@@ -1,0 +1,8 @@
+* text=auto
+
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Der uebernommene Contract bleibt bytegenau; Diffs bleiben textuell.
+*.txt -text diff
+*.json -text diff

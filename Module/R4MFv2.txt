@@ -1,0 +1,172 @@
+﻿R4OS MODULE MANIFEST V2 (R4MF)
+================================
+
+Status: Current contract for all in-tree R4X, R4L, R4D and R4P modules.
+Encoding: UTF-8 without BOM for module.R4MF itself. Lines use KEY=VALUE.
+
+1. One manifest, one module
+---------------------------
+
+The identity is the case-insensitive pair (KIND, NAME). One module.R4MF
+describes exactly one output module.
+Unknown keys, empty values and duplicate single-value keys are errors. SOURCE,
+ZIG_MODULE, IMPORT and META are ordered repeatable fields. Their order is
+significant and is preserved by planning and building.
+
+Fields in canonical order:
+
+  R4OS_MODULE_MANIFEST=2
+  KIND=R4X
+  NAME=<FAT-safe ASCII module name, maximum 31 bytes>
+  VERSION=<MAJOR.MINOR.PATCH>          module version, required for all kinds
+  LANGUAGE=Zig|C
+  SOURCE=<project-relative canonical path, repeated for C>
+  ENTRY_MODE=app|lowlevel              required for R4X, forbidden otherwise
+  APP_CLASS=console|gui|service        required for R4X, forbidden otherwise
+  TARGET=/<absolute image path ending in the KIND extension>
+  IMAGE_SCOPE=slim|full|test|none      required for every kind
+  OPTIMIZE=size|speed                  optional for R4X, default size
+  PACKAGE=<group name>                 optional for R4X, no build semantics
+  ZIG_MODULE=<alias>:<relative .zig>   optional for R4X, repeatable, Zig only
+  IMPORT=<R4L group>:Query:1            repeated; at least one for R4X
+  META=<key>=<value>                 optional, repeatable
+  ICON=<project-relative .ico path>  optional, repeatable; order = icon index
+  HELP=<project-relative text path>  optional, at most once
+  RESOURCE=<NAME>:<project-relative path>  optional, repeatable
+
+Zig has exactly one SOURCE. C may have multiple SOURCE fields. Sources are
+relative to the manifest directory, use forward slashes, may not escape with
+".." and must match the declared language. TARGET uses forward slashes,
+contains no dot segments and respects the current R4OS path/component limits.
+
+IMAGE_SCOPE decides which image a module reaches and is required for all
+four kinds. The selected sets are exact: slim images contain slim, full images
+contain slim plus full, and test images contain slim plus test. none reaches
+no automatically built image. It replaced two other conventions:
+META=image.shipped=yes|no for
+R4D and R4L, and META=image.scope=test-only in the R4L negative fixtures.
+Both are now rejected. R4D and R4P used to have no scope at all - their
+placement lived in a hardcoded list inside the build script, where the
+manifest TARGET was silently unused.
+
+VERSION is the version of the MODULE, not of the manifest format - the format
+number is R4OS_MODULE_MANIFEST. Exactly three decimal components, no prefix, no
+suffix and no leading zero in a component, so that one version has exactly one
+spelling and an update server comparison never sees two strings for the same
+version. The manifest is the only place this value is maintained: the build
+emits it into the R4M0 metadata block as module.version=<MAJOR.MINOR.PATCH> for
+all four module kinds, and ModuleCatalog emits it into Inventory/Modules.json
+as module_version and into the shipped Injection/R4OS/CONFIG/MODULES.JSON as
+version. Raising it when a module changes is a human decision; no gate enforces
+it.
+
+ENTRY_MODE=app selects the normal SDK-owned r4_app_main startup. The explicit
+lowlevel value selects a current R4XStart source that owns its entry assembly
+and is restricted to the reasoned startup, loader and SIMD fixtures. PACKAGE
+only groups installation and documentation.
+It is present in the catalog but is not read by the SDK build driver.
+
+OPTIMIZE selects the code-generation goal of an R4X without creating a
+project-local build truth. `size` maps to ReleaseSmall and remains the default;
+`speed` maps to ReleaseFast for modules whose measured hot path justifies the
+larger artifact. The field is forbidden for non-R4X modules until their
+individual build paths consume it. It changes code generation only, never
+runtime memory profiles, imports, ABI, metadata or image placement.
+
+ZIG_MODULE binds a source import name to one shared Zig file. The alias is a
+Zig identifier and unique inside the manifest. Its forward-slash path is
+resolved relative to the manifest, may deliberately reach a package sibling
+with "..", must end in .zig and must exist. The field is a build input and is
+therefore included in the machine plan. C manifests reject ZIG_MODULE.
+
+ICON, HELP and RESOURCE (since 0.61.12) declare the R4M0 resource area of
+the built module; the binary layout lives in Contract/ABI/R4M0.txt. Their
+paths follow the SOURCE rules: project-relative, forward slashes, no
+escape - a resource outside the project would silently break standalone
+builds. The first ICON is icon index 0 and thereby the desktop icon; icons
+must satisfy the SDK ICO parser (classic container, no PNG entry, a 32x32
+entry in 32 bpp BGRA or 8 bpp palette) and an unsuitable icon is a build
+error. HELP is UTF-8 text; a leading BOM of the build source is stripped on
+embedding. RESOURCE names are 1..63 bytes of printable ASCII without path
+separators or colon, case-insensitively unique per module, split at the
+FIRST colon. At most 64 resource entries per module. R4L manifests reject
+all three fields because their comptime build path never embeds - a
+declared but never embedded resource would be a silent lie. The fields are
+build inputs and are included in the machine plan.
+
+2. Explicit imports and SDK profile source
+------------------------------------------
+
+R4SYS:Query:1 is explicit in every V2 R4X import list. No parser, profile or
+builder may add it silently or filter it from the declared order. The profile
+requirements come from r4os/abi_generated.zig:r4_app_profiles, the same
+generated table consumed by App.init:
+
+  console -> app profile console -> requires R4SYS
+  gui     -> app profile desktop -> requires R4SYS, R4DESK and R4DRAW
+  service -> app profile service -> requires R4SYS
+
+The validator checks that every required group is declared. Other known groups
+remain optional and are never invented.
+
+3. Derived build and binary facts
+---------------------------------
+
+SOURCE_PROJECT, ARTIFACT, BUILD_PROFILE, EXPORT and CONTRACT are derived
+facts and are not manifest keys.
+META=app.class and META keys beginning with r4x. are also forbidden.
+
+Derived facts for a standard R4X are:
+
+  SOURCE_PROJECT = directory containing module.R4MF
+  ARTIFACT       = Code/zig-out/<NAME>.R4X for repository builds
+  BUILD_PROFILE  = R4X_<LANGUAGE>_<App|LowLevel>_<Console|Desktop|Service>
+  OPTIMIZE       = size|speed
+  EXPORT         = R4XStart:R4XStart:1
+  CONTRACT       = R4M0:1 and R4XStart:1
+  app.class      = APP_CLASS
+
+The fixed R4M0 metadata is r4x.name, r4x.class, feature=program-module,
+r4x.start=r4xstart, r4x.entry=R4XStart, r4x.start_abi=1,
+r4x.context=R4XStartContext and a class-derived memory.profile unless META
+declares that profile explicitly.
+
+4. Image scope
+--------------
+
+slim marks the required base system, full an additional full-image module,
+test a test-only module, and none an automatically uninstalled module. The
+historical normal and both values are invalid. Scope does not alter build
+semantics, runtime dependencies or later installability. Full modules do not
+enter test images implicitly. Targets are compared case-insensitively across
+the complete catalog. A target collision is an error before building or
+writing an image. If an IMPORT group has a known R4L component in the catalog,
+that provider must be selected for the same image or planning fails.
+
+The full source catalog remains Inventory/Modules.json. The shipped mutable
+starting inventory is Injection/R4OS/CONFIG/MODULES.JSON schema 2. It carries
+the required profile field slim|full|test and only the R4X, R4L, R4D and R4P
+identities selected by the exact image plan. Missing and unknown profiles are
+errors, never an implicit default.
+
+5. Discovery and current-only validation
+----------------------------------------
+
+ModuleCatalog recursively discovers module.R4MF, sorts by KIND, NAME and path,
+and rejects case-insensitive identity and image-target collisions. Its JSON is
+the machine-readable catalog/plan interface. The contract-plan action renders
+the environment-neutral R4MF_PLAN=1 view shared byte-for-byte with R4BUILD
+PLAN. Repository and inside-R4OS artifact directories are deliberately absent
+from that comparison view.
+
+The parser accepts only the contract declared in this document. Unknown
+versions, fields or kind-specific combinations are errors. All in-tree
+manifests are catalogued through this one parser; build and image owners do
+not implement a second reader.
+
+R4CODE creates and opens module.R4MF directly. R4BUILD VALIDATE, PLAN and BUILD
+use the same runtime parser. The inside-R4OS compiler reports a capability
+error for unsupported languages or profiles instead of selecting another
+project path. Historical R4CP is read only by the explicit R4BUILD CONVERT
+one-shot command; normal R4CODE and R4BUILD operation does not accept it as a
+project contract.

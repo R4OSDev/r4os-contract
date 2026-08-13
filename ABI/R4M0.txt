@@ -1,0 +1,155 @@
+﻿R4M0 Modulcontainer
+===================
+
+Rolle
+-----
+
+R4M0 ist der gemeinsame Little-Endian-Container fuer:
+
+    1 = R4X  Programm
+    2 = R4L  Library
+    3 = R4D  Treiber
+    4 = R4P  Protokollmodul
+    5 = KernelProvider
+    6 = reserviertes Kernelmodul
+
+Architektur 1 ist x86_64.
+
+Header
+------
+
+Offset  Groesse  Bedeutung
+0       4        Magic "R4M0"
+4       2        Formatversion 1
+6       2        Architektur 1
+8       2        ModuleKind
+10      2        Headergroesse 64
+12      4        Flags
+16      4        Section-Offset
+20      4        Section-Anzahl
+24      4        Import-Offset
+28      4        Import-Anzahl
+32      4        Export-Offset
+36      4        Export-Anzahl
+40      4        Relocation-Offset
+44      4        Relocation-Anzahl
+48      4        Entry-Offset
+52      4        Entry-Anzahl
+56      4        Meta-/Stringbereich-Offset
+60      4        Meta-/Stringbereich-Groesse
+
+Recordgroessen
+--------------
+
+    Section     32 Byte
+    Entry       16 Byte
+    Import      16 Byte
+    Export      16 Byte
+    Relocation  24 Byte
+
+R4X-Flags
+---------
+
+    0x00000001 = console
+    0x00000002 = gui
+    0x00000004 = service
+
+Sections
+--------
+
+Ein Section-Record enthaelt Name[8], Flags, Dateioffset, Dateigroesse,
+Speichergroesse, Alignment und reserved. Section-Flags sind alloc, exec,
+write und bss. BSS besitzt keine Dateinutzdaten und wird vom Loader genullt.
+
+Imports und Exports
+-------------------
+
+Ein Import nennt Modul, Symbol, Mindestversion und Flags. Namen liegen im
+Meta-/Stringbereich. Beispiel:
+
+    R4SYS:Query:1
+
+Ein Export nennt Symbol, Section, Sectionoffset und Version. R4X exportiert
+R4XStart Version 1. R4L exportiert Query Version 1. R4D und R4P verwenden
+ihre jeweiligen Modulvertraege.
+
+Relocations
+-----------
+
+Der Loader akzeptiert nur die im aktuellen R4M0-Vertrag definierten
+Relocationtypen. Alle Offsets, Counts, Recordbereiche, Sectionziele,
+Alignments, Stringreferenzen und Relocationziele werden vor Ausfuehrung
+technisch validiert.
+
+Die Relocationtabelle ist die einzige Wahrheit fuer Laufzeitpatches. Der
+Loader darf ausschliesslich die dort genannten Patchbereiche veraendern;
+alle nicht referenzierten Bytes einer geladenen Section bleiben bytegenau
+erhalten. Insbesondere ist es unzulaessig, gewoehnliche Zahlen- oder
+Tabellenwerte anhand ihrer Aehnlichkeit mit einer Linkadresse als Pointer zu
+interpretieren und heuristisch umzuschreiben.
+
+Ressourcenbereich (seit 0.61.12)
+--------------------------------
+
+Ein Modul darf hoechstens EINE Section ohne alloc-Flag tragen. Sie heisst
+.rsrc, hat Alignment 16 und enthaelt eingebettete Ressourcen; jede andere
+Section muss alloc tragen. Der Loader laedt .rsrc nicht in das
+Programmimage; gelesen wird on-demand aus der Moduldatei. Relocations,
+Entry und Exports duerfen nicht auf .rsrc zeigen.
+
+Aufbau des Sectioninhalts, Little Endian, alle Offsets relativ zum
+Sectionanfang:
+
+    u32 count                     1 bis 64
+    je Eintrag 16 Byte:
+        u16 typ                   1=icon, 2=help, 3=file
+        u16 index                 icon: 0..n in Manifestreihenfolge,
+                                  sonst 0
+        u32 name_off              nullterminierter Name, nur typ file,
+                                  sonst 0
+        u32 data_off              16-Byte-aligned
+        u32 size                  Blobgroesse in Bytes, mindestens 1
+    danach die Namen in Eintragsreihenfolge (nullterminiert),
+    danach die Blobs in Eintragsreihenfolge, je 16-Byte-aligned.
+
+Die Section endet mit dem letzten Byte des letzten Blobs; alle
+Paddingbytes sind null. Eintragsreihenfolge: erst alle icon nach Index,
+dann help, dann file in Manifestreihenfolge. Ein Modul ohne Ressourcen
+traegt KEINE .rsrc-Section.
+
+icon Index 0 ist das Desktopicon. Icons sind klassische Windows-ICO-
+Container ohne PNG-komprimierte Eintraege, mit mindestens einem
+32x32-Eintrag in 32 bpp BGRA oder 8 bpp Palette (Faehigkeiten des
+SDK-ICO-Parsers ico.zig). help ist UTF-8-Text; ein fuehrendes BOM der
+Bauquelle entfernt der Erzeuger. file-Namen sind 1 bis 63 Bytes
+druckbares ASCII ohne Pfadtrenner und Doppelpunkt, je Modul
+case-insensitive eindeutig. Es gibt hoechstens ein help je Modul.
+
+Quelle sind die Manifestzeilen ICON= (mehrfach, Reihenfolge = Index),
+HELP= (hoechstens einmal) und RESOURCE=NAME:pfad (mehrfach) aus
+module.R4MF; R4L-Manifeste duerfen keine Ressourcenzeilen tragen, weil
+ihr Baupfad nicht einbettet. Die Erzeuger R4XBuilder (Host) und
+R4PACK/r4pack_core (im Gast) validieren identisch und muessen fuer
+gleiche Eingaben bytegleiche Ressourcenbereiche erzeugen; das Layout
+oben laesst dafuer keinen Freiheitsgrad.
+
+Aktueller R4X-Startvertrag
+--------------------------
+
+Ein ausfuehrbares R4X besitzt:
+
+    r4x.start=r4xstart
+    r4x.entry=R4XStart
+    r4x.context=R4XStartContext
+
+sowie Export R4XStart:1 und Import R4SYS:Query:1. Weitere Imports stammen
+aus module.R4MF. Nicht passende oder widerspruechliche Startdaten sind
+generisch ungueltig und werden nicht gestartet.
+
+Vertragsquellen
+---------------
+
+    Code/Kernel/kernel/module_r4m.zig
+    Code/Kernel/program/r4x.zig
+    Code/System/SDK/Tools/R4XBuilder/src/main.zig
+    Code/System/SDK/Contract/ABI/R4XStart.txt

@@ -1,0 +1,69 @@
+﻿R4LQuery ABI
+===========
+
+Rolle
+-----
+
+Eine R4L-Systemlibrary exportiert Query Version 1. R4M0-Imports verwenden:
+
+    <GRUPPE>:Query:1
+
+Aktuelle Gruppen sind R4SYS, R4DESK, R4DRAW, R4NET, R4AUDIO, R4DEV und
+R4STD.
+
+R4OS-CONTRACT-GENERATED:BEGIN R4LQUERY
+Dieser Block wird aus ApiContract.json erzeugt und darf nicht von Hand geaendert werden.
+
+R4LQuery
+--------
+
+Offset  Typ  Feld
+0       u32  magic
+4       u32  abi_version
+8       u32  size
+12      u32  group
+16      u64  kernel_bridge
+24      u64  reserved
+
+Groesse: 32 Byte
+
+Magic: 0x314C3452
+Version: 1
+Pointergroesse: 8
+Entry: Query:1
+
+Gruppen-IDs
+-----------
+
+    1 = R4SYS (kernel_table)
+    2 = R4DESK (kernel_table)
+    3 = R4DRAW (kernel_table)
+    4 = R4NET (kernel_table)
+    5 = R4AUDIO (kernel_table)
+    6 = R4DEV (kernel_table)
+    8 = R4STD (r4l_library)
+    9 = R4IMG (r4l_library)
+    10 = R4FONT (r4l_library)
+
+R4STD, R4IMG und R4FONT besitzen keine Kernel-Gruppentabelle.
+
+R4OS-CONTRACT-GENERATED:END R4LQUERY
+
+Query-Vertrag
+-------------
+
+- Das R4L ist ein R4M0-Modul mit ModuleKind R4L.
+- module.R4MF exportiert Query und nennt den fachlichen CONTRACT.
+- Magic, Version, Groesse, Gruppe und Pointergroesse muessen passen.
+- kernel_bridge ist ein interner Resolveranker und kein App-Funktionsfeld.
+- Die sechs Kernelgruppen liefern ueber Query ihre R4XStart-Tabelle.
+- R4STD, R4IMG und R4FONT sind reine Userland-Libraries ohne Kernel-Tabelle.
+- Direkte KernelProvider-Imports sind den System-R4L vorbehalten.
+
+Beispiel
+--------
+
+    IMPORT=R4SYS:Query:1
+    IMPORT=R4STD:Query:1
+
+Die Importliste eines Projekts steht ausschliesslich in module.R4MF.
