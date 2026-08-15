@@ -4,6 +4,8 @@
     .fingerprint = 0x3de7a7c4615bb810,
     .minimum_zig_version = "0.16.0",
     .paths = .{
+        "LICENSE",
+        "NOTICE",
         "ABI",
         "API",
         "Generated",
