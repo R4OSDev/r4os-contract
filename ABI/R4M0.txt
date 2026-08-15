@@ -68,10 +68,25 @@ Ein Import nennt Modul, Symbol, Mindestversion und Flags. Namen liegen im
 Meta-/Stringbereich. Beispiel:
 
     R4SYS:Query:1
+    ACMECODEC:API_V1:2
 
-Ein Export nennt Symbol, Section, Sectionoffset und Version. R4X exportiert
-R4XStart Version 1. R4L exportiert Query Version 1. R4D und R4P verwenden
-ihre jeweiligen Modulvertraege.
+Ein Export nennt Symbol, Section, Sectionoffset und Version. Namen und
+Versionen sind innerhalb eines Moduls case-insensitiv eindeutig; leere,
+ueberlange, doppelte oder Version-0-Exporte sind ungueltig. R4X exportiert
+R4XStart Version 1. Eine benannte Runtime-R4L exportiert Query Version 1 und
+mindestens eine fachliche Tabelle wie API_V1; deren Header und Revision folgen
+R4LInterface.txt. R4D und R4P verwenden ihre jeweiligen Modulvertraege.
+
+Beim ELF-basierten Bau einer Runtime-R4L deklariert module.R4MF die Zuordnung
+
+    EXPORT=<oeffentlicher Name>:<globales ELF-Symbol>:<Revision>
+
+Der R4XBuilder loest das globale oder schwache ELF-Symbol nach Section und
+Offset auf und schreibt nur den oeffentlichen Namen und die Revision in den
+R4M0-Export. Fehlende, doppelte, undefinierte oder auf nicht ladbare Sections
+zeigende Symbole sind harte Baufehler. Dadurch kann eine beliebige Library
+echte Code- und Datentabellen exportieren, ohne dass Builder, Kernel oder
+zentraler Contract ihren Namen kennen.
 
 Relocations
 -----------
@@ -128,7 +143,7 @@ case-insensitive eindeutig. Es gibt hoechstens ein help je Modul.
 Quelle sind die Manifestzeilen ICON= (mehrfach, Reihenfolge = Index),
 HELP= (hoechstens einmal) und RESOURCE=NAME:pfad (mehrfach) aus
 module.R4MF; R4L-Manifeste duerfen keine Ressourcenzeilen tragen, weil
-ihr Baupfad nicht einbettet. Die Erzeuger R4XBuilder (Host) und
+der R4L-Vertrag keinen Ressourcenpfad definiert. Die Erzeuger R4XBuilder (Host) und
 R4PACK/r4pack_core (im Gast) validieren identisch und muessen fuer
 gleiche Eingaben bytegleiche Ressourcenbereiche erzeugen; das Layout
 oben laesst dafuer keinen Freiheitsgrad.
@@ -146,10 +161,12 @@ sowie Export R4XStart:1 und Import R4SYS:Query:1. Weitere Imports stammen
 aus module.R4MF. Nicht passende oder widerspruechliche Startdaten sind
 generisch ungueltig und werden nicht gestartet.
 
-Vertragsquellen
----------------
+Vertragsquellen und Verbraucher
+-------------------------------
 
-    Code/Kernel/kernel/module_r4m.zig
-    Code/Kernel/program/r4x.zig
-    Code/System/SDK/Tools/R4XBuilder/src/main.zig
-    Code/System/SDK/Contract/ABI/R4XStart.txt
+    ABI/R4M0.txt
+    ABI/R4XStart.txt
+    Module/R4MFv2.txt
+
+Loader, SDK-Packager und Gast-Packager sind Verbraucher dieses Vertrags und
+besitzen keine abweichende Formatwahrheit.

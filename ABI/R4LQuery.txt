@@ -4,12 +4,13 @@
 Rolle
 -----
 
-Eine R4L-Systemlibrary exportiert Query Version 1. R4M0-Imports verwenden:
+Eine R4L exportiert Query Version 1. Plattformgruppen werden so importiert:
 
     <GRUPPE>:Query:1
 
-Aktuelle Gruppen sind R4SYS, R4DESK, R4DRAW, R4NET, R4AUDIO, R4DEV und
-R4STD.
+Eine benannte optionale Runtime-R4L verwendet group=0, kernel_bridge=0 und
+wird fachlich direkt ueber einen Export wie API_V1 importiert. Query bleibt
+dabei technische Identitaetsmetadaten und ist keine Funktionstabelle.
 
 R4OS-CONTRACT-GENERATED:BEGIN R4LQUERY
 Dieser Block wird aus ApiContract.json erzeugt und darf nicht von Hand geaendert werden.
@@ -41,11 +42,8 @@ Gruppen-IDs
     4 = R4NET (kernel_table)
     5 = R4AUDIO (kernel_table)
     6 = R4DEV (kernel_table)
-    8 = R4STD (r4l_library)
-    9 = R4IMG (r4l_library)
-    10 = R4FONT (r4l_library)
 
-R4STD, R4IMG und R4FONT besitzen keine Kernel-Gruppentabelle.
+Externe Runtime-R4Ls besitzen eigene, versionierte Funktionstabellen und werden hier nicht zentral registriert.
 
 R4OS-CONTRACT-GENERATED:END R4LQUERY
 
@@ -57,13 +55,17 @@ Query-Vertrag
 - Magic, Version, Groesse, Gruppe und Pointergroesse muessen passen.
 - kernel_bridge ist ein interner Resolveranker und kein App-Funktionsfeld.
 - Die sechs Kernelgruppen liefern ueber Query ihre R4XStart-Tabelle.
-- R4STD, R4IMG und R4FONT sind reine Userland-Libraries ohne Kernel-Tabelle.
-- Direkte KernelProvider-Imports sind den System-R4L vorbehalten.
+- Benannte Runtime-R4Ls verwenden group=0; Anwendungen importieren ihre
+  libraryeigene Funktionstabelle direkt mit
+  `<MODUL>:<INTERFACE>:<REVISION>`.
+- Direkte KernelProvider-Imports sind ausschliesslich den sechs
+  kernelimplementierten Plattform-R4Ls vorbehalten.
+- Neue optionale Libraries verwenden group=0 und keine zentrale Gruppen-ID.
 
 Beispiel
 --------
 
     IMPORT=R4SYS:Query:1
-    IMPORT=R4STD:Query:1
+    IMPORT=EXAMPLE:API_V1:1
 
 Die Importliste eines Projekts steht ausschliesslich in module.R4MF.

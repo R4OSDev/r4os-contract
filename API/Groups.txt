@@ -1,162 +1,75 @@
-﻿R4OS API-Gruppen
-=================
+﻿R4OS Plattformgruppen
+=====================
 
 Grundmodell
 -----------
 
-Ein R4X erhaelt beim Start ein Bundle importierter Gruppen. R4SYS ist die
-Basis. Weitere Gruppen werden in module.R4MF als <NAME>:Query:1 angefordert.
-Normale Zig-/C-Anwendungen erhalten ein `r4os.App` beziehungsweise `R4App`
-mit typisierten Fassaden. Roher R4XStart-/Tabellenzugriff ist getrennt unter
-`r4os.lowlevel` beziehungsweise den Low-Level-C-Headern gebuendelt.
+Ein R4X erhaelt beim Start ein Bundle der explizit importierten
+Plattformschnittstellen. R4SYS ist die Basis; weitere Gruppen werden in
+`module.R4MF` als `<NAME>:Query:1` angefordert. Gruppen-ID, Tabellenlayout,
+Slots und Signaturen stehen ausschliesslich in `ApiContract.json`.
 
 R4SYS
 -----
 
-Systembasis fuer:
-
-- Console/STDIO und Umgebungsvariablen
-- Tasks, Threads, Yield und Zeit
-- Dateien, Verzeichnisse und Laufwerke
-- Programme, Instanzen und Close-Anforderungen
-- Services und Service-Endpunkte
-- virtuelle Programmspeicherregionen
-- asynchrones Programm-I/O
-- Registry und Bootlog
-
-Tabellenidentitaet, Version, Groesse und Slots werden aus ApiContract.json
-nach Docs/API/R4SYS.md erzeugt.
+Systembasis fuer Console/STDIO, Tasks und Threads, Zeit, Dateien und
+Verzeichnisse, Programme, Services, virtuelle Speicherregionen, asynchrones
+I/O, Registry und Bootlog.
 
 R4DESK
 ------
 
-Desktop- und Fenstersystem fuer:
-
-- Tastatur-/Mausereignisse und Console-Host
-- Fenster, Controls, Menues und Dialoge
-- Clipboard
-- Desktop- und Remote-Frame-Informationen
-- GUI-Zustand und Fenster-Present
-
-Tabellenidentitaet, Version, Groesse und Slots werden aus ApiContract.json
-nach Docs/API/R4DESK.md erzeugt.
+Desktop- und Fenstersystem fuer Eingabe, Console-Host, Fenster, Controls,
+Menues, Dialoge, Clipboard sowie Desktop- und Remote-Frames.
 
 R4DRAW
 ------
 
-Zeichen- und Rasterfunktionen fuer:
-
-- Pixel, Linien, Rechtecke und Text
-- Fonts und Textmessung
-- Bilder, Oberflaechen und Present
-- Desktop-nahe Renderprimitive
-
-Tabellenidentitaet, Version, Groesse und Slots werden aus ApiContract.json
-nach Docs/API/R4DRAW.md erzeugt.
+Zeichen- und Rasterfunktionen fuer Pixel, Linien, Rechtecke, Text, Fonts,
+Oberflaechen und Present.
 
 R4NET
 -----
 
-Netzwerkfunktionen fuer:
-
-- Adapter- und Konfigurationsstatus
-- UDP/TCP und Socket-nahe Operationen
-- DNS, DHCP und ICMP
-- Netz-Service-Status und Diagnose
-- Serial-Link-Netztransport
-
-Tabellenidentitaet, Version, Groesse und Slots werden aus ApiContract.json
-nach Docs/API/R4NET.md erzeugt.
+Netzwerkfunktionen fuer Adapterstatus, UDP/TCP, DNS, DHCP, ICMP,
+Netzwerkdienste, Diagnose und Serial-Link-Transport.
 
 R4AUDIO
 -------
 
-Audiofunktionen fuer:
-
-- PCM-Ausgabe und Audiostatus
-- MIDI
-- SID
-- OPL3
-- Synth- und Audiogeraetdiagnose
-
-Tabellenidentitaet, Version, Groesse und Slots werden aus ApiContract.json
-nach Docs/API/R4AUDIO.md erzeugt.
+Audiofunktionen fuer PCM-Ausgabe, MIDI, SID, OPL3 sowie Synth- und
+Audiogeraetdiagnose.
 
 R4DEV
 -----
 
-Device- und Diagnosefunktionen fuer:
+Device- und Diagnosefunktionen fuer Hardwareinventar, Treiber,
+Protokollstatus, Bootinformationen und entwicklernahe Systemdiagnose.
 
-- Hardware- und Device-Inventar
-- Treiberstatus und Treiberdetails
-- Protokollstatus und Dispatch
-- Boot- und Hardwarezusammenfassungen
-- entwicklernahe Systemdiagnose
+Die vollstaendigen generierten Tabellen stehen unter
+`Generated/Docs/API/<GRUPPE>.md`.
 
-Tabellenidentitaet, Version, Groesse und Slots werden aus ApiContract.json
-nach Docs/API/R4DEV.md erzeugt.
+Benannte Runtime-R4Ls
+---------------------
 
-R4STD
------
+Eine unabhaengige Runtime-R4L besitzt keine zentrale Gruppen-ID und keine
+Kernel-Gruppentabelle. Implementierung, fachlicher Contract, Baseline,
+Funktionsslots, Fehlercodes, Bindings und Tests liegen gemeinsam in ihrer
+Library-Einheit. Anwendungen importieren eine solche Tabelle direkt als
+`<MODUL>:<INTERFACE_VMAJOR>:<MINDESTREVISION>`.
 
-Reine R4L-Standardlibrary fuer:
-
-- Text-, Parser- und Formathelfer
-- Datum und Zeitformatierung
-- R4S-/Config-Verarbeitung
-- Settings und Dateihelfer
-
-R4STD wird als R4STD:Query:1 importiert. Es gibt keine
-R4XStartR4Std-Kernel-Tabelle.
-
-R4IMG
------
-
-Reine R4L-Rasterbildlibrary fuer:
-
-- PNG mit Transparenz
-- Baseline- und Progressive-JPEG
-- 24-/32-Bit-BMP
-- begrenzte Skalierung und Alpha-Komposition in Speicher des Aufrufers
-
-R4IMG wird als R4IMG:Query:1 importiert. Es gibt keine
-R4XStartR4Img-Kernel-Tabelle.
-
-R4FONT
-------
-
-Reine R4L-Schriftdekoderlibrary fuer:
-
-- TTF, OTF/CFF, TTC, WOFF und WOFF2
-- Zeichenabbildung, Metriken und Kerning
-- begrenzte Alpha8-Glyphenrasterung in Speicher des Aufrufers
-- caller-owned Decoderzustand ohne Kernel- oder R4DRAW-Formatlogik
-
-R4FONT wird als R4FONT:Query:1 importiert. Es gibt keine
-R4XStartR4Font-Kernel-Tabelle.
+Der zentrale Contract definiert dafuer nur R4M0, R4LQuery und den generischen
+Interfaceheader in `ABI/R4LInterface.txt`. Eine neue Runtime-R4L erfordert
+keine Aenderung an diesem Gruppenverzeichnis.
 
 Gemeinsame Regeln
 -----------------
 
-- Importnamen: R4SYS, R4DESK, R4DRAW, R4NET, R4AUDIO, R4DEV, R4STD, R4IMG,
-  R4FONT.
-- Gruppen-IDs und Query-Imports stehen ausschliesslich in ApiContract.json
-  und den daraus erzeugten ABI-/R4L-Artefakten.
-- Vorhandene Tabellenfelder und Payloads bleiben binaer stabil.
+- Plattformgruppen sind R4SYS, R4DESK, R4DRAW, R4NET, R4AUDIO und R4DEV.
+- Vorhandene Felder und Payloads bleiben binaer stabil.
 - Erweiterungen erfolgen append-only.
-- hasFn("feld") prueft eine konkrete Kernel-Funktion.
-- SDK-Wrapper liefern err_no_group (-9001) oder err_no_fn (-9002), wenn
-  Gruppe oder Feld nicht erreichbar ist.
-- Fachliche Fehlercodes bleiben dem jeweiligen Subsystem zugeordnet.
-- R4STD-, R4IMG- und R4FONT-Funktionen sind Librarycode und werden nicht mit hasFn
+- Nutzbarkeit wird ueber vorhandene Feldgroesse und einen Zeiger ungleich 0
   geprueft.
-
-Referenzen
-----------
-
-    Code/System/SDK/r4os/abi_generated.zig
-    Code/System/SDK/r4os/abi.zig
-    Code/System/SDK/r4os/r4sys.zig bis r4dev.zig
-    Code/System/SDK/r4os/r4std.zig
-    Code/System/SDK/Shared/C/include/r4os/
-    Docs/API/
+- Nicht erreichbare Plattformgruppen beziehungsweise Felder melden
+  `err_no_group` (-9001) oder `err_no_fn` (-9002).
+- Fachliche Runtime-R4L-Fehler bleiben Eigentum der jeweiligen Library.

@@ -71,16 +71,13 @@ Gruppen-IDs
     4 = R4NET
     5 = R4AUDIO
     6 = R4DEV
-    8 = R4STD
-    9 = R4IMG
-    10 = R4FONT
 
 App-Profile
 -----------
 
-    console -> app.class=console, required-mask=0x2, optional-mask=0x77C
-    desktop -> app.class=gui, required-mask=0xE, optional-mask=0x770
-    service -> app.class=service, required-mask=0x2, optional-mask=0x77C
+    console -> app.class=console, required-mask=0x2, optional-mask=0x7C
+    desktop -> app.class=gui, required-mask=0xE, optional-mask=0x70
+    service -> app.class=service, required-mask=0x2, optional-mask=0x7C
 
 Gruppentabellen
 ---------------
@@ -98,11 +95,24 @@ Gruppentabellen
     R4XSTART_R4DEV_VERSION = 5
     R4XSTART_R4DEV_SIZE    = 304
 
-R4STD, R4IMG und R4FONT sind tabellenlose R4L-/SDK-Gruppen. Die sechs Kernelgruppen beginnen
-jeweils mit magic, abi_version, size und flags; danach folgen die im Schema
-definierten 8-Byte-Slots.
+Die sechs Kernelgruppen beginnen jeweils mit magic, abi_version, size und flags;
+danach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls
+besitzen libraryeigene Vertraege und werden hier nicht zentral registriert.
 
 R4OS-CONTRACT-GENERATED:END R4XSTART
+
+group_id=0 kennzeichnet seit 0.64.2 ein benanntes externes Interface. In
+diesem Fall identifizieren module_name und symbol_name den Export,
+min_version/resolved_version enthalten die angeforderte und gelieferte
+Revision, flags enthaelt nicht group_interface und table zeigt direkt auf den
+geladenen Export. Das 40-Byte-Layout bleibt unveraendert.
+
+Nur die sechs kernelimplementierten Query-Interfaces R4SYS, R4DESK, R4DRAW,
+R4NET, R4AUDIO und R4DEV werden anhand ihres Modulnamens einer festen ID und
+einer Kernel-Gruppentabelle zugeordnet. Die IDs 8 bis 10 sind
+Uebergangswerte der noch nicht migrierten Query-Libraries und werden nicht
+fuer neue Libraries vergeben. Ein SDK darf deren Query-Header waehrend der
+Migration auswerten; der Kernel fuehrt dafuer keine Namensliste.
 
 Der Kontextvalidator verlangt die aktuelle Magic, ABI-Major 1 und mindestens
 die im generierten Block angegebene Kontextgroesse. Ein groesserer Minorwert
@@ -134,7 +144,11 @@ Ein gueltiges R4X besitzt:
 - Metadaten r4x.start=r4xstart, r4x.entry=R4XStart und
   r4x.context=R4XStartContext;
 - Import R4SYS:Query:1;
-- alle zusaetzlichen Imports aus module.R4MF.
+- alle zusaetzlichen Plattform- oder benannten Imports aus module.R4MF.
+
+Ein benannter Import wie EXTMATH:API_V1:1 erscheint mit group_id=0 und mit
+allen Namen, Versionen und dem Providerpointer im Startkontext. group_id=0 ist
+kein Fehlerzustand. Seine Interfaceheader-Regeln stehen in R4LInterface.txt.
 
 Fehlende, unbekannte, doppelte oder widerspruechliche Startmetadaten werden
 als generisch ungueltiger Startvertrag abgelehnt.
@@ -157,12 +171,13 @@ Die SDK-Startups exportieren R4XStart, validieren Kontext und Profilgruppen
 und rufen r4_app_main mit einem aufruflokalen App-Objekt auf. Direkter
 R4XStart-Zugriff bleibt explizite Low-Level-ABI.
 
-Quellen und Pruefung
---------------------
+Generierte Pakete und Pruefung
+------------------------------
 
-    Code/Kernel/program/r4x.zig
-    Code/Kernel/program/r4x_start.zig
-    Code/System/SDK/r4os/abi.zig
-    Code/System/SDK/r4os/r4xstart.zig
-    Code/System/SDK/Shared/C/include/r4os/r4xstart.h
-    Tests/Gate/Invoke-CurrentApiContractGate.ps1
+    Generated/SDK/Zig/abi_generated.zig
+    Generated/SDK/C/include/r4os/abi_generated.h
+    Generated/Kernel/Zig/r4x_api_generated.zig
+    Generated/Conformance/
+
+`zig build check` prueft Vertragsblock und Pakete bytegenau;
+`zig build test` kompiliert die Zig-/C-Projektionen.

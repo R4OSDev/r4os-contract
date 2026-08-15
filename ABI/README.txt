@@ -1,87 +1,55 @@
 ﻿R4OS ABI
-=========
+========
 
 Geltungsbereich
 ---------------
 
-Die ABI-Dateien beschreiben die binaeren Grenzen zwischen R4M0-Modulen,
-R4L-Systemlibraries, Kernel und Programmen. Zielarchitektur ist x86_64,
-Little Endian, Pointergroesse 8 Byte. Oeffentliche Structs verwenden feste
-Integerbreiten oder uintptr_t/usize an Pointerplaetzen.
+Die Dateien in diesem Verzeichnis beschreiben die binaeren Grenzen zwischen
+R4M0-Modulen, Programmen, Runtime-R4Ls und Kernel. Ziel ist x86_64, Little
+Endian, mit 8-Byte-Pointern und C-Aufrufkonvention.
 
-Aktuelle Vertraege
-------------------
+Vertraege
+---------
 
-R4M0.txt
-  Containerformat fuer R4X, R4L, R4D und R4P.
+`R4M0.txt`
+  Gemeinsames Containerformat fuer R4X, R4L, R4D und R4P.
 
-R4XStart.txt
+`R4XStart.txt`
   Einstieg eines R4X-Programms, Startkontext und importierte
-  Gruppentabellen.
+  Plattformtabellen.
 
-R4LQuery.txt
-  Exportierter Query-Anker einer R4L-Systemlibrary.
+`R4LQuery.txt`
+  Generischer Query-Export eines R4L-Moduls.
 
-R4M0 Modularten
----------------
+`R4LInterface.txt`
+  Versionierter Tabellenheader fuer unabhaengige, benannte Runtime-R4Ls.
 
-    1 = R4X
-    2 = R4L
-    3 = R4D
-    4 = R4P
-    5 = KernelProvider
-    6 = reserviert fuer Kernelmodule
+Plattformtabellen
+-----------------
 
-R4X-Laufzeit
-------------
+R4SYS, R4DESK, R4DRAW, R4NET, R4AUDIO und R4DEV beginnen jeweils mit Magic,
+ABI-Version, Groesse und Flags. Danach folgen Funktionszeiger und reservierte
+Slots in fester Reihenfolge. Die aktuellen Werte und Tabellenfelder werden
+aus `API/ApiContract.json` nach `Generated/Docs/API/` erzeugt.
 
-Ein aktuelles R4X exportiert R4XStart Version 1 und besitzt die Metadaten:
-
-    r4x.start=r4xstart
-    r4x.entry=R4XStart
-    r4x.context=R4XStartContext
-
-R4SYS:Query:1 ist der implizite Basisimport. Weitere Imports kommen
-ausschliesslich aus module.R4MF.
-
-Tabellen
---------
-
-    R4SYS   v7   824 Byte
-    R4DESK  v7   424 Byte
-    R4DRAW  v1   216 Byte
-    R4NET   v1   288 Byte
-    R4AUDIO v1   184 Byte
-    R4DEV   v4   280 Byte
-
-Jede Tabelle beginnt mit magic, abi_version, size und flags. Danach folgen
-Funktionszeiger und reservierte Slots in fester Reihenfolge. Der Consumer
-prueft size bis zum benoetigten Feld und anschliessend den Zeiger auf ungleich
-0. R4STD wird ueber R4LQuery importiert und besitzt keine Kernel-Tabelle.
-
-Der normale Zig-SDK-Pfad loest die Imports einmal in program.Bundle auf.
-Alle Gruppen-Contexts verwenden danach denselben feldbasierten Zugriff in
-program.Context. Eine kuerzere, gueltige Tabelle darf vorhandene fruehe Felder
-bereitstellen; Felder hinter size gelten als nicht vorhanden. Nullzeiger und
-reservierte Tombstones sind ebenfalls keine aufrufbaren Funktionen.
-
-r4xstart.Context und die rohen R4Sys-/R4Desk-/R4Draw-Typen sind nur fuer
-Low-Level-ABI-, Loader- und gezielte Diagnosetests vorgesehen. Normale
-Anwendungen und Services erzeugen keine parallelen Raw-Contexts.
+Eine benannte Runtime-R4L besitzt dagegen keine zentrale Kernel-Tabelle. Sie
+liefert eine libraryeigene, versionierte Funktionstabelle ueber den
+gemeinsamen Query-/Interface-Mechanismus.
 
 Aenderungen
 -----------
 
-- Append-only fuer bestehende Tabellen.
-- Keine Wiederverwendung reservierter Slots ohne neuen ausdruecklichen
-  Vertrag.
-- Keine implizite Typkonvertierung zwischen C- und Zig-Payloads.
-- Neue Majorversion nur bei bewusst inkompatiblem Vertrag.
-- Neue Minorversion darf aeltere Consumer nicht allein wegen ihrer Zahl
-  ausschliessen.
+- Bestehende Tabellen wachsen ausschliesslich am Ende.
+- Reservierte oder tombstoned Slots werden nicht still umgedeutet.
+- Fixed-layout-Typen werden nicht in-place erweitert.
+- Extensible Typen folgen ihrem Versions- und Groessenvertrag.
+- Zig- und C-Projektionen muessen binaer identisch bleiben.
 
 Maschinelle Abnahme
 -------------------
 
-    Tests/Gate/Invoke-CurrentApiContractGate.ps1 -Source
-    Tests/Gate/Invoke-CurrentApiContractGate.ps1 -SelfTest
+    zig build check
+    zig build test
+
+Die generierten Paketquellen, Layoutassertions und Conformance-Fixtures
+liegen vollstaendig im Repository unter `Generated/`.
