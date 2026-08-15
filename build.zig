@@ -55,6 +55,14 @@ pub fn build(b: *std.Build) void {
     const abi_tests = b.addTest(.{ .root_module = abi_module });
     const run_abi_tests = b.addRunArtifact(abi_tests);
 
+    const abi_package_module = b.createModule(.{
+        .root_source_file = b.path("Generated/SDK/Zig/package.zig"),
+        .target = b.graph.host,
+        .optimize = .Debug,
+    });
+    const abi_package_tests = b.addTest(.{ .root_module = abi_package_module });
+    const run_abi_package_tests = b.addRunArtifact(abi_package_tests);
+
     const kernel_module = b.createModule(.{
         .root_source_file = b.path("Generated/Kernel/Zig/r4x_api_exports.zig"),
         .target = b.graph.host,
@@ -95,6 +103,7 @@ pub fn build(b: *std.Build) void {
     test_step.dependOn(&check_run.step);
     test_step.dependOn(&selftest_run.step);
     test_step.dependOn(&run_abi_tests.step);
+    test_step.dependOn(&run_abi_package_tests.step);
     test_step.dependOn(&run_kernel_tests.step);
     test_step.dependOn(&run_zig_conformance.step);
     test_step.dependOn(&c_conformance.step);

@@ -15,6 +15,9 @@ Wahrheit und Ausgaben
 - `Module/R4MFv2.txt` beschreibt das gemeinsame Modulmanifest.
 - `Generated/` enthaelt die daraus erzeugten Zig-, Kernel- und C-Pakete,
   Conformance-Fixtures, Referenzdokumente und das API-Inventar.
+- Die exportierte Zig-ABI verbindet die schemagenerierten Definitionen mit
+  den gemeinsamen technischen Plattformtypen aus dem eingefrorenen
+  Referenzstand.
 - `Tools/ApiContractGen/` besitzt den Generator und seine Negativtests.
 
 Nicht enthalten sind Kernelimplementierungen, handgeschriebene SDK-Fassaden,
