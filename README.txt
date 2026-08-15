@@ -40,8 +40,9 @@ Baseline-Stand wird ausschliesslich explizit erzeugt:
 
 Verbraucher beziehen die passenden Dateien aus `Generated/` als explizite
 Contract-Version. Sie erzeugen daraus keine zweite fachliche Wahrheit.
-Zig-Builds beziehen das exportierte Modul `r4os_contract_abi`; fuer
-C-Builds exportiert das Paket den Include-Pfad `r4os_contract_c_include`.
+Zig-Builds beziehen das exportierte Modul `r4os_contract` und dessen
+Namespace `abi`; fuer C-Builds exportiert das Paket den Include-Pfad
+`r4os_contract_c_include`.
 
 Die Herkunft des uebernommenen 0.64.9-Stands und die repo-neutrale Anpassung
 sind in `PROVENANCE.txt` festgehalten.

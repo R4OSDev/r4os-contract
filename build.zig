@@ -1,10 +1,12 @@
 const std = @import("std");
 
+pub const abi = @import("Generated/SDK/Zig/abi_exports.zig");
+
 pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
-    _ = b.addModule("r4os_contract_abi", .{
-        .root_source_file = b.path("Generated/SDK/Zig/abi_exports.zig"),
+    _ = b.addModule("r4os_contract", .{
+        .root_source_file = b.path("Generated/SDK/Zig/package.zig"),
     });
     b.addNamedLazyPath(
         "r4os_contract_c_include",
