@@ -3,6 +3,14 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
+    _ = b.addModule("r4os_contract_abi", .{
+        .root_source_file = b.path("Generated/SDK/Zig/abi_exports.zig"),
+    });
+    b.addNamedLazyPath(
+        "r4os_contract_c_include",
+        b.path("Generated/SDK/C/include"),
+    );
+
     const generator = b.addExecutable(.{
         .name = "api-contract-gen",
         .root_module = b.createModule(.{
