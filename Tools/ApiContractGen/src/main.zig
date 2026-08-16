@@ -638,6 +638,16 @@ fn renderZigAbi(allocator: std.mem.Allocator, contract: *const Contract) ![]u8 {
         try appendLower(&out, allocator, group.name);
         try appendFmt(&out, allocator, " = {d},\n", .{group.id});
     }
+    try out.appendSlice(allocator, "};\n\npub const R4PlatformApiMeta = struct { name: []const u8, group: R4LGroup, query_import: []const u8 };\n");
+    try out.appendSlice(allocator, "pub const r4_platform_apis = [_]R4PlatformApiMeta{\n");
+    for (contract.groups) |group| {
+        if (group.kind != .kernel_table) continue;
+        try out.appendSlice(allocator, "    .{ .name = \"");
+        try out.appendSlice(allocator, group.name);
+        try out.appendSlice(allocator, "\", .group = .");
+        try appendLower(&out, allocator, group.name);
+        try appendFmt(&out, allocator, ", .query_import = \"{s}\" }},\n", .{group.query_import});
+    }
     try out.appendSlice(allocator, "};\n\n");
 
     try out.appendSlice(allocator, "pub const R4AppProfileMeta = struct { name: []const u8, app_class: R4XStartAppClass, required_groups: u32, optional_groups: u32 };\n");
@@ -1182,7 +1192,7 @@ fn renderStartDoc(allocator: std.mem.Allocator, contract: *const Contract) ![]u8
     for (contract.app_profiles) |profile| try appendFmt(&out, allocator, "    {s} -> app.class={s}, required-mask=0x{X}, optional-mask=0x{X}\n", .{ profile.name, profile.app_class, groupMask(contract, profile.required_groups), groupMask(contract, profile.optional_groups) });
     try out.appendSlice(allocator, "\nGruppentabellen\n---------------\n\n");
     for (contract.groups) |group| if (group.kind == .kernel_table) try appendFmt(&out, allocator, "    R4XSTART_{s}_VERSION = {d}\n    R4XSTART_{s}_SIZE    = {d}\n", .{ group.name, group.abi_version, group.name, group.size });
-    try out.appendSlice(allocator, "\nDie sechs Kernelgruppen beginnen jeweils mit magic, abi_version, size und flags;\ndanach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls\nbesitzen libraryeigene Vertraege und werden hier nicht zentral registriert.\n\n" ++ start_doc_end);
+    try out.appendSlice(allocator, "\nDie sechs eingebauten Platform APIs beginnen jeweils mit magic, abi_version, size und flags;\ndanach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls\nbesitzen libraryeigene Vertraege und werden hier nicht zentral registriert.\n\n" ++ start_doc_end);
     return out.toOwnedSlice(allocator);
 }
 
@@ -1193,7 +1203,7 @@ fn renderR4LContract(allocator: std.mem.Allocator, contract: *const Contract) ![
     try appendContractLayout(&out, allocator, &contract.r4l_query.layout);
     try appendFmt(&out, allocator, "Magic: 0x{X:0>8}\nVersion: {d}\nPointergroesse: {d}\nEntry: {s}:{d}\n\nGruppen-IDs\n-----------\n\n", .{ contract.r4l_query.magic, contract.r4l_query.abi_version, contract.r4l_query.pointer_size, contract.r4l_query.entry_symbol, contract.r4l_query.entry_version });
     for (contract.groups) |group| try appendFmt(&out, allocator, "    {d} = {s} ({s})\n", .{ group.id, group.name, @tagName(group.kind) });
-    try out.appendSlice(allocator, "\nExterne Runtime-R4Ls besitzen eigene, versionierte Funktionstabellen und werden hier nicht zentral registriert.\n\n" ++ r4l_contract_end);
+    try out.appendSlice(allocator, "\nDiese Gruppen-IDs identifizieren eingebaute Platform APIs und keine R4L-Dateien.\nExterne Runtime-R4Ls besitzen eigene, versionierte Funktionstabellen und werden hier nicht zentral registriert.\n\n" ++ r4l_contract_end);
     return out.toOwnedSlice(allocator);
 }
 
@@ -1707,6 +1717,8 @@ fn renderZigExports(allocator: std.mem.Allocator, contract: *const Contract) ![]
     try appendZigExport(&out, allocator, "r4_app_profiles");
     try appendZigExport(&out, allocator, "r4AppProfileMeta");
     try appendZigExport(&out, allocator, "R4LGroup");
+    try appendZigExport(&out, allocator, "R4PlatformApiMeta");
+    try appendZigExport(&out, allocator, "r4_platform_apis");
     try appendZigExport(&out, allocator, contract.r4x_start.context.name);
     try appendZigExport(&out, allocator, contract.r4x_start.import_contract.name);
     try appendZigExport(&out, allocator, contract.r4l_query.layout.name);
@@ -1750,6 +1762,8 @@ fn renderKernelExports(allocator: std.mem.Allocator, contract: *const Contract) 
     try appendZigExport(&out, allocator, "r4_app_profiles");
     try appendZigExport(&out, allocator, "r4AppProfileMeta");
     try appendZigExport(&out, allocator, "R4LGroup");
+    try appendZigExport(&out, allocator, "R4PlatformApiMeta");
+    try appendZigExport(&out, allocator, "r4_platform_apis");
     try appendZigExport(&out, allocator, contract.r4x_start.context.name);
     try appendZigExport(&out, allocator, contract.r4x_start.import_contract.name);
     try appendZigExport(&out, allocator, contract.r4l_query.layout.name);

@@ -95,7 +95,7 @@ Gruppentabellen
     R4XSTART_R4DEV_VERSION = 5
     R4XSTART_R4DEV_SIZE    = 304
 
-Die sechs Kernelgruppen beginnen jeweils mit magic, abi_version, size und flags;
+Die sechs eingebauten Platform APIs beginnen jeweils mit magic, abi_version, size und flags;
 danach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls
 besitzen libraryeigene Vertraege und werden hier nicht zentral registriert.
 
@@ -107,12 +107,11 @@ min_version/resolved_version enthalten die angeforderte und gelieferte
 Revision, flags enthaelt nicht group_interface und table zeigt direkt auf den
 geladenen Export. Das 40-Byte-Layout bleibt unveraendert.
 
-Nur die sechs kernelimplementierten Query-Interfaces R4SYS, R4DESK, R4DRAW,
-R4NET, R4AUDIO und R4DEV werden anhand ihres Modulnamens einer festen ID und
-einer Kernel-Gruppentabelle zugeordnet. Die IDs 8 bis 10 sind
-Uebergangswerte der noch nicht migrierten Query-Libraries und werden nicht
-fuer neue Libraries vergeben. Ein SDK darf deren Query-Header waehrend der
-Migration auswerten; der Kernel fuehrt dafuer keine Namensliste.
+Nur die sechs eingebauten Platform-API-Provider R4SYS, R4DESK, R4DRAW,
+R4NET, R4AUDIO und R4DEV werden anhand ihres Namens einer festen ID und einer
+Kernel-Gruppentabelle zugeordnet. Andere Libraries erhalten keine
+Gruppen-ID; ihre Interfaces werden ausschliesslich als benannte Importe mit
+group_id=0 transportiert.
 
 Der Kontextvalidator verlangt die aktuelle Magic, ABI-Major 1 und mindestens
 die im generierten Block angegebene Kontextgroesse. Ein groesserer Minorwert

@@ -1533,6 +1533,16 @@ pub const R4LGroup = enum(u32) {
     r4dev = 6,
 };
 
+pub const R4PlatformApiMeta = struct { name: []const u8, group: R4LGroup, query_import: []const u8 };
+pub const r4_platform_apis = [_]R4PlatformApiMeta{
+    .{ .name = "R4SYS", .group = .r4sys, .query_import = "R4SYS:Query:1" },
+    .{ .name = "R4DESK", .group = .r4desk, .query_import = "R4DESK:Query:1" },
+    .{ .name = "R4DRAW", .group = .r4draw, .query_import = "R4DRAW:Query:1" },
+    .{ .name = "R4NET", .group = .r4net, .query_import = "R4NET:Query:1" },
+    .{ .name = "R4AUDIO", .group = .r4audio, .query_import = "R4AUDIO:Query:1" },
+    .{ .name = "R4DEV", .group = .r4dev, .query_import = "R4DEV:Query:1" },
+};
+
 pub const R4AppProfileMeta = struct { name: []const u8, app_class: R4XStartAppClass, required_groups: u32, optional_groups: u32 };
 pub const r4_app_profiles = [_]R4AppProfileMeta{
     .{ .name = "console", .app_class = .console, .required_groups = 2, .optional_groups = 124 },

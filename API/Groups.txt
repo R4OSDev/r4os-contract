@@ -9,6 +9,11 @@ Plattformschnittstellen. R4SYS ist die Basis; weitere Gruppen werden in
 `module.R4MF` als `<NAME>:Query:1` angefordert. Gruppen-ID, Tabellenlayout,
 Slots und Signaturen stehen ausschliesslich in `ApiContract.json`.
 
+Alle sechs Gruppen sind eingebaute Kernel-Provider. Ihre oeffentlichen
+Query-Identitaeten bleiben normale Resolverziele, werden aber weder als R4L
+gebaut noch als Datei im Image installiert. Ihre Implementierung und Version
+sind an Contract und Kernelartefakt gebunden.
+
 R4SYS
 -----
 

@@ -10,8 +10,13 @@ R4M0 ist der gemeinsame Little-Endian-Container fuer:
     2 = R4L  Library
     3 = R4D  Treiber
     4 = R4P  Protokollmodul
-    5 = KernelProvider
+    5 = reservierter Built-in-Providerwert
     6 = reserviertes Kernelmodul
+
+Die Werte 5 und 6 bleiben numerisch vergeben, sind aber fuer R4M0-Dateien
+ungueltig. Eingebaute Platform-API-Provider sind Kernelobjekte und keine
+ladbaren Container. Erzeuger duerfen ausschliesslich die Werte 1 bis 4
+schreiben; Loader lehnen 5 und 6 fail-closed ab.
 
 Architektur 1 ist x86_64.
 

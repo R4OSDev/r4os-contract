@@ -4,10 +4,9 @@
 Status
 ------
 
-Dieser Vertrag friert seit R4OS 0.64.1 das Ziel fuer echte, benannte
-Runtime-R4L-Interfaces ein. Die produktive Migration erfolgt schrittweise in
-den folgenden 0.64-Unterversionen. Bis eine Library migriert ist, gilt fuer
-ihren laufenden Produktpfad weiterhin der bisherige Query-Vertrag.
+Dieser Vertrag beschreibt den produktiven Stand echter, benannter
+Runtime-R4L-Interfaces. R4STD, R4IMG und R4FONT verwenden diesen Vertrag und
+besitzen keine zentrale Platform-API-Gruppe.
 
 Zweck und Grenze
 ----------------
@@ -27,9 +26,10 @@ fachlichen Slots einer optionalen Library. Sie vergeben fuer optionale
 Libraries keine Gruppen-ID und fuehren keine Liste ihrer Namen, Interfaces,
 Funktionen oder Fehlercodes.
 
-Die kernelimplementierten Plattformgruppen R4SYS, R4DESK, R4DRAW, R4NET,
-R4AUDIO und R4DEV bleiben davon getrennt. Sie behalten ihre zentralen
-Gruppen-IDs, ihre Query-Semantik und ihre Plattformtabellen.
+Die kernelimplementierten Platform APIs R4SYS, R4DESK, R4DRAW, R4NET,
+R4AUDIO und R4DEV bleiben davon getrennt. Sie sind eingebaute Provider und
+behalten ihre zentralen Gruppen-IDs, ihre Query-Semantik und ihre
+Plattformtabellen. Fuer sie existieren keine R4L-Dateien.
 
 Namen und Identitaet
 --------------------
@@ -81,10 +81,9 @@ Modulname, Exportname und Exportversion. Der Wert ist keine fehlende oder
 unbekannte Plattformgruppe. Query:1 ist keine fachliche Funktionstabelle und
 seine Version ist unabhaengig von den Interface-Versionen einer Library.
 
-Direkte KernelProvider-Imports gehoeren nicht zum Vertrag einer optionalen
-Runtime-R4L. Eine Library bezieht benoetigte Plattforminterfaces oder andere
-R4Ls ueber normale, in ihrem eigenen R4M0-Importverzeichnis deklarierte
-Imports.
+Es existiert kein direkt importierbarer interner Kernelzugang. Eine Library
+bezieht benoetigte Platform APIs oder andere R4Ls ueber normale, in ihrem
+eigenen R4M0-Importverzeichnis deklarierte Imports.
 
 Interface-Export und Versionen
 ------------------------------
@@ -310,7 +309,7 @@ ohne zu schreiben. `--write` materialisiert nur die angegebenen Ziele. Eine
 Baseline wird ausschliesslich mit `--write --update-baseline` bewusst ersetzt.
 Damit kann eine einzelne Library vollstaendig in ihrer Einheit geaendert und
 abgenommen werden; der zentrale ApiContractGen bleibt allein fuer die
-Plattformgruppen und noch nicht migrierte Altpfade zustaendig.
+eingebauten Platform APIs zustaendig.
 
 Der normale R4MF-Build haengt `--check` vor das gebaute R4L-Artefakt. Die
 Implementierung wird als Zig oder C mit demselben freestanding Userland-Target
@@ -355,6 +354,8 @@ Vertragsquellen und Abnahme
     ABI/R4XStart.txt
 
 Der generische R4L-Contract-Generator und Runtime-Resolver gehoeren zum SDK.
-Konkrete Contract-, Baseline-, Binding- und Kompatibilitaetstests gehoeren in
-die jeweilige Library-Einheit. Dieses Repository prueft nur den gemeinsamen
-Plattformmechanismus mit `zig build test`.
+Der zentrale ApiContractGen bleibt allein fuer die eingebauten Platform APIs
+zustaendig. Konkrete Contract-, Baseline-, Binding- und
+Kompatibilitaetstests gehoeren in die jeweilige Library-Einheit. Dieses
+Repository prueft nur den gemeinsamen Plattformmechanismus mit
+`zig build test`.
