@@ -13,6 +13,8 @@
         "Tools",
         "build.zig",
         "build.zig.zon",
-        "README.txt",
+        "README.md",
+        "DOCUMENTATION.de.txt",
+        "THIRD_PARTY_NOTICES.md",
     },
 }

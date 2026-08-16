@@ -1,27 +1,26 @@
-﻿Generierte Contract-Artefakte
-=============================
+﻿Generated Contract Artifacts
+============================
 
-Mit Ausnahme dieser Uebersicht werden alle Dateien unterhalb dieses
-Verzeichnisses deterministisch aus `API/ApiContract.json` erzeugt und duerfen
-nicht von Hand geaendert werden.
+Except for this overview, every file below this directory is generated
+deterministically from API/ApiContract.json and must not be edited manually.
 
-`SDK/Zig/`
-  Vollstaendige Zig-ABI und ihr reines Exportpaket.
+SDK/Zig
+  Complete Zig ABI and its export-only package.
 
-`SDK/C/include/r4os/`
-  Vollstaendiger C-ABI-Header.
+SDK/C/include/r4os
+  Complete C ABI header.
 
-`Kernel/Zig/`
-  Vollstaendige Kernel-ABI mit typisierten Providerbauern und Exportpaket.
+Kernel/Zig
+  Complete kernel ABI with typed provider builders and export package.
 
-`Groups/`
-  Query- und Gruppenidentitaeten der sechs Plattformgruppen.
+Groups
+  Query and identity constants for the six platform groups.
 
-`Conformance/`
-  Aus demselben Schema erzeugte Zig-/C-Kompilierfixturen.
+Conformance
+  Zig and C compile fixtures generated from the same schema.
 
-`Docs/` und `Inventory/`
-  Lesbare Tabellen, Semantik-/Paritaetsberichte und Maschineninventar.
+Docs and Inventory
+  Human-readable tables, semantic and parity reports, and machine inventory.
 
-`zig build check` prueft jede Datei bytegenau. `zig build write` darf nur nach
-einer absichtlichen Schemaaenderung verwendet werden.
+zig build check compares every file byte-for-byte. Use zig build write only
+after an intentional schema change.

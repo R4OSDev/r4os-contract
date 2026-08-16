@@ -1,55 +1,54 @@
 ﻿R4OS ABI
 ========
 
-Geltungsbereich
----------------
+Scope
+-----
 
-Die Dateien in diesem Verzeichnis beschreiben die binaeren Grenzen zwischen
-R4M0-Modulen, Programmen, Runtime-R4Ls und Kernel. Ziel ist x86_64, Little
-Endian, mit 8-Byte-Pointern und C-Aufrufkonvention.
+The files in this directory define the binary boundaries between R4M0
+modules, programs, Runtime-R4Ls, and the kernel. The target is little-endian
+x86_64 with 8-byte pointers and the C calling convention.
 
-Vertraege
+Contracts
 ---------
 
-`R4M0.txt`
-  Gemeinsames Containerformat fuer R4X, R4L, R4D und R4P.
+R4M0.txt
+  Shared container format for R4X, R4L, R4D, and R4P.
 
-`R4XStart.txt`
-  Einstieg eines R4X-Programms, Startkontext und importierte
-  Plattformtabellen.
+R4XStart.txt
+  R4X program entry point, startup context, and imported platform tables.
 
-`R4LQuery.txt`
-  Generischer Query-Export eines R4L-Moduls.
+R4LQuery.txt
+  Generic query export of an R4L module.
 
-`R4LInterface.txt`
-  Versionierter Tabellenheader fuer unabhaengige, benannte Runtime-R4Ls.
+R4LInterface.txt
+  Versioned table header for independent named Runtime-R4Ls.
 
-Plattformtabellen
------------------
+Platform tables
+---------------
 
-R4SYS, R4DESK, R4DRAW, R4NET, R4AUDIO und R4DEV beginnen jeweils mit Magic,
-ABI-Version, Groesse und Flags. Danach folgen Funktionszeiger und reservierte
-Slots in fester Reihenfolge. Die aktuellen Werte und Tabellenfelder werden
-aus `API/ApiContract.json` nach `Generated/Docs/API/` erzeugt.
+R4SYS, R4DESK, R4DRAW, R4NET, R4AUDIO, and R4DEV begin with magic, ABI
+version, size, and flags. Function pointers and reserved slots follow in a
+fixed order. Current values and fields are generated from API/ApiContract.json
+into Generated/Docs/API.
 
-Eine benannte Runtime-R4L besitzt dagegen keine zentrale Kernel-Tabelle. Sie
-liefert eine libraryeigene, versionierte Funktionstabelle ueber den
-gemeinsamen Query-/Interface-Mechanismus.
+A named Runtime-R4L has no central kernel table. It returns its
+library-owned, versioned function table through the shared query and interface
+mechanism.
 
-Aenderungen
------------
-
-- Bestehende Tabellen wachsen ausschliesslich am Ende.
-- Reservierte oder tombstoned Slots werden nicht still umgedeutet.
-- Fixed-layout-Typen werden nicht in-place erweitert.
-- Extensible Typen folgen ihrem Versions- und Groessenvertrag.
-- Zig- und C-Projektionen muessen binaer identisch bleiben.
-
-Maschinelle Abnahme
+Compatibility rules
 -------------------
+
+- Existing tables grow only at the end.
+- Reserved or tombstoned slots are never silently repurposed.
+- Fixed-layout types are never extended in place.
+- Extensible types follow their version and size contract.
+- Zig and C projections remain binary-identical.
+
+Validation
+----------
 
     zig build check
     zig build test
 
-Die generierten Paketquellen, Layoutassertions und Conformance-Fixtures
-liegen vollstaendig im Repository unter `Generated/`.
+Generated package sources, layout assertions, and conformance fixtures are
+versioned under Generated.
