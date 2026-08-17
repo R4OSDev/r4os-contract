@@ -166,6 +166,26 @@ sowie Export R4XStart:1 und Import R4SYS:Query:1. Weitere Imports stammen
 aus module.R4MF. Nicht passende oder widerspruechliche Startdaten sind
 generisch ungueltig und werden nicht gestartet.
 
+Subsystem-R4X-Metadaten (seit 0.66.0)
+-------------------------------------
+
+Ein Subsystem-Host bleibt ein normales GUI-R4X mit unveraendertem Kind,
+Startvertrag und Flags. Seine typisierten R4MF-Felder werden zusaetzlich als
+geordnete Metadatenzeilen in den Meta-/Stringbereich uebernommen:
+
+    module.role=subsystem
+    subsystem.id=<normalisierte stabile ID>
+    subsystem.display_name=<UTF-8-Anzeigename>
+    subsystem.format=<Gastformat-ID>                 wiederholbar
+    subsystem.extension=<Gastformat-ID>:<.endung>    wiederholbar
+    subsystem.feature=<Gastformat-ID>:<Merkmal-ID>   wiederholbar
+
+Die vollstaendige Syntax, Normalisierung, Zuordnung und Eindeutigkeit dieser
+Werte gehoert Module/R4MFv2.txt. Sie erzeugen weder einen neuen ModuleKind
+noch neue R4X-Flags. Ein Loader kann unbekannte Metadaten weiterhin
+ignorieren; Katalog und spaeterer Userland-Resolver verwenden sie zur
+Auswahl des Hosts.
+
 Vertragsquellen und Verbraucher
 -------------------------------
 

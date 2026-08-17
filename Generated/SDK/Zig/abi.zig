@@ -1747,6 +1747,8 @@ pub const GuiEventKind = enum(u32) {
     mouse_move = 5,
     key_down = 6,
     font_changed = 7,
+    focus_gained = 8,
+    focus_lost = 9,
 };
 
 pub const GuiWindowFlag = struct {

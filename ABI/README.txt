@@ -17,6 +17,9 @@ R4M0.txt
 R4XStart.txt
   R4X program entry point, startup context, and imported platform tables.
 
+SubsystemLaunch.txt
+  Versioned length-coded guest path and option payload layered on R4X args.
+
 R4LQuery.txt
   Generic query export of an R4L module.
 

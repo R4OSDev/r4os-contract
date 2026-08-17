@@ -118,6 +118,17 @@ die im generierten Block angegebene Kontextgroesse. Ein groesserer Minorwert
 bleibt zulaessig, solange der bekannte Mindestteil vorhanden ist. Alle Offsets
 gelten fuer x86_64.
 
+GUI-Ereignisse
+---------------
+
+`GuiEvent.kind` verwendet die append-only Werte `none=0`, `close=1`,
+`resize=2`, `mouse_down=3`, `mouse_up=4`, `mouse_move=5`, `key_down=6`,
+`font_changed=7`, `focus_gained=8` und `focus_lost=9`. Die beiden Fokuswerte
+werden beim Wechsel des aktiven gehosteten GUI-Fensters an die betroffenen
+Programminstanzen gestellt. Das bestehende 40-Byte-Layout von `GuiEvent`
+bleibt dabei unveraendert; unbekannte kuenftige Werte muessen von Verbrauchern
+ignoriert werden.
+
 Stabilitaet
 -----------
 
