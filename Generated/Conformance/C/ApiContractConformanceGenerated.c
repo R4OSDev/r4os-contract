@@ -118,6 +118,7 @@ static R4SysModuleResourceStatFn r4os_probe_r4sys_module_resource_stat = (R4SysM
 static R4SysModuleResourceReadFn r4os_probe_r4sys_module_resource_read = (R4SysModuleResourceReadFn)0;
 static R4SysProgramModulePathFn r4os_probe_r4sys_program_module_path = (R4SysProgramModulePathFn)0;
 static R4SysProgramModuleRunningFn r4os_probe_r4sys_program_module_running = (R4SysProgramModuleRunningFn)0;
+static R4SysMonotonicClockFn r4os_probe_r4sys_monotonic_clock = (R4SysMonotonicClockFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;
@@ -286,5 +287,7 @@ static R4DevProgramRegistrySelfTestV2Fn r4os_probe_r4dev_program_registry_self_t
 static R4DevExecutionInventorySummaryFn r4os_probe_r4dev_execution_inventory_summary = (R4DevExecutionInventorySummaryFn)0;
 static R4DevProgramInstanceStorageSummaryV2Fn r4os_probe_r4dev_program_instance_storage_summary_v2 = (R4DevProgramInstanceStorageSummaryV2Fn)0;
 static R4DevKernelVersionFn r4os_probe_r4dev_kernel_version = (R4DevKernelVersionFn)0;
+static R4DevPerformanceBootPhaseClockFn r4os_probe_r4dev_performance_boot_phase_clock = (R4DevPerformanceBootPhaseClockFn)0;
+static R4DevPerformanceIrqTimingFn r4os_probe_r4dev_performance_irq_timing = (R4DevPerformanceIrqTimingFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

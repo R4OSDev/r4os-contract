@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 283,
-    "group_slot_count": 283,
+    "function_count": 286,
+    "group_slot_count": 286,
     "sdk_only_count": 0,
-    "public_count": 206,
-    "advanced_count": 77
+    "public_count": 207,
+    "advanced_count": 79
   },
   "functions": [
     {
@@ -1385,6 +1385,18 @@
       "slot": 117,
       "exposure": "public",
       "description": "Returns one when a published R4X instance from the exact absolute module path is still running, zero when no such instance exists, and a negative program error when the query cannot be completed.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.monotonic_clock",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 118,
+      "exposure": "public",
+      "description": "Reads the backend-stable monotonic nanosecond instant together with calibrated source and periodic-event metadata without reading the RTC.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -3172,7 +3184,7 @@
       "kind": "group_slot",
       "slot": 14,
       "exposure": "advanced",
-      "description": "Returns aggregate scheduler, storage, and boot performance counters.",
+      "description": "Returns aggregate scheduler, storage, boot, and calibrated clock counters. The caller supplies its supported ProgramPerformanceSummary version and byte size; the provider writes only the negotiated append-only prefix.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -3401,6 +3413,30 @@
       "slot": 35,
       "exposure": "advanced",
       "description": "Returns the semantic version of the currently running kernel from its embedded ELF metadata source.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.performance_boot_phase_clock",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 36,
+      "exposure": "advanced",
+      "description": "Returns the calibrated nanosecond timing and explicit availability state for one recorded boot phase.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.performance_irq_timing",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 37,
+      "exposure": "advanced",
+      "description": "Returns IRQ-router dispatch and external-handler nanosecond timing with explicit coverage and observer-read counts.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

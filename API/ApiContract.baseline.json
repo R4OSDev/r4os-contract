@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 11,
+      "abi_version": 12,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 960,
+      "size": 968,
       "slots": [
         {
           "number": 0,
@@ -9589,6 +9589,65 @@
             "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
+        },
+        {
+          "number": 118,
+          "offset": 960,
+          "name": "monotonic_clock",
+          "state": "function",
+          "required": false,
+          "description": "Reads the backend-stable monotonic nanosecond instant together with calibrated source and periodic-event metadata without reading the RTC.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "MonotonicClockInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "none",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
         }
       ]
     },
@@ -18281,10 +18340,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 5,
+      "abi_version": 6,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 304,
+      "size": 320,
       "slots": [
         {
           "number": 0,
@@ -19448,7 +19507,7 @@
           "name": "performance_summary",
           "state": "function",
           "required": false,
-          "description": "Returns aggregate scheduler, storage, and boot performance counters.",
+          "description": "Returns aggregate scheduler, storage, boot, and calibrated clock counters. The caller supplies its supported ProgramPerformanceSummary version and byte size; the provider writes only the negotiated append-only prefix.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -20767,6 +20826,138 @@
             "side_effects": "none",
             "retry": "idempotent",
             "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 36,
+          "offset": 304,
+          "name": "performance_boot_phase_clock",
+          "state": "function",
+          "required": false,
+          "description": "Returns the calibrated nanosecond timing and explicit availability state for one recorded boot phase.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramBootPhaseClockInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 37,
+          "offset": 312,
+          "name": "performance_irq_timing",
+          "state": "function",
+          "required": false,
+          "description": "Returns IRQ-router dispatch and external-handler nanosecond timing with explicit coverage and observer-read counts.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "irq",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramIrqTimingInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -25833,8 +26024,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 4440,
+      "version": 2,
+      "size": 4576,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -25851,7 +26042,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "1"
+          "default_value": "2"
         },
         {
           "name": "size",
@@ -25865,7 +26056,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "4440"
+          "default_value": "4576"
         },
         {
           "name": "flags",
@@ -34871,6 +35062,328 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "monotonic_clock_flags",
+          "offset": 4440,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Quality flags of the clock used for high-resolution performance spans.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_clock_source",
+          "offset": 4444,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current high-resolution performance clock source.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_clock_generation",
+          "offset": 4448,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current performance clock source generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_event_backend",
+          "offset": 4452,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Periodic event backend kept separate from the performance clock source.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_clock_resolution_ns",
+          "offset": 4456,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Ceiling of one performance clock quantum in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_source_frequency_hz",
+          "offset": 4464,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Calibrated raw source frequency for performance timing.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_event_frequency_numerator",
+          "offset": 4472,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reduced numerator of the effective periodic event frequency.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_event_frequency_denominator",
+          "offset": 4480,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reduced denominator of the effective periodic event frequency.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_event_requested_hz",
+          "offset": 4488,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Requested periodic event frequency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_event_effective_hz",
+          "offset": 4492,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Rounded effective periodic event frequency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_timing_valid",
+          "offset": 4496,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "One when the boot total has a calibrated monotonic duration.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_timing_unavailable_spans",
+          "offset": 4500,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot phase spans that could not be resolved against a calibrated epoch.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_timing_dropped_spans",
+          "offset": 4504,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot phase spans dropped because the bounded history was full.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_timing_valid_spans",
+          "offset": 4508,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Completed contiguous loader spans with high-resolution timing.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_timing_unavailable_spans",
+          "offset": 4512,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Completed contiguous loader spans explicitly lacking high-resolution timing.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_reserved0",
+          "offset": 4516,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved for append-only monotonic performance metadata.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_total_ns",
+          "offset": 4520,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Resolved boot duration in nanoseconds; valid only when boot_timing_valid is one.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_now_ns",
+          "offset": 4528,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Resolved current boot clock instant in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_total_ns",
+          "offset": 4536,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Contiguous filesystem-loader span in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_r4p_runtime_total_ns",
+          "offset": 4544,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Contiguous R4P runtime-loader span in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_service_boot_ns",
+          "offset": 4552,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Contiguous service boot span in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_config_load_ns",
+          "offset": 4560,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Contiguous boot configuration load span in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_reserved1",
+          "offset": 4568,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reserved for append-only monotonic performance durations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
@@ -36293,6 +36806,527 @@
       ],
       "values": [],
       "description": "Public R4OS ABI payload type."
+    },
+    {
+      "name": "ProgramBootPhaseClockInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot phase clock payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot phase clock payload size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot phase ordinal.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot phase identifier.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current monotonic clock quality flags plus valid timing state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current monotonic clock source.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current monotonic clock generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transitions",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of transitions into this phase.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "first_ns",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "First resolved phase-entry instant in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_ns",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last resolved phase-exit instant in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_ns",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Sum of resolved spans for this phase in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "unavailable_spans",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Spans explicitly unavailable on the calibrated clock.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved for append-only boot timing metadata.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "name",
+          "offset": 64,
+          "type": {
+            "kind": "array",
+            "length": 32,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Stable boot phase display name.",
+          "size": 32,
+          "alignment": 1,
+          "source_type": "[32]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Calibrated high-resolution timing for one historical boot phase."
+    },
+    {
+      "name": "ProgramIrqTimingInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "IRQ timing payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "IRQ timing payload size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "irq",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "IRQ router index.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "registered",
+          "offset": 9,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "Registered external handler count.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "shared",
+          "offset": 10,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "One when the IRQ route is shared.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "masked",
+          "offset": 11,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "One when the IRQ route is masked.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "coverage_flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Measured and explicitly unavailable IRQ timing coverage.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current monotonic clock quality flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current monotonic clock source.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Clock generation used by accumulated samples.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "unavailable_samples",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Spans that could not be resolved or crossed a source generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dispatch_samples",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Measured registered-route dispatch spans.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "handler_samples",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Measured external R4D handler spans.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observer_reads",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Clock reads performed by IRQ timing instrumentation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "delivery_samples",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Device-to-vector delivery samples; zero while no device timestamp exists.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dispatch_total_ns",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Total registered-route dispatch duration in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dispatch_max_ns",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Maximum registered-route dispatch duration in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dispatch_last_ns",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last registered-route dispatch duration in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "handler_total_ns",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Total external handler duration in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "handler_max_ns",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Maximum external handler duration in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "handler_last_ns",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last external handler duration in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "IRQ-safe high-resolution dispatch and external-handler timing with bounded observer accounting."
     },
     {
       "name": "ProgramMemoryBlockInfo",
@@ -41653,6 +42687,216 @@
       ],
       "values": [],
       "description": "Public R4OS ABI payload type."
+    },
+    {
+      "name": "MonotonicClockInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Monotonic clock payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Monotonic clock payload size in bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validity and source quality flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Calibrated hardware source identifier.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Increments whenever the active monotonic source changes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_backend",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current periodic event backend, independent of the monotonic source.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "instant_ns",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Saturating nanoseconds since the earliest calibrated kernel clock origin.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frequency_hz",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fixed public instant unit frequency; one billion for nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "1000000000"
+        },
+        {
+          "name": "resolution_ns",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Ceiling of one source quantum in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_frequency_hz",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Calibrated raw source frequency used for conversion.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_frequency_numerator",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reduced numerator of the effective periodic event frequency.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_frequency_denominator",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reduced denominator of the effective periodic event frequency.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_requested_hz",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Requested periodic event frequency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_effective_hz",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Rounded effective periodic event frequency; the rational fields remain authoritative.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Backend-stable monotonic clock snapshot with explicit source and event metadata."
     },
     {
       "name": "KeyboardLayoutInfo",
@@ -65224,7 +66468,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "1",
+      "value": "2",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -66014,7 +67258,7 @@
     },
     {
       "name": "r4xstart_r4dev_version",
-      "value": "5",
+      "value": "6",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -66063,6 +67307,186 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "performance_irq_coverage_dispatch",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_irq_timing",
+      "stability": "fixed_contract",
+      "description": "Registered IRQ-router dispatch spans are measured."
+    },
+    {
+      "name": "performance_irq_coverage_external_handler",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_irq_timing",
+      "stability": "fixed_contract",
+      "description": "External R4D handler spans are measured."
+    },
+    {
+      "name": "performance_irq_coverage_delivery_unavailable",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_irq_timing",
+      "stability": "fixed_contract",
+      "description": "Device-to-vector delivery latency is explicitly unavailable without a device timestamp."
+    },
+    {
+      "name": "performance_irq_coverage_irq_safe_clock",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_irq_timing",
+      "stability": "fixed_contract",
+      "description": "The timing source advances while interrupts are gated."
+    },
+    {
+      "name": "performance_irq_coverage_mixed_generation",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_irq_timing",
+      "stability": "fixed_contract",
+      "description": "Accumulated IRQ samples span more than one monotonic source generation."
+    },
+    {
+      "name": "monotonic_clock_frequency_hz",
+      "value": "1000000000",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "hertz",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "Fixed frequency of the public nanosecond instant."
+    },
+    {
+      "name": "monotonic_clock_flag_valid",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "The monotonic instant and metadata are valid."
+    },
+    {
+      "name": "monotonic_clock_flag_continuous",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "The published epoch is preserved across source and event backend changes."
+    },
+    {
+      "name": "monotonic_clock_flag_high_resolution",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "The clock uses a sub-millisecond hardware source."
+    },
+    {
+      "name": "monotonic_clock_flag_irq_independent",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "The clock advances while periodic interrupts are gated or delayed."
+    },
+    {
+      "name": "monotonic_clock_flag_invariant",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "The selected source has invariant-rate hardware semantics."
+    },
+    {
+      "name": "monotonic_clock_flag_early_origin",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "The calibrated epoch includes the earliest kernel entry sample."
+    },
+    {
+      "name": "monotonic_clock_flag_calibrated",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "The source frequency is calibrated rather than nominal."
+    },
+    {
+      "name": "monotonic_clock_flag_degraded",
+      "value": "128",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "Only the periodic event fallback is available."
+    },
+    {
+      "name": "monotonic_clock_source_unavailable",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "No calibrated monotonic source is currently available."
+    },
+    {
+      "name": "monotonic_clock_source_tsc",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "Invariant CPUID-calibrated timestamp counter source."
+    },
+    {
+      "name": "monotonic_clock_source_hpet",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "Free-running ACPI HPET main-counter source."
+    },
+    {
+      "name": "monotonic_clock_source_periodic_event",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "monotonic_clock",
+      "stability": "fixed_contract",
+      "description": "Degraded periodic event-count fallback source."
+    },
+    {
       "name": "r4xstart_r4sys_magic",
       "value": "827937618",
       "value_type": "u32",
@@ -66074,7 +67498,7 @@
     },
     {
       "name": "r4xstart_r4sys_version",
-      "value": "11",
+      "value": "12",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -68581,7 +70005,7 @@
     },
     {
       "name": "r4xstart_r4dev_size",
-      "value": "304",
+      "value": "320",
       "value_type": "u32",
       "unit": "bytes",
       "scope": "r4xstart_r4dev",
@@ -68608,7 +70032,7 @@
     },
     {
       "name": "r4xstart_r4sys_size",
-      "value": "960",
+      "value": "968",
       "value_type": "u32",
       "unit": "bytes",
       "scope": "r4xstart_r4sys",

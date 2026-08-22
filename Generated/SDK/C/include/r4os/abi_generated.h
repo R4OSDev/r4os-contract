@@ -861,7 +861,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 1u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_DISPLAY_USED 4u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OWNER 8u
@@ -940,13 +940,31 @@ extern "C" {
 #define R4XSTART_R4DESK_MAGIC 826623058u
 #define R4XSTART_R4DESK_VERSION 7u
 #define R4XSTART_R4DEV_MAGIC 827737170u
-#define R4XSTART_R4DEV_VERSION 5u
+#define R4XSTART_R4DEV_VERSION 6u
 #define R4XSTART_R4DRAW_MAGIC 827802706u
 #define R4XSTART_R4DRAW_VERSION 2u
 #define R4XSTART_R4NET_MAGIC 826625618u
 #define R4XSTART_R4NET_VERSION 1u
+#define R4OS_PERFORMANCE_IRQ_COVERAGE_DISPATCH 1u
+#define R4OS_PERFORMANCE_IRQ_COVERAGE_EXTERNAL_HANDLER 2u
+#define R4OS_PERFORMANCE_IRQ_COVERAGE_DELIVERY_UNAVAILABLE 4u
+#define R4OS_PERFORMANCE_IRQ_COVERAGE_IRQ_SAFE_CLOCK 8u
+#define R4OS_PERFORMANCE_IRQ_COVERAGE_MIXED_GENERATION 16u
+#define R4OS_MONOTONIC_CLOCK_FREQUENCY_HZ 1000000000ull
+#define R4OS_MONOTONIC_CLOCK_FLAG_VALID 1u
+#define R4OS_MONOTONIC_CLOCK_FLAG_CONTINUOUS 2u
+#define R4OS_MONOTONIC_CLOCK_FLAG_HIGH_RESOLUTION 4u
+#define R4OS_MONOTONIC_CLOCK_FLAG_IRQ_INDEPENDENT 8u
+#define R4OS_MONOTONIC_CLOCK_FLAG_INVARIANT 16u
+#define R4OS_MONOTONIC_CLOCK_FLAG_EARLY_ORIGIN 32u
+#define R4OS_MONOTONIC_CLOCK_FLAG_CALIBRATED 64u
+#define R4OS_MONOTONIC_CLOCK_FLAG_DEGRADED 128u
+#define R4OS_MONOTONIC_CLOCK_SOURCE_UNAVAILABLE 0u
+#define R4OS_MONOTONIC_CLOCK_SOURCE_TSC 1u
+#define R4OS_MONOTONIC_CLOCK_SOURCE_HPET 2u
+#define R4OS_MONOTONIC_CLOCK_SOURCE_PERIODIC_EVENT 3u
 #define R4XSTART_R4SYS_MAGIC 827937618u
-#define R4XSTART_R4SYS_VERSION 11u
+#define R4XSTART_R4SYS_VERSION 12u
 #define R4OS_REGISTRY_PATH_MAX_BYTES 255u
 #define R4OS_REGISTRY_VALUE_TYPE_BINARY 5u
 #define R4OS_REGISTRY_VALUE_TYPE_BOOL 4u
@@ -1203,10 +1221,10 @@ extern "C" {
 #define R4XSTART_IMPORT_SIZE 40u
 #define R4XSTART_R4AUDIO_SIZE 184u
 #define R4XSTART_R4DESK_SIZE 432u
-#define R4XSTART_R4DEV_SIZE 304u
+#define R4XSTART_R4DEV_SIZE 320u
 #define R4XSTART_R4DRAW_SIZE 272u
 #define R4XSTART_R4NET_SIZE 288u
-#define R4XSTART_R4SYS_SIZE 960u
+#define R4XSTART_R4SYS_SIZE 968u
 #define R4OS_REGISTRY_NAME_MAX 64ull
 #define R4OS_SERIAL_LINK_PAYLOAD_MAX 256ull
 #define R4OS_SERVICE_API_ENDPOINT_QUEUE_DEPTH 8ull
@@ -1565,6 +1583,8 @@ typedef struct R4ProgramPerformanceSummary R4ProgramPerformanceSummary;
 typedef struct R4ProgramTaskPerformanceInfo R4ProgramTaskPerformanceInfo;
 typedef struct R4ProgramStoragePerformanceInfo R4ProgramStoragePerformanceInfo;
 typedef struct R4ProgramBootPhasePerformanceInfo R4ProgramBootPhasePerformanceInfo;
+typedef struct R4ProgramBootPhaseClockInfo R4ProgramBootPhaseClockInfo;
+typedef struct R4ProgramIrqTimingInfo R4ProgramIrqTimingInfo;
 typedef struct R4ProgramMemoryBlockInfo R4ProgramMemoryBlockInfo;
 typedef struct R4ProgramVmReserveProbe R4ProgramVmReserveProbe;
 typedef struct R4ProgramVmRegionInfo R4ProgramVmRegionInfo;
@@ -1589,6 +1609,7 @@ typedef struct R4ProgramHostLaunchRequest R4ProgramHostLaunchRequest;
 typedef struct R4ConsoleState R4ConsoleState;
 typedef struct R4KernelVersion R4KernelVersion;
 typedef struct R4TimeState R4TimeState;
+typedef struct R4MonotonicClockInfo R4MonotonicClockInfo;
 typedef struct R4KeyboardLayoutInfo R4KeyboardLayoutInfo;
 typedef struct R4DriveInfo R4DriveInfo;
 typedef struct R4FileInfo R4FileInfo;
@@ -2680,6 +2701,29 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t fat32_inusemap_clusters;
     uint64_t fat32_inusemap_alloc_hits;
     uint64_t fat32_inusemap_alloc_misses;
+    uint32_t monotonic_clock_flags;
+    uint32_t monotonic_clock_source;
+    uint32_t monotonic_clock_generation;
+    uint32_t monotonic_event_backend;
+    uint64_t monotonic_clock_resolution_ns;
+    uint64_t monotonic_source_frequency_hz;
+    uint64_t monotonic_event_frequency_numerator;
+    uint64_t monotonic_event_frequency_denominator;
+    uint32_t monotonic_event_requested_hz;
+    uint32_t monotonic_event_effective_hz;
+    uint32_t boot_timing_valid;
+    uint32_t boot_timing_unavailable_spans;
+    uint32_t boot_timing_dropped_spans;
+    uint32_t loader_timing_valid_spans;
+    uint32_t loader_timing_unavailable_spans;
+    uint32_t monotonic_reserved0;
+    uint64_t boot_total_ns;
+    uint64_t boot_now_ns;
+    uint64_t loader_total_ns;
+    uint64_t loader_r4p_runtime_total_ns;
+    uint64_t loader_service_boot_ns;
+    uint64_t loader_config_load_ns;
+    uint64_t monotonic_reserved1;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -2787,6 +2831,47 @@ typedef struct R4ProgramBootPhasePerformanceInfo {
     uint32_t reserved0;
     uint8_t name[32];
 } R4ProgramBootPhasePerformanceInfo;
+
+typedef struct R4ProgramBootPhaseClockInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t index;
+    uint32_t phase;
+    uint32_t clock_flags;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t transitions;
+    uint64_t first_ns;
+    uint64_t last_ns;
+    uint64_t total_ns;
+    uint32_t unavailable_spans;
+    uint32_t reserved0;
+    uint8_t name[32];
+} R4ProgramBootPhaseClockInfo;
+
+typedef struct R4ProgramIrqTimingInfo {
+    uint32_t version;
+    uint32_t size;
+    uint8_t irq;
+    uint8_t registered;
+    uint8_t shared;
+    uint8_t masked;
+    uint32_t coverage_flags;
+    uint32_t clock_flags;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t unavailable_samples;
+    uint64_t dispatch_samples;
+    uint64_t handler_samples;
+    uint64_t observer_reads;
+    uint64_t delivery_samples;
+    uint64_t dispatch_total_ns;
+    uint64_t dispatch_max_ns;
+    uint64_t dispatch_last_ns;
+    uint64_t handler_total_ns;
+    uint64_t handler_max_ns;
+    uint64_t handler_last_ns;
+} R4ProgramIrqTimingInfo;
 
 typedef struct R4ProgramMemoryBlockInfo {
     uint32_t id;
@@ -3221,6 +3306,23 @@ typedef struct R4TimeState {
     uint32_t monotonic_hz;
     uint32_t monotonic_backend;
 } R4TimeState;
+
+typedef struct R4MonotonicClockInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t source;
+    uint32_t generation;
+    uint32_t event_backend;
+    uint64_t instant_ns;
+    uint64_t frequency_hz;
+    uint64_t resolution_ns;
+    uint64_t source_frequency_hz;
+    uint64_t event_frequency_numerator;
+    uint64_t event_frequency_denominator;
+    uint32_t event_requested_hz;
+    uint32_t event_effective_hz;
+} R4MonotonicClockInfo;
 
 typedef struct R4KeyboardLayoutInfo {
     uint8_t name[16];
@@ -4405,6 +4507,7 @@ typedef int32_t (*R4SysModuleResourceStatFn)(const uint8_t * module_path, uint32
 typedef int32_t (*R4SysModuleResourceReadFn)(const uint8_t * module_path, uint32_t resource_type, uint32_t resource_index, const uint8_t * resource_name, uint8_t * buffer, uint32_t buffer_len);
 typedef int32_t (*R4SysProgramModulePathFn)(uint8_t * buffer, uint32_t buffer_len);
 typedef int32_t (*R4SysProgramModuleRunningFn)(const uint8_t * module_path);
+typedef int32_t (*R4SysMonotonicClockFn)(R4MonotonicClockInfo * out);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -4529,6 +4632,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t module_resource_read;
     uintptr_t program_module_path;
     uintptr_t program_module_running;
+    uintptr_t monotonic_clock;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -4870,6 +4974,8 @@ typedef int32_t (*R4DevProgramRegistrySelfTestV2Fn)(R4ProgramRegistrySelfTestRes
 typedef int32_t (*R4DevExecutionInventorySummaryFn)(R4ProgramInventorySummary * out_summary);
 typedef int32_t (*R4DevProgramInstanceStorageSummaryV2Fn)(R4ProgramInstanceStorageSummary * out_summary);
 typedef int32_t (*R4DevKernelVersionFn)(R4KernelVersion * out_version);
+typedef int32_t (*R4DevPerformanceBootPhaseClockFn)(uint32_t index, R4ProgramBootPhaseClockInfo * out);
+typedef int32_t (*R4DevPerformanceIrqTimingFn)(uint32_t irq, R4ProgramIrqTimingInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -4912,6 +5018,8 @@ typedef struct R4XStartR4Dev {
     uintptr_t execution_inventory_summary;
     uintptr_t program_instance_storage_summary_v2;
     uintptr_t kernel_version;
+    uintptr_t performance_boot_phase_clock;
+    uintptr_t performance_irq_timing;
 } R4XStartR4Dev;
 
 
@@ -5304,7 +5412,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 4440u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 4576u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -5950,6 +6058,29 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, fat32_inusemap_builds) == 4
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fat32_inusemap_clusters) == 4416u, "ProgramPerformanceSummary.fat32_inusemap_clusters offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fat32_inusemap_alloc_hits) == 4424u, "ProgramPerformanceSummary.fat32_inusemap_alloc_hits offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fat32_inusemap_alloc_misses) == 4432u, "ProgramPerformanceSummary.fat32_inusemap_alloc_misses offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_clock_flags) == 4440u, "ProgramPerformanceSummary.monotonic_clock_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_clock_source) == 4444u, "ProgramPerformanceSummary.monotonic_clock_source offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_clock_generation) == 4448u, "ProgramPerformanceSummary.monotonic_clock_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_event_backend) == 4452u, "ProgramPerformanceSummary.monotonic_event_backend offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_clock_resolution_ns) == 4456u, "ProgramPerformanceSummary.monotonic_clock_resolution_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_source_frequency_hz) == 4464u, "ProgramPerformanceSummary.monotonic_source_frequency_hz offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_event_frequency_numerator) == 4472u, "ProgramPerformanceSummary.monotonic_event_frequency_numerator offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_event_frequency_denominator) == 4480u, "ProgramPerformanceSummary.monotonic_event_frequency_denominator offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_event_requested_hz) == 4488u, "ProgramPerformanceSummary.monotonic_event_requested_hz offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_event_effective_hz) == 4492u, "ProgramPerformanceSummary.monotonic_event_effective_hz offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, boot_timing_valid) == 4496u, "ProgramPerformanceSummary.boot_timing_valid offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, boot_timing_unavailable_spans) == 4500u, "ProgramPerformanceSummary.boot_timing_unavailable_spans offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, boot_timing_dropped_spans) == 4504u, "ProgramPerformanceSummary.boot_timing_dropped_spans offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_timing_valid_spans) == 4508u, "ProgramPerformanceSummary.loader_timing_valid_spans offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_timing_unavailable_spans) == 4512u, "ProgramPerformanceSummary.loader_timing_unavailable_spans offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_reserved0) == 4516u, "ProgramPerformanceSummary.monotonic_reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, boot_total_ns) == 4520u, "ProgramPerformanceSummary.boot_total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, boot_now_ns) == 4528u, "ProgramPerformanceSummary.boot_now_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_total_ns) == 4536u, "ProgramPerformanceSummary.loader_total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_r4p_runtime_total_ns) == 4544u, "ProgramPerformanceSummary.loader_r4p_runtime_total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_service_boot_ns) == 4552u, "ProgramPerformanceSummary.loader_service_boot_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_config_load_ns) == 4560u, "ProgramPerformanceSummary.loader_config_load_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_reserved1) == 4568u, "ProgramPerformanceSummary.monotonic_reserved1 offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");
@@ -6050,6 +6181,43 @@ _Static_assert(offsetof(R4ProgramBootPhasePerformanceInfo, total_ticks) == 24u, 
 _Static_assert(offsetof(R4ProgramBootPhasePerformanceInfo, transitions) == 32u, "ProgramBootPhasePerformanceInfo.transitions offset mismatch");
 _Static_assert(offsetof(R4ProgramBootPhasePerformanceInfo, reserved0) == 36u, "ProgramBootPhasePerformanceInfo.reserved0 offset mismatch");
 _Static_assert(offsetof(R4ProgramBootPhasePerformanceInfo, name) == 40u, "ProgramBootPhasePerformanceInfo.name offset mismatch");
+_Static_assert(sizeof(R4ProgramBootPhaseClockInfo) == 96u, "ProgramBootPhaseClockInfo size mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, version) == 0u, "ProgramBootPhaseClockInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, size) == 4u, "ProgramBootPhaseClockInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, index) == 8u, "ProgramBootPhaseClockInfo.index offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, phase) == 12u, "ProgramBootPhaseClockInfo.phase offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, clock_flags) == 16u, "ProgramBootPhaseClockInfo.clock_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, clock_source) == 20u, "ProgramBootPhaseClockInfo.clock_source offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, clock_generation) == 24u, "ProgramBootPhaseClockInfo.clock_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, transitions) == 28u, "ProgramBootPhaseClockInfo.transitions offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, first_ns) == 32u, "ProgramBootPhaseClockInfo.first_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, last_ns) == 40u, "ProgramBootPhaseClockInfo.last_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, total_ns) == 48u, "ProgramBootPhaseClockInfo.total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, unavailable_spans) == 56u, "ProgramBootPhaseClockInfo.unavailable_spans offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, reserved0) == 60u, "ProgramBootPhaseClockInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPhaseClockInfo, name) == 64u, "ProgramBootPhaseClockInfo.name offset mismatch");
+_Static_assert(sizeof(R4ProgramIrqTimingInfo) == 112u, "ProgramIrqTimingInfo size mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, version) == 0u, "ProgramIrqTimingInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, size) == 4u, "ProgramIrqTimingInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, irq) == 8u, "ProgramIrqTimingInfo.irq offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, registered) == 9u, "ProgramIrqTimingInfo.registered offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, shared) == 10u, "ProgramIrqTimingInfo.shared offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, masked) == 11u, "ProgramIrqTimingInfo.masked offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, coverage_flags) == 12u, "ProgramIrqTimingInfo.coverage_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, clock_flags) == 16u, "ProgramIrqTimingInfo.clock_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, clock_source) == 20u, "ProgramIrqTimingInfo.clock_source offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, clock_generation) == 24u, "ProgramIrqTimingInfo.clock_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, unavailable_samples) == 28u, "ProgramIrqTimingInfo.unavailable_samples offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, dispatch_samples) == 32u, "ProgramIrqTimingInfo.dispatch_samples offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, handler_samples) == 40u, "ProgramIrqTimingInfo.handler_samples offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, observer_reads) == 48u, "ProgramIrqTimingInfo.observer_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, delivery_samples) == 56u, "ProgramIrqTimingInfo.delivery_samples offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, dispatch_total_ns) == 64u, "ProgramIrqTimingInfo.dispatch_total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, dispatch_max_ns) == 72u, "ProgramIrqTimingInfo.dispatch_max_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, dispatch_last_ns) == 80u, "ProgramIrqTimingInfo.dispatch_last_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, handler_total_ns) == 88u, "ProgramIrqTimingInfo.handler_total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, handler_max_ns) == 96u, "ProgramIrqTimingInfo.handler_max_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramIrqTimingInfo, handler_last_ns) == 104u, "ProgramIrqTimingInfo.handler_last_ns offset mismatch");
 _Static_assert(sizeof(R4ProgramMemoryBlockInfo) == 96u, "ProgramMemoryBlockInfo size mismatch");
 _Static_assert(offsetof(R4ProgramMemoryBlockInfo, id) == 0u, "ProgramMemoryBlockInfo.id offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryBlockInfo, kind) == 4u, "ProgramMemoryBlockInfo.kind offset mismatch");
@@ -6430,6 +6598,21 @@ _Static_assert(offsetof(R4TimeState, seconds_since_midnight) == 12u, "TimeState.
 _Static_assert(offsetof(R4TimeState, monotonic_ticks) == 16u, "TimeState.monotonic_ticks offset mismatch");
 _Static_assert(offsetof(R4TimeState, monotonic_hz) == 24u, "TimeState.monotonic_hz offset mismatch");
 _Static_assert(offsetof(R4TimeState, monotonic_backend) == 28u, "TimeState.monotonic_backend offset mismatch");
+_Static_assert(sizeof(R4MonotonicClockInfo) == 80u, "MonotonicClockInfo size mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, version) == 0u, "MonotonicClockInfo.version offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, size) == 4u, "MonotonicClockInfo.size offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, flags) == 8u, "MonotonicClockInfo.flags offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, source) == 12u, "MonotonicClockInfo.source offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, generation) == 16u, "MonotonicClockInfo.generation offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, event_backend) == 20u, "MonotonicClockInfo.event_backend offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, instant_ns) == 24u, "MonotonicClockInfo.instant_ns offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, frequency_hz) == 32u, "MonotonicClockInfo.frequency_hz offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, resolution_ns) == 40u, "MonotonicClockInfo.resolution_ns offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, source_frequency_hz) == 48u, "MonotonicClockInfo.source_frequency_hz offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, event_frequency_numerator) == 56u, "MonotonicClockInfo.event_frequency_numerator offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, event_frequency_denominator) == 64u, "MonotonicClockInfo.event_frequency_denominator offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, event_requested_hz) == 72u, "MonotonicClockInfo.event_requested_hz offset mismatch");
+_Static_assert(offsetof(R4MonotonicClockInfo, event_effective_hz) == 76u, "MonotonicClockInfo.event_effective_hz offset mismatch");
 _Static_assert(sizeof(R4KeyboardLayoutInfo) == 36u, "KeyboardLayoutInfo size mismatch");
 _Static_assert(offsetof(R4KeyboardLayoutInfo, name) == 0u, "KeyboardLayoutInfo.name offset mismatch");
 _Static_assert(offsetof(R4KeyboardLayoutInfo, display) == 16u, "KeyboardLayoutInfo.display offset mismatch");
@@ -7330,7 +7513,7 @@ _Static_assert(offsetof(R4ProgramInventorySummary, flags) == 140u, "ProgramInven
 _Static_assert(offsetof(R4ProgramInventorySummary, program_reserved) == 144u, "ProgramInventorySummary.program_reserved offset mismatch");
 _Static_assert(offsetof(R4ProgramInventorySummary, heap_active_blocks) == 148u, "ProgramInventorySummary.heap_active_blocks offset mismatch");
 _Static_assert(offsetof(R4ProgramInventorySummary, heap_used_bytes) == 152u, "ProgramInventorySummary.heap_used_bytes offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 960u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 968u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -7564,6 +7747,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_module_path) == 944u, "R4XStartR4
 _Static_assert(sizeof(R4SysProgramModulePathFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_module_running) == 952u, "R4XStartR4Sys.program_module_running offset mismatch");
 _Static_assert(sizeof(R4SysProgramModuleRunningFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, monotonic_clock) == 960u, "R4XStartR4Sys.monotonic_clock offset mismatch");
+_Static_assert(sizeof(R4SysMonotonicClockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 432u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -7841,7 +8026,7 @@ _Static_assert(offsetof(R4XStartR4Audio, opl3_stop) == 160u, "R4XStartR4Audio.op
 _Static_assert(sizeof(R4AudioOpl3StopFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved0) == 168u, "R4XStartR4Audio.reserved0 offset mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved1) == 176u, "R4XStartR4Audio.reserved1 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 304u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 320u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -7912,6 +8097,10 @@ _Static_assert(offsetof(R4XStartR4Dev, program_instance_storage_summary_v2) == 2
 _Static_assert(sizeof(R4DevProgramInstanceStorageSummaryV2Fn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, kernel_version) == 296u, "R4XStartR4Dev.kernel_version offset mismatch");
 _Static_assert(sizeof(R4DevKernelVersionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_boot_phase_clock) == 304u, "R4XStartR4Dev.performance_boot_phase_clock offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceBootPhaseClockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_irq_timing) == 312u, "R4XStartR4Dev.performance_irq_timing offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceIrqTimingFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }
