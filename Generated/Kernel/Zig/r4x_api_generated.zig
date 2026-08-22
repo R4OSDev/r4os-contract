@@ -928,11 +928,36 @@ pub const r4xstart_r4audio_version: u32 = 1;
 pub const r4xstart_r4desk_magic: u32 = 826623058;
 pub const r4xstart_r4desk_version: u32 = 7;
 pub const r4xstart_r4dev_magic: u32 = 827737170;
-pub const r4xstart_r4dev_version: u32 = 6;
+pub const r4xstart_r4dev_version: u32 = 7;
 pub const r4xstart_r4draw_magic: u32 = 827802706;
 pub const r4xstart_r4draw_version: u32 = 2;
 pub const r4xstart_r4net_magic: u32 = 826625618;
 pub const r4xstart_r4net_version: u32 = 1;
+pub const boot_ready_result_completed: i32 = 0;
+pub const boot_ready_result_already_completed: i32 = 1;
+pub const boot_ready_error_not_boot_shell: i32 = -1;
+pub const boot_ready_error_boot_failed: i32 = -2;
+pub const boot_performance_version: u32 = 1;
+pub const boot_performance_size: u32 = 144;
+pub const boot_performance_state_uninitialized: u32 = 0;
+pub const boot_performance_state_running: u32 = 1;
+pub const boot_performance_state_ready: u32 = 2;
+pub const boot_performance_state_fallback_ready: u32 = 3;
+pub const boot_performance_state_failed: u32 = 4;
+pub const boot_completion_reason_none: u32 = 0;
+pub const boot_completion_reason_configured_shell_ready: u32 = 1;
+pub const boot_completion_reason_terminal_fallback_ready: u32 = 2;
+pub const boot_completion_reason_recovery_fallback_ready: u32 = 3;
+pub const boot_completion_reason_no_shell: u32 = 4;
+pub const boot_completion_reason_fatal_error: u32 = 5;
+pub const boot_completion_reason_shell_exited_before_ready: u32 = 6;
+pub const boot_performance_flag_initialized: u32 = 1;
+pub const boot_performance_flag_completed: u32 = 2;
+pub const boot_performance_flag_ready: u32 = 4;
+pub const boot_performance_flag_fallback: u32 = 8;
+pub const boot_performance_flag_failed: u32 = 16;
+pub const boot_performance_flag_timing_valid: u32 = 32;
+pub const boot_performance_flag_frozen: u32 = 64;
 pub const performance_irq_coverage_dispatch: u32 = 1;
 pub const performance_irq_coverage_external_handler: u32 = 2;
 pub const performance_irq_coverage_delivery_unavailable: u32 = 4;
@@ -952,7 +977,7 @@ pub const monotonic_clock_source_tsc: u32 = 1;
 pub const monotonic_clock_source_hpet: u32 = 2;
 pub const monotonic_clock_source_periodic_event: u32 = 3;
 pub const r4xstart_r4sys_magic: u32 = 827937618;
-pub const r4xstart_r4sys_version: u32 = 12;
+pub const r4xstart_r4sys_version: u32 = 13;
 pub const registry_path_max_bytes: u16 = 255;
 pub const registry_value_type_binary: u16 = 5;
 pub const registry_value_type_bool: u16 = 4;
@@ -1209,10 +1234,10 @@ pub const r4xstart_context_size: u32 = 128;
 pub const r4xstart_import_size: u32 = 40;
 pub const r4xstart_r4audio_size: u32 = 184;
 pub const r4xstart_r4desk_size: u32 = 432;
-pub const r4xstart_r4dev_size: u32 = 320;
+pub const r4xstart_r4dev_size: u32 = 328;
 pub const r4xstart_r4draw_size: u32 = 272;
 pub const r4xstart_r4net_size: u32 = 288;
-pub const r4xstart_r4sys_size: u32 = 968;
+pub const r4xstart_r4sys_size: u32 = 976;
 pub const registry_name_max: usize = 64;
 pub const serial_link_payload_max: usize = 256;
 pub const service_api_endpoint_queue_depth: usize = 8;
@@ -2792,6 +2817,36 @@ pub const ProgramBootPhaseClockInfo = extern struct {
     unavailable_spans: u32 = 0,
     reserved0: u32 = 0,
     name: [32]u8 = .{0} ** 32,
+};
+
+pub const ProgramBootPerformanceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 144,
+    state: u32 = 0,
+    completion_reason: u32 = 0,
+    flags: u32 = 0,
+    current_phase: u32 = 0,
+    phase_count: u32 = 0,
+    timing_span_count: u32 = 0,
+    timing_unavailable_spans: u32 = 0,
+    timing_dropped_spans: u32 = 0,
+    clock_flags: u32 = 0,
+    clock_source: u32 = 0,
+    clock_generation: u32 = 0,
+    configured_attempts: u32 = 0,
+    fallback_attempts: u32 = 0,
+    launch_failures: u32 = 0,
+    shell_instance_id: u32 = 0,
+    reserved0: u32 = 0,
+    boot_start_tick: u64 = 0,
+    boot_end_tick: u64 = 0,
+    total_ticks: u64 = 0,
+    boot_start_ns: u64 = 0,
+    boot_end_ns: u64 = 0,
+    total_ns: u64 = 0,
+    clock_resolution_ns: u64 = 0,
+    transition_count: u64 = 0,
+    reserved1: u64 = 0,
 };
 
 pub const ProgramIrqTimingInfo = extern struct {
@@ -4406,12 +4461,13 @@ pub const R4SysFns = struct {
     pub const program_module_path = *const fn ([*]u8, u32) callconv(.c) i32;
     pub const program_module_running = *const fn ([*:0]const u8) callconv(.c) i32;
     pub const monotonic_clock = *const fn (*MonotonicClockInfo) callconv(.c) i32;
+    pub const boot_ready = *const fn () callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 12,
-    size: u32 = 968,
+    abi_version: u32 = 13,
+    size: u32 = 976,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -4532,6 +4588,7 @@ pub const R4XStartR4Sys = extern struct {
     program_module_path: usize = 0,
     program_module_running: usize = 0,
     monotonic_clock: usize = 0,
+    boot_ready: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -4884,12 +4941,13 @@ pub const R4DevFns = struct {
     pub const kernel_version = *const fn (*KernelVersion) callconv(.c) i32;
     pub const performance_boot_phase_clock = *const fn (u32, *ProgramBootPhaseClockInfo) callconv(.c) i32;
     pub const performance_irq_timing = *const fn (u32, *ProgramIrqTimingInfo) callconv(.c) i32;
+    pub const performance_boot_summary = *const fn (*ProgramBootPerformanceInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 6,
-    size: u32 = 320,
+    abi_version: u32 = 7,
+    size: u32 = 328,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -4929,6 +4987,7 @@ pub const R4XStartR4Dev = extern struct {
     kernel_version: usize = 0,
     performance_boot_phase_clock: usize = 0,
     performance_irq_timing: usize = 0,
+    performance_boot_summary: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -5054,6 +5113,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 116, .offset = 944, .name = "program_module_path", .state = .function, .required = false },
     .{ .number = 117, .offset = 952, .name = "program_module_running", .state = .function, .required = false },
     .{ .number = 118, .offset = 960, .name = "monotonic_clock", .state = .function, .required = false },
+    .{ .number = 119, .offset = 968, .name = "boot_ready", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -5246,6 +5306,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 35, .offset = 296, .name = "kernel_version", .state = .function, .required = false },
     .{ .number = 36, .offset = 304, .name = "performance_boot_phase_clock", .state = .function, .required = false },
     .{ .number = 37, .offset = 312, .name = "performance_irq_timing", .state = .function, .required = false },
+    .{ .number = 38, .offset = 320, .name = "performance_boot_summary", .state = .function, .required = false },
 };
 
 comptime {
@@ -6441,6 +6502,35 @@ comptime {
     if (@offsetOf(ProgramBootPhaseClockInfo, "unavailable_spans") != 56) @compileError("generated ABI offset drift: ProgramBootPhaseClockInfo.unavailable_spans");
     if (@offsetOf(ProgramBootPhaseClockInfo, "reserved0") != 60) @compileError("generated ABI offset drift: ProgramBootPhaseClockInfo.reserved0");
     if (@offsetOf(ProgramBootPhaseClockInfo, "name") != 64) @compileError("generated ABI offset drift: ProgramBootPhaseClockInfo.name");
+    if (@sizeOf(ProgramBootPerformanceInfo) != 144) @compileError("generated ABI size drift: ProgramBootPerformanceInfo");
+    if (@alignOf(ProgramBootPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramBootPerformanceInfo");
+    if (@offsetOf(ProgramBootPerformanceInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.version");
+    if (@offsetOf(ProgramBootPerformanceInfo, "size") != 4) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.size");
+    if (@offsetOf(ProgramBootPerformanceInfo, "state") != 8) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.state");
+    if (@offsetOf(ProgramBootPerformanceInfo, "completion_reason") != 12) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.completion_reason");
+    if (@offsetOf(ProgramBootPerformanceInfo, "flags") != 16) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.flags");
+    if (@offsetOf(ProgramBootPerformanceInfo, "current_phase") != 20) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.current_phase");
+    if (@offsetOf(ProgramBootPerformanceInfo, "phase_count") != 24) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.phase_count");
+    if (@offsetOf(ProgramBootPerformanceInfo, "timing_span_count") != 28) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.timing_span_count");
+    if (@offsetOf(ProgramBootPerformanceInfo, "timing_unavailable_spans") != 32) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.timing_unavailable_spans");
+    if (@offsetOf(ProgramBootPerformanceInfo, "timing_dropped_spans") != 36) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.timing_dropped_spans");
+    if (@offsetOf(ProgramBootPerformanceInfo, "clock_flags") != 40) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.clock_flags");
+    if (@offsetOf(ProgramBootPerformanceInfo, "clock_source") != 44) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.clock_source");
+    if (@offsetOf(ProgramBootPerformanceInfo, "clock_generation") != 48) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.clock_generation");
+    if (@offsetOf(ProgramBootPerformanceInfo, "configured_attempts") != 52) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.configured_attempts");
+    if (@offsetOf(ProgramBootPerformanceInfo, "fallback_attempts") != 56) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.fallback_attempts");
+    if (@offsetOf(ProgramBootPerformanceInfo, "launch_failures") != 60) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.launch_failures");
+    if (@offsetOf(ProgramBootPerformanceInfo, "shell_instance_id") != 64) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.shell_instance_id");
+    if (@offsetOf(ProgramBootPerformanceInfo, "reserved0") != 68) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.reserved0");
+    if (@offsetOf(ProgramBootPerformanceInfo, "boot_start_tick") != 72) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.boot_start_tick");
+    if (@offsetOf(ProgramBootPerformanceInfo, "boot_end_tick") != 80) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.boot_end_tick");
+    if (@offsetOf(ProgramBootPerformanceInfo, "total_ticks") != 88) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.total_ticks");
+    if (@offsetOf(ProgramBootPerformanceInfo, "boot_start_ns") != 96) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.boot_start_ns");
+    if (@offsetOf(ProgramBootPerformanceInfo, "boot_end_ns") != 104) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.boot_end_ns");
+    if (@offsetOf(ProgramBootPerformanceInfo, "total_ns") != 112) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.total_ns");
+    if (@offsetOf(ProgramBootPerformanceInfo, "clock_resolution_ns") != 120) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.clock_resolution_ns");
+    if (@offsetOf(ProgramBootPerformanceInfo, "transition_count") != 128) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.transition_count");
+    if (@offsetOf(ProgramBootPerformanceInfo, "reserved1") != 136) @compileError("generated ABI offset drift: ProgramBootPerformanceInfo.reserved1");
     if (@sizeOf(ProgramIrqTimingInfo) != 112) @compileError("generated ABI size drift: ProgramIrqTimingInfo");
     if (@alignOf(ProgramIrqTimingInfo) != 8) @compileError("generated ABI alignment drift: ProgramIrqTimingInfo");
     if (@offsetOf(ProgramIrqTimingInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramIrqTimingInfo.version");
@@ -7847,7 +7937,7 @@ comptime {
     if (@offsetOf(ProgramInventorySummary, "program_reserved") != 144) @compileError("generated ABI offset drift: ProgramInventorySummary.program_reserved");
     if (@offsetOf(ProgramInventorySummary, "heap_active_blocks") != 148) @compileError("generated ABI offset drift: ProgramInventorySummary.heap_active_blocks");
     if (@offsetOf(ProgramInventorySummary, "heap_used_bytes") != 152) @compileError("generated ABI offset drift: ProgramInventorySummary.heap_used_bytes");
-    if (@sizeOf(R4XStartR4Sys) != 968) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 976) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -7967,6 +8057,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_module_path") != 944) @compileError("generated ABI offset drift: R4XStartR4Sys.program_module_path");
     if (@offsetOf(R4XStartR4Sys, "program_module_running") != 952) @compileError("generated ABI offset drift: R4XStartR4Sys.program_module_running");
     if (@offsetOf(R4XStartR4Sys, "monotonic_clock") != 960) @compileError("generated ABI offset drift: R4XStartR4Sys.monotonic_clock");
+    if (@offsetOf(R4XStartR4Sys, "boot_ready") != 968) @compileError("generated ABI offset drift: R4XStartR4Sys.boot_ready");
     if (@sizeOf(R4XStartR4Desk) != 432) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -8110,7 +8201,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "opl3_stop") != 160) @compileError("generated ABI offset drift: R4XStartR4Audio.opl3_stop");
     if (@offsetOf(R4XStartR4Audio, "reserved0") != 168) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved0");
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
-    if (@sizeOf(R4XStartR4Dev) != 320) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 328) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -8149,6 +8240,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "kernel_version") != 296) @compileError("generated ABI offset drift: R4XStartR4Dev.kernel_version");
     if (@offsetOf(R4XStartR4Dev, "performance_boot_phase_clock") != 304) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_boot_phase_clock");
     if (@offsetOf(R4XStartR4Dev, "performance_irq_timing") != 312) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_irq_timing");
+    if (@offsetOf(R4XStartR4Dev, "performance_boot_summary") != 320) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_boot_summary");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -8269,13 +8361,14 @@ pub const R4SysProvider = struct {
     program_module_path: R4SysFns.program_module_path,
     program_module_running: R4SysFns.program_module_running,
     monotonic_clock: R4SysFns.monotonic_clock,
+    boot_ready: R4SysFns.boot_ready,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 12,
-        .size = 968,
+        .abi_version = 13,
+        .size = 976,
         .flags = 0,
         .write = @intFromPtr(provider.write),
         .putc = @intFromPtr(provider.putc),
@@ -8396,6 +8489,7 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .program_module_path = @intFromPtr(provider.program_module_path),
         .program_module_running = @intFromPtr(provider.program_module_running),
         .monotonic_clock = @intFromPtr(provider.monotonic_clock),
+        .boot_ready = @intFromPtr(provider.boot_ready),
     };
 }
 
@@ -8757,13 +8851,14 @@ pub const R4DevProvider = struct {
     kernel_version: R4DevFns.kernel_version,
     performance_boot_phase_clock: R4DevFns.performance_boot_phase_clock,
     performance_irq_timing: R4DevFns.performance_irq_timing,
+    performance_boot_summary: R4DevFns.performance_boot_summary,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 6,
-        .size = 320,
+        .abi_version = 7,
+        .size = 328,
         .flags = 0,
         .device_inventory_summary = @intFromPtr(provider.device_inventory_summary),
         .device_inventory_record = @intFromPtr(provider.device_inventory_record),
@@ -8803,5 +8898,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .kernel_version = @intFromPtr(provider.kernel_version),
         .performance_boot_phase_clock = @intFromPtr(provider.performance_boot_phase_clock),
         .performance_irq_timing = @intFromPtr(provider.performance_irq_timing),
+        .performance_boot_summary = @intFromPtr(provider.performance_boot_summary),
     };
 }

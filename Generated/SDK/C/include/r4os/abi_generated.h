@@ -940,11 +940,36 @@ extern "C" {
 #define R4XSTART_R4DESK_MAGIC 826623058u
 #define R4XSTART_R4DESK_VERSION 7u
 #define R4XSTART_R4DEV_MAGIC 827737170u
-#define R4XSTART_R4DEV_VERSION 6u
+#define R4XSTART_R4DEV_VERSION 7u
 #define R4XSTART_R4DRAW_MAGIC 827802706u
 #define R4XSTART_R4DRAW_VERSION 2u
 #define R4XSTART_R4NET_MAGIC 826625618u
 #define R4XSTART_R4NET_VERSION 1u
+#define R4OS_BOOT_READY_RESULT_COMPLETED ((int32_t)0)
+#define R4OS_BOOT_READY_RESULT_ALREADY_COMPLETED ((int32_t)1)
+#define R4OS_BOOT_READY_ERROR_NOT_BOOT_SHELL ((int32_t)-1)
+#define R4OS_BOOT_READY_ERROR_BOOT_FAILED ((int32_t)-2)
+#define R4OS_BOOT_PERFORMANCE_VERSION 1u
+#define R4OS_BOOT_PERFORMANCE_SIZE 144u
+#define R4OS_BOOT_PERFORMANCE_STATE_UNINITIALIZED 0u
+#define R4OS_BOOT_PERFORMANCE_STATE_RUNNING 1u
+#define R4OS_BOOT_PERFORMANCE_STATE_READY 2u
+#define R4OS_BOOT_PERFORMANCE_STATE_FALLBACK_READY 3u
+#define R4OS_BOOT_PERFORMANCE_STATE_FAILED 4u
+#define R4OS_BOOT_COMPLETION_REASON_NONE 0u
+#define R4OS_BOOT_COMPLETION_REASON_CONFIGURED_SHELL_READY 1u
+#define R4OS_BOOT_COMPLETION_REASON_TERMINAL_FALLBACK_READY 2u
+#define R4OS_BOOT_COMPLETION_REASON_RECOVERY_FALLBACK_READY 3u
+#define R4OS_BOOT_COMPLETION_REASON_NO_SHELL 4u
+#define R4OS_BOOT_COMPLETION_REASON_FATAL_ERROR 5u
+#define R4OS_BOOT_COMPLETION_REASON_SHELL_EXITED_BEFORE_READY 6u
+#define R4OS_BOOT_PERFORMANCE_FLAG_INITIALIZED 1u
+#define R4OS_BOOT_PERFORMANCE_FLAG_COMPLETED 2u
+#define R4OS_BOOT_PERFORMANCE_FLAG_READY 4u
+#define R4OS_BOOT_PERFORMANCE_FLAG_FALLBACK 8u
+#define R4OS_BOOT_PERFORMANCE_FLAG_FAILED 16u
+#define R4OS_BOOT_PERFORMANCE_FLAG_TIMING_VALID 32u
+#define R4OS_BOOT_PERFORMANCE_FLAG_FROZEN 64u
 #define R4OS_PERFORMANCE_IRQ_COVERAGE_DISPATCH 1u
 #define R4OS_PERFORMANCE_IRQ_COVERAGE_EXTERNAL_HANDLER 2u
 #define R4OS_PERFORMANCE_IRQ_COVERAGE_DELIVERY_UNAVAILABLE 4u
@@ -964,7 +989,7 @@ extern "C" {
 #define R4OS_MONOTONIC_CLOCK_SOURCE_HPET 2u
 #define R4OS_MONOTONIC_CLOCK_SOURCE_PERIODIC_EVENT 3u
 #define R4XSTART_R4SYS_MAGIC 827937618u
-#define R4XSTART_R4SYS_VERSION 12u
+#define R4XSTART_R4SYS_VERSION 13u
 #define R4OS_REGISTRY_PATH_MAX_BYTES 255u
 #define R4OS_REGISTRY_VALUE_TYPE_BINARY 5u
 #define R4OS_REGISTRY_VALUE_TYPE_BOOL 4u
@@ -1221,10 +1246,10 @@ extern "C" {
 #define R4XSTART_IMPORT_SIZE 40u
 #define R4XSTART_R4AUDIO_SIZE 184u
 #define R4XSTART_R4DESK_SIZE 432u
-#define R4XSTART_R4DEV_SIZE 320u
+#define R4XSTART_R4DEV_SIZE 328u
 #define R4XSTART_R4DRAW_SIZE 272u
 #define R4XSTART_R4NET_SIZE 288u
-#define R4XSTART_R4SYS_SIZE 968u
+#define R4XSTART_R4SYS_SIZE 976u
 #define R4OS_REGISTRY_NAME_MAX 64ull
 #define R4OS_SERIAL_LINK_PAYLOAD_MAX 256ull
 #define R4OS_SERVICE_API_ENDPOINT_QUEUE_DEPTH 8ull
@@ -1584,6 +1609,7 @@ typedef struct R4ProgramTaskPerformanceInfo R4ProgramTaskPerformanceInfo;
 typedef struct R4ProgramStoragePerformanceInfo R4ProgramStoragePerformanceInfo;
 typedef struct R4ProgramBootPhasePerformanceInfo R4ProgramBootPhasePerformanceInfo;
 typedef struct R4ProgramBootPhaseClockInfo R4ProgramBootPhaseClockInfo;
+typedef struct R4ProgramBootPerformanceInfo R4ProgramBootPerformanceInfo;
 typedef struct R4ProgramIrqTimingInfo R4ProgramIrqTimingInfo;
 typedef struct R4ProgramMemoryBlockInfo R4ProgramMemoryBlockInfo;
 typedef struct R4ProgramVmReserveProbe R4ProgramVmReserveProbe;
@@ -2848,6 +2874,36 @@ typedef struct R4ProgramBootPhaseClockInfo {
     uint32_t reserved0;
     uint8_t name[32];
 } R4ProgramBootPhaseClockInfo;
+
+typedef struct R4ProgramBootPerformanceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t state;
+    uint32_t completion_reason;
+    uint32_t flags;
+    uint32_t current_phase;
+    uint32_t phase_count;
+    uint32_t timing_span_count;
+    uint32_t timing_unavailable_spans;
+    uint32_t timing_dropped_spans;
+    uint32_t clock_flags;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t configured_attempts;
+    uint32_t fallback_attempts;
+    uint32_t launch_failures;
+    uint32_t shell_instance_id;
+    uint32_t reserved0;
+    uint64_t boot_start_tick;
+    uint64_t boot_end_tick;
+    uint64_t total_ticks;
+    uint64_t boot_start_ns;
+    uint64_t boot_end_ns;
+    uint64_t total_ns;
+    uint64_t clock_resolution_ns;
+    uint64_t transition_count;
+    uint64_t reserved1;
+} R4ProgramBootPerformanceInfo;
 
 typedef struct R4ProgramIrqTimingInfo {
     uint32_t version;
@@ -4508,6 +4564,7 @@ typedef int32_t (*R4SysModuleResourceReadFn)(const uint8_t * module_path, uint32
 typedef int32_t (*R4SysProgramModulePathFn)(uint8_t * buffer, uint32_t buffer_len);
 typedef int32_t (*R4SysProgramModuleRunningFn)(const uint8_t * module_path);
 typedef int32_t (*R4SysMonotonicClockFn)(R4MonotonicClockInfo * out);
+typedef int32_t (*R4SysBootReadyFn)(void);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -4633,6 +4690,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_module_path;
     uintptr_t program_module_running;
     uintptr_t monotonic_clock;
+    uintptr_t boot_ready;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -4976,6 +5034,7 @@ typedef int32_t (*R4DevProgramInstanceStorageSummaryV2Fn)(R4ProgramInstanceStora
 typedef int32_t (*R4DevKernelVersionFn)(R4KernelVersion * out_version);
 typedef int32_t (*R4DevPerformanceBootPhaseClockFn)(uint32_t index, R4ProgramBootPhaseClockInfo * out);
 typedef int32_t (*R4DevPerformanceIrqTimingFn)(uint32_t irq, R4ProgramIrqTimingInfo * out);
+typedef int32_t (*R4DevPerformanceBootSummaryFn)(R4ProgramBootPerformanceInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -5020,6 +5079,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t kernel_version;
     uintptr_t performance_boot_phase_clock;
     uintptr_t performance_irq_timing;
+    uintptr_t performance_boot_summary;
 } R4XStartR4Dev;
 
 
@@ -6196,6 +6256,34 @@ _Static_assert(offsetof(R4ProgramBootPhaseClockInfo, total_ns) == 48u, "ProgramB
 _Static_assert(offsetof(R4ProgramBootPhaseClockInfo, unavailable_spans) == 56u, "ProgramBootPhaseClockInfo.unavailable_spans offset mismatch");
 _Static_assert(offsetof(R4ProgramBootPhaseClockInfo, reserved0) == 60u, "ProgramBootPhaseClockInfo.reserved0 offset mismatch");
 _Static_assert(offsetof(R4ProgramBootPhaseClockInfo, name) == 64u, "ProgramBootPhaseClockInfo.name offset mismatch");
+_Static_assert(sizeof(R4ProgramBootPerformanceInfo) == 144u, "ProgramBootPerformanceInfo size mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, version) == 0u, "ProgramBootPerformanceInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, size) == 4u, "ProgramBootPerformanceInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, state) == 8u, "ProgramBootPerformanceInfo.state offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, completion_reason) == 12u, "ProgramBootPerformanceInfo.completion_reason offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, flags) == 16u, "ProgramBootPerformanceInfo.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, current_phase) == 20u, "ProgramBootPerformanceInfo.current_phase offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, phase_count) == 24u, "ProgramBootPerformanceInfo.phase_count offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, timing_span_count) == 28u, "ProgramBootPerformanceInfo.timing_span_count offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, timing_unavailable_spans) == 32u, "ProgramBootPerformanceInfo.timing_unavailable_spans offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, timing_dropped_spans) == 36u, "ProgramBootPerformanceInfo.timing_dropped_spans offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, clock_flags) == 40u, "ProgramBootPerformanceInfo.clock_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, clock_source) == 44u, "ProgramBootPerformanceInfo.clock_source offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, clock_generation) == 48u, "ProgramBootPerformanceInfo.clock_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, configured_attempts) == 52u, "ProgramBootPerformanceInfo.configured_attempts offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, fallback_attempts) == 56u, "ProgramBootPerformanceInfo.fallback_attempts offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, launch_failures) == 60u, "ProgramBootPerformanceInfo.launch_failures offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, shell_instance_id) == 64u, "ProgramBootPerformanceInfo.shell_instance_id offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, reserved0) == 68u, "ProgramBootPerformanceInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, boot_start_tick) == 72u, "ProgramBootPerformanceInfo.boot_start_tick offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, boot_end_tick) == 80u, "ProgramBootPerformanceInfo.boot_end_tick offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, total_ticks) == 88u, "ProgramBootPerformanceInfo.total_ticks offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, boot_start_ns) == 96u, "ProgramBootPerformanceInfo.boot_start_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, boot_end_ns) == 104u, "ProgramBootPerformanceInfo.boot_end_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, total_ns) == 112u, "ProgramBootPerformanceInfo.total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, clock_resolution_ns) == 120u, "ProgramBootPerformanceInfo.clock_resolution_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, transition_count) == 128u, "ProgramBootPerformanceInfo.transition_count offset mismatch");
+_Static_assert(offsetof(R4ProgramBootPerformanceInfo, reserved1) == 136u, "ProgramBootPerformanceInfo.reserved1 offset mismatch");
 _Static_assert(sizeof(R4ProgramIrqTimingInfo) == 112u, "ProgramIrqTimingInfo size mismatch");
 _Static_assert(offsetof(R4ProgramIrqTimingInfo, version) == 0u, "ProgramIrqTimingInfo.version offset mismatch");
 _Static_assert(offsetof(R4ProgramIrqTimingInfo, size) == 4u, "ProgramIrqTimingInfo.size offset mismatch");
@@ -7513,7 +7601,7 @@ _Static_assert(offsetof(R4ProgramInventorySummary, flags) == 140u, "ProgramInven
 _Static_assert(offsetof(R4ProgramInventorySummary, program_reserved) == 144u, "ProgramInventorySummary.program_reserved offset mismatch");
 _Static_assert(offsetof(R4ProgramInventorySummary, heap_active_blocks) == 148u, "ProgramInventorySummary.heap_active_blocks offset mismatch");
 _Static_assert(offsetof(R4ProgramInventorySummary, heap_used_bytes) == 152u, "ProgramInventorySummary.heap_used_bytes offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 968u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 976u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -7749,6 +7837,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_module_running) == 952u, "R4XStar
 _Static_assert(sizeof(R4SysProgramModuleRunningFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, monotonic_clock) == 960u, "R4XStartR4Sys.monotonic_clock offset mismatch");
 _Static_assert(sizeof(R4SysMonotonicClockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, boot_ready) == 968u, "R4XStartR4Sys.boot_ready offset mismatch");
+_Static_assert(sizeof(R4SysBootReadyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 432u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -8026,7 +8116,7 @@ _Static_assert(offsetof(R4XStartR4Audio, opl3_stop) == 160u, "R4XStartR4Audio.op
 _Static_assert(sizeof(R4AudioOpl3StopFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved0) == 168u, "R4XStartR4Audio.reserved0 offset mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved1) == 176u, "R4XStartR4Audio.reserved1 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 320u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 328u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -8101,6 +8191,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_boot_phase_clock) == 304u, "R
 _Static_assert(sizeof(R4DevPerformanceBootPhaseClockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, performance_irq_timing) == 312u, "R4XStartR4Dev.performance_irq_timing offset mismatch");
 _Static_assert(sizeof(R4DevPerformanceIrqTimingFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_boot_summary) == 320u, "R4XStartR4Dev.performance_boot_summary offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceBootSummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

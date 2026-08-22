@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 12,
+      "abi_version": 13,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 968,
+      "size": 976,
       "slots": [
         {
           "number": 0,
@@ -9648,6 +9648,47 @@
             "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
+        },
+        {
+          "number": 119,
+          "offset": 968,
+          "name": "boot_ready",
+          "state": "function",
+          "required": false,
+          "description": "Lets the active boot shell mark its first usable frame or prompt exactly once; repeated calls by that shell are idempotent.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "none",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "atomic_on_success",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
         }
       ]
     },
@@ -18340,10 +18381,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 6,
+      "abi_version": 7,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 320,
+      "size": 328,
       "slots": [
         {
           "number": 0,
@@ -20835,7 +20876,7 @@
           "name": "performance_boot_phase_clock",
           "state": "function",
           "required": false,
-          "description": "Returns the calibrated nanosecond timing and explicit availability state for one recorded boot phase.",
+          "description": "Returns the calibrated nanosecond timing and explicit availability state for one recorded boot phase; endpoint clock metadata is frozen after terminal boot completion.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -20921,6 +20962,65 @@
                   "child": {
                     "kind": "named",
                     "name": "ProgramIrqTimingInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 38,
+          "offset": 320,
+          "name": "performance_boot_summary",
+          "state": "function",
+          "required": false,
+          "description": "Returns the small passive boot completion and frozen timing dataset without collecting broad subsystem summaries.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramBootPerformanceInfo"
                   },
                   "direction": "output",
                   "nullable": false,
@@ -36880,7 +36980,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Current monotonic clock quality flags plus valid timing state.",
+          "description": "Monotonic clock quality flags at the reported boot endpoint plus valid timing state.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -36894,7 +36994,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Current monotonic clock source.",
+          "description": "Monotonic clock source at the reported boot endpoint.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -36908,7 +37008,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Current monotonic clock generation.",
+          "description": "Monotonic clock generation at the reported boot endpoint.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -37019,6 +37119,398 @@
       ],
       "values": [],
       "description": "Calibrated high-resolution timing for one historical boot phase."
+    },
+    {
+      "name": "ProgramBootPerformanceInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 144,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot performance payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot performance payload size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "144"
+        },
+        {
+          "name": "state",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot completion state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completion_reason",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Terminal boot completion reason, or none while running.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialization, completion, fallback, failure, timing and frozen-state flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "current_phase",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last entered boot phase.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase_count",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of distinct recorded boot phases.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timing_span_count",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of recorded boot timing spans.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timing_unavailable_spans",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot spans unavailable on the calibrated clock.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timing_dropped_spans",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot spans dropped because the fixed history was full.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Monotonic clock quality flags at the reported endpoint.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Monotonic clock source at the reported endpoint.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Monotonic clock generation at the reported endpoint.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "configured_attempts",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Configured shell launch attempts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fallback_attempts",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Terminal and recovery fallback launch attempts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "launch_failures",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Synchronous shell launch failures before the terminal state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "shell_instance_id",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Expected or completing boot-shell instance identifier.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved for append-only boot metadata.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_start_tick",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Boot start in logical scheduler ticks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_end_tick",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current logical tick while running, frozen terminal tick afterward.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_ticks",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Logical ticks from boot start through the reported endpoint.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_start_ns",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Resolved monotonic boot start in nanoseconds when available.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_end_ns",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current monotonic instant while running, frozen terminal instant afterward.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_ns",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Calibrated boot duration in nanoseconds when available.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_resolution_ns",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Clock resolution at the reported endpoint in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transition_count",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Total boot phase transitions.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reserved for append-only boot timing metadata.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Small passive boot completion snapshot whose terminal values are frozen at actual shell readiness or failure."
     },
     {
       "name": "ProgramIrqTimingInfo",
@@ -67258,7 +67750,7 @@
     },
     {
       "name": "r4xstart_r4dev_version",
-      "value": "6",
+      "value": "7",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -67305,6 +67797,256 @@
       "scope": "r4xstart_r4net",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "boot_ready_result_completed",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "boot_ready",
+      "stability": "fixed_contract",
+      "description": "This call froze boot completion at the shell readiness point."
+    },
+    {
+      "name": "boot_ready_result_already_completed",
+      "value": "1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "boot_ready",
+      "stability": "fixed_contract",
+      "description": "Boot was already completed by the same shell; no state changed."
+    },
+    {
+      "name": "boot_ready_error_not_boot_shell",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "boot_ready",
+      "stability": "fixed_contract",
+      "description": "The caller is not the shell instance selected by the boot launcher."
+    },
+    {
+      "name": "boot_ready_error_boot_failed",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "boot_ready",
+      "stability": "fixed_contract",
+      "description": "Boot already ended in failure and cannot become ready."
+    },
+    {
+      "name": "boot_performance_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "ProgramBootPerformanceInfo payload version."
+    },
+    {
+      "name": "boot_performance_size",
+      "value": "144",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "bytes",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "ProgramBootPerformanceInfo payload size."
+    },
+    {
+      "name": "boot_performance_state_uninitialized",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Boot measurement has not been initialized."
+    },
+    {
+      "name": "boot_performance_state_running",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Boot is still running; endpoint fields remain live."
+    },
+    {
+      "name": "boot_performance_state_ready",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "The configured shell reported actual readiness."
+    },
+    {
+      "name": "boot_performance_state_fallback_ready",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "A fallback shell reported actual readiness."
+    },
+    {
+      "name": "boot_performance_state_failed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Boot ended without an available shell."
+    },
+    {
+      "name": "boot_completion_reason_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "No terminal boot completion reason exists yet."
+    },
+    {
+      "name": "boot_completion_reason_configured_shell_ready",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "The configured shell produced its first usable frame or prompt."
+    },
+    {
+      "name": "boot_completion_reason_terminal_fallback_ready",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "The Terminal fallback produced its first usable prompt."
+    },
+    {
+      "name": "boot_completion_reason_recovery_fallback_ready",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "A recovery fallback produced its first usable prompt."
+    },
+    {
+      "name": "boot_completion_reason_no_shell",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "All configured and fallback shell launches failed."
+    },
+    {
+      "name": "boot_completion_reason_fatal_error",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "A fatal kernel boot error ended the measurement."
+    },
+    {
+      "name": "boot_completion_reason_shell_exited_before_ready",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "The selected shell exited before reporting its first usable frame or prompt."
+    },
+    {
+      "name": "boot_performance_flag_initialized",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Boot measurement is initialized."
+    },
+    {
+      "name": "boot_performance_flag_completed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Boot reached a terminal ready or failed state."
+    },
+    {
+      "name": "boot_performance_flag_ready",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "A shell reported actual readiness."
+    },
+    {
+      "name": "boot_performance_flag_fallback",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Readiness came from a fallback shell."
+    },
+    {
+      "name": "boot_performance_flag_failed",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Boot ended without an available shell."
+    },
+    {
+      "name": "boot_performance_flag_timing_valid",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "The calibrated nanosecond duration is valid."
+    },
+    {
+      "name": "boot_performance_flag_frozen",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "performance_boot_summary",
+      "stability": "fixed_contract",
+      "description": "Endpoint, duration and phase data no longer change."
     },
     {
       "name": "performance_irq_coverage_dispatch",
@@ -67498,7 +68240,7 @@
     },
     {
       "name": "r4xstart_r4sys_version",
-      "value": "12",
+      "value": "13",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -70005,7 +70747,7 @@
     },
     {
       "name": "r4xstart_r4dev_size",
-      "value": "320",
+      "value": "328",
       "value_type": "u32",
       "unit": "bytes",
       "scope": "r4xstart_r4dev",
@@ -70032,7 +70774,7 @@
     },
     {
       "name": "r4xstart_r4sys_size",
-      "value": "968",
+      "value": "976",
       "value_type": "u32",
       "unit": "bytes",
       "scope": "r4xstart_r4sys",

@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 286,
-    "group_slot_count": 286,
+    "function_count": 288,
+    "group_slot_count": 288,
     "sdk_only_count": 0,
-    "public_count": 207,
-    "advanced_count": 79
+    "public_count": 208,
+    "advanced_count": 80
   },
   "functions": [
     {
@@ -1397,6 +1397,18 @@
       "slot": 118,
       "exposure": "public",
       "description": "Reads the backend-stable monotonic nanosecond instant together with calibrated source and periodic-event metadata without reading the RTC.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.boot_ready",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 119,
+      "exposure": "public",
+      "description": "Lets the active boot shell mark its first usable frame or prompt exactly once; repeated calls by that shell are idempotent.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -3424,7 +3436,7 @@
       "kind": "group_slot",
       "slot": 36,
       "exposure": "advanced",
-      "description": "Returns the calibrated nanosecond timing and explicit availability state for one recorded boot phase.",
+      "description": "Returns the calibrated nanosecond timing and explicit availability state for one recorded boot phase; endpoint clock metadata is frozen after terminal boot completion.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -3437,6 +3449,18 @@
       "slot": 37,
       "exposure": "advanced",
       "description": "Returns IRQ-router dispatch and external-handler nanosecond timing with explicit coverage and observer-read counts.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.performance_boot_summary",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 38,
+      "exposure": "advanced",
+      "description": "Returns the small passive boot completion and frozen timing dataset without collecting broad subsystem summaries.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

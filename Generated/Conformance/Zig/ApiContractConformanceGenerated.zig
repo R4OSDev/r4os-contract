@@ -1174,6 +1174,34 @@ comptime {
     if (@offsetOf(abi.ProgramBootPhaseClockInfo, "unavailable_spans") != 56) @compileError("ProgramBootPhaseClockInfo.unavailable_spans offset");
     if (@offsetOf(abi.ProgramBootPhaseClockInfo, "reserved0") != 60) @compileError("ProgramBootPhaseClockInfo.reserved0 offset");
     if (@offsetOf(abi.ProgramBootPhaseClockInfo, "name") != 64) @compileError("ProgramBootPhaseClockInfo.name offset");
+    if (@sizeOf(abi.ProgramBootPerformanceInfo) != 144) @compileError("ProgramBootPerformanceInfo size");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "version") != 0) @compileError("ProgramBootPerformanceInfo.version offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "size") != 4) @compileError("ProgramBootPerformanceInfo.size offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "state") != 8) @compileError("ProgramBootPerformanceInfo.state offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "completion_reason") != 12) @compileError("ProgramBootPerformanceInfo.completion_reason offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "flags") != 16) @compileError("ProgramBootPerformanceInfo.flags offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "current_phase") != 20) @compileError("ProgramBootPerformanceInfo.current_phase offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "phase_count") != 24) @compileError("ProgramBootPerformanceInfo.phase_count offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "timing_span_count") != 28) @compileError("ProgramBootPerformanceInfo.timing_span_count offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "timing_unavailable_spans") != 32) @compileError("ProgramBootPerformanceInfo.timing_unavailable_spans offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "timing_dropped_spans") != 36) @compileError("ProgramBootPerformanceInfo.timing_dropped_spans offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "clock_flags") != 40) @compileError("ProgramBootPerformanceInfo.clock_flags offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "clock_source") != 44) @compileError("ProgramBootPerformanceInfo.clock_source offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "clock_generation") != 48) @compileError("ProgramBootPerformanceInfo.clock_generation offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "configured_attempts") != 52) @compileError("ProgramBootPerformanceInfo.configured_attempts offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "fallback_attempts") != 56) @compileError("ProgramBootPerformanceInfo.fallback_attempts offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "launch_failures") != 60) @compileError("ProgramBootPerformanceInfo.launch_failures offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "shell_instance_id") != 64) @compileError("ProgramBootPerformanceInfo.shell_instance_id offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "reserved0") != 68) @compileError("ProgramBootPerformanceInfo.reserved0 offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "boot_start_tick") != 72) @compileError("ProgramBootPerformanceInfo.boot_start_tick offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "boot_end_tick") != 80) @compileError("ProgramBootPerformanceInfo.boot_end_tick offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "total_ticks") != 88) @compileError("ProgramBootPerformanceInfo.total_ticks offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "boot_start_ns") != 96) @compileError("ProgramBootPerformanceInfo.boot_start_ns offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "boot_end_ns") != 104) @compileError("ProgramBootPerformanceInfo.boot_end_ns offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "total_ns") != 112) @compileError("ProgramBootPerformanceInfo.total_ns offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "clock_resolution_ns") != 120) @compileError("ProgramBootPerformanceInfo.clock_resolution_ns offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "transition_count") != 128) @compileError("ProgramBootPerformanceInfo.transition_count offset");
+    if (@offsetOf(abi.ProgramBootPerformanceInfo, "reserved1") != 136) @compileError("ProgramBootPerformanceInfo.reserved1 offset");
     if (@sizeOf(abi.ProgramIrqTimingInfo) != 112) @compileError("ProgramIrqTimingInfo size");
     if (@offsetOf(abi.ProgramIrqTimingInfo, "version") != 0) @compileError("ProgramIrqTimingInfo.version offset");
     if (@offsetOf(abi.ProgramIrqTimingInfo, "size") != 4) @compileError("ProgramIrqTimingInfo.size offset");
@@ -2491,7 +2519,7 @@ comptime {
     if (@offsetOf(abi.ProgramInventorySummary, "program_reserved") != 144) @compileError("ProgramInventorySummary.program_reserved offset");
     if (@offsetOf(abi.ProgramInventorySummary, "heap_active_blocks") != 148) @compileError("ProgramInventorySummary.heap_active_blocks offset");
     if (@offsetOf(abi.ProgramInventorySummary, "heap_used_bytes") != 152) @compileError("ProgramInventorySummary.heap_used_bytes offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 968) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 976) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -2727,6 +2755,8 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_module_running) != 8) @compileError("R4SysFns.program_module_running signature");
     if (@offsetOf(abi.R4XStartR4Sys, "monotonic_clock") != 960) @compileError("R4XStartR4Sys.monotonic_clock offset");
     if (@sizeOf(abi.R4SysFns.monotonic_clock) != 8) @compileError("R4SysFns.monotonic_clock signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "boot_ready") != 968) @compileError("R4XStartR4Sys.boot_ready offset");
+    if (@sizeOf(abi.R4SysFns.boot_ready) != 8) @compileError("R4SysFns.boot_ready signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 432) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
@@ -3004,7 +3034,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.opl3_stop) != 8) @compileError("R4AudioFns.opl3_stop signature");
     if (@offsetOf(abi.R4XStartR4Audio, "reserved0") != 168) @compileError("R4XStartR4Audio.reserved0 offset");
     if (@offsetOf(abi.R4XStartR4Audio, "reserved1") != 176) @compileError("R4XStartR4Audio.reserved1 offset");
-    if (@sizeOf(abi.R4XStartR4Dev) != 320) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 328) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -3079,6 +3109,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.performance_boot_phase_clock) != 8) @compileError("R4DevFns.performance_boot_phase_clock signature");
     if (@offsetOf(abi.R4XStartR4Dev, "performance_irq_timing") != 312) @compileError("R4XStartR4Dev.performance_irq_timing offset");
     if (@sizeOf(abi.R4DevFns.performance_irq_timing) != 8) @compileError("R4DevFns.performance_irq_timing signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "performance_boot_summary") != 320) @compileError("R4XStartR4Dev.performance_boot_summary offset");
+    if (@sizeOf(abi.R4DevFns.performance_boot_summary) != 8) @compileError("R4DevFns.performance_boot_summary signature");
 }
 
 test "generated API contract compiles" {}

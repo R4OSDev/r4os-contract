@@ -386,7 +386,7 @@ const ExpectedGroup = struct {
 const phase_a_groups = [_]ExpectedGroup{
     // 110 since 0.60.23/0.60.24 appended slots 111 (path_names_equal_collated)
     // and 112 (file_update_cleanup_checked).
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 116, .reserved = 2, .tombstones = 1 },
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 117, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 51, .reserved = 1, .tombstones = 0 },
@@ -399,7 +399,7 @@ const phase_a_groups = [_]ExpectedGroup{
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 19, .reserved = 2, .tombstones = 0 },
     // R4DEV v6 appends calibrated boot-phase and IRQ timing diagnostics at
     // slots 36..37 while slot 27 remains the frozen storage v1 prefix.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 36, .reserved = 2, .tombstones = 0 },
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 37, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {
