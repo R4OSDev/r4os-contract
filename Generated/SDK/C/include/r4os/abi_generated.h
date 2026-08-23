@@ -857,11 +857,18 @@ extern "C" {
 #define R4OS_PERFORMANCE_PREEMPTION_GATE_MEMORY_PAGING 4u
 #define R4OS_PERFORMANCE_PREEMPTION_GATE_PRODUCTIVE_DISABLED 1u
 #define R4OS_PERFORMANCE_PREEMPTION_GATE_SERVICE_PROGRAM 32u
+#define R4OS_PERFORMANCE_SERVICE_LOCK_FAMILY_ENDPOINT_DATA 4u
+#define R4OS_PERFORMANCE_SERVICE_LOCK_FAMILY_ENDPOINT_LIFECYCLE 3u
+#define R4OS_PERFORMANCE_SERVICE_LOCK_FAMILY_ENDPOINT_SNAPSHOT 6u
+#define R4OS_PERFORMANCE_SERVICE_LOCK_FAMILY_ENDPOINT_WAIT 5u
+#define R4OS_PERFORMANCE_SERVICE_LOCK_FAMILY_REGISTRY_CONTROL 0u
+#define R4OS_PERFORMANCE_SERVICE_LOCK_FAMILY_REGISTRY_LOOKUP 1u
+#define R4OS_PERFORMANCE_SERVICE_LOCK_FAMILY_REGISTRY_SNAPSHOT 2u
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX 2u
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 4u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 6u
 #define R4OS_PROGRAM_COMPLETION_FLAG_DISPLAY_USED 4u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OWNER 8u
@@ -2760,6 +2767,22 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t service_slot_metadata_resets;
     uint64_t service_endpoint_metadata_resets;
     uint64_t service_endpoint_payload_reset_bytes;
+    uint64_t service_queue_scan_passes;
+    uint64_t service_queue_scan_slots;
+    uint64_t service_endpoint_revalidations;
+    uint64_t service_endpoint_stale_rejections;
+    uint32_t service_lock_family_count;
+    uint32_t service_lock_reserved0;
+    uint64_t service_lock_acquisitions[7];
+    uint64_t service_lock_contentions[7];
+    uint64_t service_lock_wait_ns[7];
+    uint64_t service_lock_wait_max_ns[7];
+    uint64_t service_lock_hold_ns[7];
+    uint64_t service_lock_hold_max_ns[7];
+    uint64_t service_lock_timing_unavailable[7];
+    uint32_t service_lock_timing_stride;
+    uint32_t service_lock_timing_reserved0;
+    uint64_t service_lock_timing_samples[7];
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -5482,7 +5505,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 4656u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 5152u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -6161,6 +6184,22 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, service_payload_clear_bytes
 _Static_assert(offsetof(R4ProgramPerformanceSummary, service_slot_metadata_resets) == 4632u, "ProgramPerformanceSummary.service_slot_metadata_resets offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, service_endpoint_metadata_resets) == 4640u, "ProgramPerformanceSummary.service_endpoint_metadata_resets offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, service_endpoint_payload_reset_bytes) == 4648u, "ProgramPerformanceSummary.service_endpoint_payload_reset_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_queue_scan_passes) == 4656u, "ProgramPerformanceSummary.service_queue_scan_passes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_queue_scan_slots) == 4664u, "ProgramPerformanceSummary.service_queue_scan_slots offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_endpoint_revalidations) == 4672u, "ProgramPerformanceSummary.service_endpoint_revalidations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_endpoint_stale_rejections) == 4680u, "ProgramPerformanceSummary.service_endpoint_stale_rejections offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_family_count) == 4688u, "ProgramPerformanceSummary.service_lock_family_count offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_reserved0) == 4692u, "ProgramPerformanceSummary.service_lock_reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_acquisitions) == 4696u, "ProgramPerformanceSummary.service_lock_acquisitions offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_contentions) == 4752u, "ProgramPerformanceSummary.service_lock_contentions offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_wait_ns) == 4808u, "ProgramPerformanceSummary.service_lock_wait_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_wait_max_ns) == 4864u, "ProgramPerformanceSummary.service_lock_wait_max_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_hold_ns) == 4920u, "ProgramPerformanceSummary.service_lock_hold_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_hold_max_ns) == 4976u, "ProgramPerformanceSummary.service_lock_hold_max_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_timing_unavailable) == 5032u, "ProgramPerformanceSummary.service_lock_timing_unavailable offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_timing_stride) == 5088u, "ProgramPerformanceSummary.service_lock_timing_stride offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_timing_reserved0) == 5092u, "ProgramPerformanceSummary.service_lock_timing_reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_lock_timing_samples) == 5096u, "ProgramPerformanceSummary.service_lock_timing_samples offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");
