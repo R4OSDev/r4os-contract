@@ -1619,6 +1619,7 @@ pub const ServiceInfo = generated.ServiceInfo;
 pub const ServiceDetail = generated.ServiceDetail;
 pub const ServiceMessageHeader = generated.ServiceMessageHeader;
 pub const IpcSummary = generated.IpcSummary;
+pub const IpcPerformanceSummary = generated.IpcPerformanceSummary;
 pub const IpcChannelInfo = generated.IpcChannelInfo;
 pub const TcpSummary = generated.TcpSummary;
 pub const TcpConnectionInfo = generated.TcpConnectionInfo;

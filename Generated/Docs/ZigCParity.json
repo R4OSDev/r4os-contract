@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 288,
+    "group_function_signatures": 290,
     "sdk_operation_contracts": 0,
-    "parity_entries": 288,
+    "parity_entries": 290,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2096,6 +2096,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4NetFns.serial_link_inbox",
       "c_contract": "R4NetSerialLinkInboxFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4NET.net_service_request",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4NetFns.net_service_request",
+      "c_contract": "R4NetNetServiceRequestFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4NET.ipc_performance",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4NetFns.ipc_performance",
+      "c_contract": "R4NetIpcPerformanceFn",
       "coverage": "generated_signature"
     },
     {

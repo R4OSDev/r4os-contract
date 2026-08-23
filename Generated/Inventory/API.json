@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 288,
-    "group_slot_count": 288,
+    "function_count": 290,
+    "group_slot_count": 290,
     "sdk_only_count": 0,
     "public_count": 208,
-    "advanced_count": 80
+    "advanced_count": 82
   },
   "functions": [
     {
@@ -2789,6 +2789,30 @@
       "slot": 31,
       "exposure": "advanced",
       "description": "Reads one message from the serial-link inbox.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4NET.net_service_request",
+      "group": "R4NET",
+      "kind": "group_slot",
+      "slot": 32,
+      "exposure": "advanced",
+      "description": "Runs one network-service request through the generation-bound kernel channel worker and returns only its matching response.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4NET.ipc_performance",
+      "group": "R4NET",
+      "kind": "group_slot",
+      "slot": 33,
+      "exposure": "advanced",
+      "description": "Returns append-only kernel-channel worker, byte-work, queue, wait and timing counters for one channel or channel zero for the aggregate.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

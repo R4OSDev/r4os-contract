@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 111 von 111 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 112 von 112 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 61; Konstanten: 1175; Limits: 94
 
@@ -86,6 +86,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ServiceDetail` | fixed_layout | extern_struct | 520/8 | 520/8 | 520/8 | 520/8 |
 | `ServiceMessageHeader` | fixed_layout | extern_struct | 28/4 | 28/4 | 28/4 | 28/4 |
 | `IpcSummary` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `IpcPerformanceSummary` | extensible | extern_struct | 240/8 | 240/8 | 240/8 | 240/8 |
 | `IpcChannelInfo` | fixed_layout | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `TcpSummary` | fixed_layout | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 | `TcpConnectionInfo` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
@@ -2529,6 +2530,51 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `drops` | 32 | 8 | 8 | `u64` | - |
 | `errors` | 40 | 8 | 8 | `u64` | - |
 | `echo_tests` | 48 | 8 | 8 | `u64` | - |
+
+### `IpcPerformanceSummary`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 240 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `worker_started` | 8 | 4 | 4 | `u32` | - |
+| `worker_task_id` | 12 | 4 | 4 | `u32` | - |
+| `active_channels` | 16 | 4 | 4 | `u32` | - |
+| `queue_used` | 20 | 4 | 4 | `u32` | - |
+| `queue_ready` | 24 | 4 | 4 | `u32` | - |
+| `queue_running` | 28 | 4 | 4 | `u32` | - |
+| `queue_limit` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `handler_queued` | 40 | 8 | 8 | `u64` | - |
+| `handler_completed` | 48 | 8 | 8 | `u64` | - |
+| `handler_failures` | 56 | 8 | 8 | `u64` | - |
+| `handler_direct` | 64 | 8 | 8 | `u64` | - |
+| `handler_waits` | 72 | 8 | 8 | `u64` | - |
+| `handler_wait_timeouts` | 80 | 8 | 8 | `u64` | - |
+| `handler_queue_ns` | 88 | 8 | 8 | `u64` | - |
+| `handler_queue_max_ns` | 96 | 8 | 8 | `u64` | - |
+| `handler_run_ns` | 104 | 8 | 8 | `u64` | - |
+| `handler_run_max_ns` | 112 | 8 | 8 | `u64` | - |
+| `handler_e2e_ns` | 120 | 8 | 8 | `u64` | - |
+| `handler_e2e_max_ns` | 128 | 8 | 8 | `u64` | - |
+| `request_bytes` | 136 | 8 | 8 | `u64` | - |
+| `response_bytes` | 144 | 8 | 8 | `u64` | - |
+| `payload_copy_bytes` | 152 | 8 | 8 | `u64` | - |
+| `payload_clear_bytes` | 160 | 8 | 8 | `u64` | - |
+| `queue_full` | 168 | 8 | 8 | `u64` | - |
+| `queue_empty` | 176 | 8 | 8 | `u64` | - |
+| `admission_waits` | 184 | 8 | 8 | `u64` | - |
+| `admission_timeouts` | 192 | 8 | 8 | `u64` | - |
+| `recv_buffer_small` | 200 | 8 | 8 | `u64` | - |
+| `response_search_slots` | 208 | 8 | 8 | `u64` | - |
+| `stale_drops` | 216 | 8 | 8 | `u64` | - |
+| `lock_contentions` | 224 | 8 | 8 | `u64` | - |
+| `irq_denied` | 232 | 8 | 8 | `u64` | - |
 
 ### `IpcChannelInfo`
 

@@ -5,6 +5,7 @@ const default_baseline_path = "API/ApiContract.baseline.json";
 const default_payload_reference_path = "Generated/Docs/PayloadTypes.md";
 const default_zig_abi_path = "Generated/SDK/Zig/abi_generated.zig";
 const default_zig_exports_path = "Generated/SDK/Zig/abi_exports.zig";
+const default_zig_facade_path = "Generated/SDK/Zig/abi.zig";
 const default_kernel_abi_path = "Generated/Kernel/Zig/r4x_api_generated.zig";
 const default_kernel_exports_path = "Generated/Kernel/Zig/r4x_api_exports.zig";
 const default_c_abi_path = "Generated/SDK/C/include/r4os/abi_generated.h";
@@ -395,7 +396,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // font-neutral hosted Alpha8 coverage-mask transport, and 0.62.43 adds
     // transactional frame lifecycle, batch append, info and snapshot slots 26..31.
     .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 32, .reserved = 0, .tombstones = 0 },
-    .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 32, .reserved = 2, .tombstones = 0 },
+    // 0.69.12 activates the two preallocated R4NET extension slots for the
+    // generation-bound service request path and its kernel-channel telemetry.
+    .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 34, .reserved = 0, .tombstones = 0 },
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 19, .reserved = 2, .tombstones = 0 },
     // R4DEV v6 appends calibrated boot-phase and IRQ timing diagnostics at
     // slots 36..37 while slot 27 remains the frozen storage v1 prefix.
@@ -1498,6 +1501,11 @@ fn checkGeneratedOutputs(io: std.Io, cwd: std.Io.Dir, allocator: std.mem.Allocat
     const api_inventory = try renderApiInventory(allocator, contract);
     defer allocator.free(api_inventory);
     try checkExactFile(io, cwd, allocator, default_api_inventory_path, api_inventory, error.ApiInventoryDrift);
+    const zig_exports = try renderZigExports(allocator, contract);
+    defer allocator.free(zig_exports);
+    const zig_facade = try cwd.readFileAlloc(io, default_zig_facade_path, allocator, .limited(max_contract_bytes));
+    defer allocator.free(zig_facade);
+    try checkGeneratedFacade(zig_facade, zig_exports, zig_exports_begin, zig_exports_end);
     const start_doc_bytes = try cwd.readFileAlloc(io, options.start_doc_path, allocator, .limited(max_contract_bytes));
     defer allocator.free(start_doc_bytes);
     try checkGeneratedFacade(start_doc_bytes, start_doc, start_doc_begin, start_doc_end);
@@ -1533,6 +1541,9 @@ fn writeGeneratedOutputs(io: std.Io, cwd: std.Io.Dir, allocator: std.mem.Allocat
     const api_inventory = try renderApiInventory(allocator, contract);
     defer allocator.free(api_inventory);
     try cwd.writeFile(io, .{ .sub_path = default_api_inventory_path, .data = api_inventory });
+    const zig_exports = try renderZigExports(allocator, contract);
+    defer allocator.free(zig_exports);
+    try writeGeneratedFacade(io, cwd, allocator, default_zig_facade_path, zig_exports, zig_exports_begin, zig_exports_end);
     try writeGeneratedFacade(io, cwd, allocator, options.start_doc_path, start_doc, start_doc_begin, start_doc_end);
     try writeGeneratedFacade(io, cwd, allocator, options.r4l_contract_path, r4l_contract, r4l_contract_begin, r4l_contract_end);
     for (contract.groups) |group| {

@@ -3591,6 +3591,44 @@ pub const IpcSummary = extern struct {
     echo_tests: u64 = 0,
 };
 
+pub const IpcPerformanceSummary = extern struct {
+    version: u32 = 1,
+    size: u32 = 240,
+    worker_started: u32 = 0,
+    worker_task_id: u32 = 0,
+    active_channels: u32 = 0,
+    queue_used: u32 = 0,
+    queue_ready: u32 = 0,
+    queue_running: u32 = 0,
+    queue_limit: u32 = 0,
+    reserved0: u32 = 0,
+    handler_queued: u64 = 0,
+    handler_completed: u64 = 0,
+    handler_failures: u64 = 0,
+    handler_direct: u64 = 0,
+    handler_waits: u64 = 0,
+    handler_wait_timeouts: u64 = 0,
+    handler_queue_ns: u64 = 0,
+    handler_queue_max_ns: u64 = 0,
+    handler_run_ns: u64 = 0,
+    handler_run_max_ns: u64 = 0,
+    handler_e2e_ns: u64 = 0,
+    handler_e2e_max_ns: u64 = 0,
+    request_bytes: u64 = 0,
+    response_bytes: u64 = 0,
+    payload_copy_bytes: u64 = 0,
+    payload_clear_bytes: u64 = 0,
+    queue_full: u64 = 0,
+    queue_empty: u64 = 0,
+    admission_waits: u64 = 0,
+    admission_timeouts: u64 = 0,
+    recv_buffer_small: u64 = 0,
+    response_search_slots: u64 = 0,
+    stale_drops: u64 = 0,
+    lock_contentions: u64 = 0,
+    irq_denied: u64 = 0,
+};
+
 pub const IpcChannelInfo = extern struct {
     id: u32 = 0,
     active: u32 = 0,
@@ -4849,6 +4887,8 @@ pub const R4NetFns = struct {
     pub const serial_link_send_message = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const serial_link_host_test = *const fn () callconv(.c) i32;
     pub const serial_link_inbox = *const fn (*SerialLinkMessage) callconv(.c) i32;
+    pub const net_service_request = *const fn (u32, u16, u32, u16, [*]const u8, u32, [*]u8, u32) callconv(.c) i32;
+    pub const ipc_performance = *const fn (u32, *IpcPerformanceSummary) callconv(.c) i32;
 };
 
 pub const R4XStartR4Net = extern struct {
@@ -4888,8 +4928,8 @@ pub const R4XStartR4Net = extern struct {
     serial_link_send_message: usize = 0,
     serial_link_host_test: usize = 0,
     serial_link_inbox: usize = 0,
-    reserved0: usize = 0,
-    reserved1: usize = 0,
+    net_service_request: usize = 0,
+    ipc_performance: usize = 0,
 };
 
 pub const R4AudioFns = struct {
@@ -5277,8 +5317,8 @@ pub const R4NetSlots = [_]R4ApiSlotMeta{
     .{ .number = 29, .offset = 248, .name = "serial_link_send_message", .state = .function, .required = false },
     .{ .number = 30, .offset = 256, .name = "serial_link_host_test", .state = .function, .required = false },
     .{ .number = 31, .offset = 264, .name = "serial_link_inbox", .state = .function, .required = false },
-    .{ .number = 32, .offset = 272, .name = "reserved0", .state = .reserved, .required = false },
-    .{ .number = 33, .offset = 280, .name = "reserved1", .state = .reserved, .required = false },
+    .{ .number = 32, .offset = 272, .name = "net_service_request", .state = .function, .required = false },
+    .{ .number = 33, .offset = 280, .name = "ipc_performance", .state = .function, .required = false },
 };
 
 pub const R4AudioSlots = [_]R4ApiSlotMeta{
@@ -7261,6 +7301,43 @@ comptime {
     if (@offsetOf(IpcSummary, "drops") != 32) @compileError("generated ABI offset drift: IpcSummary.drops");
     if (@offsetOf(IpcSummary, "errors") != 40) @compileError("generated ABI offset drift: IpcSummary.errors");
     if (@offsetOf(IpcSummary, "echo_tests") != 48) @compileError("generated ABI offset drift: IpcSummary.echo_tests");
+    if (@sizeOf(IpcPerformanceSummary) != 240) @compileError("generated ABI size drift: IpcPerformanceSummary");
+    if (@alignOf(IpcPerformanceSummary) != 8) @compileError("generated ABI alignment drift: IpcPerformanceSummary");
+    if (@offsetOf(IpcPerformanceSummary, "version") != 0) @compileError("generated ABI offset drift: IpcPerformanceSummary.version");
+    if (@offsetOf(IpcPerformanceSummary, "size") != 4) @compileError("generated ABI offset drift: IpcPerformanceSummary.size");
+    if (@offsetOf(IpcPerformanceSummary, "worker_started") != 8) @compileError("generated ABI offset drift: IpcPerformanceSummary.worker_started");
+    if (@offsetOf(IpcPerformanceSummary, "worker_task_id") != 12) @compileError("generated ABI offset drift: IpcPerformanceSummary.worker_task_id");
+    if (@offsetOf(IpcPerformanceSummary, "active_channels") != 16) @compileError("generated ABI offset drift: IpcPerformanceSummary.active_channels");
+    if (@offsetOf(IpcPerformanceSummary, "queue_used") != 20) @compileError("generated ABI offset drift: IpcPerformanceSummary.queue_used");
+    if (@offsetOf(IpcPerformanceSummary, "queue_ready") != 24) @compileError("generated ABI offset drift: IpcPerformanceSummary.queue_ready");
+    if (@offsetOf(IpcPerformanceSummary, "queue_running") != 28) @compileError("generated ABI offset drift: IpcPerformanceSummary.queue_running");
+    if (@offsetOf(IpcPerformanceSummary, "queue_limit") != 32) @compileError("generated ABI offset drift: IpcPerformanceSummary.queue_limit");
+    if (@offsetOf(IpcPerformanceSummary, "reserved0") != 36) @compileError("generated ABI offset drift: IpcPerformanceSummary.reserved0");
+    if (@offsetOf(IpcPerformanceSummary, "handler_queued") != 40) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_queued");
+    if (@offsetOf(IpcPerformanceSummary, "handler_completed") != 48) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_completed");
+    if (@offsetOf(IpcPerformanceSummary, "handler_failures") != 56) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_failures");
+    if (@offsetOf(IpcPerformanceSummary, "handler_direct") != 64) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_direct");
+    if (@offsetOf(IpcPerformanceSummary, "handler_waits") != 72) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_waits");
+    if (@offsetOf(IpcPerformanceSummary, "handler_wait_timeouts") != 80) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_wait_timeouts");
+    if (@offsetOf(IpcPerformanceSummary, "handler_queue_ns") != 88) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_queue_ns");
+    if (@offsetOf(IpcPerformanceSummary, "handler_queue_max_ns") != 96) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_queue_max_ns");
+    if (@offsetOf(IpcPerformanceSummary, "handler_run_ns") != 104) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_run_ns");
+    if (@offsetOf(IpcPerformanceSummary, "handler_run_max_ns") != 112) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_run_max_ns");
+    if (@offsetOf(IpcPerformanceSummary, "handler_e2e_ns") != 120) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_e2e_ns");
+    if (@offsetOf(IpcPerformanceSummary, "handler_e2e_max_ns") != 128) @compileError("generated ABI offset drift: IpcPerformanceSummary.handler_e2e_max_ns");
+    if (@offsetOf(IpcPerformanceSummary, "request_bytes") != 136) @compileError("generated ABI offset drift: IpcPerformanceSummary.request_bytes");
+    if (@offsetOf(IpcPerformanceSummary, "response_bytes") != 144) @compileError("generated ABI offset drift: IpcPerformanceSummary.response_bytes");
+    if (@offsetOf(IpcPerformanceSummary, "payload_copy_bytes") != 152) @compileError("generated ABI offset drift: IpcPerformanceSummary.payload_copy_bytes");
+    if (@offsetOf(IpcPerformanceSummary, "payload_clear_bytes") != 160) @compileError("generated ABI offset drift: IpcPerformanceSummary.payload_clear_bytes");
+    if (@offsetOf(IpcPerformanceSummary, "queue_full") != 168) @compileError("generated ABI offset drift: IpcPerformanceSummary.queue_full");
+    if (@offsetOf(IpcPerformanceSummary, "queue_empty") != 176) @compileError("generated ABI offset drift: IpcPerformanceSummary.queue_empty");
+    if (@offsetOf(IpcPerformanceSummary, "admission_waits") != 184) @compileError("generated ABI offset drift: IpcPerformanceSummary.admission_waits");
+    if (@offsetOf(IpcPerformanceSummary, "admission_timeouts") != 192) @compileError("generated ABI offset drift: IpcPerformanceSummary.admission_timeouts");
+    if (@offsetOf(IpcPerformanceSummary, "recv_buffer_small") != 200) @compileError("generated ABI offset drift: IpcPerformanceSummary.recv_buffer_small");
+    if (@offsetOf(IpcPerformanceSummary, "response_search_slots") != 208) @compileError("generated ABI offset drift: IpcPerformanceSummary.response_search_slots");
+    if (@offsetOf(IpcPerformanceSummary, "stale_drops") != 216) @compileError("generated ABI offset drift: IpcPerformanceSummary.stale_drops");
+    if (@offsetOf(IpcPerformanceSummary, "lock_contentions") != 224) @compileError("generated ABI offset drift: IpcPerformanceSummary.lock_contentions");
+    if (@offsetOf(IpcPerformanceSummary, "irq_denied") != 232) @compileError("generated ABI offset drift: IpcPerformanceSummary.irq_denied");
     if (@sizeOf(IpcChannelInfo) != 88) @compileError("generated ABI size drift: IpcChannelInfo");
     if (@alignOf(IpcChannelInfo) != 8) @compileError("generated ABI alignment drift: IpcChannelInfo");
     if (@offsetOf(IpcChannelInfo, "id") != 0) @compileError("generated ABI offset drift: IpcChannelInfo.id");
@@ -8246,8 +8323,8 @@ comptime {
     if (@offsetOf(R4XStartR4Net, "serial_link_send_message") != 248) @compileError("generated ABI offset drift: R4XStartR4Net.serial_link_send_message");
     if (@offsetOf(R4XStartR4Net, "serial_link_host_test") != 256) @compileError("generated ABI offset drift: R4XStartR4Net.serial_link_host_test");
     if (@offsetOf(R4XStartR4Net, "serial_link_inbox") != 264) @compileError("generated ABI offset drift: R4XStartR4Net.serial_link_inbox");
-    if (@offsetOf(R4XStartR4Net, "reserved0") != 272) @compileError("generated ABI offset drift: R4XStartR4Net.reserved0");
-    if (@offsetOf(R4XStartR4Net, "reserved1") != 280) @compileError("generated ABI offset drift: R4XStartR4Net.reserved1");
+    if (@offsetOf(R4XStartR4Net, "net_service_request") != 272) @compileError("generated ABI offset drift: R4XStartR4Net.net_service_request");
+    if (@offsetOf(R4XStartR4Net, "ipc_performance") != 280) @compileError("generated ABI offset drift: R4XStartR4Net.ipc_performance");
     if (@sizeOf(R4XStartR4Audio) != 184) @compileError("generated ABI size drift: R4XStartR4Audio");
     if (@offsetOf(R4XStartR4Audio, "audio_open_stream") != 16) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_open_stream");
     if (@offsetOf(R4XStartR4Audio, "audio_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_write");
