@@ -400,9 +400,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // generation-bound service request path and its kernel-channel telemetry.
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 34, .reserved = 0, .tombstones = 0 },
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 19, .reserved = 2, .tombstones = 0 },
-    // R4DEV v8 extends the passive performance tail through slot 39 with the
-    // compact owner-selectable driver-work snapshot; slot 27 remains frozen.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 38, .reserved = 2, .tombstones = 0 },
+    // R4DEV v9 extends the passive performance tail through slot 40 with the
+    // compact canonical PCI inventory snapshot; slot 27 remains frozen.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 39, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {

@@ -2710,6 +2710,46 @@ comptime {
     if (@offsetOf(abi.ProgramDriverWorkPerformanceInfo, "owner_waiters_max") != 156) @compileError("ProgramDriverWorkPerformanceInfo.owner_waiters_max offset");
     if (@offsetOf(abi.ProgramDriverWorkPerformanceInfo, "long_callback_threshold_ns") != 160) @compileError("ProgramDriverWorkPerformanceInfo.long_callback_threshold_ns offset");
     if (@offsetOf(abi.ProgramDriverWorkPerformanceInfo, "metrics") != 168) @compileError("ProgramDriverWorkPerformanceInfo.metrics offset");
+    if (@sizeOf(abi.ProgramPciInventoryPerformanceInfo) != 280) @compileError("ProgramPciInventoryPerformanceInfo size");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "version") != 0) @compileError("ProgramPciInventoryPerformanceInfo.version offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "size") != 4) @compileError("ProgramPciInventoryPerformanceInfo.size offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "flags") != 8) @compileError("ProgramPciInventoryPerformanceInfo.flags offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "generation") != 12) @compileError("ProgramPciInventoryPerformanceInfo.generation offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "capacity") != 16) @compileError("ProgramPciInventoryPerformanceInfo.capacity offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "mcfg_segment") != 20) @compileError("ProgramPciInventoryPerformanceInfo.mcfg_segment offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "mcfg_start_bus") != 24) @compileError("ProgramPciInventoryPerformanceInfo.mcfg_start_bus offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "mcfg_end_bus") != 28) @compileError("ProgramPciInventoryPerformanceInfo.mcfg_end_bus offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "found") != 32) @compileError("ProgramPciInventoryPerformanceInfo.found offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "stored") != 40) @compileError("ProgramPciInventoryPerformanceInfo.stored offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "dropped") != 48) @compileError("ProgramPciInventoryPerformanceInfo.dropped offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "ecam_stored") != 56) @compileError("ProgramPciInventoryPerformanceInfo.ecam_stored offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "legacy_stored") != 64) @compileError("ProgramPciInventoryPerformanceInfo.legacy_stored offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "vendor_probes_ecam") != 72) @compileError("ProgramPciInventoryPerformanceInfo.vendor_probes_ecam offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "vendor_probes_legacy") != 80) @compileError("ProgramPciInventoryPerformanceInfo.vendor_probes_legacy offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "class_reads") != 88) @compileError("ProgramPciInventoryPerformanceInfo.class_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "header_reads") != 96) @compileError("ProgramPciInventoryPerformanceInfo.header_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "enumeration_config_reads") != 104) @compileError("ProgramPciInventoryPerformanceInfo.enumeration_config_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "function_pages") != 112) @compileError("ProgramPciInventoryPerformanceInfo.function_pages offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "early_stops") != 120) @compileError("ProgramPciInventoryPerformanceInfo.early_stops offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "ecam_config_reads") != 128) @compileError("ProgramPciInventoryPerformanceInfo.ecam_config_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "ecam_config_writes") != 136) @compileError("ProgramPciInventoryPerformanceInfo.ecam_config_writes offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "legacy_config_reads") != 144) @compileError("ProgramPciInventoryPerformanceInfo.legacy_config_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "legacy_config_writes") != 152) @compileError("ProgramPciInventoryPerformanceInfo.legacy_config_writes offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "mapping_checks") != 160) @compileError("ProgramPciInventoryPerformanceInfo.mapping_checks offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "mapping_hits") != 168) @compileError("ProgramPciInventoryPerformanceInfo.mapping_hits offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "mapping_misses") != 176) @compileError("ProgramPciInventoryPerformanceInfo.mapping_misses offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "mapping_fast_accesses") != 184) @compileError("ProgramPciInventoryPerformanceInfo.mapping_fast_accesses offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "invalid_accesses") != 192) @compileError("ProgramPciInventoryPerformanceInfo.invalid_accesses offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "class_find_calls") != 200) @compileError("ProgramPciInventoryPerformanceInfo.class_find_calls offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "class_candidates") != 208) @compileError("ProgramPciInventoryPerformanceInfo.class_candidates offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "detail_materializations") != 216) @compileError("ProgramPciInventoryPerformanceInfo.detail_materializations offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "interrupt_dword_reads") != 224) @compileError("ProgramPciInventoryPerformanceInfo.interrupt_dword_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "command_reads") != 232) @compileError("ProgramPciInventoryPerformanceInfo.command_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "bar_reads") != 240) @compileError("ProgramPciInventoryPerformanceInfo.bar_reads offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "enumeration_total_ns") != 248) @compileError("ProgramPciInventoryPerformanceInfo.enumeration_total_ns offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "ecam_enumeration_ns") != 256) @compileError("ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "legacy_enumeration_ns") != 264) @compileError("ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns offset");
+    if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "timing_unavailable") != 272) @compileError("ProgramPciInventoryPerformanceInfo.timing_unavailable offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 976) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -3227,7 +3267,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.opl3_stop) != 8) @compileError("R4AudioFns.opl3_stop signature");
     if (@offsetOf(abi.R4XStartR4Audio, "reserved0") != 168) @compileError("R4XStartR4Audio.reserved0 offset");
     if (@offsetOf(abi.R4XStartR4Audio, "reserved1") != 176) @compileError("R4XStartR4Audio.reserved1 offset");
-    if (@sizeOf(abi.R4XStartR4Dev) != 336) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 344) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -3306,6 +3346,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.performance_boot_summary) != 8) @compileError("R4DevFns.performance_boot_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "performance_driver_work") != 328) @compileError("R4XStartR4Dev.performance_driver_work offset");
     if (@sizeOf(abi.R4DevFns.performance_driver_work) != 8) @compileError("R4DevFns.performance_driver_work signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "performance_pci_inventory") != 336) @compileError("R4XStartR4Dev.performance_pci_inventory offset");
+    if (@sizeOf(abi.R4DevFns.performance_pci_inventory) != 8) @compileError("R4DevFns.performance_pci_inventory signature");
 }
 
 test "generated API contract compiles" {}

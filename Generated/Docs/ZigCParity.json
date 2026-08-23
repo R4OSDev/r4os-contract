@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 291,
+    "group_function_signatures": 292,
     "sdk_operation_contracts": 0,
-    "parity_entries": 291,
+    "parity_entries": 292,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2627,6 +2627,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.performance_driver_work",
       "c_contract": "R4DevPerformanceDriverWorkFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.performance_pci_inventory",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.performance_pci_inventory",
+      "c_contract": "R4DevPerformancePciInventoryFn",
       "coverage": "generated_signature"
     }
   ],

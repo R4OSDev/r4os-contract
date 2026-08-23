@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 114 von 114 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 115 von 115 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1175; Limits: 94
+- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1175; Limits: 102
 
 ## App-Profile
 
@@ -135,6 +135,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramInventorySummary` | extensible | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 | `ProgramDriverWorkPerformanceMetrics` | fixed_layout | extern_struct | 640/8 | 640/8 | 640/8 | 640/8 |
 | `ProgramDriverWorkPerformanceInfo` | extensible | extern_struct | 808/8 | 808/8 | 808/8 | 808/8 |
+| `ProgramPciInventoryPerformanceInfo` | extensible | extern_struct | 280/8 | 280/8 | 280/8 | 280/8 |
 
 ## Typdetails
 
@@ -3833,6 +3834,55 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `long_callback_threshold_ns` | 160 | 8 | 8 | `u64` | - |
 | `metrics` | 168 | 640 | 8 | `r4os.abi.ProgramDriverWorkPerformanceMetrics` | - |
 
+### `ProgramPciInventoryPerformanceInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 280 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `generation` | 12 | 4 | 4 | `u32` | - |
+| `capacity` | 16 | 4 | 4 | `u32` | - |
+| `mcfg_segment` | 20 | 4 | 4 | `u32` | - |
+| `mcfg_start_bus` | 24 | 4 | 4 | `u32` | - |
+| `mcfg_end_bus` | 28 | 4 | 4 | `u32` | - |
+| `found` | 32 | 8 | 8 | `u64` | - |
+| `stored` | 40 | 8 | 8 | `u64` | - |
+| `dropped` | 48 | 8 | 8 | `u64` | - |
+| `ecam_stored` | 56 | 8 | 8 | `u64` | - |
+| `legacy_stored` | 64 | 8 | 8 | `u64` | - |
+| `vendor_probes_ecam` | 72 | 8 | 8 | `u64` | - |
+| `vendor_probes_legacy` | 80 | 8 | 8 | `u64` | - |
+| `class_reads` | 88 | 8 | 8 | `u64` | - |
+| `header_reads` | 96 | 8 | 8 | `u64` | - |
+| `enumeration_config_reads` | 104 | 8 | 8 | `u64` | - |
+| `function_pages` | 112 | 8 | 8 | `u64` | - |
+| `early_stops` | 120 | 8 | 8 | `u64` | - |
+| `ecam_config_reads` | 128 | 8 | 8 | `u64` | - |
+| `ecam_config_writes` | 136 | 8 | 8 | `u64` | - |
+| `legacy_config_reads` | 144 | 8 | 8 | `u64` | - |
+| `legacy_config_writes` | 152 | 8 | 8 | `u64` | - |
+| `mapping_checks` | 160 | 8 | 8 | `u64` | - |
+| `mapping_hits` | 168 | 8 | 8 | `u64` | - |
+| `mapping_misses` | 176 | 8 | 8 | `u64` | - |
+| `mapping_fast_accesses` | 184 | 8 | 8 | `u64` | - |
+| `invalid_accesses` | 192 | 8 | 8 | `u64` | - |
+| `class_find_calls` | 200 | 8 | 8 | `u64` | - |
+| `class_candidates` | 208 | 8 | 8 | `u64` | - |
+| `detail_materializations` | 216 | 8 | 8 | `u64` | - |
+| `interrupt_dword_reads` | 224 | 8 | 8 | `u64` | - |
+| `command_reads` | 232 | 8 | 8 | `u64` | - |
+| `bar_reads` | 240 | 8 | 8 | `u64` | - |
+| `enumeration_total_ns` | 248 | 8 | 8 | `u64` | - |
+| `ecam_enumeration_ns` | 256 | 8 | 8 | `u64` | - |
+| `legacy_enumeration_ns` | 264 | 8 | 8 | `u64` | - |
+| `timing_unavailable` | 272 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -5725,6 +5775,14 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `clipboard_max_text_bytes` | `4095` | `u32` | bytes | `clipboard_max` | fixed_contract |
 | `console_output_capacity` | `16384` | `u32` | bytes | `console_output` | fixed_contract |
 | `driver_work_queue_capacity` | `16` | `u32` | bytes | `driver_work` | fixed_contract |
+| `pci_inventory_capacity` | `64` | `u32` | count | `pci_inventory` | fixed_contract |
+| `pci_inventory_flag_enumerated` | `1` | `u32` | bitmask | `pci_inventory` | fixed_contract |
+| `pci_inventory_flag_ecam` | `2` | `u32` | bitmask | `pci_inventory` | fixed_contract |
+| `pci_inventory_flag_legacy` | `4` | `u32` | bitmask | `pci_inventory` | fixed_contract |
+| `pci_inventory_flag_partial` | `8` | `u32` | bitmask | `pci_inventory` | fixed_contract |
+| `pci_inventory_flag_truncated` | `16` | `u32` | bitmask | `pci_inventory` | fixed_contract |
+| `pci_inventory_flag_ecam_aperture_ready` | `32` | `u32` | bitmask | `pci_inventory` | fixed_contract |
+| `pci_inventory_flag_ecam_rejected_segment` | `64` | `u32` | bitmask | `pci_inventory` | fixed_contract |
 | `environment_block_max` | `2048` | `usize` | count | `environment_block` | fixed_contract |
 | `environment_name_max` | `32` | `usize` | count | `environment_name` | fixed_contract |
 | `environment_value_max` | `512` | `usize` | count | `environment_value` | fixed_contract |
@@ -5782,7 +5840,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `r4xstart_import_size` | `40` | `u32` | bytes | `r4xstart_import` | fixed_contract |
 | `r4xstart_r4audio_size` | `184` | `u32` | bytes | `r4xstart_r4audio` | fixed_contract |
 | `r4xstart_r4desk_size` | `432` | `u32` | bytes | `r4xstart_r4desk` | fixed_contract |
-| `r4xstart_r4dev_size` | `336` | `u32` | bytes | `r4xstart_r4dev` | fixed_contract |
+| `r4xstart_r4dev_size` | `344` | `u32` | bytes | `r4xstart_r4dev` | fixed_contract |
 | `r4xstart_r4draw_size` | `272` | `u32` | bytes | `r4xstart_r4draw` | fixed_contract |
 | `r4xstart_r4net_size` | `288` | `u32` | bytes | `r4xstart_r4net` | fixed_contract |
 | `r4xstart_r4sys_size` | `976` | `u32` | bytes | `r4xstart_r4sys` | fixed_contract |

@@ -294,5 +294,6 @@ static R4DevPerformanceBootPhaseClockFn r4os_probe_r4dev_performance_boot_phase_
 static R4DevPerformanceIrqTimingFn r4os_probe_r4dev_performance_irq_timing = (R4DevPerformanceIrqTimingFn)0;
 static R4DevPerformanceBootSummaryFn r4os_probe_r4dev_performance_boot_summary = (R4DevPerformanceBootSummaryFn)0;
 static R4DevPerformanceDriverWorkFn r4os_probe_r4dev_performance_driver_work = (R4DevPerformanceDriverWorkFn)0;
+static R4DevPerformancePciInventoryFn r4os_probe_r4dev_performance_pci_inventory = (R4DevPerformancePciInventoryFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

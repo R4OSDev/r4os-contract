@@ -18499,10 +18499,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 8,
+      "abi_version": 9,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 336,
+      "size": 344,
       "slots": [
         {
           "number": 0,
@@ -21205,6 +21205,65 @@
                   "child": {
                     "kind": "named",
                     "name": "ProgramDriverWorkPerformanceInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 40,
+          "offset": 336,
+          "name": "performance_pci_inventory",
+          "state": "function",
+          "required": false,
+          "description": "Returns the compact canonical PCI inventory coverage, bounded-enumeration, config-access, mapping and consumer-materialization counters.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramPciInventoryPerformanceInfo"
                   },
                   "direction": "output",
                   "nullable": false,
@@ -59098,6 +59157,567 @@
       ],
       "values": [],
       "description": "Versioned compact driver-work queue snapshot; owner zero selects aggregate counters and owners 1 through 16 select exact registry-owner counters."
+    },
+    {
+      "name": "ProgramPciInventoryPerformanceInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 280,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "PCI inventory snapshot field version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "PCI inventory snapshot byte size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "280"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Canonical inventory source, coverage, truncation and ECAM readiness flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Canonical inventory generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum number of retained PCI functions.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "mcfg_segment",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "MCFG segment advertised for the ECAM aperture.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mcfg_start_bus",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "First bus covered by the MCFG ECAM aperture.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mcfg_end_bus",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last bus covered by the MCFG ECAM aperture.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "found",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "PCI functions observed before a bounded capacity stop.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stored",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "PCI functions retained in the canonical inventory.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dropped",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Observed PCI functions not retained because capacity was exhausted.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ecam_stored",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Retained functions discovered through ECAM.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "legacy_stored",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Retained functions discovered through legacy configuration I/O.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vendor_probes_ecam",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Vendor probes issued through ECAM during enumeration.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vendor_probes_legacy",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Vendor probes issued through legacy configuration I/O during enumeration.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "class_reads",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Class-code dword reads issued during enumeration.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "header_reads",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Header-type dword reads issued during enumeration.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "enumeration_config_reads",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Total configuration dword reads issued by canonical enumeration.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "function_pages",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Function locations probed for a vendor ID during enumeration.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "early_stops",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bounded enumeration stops caused by exhausted retained capacity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ecam_config_reads",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cumulative ECAM configuration dword reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ecam_config_writes",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cumulative ECAM configuration dword writes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "legacy_config_reads",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cumulative legacy configuration dword reads since canonical enumeration began.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "legacy_config_writes",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cumulative legacy configuration writes since canonical enumeration began.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mapping_checks",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "ECAM mapping validation checks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mapping_hits",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful ECAM mapping validation checks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mapping_misses",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Failed ECAM mapping validation checks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mapping_fast_accesses",
+          "offset": 184,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "ECAM accesses served by the once-validated aperture fast path.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "invalid_accesses",
+          "offset": 192,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Rejected ECAM configuration accesses.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "class_find_calls",
+          "offset": 200,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Static canonical inventory class-search calls.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "class_candidates",
+          "offset": 208,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Retained inventory candidates inspected by static class searches.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "detail_materializations",
+          "offset": 216,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Detailed public PCI records materialized on demand.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interrupt_dword_reads",
+          "offset": 224,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Combined interrupt-line and interrupt-pin dword reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "command_reads",
+          "offset": 232,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "On-demand PCI Command register reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bar_reads",
+          "offset": 240,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "On-demand PCI BAR dword reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "enumeration_total_ns",
+          "offset": 248,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Total canonical PCI enumeration time in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ecam_enumeration_ns",
+          "offset": 256,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "ECAM enumeration time in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "legacy_enumeration_ns",
+          "offset": 264,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Legacy fallback enumeration time in nanoseconds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timing_unavailable",
+          "offset": 272,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Enumeration timing samples unavailable from the monotonic clock.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Versioned compact snapshot of the canonical PCI inventory, bounded enumeration, ECAM mapping and on-demand consumer accesses."
     }
   ],
   "operations": [],
@@ -73186,6 +73806,78 @@
       "description": "Public fixed contract limit."
     },
     {
+      "name": "pci_inventory_capacity",
+      "value": "64",
+      "value_type": "u32",
+      "unit": "count",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "Maximum number of PCI functions retained by the canonical inventory."
+    },
+    {
+      "name": "pci_inventory_flag_enumerated",
+      "value": "1",
+      "value_type": "u32",
+      "unit": "bitmask",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "Canonical PCI enumeration completed."
+    },
+    {
+      "name": "pci_inventory_flag_ecam",
+      "value": "2",
+      "value_type": "u32",
+      "unit": "bitmask",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "The canonical inventory used ECAM coverage."
+    },
+    {
+      "name": "pci_inventory_flag_legacy",
+      "value": "4",
+      "value_type": "u32",
+      "unit": "bitmask",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "The canonical inventory used legacy configuration I/O coverage."
+    },
+    {
+      "name": "pci_inventory_flag_partial",
+      "value": "8",
+      "value_type": "u32",
+      "unit": "bitmask",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "ECAM covered only part of segment zero and legacy I/O covered remaining buses."
+    },
+    {
+      "name": "pci_inventory_flag_truncated",
+      "value": "16",
+      "value_type": "u32",
+      "unit": "bitmask",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "At least one observed PCI function exceeded retained capacity."
+    },
+    {
+      "name": "pci_inventory_flag_ecam_aperture_ready",
+      "value": "32",
+      "value_type": "u32",
+      "unit": "bitmask",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "The complete ECAM aperture was mapped before enumeration and validated once."
+    },
+    {
+      "name": "pci_inventory_flag_ecam_rejected_segment",
+      "value": "64",
+      "value_type": "u32",
+      "unit": "bitmask",
+      "scope": "pci_inventory",
+      "stability": "fixed_contract",
+      "description": "MCFG advertised a nonzero segment that this segment-zero inventory rejected."
+    },
+    {
       "name": "environment_block_max",
       "value": "2048",
       "value_type": "usize",
@@ -73700,7 +74392,7 @@
     },
     {
       "name": "r4xstart_r4dev_size",
-      "value": "336",
+      "value": "344",
       "value_type": "u32",
       "unit": "bytes",
       "scope": "r4xstart_r4dev",

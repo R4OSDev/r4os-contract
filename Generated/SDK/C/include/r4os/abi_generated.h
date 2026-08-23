@@ -1196,6 +1196,14 @@ extern "C" {
 #define R4OS_CLIPBOARD_MAX_TEXT_BYTES 4095u
 #define R4OS_CONSOLE_OUTPUT_CAPACITY 16384u
 #define R4OS_DRIVER_WORK_QUEUE_CAPACITY 16u
+#define R4OS_PCI_INVENTORY_CAPACITY 64u
+#define R4OS_PCI_INVENTORY_FLAG_ENUMERATED 1u
+#define R4OS_PCI_INVENTORY_FLAG_ECAM 2u
+#define R4OS_PCI_INVENTORY_FLAG_LEGACY 4u
+#define R4OS_PCI_INVENTORY_FLAG_PARTIAL 8u
+#define R4OS_PCI_INVENTORY_FLAG_TRUNCATED 16u
+#define R4OS_PCI_INVENTORY_FLAG_ECAM_APERTURE_READY 32u
+#define R4OS_PCI_INVENTORY_FLAG_ECAM_REJECTED_SEGMENT 64u
 #define R4OS_ENVIRONMENT_BLOCK_MAX 2048ull
 #define R4OS_ENVIRONMENT_NAME_MAX 32ull
 #define R4OS_ENVIRONMENT_VALUE_MAX 512ull
@@ -1253,7 +1261,7 @@ extern "C" {
 #define R4XSTART_IMPORT_SIZE 40u
 #define R4XSTART_R4AUDIO_SIZE 184u
 #define R4XSTART_R4DESK_SIZE 432u
-#define R4XSTART_R4DEV_SIZE 336u
+#define R4XSTART_R4DEV_SIZE 344u
 #define R4XSTART_R4DRAW_SIZE 272u
 #define R4XSTART_R4NET_SIZE 288u
 #define R4XSTART_R4SYS_SIZE 976u
@@ -1709,6 +1717,7 @@ typedef struct R4ProgramThreadSnapshot R4ProgramThreadSnapshot;
 typedef struct R4ProgramInventorySummary R4ProgramInventorySummary;
 typedef struct R4ProgramDriverWorkPerformanceMetrics R4ProgramDriverWorkPerformanceMetrics;
 typedef struct R4ProgramDriverWorkPerformanceInfo R4ProgramDriverWorkPerformanceInfo;
+typedef struct R4ProgramPciInventoryPerformanceInfo R4ProgramPciInventoryPerformanceInfo;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -4607,6 +4616,48 @@ typedef struct R4ProgramDriverWorkPerformanceInfo {
     R4ProgramDriverWorkPerformanceMetrics metrics;
 } R4ProgramDriverWorkPerformanceInfo;
 
+typedef struct R4ProgramPciInventoryPerformanceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t generation;
+    uint32_t capacity;
+    uint32_t mcfg_segment;
+    uint32_t mcfg_start_bus;
+    uint32_t mcfg_end_bus;
+    uint64_t found;
+    uint64_t stored;
+    uint64_t dropped;
+    uint64_t ecam_stored;
+    uint64_t legacy_stored;
+    uint64_t vendor_probes_ecam;
+    uint64_t vendor_probes_legacy;
+    uint64_t class_reads;
+    uint64_t header_reads;
+    uint64_t enumeration_config_reads;
+    uint64_t function_pages;
+    uint64_t early_stops;
+    uint64_t ecam_config_reads;
+    uint64_t ecam_config_writes;
+    uint64_t legacy_config_reads;
+    uint64_t legacy_config_writes;
+    uint64_t mapping_checks;
+    uint64_t mapping_hits;
+    uint64_t mapping_misses;
+    uint64_t mapping_fast_accesses;
+    uint64_t invalid_accesses;
+    uint64_t class_find_calls;
+    uint64_t class_candidates;
+    uint64_t detail_materializations;
+    uint64_t interrupt_dword_reads;
+    uint64_t command_reads;
+    uint64_t bar_reads;
+    uint64_t enumeration_total_ns;
+    uint64_t ecam_enumeration_ns;
+    uint64_t legacy_enumeration_ns;
+    uint64_t timing_unavailable;
+} R4ProgramPciInventoryPerformanceInfo;
+
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
 typedef struct R4XStartContext {
@@ -5245,6 +5296,7 @@ typedef int32_t (*R4DevPerformanceBootPhaseClockFn)(uint32_t index, R4ProgramBoo
 typedef int32_t (*R4DevPerformanceIrqTimingFn)(uint32_t irq, R4ProgramIrqTimingInfo * out);
 typedef int32_t (*R4DevPerformanceBootSummaryFn)(R4ProgramBootPerformanceInfo * out);
 typedef int32_t (*R4DevPerformanceDriverWorkFn)(uint32_t owner, R4ProgramDriverWorkPerformanceInfo * out);
+typedef int32_t (*R4DevPerformancePciInventoryFn)(R4ProgramPciInventoryPerformanceInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -5291,6 +5343,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_irq_timing;
     uintptr_t performance_boot_summary;
     uintptr_t performance_driver_work;
+    uintptr_t performance_pci_inventory;
 } R4XStartR4Dev;
 
 
@@ -8003,6 +8056,46 @@ _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, owner_waiters_curren
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, owner_waiters_max) == 156u, "ProgramDriverWorkPerformanceInfo.owner_waiters_max offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, long_callback_threshold_ns) == 160u, "ProgramDriverWorkPerformanceInfo.long_callback_threshold_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, metrics) == 168u, "ProgramDriverWorkPerformanceInfo.metrics offset mismatch");
+_Static_assert(sizeof(R4ProgramPciInventoryPerformanceInfo) == 280u, "ProgramPciInventoryPerformanceInfo size mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, version) == 0u, "ProgramPciInventoryPerformanceInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, size) == 4u, "ProgramPciInventoryPerformanceInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, flags) == 8u, "ProgramPciInventoryPerformanceInfo.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, generation) == 12u, "ProgramPciInventoryPerformanceInfo.generation offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, capacity) == 16u, "ProgramPciInventoryPerformanceInfo.capacity offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, mcfg_segment) == 20u, "ProgramPciInventoryPerformanceInfo.mcfg_segment offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, mcfg_start_bus) == 24u, "ProgramPciInventoryPerformanceInfo.mcfg_start_bus offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, mcfg_end_bus) == 28u, "ProgramPciInventoryPerformanceInfo.mcfg_end_bus offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, found) == 32u, "ProgramPciInventoryPerformanceInfo.found offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, stored) == 40u, "ProgramPciInventoryPerformanceInfo.stored offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, dropped) == 48u, "ProgramPciInventoryPerformanceInfo.dropped offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, ecam_stored) == 56u, "ProgramPciInventoryPerformanceInfo.ecam_stored offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, legacy_stored) == 64u, "ProgramPciInventoryPerformanceInfo.legacy_stored offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, vendor_probes_ecam) == 72u, "ProgramPciInventoryPerformanceInfo.vendor_probes_ecam offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, vendor_probes_legacy) == 80u, "ProgramPciInventoryPerformanceInfo.vendor_probes_legacy offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, class_reads) == 88u, "ProgramPciInventoryPerformanceInfo.class_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, header_reads) == 96u, "ProgramPciInventoryPerformanceInfo.header_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, enumeration_config_reads) == 104u, "ProgramPciInventoryPerformanceInfo.enumeration_config_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, function_pages) == 112u, "ProgramPciInventoryPerformanceInfo.function_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, early_stops) == 120u, "ProgramPciInventoryPerformanceInfo.early_stops offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, ecam_config_reads) == 128u, "ProgramPciInventoryPerformanceInfo.ecam_config_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, ecam_config_writes) == 136u, "ProgramPciInventoryPerformanceInfo.ecam_config_writes offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, legacy_config_reads) == 144u, "ProgramPciInventoryPerformanceInfo.legacy_config_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, legacy_config_writes) == 152u, "ProgramPciInventoryPerformanceInfo.legacy_config_writes offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, mapping_checks) == 160u, "ProgramPciInventoryPerformanceInfo.mapping_checks offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, mapping_hits) == 168u, "ProgramPciInventoryPerformanceInfo.mapping_hits offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, mapping_misses) == 176u, "ProgramPciInventoryPerformanceInfo.mapping_misses offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, mapping_fast_accesses) == 184u, "ProgramPciInventoryPerformanceInfo.mapping_fast_accesses offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, invalid_accesses) == 192u, "ProgramPciInventoryPerformanceInfo.invalid_accesses offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, class_find_calls) == 200u, "ProgramPciInventoryPerformanceInfo.class_find_calls offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, class_candidates) == 208u, "ProgramPciInventoryPerformanceInfo.class_candidates offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, detail_materializations) == 216u, "ProgramPciInventoryPerformanceInfo.detail_materializations offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, interrupt_dword_reads) == 224u, "ProgramPciInventoryPerformanceInfo.interrupt_dword_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, command_reads) == 232u, "ProgramPciInventoryPerformanceInfo.command_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, bar_reads) == 240u, "ProgramPciInventoryPerformanceInfo.bar_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, enumeration_total_ns) == 248u, "ProgramPciInventoryPerformanceInfo.enumeration_total_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, ecam_enumeration_ns) == 256u, "ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, legacy_enumeration_ns) == 264u, "ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, timing_unavailable) == 272u, "ProgramPciInventoryPerformanceInfo.timing_unavailable offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 976u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -8520,7 +8613,7 @@ _Static_assert(offsetof(R4XStartR4Audio, opl3_stop) == 160u, "R4XStartR4Audio.op
 _Static_assert(sizeof(R4AudioOpl3StopFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved0) == 168u, "R4XStartR4Audio.reserved0 offset mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved1) == 176u, "R4XStartR4Audio.reserved1 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 336u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 344u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -8599,6 +8692,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_boot_summary) == 320u, "R4XSt
 _Static_assert(sizeof(R4DevPerformanceBootSummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, performance_driver_work) == 328u, "R4XStartR4Dev.performance_driver_work offset mismatch");
 _Static_assert(sizeof(R4DevPerformanceDriverWorkFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_pci_inventory) == 336u, "R4XStartR4Dev.performance_pci_inventory offset mismatch");
+_Static_assert(sizeof(R4DevPerformancePciInventoryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

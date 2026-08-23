@@ -1184,6 +1184,14 @@ pub const boot_log_buffer_size: usize = 65536;
 pub const clipboard_max_text_bytes: u32 = 4095;
 pub const console_output_capacity: u32 = 16384;
 pub const driver_work_queue_capacity: u32 = 16;
+pub const pci_inventory_capacity: u32 = 64;
+pub const pci_inventory_flag_enumerated: u32 = 1;
+pub const pci_inventory_flag_ecam: u32 = 2;
+pub const pci_inventory_flag_legacy: u32 = 4;
+pub const pci_inventory_flag_partial: u32 = 8;
+pub const pci_inventory_flag_truncated: u32 = 16;
+pub const pci_inventory_flag_ecam_aperture_ready: u32 = 32;
+pub const pci_inventory_flag_ecam_rejected_segment: u32 = 64;
 pub const environment_block_max: usize = 2048;
 pub const environment_name_max: usize = 32;
 pub const environment_value_max: usize = 512;
@@ -1241,7 +1249,7 @@ pub const r4xstart_context_size: u32 = 128;
 pub const r4xstart_import_size: u32 = 40;
 pub const r4xstart_r4audio_size: u32 = 184;
 pub const r4xstart_r4desk_size: u32 = 432;
-pub const r4xstart_r4dev_size: u32 = 336;
+pub const r4xstart_r4dev_size: u32 = 344;
 pub const r4xstart_r4draw_size: u32 = 272;
 pub const r4xstart_r4net_size: u32 = 288;
 pub const r4xstart_r4sys_size: u32 = 976;
@@ -4548,6 +4556,48 @@ pub const ProgramDriverWorkPerformanceInfo = extern struct {
     metrics: ProgramDriverWorkPerformanceMetrics = .{},
 };
 
+pub const ProgramPciInventoryPerformanceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 280,
+    flags: u32 = 0,
+    generation: u32 = 0,
+    capacity: u32 = 64,
+    mcfg_segment: u32 = 0,
+    mcfg_start_bus: u32 = 0,
+    mcfg_end_bus: u32 = 0,
+    found: u64 = 0,
+    stored: u64 = 0,
+    dropped: u64 = 0,
+    ecam_stored: u64 = 0,
+    legacy_stored: u64 = 0,
+    vendor_probes_ecam: u64 = 0,
+    vendor_probes_legacy: u64 = 0,
+    class_reads: u64 = 0,
+    header_reads: u64 = 0,
+    enumeration_config_reads: u64 = 0,
+    function_pages: u64 = 0,
+    early_stops: u64 = 0,
+    ecam_config_reads: u64 = 0,
+    ecam_config_writes: u64 = 0,
+    legacy_config_reads: u64 = 0,
+    legacy_config_writes: u64 = 0,
+    mapping_checks: u64 = 0,
+    mapping_hits: u64 = 0,
+    mapping_misses: u64 = 0,
+    mapping_fast_accesses: u64 = 0,
+    invalid_accesses: u64 = 0,
+    class_find_calls: u64 = 0,
+    class_candidates: u64 = 0,
+    detail_materializations: u64 = 0,
+    interrupt_dword_reads: u64 = 0,
+    command_reads: u64 = 0,
+    bar_reads: u64 = 0,
+    enumeration_total_ns: u64 = 0,
+    ecam_enumeration_ns: u64 = 0,
+    legacy_enumeration_ns: u64 = 0,
+    timing_unavailable: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -5149,12 +5199,13 @@ pub const R4DevFns = struct {
     pub const performance_irq_timing = *const fn (u32, *ProgramIrqTimingInfo) callconv(.c) i32;
     pub const performance_boot_summary = *const fn (*ProgramBootPerformanceInfo) callconv(.c) i32;
     pub const performance_driver_work = *const fn (u32, *ProgramDriverWorkPerformanceInfo) callconv(.c) i32;
+    pub const performance_pci_inventory = *const fn (*ProgramPciInventoryPerformanceInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 8,
-    size: u32 = 336,
+    abi_version: u32 = 9,
+    size: u32 = 344,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -5196,6 +5247,7 @@ pub const R4XStartR4Dev = extern struct {
     performance_irq_timing: usize = 0,
     performance_boot_summary: usize = 0,
     performance_driver_work: usize = 0,
+    performance_pci_inventory: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -5516,6 +5568,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 37, .offset = 312, .name = "performance_irq_timing", .state = .function, .required = false },
     .{ .number = 38, .offset = 320, .name = "performance_boot_summary", .state = .function, .required = false },
     .{ .number = 39, .offset = 328, .name = "performance_driver_work", .state = .function, .required = false },
+    .{ .number = 40, .offset = 336, .name = "performance_pci_inventory", .state = .function, .required = false },
 };
 
 comptime {
@@ -8340,6 +8393,47 @@ comptime {
     if (@offsetOf(ProgramDriverWorkPerformanceInfo, "owner_waiters_max") != 156) @compileError("generated ABI offset drift: ProgramDriverWorkPerformanceInfo.owner_waiters_max");
     if (@offsetOf(ProgramDriverWorkPerformanceInfo, "long_callback_threshold_ns") != 160) @compileError("generated ABI offset drift: ProgramDriverWorkPerformanceInfo.long_callback_threshold_ns");
     if (@offsetOf(ProgramDriverWorkPerformanceInfo, "metrics") != 168) @compileError("generated ABI offset drift: ProgramDriverWorkPerformanceInfo.metrics");
+    if (@sizeOf(ProgramPciInventoryPerformanceInfo) != 280) @compileError("generated ABI size drift: ProgramPciInventoryPerformanceInfo");
+    if (@alignOf(ProgramPciInventoryPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramPciInventoryPerformanceInfo");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.version");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "size") != 4) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.size");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "flags") != 8) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.flags");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "generation") != 12) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.generation");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "capacity") != 16) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.capacity");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "mcfg_segment") != 20) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.mcfg_segment");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "mcfg_start_bus") != 24) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.mcfg_start_bus");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "mcfg_end_bus") != 28) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.mcfg_end_bus");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "found") != 32) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.found");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "stored") != 40) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.stored");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "dropped") != 48) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.dropped");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "ecam_stored") != 56) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.ecam_stored");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "legacy_stored") != 64) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.legacy_stored");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "vendor_probes_ecam") != 72) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.vendor_probes_ecam");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "vendor_probes_legacy") != 80) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.vendor_probes_legacy");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "class_reads") != 88) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.class_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "header_reads") != 96) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.header_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "enumeration_config_reads") != 104) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.enumeration_config_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "function_pages") != 112) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.function_pages");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "early_stops") != 120) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.early_stops");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "ecam_config_reads") != 128) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.ecam_config_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "ecam_config_writes") != 136) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.ecam_config_writes");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "legacy_config_reads") != 144) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.legacy_config_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "legacy_config_writes") != 152) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.legacy_config_writes");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "mapping_checks") != 160) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.mapping_checks");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "mapping_hits") != 168) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.mapping_hits");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "mapping_misses") != 176) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.mapping_misses");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "mapping_fast_accesses") != 184) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.mapping_fast_accesses");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "invalid_accesses") != 192) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.invalid_accesses");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "class_find_calls") != 200) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.class_find_calls");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "class_candidates") != 208) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.class_candidates");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "detail_materializations") != 216) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.detail_materializations");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "interrupt_dword_reads") != 224) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.interrupt_dword_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "command_reads") != 232) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.command_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "bar_reads") != 240) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.bar_reads");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "enumeration_total_ns") != 248) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.enumeration_total_ns");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "ecam_enumeration_ns") != 256) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "legacy_enumeration_ns") != 264) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns");
+    if (@offsetOf(ProgramPciInventoryPerformanceInfo, "timing_unavailable") != 272) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.timing_unavailable");
     if (@sizeOf(R4XStartR4Sys) != 976) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -8604,7 +8698,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "opl3_stop") != 160) @compileError("generated ABI offset drift: R4XStartR4Audio.opl3_stop");
     if (@offsetOf(R4XStartR4Audio, "reserved0") != 168) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved0");
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
-    if (@sizeOf(R4XStartR4Dev) != 336) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 344) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -8645,6 +8739,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_irq_timing") != 312) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_irq_timing");
     if (@offsetOf(R4XStartR4Dev, "performance_boot_summary") != 320) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_boot_summary");
     if (@offsetOf(R4XStartR4Dev, "performance_driver_work") != 328) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_driver_work");
+    if (@offsetOf(R4XStartR4Dev, "performance_pci_inventory") != 336) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_pci_inventory");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -9259,13 +9354,14 @@ pub const R4DevProvider = struct {
     performance_irq_timing: R4DevFns.performance_irq_timing,
     performance_boot_summary: R4DevFns.performance_boot_summary,
     performance_driver_work: R4DevFns.performance_driver_work,
+    performance_pci_inventory: R4DevFns.performance_pci_inventory,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 8,
-        .size = 336,
+        .abi_version = 9,
+        .size = 344,
         .flags = 0,
         .device_inventory_summary = @intFromPtr(provider.device_inventory_summary),
         .device_inventory_record = @intFromPtr(provider.device_inventory_record),
@@ -9307,5 +9403,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .performance_irq_timing = @intFromPtr(provider.performance_irq_timing),
         .performance_boot_summary = @intFromPtr(provider.performance_boot_summary),
         .performance_driver_work = @intFromPtr(provider.performance_driver_work),
+        .performance_pci_inventory = @intFromPtr(provider.performance_pci_inventory),
     };
 }
