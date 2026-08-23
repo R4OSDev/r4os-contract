@@ -2948,6 +2948,10 @@ pub const DriverApi = extern struct {
     // 0.59.19 (DriverApi Version 16, append-only): MSI-Aktivierung; liefert
     // die Router-IRQ aus dem festen MSI-Fenster oder einen negativen Fehler.
     pci_enable_msi: *const fn (u8, u8, u8, u8) callconv(.c) i32,
+    // 0.69.17 (DriverApi Version 17, append-only): begrenzte DMA-Allokation
+    // und explizites MSI-Rollback fuer Fehler- und Unloadpfade.
+    alloc_dma_region_constrained: *const fn (u32, u32, u64, *DmaBuffer) callconv(.c) i32,
+    pci_disable_msi: *const fn (u8, u8, u8, u8) callconv(.c) i32,
 };
 
 pub const ProtocolApi = extern struct {
