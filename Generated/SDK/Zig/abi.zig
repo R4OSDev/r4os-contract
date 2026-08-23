@@ -1678,6 +1678,7 @@ pub const ProgramDriverWorkPerformanceMetrics = generated.ProgramDriverWorkPerfo
 pub const ProgramDriverWorkPerformanceInfo = generated.ProgramDriverWorkPerformanceInfo;
 pub const ProgramPciInventoryPerformanceInfo = generated.ProgramPciInventoryPerformanceInfo;
 pub const ProgramInputPerformanceInfo = generated.ProgramInputPerformanceInfo;
+pub const ServiceDeadlineFooter = generated.ServiceDeadlineFooter;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

@@ -4639,6 +4639,15 @@ pub const ProgramInputPerformanceInfo = extern struct {
     program_attach_wait_events: u64 = 0,
 };
 
+pub const ServiceDeadlineFooter = extern struct {
+    magic: u32 = 1279538258,
+    version: u16 = 1,
+    size: u16 = 24,
+    payload_len: u32 = 0,
+    reserved0: u32 = 0,
+    deadline_tick: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8521,6 +8530,14 @@ comptime {
     if (@offsetOf(ProgramInputPerformanceInfo, "program_launch_attempts") != 224) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_launch_attempts");
     if (@offsetOf(ProgramInputPerformanceInfo, "program_entries_started") != 232) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_entries_started");
     if (@offsetOf(ProgramInputPerformanceInfo, "program_attach_wait_events") != 240) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_attach_wait_events");
+    if (@sizeOf(ServiceDeadlineFooter) != 24) @compileError("generated ABI size drift: ServiceDeadlineFooter");
+    if (@alignOf(ServiceDeadlineFooter) != 8) @compileError("generated ABI alignment drift: ServiceDeadlineFooter");
+    if (@offsetOf(ServiceDeadlineFooter, "magic") != 0) @compileError("generated ABI offset drift: ServiceDeadlineFooter.magic");
+    if (@offsetOf(ServiceDeadlineFooter, "version") != 4) @compileError("generated ABI offset drift: ServiceDeadlineFooter.version");
+    if (@offsetOf(ServiceDeadlineFooter, "size") != 6) @compileError("generated ABI offset drift: ServiceDeadlineFooter.size");
+    if (@offsetOf(ServiceDeadlineFooter, "payload_len") != 8) @compileError("generated ABI offset drift: ServiceDeadlineFooter.payload_len");
+    if (@offsetOf(ServiceDeadlineFooter, "reserved0") != 12) @compileError("generated ABI offset drift: ServiceDeadlineFooter.reserved0");
+    if (@offsetOf(ServiceDeadlineFooter, "deadline_tick") != 16) @compileError("generated ABI offset drift: ServiceDeadlineFooter.deadline_tick");
     if (@sizeOf(R4XStartR4Sys) != 976) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");

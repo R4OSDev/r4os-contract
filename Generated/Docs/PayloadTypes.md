@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 116 von 116 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 117 von 117 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 61; Konstanten: 1175; Limits: 102
 
@@ -137,6 +137,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramDriverWorkPerformanceInfo` | extensible | extern_struct | 808/8 | 808/8 | 808/8 | 808/8 |
 | `ProgramPciInventoryPerformanceInfo` | extensible | extern_struct | 280/8 | 280/8 | 280/8 | 280/8 |
 | `ProgramInputPerformanceInfo` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
+| `ServiceDeadlineFooter` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 
 ## Typdetails
 
@@ -3931,6 +3932,22 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `program_launch_attempts` | 224 | 8 | 8 | `u64` | - |
 | `program_entries_started` | 232 | 8 | 8 | `u64` | - |
 | `program_attach_wait_events` | 240 | 8 | 8 | `u64` | - |
+
+### `ServiceDeadlineFooter`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `magic` | 0 | 4 | 4 | `u32` | - |
+| `version` | 4 | 2 | 2 | `u16` | - |
+| `size` | 6 | 2 | 2 | `u16` | - |
+| `payload_len` | 8 | 4 | 4 | `u32` | - |
+| `reserved0` | 12 | 4 | 4 | `u32` | - |
+| `deadline_tick` | 16 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 

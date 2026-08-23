@@ -2789,6 +2789,13 @@ comptime {
     if (@offsetOf(abi.ProgramInputPerformanceInfo, "program_launch_attempts") != 224) @compileError("ProgramInputPerformanceInfo.program_launch_attempts offset");
     if (@offsetOf(abi.ProgramInputPerformanceInfo, "program_entries_started") != 232) @compileError("ProgramInputPerformanceInfo.program_entries_started offset");
     if (@offsetOf(abi.ProgramInputPerformanceInfo, "program_attach_wait_events") != 240) @compileError("ProgramInputPerformanceInfo.program_attach_wait_events offset");
+    if (@sizeOf(abi.ServiceDeadlineFooter) != 24) @compileError("ServiceDeadlineFooter size");
+    if (@offsetOf(abi.ServiceDeadlineFooter, "magic") != 0) @compileError("ServiceDeadlineFooter.magic offset");
+    if (@offsetOf(abi.ServiceDeadlineFooter, "version") != 4) @compileError("ServiceDeadlineFooter.version offset");
+    if (@offsetOf(abi.ServiceDeadlineFooter, "size") != 6) @compileError("ServiceDeadlineFooter.size offset");
+    if (@offsetOf(abi.ServiceDeadlineFooter, "payload_len") != 8) @compileError("ServiceDeadlineFooter.payload_len offset");
+    if (@offsetOf(abi.ServiceDeadlineFooter, "reserved0") != 12) @compileError("ServiceDeadlineFooter.reserved0 offset");
+    if (@offsetOf(abi.ServiceDeadlineFooter, "deadline_tick") != 16) @compileError("ServiceDeadlineFooter.deadline_tick offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 976) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");

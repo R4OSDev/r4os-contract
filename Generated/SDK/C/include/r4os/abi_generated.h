@@ -1719,6 +1719,7 @@ typedef struct R4ProgramDriverWorkPerformanceMetrics R4ProgramDriverWorkPerforma
 typedef struct R4ProgramDriverWorkPerformanceInfo R4ProgramDriverWorkPerformanceInfo;
 typedef struct R4ProgramPciInventoryPerformanceInfo R4ProgramPciInventoryPerformanceInfo;
 typedef struct R4ProgramInputPerformanceInfo R4ProgramInputPerformanceInfo;
+typedef struct R4ServiceDeadlineFooter R4ServiceDeadlineFooter;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -4699,6 +4700,15 @@ typedef struct R4ProgramInputPerformanceInfo {
     uint64_t program_entries_started;
     uint64_t program_attach_wait_events;
 } R4ProgramInputPerformanceInfo;
+
+typedef struct R4ServiceDeadlineFooter {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint32_t payload_len;
+    uint32_t reserved0;
+    uint64_t deadline_tick;
+} R4ServiceDeadlineFooter;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8181,6 +8191,13 @@ _Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_full_events) == 2
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_launch_attempts) == 224u, "ProgramInputPerformanceInfo.program_launch_attempts offset mismatch");
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_entries_started) == 232u, "ProgramInputPerformanceInfo.program_entries_started offset mismatch");
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_attach_wait_events) == 240u, "ProgramInputPerformanceInfo.program_attach_wait_events offset mismatch");
+_Static_assert(sizeof(R4ServiceDeadlineFooter) == 24u, "ServiceDeadlineFooter size mismatch");
+_Static_assert(offsetof(R4ServiceDeadlineFooter, magic) == 0u, "ServiceDeadlineFooter.magic offset mismatch");
+_Static_assert(offsetof(R4ServiceDeadlineFooter, version) == 4u, "ServiceDeadlineFooter.version offset mismatch");
+_Static_assert(offsetof(R4ServiceDeadlineFooter, size) == 6u, "ServiceDeadlineFooter.size offset mismatch");
+_Static_assert(offsetof(R4ServiceDeadlineFooter, payload_len) == 8u, "ServiceDeadlineFooter.payload_len offset mismatch");
+_Static_assert(offsetof(R4ServiceDeadlineFooter, reserved0) == 12u, "ServiceDeadlineFooter.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ServiceDeadlineFooter, deadline_tick) == 16u, "ServiceDeadlineFooter.deadline_tick offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 976u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
