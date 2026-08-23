@@ -390,7 +390,7 @@ comptime {
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("ProgramMemoryVmPageStateProbe.table_full_failures offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("ProgramMemoryVmPageStateProbe.cleanup_pages offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("ProgramMemoryVmPageStateProbe.reserved1 offset");
-    if (@sizeOf(abi.ProgramPerformanceSummary) != 5152) @compileError("ProgramPerformanceSummary size");
+    if (@sizeOf(abi.ProgramPerformanceSummary) != 5192) @compileError("ProgramPerformanceSummary size");
     if (@offsetOf(abi.ProgramPerformanceSummary, "version") != 0) @compileError("ProgramPerformanceSummary.version offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "size") != 4) @compileError("ProgramPerformanceSummary.size offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "flags") != 8) @compileError("ProgramPerformanceSummary.flags offset");
@@ -1085,6 +1085,11 @@ comptime {
     if (@offsetOf(abi.ProgramPerformanceSummary, "service_lock_timing_stride") != 5088) @compileError("ProgramPerformanceSummary.service_lock_timing_stride offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "service_lock_timing_reserved0") != 5092) @compileError("ProgramPerformanceSummary.service_lock_timing_reserved0 offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "service_lock_timing_samples") != 5096) @compileError("ProgramPerformanceSummary.service_lock_timing_samples offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_registry_index_queries") != 5152) @compileError("ProgramPerformanceSummary.service_registry_index_queries offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_registry_refresh_requests") != 5160) @compileError("ProgramPerformanceSummary.service_registry_refresh_requests offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_registry_refresh_visits") != 5168) @compileError("ProgramPerformanceSummary.service_registry_refresh_visits offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_registry_instance_lookups") != 5176) @compileError("ProgramPerformanceSummary.service_registry_instance_lookups offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_registry_index_end_markers") != 5184) @compileError("ProgramPerformanceSummary.service_registry_index_end_markers offset");
     if (@sizeOf(abi.ProgramTaskPerformanceInfo) != 304) @compileError("ProgramTaskPerformanceInfo size");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "index") != 0) @compileError("ProgramTaskPerformanceInfo.index offset");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "id") != 4) @compileError("ProgramTaskPerformanceInfo.id offset");
