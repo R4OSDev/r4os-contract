@@ -390,7 +390,7 @@ comptime {
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("ProgramMemoryVmPageStateProbe.table_full_failures offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("ProgramMemoryVmPageStateProbe.cleanup_pages offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("ProgramMemoryVmPageStateProbe.reserved1 offset");
-    if (@sizeOf(abi.ProgramPerformanceSummary) != 4616) @compileError("ProgramPerformanceSummary size");
+    if (@sizeOf(abi.ProgramPerformanceSummary) != 4656) @compileError("ProgramPerformanceSummary size");
     if (@offsetOf(abi.ProgramPerformanceSummary, "version") != 0) @compileError("ProgramPerformanceSummary.version offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "size") != 4) @compileError("ProgramPerformanceSummary.size offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "flags") != 8) @compileError("ProgramPerformanceSummary.flags offset");
@@ -1064,6 +1064,11 @@ comptime {
     if (@offsetOf(abi.ProgramPerformanceSummary, "service_targeted_response_wake_misses") != 4592) @compileError("ProgramPerformanceSummary.service_targeted_response_wake_misses offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "service_admission_waits") != 4600) @compileError("ProgramPerformanceSummary.service_admission_waits offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "service_admission_timeouts") != 4608) @compileError("ProgramPerformanceSummary.service_admission_timeouts offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_payload_copy_bytes") != 4616) @compileError("ProgramPerformanceSummary.service_payload_copy_bytes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_payload_clear_bytes") != 4624) @compileError("ProgramPerformanceSummary.service_payload_clear_bytes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_slot_metadata_resets") != 4632) @compileError("ProgramPerformanceSummary.service_slot_metadata_resets offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_endpoint_metadata_resets") != 4640) @compileError("ProgramPerformanceSummary.service_endpoint_metadata_resets offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_endpoint_payload_reset_bytes") != 4648) @compileError("ProgramPerformanceSummary.service_endpoint_payload_reset_bytes offset");
     if (@sizeOf(abi.ProgramTaskPerformanceInfo) != 304) @compileError("ProgramTaskPerformanceInfo size");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "index") != 0) @compileError("ProgramTaskPerformanceInfo.index offset");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "id") != 4) @compileError("ProgramTaskPerformanceInfo.id offset");

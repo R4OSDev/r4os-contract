@@ -26124,8 +26124,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 3,
-      "size": 4616,
+      "version": 4,
+      "size": 4656,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -26142,7 +26142,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "3"
+          "default_value": "4"
         },
         {
           "name": "size",
@@ -26156,7 +26156,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "4616"
+          "default_value": "4656"
         },
         {
           "name": "flags",
@@ -35549,6 +35549,76 @@
             "name": "u64"
           },
           "description": "Synchronous service submissions whose absolute deadline expired during slot admission.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_payload_copy_bytes",
+          "offset": 4616,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Lifetime bytes copied into or out of kernel-owned service request and response payload slots.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_payload_clear_bytes",
+          "offset": 4624,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Lifetime payload bytes explicitly cleared by the service request-slot lifecycle.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_slot_metadata_resets",
+          "offset": 4632,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Lifetime request-slot reclamations that reset metadata and synchronization state without clearing payload storage.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_endpoint_metadata_resets",
+          "offset": 4640,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Lifetime endpoint activations and retirements reset through metadata and synchronization state only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_endpoint_payload_reset_bytes",
+          "offset": 4648,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Lifetime payload bytes explicitly cleared while activating or retiring service endpoints.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -67030,7 +67100,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "3",
+      "value": "4",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
