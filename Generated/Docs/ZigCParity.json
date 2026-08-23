@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 292,
+    "group_function_signatures": 294,
     "sdk_operation_contracts": 0,
-    "parity_entries": 292,
+    "parity_entries": 294,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1523,6 +1523,15 @@
       "coverage": "generated_signature"
     },
     {
+      "id": "R4DESK.console_push_input",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.console_push_input",
+      "c_contract": "R4DeskConsolePushInputFn",
+      "coverage": "generated_signature"
+    },
+    {
       "id": "R4DRAW.screen_width",
       "kind": "group_slot",
       "exposure": "public",
@@ -2636,6 +2645,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.performance_pci_inventory",
       "c_contract": "R4DevPerformancePciInventoryFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.performance_input",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.performance_input",
+      "c_contract": "R4DevPerformanceInputFn",
       "coverage": "generated_signature"
     }
   ],

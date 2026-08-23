@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 292,
-    "group_slot_count": 292,
+    "function_count": 294,
+    "group_slot_count": 294,
     "sdk_only_count": 0,
     "public_count": 208,
-    "advanced_count": 84
+    "advanced_count": 86
   },
   "functions": [
     {
@@ -2027,6 +2027,18 @@
       }
     },
     {
+      "name": "R4DESK.console_push_input",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 52,
+      "exposure": "advanced",
+      "description": "Queues a bounded byte span for a hosted console and returns the accepted prefix length; an unaccepted suffix remains caller-owned.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
       "name": "R4DRAW.screen_width",
       "group": "R4DRAW",
       "kind": "group_slot",
@@ -3509,6 +3521,18 @@
       "slot": 40,
       "exposure": "advanced",
       "description": "Returns the compact canonical PCI inventory coverage, bounded-enumeration, config-access, mapping and consumer-materialization counters.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.performance_input",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 41,
+      "exposure": "advanced",
+      "description": "Returns compact i8042, keyboard, GUI-event, console-input and program-entry queue counters.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

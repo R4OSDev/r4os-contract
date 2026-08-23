@@ -4598,6 +4598,47 @@ pub const ProgramPciInventoryPerformanceInfo = extern struct {
     timing_unavailable: u64 = 0,
 };
 
+pub const ProgramInputPerformanceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 248,
+    keyboard_queue_capacity: u32 = 0,
+    keyboard_queue_pending: u32 = 0,
+    keyboard_queue_high_water: u32 = 0,
+    gui_queue_capacity: u32 = 0,
+    gui_queue_pending: u32 = 0,
+    gui_queue_high_water: u32 = 0,
+    gui_queue_active: u32 = 0,
+    console_queue_capacity: u32 = 0,
+    console_queue_pending: u32 = 0,
+    console_queue_high_water: u32 = 0,
+    console_queue_active: u32 = 0,
+    program_start_attach_pending: u32 = 0,
+    i8042_irq1_count: u64 = 0,
+    i8042_irq12_count: u64 = 0,
+    i8042_byte_count: u64 = 0,
+    i8042_keyboard_byte_count: u64 = 0,
+    i8042_mouse_byte_count: u64 = 0,
+    i8042_keyboard_bytes_on_irq12: u64 = 0,
+    i8042_mouse_bytes_on_irq1: u64 = 0,
+    i8042_drain_limit_hits: u64 = 0,
+    keyboard_push_attempts: u64 = 0,
+    keyboard_accepted: u64 = 0,
+    keyboard_dropped: u64 = 0,
+    gui_push_attempts: u64 = 0,
+    gui_accepted: u64 = 0,
+    gui_mouse_move_coalesced: u64 = 0,
+    gui_mouse_move_evicted: u64 = 0,
+    gui_rejected: u64 = 0,
+    console_push_calls: u64 = 0,
+    console_batch_calls: u64 = 0,
+    console_bytes_attempted: u64 = 0,
+    console_bytes_accepted: u64 = 0,
+    console_full_events: u64 = 0,
+    program_launch_attempts: u64 = 0,
+    program_entries_started: u64 = 0,
+    program_attach_wait_events: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -4897,12 +4938,13 @@ pub const R4DeskFns = struct {
     pub const program_spawn_with_console_host = *const fn ([*:0]const u8, [*:0]const u8, u32, u32) callconv(.c) i32;
     pub const program_spawn_with_console_host_handle = *const fn ([*:0]const u8, [*:0]const u8, u32, u32, *ProgramProcessHandle) callconv(.c) i32;
     pub const program_set_window_handle = *const fn (*const ProgramProcessHandle, i32) callconv(.c) i32;
+    pub const console_push_input = *const fn (u32, [*]const u8, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 7,
-    size: u32 = 432,
+    abi_version: u32 = 8,
+    size: u32 = 440,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -4956,6 +4998,7 @@ pub const R4XStartR4Desk = extern struct {
     program_spawn_with_console_host: usize = 0,
     program_spawn_with_console_host_handle: usize = 0,
     program_set_window_handle: usize = 0,
+    console_push_input: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -5200,12 +5243,13 @@ pub const R4DevFns = struct {
     pub const performance_boot_summary = *const fn (*ProgramBootPerformanceInfo) callconv(.c) i32;
     pub const performance_driver_work = *const fn (u32, *ProgramDriverWorkPerformanceInfo) callconv(.c) i32;
     pub const performance_pci_inventory = *const fn (*ProgramPciInventoryPerformanceInfo) callconv(.c) i32;
+    pub const performance_input = *const fn (*ProgramInputPerformanceInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 9,
-    size: u32 = 344,
+    abi_version: u32 = 10,
+    size: u32 = 352,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -5248,6 +5292,7 @@ pub const R4XStartR4Dev = extern struct {
     performance_boot_summary: usize = 0,
     performance_driver_work: usize = 0,
     performance_pci_inventory: usize = 0,
+    performance_input: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -5429,6 +5474,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 49, .offset = 408, .name = "program_spawn_with_console_host", .state = .function, .required = false },
     .{ .number = 50, .offset = 416, .name = "program_spawn_with_console_host_handle", .state = .function, .required = false },
     .{ .number = 51, .offset = 424, .name = "program_set_window_handle", .state = .function, .required = false },
+    .{ .number = 52, .offset = 432, .name = "console_push_input", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -5569,6 +5615,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 38, .offset = 320, .name = "performance_boot_summary", .state = .function, .required = false },
     .{ .number = 39, .offset = 328, .name = "performance_driver_work", .state = .function, .required = false },
     .{ .number = 40, .offset = 336, .name = "performance_pci_inventory", .state = .function, .required = false },
+    .{ .number = 41, .offset = 344, .name = "performance_input", .state = .function, .required = false },
 };
 
 comptime {
@@ -8434,6 +8481,46 @@ comptime {
     if (@offsetOf(ProgramPciInventoryPerformanceInfo, "ecam_enumeration_ns") != 256) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns");
     if (@offsetOf(ProgramPciInventoryPerformanceInfo, "legacy_enumeration_ns") != 264) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns");
     if (@offsetOf(ProgramPciInventoryPerformanceInfo, "timing_unavailable") != 272) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.timing_unavailable");
+    if (@sizeOf(ProgramInputPerformanceInfo) != 248) @compileError("generated ABI size drift: ProgramInputPerformanceInfo");
+    if (@alignOf(ProgramInputPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramInputPerformanceInfo");
+    if (@offsetOf(ProgramInputPerformanceInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.version");
+    if (@offsetOf(ProgramInputPerformanceInfo, "size") != 4) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.size");
+    if (@offsetOf(ProgramInputPerformanceInfo, "keyboard_queue_capacity") != 8) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.keyboard_queue_capacity");
+    if (@offsetOf(ProgramInputPerformanceInfo, "keyboard_queue_pending") != 12) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.keyboard_queue_pending");
+    if (@offsetOf(ProgramInputPerformanceInfo, "keyboard_queue_high_water") != 16) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.keyboard_queue_high_water");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_queue_capacity") != 20) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_queue_capacity");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_queue_pending") != 24) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_queue_pending");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_queue_high_water") != 28) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_queue_high_water");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_queue_active") != 32) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_queue_active");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_queue_capacity") != 36) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_queue_capacity");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_queue_pending") != 40) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_queue_pending");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_queue_high_water") != 44) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_queue_high_water");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_queue_active") != 48) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_queue_active");
+    if (@offsetOf(ProgramInputPerformanceInfo, "program_start_attach_pending") != 52) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_start_attach_pending");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_irq1_count") != 56) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_irq1_count");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_irq12_count") != 64) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_irq12_count");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_byte_count") != 72) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_byte_count");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_keyboard_byte_count") != 80) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_keyboard_byte_count");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_mouse_byte_count") != 88) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_mouse_byte_count");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_keyboard_bytes_on_irq12") != 96) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_keyboard_bytes_on_irq12");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_mouse_bytes_on_irq1") != 104) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_mouse_bytes_on_irq1");
+    if (@offsetOf(ProgramInputPerformanceInfo, "i8042_drain_limit_hits") != 112) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.i8042_drain_limit_hits");
+    if (@offsetOf(ProgramInputPerformanceInfo, "keyboard_push_attempts") != 120) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.keyboard_push_attempts");
+    if (@offsetOf(ProgramInputPerformanceInfo, "keyboard_accepted") != 128) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.keyboard_accepted");
+    if (@offsetOf(ProgramInputPerformanceInfo, "keyboard_dropped") != 136) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.keyboard_dropped");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_push_attempts") != 144) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_push_attempts");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_accepted") != 152) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_accepted");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_mouse_move_coalesced") != 160) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_mouse_move_coalesced");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_mouse_move_evicted") != 168) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_mouse_move_evicted");
+    if (@offsetOf(ProgramInputPerformanceInfo, "gui_rejected") != 176) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.gui_rejected");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_push_calls") != 184) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_push_calls");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_batch_calls") != 192) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_batch_calls");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_bytes_attempted") != 200) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_bytes_attempted");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_bytes_accepted") != 208) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_bytes_accepted");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_full_events") != 216) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_full_events");
+    if (@offsetOf(ProgramInputPerformanceInfo, "program_launch_attempts") != 224) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_launch_attempts");
+    if (@offsetOf(ProgramInputPerformanceInfo, "program_entries_started") != 232) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_entries_started");
+    if (@offsetOf(ProgramInputPerformanceInfo, "program_attach_wait_events") != 240) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_attach_wait_events");
     if (@sizeOf(R4XStartR4Sys) != 976) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -8555,7 +8642,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_module_running") != 952) @compileError("generated ABI offset drift: R4XStartR4Sys.program_module_running");
     if (@offsetOf(R4XStartR4Sys, "monotonic_clock") != 960) @compileError("generated ABI offset drift: R4XStartR4Sys.monotonic_clock");
     if (@offsetOf(R4XStartR4Sys, "boot_ready") != 968) @compileError("generated ABI offset drift: R4XStartR4Sys.boot_ready");
-    if (@sizeOf(R4XStartR4Desk) != 432) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 440) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -8608,6 +8695,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "program_spawn_with_console_host") != 408) @compileError("generated ABI offset drift: R4XStartR4Desk.program_spawn_with_console_host");
     if (@offsetOf(R4XStartR4Desk, "program_spawn_with_console_host_handle") != 416) @compileError("generated ABI offset drift: R4XStartR4Desk.program_spawn_with_console_host_handle");
     if (@offsetOf(R4XStartR4Desk, "program_set_window_handle") != 424) @compileError("generated ABI offset drift: R4XStartR4Desk.program_set_window_handle");
+    if (@offsetOf(R4XStartR4Desk, "console_push_input") != 432) @compileError("generated ABI offset drift: R4XStartR4Desk.console_push_input");
     if (@sizeOf(R4XStartR4Draw) != 272) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
@@ -8698,7 +8786,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "opl3_stop") != 160) @compileError("generated ABI offset drift: R4XStartR4Audio.opl3_stop");
     if (@offsetOf(R4XStartR4Audio, "reserved0") != 168) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved0");
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
-    if (@sizeOf(R4XStartR4Dev) != 344) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 352) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -8740,6 +8828,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_boot_summary") != 320) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_boot_summary");
     if (@offsetOf(R4XStartR4Dev, "performance_driver_work") != 328) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_driver_work");
     if (@offsetOf(R4XStartR4Dev, "performance_pci_inventory") != 336) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_pci_inventory");
+    if (@offsetOf(R4XStartR4Dev, "performance_input") != 344) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_input");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -9044,13 +9133,14 @@ pub const R4DeskProvider = struct {
     program_spawn_with_console_host: R4DeskFns.program_spawn_with_console_host,
     program_spawn_with_console_host_handle: R4DeskFns.program_spawn_with_console_host_handle,
     program_set_window_handle: R4DeskFns.program_set_window_handle,
+    console_push_input: R4DeskFns.console_push_input,
 };
 
 pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
     return .{
         .magic = 826623058,
-        .abi_version = 7,
-        .size = 432,
+        .abi_version = 8,
+        .size = 440,
         .flags = 0,
         .read_key = @intFromPtr(provider.read_key),
         .mouse_state = @intFromPtr(provider.mouse_state),
@@ -9104,6 +9194,7 @@ pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
         .program_spawn_with_console_host = @intFromPtr(provider.program_spawn_with_console_host),
         .program_spawn_with_console_host_handle = @intFromPtr(provider.program_spawn_with_console_host_handle),
         .program_set_window_handle = @intFromPtr(provider.program_set_window_handle),
+        .console_push_input = @intFromPtr(provider.console_push_input),
     };
 }
 
@@ -9355,13 +9446,14 @@ pub const R4DevProvider = struct {
     performance_boot_summary: R4DevFns.performance_boot_summary,
     performance_driver_work: R4DevFns.performance_driver_work,
     performance_pci_inventory: R4DevFns.performance_pci_inventory,
+    performance_input: R4DevFns.performance_input,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 9,
-        .size = 344,
+        .abi_version = 10,
+        .size = 352,
         .flags = 0,
         .device_inventory_summary = @intFromPtr(provider.device_inventory_summary),
         .device_inventory_record = @intFromPtr(provider.device_inventory_record),
@@ -9404,5 +9496,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .performance_boot_summary = @intFromPtr(provider.performance_boot_summary),
         .performance_driver_work = @intFromPtr(provider.performance_driver_work),
         .performance_pci_inventory = @intFromPtr(provider.performance_pci_inventory),
+        .performance_input = @intFromPtr(provider.performance_input),
     };
 }

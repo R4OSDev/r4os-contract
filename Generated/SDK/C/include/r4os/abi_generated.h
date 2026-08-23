@@ -1718,6 +1718,7 @@ typedef struct R4ProgramInventorySummary R4ProgramInventorySummary;
 typedef struct R4ProgramDriverWorkPerformanceMetrics R4ProgramDriverWorkPerformanceMetrics;
 typedef struct R4ProgramDriverWorkPerformanceInfo R4ProgramDriverWorkPerformanceInfo;
 typedef struct R4ProgramPciInventoryPerformanceInfo R4ProgramPciInventoryPerformanceInfo;
+typedef struct R4ProgramInputPerformanceInfo R4ProgramInputPerformanceInfo;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -4658,6 +4659,47 @@ typedef struct R4ProgramPciInventoryPerformanceInfo {
     uint64_t timing_unavailable;
 } R4ProgramPciInventoryPerformanceInfo;
 
+typedef struct R4ProgramInputPerformanceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t keyboard_queue_capacity;
+    uint32_t keyboard_queue_pending;
+    uint32_t keyboard_queue_high_water;
+    uint32_t gui_queue_capacity;
+    uint32_t gui_queue_pending;
+    uint32_t gui_queue_high_water;
+    uint32_t gui_queue_active;
+    uint32_t console_queue_capacity;
+    uint32_t console_queue_pending;
+    uint32_t console_queue_high_water;
+    uint32_t console_queue_active;
+    uint32_t program_start_attach_pending;
+    uint64_t i8042_irq1_count;
+    uint64_t i8042_irq12_count;
+    uint64_t i8042_byte_count;
+    uint64_t i8042_keyboard_byte_count;
+    uint64_t i8042_mouse_byte_count;
+    uint64_t i8042_keyboard_bytes_on_irq12;
+    uint64_t i8042_mouse_bytes_on_irq1;
+    uint64_t i8042_drain_limit_hits;
+    uint64_t keyboard_push_attempts;
+    uint64_t keyboard_accepted;
+    uint64_t keyboard_dropped;
+    uint64_t gui_push_attempts;
+    uint64_t gui_accepted;
+    uint64_t gui_mouse_move_coalesced;
+    uint64_t gui_mouse_move_evicted;
+    uint64_t gui_rejected;
+    uint64_t console_push_calls;
+    uint64_t console_batch_calls;
+    uint64_t console_bytes_attempted;
+    uint64_t console_bytes_accepted;
+    uint64_t console_full_events;
+    uint64_t program_launch_attempts;
+    uint64_t program_entries_started;
+    uint64_t program_attach_wait_events;
+} R4ProgramInputPerformanceInfo;
+
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
 typedef struct R4XStartContext {
@@ -5002,6 +5044,7 @@ typedef int32_t (*R4DeskProgramRequestDesktopFn)(void);
 typedef int32_t (*R4DeskProgramSpawnWithConsoleHostFn)(const uint8_t * arg0, const uint8_t * arg1, uint32_t arg2, uint32_t arg3);
 typedef int32_t (*R4DeskProgramSpawnWithConsoleHostHandleFn)(const uint8_t * path, const uint8_t * args, uint32_t policy, uint32_t host, R4ProgramProcessHandle * out_handle);
 typedef int32_t (*R4DeskProgramSetWindowHandleFn)(const R4ProgramProcessHandle * handle, int32_t window_id);
+typedef int32_t (*R4DeskConsolePushInputFn)(uint32_t instance_id, const uint8_t * data, uint32_t length);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -5060,6 +5103,7 @@ typedef struct R4XStartR4Desk {
     uintptr_t program_spawn_with_console_host;
     uintptr_t program_spawn_with_console_host_handle;
     uintptr_t program_set_window_handle;
+    uintptr_t console_push_input;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -5297,6 +5341,7 @@ typedef int32_t (*R4DevPerformanceIrqTimingFn)(uint32_t irq, R4ProgramIrqTimingI
 typedef int32_t (*R4DevPerformanceBootSummaryFn)(R4ProgramBootPerformanceInfo * out);
 typedef int32_t (*R4DevPerformanceDriverWorkFn)(uint32_t owner, R4ProgramDriverWorkPerformanceInfo * out);
 typedef int32_t (*R4DevPerformancePciInventoryFn)(R4ProgramPciInventoryPerformanceInfo * out);
+typedef int32_t (*R4DevPerformanceInputFn)(R4ProgramInputPerformanceInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -5344,6 +5389,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_boot_summary;
     uintptr_t performance_driver_work;
     uintptr_t performance_pci_inventory;
+    uintptr_t performance_input;
 } R4XStartR4Dev;
 
 
@@ -8096,6 +8142,45 @@ _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, enumeration_total_
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, ecam_enumeration_ns) == 256u, "ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, legacy_enumeration_ns) == 264u, "ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, timing_unavailable) == 272u, "ProgramPciInventoryPerformanceInfo.timing_unavailable offset mismatch");
+_Static_assert(sizeof(R4ProgramInputPerformanceInfo) == 248u, "ProgramInputPerformanceInfo size mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, version) == 0u, "ProgramInputPerformanceInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, size) == 4u, "ProgramInputPerformanceInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, keyboard_queue_capacity) == 8u, "ProgramInputPerformanceInfo.keyboard_queue_capacity offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, keyboard_queue_pending) == 12u, "ProgramInputPerformanceInfo.keyboard_queue_pending offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, keyboard_queue_high_water) == 16u, "ProgramInputPerformanceInfo.keyboard_queue_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_queue_capacity) == 20u, "ProgramInputPerformanceInfo.gui_queue_capacity offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_queue_pending) == 24u, "ProgramInputPerformanceInfo.gui_queue_pending offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_queue_high_water) == 28u, "ProgramInputPerformanceInfo.gui_queue_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_queue_active) == 32u, "ProgramInputPerformanceInfo.gui_queue_active offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_queue_capacity) == 36u, "ProgramInputPerformanceInfo.console_queue_capacity offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_queue_pending) == 40u, "ProgramInputPerformanceInfo.console_queue_pending offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_queue_high_water) == 44u, "ProgramInputPerformanceInfo.console_queue_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_queue_active) == 48u, "ProgramInputPerformanceInfo.console_queue_active offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_start_attach_pending) == 52u, "ProgramInputPerformanceInfo.program_start_attach_pending offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_irq1_count) == 56u, "ProgramInputPerformanceInfo.i8042_irq1_count offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_irq12_count) == 64u, "ProgramInputPerformanceInfo.i8042_irq12_count offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_byte_count) == 72u, "ProgramInputPerformanceInfo.i8042_byte_count offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_keyboard_byte_count) == 80u, "ProgramInputPerformanceInfo.i8042_keyboard_byte_count offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_mouse_byte_count) == 88u, "ProgramInputPerformanceInfo.i8042_mouse_byte_count offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_keyboard_bytes_on_irq12) == 96u, "ProgramInputPerformanceInfo.i8042_keyboard_bytes_on_irq12 offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_mouse_bytes_on_irq1) == 104u, "ProgramInputPerformanceInfo.i8042_mouse_bytes_on_irq1 offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, i8042_drain_limit_hits) == 112u, "ProgramInputPerformanceInfo.i8042_drain_limit_hits offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, keyboard_push_attempts) == 120u, "ProgramInputPerformanceInfo.keyboard_push_attempts offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, keyboard_accepted) == 128u, "ProgramInputPerformanceInfo.keyboard_accepted offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, keyboard_dropped) == 136u, "ProgramInputPerformanceInfo.keyboard_dropped offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_push_attempts) == 144u, "ProgramInputPerformanceInfo.gui_push_attempts offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_accepted) == 152u, "ProgramInputPerformanceInfo.gui_accepted offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_mouse_move_coalesced) == 160u, "ProgramInputPerformanceInfo.gui_mouse_move_coalesced offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_mouse_move_evicted) == 168u, "ProgramInputPerformanceInfo.gui_mouse_move_evicted offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, gui_rejected) == 176u, "ProgramInputPerformanceInfo.gui_rejected offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_push_calls) == 184u, "ProgramInputPerformanceInfo.console_push_calls offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_batch_calls) == 192u, "ProgramInputPerformanceInfo.console_batch_calls offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_bytes_attempted) == 200u, "ProgramInputPerformanceInfo.console_bytes_attempted offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_bytes_accepted) == 208u, "ProgramInputPerformanceInfo.console_bytes_accepted offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_full_events) == 216u, "ProgramInputPerformanceInfo.console_full_events offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_launch_attempts) == 224u, "ProgramInputPerformanceInfo.program_launch_attempts offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_entries_started) == 232u, "ProgramInputPerformanceInfo.program_entries_started offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_attach_wait_events) == 240u, "ProgramInputPerformanceInfo.program_attach_wait_events offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 976u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -8334,7 +8419,7 @@ _Static_assert(offsetof(R4XStartR4Sys, monotonic_clock) == 960u, "R4XStartR4Sys.
 _Static_assert(sizeof(R4SysMonotonicClockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, boot_ready) == 968u, "R4XStartR4Sys.boot_ready offset mismatch");
 _Static_assert(sizeof(R4SysBootReadyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 432u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 440u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -8438,6 +8523,8 @@ _Static_assert(offsetof(R4XStartR4Desk, program_spawn_with_console_host_handle) 
 _Static_assert(sizeof(R4DeskProgramSpawnWithConsoleHostHandleFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, program_set_window_handle) == 424u, "R4XStartR4Desk.program_set_window_handle offset mismatch");
 _Static_assert(sizeof(R4DeskProgramSetWindowHandleFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, console_push_input) == 432u, "R4XStartR4Desk.console_push_input offset mismatch");
+_Static_assert(sizeof(R4DeskConsolePushInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 272u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -8613,7 +8700,7 @@ _Static_assert(offsetof(R4XStartR4Audio, opl3_stop) == 160u, "R4XStartR4Audio.op
 _Static_assert(sizeof(R4AudioOpl3StopFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved0) == 168u, "R4XStartR4Audio.reserved0 offset mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, reserved1) == 176u, "R4XStartR4Audio.reserved1 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 344u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 352u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -8694,6 +8781,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_driver_work) == 328u, "R4XSta
 _Static_assert(sizeof(R4DevPerformanceDriverWorkFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, performance_pci_inventory) == 336u, "R4XStartR4Dev.performance_pci_inventory offset mismatch");
 _Static_assert(sizeof(R4DevPerformancePciInventoryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_input) == 344u, "R4XStartR4Dev.performance_input offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

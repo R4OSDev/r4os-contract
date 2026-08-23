@@ -2750,6 +2750,45 @@ comptime {
     if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "ecam_enumeration_ns") != 256) @compileError("ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns offset");
     if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "legacy_enumeration_ns") != 264) @compileError("ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns offset");
     if (@offsetOf(abi.ProgramPciInventoryPerformanceInfo, "timing_unavailable") != 272) @compileError("ProgramPciInventoryPerformanceInfo.timing_unavailable offset");
+    if (@sizeOf(abi.ProgramInputPerformanceInfo) != 248) @compileError("ProgramInputPerformanceInfo size");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "version") != 0) @compileError("ProgramInputPerformanceInfo.version offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "size") != 4) @compileError("ProgramInputPerformanceInfo.size offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "keyboard_queue_capacity") != 8) @compileError("ProgramInputPerformanceInfo.keyboard_queue_capacity offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "keyboard_queue_pending") != 12) @compileError("ProgramInputPerformanceInfo.keyboard_queue_pending offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "keyboard_queue_high_water") != 16) @compileError("ProgramInputPerformanceInfo.keyboard_queue_high_water offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_queue_capacity") != 20) @compileError("ProgramInputPerformanceInfo.gui_queue_capacity offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_queue_pending") != 24) @compileError("ProgramInputPerformanceInfo.gui_queue_pending offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_queue_high_water") != 28) @compileError("ProgramInputPerformanceInfo.gui_queue_high_water offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_queue_active") != 32) @compileError("ProgramInputPerformanceInfo.gui_queue_active offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_queue_capacity") != 36) @compileError("ProgramInputPerformanceInfo.console_queue_capacity offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_queue_pending") != 40) @compileError("ProgramInputPerformanceInfo.console_queue_pending offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_queue_high_water") != 44) @compileError("ProgramInputPerformanceInfo.console_queue_high_water offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_queue_active") != 48) @compileError("ProgramInputPerformanceInfo.console_queue_active offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "program_start_attach_pending") != 52) @compileError("ProgramInputPerformanceInfo.program_start_attach_pending offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_irq1_count") != 56) @compileError("ProgramInputPerformanceInfo.i8042_irq1_count offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_irq12_count") != 64) @compileError("ProgramInputPerformanceInfo.i8042_irq12_count offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_byte_count") != 72) @compileError("ProgramInputPerformanceInfo.i8042_byte_count offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_keyboard_byte_count") != 80) @compileError("ProgramInputPerformanceInfo.i8042_keyboard_byte_count offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_mouse_byte_count") != 88) @compileError("ProgramInputPerformanceInfo.i8042_mouse_byte_count offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_keyboard_bytes_on_irq12") != 96) @compileError("ProgramInputPerformanceInfo.i8042_keyboard_bytes_on_irq12 offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_mouse_bytes_on_irq1") != 104) @compileError("ProgramInputPerformanceInfo.i8042_mouse_bytes_on_irq1 offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "i8042_drain_limit_hits") != 112) @compileError("ProgramInputPerformanceInfo.i8042_drain_limit_hits offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "keyboard_push_attempts") != 120) @compileError("ProgramInputPerformanceInfo.keyboard_push_attempts offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "keyboard_accepted") != 128) @compileError("ProgramInputPerformanceInfo.keyboard_accepted offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "keyboard_dropped") != 136) @compileError("ProgramInputPerformanceInfo.keyboard_dropped offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_push_attempts") != 144) @compileError("ProgramInputPerformanceInfo.gui_push_attempts offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_accepted") != 152) @compileError("ProgramInputPerformanceInfo.gui_accepted offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_mouse_move_coalesced") != 160) @compileError("ProgramInputPerformanceInfo.gui_mouse_move_coalesced offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_mouse_move_evicted") != 168) @compileError("ProgramInputPerformanceInfo.gui_mouse_move_evicted offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "gui_rejected") != 176) @compileError("ProgramInputPerformanceInfo.gui_rejected offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_push_calls") != 184) @compileError("ProgramInputPerformanceInfo.console_push_calls offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_batch_calls") != 192) @compileError("ProgramInputPerformanceInfo.console_batch_calls offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_bytes_attempted") != 200) @compileError("ProgramInputPerformanceInfo.console_bytes_attempted offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_bytes_accepted") != 208) @compileError("ProgramInputPerformanceInfo.console_bytes_accepted offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "console_full_events") != 216) @compileError("ProgramInputPerformanceInfo.console_full_events offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "program_launch_attempts") != 224) @compileError("ProgramInputPerformanceInfo.program_launch_attempts offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "program_entries_started") != 232) @compileError("ProgramInputPerformanceInfo.program_entries_started offset");
+    if (@offsetOf(abi.ProgramInputPerformanceInfo, "program_attach_wait_events") != 240) @compileError("ProgramInputPerformanceInfo.program_attach_wait_events offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 976) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -2988,7 +3027,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.monotonic_clock) != 8) @compileError("R4SysFns.monotonic_clock signature");
     if (@offsetOf(abi.R4XStartR4Sys, "boot_ready") != 968) @compileError("R4XStartR4Sys.boot_ready offset");
     if (@sizeOf(abi.R4SysFns.boot_ready) != 8) @compileError("R4SysFns.boot_ready signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 432) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 440) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -3092,6 +3131,8 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.program_spawn_with_console_host_handle) != 8) @compileError("R4DeskFns.program_spawn_with_console_host_handle signature");
     if (@offsetOf(abi.R4XStartR4Desk, "program_set_window_handle") != 424) @compileError("R4XStartR4Desk.program_set_window_handle offset");
     if (@sizeOf(abi.R4DeskFns.program_set_window_handle) != 8) @compileError("R4DeskFns.program_set_window_handle signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "console_push_input") != 432) @compileError("R4XStartR4Desk.console_push_input offset");
+    if (@sizeOf(abi.R4DeskFns.console_push_input) != 8) @compileError("R4DeskFns.console_push_input signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 272) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");
@@ -3267,7 +3308,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.opl3_stop) != 8) @compileError("R4AudioFns.opl3_stop signature");
     if (@offsetOf(abi.R4XStartR4Audio, "reserved0") != 168) @compileError("R4XStartR4Audio.reserved0 offset");
     if (@offsetOf(abi.R4XStartR4Audio, "reserved1") != 176) @compileError("R4XStartR4Audio.reserved1 offset");
-    if (@sizeOf(abi.R4XStartR4Dev) != 344) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 352) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -3348,6 +3389,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.performance_driver_work) != 8) @compileError("R4DevFns.performance_driver_work signature");
     if (@offsetOf(abi.R4XStartR4Dev, "performance_pci_inventory") != 336) @compileError("R4XStartR4Dev.performance_pci_inventory offset");
     if (@sizeOf(abi.R4DevFns.performance_pci_inventory) != 8) @compileError("R4DevFns.performance_pci_inventory signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "performance_input") != 344) @compileError("R4XStartR4Dev.performance_input offset");
+    if (@sizeOf(abi.R4DevFns.performance_input) != 8) @compileError("R4DevFns.performance_input signature");
 }
 
 test "generated API contract compiles" {}

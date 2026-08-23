@@ -84,16 +84,16 @@ Gruppentabellen
 
     R4XSTART_R4SYS_VERSION = 13
     R4XSTART_R4SYS_SIZE    = 976
-    R4XSTART_R4DESK_VERSION = 7
-    R4XSTART_R4DESK_SIZE    = 432
+    R4XSTART_R4DESK_VERSION = 8
+    R4XSTART_R4DESK_SIZE    = 440
     R4XSTART_R4DRAW_VERSION = 2
     R4XSTART_R4DRAW_SIZE    = 272
     R4XSTART_R4NET_VERSION = 1
     R4XSTART_R4NET_SIZE    = 288
     R4XSTART_R4AUDIO_VERSION = 1
     R4XSTART_R4AUDIO_SIZE    = 184
-    R4XSTART_R4DEV_VERSION = 9
-    R4XSTART_R4DEV_SIZE    = 344
+    R4XSTART_R4DEV_VERSION = 10
+    R4XSTART_R4DEV_SIZE    = 352
 
 Die sechs eingebauten Platform APIs beginnen jeweils mit magic, abi_version, size und flags;
 danach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls

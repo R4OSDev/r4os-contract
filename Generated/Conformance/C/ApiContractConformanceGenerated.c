@@ -171,6 +171,7 @@ static R4DeskProgramRequestDesktopFn r4os_probe_r4desk_program_request_desktop =
 static R4DeskProgramSpawnWithConsoleHostFn r4os_probe_r4desk_program_spawn_with_console_host = (R4DeskProgramSpawnWithConsoleHostFn)0;
 static R4DeskProgramSpawnWithConsoleHostHandleFn r4os_probe_r4desk_program_spawn_with_console_host_handle = (R4DeskProgramSpawnWithConsoleHostHandleFn)0;
 static R4DeskProgramSetWindowHandleFn r4os_probe_r4desk_program_set_window_handle = (R4DeskProgramSetWindowHandleFn)0;
+static R4DeskConsolePushInputFn r4os_probe_r4desk_console_push_input = (R4DeskConsolePushInputFn)0;
 static R4DrawScreenWidthFn r4os_probe_r4draw_screen_width = (R4DrawScreenWidthFn)0;
 static R4DrawScreenHeightFn r4os_probe_r4draw_screen_height = (R4DrawScreenHeightFn)0;
 static R4DrawClearFn r4os_probe_r4draw_clear = (R4DrawClearFn)0;
@@ -295,5 +296,6 @@ static R4DevPerformanceIrqTimingFn r4os_probe_r4dev_performance_irq_timing = (R4
 static R4DevPerformanceBootSummaryFn r4os_probe_r4dev_performance_boot_summary = (R4DevPerformanceBootSummaryFn)0;
 static R4DevPerformanceDriverWorkFn r4os_probe_r4dev_performance_driver_work = (R4DevPerformanceDriverWorkFn)0;
 static R4DevPerformancePciInventoryFn r4os_probe_r4dev_performance_pci_inventory = (R4DevPerformancePciInventoryFn)0;
+static R4DevPerformanceInputFn r4os_probe_r4dev_performance_input = (R4DevPerformanceInputFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }
