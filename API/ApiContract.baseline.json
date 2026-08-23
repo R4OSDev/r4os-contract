@@ -17491,7 +17491,7 @@
           "name": "audio_close",
           "state": "function",
           "required": false,
-          "description": "Closes and invalidates an owned audio stream.",
+          "description": "Drains all accepted PCM frames, then closes and invalidates an owned audio stream; a failed drain keeps the handle valid for retry.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -17517,7 +17517,7 @@
             "error_domain": "audio",
             "ownership": "consumes_owned_handle",
             "buffer_lifetime": "none",
-            "blocking": "nonblocking",
+            "blocking": "may_block",
             "threading": "caller_serialized",
             "timeout": "none",
             "cancel": "not_cancellable",
