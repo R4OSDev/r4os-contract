@@ -861,7 +861,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 2u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 3u
 #define R4OS_PROGRAM_COMPLETION_FLAG_DISPLAY_USED 4u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OWNER 8u
@@ -2750,6 +2750,11 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t loader_service_boot_ns;
     uint64_t loader_config_load_ns;
     uint64_t monotonic_reserved1;
+    uint64_t service_completion_wait_rounds;
+    uint64_t service_targeted_response_wakes;
+    uint64_t service_targeted_response_wake_misses;
+    uint64_t service_admission_waits;
+    uint64_t service_admission_timeouts;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -5472,7 +5477,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 4576u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 4616u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -6141,6 +6146,11 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, loader_r4p_runtime_total_ns
 _Static_assert(offsetof(R4ProgramPerformanceSummary, loader_service_boot_ns) == 4552u, "ProgramPerformanceSummary.loader_service_boot_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, loader_config_load_ns) == 4560u, "ProgramPerformanceSummary.loader_config_load_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, monotonic_reserved1) == 4568u, "ProgramPerformanceSummary.monotonic_reserved1 offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_completion_wait_rounds) == 4576u, "ProgramPerformanceSummary.service_completion_wait_rounds offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_targeted_response_wakes) == 4584u, "ProgramPerformanceSummary.service_targeted_response_wakes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_targeted_response_wake_misses) == 4592u, "ProgramPerformanceSummary.service_targeted_response_wake_misses offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_admission_waits) == 4600u, "ProgramPerformanceSummary.service_admission_waits offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, service_admission_timeouts) == 4608u, "ProgramPerformanceSummary.service_admission_timeouts offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");

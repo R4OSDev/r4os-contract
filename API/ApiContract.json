@@ -26124,8 +26124,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 4576,
+      "version": 3,
+      "size": 4616,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -26142,7 +26142,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "2"
+          "default_value": "3"
         },
         {
           "name": "size",
@@ -26156,7 +26156,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "4576"
+          "default_value": "4616"
         },
         {
           "name": "flags",
@@ -35479,6 +35479,76 @@
             "name": "u64"
           },
           "description": "Reserved for append-only monotonic performance durations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_completion_wait_rounds",
+          "offset": 4576,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Number of request-specific response wait rounds.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_targeted_response_wakes",
+          "offset": 4584,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Response publications that woke their request-specific waiter.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_targeted_response_wake_misses",
+          "offset": 4592,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Response publications completed before a request-specific waiter was enrolled.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_admission_waits",
+          "offset": 4600,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Synchronous service submissions that waited for a free endpoint request slot.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_admission_timeouts",
+          "offset": 4608,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Synchronous service submissions whose absolute deadline expired during slot admission.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -66960,7 +67030,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "2",
+      "value": "3",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

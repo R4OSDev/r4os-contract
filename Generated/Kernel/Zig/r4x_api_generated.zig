@@ -849,7 +849,7 @@ pub const performance_simd_abi_avx: u32 = 2;
 pub const performance_simd_abi_avx2: u32 = 3;
 pub const performance_simd_abi_none: u32 = 0;
 pub const performance_simd_abi_sse2: u32 = 1;
-pub const performance_snapshot_version: u32 = 2;
+pub const performance_snapshot_version: u32 = 3;
 pub const program_completion_flag_display_used: u32 = 4;
 pub const program_completion_flag_output: u32 = 2;
 pub const program_completion_flag_owner: u32 = 8;
@@ -2026,8 +2026,8 @@ pub const ProgramMemoryVmPageStateProbe = extern struct {
 };
 
 pub const ProgramPerformanceSummary = extern struct {
-    version: u32 = 2,
-    size: u32 = 4576,
+    version: u32 = 3,
+    size: u32 = 4616,
     flags: u32 = 0,
     missing_flags: u32 = 0,
     ticks: u64 = 0,
@@ -2694,6 +2694,11 @@ pub const ProgramPerformanceSummary = extern struct {
     loader_service_boot_ns: u64 = 0,
     loader_config_load_ns: u64 = 0,
     monotonic_reserved1: u64 = 0,
+    service_completion_wait_rounds: u64 = 0,
+    service_targeted_response_wakes: u64 = 0,
+    service_targeted_response_wake_misses: u64 = 0,
+    service_admission_waits: u64 = 0,
+    service_admission_timeouts: u64 = 0,
 };
 
 pub const ProgramTaskPerformanceInfo = extern struct {
@@ -5713,7 +5718,7 @@ comptime {
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.table_full_failures");
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.cleanup_pages");
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.reserved1");
-    if (@sizeOf(ProgramPerformanceSummary) != 4576) @compileError("generated ABI size drift: ProgramPerformanceSummary");
+    if (@sizeOf(ProgramPerformanceSummary) != 4616) @compileError("generated ABI size drift: ProgramPerformanceSummary");
     if (@alignOf(ProgramPerformanceSummary) != 8) @compileError("generated ABI alignment drift: ProgramPerformanceSummary");
     if (@offsetOf(ProgramPerformanceSummary, "version") != 0) @compileError("generated ABI offset drift: ProgramPerformanceSummary.version");
     if (@offsetOf(ProgramPerformanceSummary, "size") != 4) @compileError("generated ABI offset drift: ProgramPerformanceSummary.size");
@@ -6383,6 +6388,11 @@ comptime {
     if (@offsetOf(ProgramPerformanceSummary, "loader_service_boot_ns") != 4552) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_service_boot_ns");
     if (@offsetOf(ProgramPerformanceSummary, "loader_config_load_ns") != 4560) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_config_load_ns");
     if (@offsetOf(ProgramPerformanceSummary, "monotonic_reserved1") != 4568) @compileError("generated ABI offset drift: ProgramPerformanceSummary.monotonic_reserved1");
+    if (@offsetOf(ProgramPerformanceSummary, "service_completion_wait_rounds") != 4576) @compileError("generated ABI offset drift: ProgramPerformanceSummary.service_completion_wait_rounds");
+    if (@offsetOf(ProgramPerformanceSummary, "service_targeted_response_wakes") != 4584) @compileError("generated ABI offset drift: ProgramPerformanceSummary.service_targeted_response_wakes");
+    if (@offsetOf(ProgramPerformanceSummary, "service_targeted_response_wake_misses") != 4592) @compileError("generated ABI offset drift: ProgramPerformanceSummary.service_targeted_response_wake_misses");
+    if (@offsetOf(ProgramPerformanceSummary, "service_admission_waits") != 4600) @compileError("generated ABI offset drift: ProgramPerformanceSummary.service_admission_waits");
+    if (@offsetOf(ProgramPerformanceSummary, "service_admission_timeouts") != 4608) @compileError("generated ABI offset drift: ProgramPerformanceSummary.service_admission_timeouts");
     if (@sizeOf(ProgramTaskPerformanceInfo) != 304) @compileError("generated ABI size drift: ProgramTaskPerformanceInfo");
     if (@alignOf(ProgramTaskPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramTaskPerformanceInfo");
     if (@offsetOf(ProgramTaskPerformanceInfo, "index") != 0) @compileError("generated ABI offset drift: ProgramTaskPerformanceInfo.index");

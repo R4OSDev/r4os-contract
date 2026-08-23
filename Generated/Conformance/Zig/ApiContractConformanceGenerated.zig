@@ -390,7 +390,7 @@ comptime {
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("ProgramMemoryVmPageStateProbe.table_full_failures offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("ProgramMemoryVmPageStateProbe.cleanup_pages offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("ProgramMemoryVmPageStateProbe.reserved1 offset");
-    if (@sizeOf(abi.ProgramPerformanceSummary) != 4576) @compileError("ProgramPerformanceSummary size");
+    if (@sizeOf(abi.ProgramPerformanceSummary) != 4616) @compileError("ProgramPerformanceSummary size");
     if (@offsetOf(abi.ProgramPerformanceSummary, "version") != 0) @compileError("ProgramPerformanceSummary.version offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "size") != 4) @compileError("ProgramPerformanceSummary.size offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "flags") != 8) @compileError("ProgramPerformanceSummary.flags offset");
@@ -1059,6 +1059,11 @@ comptime {
     if (@offsetOf(abi.ProgramPerformanceSummary, "loader_service_boot_ns") != 4552) @compileError("ProgramPerformanceSummary.loader_service_boot_ns offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "loader_config_load_ns") != 4560) @compileError("ProgramPerformanceSummary.loader_config_load_ns offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "monotonic_reserved1") != 4568) @compileError("ProgramPerformanceSummary.monotonic_reserved1 offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_completion_wait_rounds") != 4576) @compileError("ProgramPerformanceSummary.service_completion_wait_rounds offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_targeted_response_wakes") != 4584) @compileError("ProgramPerformanceSummary.service_targeted_response_wakes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_targeted_response_wake_misses") != 4592) @compileError("ProgramPerformanceSummary.service_targeted_response_wake_misses offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_admission_waits") != 4600) @compileError("ProgramPerformanceSummary.service_admission_waits offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "service_admission_timeouts") != 4608) @compileError("ProgramPerformanceSummary.service_admission_timeouts offset");
     if (@sizeOf(abi.ProgramTaskPerformanceInfo) != 304) @compileError("ProgramTaskPerformanceInfo size");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "index") != 0) @compileError("ProgramTaskPerformanceInfo.index offset");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "id") != 4) @compileError("ProgramTaskPerformanceInfo.id offset");
