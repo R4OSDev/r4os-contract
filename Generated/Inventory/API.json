@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 290,
-    "group_slot_count": 290,
+    "function_count": 291,
+    "group_slot_count": 291,
     "sdk_only_count": 0,
     "public_count": 208,
-    "advanced_count": 82
+    "advanced_count": 83
   },
   "functions": [
     {
@@ -3485,6 +3485,18 @@
       "slot": 38,
       "exposure": "advanced",
       "description": "Returns the small passive boot completion and frozen timing dataset without collecting broad subsystem summaries.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.performance_driver_work",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 39,
+      "exposure": "advanced",
+      "description": "Returns the compact owner-selectable driver-work queue state, timing, wake, release, scan, critical-section and cleanup counters without collecting broad subsystem summaries.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

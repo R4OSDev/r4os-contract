@@ -18499,10 +18499,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 7,
+      "abi_version": 8,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 328,
+      "size": 336,
       "slots": [
         {
           "number": 0,
@@ -21139,6 +21139,72 @@
                   "child": {
                     "kind": "named",
                     "name": "ProgramBootPerformanceInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 39,
+          "offset": 328,
+          "name": "performance_driver_work",
+          "state": "function",
+          "required": false,
+          "description": "Returns the compact owner-selectable driver-work queue state, timing, wake, release, scan, critical-section and cleanup counters without collecting broad subsystem summaries.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "owner",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramDriverWorkPerformanceInfo"
                   },
                   "direction": "output",
                   "nullable": false,
@@ -57296,6 +57362,1742 @@
       ],
       "values": [],
       "description": "Compact versioned execution inventory summary with non-saturating counts and peaks."
+    },
+    {
+      "name": "ProgramDriverWorkPerformanceMetrics",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 640,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "submitted",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric submitted.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "submitted_actual_irq",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric submitted_actual_irq.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "submitted_actual_task",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric submitted_actual_task.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "submitted_irq_class",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric submitted_irq_class.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "submitted_task_class",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric submitted_task_class.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "started",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric started.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "started_irq_class",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric started_irq_class.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "started_task_class",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric started_task_class.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric completed.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed_irq_class",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric completed_irq_class.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed_task_class",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric completed_task_class.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "failed",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric failed.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cancelled",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cancelled.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dropped",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric dropped.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "full_rejections",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric full_rejections.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained_full_rejections",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric retained_full_rejections.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waits",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric waits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wait_timeouts",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wait_timeouts.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wait_denied_irq",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wait_denied_irq.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wait_failed",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wait_failed.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wait_total_ns",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wait_total_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wait_max_ns",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wait_max_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wait_last_ns",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wait_last_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wake_publications",
+          "offset": 184,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wake_publications.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wake_waiters",
+          "offset": 192,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wake_waiters.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wake_misses",
+          "offset": 200,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric wake_misses.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "releases",
+          "offset": 208,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric releases.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "release_busy",
+          "offset": 216,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric release_busy.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "release_wakes",
+          "offset": 224,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric release_wakes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "invalid_handles",
+          "offset": 232,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric invalid_handles.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stale_handles",
+          "offset": 240,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric stale_handles.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "publication_pending_releases",
+          "offset": 248,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric publication_pending_releases.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiter_blocked_releases",
+          "offset": 256,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric waiter_blocked_releases.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "claimed_releases",
+          "offset": 264,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric claimed_releases.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queue_total_ns",
+          "offset": 272,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric queue_total_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queue_max_ns",
+          "offset": 280,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric queue_max_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queue_last_ns",
+          "offset": 288,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric queue_last_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "run_total_ns",
+          "offset": 296,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric run_total_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "run_max_ns",
+          "offset": 304,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric run_max_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "run_last_ns",
+          "offset": 312,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric run_last_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "e2e_total_ns",
+          "offset": 320,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric e2e_total_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "e2e_max_ns",
+          "offset": 328,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric e2e_max_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "e2e_last_ns",
+          "offset": 336,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric e2e_last_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timing_unavailable",
+          "offset": 344,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric timing_unavailable.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completion_age_current_ns",
+          "offset": 352,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric completion_age_current_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completion_age_max_ns",
+          "offset": 360,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric completion_age_max_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selection_irq",
+          "offset": 368,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric selection_irq.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selection_task",
+          "offset": 376,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric selection_task.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selection_irq_preferred",
+          "offset": 384,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric selection_irq_preferred.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selection_task_fairness",
+          "offset": 392,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric selection_task_fairness.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selection_empty",
+          "offset": 400,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric selection_empty.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scan_passes",
+          "offset": 408,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric scan_passes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scan_slots",
+          "offset": 416,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric scan_slots.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "critical_sections",
+          "offset": 424,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric critical_sections.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "critical_from_irq",
+          "offset": 432,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric critical_from_irq.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "critical_timing_samples",
+          "offset": 440,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric critical_timing_samples.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "critical_timing_unavailable",
+          "offset": 448,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric critical_timing_unavailable.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "critical_total_ns",
+          "offset": 456,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric critical_total_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "critical_max_ns",
+          "offset": 464,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric critical_max_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "critical_last_ns",
+          "offset": 472,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric critical_last_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_calls",
+          "offset": 480,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_calls.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_quiesced",
+          "offset": 488,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_quiesced.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_failed_context",
+          "offset": 496,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_failed_context.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_queued_cancelled",
+          "offset": 504,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_queued_cancelled.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_waits",
+          "offset": 512,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_waits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_wait_timeouts",
+          "offset": 520,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_wait_timeouts.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_wait_failures",
+          "offset": 528,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_wait_failures.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_wait_total_ns",
+          "offset": 536,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_wait_total_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_wait_max_ns",
+          "offset": 544,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_wait_max_ns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_released",
+          "offset": 552,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_released.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_late_finishes",
+          "offset": 560,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_late_finishes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_scan_passes",
+          "offset": 568,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_scan_passes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_scan_slots",
+          "offset": 576,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric cleanup_scan_slots.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "long_callbacks",
+          "offset": 584,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric long_callbacks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiter_enrollments",
+          "offset": 592,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric waiter_enrollments.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiter_wake_returns",
+          "offset": 600,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric waiter_wake_returns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiter_cancel_returns",
+          "offset": 608,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric waiter_cancel_returns.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sleep_waits",
+          "offset": 616,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric sleep_waits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sleep_denied_irq",
+          "offset": 624,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric sleep_denied_irq.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sleep_total_ticks",
+          "offset": 632,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-work metric sleep_total_ticks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fixed scalar metric block used by the owner-selectable driver-work performance snapshot."
+    },
+    {
+      "name": "ProgramDriverWorkPerformanceInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 808,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "808"
+        },
+        {
+          "name": "selected_owner",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field selected_owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_present",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_present.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "initialized",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field initialized.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_started",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field worker_started.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_task_id",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field worker_task_id.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_count",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field worker_count.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "queue_capacity",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field queue_capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "free_slots",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field free_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "used_slots",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field used_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queued_slots",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field queued_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "running_slots",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field running_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed_slots",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field completed_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cancelled_slots",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field cancelled_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "irq_queued_slots",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field irq_queued_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_queued_slots",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field task_queued_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queue_high_water",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field queue_high_water.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "used_high_water",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field used_high_water.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained_high_water",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field retained_high_water.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "irq_burst_limit",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field irq_burst_limit.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4"
+        },
+        {
+          "name": "current_irq_burst",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field current_irq_burst.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiters_current",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field waiters_current.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiters_max",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field waiters_max.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_submitted_owner",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field last_submitted_owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_started_owner",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field last_started_owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_completed_owner",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field last_completed_owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_cleanup_owner",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field last_cleanup_owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_used_slots",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_used_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_queued_slots",
+          "offset": 116,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_queued_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_running_slots",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_running_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_completed_slots",
+          "offset": 124,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_completed_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_cancelled_slots",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_cancelled_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_irq_queued_slots",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_irq_queued_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_task_queued_slots",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_task_queued_slots.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_used_high_water",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_used_high_water.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_retained_high_water",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field owner_retained_high_water.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "monotonic_clock_flags",
+          "offset": 148,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver-work snapshot field monotonic_clock_flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_waiters_current",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current enrolled waiter count for the exact selected owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_waiters_max",
+          "offset": 156,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Highest enrolled waiter count observed for the exact selected owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "long_callback_threshold_ns",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nanosecond threshold used to classify a callback as long.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "1000000"
+        },
+        {
+          "name": "metrics",
+          "offset": 168,
+          "type": {
+            "kind": "named",
+            "name": "ProgramDriverWorkPerformanceMetrics"
+          },
+          "description": "Metrics for owner zero aggregate or the exact selected owner.",
+          "size": 640,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramDriverWorkPerformanceMetrics",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Versioned compact driver-work queue snapshot; owner zero selects aggregate counters and owners 1 through 16 select exact registry-owner counters."
     }
   ],
   "operations": [],
@@ -68901,7 +70703,7 @@
     },
     {
       "name": "r4xstart_r4dev_version",
-      "value": "7",
+      "value": "8",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -71898,7 +73700,7 @@
     },
     {
       "name": "r4xstart_r4dev_size",
-      "value": "328",
+      "value": "336",
       "value_type": "u32",
       "unit": "bytes",
       "scope": "r4xstart_r4dev",

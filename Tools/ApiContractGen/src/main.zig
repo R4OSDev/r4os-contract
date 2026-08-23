@@ -400,9 +400,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // generation-bound service request path and its kernel-channel telemetry.
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 34, .reserved = 0, .tombstones = 0 },
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 19, .reserved = 2, .tombstones = 0 },
-    // R4DEV v6 appends calibrated boot-phase and IRQ timing diagnostics at
-    // slots 36..37 while slot 27 remains the frozen storage v1 prefix.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 37, .reserved = 2, .tombstones = 0 },
+    // R4DEV v8 extends the passive performance tail through slot 39 with the
+    // compact owner-selectable driver-work snapshot; slot 27 remains frozen.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 38, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {
