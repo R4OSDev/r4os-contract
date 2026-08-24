@@ -868,7 +868,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 7u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 8u
 #define R4OS_PROGRAM_COMPLETION_FLAG_DISPLAY_USED 4u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OWNER 8u
@@ -2802,6 +2802,38 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t service_registry_refresh_visits;
     uint64_t service_registry_instance_lookups;
     uint64_t service_registry_index_end_markers;
+    uint32_t hot_path_memory_block_physical_index_entries;
+    uint32_t hot_path_memory_block_physical_step_max;
+    uint32_t hot_path_memory_block_id_index_entries;
+    uint32_t hot_path_memory_block_id_step_max;
+    uint32_t hot_path_memory_block_free_slot_word_step_max;
+    uint32_t hot_path_memory_vm_range_address_entries;
+    uint32_t hot_path_memory_vm_range_address_probe_max;
+    uint32_t hot_path_memory_vm_range_address_probe_last;
+    uint32_t hot_path_memory_vm_commit_span_active;
+    uint32_t hot_path_memory_vm_commit_span_step_max;
+    uint32_t hot_path_memory_vm_page_state_span_active;
+    uint32_t hot_path_memory_vm_page_state_span_step_max;
+    uint64_t hot_path_memory_block_physical_lookups;
+    uint64_t hot_path_memory_block_physical_steps;
+    uint64_t hot_path_memory_block_physical_mutations;
+    uint64_t hot_path_memory_block_physical_rebuilds;
+    uint64_t hot_path_memory_block_id_lookups;
+    uint64_t hot_path_memory_block_id_steps;
+    uint64_t hot_path_memory_block_free_slot_lookups;
+    uint64_t hot_path_memory_block_free_slot_word_steps;
+    uint64_t hot_path_memory_block_claim_transactions;
+    uint64_t hot_path_memory_block_claim_rollbacks;
+    uint64_t hot_path_memory_vm_range_address_lookups;
+    uint64_t hot_path_memory_vm_range_address_probe_total;
+    uint64_t hot_path_memory_vm_commit_span_lookups;
+    uint64_t hot_path_memory_vm_commit_span_steps;
+    uint64_t hot_path_memory_vm_page_state_span_lookups;
+    uint64_t hot_path_memory_vm_page_state_span_steps;
+    uint64_t hot_path_memory_vm_reclaim_range_steps;
+    uint64_t hot_path_memory_vm_reclaim_span_steps;
+    uint64_t hot_path_memory_vm_reclaim_page_steps;
+    uint64_t hot_path_memory_vm_reclaim_wraps;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -5792,7 +5824,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 5192u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 5400u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -6492,6 +6524,38 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, service_registry_refresh_re
 _Static_assert(offsetof(R4ProgramPerformanceSummary, service_registry_refresh_visits) == 5168u, "ProgramPerformanceSummary.service_registry_refresh_visits offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, service_registry_instance_lookups) == 5176u, "ProgramPerformanceSummary.service_registry_instance_lookups offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, service_registry_index_end_markers) == 5184u, "ProgramPerformanceSummary.service_registry_index_end_markers offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_physical_index_entries) == 5192u, "ProgramPerformanceSummary.hot_path_memory_block_physical_index_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_physical_step_max) == 5196u, "ProgramPerformanceSummary.hot_path_memory_block_physical_step_max offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_id_index_entries) == 5200u, "ProgramPerformanceSummary.hot_path_memory_block_id_index_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_id_step_max) == 5204u, "ProgramPerformanceSummary.hot_path_memory_block_id_step_max offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_free_slot_word_step_max) == 5208u, "ProgramPerformanceSummary.hot_path_memory_block_free_slot_word_step_max offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_range_address_entries) == 5212u, "ProgramPerformanceSummary.hot_path_memory_vm_range_address_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_range_address_probe_max) == 5216u, "ProgramPerformanceSummary.hot_path_memory_vm_range_address_probe_max offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_range_address_probe_last) == 5220u, "ProgramPerformanceSummary.hot_path_memory_vm_range_address_probe_last offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_commit_span_active) == 5224u, "ProgramPerformanceSummary.hot_path_memory_vm_commit_span_active offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_commit_span_step_max) == 5228u, "ProgramPerformanceSummary.hot_path_memory_vm_commit_span_step_max offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_page_state_span_active) == 5232u, "ProgramPerformanceSummary.hot_path_memory_vm_page_state_span_active offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_page_state_span_step_max) == 5236u, "ProgramPerformanceSummary.hot_path_memory_vm_page_state_span_step_max offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_physical_lookups) == 5240u, "ProgramPerformanceSummary.hot_path_memory_block_physical_lookups offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_physical_steps) == 5248u, "ProgramPerformanceSummary.hot_path_memory_block_physical_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_physical_mutations) == 5256u, "ProgramPerformanceSummary.hot_path_memory_block_physical_mutations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_physical_rebuilds) == 5264u, "ProgramPerformanceSummary.hot_path_memory_block_physical_rebuilds offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_id_lookups) == 5272u, "ProgramPerformanceSummary.hot_path_memory_block_id_lookups offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_id_steps) == 5280u, "ProgramPerformanceSummary.hot_path_memory_block_id_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_free_slot_lookups) == 5288u, "ProgramPerformanceSummary.hot_path_memory_block_free_slot_lookups offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_free_slot_word_steps) == 5296u, "ProgramPerformanceSummary.hot_path_memory_block_free_slot_word_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_claim_transactions) == 5304u, "ProgramPerformanceSummary.hot_path_memory_block_claim_transactions offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_block_claim_rollbacks) == 5312u, "ProgramPerformanceSummary.hot_path_memory_block_claim_rollbacks offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_range_address_lookups) == 5320u, "ProgramPerformanceSummary.hot_path_memory_vm_range_address_lookups offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_range_address_probe_total) == 5328u, "ProgramPerformanceSummary.hot_path_memory_vm_range_address_probe_total offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_commit_span_lookups) == 5336u, "ProgramPerformanceSummary.hot_path_memory_vm_commit_span_lookups offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_commit_span_steps) == 5344u, "ProgramPerformanceSummary.hot_path_memory_vm_commit_span_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_page_state_span_lookups) == 5352u, "ProgramPerformanceSummary.hot_path_memory_vm_page_state_span_lookups offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_page_state_span_steps) == 5360u, "ProgramPerformanceSummary.hot_path_memory_vm_page_state_span_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_reclaim_range_steps) == 5368u, "ProgramPerformanceSummary.hot_path_memory_vm_reclaim_range_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_reclaim_span_steps) == 5376u, "ProgramPerformanceSummary.hot_path_memory_vm_reclaim_span_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_reclaim_page_steps) == 5384u, "ProgramPerformanceSummary.hot_path_memory_vm_reclaim_page_steps offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, hot_path_memory_vm_reclaim_wraps) == 5392u, "ProgramPerformanceSummary.hot_path_memory_vm_reclaim_wraps offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");

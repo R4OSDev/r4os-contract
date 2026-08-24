@@ -37,7 +37,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramMemoryPagerGateProbe` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `ProgramMemoryPageIoProbe` | extensible | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramMemoryVmPageStateProbe` | extensible | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
-| `ProgramPerformanceSummary` | extensible | extern_struct | 5192/8 | 5192/8 | 5192/8 | 5192/8 |
+| `ProgramPerformanceSummary` | extensible | extern_struct | 5400/8 | 5400/8 | 5400/8 | 5400/8 |
 | `ProgramTaskPerformanceInfo` | fixed_layout | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramStoragePerformanceInfo` | fixed_layout | extern_struct | 440/8 | 440/8 | 440/8 | 440/8 |
 | `ProgramBootPhasePerformanceInfo` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
@@ -639,7 +639,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 7 / 5192 / 8
+- Version/Größe/Alignment: 8 / 5400 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -1342,6 +1342,38 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `service_registry_refresh_visits` | 5168 | 8 | 8 | `u64` | - |
 | `service_registry_instance_lookups` | 5176 | 8 | 8 | `u64` | - |
 | `service_registry_index_end_markers` | 5184 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_physical_index_entries` | 5192 | 4 | 4 | `u32` | - |
+| `hot_path_memory_block_physical_step_max` | 5196 | 4 | 4 | `u32` | - |
+| `hot_path_memory_block_id_index_entries` | 5200 | 4 | 4 | `u32` | - |
+| `hot_path_memory_block_id_step_max` | 5204 | 4 | 4 | `u32` | - |
+| `hot_path_memory_block_free_slot_word_step_max` | 5208 | 4 | 4 | `u32` | - |
+| `hot_path_memory_vm_range_address_entries` | 5212 | 4 | 4 | `u32` | - |
+| `hot_path_memory_vm_range_address_probe_max` | 5216 | 4 | 4 | `u32` | - |
+| `hot_path_memory_vm_range_address_probe_last` | 5220 | 4 | 4 | `u32` | - |
+| `hot_path_memory_vm_commit_span_active` | 5224 | 4 | 4 | `u32` | - |
+| `hot_path_memory_vm_commit_span_step_max` | 5228 | 4 | 4 | `u32` | - |
+| `hot_path_memory_vm_page_state_span_active` | 5232 | 4 | 4 | `u32` | - |
+| `hot_path_memory_vm_page_state_span_step_max` | 5236 | 4 | 4 | `u32` | - |
+| `hot_path_memory_block_physical_lookups` | 5240 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_physical_steps` | 5248 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_physical_mutations` | 5256 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_physical_rebuilds` | 5264 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_id_lookups` | 5272 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_id_steps` | 5280 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_free_slot_lookups` | 5288 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_free_slot_word_steps` | 5296 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_claim_transactions` | 5304 | 8 | 8 | `u64` | - |
+| `hot_path_memory_block_claim_rollbacks` | 5312 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_range_address_lookups` | 5320 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_range_address_probe_total` | 5328 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_commit_span_lookups` | 5336 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_commit_span_steps` | 5344 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_page_state_span_lookups` | 5352 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_page_state_span_steps` | 5360 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_reclaim_range_steps` | 5368 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_reclaim_span_steps` | 5376 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_reclaim_page_steps` | 5384 | 8 | 8 | `u64` | - |
+| `hot_path_memory_vm_reclaim_wraps` | 5392 | 8 | 8 | `u64` | - |
 
 ### `ProgramTaskPerformanceInfo`
 
@@ -5508,7 +5540,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `performance_simd_abi_avx2` | `3` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_none` | `0` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_sse2` | `1` | `u32` | value | number | `performance_simd` | fixed_contract |
-| `performance_snapshot_version` | `7` | `u32` | version | number | `performance_snapshot` | fixed_contract |
+| `performance_snapshot_version` | `8` | `u32` | version | number | `performance_snapshot` | fixed_contract |
 | `program_completion_flag_display_used` | `4` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_output` | `2` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_owner` | `8` | `u32` | flag | bitmask | `program_completion` | fixed_contract |

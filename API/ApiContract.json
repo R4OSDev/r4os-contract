@@ -26499,8 +26499,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 7,
-      "size": 5192,
+      "version": 8,
+      "size": 5400,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -26517,7 +26517,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "7"
+          "default_value": "8"
         },
         {
           "name": "size",
@@ -26531,7 +26531,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "5192"
+          "default_value": "5400"
         },
         {
           "name": "flags",
@@ -36312,6 +36312,454 @@
             "name": "u64"
           },
           "description": "Index queries that reached the end of the dense service enumeration without requesting lifecycle refresh work.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_physical_index_entries",
+          "offset": 5192,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active physical MemoryBlock intervals represented by the balanced address index.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_physical_step_max",
+          "offset": 5196,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum balanced physical-address index steps observed for one lookup.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_id_index_entries",
+          "offset": 5200,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "MemoryBlock IDs represented by the hash index, including reusable released slots until replacement.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_id_step_max",
+          "offset": 5204,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum MemoryBlock ID hash probes observed for one lookup.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_free_slot_word_step_max",
+          "offset": 5208,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum 64-slot bitmap words inspected by one MemoryBlock free-slot lookup.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_range_address_entries",
+          "offset": 5212,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active VM ranges represented by the sorted address index.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_range_address_probe_max",
+          "offset": 5216,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum binary-search probes observed for one VM address lookup.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_range_address_probe_last",
+          "offset": 5220,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Binary-search probes used by the latest VM address lookup.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_commit_span_active",
+          "offset": 5224,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active range-local VM commit spans.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_commit_span_step_max",
+          "offset": 5228,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum range-local commit-span steps observed for one lookup or mutation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_page_state_span_active",
+          "offset": 5232,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active range-local VM page-state spans.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_page_state_span_step_max",
+          "offset": 5236,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum range-local page-state span steps observed for one lookup or mutation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_physical_lookups",
+          "offset": 5240,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Balanced physical MemoryBlock address-index lookups.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_physical_steps",
+          "offset": 5248,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Balanced physical MemoryBlock address-index nodes visited.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_physical_mutations",
+          "offset": 5256,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Indexed MemoryBlock entry replacements applied.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_physical_rebuilds",
+          "offset": 5264,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Full MemoryBlock index rebuilds, reserved for initialization recovery and failed-transaction rollback.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_id_lookups",
+          "offset": 5272,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "MemoryBlock ID hash-index lookups.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_id_steps",
+          "offset": 5280,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "MemoryBlock ID hash probes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_free_slot_lookups",
+          "offset": 5288,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "MemoryBlock free-slot bitmap lookups.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_free_slot_word_steps",
+          "offset": 5296,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "MemoryBlock free-slot bitmap words inspected.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_claim_transactions",
+          "offset": 5304,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Physical-range claim transactions attempted.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_block_claim_rollbacks",
+          "offset": 5312,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Physical-range claim transactions rolled back after failure.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_range_address_lookups",
+          "offset": 5320,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Binary VM range address-index lookups.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_range_address_probe_total",
+          "offset": 5328,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Binary-search probes accumulated by VM range address lookups.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_commit_span_lookups",
+          "offset": 5336,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Range-local VM commit-span lookups and mutations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_commit_span_steps",
+          "offset": 5344,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Range-local VM commit spans visited.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_page_state_span_lookups",
+          "offset": 5352,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Range-local VM page-state span lookups and mutations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_page_state_span_steps",
+          "offset": 5360,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Range-local VM page-state spans visited.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_reclaim_range_steps",
+          "offset": 5368,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "VM ranges visited by the persistent reclaim cursor.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_reclaim_span_steps",
+          "offset": 5376,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Range-local page-state spans visited by the persistent reclaim cursor.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_reclaim_page_steps",
+          "offset": 5384,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Pages visited by the persistent reclaim cursor.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hot_path_memory_vm_reclaim_wraps",
+          "offset": 5392,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Wraps of the persistent VM reclaim cursor.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -71310,7 +71758,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "7",
+      "value": "8",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
