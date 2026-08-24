@@ -18189,7 +18189,7 @@
           "name": "midi_send",
           "state": "function",
           "required": false,
-          "description": "Sends MIDI bytes to an open synthesizer session.",
+          "description": "Sends MIDI bytes to an open synthesizer session. Status zero renders PCM; data1/data2 carry the little-endian frame count (1..1024), while zero selects 1024 frames. Backend and backpressure errors are returned unchanged.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -63960,7 +63960,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "17",
+      "value": "18",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

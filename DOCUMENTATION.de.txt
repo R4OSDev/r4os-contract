@@ -47,5 +47,12 @@ Zig-Builds beziehen das exportierte Modul `r4os_contract` und dessen
 Namespace `abi`; fuer C-Builds exportiert das Paket den Include-Pfad
 `r4os_contract_c_include`.
 
+Der technische Zig-Fassadenteil fuehrt seit 0.69.28 den append-only
+`SynthEngine.render_pcm`-Callback. DriverApi v18 haengt den synchronen
+`protocol_dispatch` an; der alte Tabellenpraefix und der Synth-Descriptor-v1-
+Praefix bleiben unveraendert. Der bestehende R4AUDIO-Aufruf `midi_send`
+verwendet Status null fuer PCM-Renderanforderungen und transportiert die
+Framezahl little-endian in `data1`/`data2`.
+
 Die Herkunft des uebernommenen 0.64.9-Stands und die repo-neutrale Anpassung
 sind in `PROVENANCE.txt` festgehalten.

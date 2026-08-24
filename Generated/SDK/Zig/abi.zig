@@ -2954,6 +2954,10 @@ pub const DriverApi = extern struct {
     // und explizites MSI-Rollback fuer Fehler- und Unloadpfade.
     alloc_dma_region_constrained: *const fn (u32, u32, u64, *DmaBuffer) callconv(.c) i32,
     pci_disable_msi: *const fn (u8, u8, u8, u8) callconv(.c) i32,
+    // 0.69.28 (DriverApi Version 18, append-only): produktiver R4P-Dispatch
+    // fuer Treiber, deren Laufzeitdaten einen installierten Protokollvertrag
+    // durchlaufen muessen.
+    protocol_dispatch: ?*const fn ([*:0]const u8, u32, *const ProtocolBuffer, *ProtocolBuffer) callconv(.c) i32 = null,
 };
 
 pub const ProtocolApi = extern struct {
@@ -3234,6 +3238,10 @@ pub const SynthEngine = extern struct {
     sid_init: ?*const fn (?*anyopaque, u32, u32, u32) callconv(.c) i32 = null,
     sid_play_frame: ?*const fn (?*anyopaque, u32, u32, u32) callconv(.c) i32 = null,
     sid_render_pcm: ?*const fn (?*anyopaque, u32, [*]u8, u32) callconv(.c) i32 = null,
+    // Append-only PCM render extension. The kernel supplies the complete
+    // writable buffer domain; a positive return value is the produced byte
+    // count, zero means no block, and negative backend-domain values fail.
+    render_pcm: ?*const fn (?*anyopaque, [*]u8, u32, u32, u16, u16) callconv(.c) i32 = null,
 };
 
 pub const NetBackendStatus = extern struct {

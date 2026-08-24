@@ -2992,7 +2992,7 @@
       "kind": "group_slot",
       "slot": 13,
       "exposure": "public",
-      "description": "Sends MIDI bytes to an open synthesizer session.",
+      "description": "Sends MIDI bytes to an open synthesizer session. Status zero renders PCM; data1/data2 carry the little-endian frame count (1..1024), while zero selects 1024 frames. Backend and backpressure errors are returned unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
