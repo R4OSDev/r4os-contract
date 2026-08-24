@@ -37,7 +37,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramMemoryPagerGateProbe` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `ProgramMemoryPageIoProbe` | extensible | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramMemoryVmPageStateProbe` | extensible | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
-| `ProgramPerformanceSummary` | extensible | extern_struct | 5552/8 | 5552/8 | 5552/8 | 5552/8 |
+| `ProgramPerformanceSummary` | extensible | extern_struct | 5704/8 | 5704/8 | 5704/8 | 5704/8 |
 | `ProgramTaskPerformanceInfo` | fixed_layout | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramStoragePerformanceInfo` | fixed_layout | extern_struct | 440/8 | 440/8 | 440/8 | 440/8 |
 | `ProgramBootPhasePerformanceInfo` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
@@ -639,7 +639,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 10 / 5552 / 8
+- Version/Größe/Alignment: 11 / 5704 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -1397,6 +1397,29 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `fs_cache_selective_flushes` | 5528 | 8 | 8 | `u64` | - |
 | `fs_cache_selective_writeback_sectors` | 5536 | 8 | 8 | `u64` | - |
 | `fs_cache_selective_foreign_dirty_sectors_skipped` | 5544 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_version` | 5552 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_device_capacity` | 5556 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_dirty_high_pages` | 5560 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_dirty_low_pages` | 5564 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_max_dirty_age_ticks` | 5568 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_background_page_budget` | 5576 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_worker_started` | 5580 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_worker_task_id` | 5584 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_device_dirty_high_water` | 5588 | 4 | 4 | `u32` | - |
+| `fs_cache_policy_worker_wakeups` | 5592 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_background_drains` | 5600 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_background_sectors` | 5608 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_background_pressure_drains` | 5616 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_background_age_drains` | 5624 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_background_errors` | 5632 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_clean_device_probes` | 5640 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_dirty_device_probes` | 5648 | 8 | 8 | `u64` | - |
+| `fs_cache_policy_full_scan_fallbacks` | 5656 | 8 | 8 | `u64` | - |
+| `fs_cache_read_ahead_requests` | 5664 | 8 | 8 | `u64` | - |
+| `fs_cache_read_ahead_issued` | 5672 | 8 | 8 | `u64` | - |
+| `fs_cache_read_ahead_hits` | 5680 | 8 | 8 | `u64` | - |
+| `fs_cache_read_ahead_cancellations` | 5688 | 8 | 8 | `u64` | - |
+| `fs_cache_read_ahead_budget_skips` | 5696 | 8 | 8 | `u64` | - |
 
 ### `ProgramTaskPerformanceInfo`
 
@@ -5563,7 +5586,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `performance_simd_abi_avx2` | `3` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_none` | `0` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_sse2` | `1` | `u32` | value | number | `performance_simd` | fixed_contract |
-| `performance_snapshot_version` | `10` | `u32` | version | number | `performance_snapshot` | fixed_contract |
+| `performance_snapshot_version` | `11` | `u32` | version | number | `performance_snapshot` | fixed_contract |
 | `program_completion_flag_display_used` | `4` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_output` | `2` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_owner` | `8` | `u32` | flag | bitmask | `program_completion` | fixed_contract |

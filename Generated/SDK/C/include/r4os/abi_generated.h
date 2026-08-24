@@ -868,7 +868,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 10u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 11u
 #define R4OS_PROGRAM_COMPLETION_FLAG_DISPLAY_USED 4u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OWNER 8u
@@ -2857,6 +2857,29 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t fs_cache_selective_flushes;
     uint64_t fs_cache_selective_writeback_sectors;
     uint64_t fs_cache_selective_foreign_dirty_sectors_skipped;
+    uint32_t fs_cache_policy_version;
+    uint32_t fs_cache_policy_device_capacity;
+    uint32_t fs_cache_policy_dirty_high_pages;
+    uint32_t fs_cache_policy_dirty_low_pages;
+    uint64_t fs_cache_policy_max_dirty_age_ticks;
+    uint32_t fs_cache_policy_background_page_budget;
+    uint32_t fs_cache_policy_worker_started;
+    uint32_t fs_cache_policy_worker_task_id;
+    uint32_t fs_cache_policy_device_dirty_high_water;
+    uint64_t fs_cache_policy_worker_wakeups;
+    uint64_t fs_cache_policy_background_drains;
+    uint64_t fs_cache_policy_background_sectors;
+    uint64_t fs_cache_policy_background_pressure_drains;
+    uint64_t fs_cache_policy_background_age_drains;
+    uint64_t fs_cache_policy_background_errors;
+    uint64_t fs_cache_policy_clean_device_probes;
+    uint64_t fs_cache_policy_dirty_device_probes;
+    uint64_t fs_cache_policy_full_scan_fallbacks;
+    uint64_t fs_cache_read_ahead_requests;
+    uint64_t fs_cache_read_ahead_issued;
+    uint64_t fs_cache_read_ahead_hits;
+    uint64_t fs_cache_read_ahead_cancellations;
+    uint64_t fs_cache_read_ahead_budget_skips;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -5847,7 +5870,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 5552u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 5704u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -6602,6 +6625,29 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_bulk_write_sectors
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_selective_flushes) == 5528u, "ProgramPerformanceSummary.fs_cache_selective_flushes offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_selective_writeback_sectors) == 5536u, "ProgramPerformanceSummary.fs_cache_selective_writeback_sectors offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_selective_foreign_dirty_sectors_skipped) == 5544u, "ProgramPerformanceSummary.fs_cache_selective_foreign_dirty_sectors_skipped offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_version) == 5552u, "ProgramPerformanceSummary.fs_cache_policy_version offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_device_capacity) == 5556u, "ProgramPerformanceSummary.fs_cache_policy_device_capacity offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_dirty_high_pages) == 5560u, "ProgramPerformanceSummary.fs_cache_policy_dirty_high_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_dirty_low_pages) == 5564u, "ProgramPerformanceSummary.fs_cache_policy_dirty_low_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_max_dirty_age_ticks) == 5568u, "ProgramPerformanceSummary.fs_cache_policy_max_dirty_age_ticks offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_background_page_budget) == 5576u, "ProgramPerformanceSummary.fs_cache_policy_background_page_budget offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_worker_started) == 5580u, "ProgramPerformanceSummary.fs_cache_policy_worker_started offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_worker_task_id) == 5584u, "ProgramPerformanceSummary.fs_cache_policy_worker_task_id offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_device_dirty_high_water) == 5588u, "ProgramPerformanceSummary.fs_cache_policy_device_dirty_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_worker_wakeups) == 5592u, "ProgramPerformanceSummary.fs_cache_policy_worker_wakeups offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_background_drains) == 5600u, "ProgramPerformanceSummary.fs_cache_policy_background_drains offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_background_sectors) == 5608u, "ProgramPerformanceSummary.fs_cache_policy_background_sectors offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_background_pressure_drains) == 5616u, "ProgramPerformanceSummary.fs_cache_policy_background_pressure_drains offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_background_age_drains) == 5624u, "ProgramPerformanceSummary.fs_cache_policy_background_age_drains offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_background_errors) == 5632u, "ProgramPerformanceSummary.fs_cache_policy_background_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_clean_device_probes) == 5640u, "ProgramPerformanceSummary.fs_cache_policy_clean_device_probes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_dirty_device_probes) == 5648u, "ProgramPerformanceSummary.fs_cache_policy_dirty_device_probes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_policy_full_scan_fallbacks) == 5656u, "ProgramPerformanceSummary.fs_cache_policy_full_scan_fallbacks offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_requests) == 5664u, "ProgramPerformanceSummary.fs_cache_read_ahead_requests offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_issued) == 5672u, "ProgramPerformanceSummary.fs_cache_read_ahead_issued offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_hits) == 5680u, "ProgramPerformanceSummary.fs_cache_read_ahead_hits offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_cancellations) == 5688u, "ProgramPerformanceSummary.fs_cache_read_ahead_cancellations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_budget_skips) == 5696u, "ProgramPerformanceSummary.fs_cache_read_ahead_budget_skips offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");

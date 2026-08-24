@@ -26499,8 +26499,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 10,
-      "size": 5552,
+      "version": 11,
+      "size": 5704,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -26517,7 +26517,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "10"
+          "default_value": "11"
         },
         {
           "name": "size",
@@ -26531,7 +26531,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "5552"
+          "default_value": "5704"
         },
         {
           "name": "flags",
@@ -37082,6 +37082,328 @@
             "name": "u64"
           },
           "description": "Foreign dirty sectors observed and deliberately retained across operation-scoped commits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_version",
+          "offset": 5552,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version of the bounded per-device page-cache policy snapshot.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_device_capacity",
+          "offset": 5556,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum independently indexed page-cache device shards.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_dirty_high_pages",
+          "offset": 5560,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Per-device dirty-page high watermark that activates background pressure writeback.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_dirty_low_pages",
+          "offset": 5564,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Per-device dirty-page low watermark that ends pressure writeback.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_max_dirty_age_ticks",
+          "offset": 5568,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Maximum dirty age before an otherwise low-pressure device becomes eligible for background progress.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_background_page_budget",
+          "offset": 5576,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum cache pages synchronously written by one background worker activation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_worker_started",
+          "offset": 5580,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "One when the autonomous page-cache policy worker is live.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_worker_task_id",
+          "offset": 5584,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Kernel task identity of the autonomous page-cache policy worker.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_device_dirty_high_water",
+          "offset": 5588,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Largest dirty-page depth observed in any single device shard.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_worker_wakeups",
+          "offset": 5592,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Signal- or age-timer-driven page-cache policy worker activations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_background_drains",
+          "offset": 5600,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cache pages successfully advanced by autonomous background writeback.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_background_sectors",
+          "offset": 5608,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Dirty sectors written by autonomous background writeback without implying a durability barrier.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_background_pressure_drains",
+          "offset": 5616,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Background page drains selected by per-device high/low-water pressure hysteresis.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_background_age_drains",
+          "offset": 5624,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Background page drains selected because the oldest device-local dirty page reached its age budget.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_background_errors",
+          "offset": 5632,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Failed background writeback attempts retained dirty and placed under bounded device-local backoff.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_clean_device_probes",
+          "offset": 5640,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bounded device-shard probes used for clean LRU and reclaim selection.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_dirty_device_probes",
+          "offset": 5648,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bounded device-shard probes used for dirty and background selection.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_policy_full_scan_fallbacks",
+          "offset": 5656,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Diagnostic or inconsistency fallbacks that scanned the complete global cache entry table.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_requests",
+          "offset": 5664,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Read-ahead requests inferred only from multi-page sequential bulk consumers.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_issued",
+          "offset": 5672,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Read-ahead pages successfully loaded within the free-slot and per-device residency budgets.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_hits",
+          "offset": 5680,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Speculatively loaded pages subsequently consumed by demand I/O.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_cancellations",
+          "offset": 5688,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Pending or in-flight speculative generations superseded by demand or a newer sequential range.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_budget_skips",
+          "offset": 5696,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Speculative reads skipped because data was resident or a cache/free-slot budget was exhausted.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -72080,7 +72402,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "10",
+      "value": "11",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

@@ -54,11 +54,13 @@ Praefix bleiben unveraendert. Der bestehende R4AUDIO-Aufruf `midi_send`
 verwendet Status null fuer PCM-Renderanforderungen und transportiert die
 Framezahl little-endian in `data1`/`data2`.
 
-`ProgramPerformanceSummary` v10 erweitert den bisherigen v9-Praefix
-append-only um Mehrsektor- und selektive Pagecache-Commitzaehler. Damit sind
-die tatsaechlich entladenen sowie bewusst zurueckgehaltenen fremden Dirty-
-Sektoren sichtbar. Ein v9-Verbraucher erhaelt weiterhin exakt den
-5512-Byte-Praefix; der v8-Praefix bleibt bei 5400 Bytes.
+`ProgramPerformanceSummary` v11 erweitert den v10-Praefix append-only um die
+begrenzte Pagecache-Policy. Sichtbar sind Geraetekapazitaet, Dirty-Low/High,
+maximales Dirty-Alter, Worker- und Seitenbudget, Hintergrundfortschritt nach
+Druck und Alter, Fehler, begrenzte Device-Probes, diagnostische Vollscan-
+Fallbacks sowie Read-ahead-Anforderungen, Ausgaben, Treffer, Abbrueche und
+Budgetverzicht. Ein v10-Verbraucher erhaelt weiterhin exakt den
+5552-Byte-Praefix; v9 bleibt bei 5512 und v8 bei 5400 Bytes.
 
 Die Herkunft des uebernommenen 0.64.9-Stands und die repo-neutrale Anpassung
 sind in `PROVENANCE.txt` festgehalten.
