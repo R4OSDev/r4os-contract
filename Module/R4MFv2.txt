@@ -69,7 +69,8 @@ whitespace-free value. C_FLAG is one whitespace-free token beginning with
 IMAGE_SCOPE decides which image a module reaches and is required for all
 four kinds. The selected sets are exact: slim images contain slim, full images
 contain slim plus full, and test images contain slim plus test. none reaches
-no automatically built image. It replaced two other conventions:
+no automatically built image; an explicit test-plan include may still select
+it for an on-demand diagnostic run. It replaced two other conventions:
 META=image.shipped=yes|no for
 R4D and R4L, and META=image.scope=test-only in the R4L negative fixtures.
 Both are now rejected. R4D and R4P used to have no scope at all - their

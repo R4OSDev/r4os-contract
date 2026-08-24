@@ -390,7 +390,8 @@ const phase_a_groups = [_]ExpectedGroup{
     .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 117, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
-    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 51, .reserved = 1, .tombstones = 0 },
+    // The append-only console input transport now occupies slot 52.
+    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 52, .reserved = 1, .tombstones = 0 },
     // 0.62.3 used the first public R4DRAW extension slot for font_reload;
     // 0.62.4 added the transient glyph-row query, 0.62.41 appends the
     // font-neutral hosted Alpha8 coverage-mask transport, and 0.62.43 adds
@@ -400,9 +401,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // generation-bound service request path and its kernel-channel telemetry.
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 34, .reserved = 0, .tombstones = 0 },
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 19, .reserved = 2, .tombstones = 0 },
-    // R4DEV v9 extends the passive performance tail through slot 40 with the
-    // compact canonical PCI inventory snapshot; slot 27 remains frozen.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 39, .reserved = 2, .tombstones = 0 },
+    // R4DEV extends the passive diagnostic tail through slot 41 with the
+    // canonical PCI and input snapshots; slot 27 remains frozen.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 40, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {

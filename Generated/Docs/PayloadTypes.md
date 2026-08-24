@@ -37,7 +37,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramMemoryPagerGateProbe` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `ProgramMemoryPageIoProbe` | extensible | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramMemoryVmPageStateProbe` | extensible | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
-| `ProgramPerformanceSummary` | extensible | extern_struct | 5400/8 | 5400/8 | 5400/8 | 5400/8 |
+| `ProgramPerformanceSummary` | extensible | extern_struct | 5512/8 | 5512/8 | 5512/8 | 5512/8 |
 | `ProgramTaskPerformanceInfo` | fixed_layout | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramStoragePerformanceInfo` | fixed_layout | extern_struct | 440/8 | 440/8 | 440/8 | 440/8 |
 | `ProgramBootPhasePerformanceInfo` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
@@ -639,7 +639,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 8 / 5400 / 8
+- Version/Größe/Alignment: 9 / 5512 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -1374,6 +1374,24 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `hot_path_memory_vm_reclaim_span_steps` | 5376 | 8 | 8 | `u64` | - |
 | `hot_path_memory_vm_reclaim_page_steps` | 5384 | 8 | 8 | `u64` | - |
 | `hot_path_memory_vm_reclaim_wraps` | 5392 | 8 | 8 | `u64` | - |
+| `fs_drive_gate_count` | 5400 | 4 | 4 | `u32` | - |
+| `fs_active_requests` | 5404 | 4 | 4 | `u32` | - |
+| `fs_parallel_active_max` | 5408 | 4 | 4 | `u32` | - |
+| `storage_controller_count` | 5412 | 4 | 4 | `u32` | - |
+| `storage_worker_count` | 5416 | 4 | 4 | `u32` | - |
+| `storage_worker_parallel_active` | 5420 | 4 | 4 | `u32` | - |
+| `storage_worker_parallel_active_max` | 5424 | 4 | 4 | `u32` | - |
+| `storage_dispatch_reserved0` | 5428 | 4 | 4 | `u32` | - |
+| `fs_single_drive_requests` | 5432 | 8 | 8 | `u64` | - |
+| `fs_cross_drive_requests` | 5440 | 8 | 8 | `u64` | - |
+| `fs_global_requests` | 5448 | 8 | 8 | `u64` | - |
+| `storage_worker_start_failures` | 5456 | 8 | 8 | `u64` | - |
+| `storage_direct_requests` | 5464 | 8 | 8 | `u64` | - |
+| `storage_direct_bytes` | 5472 | 8 | 8 | `u64` | - |
+| `storage_bounce_allocations` | 5480 | 8 | 8 | `u64` | - |
+| `storage_bounce_bytes` | 5488 | 8 | 8 | `u64` | - |
+| `storage_bounce_copy_bytes` | 5496 | 8 | 8 | `u64` | - |
+| `storage_direct_timeout_waits` | 5504 | 8 | 8 | `u64` | - |
 
 ### `ProgramTaskPerformanceInfo`
 
@@ -5540,7 +5558,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `performance_simd_abi_avx2` | `3` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_none` | `0` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_sse2` | `1` | `u32` | value | number | `performance_simd` | fixed_contract |
-| `performance_snapshot_version` | `8` | `u32` | version | number | `performance_snapshot` | fixed_contract |
+| `performance_snapshot_version` | `9` | `u32` | version | number | `performance_snapshot` | fixed_contract |
 | `program_completion_flag_display_used` | `4` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_output` | `2` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_owner` | `8` | `u32` | flag | bitmask | `program_completion` | fixed_contract |

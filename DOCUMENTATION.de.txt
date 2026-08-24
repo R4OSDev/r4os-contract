@@ -54,5 +54,10 @@ Praefix bleiben unveraendert. Der bestehende R4AUDIO-Aufruf `midi_send`
 verwendet Status null fuer PCM-Renderanforderungen und transportiert die
 Framezahl little-endian in `data1`/`data2`.
 
+`ProgramPerformanceSummary` v9 erweitert den bisherigen v8-Praefix
+append-only um die laufwerkslokale FS-Gatebelegung, controllerlokale
+Blockworker sowie Direktpuffer-, Bounce-, Timeout- und Parallelitaetszaehler.
+Ein v8-Verbraucher erhaelt weiterhin exakt den 5400-Byte-Praefix.
+
 Die Herkunft des uebernommenen 0.64.9-Stands und die repo-neutrale Anpassung
 sind in `PROVENANCE.txt` festgehalten.

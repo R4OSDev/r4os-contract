@@ -26499,8 +26499,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 8,
-      "size": 5400,
+      "version": 9,
+      "size": 5512,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -26517,7 +26517,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "8"
+          "default_value": "9"
         },
         {
           "name": "size",
@@ -26531,7 +26531,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "5400"
+          "default_value": "5512"
         },
         {
           "name": "flags",
@@ -36760,6 +36760,258 @@
             "name": "u64"
           },
           "description": "Wraps of the persistent VM reclaim cursor.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_drive_gate_count",
+          "offset": 5400,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of independent A-Z filesystem transaction ownership lanes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_active_requests",
+          "offset": 5404,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Filesystem requests currently owning one or more volume lanes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_parallel_active_max",
+          "offset": 5408,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum simultaneously active filesystem requests observed across independent volume lanes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_controller_count",
+          "offset": 5412,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Registered independent block-controller ownership lanes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_worker_count",
+          "offset": 5416,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Live controller-local block workers.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_worker_parallel_active",
+          "offset": 5420,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Block backend callbacks currently active across controller workers.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_worker_parallel_active_max",
+          "offset": 5424,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum simultaneous block backend callbacks observed across controller workers.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_dispatch_reserved0",
+          "offset": 5428,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved controller-dispatch field; must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_single_drive_requests",
+          "offset": 5432,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Filesystem requests admitted through exactly one volume lane.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cross_drive_requests",
+          "offset": 5440,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Filesystem requests that acquired two volume lanes in canonical order.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_global_requests",
+          "offset": 5448,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Ownership-free filesystem cleanup requests that conservatively acquired every volume lane.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_worker_start_failures",
+          "offset": 5456,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Controller-local worker starts that fell back to the primary block worker.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_direct_requests",
+          "offset": 5464,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Runtime block requests using an explicitly resident owner-fixed borrowed buffer.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_direct_bytes",
+          "offset": 5472,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes submitted through the trusted resident direct-buffer path.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_bounce_allocations",
+          "offset": 5480,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Runtime block bounce buffers allocated for callers without a resident-buffer proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_bounce_bytes",
+          "offset": 5488,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes allocated in runtime block bounce buffers.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_bounce_copy_bytes",
+          "offset": 5496,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes copied into or out of runtime block bounce buffers.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "storage_direct_timeout_waits",
+          "offset": 5504,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Timed-out direct requests that retained their borrowed buffer owner until backend completion.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -71758,7 +72010,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "8",
+      "value": "9",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
