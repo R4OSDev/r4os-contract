@@ -37,7 +37,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramMemoryPagerGateProbe` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `ProgramMemoryPageIoProbe` | extensible | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramMemoryVmPageStateProbe` | extensible | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
-| `ProgramPerformanceSummary` | extensible | extern_struct | 5512/8 | 5512/8 | 5512/8 | 5512/8 |
+| `ProgramPerformanceSummary` | extensible | extern_struct | 5552/8 | 5552/8 | 5552/8 | 5552/8 |
 | `ProgramTaskPerformanceInfo` | fixed_layout | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramStoragePerformanceInfo` | fixed_layout | extern_struct | 440/8 | 440/8 | 440/8 | 440/8 |
 | `ProgramBootPhasePerformanceInfo` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
@@ -639,7 +639,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 9 / 5512 / 8
+- Version/Größe/Alignment: 10 / 5552 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -1392,6 +1392,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `storage_bounce_bytes` | 5488 | 8 | 8 | `u64` | - |
 | `storage_bounce_copy_bytes` | 5496 | 8 | 8 | `u64` | - |
 | `storage_direct_timeout_waits` | 5504 | 8 | 8 | `u64` | - |
+| `fs_cache_bulk_write_requests` | 5512 | 8 | 8 | `u64` | - |
+| `fs_cache_bulk_write_sectors` | 5520 | 8 | 8 | `u64` | - |
+| `fs_cache_selective_flushes` | 5528 | 8 | 8 | `u64` | - |
+| `fs_cache_selective_writeback_sectors` | 5536 | 8 | 8 | `u64` | - |
+| `fs_cache_selective_foreign_dirty_sectors_skipped` | 5544 | 8 | 8 | `u64` | - |
 
 ### `ProgramTaskPerformanceInfo`
 
@@ -5558,7 +5563,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `performance_simd_abi_avx2` | `3` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_none` | `0` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_sse2` | `1` | `u32` | value | number | `performance_simd` | fixed_contract |
-| `performance_snapshot_version` | `9` | `u32` | version | number | `performance_snapshot` | fixed_contract |
+| `performance_snapshot_version` | `10` | `u32` | version | number | `performance_snapshot` | fixed_contract |
 | `program_completion_flag_display_used` | `4` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_output` | `2` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_owner` | `8` | `u32` | flag | bitmask | `program_completion` | fixed_contract |

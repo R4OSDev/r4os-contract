@@ -390,7 +390,7 @@ comptime {
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("ProgramMemoryVmPageStateProbe.table_full_failures offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("ProgramMemoryVmPageStateProbe.cleanup_pages offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("ProgramMemoryVmPageStateProbe.reserved1 offset");
-    if (@sizeOf(abi.ProgramPerformanceSummary) != 5512) @compileError("ProgramPerformanceSummary size");
+    if (@sizeOf(abi.ProgramPerformanceSummary) != 5552) @compileError("ProgramPerformanceSummary size");
     if (@offsetOf(abi.ProgramPerformanceSummary, "version") != 0) @compileError("ProgramPerformanceSummary.version offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "size") != 4) @compileError("ProgramPerformanceSummary.size offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "flags") != 8) @compileError("ProgramPerformanceSummary.flags offset");
@@ -1140,6 +1140,11 @@ comptime {
     if (@offsetOf(abi.ProgramPerformanceSummary, "storage_bounce_bytes") != 5488) @compileError("ProgramPerformanceSummary.storage_bounce_bytes offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "storage_bounce_copy_bytes") != 5496) @compileError("ProgramPerformanceSummary.storage_bounce_copy_bytes offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "storage_direct_timeout_waits") != 5504) @compileError("ProgramPerformanceSummary.storage_direct_timeout_waits offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_bulk_write_requests") != 5512) @compileError("ProgramPerformanceSummary.fs_cache_bulk_write_requests offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_bulk_write_sectors") != 5520) @compileError("ProgramPerformanceSummary.fs_cache_bulk_write_sectors offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_selective_flushes") != 5528) @compileError("ProgramPerformanceSummary.fs_cache_selective_flushes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_selective_writeback_sectors") != 5536) @compileError("ProgramPerformanceSummary.fs_cache_selective_writeback_sectors offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_selective_foreign_dirty_sectors_skipped") != 5544) @compileError("ProgramPerformanceSummary.fs_cache_selective_foreign_dirty_sectors_skipped offset");
     if (@sizeOf(abi.ProgramTaskPerformanceInfo) != 304) @compileError("ProgramTaskPerformanceInfo size");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "index") != 0) @compileError("ProgramTaskPerformanceInfo.index offset");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "id") != 4) @compileError("ProgramTaskPerformanceInfo.id offset");

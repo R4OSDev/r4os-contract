@@ -26499,8 +26499,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 9,
-      "size": 5512,
+      "version": 10,
+      "size": 5552,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -26517,7 +26517,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "9"
+          "default_value": "10"
         },
         {
           "name": "size",
@@ -26531,7 +26531,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "5512"
+          "default_value": "5552"
         },
         {
           "name": "flags",
@@ -37012,6 +37012,76 @@
             "name": "u64"
           },
           "description": "Timed-out direct requests that retained their borrowed buffer owner until backend completion.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_bulk_write_requests",
+          "offset": 5512,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Contiguous multi-sector page-cache direct-write submissions.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_bulk_write_sectors",
+          "offset": 5520,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Sectors retained in contiguous multi-sector page-cache direct writes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_selective_flushes",
+          "offset": 5528,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Operation-scoped page-cache commits followed by a backend durability barrier.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_selective_writeback_sectors",
+          "offset": 5536,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Dirty sectors written by operation-scoped page-cache commits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_selective_foreign_dirty_sectors_skipped",
+          "offset": 5544,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Foreign dirty sectors observed and deliberately retained across operation-scoped commits.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -72010,7 +72080,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "9",
+      "value": "10",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

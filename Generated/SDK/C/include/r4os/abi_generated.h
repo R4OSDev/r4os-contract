@@ -868,7 +868,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 9u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 10u
 #define R4OS_PROGRAM_COMPLETION_FLAG_DISPLAY_USED 4u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OWNER 8u
@@ -2852,6 +2852,11 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t storage_bounce_bytes;
     uint64_t storage_bounce_copy_bytes;
     uint64_t storage_direct_timeout_waits;
+    uint64_t fs_cache_bulk_write_requests;
+    uint64_t fs_cache_bulk_write_sectors;
+    uint64_t fs_cache_selective_flushes;
+    uint64_t fs_cache_selective_writeback_sectors;
+    uint64_t fs_cache_selective_foreign_dirty_sectors_skipped;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -5842,7 +5847,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 5512u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 5552u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -6592,6 +6597,11 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, storage_bounce_allocations)
 _Static_assert(offsetof(R4ProgramPerformanceSummary, storage_bounce_bytes) == 5488u, "ProgramPerformanceSummary.storage_bounce_bytes offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, storage_bounce_copy_bytes) == 5496u, "ProgramPerformanceSummary.storage_bounce_copy_bytes offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, storage_direct_timeout_waits) == 5504u, "ProgramPerformanceSummary.storage_direct_timeout_waits offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_bulk_write_requests) == 5512u, "ProgramPerformanceSummary.fs_cache_bulk_write_requests offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_bulk_write_sectors) == 5520u, "ProgramPerformanceSummary.fs_cache_bulk_write_sectors offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_selective_flushes) == 5528u, "ProgramPerformanceSummary.fs_cache_selective_flushes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_selective_writeback_sectors) == 5536u, "ProgramPerformanceSummary.fs_cache_selective_writeback_sectors offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_selective_foreign_dirty_sectors_skipped) == 5544u, "ProgramPerformanceSummary.fs_cache_selective_foreign_dirty_sectors_skipped offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");
