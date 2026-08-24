@@ -37,7 +37,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramMemoryPagerGateProbe` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `ProgramMemoryPageIoProbe` | extensible | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramMemoryVmPageStateProbe` | extensible | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
-| `ProgramPerformanceSummary` | extensible | extern_struct | 5704/8 | 5704/8 | 5704/8 | 5704/8 |
+| `ProgramPerformanceSummary` | extensible | extern_struct | 6000/8 | 6000/8 | 6000/8 | 6000/8 |
 | `ProgramTaskPerformanceInfo` | fixed_layout | extern_struct | 304/8 | 304/8 | 304/8 | 304/8 |
 | `ProgramStoragePerformanceInfo` | fixed_layout | extern_struct | 440/8 | 440/8 | 440/8 | 440/8 |
 | `ProgramBootPhasePerformanceInfo` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
@@ -639,7 +639,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 11 / 5704 / 8
+- Version/Größe/Alignment: 12 / 6000 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -1420,6 +1420,49 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `fs_cache_read_ahead_hits` | 5680 | 8 | 8 | `u64` | - |
 | `fs_cache_read_ahead_cancellations` | 5688 | 8 | 8 | `u64` | - |
 | `fs_cache_read_ahead_budget_skips` | 5696 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_cache_version` | 5704 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_cache_active_volumes` | 5708 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_cache_bytes_per_volume` | 5712 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_cache_slot_capacity` | 5716 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_record_capacity` | 5720 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_attribute_capacity` | 5724 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_index_capacity` | 5728 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_path_capacity` | 5732 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_record_entries` | 5736 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_attribute_entries` | 5740 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_index_entries` | 5744 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_path_entries` | 5748 | 4 | 4 | `u32` | - |
+| `ntfs_metadata_mount_generation` | 5752 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_content_generation` | 5760 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_negative_ttl_ticks` | 5768 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_record_hits` | 5776 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_record_misses` | 5784 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_record_stores` | 5792 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_record_evictions` | 5800 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_attribute_hits` | 5808 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_attribute_misses` | 5816 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_attribute_stores` | 5824 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_attribute_evictions` | 5832 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_index_hits` | 5840 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_index_misses` | 5848 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_index_stores` | 5856 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_index_evictions` | 5864 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_path_queries` | 5872 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_path_positive_hits` | 5880 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_path_negative_hits` | 5888 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_path_misses` | 5896 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_path_positive_stores` | 5904 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_path_negative_stores` | 5912 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_path_expirations` | 5920 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_lookup_tree_walks` | 5928 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_recovery_cache_bypasses` | 5936 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_mount_invalidations` | 5944 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_mutation_invalidations` | 5952 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_external_invalidations` | 5960 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_invalidated_entries` | 5968 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_reclaim_requests` | 5976 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_reclaim_scans` | 5984 | 8 | 8 | `u64` | - |
+| `ntfs_metadata_reclaimed_entries` | 5992 | 8 | 8 | `u64` | - |
 
 ### `ProgramTaskPerformanceInfo`
 
@@ -5586,7 +5629,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `performance_simd_abi_avx2` | `3` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_none` | `0` | `u32` | value | number | `performance_simd` | fixed_contract |
 | `performance_simd_abi_sse2` | `1` | `u32` | value | number | `performance_simd` | fixed_contract |
-| `performance_snapshot_version` | `11` | `u32` | version | number | `performance_snapshot` | fixed_contract |
+| `performance_snapshot_version` | `12` | `u32` | version | number | `performance_snapshot` | fixed_contract |
 | `program_completion_flag_display_used` | `4` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_output` | `2` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_owner` | `8` | `u32` | flag | bitmask | `program_completion` | fixed_contract |

@@ -26499,8 +26499,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 11,
-      "size": 5704,
+      "version": 12,
+      "size": 6000,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -26517,7 +26517,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "11"
+          "default_value": "12"
         },
         {
           "name": "size",
@@ -26531,7 +26531,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "5704"
+          "default_value": "6000"
         },
         {
           "name": "flags",
@@ -37404,6 +37404,608 @@
             "name": "u64"
           },
           "description": "Speculative reads skipped because data was resident or a cache/free-slot budget was exhausted.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_cache_version",
+          "offset": 5704,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version of the bounded generation-scoped NTFS decoded-metadata cache contract.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_cache_active_volumes",
+          "offset": 5708,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Mounted NTFS volumes currently contributing decoded-metadata cache counters.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_cache_bytes_per_volume",
+          "offset": 5712,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fixed control and payload bytes reserved for one mounted NTFS metadata cache.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_cache_slot_capacity",
+          "offset": 5716,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Total hard entry capacity of one mounted NTFS metadata cache.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_record_capacity",
+          "offset": 5720,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Hard decoded MFT-record capacity per mounted NTFS volume.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_attribute_capacity",
+          "offset": 5724,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Hard decoded attribute and runlist capacity per mounted NTFS volume.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_index_capacity",
+          "offset": 5728,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Hard decoded INDX-block capacity per mounted NTFS volume.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_capacity",
+          "offset": 5732,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Hard positive and negative path-component capacity per mounted NTFS volume.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_record_entries",
+          "offset": 5736,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Currently resident decoded MFT-record entries across active NTFS volumes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_attribute_entries",
+          "offset": 5740,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Currently resident decoded attribute and runlist entries across active NTFS volumes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_index_entries",
+          "offset": 5744,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Currently resident decoded INDX-block entries across active NTFS volumes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_entries",
+          "offset": 5748,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Currently resident positive and negative path-component entries across active NTFS volumes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_mount_generation",
+          "offset": 5752,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Highest active NTFS mount generation represented by the metadata caches.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_content_generation",
+          "offset": 5760,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Highest active NTFS metadata content generation after mount or mutation invalidation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_negative_ttl_ticks",
+          "offset": 5768,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Maximum lifetime of a negative path-component entry in monotonic ticks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_record_hits",
+          "offset": 5776,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded MFT-record cache hits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_record_misses",
+          "offset": 5784,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded MFT-record cache misses that required record I/O and fixup decoding.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_record_stores",
+          "offset": 5792,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated decoded MFT records inserted or refreshed in cache.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_record_evictions",
+          "offset": 5800,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded MFT-record entries replaced at the fixed capacity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_attribute_hits",
+          "offset": 5808,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded attribute and runlist cache hits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_attribute_misses",
+          "offset": 5816,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded attribute and runlist cache misses that required record parsing.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_attribute_stores",
+          "offset": 5824,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated decoded attribute and runlist results inserted or refreshed in cache.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_attribute_evictions",
+          "offset": 5832,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded attribute and runlist entries replaced at the fixed capacity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_index_hits",
+          "offset": 5840,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded INDX-block cache hits in read-side directory traversal.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_index_misses",
+          "offset": 5848,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded INDX-block cache misses requiring block I/O and fixup decoding.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_index_stores",
+          "offset": 5856,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated decoded INDX blocks inserted or refreshed in cache.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_index_evictions",
+          "offset": 5864,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded INDX-block entries replaced at the fixed capacity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_queries",
+          "offset": 5872,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Generation-scoped normal path-component cache queries.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_positive_hits",
+          "offset": 5880,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Positive path-component cache hits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_negative_hits",
+          "offset": 5888,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unexpired negative path-component cache hits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_misses",
+          "offset": 5896,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Path-component cache misses that entered the NTFS index tree.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_positive_stores",
+          "offset": 5904,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated positive path-component results inserted in cache.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_negative_stores",
+          "offset": 5912,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Proven absent path-component results inserted with bounded lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_path_expirations",
+          "offset": 5920,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Negative path-component entries rejected after their monotonic lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_lookup_tree_walks",
+          "offset": 5928,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Normal path-component queries that performed an NTFS index-tree traversal.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_recovery_cache_bypasses",
+          "offset": 5936,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Recovery transient-view lookups that deliberately bypassed normal path caching.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_mount_invalidations",
+          "offset": 5944,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Mount-generation changes that cleared decoded NTFS metadata entries.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_mutation_invalidations",
+          "offset": 5952,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "NTFS write publications that invalidated at least one decoded metadata entry.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_external_invalidations",
+          "offset": 5960,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Explicit external media-generation invalidations of decoded NTFS metadata.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_invalidated_entries",
+          "offset": 5968,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded NTFS metadata entries discarded by mount, mutation, or external generation changes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_reclaim_requests",
+          "offset": 5976,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Global pressure passes that requested bounded decoded NTFS metadata reclamation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_reclaim_scans",
+          "offset": 5984,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fixed cache slots inspected by decoded NTFS metadata reclaim.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_reclaimed_entries",
+          "offset": 5992,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded NTFS metadata entries discarded by global pressure reclaim.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -72402,7 +73004,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "11",
+      "value": "12",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

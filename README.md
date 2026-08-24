@@ -10,13 +10,9 @@ library owns its own contract and bindings.
 
 ## Build and validation
 
-On Windows:
+With the configured Zig toolchain on every supported host:
 
-    Build.bat test
-
-On Linux or macOS:
-
-    ./Build.sh test
+    zig build test
 
 Generated files are checked during normal builds. Intentional contract changes
 must use the repository's explicit generator write workflow and update the
