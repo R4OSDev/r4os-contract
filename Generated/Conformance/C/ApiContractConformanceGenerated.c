@@ -175,6 +175,9 @@ static R4DeskProgramSpawnWithConsoleHostFn r4os_probe_r4desk_program_spawn_with_
 static R4DeskProgramSpawnWithConsoleHostHandleFn r4os_probe_r4desk_program_spawn_with_console_host_handle = (R4DeskProgramSpawnWithConsoleHostHandleFn)0;
 static R4DeskProgramSetWindowHandleFn r4os_probe_r4desk_program_set_window_handle = (R4DeskProgramSetWindowHandleFn)0;
 static R4DeskConsolePushInputFn r4os_probe_r4desk_console_push_input = (R4DeskConsolePushInputFn)0;
+static R4DeskRemoteFrameAcquireFn r4os_probe_r4desk_remote_frame_acquire = (R4DeskRemoteFrameAcquireFn)0;
+static R4DeskRemoteFrameReleaseFn r4os_probe_r4desk_remote_frame_release = (R4DeskRemoteFrameReleaseFn)0;
+static R4DeskRemoteFrameConsumersFn r4os_probe_r4desk_remote_frame_consumers = (R4DeskRemoteFrameConsumersFn)0;
 static R4DrawScreenWidthFn r4os_probe_r4draw_screen_width = (R4DrawScreenWidthFn)0;
 static R4DrawScreenHeightFn r4os_probe_r4draw_screen_height = (R4DrawScreenHeightFn)0;
 static R4DrawClearFn r4os_probe_r4draw_clear = (R4DrawClearFn)0;
@@ -207,6 +210,7 @@ static R4DrawGuiFrameCommitFn r4os_probe_r4draw_gui_frame_commit = (R4DrawGuiFra
 static R4DrawGuiFrameCancelFn r4os_probe_r4draw_gui_frame_cancel = (R4DrawGuiFrameCancelFn)0;
 static R4DrawGuiFrameInfoFn r4os_probe_r4draw_gui_frame_info = (R4DrawGuiFrameInfoFn)0;
 static R4DrawGuiFrameReadFn r4os_probe_r4draw_gui_frame_read = (R4DrawGuiFrameReadFn)0;
+static R4DrawDisplayBlitXrgb32StrideFn r4os_probe_r4draw_display_blit_xrgb32_stride = (R4DrawDisplayBlitXrgb32StrideFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

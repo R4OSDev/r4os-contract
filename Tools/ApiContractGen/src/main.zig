@@ -390,13 +390,15 @@ const phase_a_groups = [_]ExpectedGroup{
     .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 120, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
-    // The append-only console input transport now occupies slot 52.
-    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 52, .reserved = 1, .tombstones = 0 },
+    // The append-only console input transport occupies slot 52; 0.69.47
+    // appends explicit remote-frame consumer lifetime at slots 53..55.
+    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 55, .reserved = 1, .tombstones = 0 },
     // 0.62.3 used the first public R4DRAW extension slot for font_reload;
     // 0.62.4 added the transient glyph-row query, 0.62.41 appends the
     // font-neutral hosted Alpha8 coverage-mask transport, and 0.62.43 adds
-    // transactional frame lifecycle, batch append, info and snapshot slots 26..31.
-    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 32, .reserved = 0, .tombstones = 0 },
+    // transactional frame lifecycle, batch append, info and snapshot slots
+    // 26..31. 0.69.47 appends the source-stride display rect at slot 32.
+    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 33, .reserved = 0, .tombstones = 0 },
     // 0.69.12 activates the two preallocated R4NET extension slots for the
     // generation-bound service request path and its kernel-channel telemetry.
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 34, .reserved = 0, .tombstones = 0 },

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 297,
+    "group_function_signatures": 301,
     "sdk_operation_contracts": 0,
-    "parity_entries": 297,
+    "parity_entries": 301,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1559,6 +1559,33 @@
       "coverage": "generated_signature"
     },
     {
+      "id": "R4DESK.remote_frame_acquire",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.remote_frame_acquire",
+      "c_contract": "R4DeskRemoteFrameAcquireFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.remote_frame_release",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.remote_frame_release",
+      "c_contract": "R4DeskRemoteFrameReleaseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.remote_frame_consumers",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.remote_frame_consumers",
+      "c_contract": "R4DeskRemoteFrameConsumersFn",
+      "coverage": "generated_signature"
+    },
+    {
       "id": "R4DRAW.screen_width",
       "kind": "group_slot",
       "exposure": "public",
@@ -1844,6 +1871,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gui_frame_read",
       "c_contract": "R4DrawGuiFrameReadFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.display_blit_xrgb32_stride",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.display_blit_xrgb32_stride",
+      "c_contract": "R4DrawDisplayBlitXrgb32StrideFn",
       "coverage": "generated_signature"
     },
     {

@@ -5190,12 +5190,15 @@ pub const R4DeskFns = struct {
     pub const program_spawn_with_console_host_handle = *const fn ([*:0]const u8, [*:0]const u8, u32, u32, *ProgramProcessHandle) callconv(.c) i32;
     pub const program_set_window_handle = *const fn (*const ProgramProcessHandle, i32) callconv(.c) i32;
     pub const console_push_input = *const fn (u32, [*]const u8, u32) callconv(.c) i32;
+    pub const remote_frame_acquire = *const fn () callconv(.c) i32;
+    pub const remote_frame_release = *const fn () callconv(.c) i32;
+    pub const remote_frame_consumers = *const fn () callconv(.c) u32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 8,
-    size: u32 = 440,
+    abi_version: u32 = 9,
+    size: u32 = 464,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -5250,6 +5253,9 @@ pub const R4XStartR4Desk = extern struct {
     program_spawn_with_console_host_handle: usize = 0,
     program_set_window_handle: usize = 0,
     console_push_input: usize = 0,
+    remote_frame_acquire: usize = 0,
+    remote_frame_release: usize = 0,
+    remote_frame_consumers: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -5285,12 +5291,13 @@ pub const R4DrawFns = struct {
     pub const gui_frame_cancel = *const fn () callconv(.c) i32;
     pub const gui_frame_info = *const fn (?*const ProgramProcessHandle, *GuiFrameInfo) callconv(.c) i32;
     pub const gui_frame_read = *const fn (*const ProgramProcessHandle, u64, ?[*]GuiFrameCommand, u64, ?[*]u8, u64, *GuiFrameInfo) callconv(.c) i32;
+    pub const display_blit_xrgb32_stride = *const fn (i32, i32, u32, u32, [*]const u32, u32, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 2,
-    size: u32 = 272,
+    abi_version: u32 = 3,
+    size: u32 = 280,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -5324,6 +5331,7 @@ pub const R4XStartR4Draw = extern struct {
     gui_frame_cancel: usize = 0,
     gui_frame_info: usize = 0,
     gui_frame_read: usize = 0,
+    display_blit_xrgb32_stride: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -5729,6 +5737,9 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 50, .offset = 416, .name = "program_spawn_with_console_host_handle", .state = .function, .required = false },
     .{ .number = 51, .offset = 424, .name = "program_set_window_handle", .state = .function, .required = false },
     .{ .number = 52, .offset = 432, .name = "console_push_input", .state = .function, .required = false },
+    .{ .number = 53, .offset = 440, .name = "remote_frame_acquire", .state = .function, .required = false },
+    .{ .number = 54, .offset = 448, .name = "remote_frame_release", .state = .function, .required = false },
+    .{ .number = 55, .offset = 456, .name = "remote_frame_consumers", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -5764,6 +5775,7 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 29, .offset = 248, .name = "gui_frame_cancel", .state = .function, .required = false },
     .{ .number = 30, .offset = 256, .name = "gui_frame_info", .state = .function, .required = false },
     .{ .number = 31, .offset = 264, .name = "gui_frame_read", .state = .function, .required = false },
+    .{ .number = 32, .offset = 272, .name = "display_blit_xrgb32_stride", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -9101,7 +9113,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_begin") != 976) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_begin");
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_page") != 984) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_page");
     if (@offsetOf(R4XStartR4Sys, "registry_batch_mutate") != 992) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_batch_mutate");
-    if (@sizeOf(R4XStartR4Desk) != 440) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 464) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -9155,7 +9167,10 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "program_spawn_with_console_host_handle") != 416) @compileError("generated ABI offset drift: R4XStartR4Desk.program_spawn_with_console_host_handle");
     if (@offsetOf(R4XStartR4Desk, "program_set_window_handle") != 424) @compileError("generated ABI offset drift: R4XStartR4Desk.program_set_window_handle");
     if (@offsetOf(R4XStartR4Desk, "console_push_input") != 432) @compileError("generated ABI offset drift: R4XStartR4Desk.console_push_input");
-    if (@sizeOf(R4XStartR4Draw) != 272) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_acquire") != 440) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_acquire");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_release") != 448) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_release");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_consumers") != 456) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_consumers");
+    if (@sizeOf(R4XStartR4Draw) != 280) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -9188,6 +9203,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gui_frame_cancel") != 248) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_cancel");
     if (@offsetOf(R4XStartR4Draw, "gui_frame_info") != 256) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_info");
     if (@offsetOf(R4XStartR4Draw, "gui_frame_read") != 264) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_read");
+    if (@offsetOf(R4XStartR4Draw, "display_blit_xrgb32_stride") != 272) @compileError("generated ABI offset drift: R4XStartR4Draw.display_blit_xrgb32_stride");
     if (@sizeOf(R4XStartR4Net) != 288) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -9599,13 +9615,16 @@ pub const R4DeskProvider = struct {
     program_spawn_with_console_host_handle: R4DeskFns.program_spawn_with_console_host_handle,
     program_set_window_handle: R4DeskFns.program_set_window_handle,
     console_push_input: R4DeskFns.console_push_input,
+    remote_frame_acquire: R4DeskFns.remote_frame_acquire,
+    remote_frame_release: R4DeskFns.remote_frame_release,
+    remote_frame_consumers: R4DeskFns.remote_frame_consumers,
 };
 
 pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
     return .{
         .magic = 826623058,
-        .abi_version = 8,
-        .size = 440,
+        .abi_version = 9,
+        .size = 464,
         .flags = 0,
         .read_key = @intFromPtr(provider.read_key),
         .mouse_state = @intFromPtr(provider.mouse_state),
@@ -9660,6 +9679,9 @@ pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
         .program_spawn_with_console_host_handle = @intFromPtr(provider.program_spawn_with_console_host_handle),
         .program_set_window_handle = @intFromPtr(provider.program_set_window_handle),
         .console_push_input = @intFromPtr(provider.console_push_input),
+        .remote_frame_acquire = @intFromPtr(provider.remote_frame_acquire),
+        .remote_frame_release = @intFromPtr(provider.remote_frame_release),
+        .remote_frame_consumers = @intFromPtr(provider.remote_frame_consumers),
     };
 }
 
@@ -9696,13 +9718,14 @@ pub const R4DrawProvider = struct {
     gui_frame_cancel: R4DrawFns.gui_frame_cancel,
     gui_frame_info: R4DrawFns.gui_frame_info,
     gui_frame_read: R4DrawFns.gui_frame_read,
+    display_blit_xrgb32_stride: R4DrawFns.display_blit_xrgb32_stride,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 2,
-        .size = 272,
+        .abi_version = 3,
+        .size = 280,
         .flags = 0,
         .screen_width = @intFromPtr(provider.screen_width),
         .screen_height = @intFromPtr(provider.screen_height),
@@ -9736,6 +9759,7 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gui_frame_cancel = @intFromPtr(provider.gui_frame_cancel),
         .gui_frame_info = @intFromPtr(provider.gui_frame_info),
         .gui_frame_read = @intFromPtr(provider.gui_frame_read),
+        .display_blit_xrgb32_stride = @intFromPtr(provider.display_blit_xrgb32_stride),
     };
 }
 

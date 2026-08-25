@@ -7008,7 +7008,7 @@
             "callback_context": "none",
             "buffer_completion": "call",
             "shutdown": "none",
-            "close_rule": "explicit_close_required",
+            "close_rule": "none",
             "outputs": "none",
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
@@ -10016,10 +10016,10 @@
       "fn_namespace": "R4DeskFns",
       "required": false,
       "magic": 826623058,
-      "abi_version": 8,
+      "abi_version": 9,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 440,
+      "size": 464,
       "slots": [
         {
           "number": 0,
@@ -13281,6 +13281,129 @@
             "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
           }
+        },
+        {
+          "number": 53,
+          "offset": 440,
+          "name": "remote_frame_acquire",
+          "state": "function",
+          "required": false,
+          "description": "Registers one active remote-frame readback consumer, wakes the desktop on the first consumer, and returns the active consumer count.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "serialized",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 54,
+          "offset": 448,
+          "name": "remote_frame_release",
+          "state": "function",
+          "required": false,
+          "description": "Releases one active remote-frame readback consumer, discards the full-frame shadow after the last consumer, and returns the remaining consumer count.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "serialized",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "atomic_on_success",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 55,
+          "offset": 456,
+          "name": "remote_frame_consumers",
+          "state": "function",
+          "required": false,
+          "description": "Returns the active remote-frame readback consumer count without creating or copying a frame shadow.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "u32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
         }
       ]
     },
@@ -13293,10 +13416,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 2,
+      "abi_version": 3,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 272,
+      "size": 280,
       "slots": [
         {
           "number": 0,
@@ -15449,6 +15572,107 @@
             "side_effects": "none",
             "retry": "idempotent",
             "buffer_too_small": "required_size_reported",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 32,
+          "offset": 272,
+          "name": "display_blit_xrgb32_stride",
+          "state": "function",
+          "required": false,
+          "description": "Copies an XRGB32 source rectangle with an explicit source row stride into the display frame. source_stride_pixels must be at least w and pixel_count must cover the last addressed pixel.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "x",
+                "type": {
+                  "kind": "scalar",
+                  "name": "i32"
+                }
+              },
+              {
+                "name": "y",
+                "type": {
+                  "kind": "scalar",
+                  "name": "i32"
+                }
+              },
+              {
+                "name": "w",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "h",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "pixels",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": true,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u32"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "pixel_count",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "pixel_count",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "source_stride_pixels",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
           }
         }

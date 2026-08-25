@@ -5302,6 +5302,9 @@ typedef int32_t (*R4DeskProgramSpawnWithConsoleHostFn)(const uint8_t * arg0, con
 typedef int32_t (*R4DeskProgramSpawnWithConsoleHostHandleFn)(const uint8_t * path, const uint8_t * args, uint32_t policy, uint32_t host, R4ProgramProcessHandle * out_handle);
 typedef int32_t (*R4DeskProgramSetWindowHandleFn)(const R4ProgramProcessHandle * handle, int32_t window_id);
 typedef int32_t (*R4DeskConsolePushInputFn)(uint32_t instance_id, const uint8_t * data, uint32_t length);
+typedef int32_t (*R4DeskRemoteFrameAcquireFn)(void);
+typedef int32_t (*R4DeskRemoteFrameReleaseFn)(void);
+typedef uint32_t (*R4DeskRemoteFrameConsumersFn)(void);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -5361,6 +5364,9 @@ typedef struct R4XStartR4Desk {
     uintptr_t program_spawn_with_console_host_handle;
     uintptr_t program_set_window_handle;
     uintptr_t console_push_input;
+    uintptr_t remote_frame_acquire;
+    uintptr_t remote_frame_release;
+    uintptr_t remote_frame_consumers;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -5395,6 +5401,7 @@ typedef int32_t (*R4DrawGuiFrameCommitFn)(void);
 typedef int32_t (*R4DrawGuiFrameCancelFn)(void);
 typedef int32_t (*R4DrawGuiFrameInfoFn)(const R4ProgramProcessHandle * handle, R4GuiFrameInfo * out_info);
 typedef int32_t (*R4DrawGuiFrameReadFn)(const R4ProgramProcessHandle * handle, uint64_t expected_generation, R4GuiFrameCommand * commands, uint64_t command_capacity, uint8_t * resources, uint64_t resource_capacity, R4GuiFrameInfo * out_info);
+typedef int32_t (*R4DrawDisplayBlitXrgb32StrideFn)(int32_t x, int32_t y, uint32_t w, uint32_t h, const uint32_t * pixels, uint32_t pixel_count, uint32_t source_stride_pixels);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -5433,6 +5440,7 @@ typedef struct R4XStartR4Draw {
     uintptr_t gui_frame_cancel;
     uintptr_t gui_frame_info;
     uintptr_t gui_frame_read;
+    uintptr_t display_blit_xrgb32_stride;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -8878,7 +8886,7 @@ _Static_assert(offsetof(R4XStartR4Sys, registry_snapshot_page) == 984u, "R4XStar
 _Static_assert(sizeof(R4SysRegistrySnapshotPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, registry_batch_mutate) == 992u, "R4XStartR4Sys.registry_batch_mutate offset mismatch");
 _Static_assert(sizeof(R4SysRegistryBatchMutateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 440u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 464u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -8984,7 +8992,13 @@ _Static_assert(offsetof(R4XStartR4Desk, program_set_window_handle) == 424u, "R4X
 _Static_assert(sizeof(R4DeskProgramSetWindowHandleFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, console_push_input) == 432u, "R4XStartR4Desk.console_push_input offset mismatch");
 _Static_assert(sizeof(R4DeskConsolePushInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 272u, "R4XStartR4Draw size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_acquire) == 440u, "R4XStartR4Desk.remote_frame_acquire offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFrameAcquireFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_release) == 448u, "R4XStartR4Desk.remote_frame_release offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFrameReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_consumers) == 456u, "R4XStartR4Desk.remote_frame_consumers offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFrameConsumersFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 280u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -9049,6 +9063,8 @@ _Static_assert(offsetof(R4XStartR4Draw, gui_frame_info) == 256u, "R4XStartR4Draw
 _Static_assert(sizeof(R4DrawGuiFrameInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gui_frame_read) == 264u, "R4XStartR4Draw.gui_frame_read offset mismatch");
 _Static_assert(sizeof(R4DrawGuiFrameReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, display_blit_xrgb32_stride) == 272u, "R4XStartR4Draw.display_blit_xrgb32_stride offset mismatch");
+_Static_assert(sizeof(R4DrawDisplayBlitXrgb32StrideFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 288u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

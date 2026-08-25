@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 297,
-    "group_slot_count": 297,
+    "function_count": 301,
+    "group_slot_count": 301,
     "sdk_only_count": 0,
-    "public_count": 211,
-    "advanced_count": 86
+    "public_count": 212,
+    "advanced_count": 89
   },
   "functions": [
     {
@@ -2075,6 +2075,42 @@
       }
     },
     {
+      "name": "R4DESK.remote_frame_acquire",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 53,
+      "exposure": "advanced",
+      "description": "Registers one active remote-frame readback consumer, wakes the desktop on the first consumer, and returns the active consumer count.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.remote_frame_release",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 54,
+      "exposure": "advanced",
+      "description": "Releases one active remote-frame readback consumer, discards the full-frame shadow after the last consumer, and returns the remaining consumer count.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.remote_frame_consumers",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 55,
+      "exposure": "advanced",
+      "description": "Returns the active remote-frame readback consumer count without creating or copying a frame shadow.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
       "name": "R4DRAW.screen_width",
       "group": "R4DRAW",
       "kind": "group_slot",
@@ -2453,6 +2489,18 @@
       "slot": 31,
       "exposure": "public",
       "description": "Copies one immutable committed GUI frame into caller-owned command and resource buffers in one generation-checked operation. The handle is mandatory. Null payload pointers require zero capacity. GuiFrameInfo version 1 or newer with size at least 176 is accepted and answered as the supported v1/176 prefix. Version zero or a smaller size modifies neither out_info nor either payload buffer and returns gui_frame_error_invalid. On stale, buffer-too-small or other invalid input neither payload buffer is modified; out_info remains valid and reports the current owner, generation and required counts.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_blit_xrgb32_stride",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 32,
+      "exposure": "public",
+      "description": "Copies an XRGB32 source rectangle with an explicit source row stride into the display frame. source_stride_pixels must be at least w and pixel_count must cover the last addressed pixel.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

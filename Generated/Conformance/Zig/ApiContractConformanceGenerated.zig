@@ -3229,7 +3229,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.registry_snapshot_page) != 8) @compileError("R4SysFns.registry_snapshot_page signature");
     if (@offsetOf(abi.R4XStartR4Sys, "registry_batch_mutate") != 992) @compileError("R4XStartR4Sys.registry_batch_mutate offset");
     if (@sizeOf(abi.R4SysFns.registry_batch_mutate) != 8) @compileError("R4SysFns.registry_batch_mutate signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 440) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 464) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -3335,7 +3335,13 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.program_set_window_handle) != 8) @compileError("R4DeskFns.program_set_window_handle signature");
     if (@offsetOf(abi.R4XStartR4Desk, "console_push_input") != 432) @compileError("R4XStartR4Desk.console_push_input offset");
     if (@sizeOf(abi.R4DeskFns.console_push_input) != 8) @compileError("R4DeskFns.console_push_input signature");
-    if (@sizeOf(abi.R4XStartR4Draw) != 272) @compileError("R4XStartR4Draw size");
+    if (@offsetOf(abi.R4XStartR4Desk, "remote_frame_acquire") != 440) @compileError("R4XStartR4Desk.remote_frame_acquire offset");
+    if (@sizeOf(abi.R4DeskFns.remote_frame_acquire) != 8) @compileError("R4DeskFns.remote_frame_acquire signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "remote_frame_release") != 448) @compileError("R4XStartR4Desk.remote_frame_release offset");
+    if (@sizeOf(abi.R4DeskFns.remote_frame_release) != 8) @compileError("R4DeskFns.remote_frame_release signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "remote_frame_consumers") != 456) @compileError("R4XStartR4Desk.remote_frame_consumers offset");
+    if (@sizeOf(abi.R4DeskFns.remote_frame_consumers) != 8) @compileError("R4DeskFns.remote_frame_consumers signature");
+    if (@sizeOf(abi.R4XStartR4Draw) != 280) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_height") != 24) @compileError("R4XStartR4Draw.screen_height offset");
@@ -3400,6 +3406,8 @@ comptime {
     if (@sizeOf(abi.R4DrawFns.gui_frame_info) != 8) @compileError("R4DrawFns.gui_frame_info signature");
     if (@offsetOf(abi.R4XStartR4Draw, "gui_frame_read") != 264) @compileError("R4XStartR4Draw.gui_frame_read offset");
     if (@sizeOf(abi.R4DrawFns.gui_frame_read) != 8) @compileError("R4DrawFns.gui_frame_read signature");
+    if (@offsetOf(abi.R4XStartR4Draw, "display_blit_xrgb32_stride") != 272) @compileError("R4XStartR4Draw.display_blit_xrgb32_stride offset");
+    if (@sizeOf(abi.R4DrawFns.display_blit_xrgb32_stride) != 8) @compileError("R4DrawFns.display_blit_xrgb32_stride signature");
     if (@sizeOf(abi.R4XStartR4Net) != 288) @compileError("R4XStartR4Net size");
     if (@offsetOf(abi.R4XStartR4Net, "tcp_connect") != 16) @compileError("R4XStartR4Net.tcp_connect offset");
     if (@sizeOf(abi.R4NetFns.tcp_connect) != 8) @compileError("R4NetFns.tcp_connect signature");
