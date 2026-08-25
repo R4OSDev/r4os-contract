@@ -996,8 +996,30 @@ extern "C" {
 #define R4OS_MONOTONIC_CLOCK_SOURCE_HPET 2u
 #define R4OS_MONOTONIC_CLOCK_SOURCE_PERIODIC_EVENT 3u
 #define R4XSTART_R4SYS_MAGIC 827937618u
-#define R4XSTART_R4SYS_VERSION 13u
+#define R4XSTART_R4SYS_VERSION 14u
+#define R4OS_REGISTRY_BATCH_BLOB_MAX 16384u
+#define R4OS_REGISTRY_BATCH_FAILED_INDEX_NONE 4294967295u
+#define R4OS_REGISTRY_BATCH_OPERATION_DELETE 2u
+#define R4OS_REGISTRY_BATCH_OPERATION_MAX 32u
+#define R4OS_REGISTRY_BATCH_OPERATION_SET 1u
+#define R4OS_REGISTRY_BATCH_STATUS_COMMIT_FAILED ((int32_t)3)
+#define R4OS_REGISTRY_BATCH_STATUS_COMMITTED ((int32_t)1)
+#define R4OS_REGISTRY_BATCH_STATUS_INVALID ((int32_t)0)
+#define R4OS_REGISTRY_BATCH_STATUS_VALIDATION_FAILED ((int32_t)2)
+#define R4OS_REGISTRY_BATCH_VERSION 1u
 #define R4OS_REGISTRY_PATH_MAX_BYTES 255u
+#define R4OS_REGISTRY_SNAPSHOT_CURSOR_FLAG_INITIALIZED 1u
+#define R4OS_REGISTRY_SNAPSHOT_DATA_MAX 16384u
+#define R4OS_REGISTRY_SNAPSHOT_ENTRY_FLAG_DATA_OMITTED 2u
+#define R4OS_REGISTRY_SNAPSHOT_ENTRY_FLAG_DATA_PRESENT 1u
+#define R4OS_REGISTRY_SNAPSHOT_KIND_KEYS 1u
+#define R4OS_REGISTRY_SNAPSHOT_KIND_VALUES 2u
+#define R4OS_REGISTRY_SNAPSHOT_PAGE_MAX 32u
+#define R4OS_REGISTRY_SNAPSHOT_STATUS_COMPLETE ((int32_t)1)
+#define R4OS_REGISTRY_SNAPSHOT_STATUS_INVALID ((int32_t)0)
+#define R4OS_REGISTRY_SNAPSHOT_STATUS_MORE ((int32_t)2)
+#define R4OS_REGISTRY_SNAPSHOT_STATUS_RESTART ((int32_t)3)
+#define R4OS_REGISTRY_SNAPSHOT_VERSION 1u
 #define R4OS_REGISTRY_VALUE_TYPE_BINARY 5u
 #define R4OS_REGISTRY_VALUE_TYPE_BOOL 4u
 #define R4OS_REGISTRY_VALUE_TYPE_MULTI_STRING 6u
@@ -1279,7 +1301,7 @@ extern "C" {
 #define R4XSTART_R4DEV_SIZE 344u
 #define R4XSTART_R4DRAW_SIZE 272u
 #define R4XSTART_R4NET_SIZE 288u
-#define R4XSTART_R4SYS_SIZE 976u
+#define R4XSTART_R4SYS_SIZE 1000u
 #define R4OS_REGISTRY_NAME_MAX 64ull
 #define R4OS_SERIAL_LINK_PAYLOAD_MAX 256ull
 #define R4OS_SERVICE_API_ENDPOINT_QUEUE_DEPTH 8ull
@@ -1677,6 +1699,11 @@ typedef struct R4ProtocolStatus R4ProtocolStatus;
 typedef struct R4ProtocolBuffer R4ProtocolBuffer;
 typedef struct R4SerialLinkStatus R4SerialLinkStatus;
 typedef struct R4SerialLinkMessage R4SerialLinkMessage;
+typedef struct R4RegistryBatchOperation R4RegistryBatchOperation;
+typedef struct R4RegistryBatchResult R4RegistryBatchResult;
+typedef struct R4RegistrySnapshotCursor R4RegistrySnapshotCursor;
+typedef struct R4RegistrySnapshotEntry R4RegistrySnapshotEntry;
+typedef struct R4RegistrySnapshotPageInfo R4RegistrySnapshotPageInfo;
 typedef struct R4RegistryKeyInfo R4RegistryKeyInfo;
 typedef struct R4RegistryValueInfo R4RegistryValueInfo;
 typedef struct R4ServiceInfo R4ServiceInfo;
@@ -3732,6 +3759,64 @@ typedef struct R4SerialLinkMessage {
     uint8_t data[256];
 } R4SerialLinkMessage;
 
+typedef struct R4RegistryBatchOperation {
+    uint16_t operation;
+    uint16_t value_type;
+    uint32_t key_path_offset;
+    uint32_t key_path_len;
+    uint32_t value_name_offset;
+    uint32_t value_name_len;
+    uint32_t data_offset;
+    uint32_t data_len;
+    uint32_t reserved0;
+} R4RegistryBatchOperation;
+
+typedef struct R4RegistryBatchResult {
+    uint32_t version;
+    uint32_t size;
+    uint64_t generation_before;
+    uint64_t generation_after;
+    uint32_t operation_count;
+    uint32_t failed_index;
+    int32_t status;
+    uint32_t reserved0;
+} R4RegistryBatchResult;
+
+typedef struct R4RegistrySnapshotCursor {
+    uint32_t version;
+    uint32_t size;
+    uint64_t generation;
+    uint32_t key_index;
+    uint32_t kind;
+    uint32_t next_index;
+    uint32_t total;
+    uint32_t flags;
+    uint32_t restarts;
+    uint64_t reserved0;
+} R4RegistrySnapshotCursor;
+
+typedef struct R4RegistrySnapshotEntry {
+    uint16_t kind;
+    uint16_t value_type;
+    uint32_t flags;
+    uint32_t data_offset;
+    uint32_t data_len;
+    uint8_t name[64];
+} R4RegistrySnapshotEntry;
+
+typedef struct R4RegistrySnapshotPageInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t generation;
+    uint32_t total;
+    uint32_t returned;
+    uint32_t next_index;
+    uint32_t data_bytes;
+    uint32_t kind;
+    int32_t status;
+    uint64_t reserved0;
+} R4RegistrySnapshotPageInfo;
+
 typedef struct R4RegistryKeyInfo {
     uint32_t child_count;
     uint32_t value_count;
@@ -5031,6 +5116,9 @@ typedef int32_t (*R4SysProgramModulePathFn)(uint8_t * buffer, uint32_t buffer_le
 typedef int32_t (*R4SysProgramModuleRunningFn)(const uint8_t * module_path);
 typedef int32_t (*R4SysMonotonicClockFn)(R4MonotonicClockInfo * out);
 typedef int32_t (*R4SysBootReadyFn)(void);
+typedef int32_t (*R4SysRegistrySnapshotBeginFn)(const uint8_t * key_path, uint32_t kind, R4RegistrySnapshotCursor * cursor);
+typedef int32_t (*R4SysRegistrySnapshotPageFn)(R4RegistrySnapshotCursor * cursor, R4RegistrySnapshotEntry * out_entries, uint32_t entry_capacity, uint8_t * out_data, uint32_t data_capacity, R4RegistrySnapshotPageInfo * out_page);
+typedef int32_t (*R4SysRegistryBatchMutateFn)(const R4RegistryBatchOperation * operations, uint32_t operation_count, const uint8_t * blob, uint32_t blob_len, R4RegistryBatchResult * out_result);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -5157,6 +5245,9 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_module_running;
     uintptr_t monotonic_clock;
     uintptr_t boot_ready;
+    uintptr_t registry_snapshot_begin;
+    uintptr_t registry_snapshot_page;
+    uintptr_t registry_batch_mutate;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -7471,6 +7562,54 @@ _Static_assert(sizeof(R4SerialLinkMessage) == 260u, "SerialLinkMessage size mism
 _Static_assert(offsetof(R4SerialLinkMessage, len) == 0u, "SerialLinkMessage.len offset mismatch");
 _Static_assert(offsetof(R4SerialLinkMessage, reserved) == 2u, "SerialLinkMessage.reserved offset mismatch");
 _Static_assert(offsetof(R4SerialLinkMessage, data) == 4u, "SerialLinkMessage.data offset mismatch");
+_Static_assert(sizeof(R4RegistryBatchOperation) == 32u, "RegistryBatchOperation size mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, operation) == 0u, "RegistryBatchOperation.operation offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, value_type) == 2u, "RegistryBatchOperation.value_type offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, key_path_offset) == 4u, "RegistryBatchOperation.key_path_offset offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, key_path_len) == 8u, "RegistryBatchOperation.key_path_len offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, value_name_offset) == 12u, "RegistryBatchOperation.value_name_offset offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, value_name_len) == 16u, "RegistryBatchOperation.value_name_len offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, data_offset) == 20u, "RegistryBatchOperation.data_offset offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, data_len) == 24u, "RegistryBatchOperation.data_len offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchOperation, reserved0) == 28u, "RegistryBatchOperation.reserved0 offset mismatch");
+_Static_assert(sizeof(R4RegistryBatchResult) == 40u, "RegistryBatchResult size mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, version) == 0u, "RegistryBatchResult.version offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, size) == 4u, "RegistryBatchResult.size offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, generation_before) == 8u, "RegistryBatchResult.generation_before offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, generation_after) == 16u, "RegistryBatchResult.generation_after offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, operation_count) == 24u, "RegistryBatchResult.operation_count offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, failed_index) == 28u, "RegistryBatchResult.failed_index offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, status) == 32u, "RegistryBatchResult.status offset mismatch");
+_Static_assert(offsetof(R4RegistryBatchResult, reserved0) == 36u, "RegistryBatchResult.reserved0 offset mismatch");
+_Static_assert(sizeof(R4RegistrySnapshotCursor) == 48u, "RegistrySnapshotCursor size mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, version) == 0u, "RegistrySnapshotCursor.version offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, size) == 4u, "RegistrySnapshotCursor.size offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, generation) == 8u, "RegistrySnapshotCursor.generation offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, key_index) == 16u, "RegistrySnapshotCursor.key_index offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, kind) == 20u, "RegistrySnapshotCursor.kind offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, next_index) == 24u, "RegistrySnapshotCursor.next_index offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, total) == 28u, "RegistrySnapshotCursor.total offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, flags) == 32u, "RegistrySnapshotCursor.flags offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, restarts) == 36u, "RegistrySnapshotCursor.restarts offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotCursor, reserved0) == 40u, "RegistrySnapshotCursor.reserved0 offset mismatch");
+_Static_assert(sizeof(R4RegistrySnapshotEntry) == 80u, "RegistrySnapshotEntry size mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotEntry, kind) == 0u, "RegistrySnapshotEntry.kind offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotEntry, value_type) == 2u, "RegistrySnapshotEntry.value_type offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotEntry, flags) == 4u, "RegistrySnapshotEntry.flags offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotEntry, data_offset) == 8u, "RegistrySnapshotEntry.data_offset offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotEntry, data_len) == 12u, "RegistrySnapshotEntry.data_len offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotEntry, name) == 16u, "RegistrySnapshotEntry.name offset mismatch");
+_Static_assert(sizeof(R4RegistrySnapshotPageInfo) == 48u, "RegistrySnapshotPageInfo size mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, version) == 0u, "RegistrySnapshotPageInfo.version offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, size) == 4u, "RegistrySnapshotPageInfo.size offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, generation) == 8u, "RegistrySnapshotPageInfo.generation offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, total) == 16u, "RegistrySnapshotPageInfo.total offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, returned) == 20u, "RegistrySnapshotPageInfo.returned offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, next_index) == 24u, "RegistrySnapshotPageInfo.next_index offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, data_bytes) == 28u, "RegistrySnapshotPageInfo.data_bytes offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, kind) == 32u, "RegistrySnapshotPageInfo.kind offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, status) == 36u, "RegistrySnapshotPageInfo.status offset mismatch");
+_Static_assert(offsetof(R4RegistrySnapshotPageInfo, reserved0) == 40u, "RegistrySnapshotPageInfo.reserved0 offset mismatch");
 _Static_assert(sizeof(R4RegistryKeyInfo) == 72u, "RegistryKeyInfo size mismatch");
 _Static_assert(offsetof(R4RegistryKeyInfo, child_count) == 0u, "RegistryKeyInfo.child_count offset mismatch");
 _Static_assert(offsetof(R4RegistryKeyInfo, value_count) == 4u, "RegistryKeyInfo.value_count offset mismatch");
@@ -8495,7 +8634,7 @@ _Static_assert(offsetof(R4ServiceDeadlineFooter, size) == 6u, "ServiceDeadlineFo
 _Static_assert(offsetof(R4ServiceDeadlineFooter, payload_len) == 8u, "ServiceDeadlineFooter.payload_len offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, reserved0) == 12u, "ServiceDeadlineFooter.reserved0 offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, deadline_tick) == 16u, "ServiceDeadlineFooter.deadline_tick offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 976u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1000u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -8733,6 +8872,12 @@ _Static_assert(offsetof(R4XStartR4Sys, monotonic_clock) == 960u, "R4XStartR4Sys.
 _Static_assert(sizeof(R4SysMonotonicClockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, boot_ready) == 968u, "R4XStartR4Sys.boot_ready offset mismatch");
 _Static_assert(sizeof(R4SysBootReadyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, registry_snapshot_begin) == 976u, "R4XStartR4Sys.registry_snapshot_begin offset mismatch");
+_Static_assert(sizeof(R4SysRegistrySnapshotBeginFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, registry_snapshot_page) == 984u, "R4XStartR4Sys.registry_snapshot_page offset mismatch");
+_Static_assert(sizeof(R4SysRegistrySnapshotPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, registry_batch_mutate) == 992u, "R4XStartR4Sys.registry_batch_mutate offset mismatch");
+_Static_assert(sizeof(R4SysRegistryBatchMutateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 440u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 117 von 117 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 122 von 122 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1190; Limits: 102
+- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1212; Limits: 102
 
 ## App-Profile
 
@@ -80,6 +80,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProtocolBuffer` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `SerialLinkStatus` | fixed_layout | extern_struct | 736/8 | 736/8 | 736/8 | 736/8 |
 | `SerialLinkMessage` | fixed_layout | extern_struct | 260/2 | 260/2 | 260/2 | 260/2 |
+| `RegistryBatchOperation` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `RegistryBatchResult` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `RegistrySnapshotCursor` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `RegistrySnapshotEntry` | fixed_layout | extern_struct | 80/4 | 80/4 | 80/4 | 80/4 |
+| `RegistrySnapshotPageInfo` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `RegistryKeyInfo` | fixed_layout | extern_struct | 72/4 | 72/4 | 72/4 | 72/4 |
 | `RegistryValueInfo` | fixed_layout | extern_struct | 72/4 | 72/4 | 72/4 | 72/4 |
 | `ServiceInfo` | fixed_layout | extern_struct | 216/8 | 216/8 | 216/8 | 216/8 |
@@ -2543,6 +2548,99 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `len` | 0 | 2 | 2 | `u16` | - |
 | `reserved` | 2 | 2 | 2 | `u16` | - |
 | `data` | 4 | 256 | 1 | `[256]u8` | - |
+
+### `RegistryBatchOperation`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `operation` | 0 | 2 | 2 | `u16` | - |
+| `value_type` | 2 | 2 | 2 | `u16` | - |
+| `key_path_offset` | 4 | 4 | 4 | `u32` | - |
+| `key_path_len` | 8 | 4 | 4 | `u32` | - |
+| `value_name_offset` | 12 | 4 | 4 | `u32` | - |
+| `value_name_len` | 16 | 4 | 4 | `u32` | - |
+| `data_offset` | 20 | 4 | 4 | `u32` | - |
+| `data_len` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+
+### `RegistryBatchResult`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `generation_before` | 8 | 8 | 8 | `u64` | - |
+| `generation_after` | 16 | 8 | 8 | `u64` | - |
+| `operation_count` | 24 | 4 | 4 | `u32` | - |
+| `failed_index` | 28 | 4 | 4 | `u32` | - |
+| `status` | 32 | 4 | 4 | `i32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+
+### `RegistrySnapshotCursor`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+| `key_index` | 16 | 4 | 4 | `u32` | - |
+| `kind` | 20 | 4 | 4 | `u32` | - |
+| `next_index` | 24 | 4 | 4 | `u32` | - |
+| `total` | 28 | 4 | 4 | `u32` | - |
+| `flags` | 32 | 4 | 4 | `u32` | - |
+| `restarts` | 36 | 4 | 4 | `u32` | - |
+| `reserved0` | 40 | 8 | 8 | `u64` | - |
+
+### `RegistrySnapshotEntry`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `kind` | 0 | 2 | 2 | `u16` | - |
+| `value_type` | 2 | 2 | 2 | `u16` | - |
+| `flags` | 4 | 4 | 4 | `u32` | - |
+| `data_offset` | 8 | 4 | 4 | `u32` | - |
+| `data_len` | 12 | 4 | 4 | `u32` | - |
+| `name` | 16 | 64 | 1 | `[64]u8` | - |
+
+### `RegistrySnapshotPageInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+| `total` | 16 | 4 | 4 | `u32` | - |
+| `returned` | 20 | 4 | 4 | `u32` | - |
+| `next_index` | 24 | 4 | 4 | `u32` | - |
+| `data_bytes` | 28 | 4 | 4 | `u32` | - |
+| `kind` | 32 | 4 | 4 | `u32` | - |
+| `status` | 36 | 4 | 4 | `i32` | - |
+| `reserved0` | 40 | 8 | 8 | `u64` | - |
 
 ### `RegistryKeyInfo`
 
@@ -5777,8 +5875,30 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `monotonic_clock_source_hpet` | `2` | `u32` | value | number | `monotonic_clock` | fixed_contract |
 | `monotonic_clock_source_periodic_event` | `3` | `u32` | value | number | `monotonic_clock` | fixed_contract |
 | `r4xstart_r4sys_magic` | `827937618` | `u32` | magic | number | `r4xstart_r4sys` | fixed_contract |
-| `r4xstart_r4sys_version` | `13` | `u32` | version | number | `r4xstart_r4sys` | fixed_contract |
+| `r4xstart_r4sys_version` | `14` | `u32` | version | number | `r4xstart_r4sys` | fixed_contract |
+| `registry_batch_blob_max` | `16384` | `u32` | value | bytes | `registry_batch` | fixed_contract |
+| `registry_batch_failed_index_none` | `4294967295` | `u32` | value | index | `registry_batch` | fixed_contract |
+| `registry_batch_operation_delete` | `2` | `u16` | value | enum_value | `registry_batch` | fixed_contract |
+| `registry_batch_operation_max` | `32` | `u32` | value | operations | `registry_batch` | fixed_contract |
+| `registry_batch_operation_set` | `1` | `u16` | value | enum_value | `registry_batch` | fixed_contract |
+| `registry_batch_status_commit_failed` | `3` | `i32` | value | enum_value | `registry_batch` | fixed_contract |
+| `registry_batch_status_committed` | `1` | `i32` | value | enum_value | `registry_batch` | fixed_contract |
+| `registry_batch_status_invalid` | `0` | `i32` | value | enum_value | `registry_batch` | fixed_contract |
+| `registry_batch_status_validation_failed` | `2` | `i32` | value | enum_value | `registry_batch` | fixed_contract |
+| `registry_batch_version` | `1` | `u16` | identity | version | `registry_batch` | fixed_contract |
 | `registry_path_max_bytes` | `255` | `u16` | value | bytes | `text_path_time` | fixed_contract |
+| `registry_snapshot_cursor_flag_initialized` | `1` | `u32` | flag | bitmask | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_data_max` | `16384` | `u32` | value | bytes | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_entry_flag_data_omitted` | `2` | `u32` | flag | bitmask | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_entry_flag_data_present` | `1` | `u32` | flag | bitmask | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_kind_keys` | `1` | `u32` | value | enum_value | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_kind_values` | `2` | `u32` | value | enum_value | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_page_max` | `32` | `u32` | value | entries | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_status_complete` | `1` | `i32` | value | enum_value | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_status_invalid` | `0` | `i32` | value | enum_value | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_status_more` | `2` | `i32` | value | enum_value | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_status_restart` | `3` | `i32` | value | enum_value | `registry_snapshot` | fixed_contract |
+| `registry_snapshot_version` | `1` | `u16` | identity | version | `registry_snapshot` | fixed_contract |
 | `registry_value_type_binary` | `5` | `u16` | value | number | `registry_value` | fixed_contract |
 | `registry_value_type_bool` | `4` | `u16` | value | number | `registry_value` | fixed_contract |
 | `registry_value_type_multi_string` | `6` | `u16` | value | number | `registry_value` | fixed_contract |
@@ -6065,7 +6185,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `r4xstart_r4dev_size` | `344` | `u32` | bytes | `r4xstart_r4dev` | fixed_contract |
 | `r4xstart_r4draw_size` | `272` | `u32` | bytes | `r4xstart_r4draw` | fixed_contract |
 | `r4xstart_r4net_size` | `288` | `u32` | bytes | `r4xstart_r4net` | fixed_contract |
-| `r4xstart_r4sys_size` | `976` | `u32` | bytes | `r4xstart_r4sys` | fixed_contract |
+| `r4xstart_r4sys_size` | `1000` | `u32` | bytes | `r4xstart_r4sys` | fixed_contract |
 | `registry_name_max` | `64` | `usize` | count | `registry_name` | fixed_contract |
 | `serial_link_payload_max` | `256` | `usize` | count | `serial_link` | fixed_contract |
 | `service_api_endpoint_queue_depth` | `8` | `usize` | count | `service_api` | fixed_contract |

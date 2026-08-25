@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 294,
-    "group_slot_count": 294,
+    "function_count": 297,
+    "group_slot_count": 297,
     "sdk_only_count": 0,
-    "public_count": 208,
+    "public_count": 211,
     "advanced_count": 86
   },
   "functions": [
@@ -1409,6 +1409,42 @@
       "slot": 119,
       "exposure": "public",
       "description": "Lets the active boot shell mark its first usable frame or prompt exactly once; repeated calls by that shell are idempotent.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.registry_snapshot_begin",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 120,
+      "exposure": "public",
+      "description": "Starts a caller-owned, generation-keyed registry child-key or value snapshot without allocating kernel memory.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.registry_snapshot_page",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 121,
+      "exposure": "public",
+      "description": "Reads one bounded registry snapshot page directly from the captured key range and reports restart instead of exposing mixed generations.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.registry_batch_mutate",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 122,
+      "exposure": "public",
+      "description": "Validates and commits one bounded set/delete batch as a single registry generation with no partial visible mutation.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

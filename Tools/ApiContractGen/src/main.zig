@@ -385,9 +385,9 @@ const ExpectedGroup = struct {
 };
 
 const phase_a_groups = [_]ExpectedGroup{
-    // 110 since 0.60.23/0.60.24 appended slots 111 (path_names_equal_collated)
-    // and 112 (file_update_cleanup_checked).
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 117, .reserved = 2, .tombstones = 1 },
+    // 0.69.46 appends generation-keyed registry snapshot paging and bounded
+    // atomic registry batches at slots 120..122.
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 120, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport now occupies slot 52.

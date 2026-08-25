@@ -984,8 +984,30 @@ pub const monotonic_clock_source_tsc: u32 = 1;
 pub const monotonic_clock_source_hpet: u32 = 2;
 pub const monotonic_clock_source_periodic_event: u32 = 3;
 pub const r4xstart_r4sys_magic: u32 = 827937618;
-pub const r4xstart_r4sys_version: u32 = 13;
+pub const r4xstart_r4sys_version: u32 = 14;
+pub const registry_batch_blob_max: u32 = 16384;
+pub const registry_batch_failed_index_none: u32 = 4294967295;
+pub const registry_batch_operation_delete: u16 = 2;
+pub const registry_batch_operation_max: u32 = 32;
+pub const registry_batch_operation_set: u16 = 1;
+pub const registry_batch_status_commit_failed: i32 = 3;
+pub const registry_batch_status_committed: i32 = 1;
+pub const registry_batch_status_invalid: i32 = 0;
+pub const registry_batch_status_validation_failed: i32 = 2;
+pub const registry_batch_version: u16 = 1;
 pub const registry_path_max_bytes: u16 = 255;
+pub const registry_snapshot_cursor_flag_initialized: u32 = 1;
+pub const registry_snapshot_data_max: u32 = 16384;
+pub const registry_snapshot_entry_flag_data_omitted: u32 = 2;
+pub const registry_snapshot_entry_flag_data_present: u32 = 1;
+pub const registry_snapshot_kind_keys: u32 = 1;
+pub const registry_snapshot_kind_values: u32 = 2;
+pub const registry_snapshot_page_max: u32 = 32;
+pub const registry_snapshot_status_complete: i32 = 1;
+pub const registry_snapshot_status_invalid: i32 = 0;
+pub const registry_snapshot_status_more: i32 = 2;
+pub const registry_snapshot_status_restart: i32 = 3;
+pub const registry_snapshot_version: u16 = 1;
 pub const registry_value_type_binary: u16 = 5;
 pub const registry_value_type_bool: u16 = 4;
 pub const registry_value_type_multi_string: u16 = 6;
@@ -1267,7 +1289,7 @@ pub const r4xstart_r4desk_size: u32 = 432;
 pub const r4xstart_r4dev_size: u32 = 344;
 pub const r4xstart_r4draw_size: u32 = 272;
 pub const r4xstart_r4net_size: u32 = 288;
-pub const r4xstart_r4sys_size: u32 = 976;
+pub const r4xstart_r4sys_size: u32 = 1000;
 pub const registry_name_max: usize = 64;
 pub const serial_link_payload_max: usize = 256;
 pub const service_api_endpoint_queue_depth: usize = 8;
@@ -3664,6 +3686,64 @@ pub const SerialLinkMessage = extern struct {
     data: [256]u8 = .{0} ** 256,
 };
 
+pub const RegistryBatchOperation = extern struct {
+    operation: u16 = 0,
+    value_type: u16 = 0,
+    key_path_offset: u32 = 0,
+    key_path_len: u32 = 0,
+    value_name_offset: u32 = 0,
+    value_name_len: u32 = 0,
+    data_offset: u32 = 0,
+    data_len: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const RegistryBatchResult = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    generation_before: u64 = 0,
+    generation_after: u64 = 0,
+    operation_count: u32 = 0,
+    failed_index: u32 = 0,
+    status: i32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const RegistrySnapshotCursor = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    generation: u64 = 0,
+    key_index: u32 = 0,
+    kind: u32 = 0,
+    next_index: u32 = 0,
+    total: u32 = 0,
+    flags: u32 = 0,
+    restarts: u32 = 0,
+    reserved0: u64 = 0,
+};
+
+pub const RegistrySnapshotEntry = extern struct {
+    kind: u16 = 0,
+    value_type: u16 = 0,
+    flags: u32 = 0,
+    data_offset: u32 = 0,
+    data_len: u32 = 0,
+    name: [64]u8 = .{0} ** 64,
+};
+
+pub const RegistrySnapshotPageInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    generation: u64 = 0,
+    total: u32 = 0,
+    returned: u32 = 0,
+    next_index: u32 = 0,
+    data_bytes: u32 = 0,
+    kind: u32 = 0,
+    status: i32 = 0,
+    reserved0: u64 = 0,
+};
+
 pub const RegistryKeyInfo = extern struct {
     child_count: u32 = 0,
     value_count: u32 = 0,
@@ -4922,12 +5002,15 @@ pub const R4SysFns = struct {
     pub const program_module_running = *const fn ([*:0]const u8) callconv(.c) i32;
     pub const monotonic_clock = *const fn (*MonotonicClockInfo) callconv(.c) i32;
     pub const boot_ready = *const fn () callconv(.c) i32;
+    pub const registry_snapshot_begin = *const fn ([*:0]const u8, u32, *RegistrySnapshotCursor) callconv(.c) i32;
+    pub const registry_snapshot_page = *const fn (*RegistrySnapshotCursor, [*]RegistrySnapshotEntry, u32, [*]u8, u32, *RegistrySnapshotPageInfo) callconv(.c) i32;
+    pub const registry_batch_mutate = *const fn ([*]const RegistryBatchOperation, u32, [*]const u8, u32, *RegistryBatchResult) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 13,
-    size: u32 = 976,
+    abi_version: u32 = 14,
+    size: u32 = 1000,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -5049,6 +5132,9 @@ pub const R4XStartR4Sys = extern struct {
     program_module_running: usize = 0,
     monotonic_clock: usize = 0,
     boot_ready: usize = 0,
+    registry_snapshot_begin: usize = 0,
+    registry_snapshot_page: usize = 0,
+    registry_batch_mutate: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -5584,6 +5670,9 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 117, .offset = 952, .name = "program_module_running", .state = .function, .required = false },
     .{ .number = 118, .offset = 960, .name = "monotonic_clock", .state = .function, .required = false },
     .{ .number = 119, .offset = 968, .name = "boot_ready", .state = .function, .required = false },
+    .{ .number = 120, .offset = 976, .name = "registry_snapshot_begin", .state = .function, .required = false },
+    .{ .number = 121, .offset = 984, .name = "registry_snapshot_page", .state = .function, .required = false },
+    .{ .number = 122, .offset = 992, .name = "registry_batch_mutate", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -7753,6 +7842,59 @@ comptime {
     if (@offsetOf(SerialLinkMessage, "len") != 0) @compileError("generated ABI offset drift: SerialLinkMessage.len");
     if (@offsetOf(SerialLinkMessage, "reserved") != 2) @compileError("generated ABI offset drift: SerialLinkMessage.reserved");
     if (@offsetOf(SerialLinkMessage, "data") != 4) @compileError("generated ABI offset drift: SerialLinkMessage.data");
+    if (@sizeOf(RegistryBatchOperation) != 32) @compileError("generated ABI size drift: RegistryBatchOperation");
+    if (@alignOf(RegistryBatchOperation) != 4) @compileError("generated ABI alignment drift: RegistryBatchOperation");
+    if (@offsetOf(RegistryBatchOperation, "operation") != 0) @compileError("generated ABI offset drift: RegistryBatchOperation.operation");
+    if (@offsetOf(RegistryBatchOperation, "value_type") != 2) @compileError("generated ABI offset drift: RegistryBatchOperation.value_type");
+    if (@offsetOf(RegistryBatchOperation, "key_path_offset") != 4) @compileError("generated ABI offset drift: RegistryBatchOperation.key_path_offset");
+    if (@offsetOf(RegistryBatchOperation, "key_path_len") != 8) @compileError("generated ABI offset drift: RegistryBatchOperation.key_path_len");
+    if (@offsetOf(RegistryBatchOperation, "value_name_offset") != 12) @compileError("generated ABI offset drift: RegistryBatchOperation.value_name_offset");
+    if (@offsetOf(RegistryBatchOperation, "value_name_len") != 16) @compileError("generated ABI offset drift: RegistryBatchOperation.value_name_len");
+    if (@offsetOf(RegistryBatchOperation, "data_offset") != 20) @compileError("generated ABI offset drift: RegistryBatchOperation.data_offset");
+    if (@offsetOf(RegistryBatchOperation, "data_len") != 24) @compileError("generated ABI offset drift: RegistryBatchOperation.data_len");
+    if (@offsetOf(RegistryBatchOperation, "reserved0") != 28) @compileError("generated ABI offset drift: RegistryBatchOperation.reserved0");
+    if (@sizeOf(RegistryBatchResult) != 40) @compileError("generated ABI size drift: RegistryBatchResult");
+    if (@alignOf(RegistryBatchResult) != 8) @compileError("generated ABI alignment drift: RegistryBatchResult");
+    if (@offsetOf(RegistryBatchResult, "version") != 0) @compileError("generated ABI offset drift: RegistryBatchResult.version");
+    if (@offsetOf(RegistryBatchResult, "size") != 4) @compileError("generated ABI offset drift: RegistryBatchResult.size");
+    if (@offsetOf(RegistryBatchResult, "generation_before") != 8) @compileError("generated ABI offset drift: RegistryBatchResult.generation_before");
+    if (@offsetOf(RegistryBatchResult, "generation_after") != 16) @compileError("generated ABI offset drift: RegistryBatchResult.generation_after");
+    if (@offsetOf(RegistryBatchResult, "operation_count") != 24) @compileError("generated ABI offset drift: RegistryBatchResult.operation_count");
+    if (@offsetOf(RegistryBatchResult, "failed_index") != 28) @compileError("generated ABI offset drift: RegistryBatchResult.failed_index");
+    if (@offsetOf(RegistryBatchResult, "status") != 32) @compileError("generated ABI offset drift: RegistryBatchResult.status");
+    if (@offsetOf(RegistryBatchResult, "reserved0") != 36) @compileError("generated ABI offset drift: RegistryBatchResult.reserved0");
+    if (@sizeOf(RegistrySnapshotCursor) != 48) @compileError("generated ABI size drift: RegistrySnapshotCursor");
+    if (@alignOf(RegistrySnapshotCursor) != 8) @compileError("generated ABI alignment drift: RegistrySnapshotCursor");
+    if (@offsetOf(RegistrySnapshotCursor, "version") != 0) @compileError("generated ABI offset drift: RegistrySnapshotCursor.version");
+    if (@offsetOf(RegistrySnapshotCursor, "size") != 4) @compileError("generated ABI offset drift: RegistrySnapshotCursor.size");
+    if (@offsetOf(RegistrySnapshotCursor, "generation") != 8) @compileError("generated ABI offset drift: RegistrySnapshotCursor.generation");
+    if (@offsetOf(RegistrySnapshotCursor, "key_index") != 16) @compileError("generated ABI offset drift: RegistrySnapshotCursor.key_index");
+    if (@offsetOf(RegistrySnapshotCursor, "kind") != 20) @compileError("generated ABI offset drift: RegistrySnapshotCursor.kind");
+    if (@offsetOf(RegistrySnapshotCursor, "next_index") != 24) @compileError("generated ABI offset drift: RegistrySnapshotCursor.next_index");
+    if (@offsetOf(RegistrySnapshotCursor, "total") != 28) @compileError("generated ABI offset drift: RegistrySnapshotCursor.total");
+    if (@offsetOf(RegistrySnapshotCursor, "flags") != 32) @compileError("generated ABI offset drift: RegistrySnapshotCursor.flags");
+    if (@offsetOf(RegistrySnapshotCursor, "restarts") != 36) @compileError("generated ABI offset drift: RegistrySnapshotCursor.restarts");
+    if (@offsetOf(RegistrySnapshotCursor, "reserved0") != 40) @compileError("generated ABI offset drift: RegistrySnapshotCursor.reserved0");
+    if (@sizeOf(RegistrySnapshotEntry) != 80) @compileError("generated ABI size drift: RegistrySnapshotEntry");
+    if (@alignOf(RegistrySnapshotEntry) != 4) @compileError("generated ABI alignment drift: RegistrySnapshotEntry");
+    if (@offsetOf(RegistrySnapshotEntry, "kind") != 0) @compileError("generated ABI offset drift: RegistrySnapshotEntry.kind");
+    if (@offsetOf(RegistrySnapshotEntry, "value_type") != 2) @compileError("generated ABI offset drift: RegistrySnapshotEntry.value_type");
+    if (@offsetOf(RegistrySnapshotEntry, "flags") != 4) @compileError("generated ABI offset drift: RegistrySnapshotEntry.flags");
+    if (@offsetOf(RegistrySnapshotEntry, "data_offset") != 8) @compileError("generated ABI offset drift: RegistrySnapshotEntry.data_offset");
+    if (@offsetOf(RegistrySnapshotEntry, "data_len") != 12) @compileError("generated ABI offset drift: RegistrySnapshotEntry.data_len");
+    if (@offsetOf(RegistrySnapshotEntry, "name") != 16) @compileError("generated ABI offset drift: RegistrySnapshotEntry.name");
+    if (@sizeOf(RegistrySnapshotPageInfo) != 48) @compileError("generated ABI size drift: RegistrySnapshotPageInfo");
+    if (@alignOf(RegistrySnapshotPageInfo) != 8) @compileError("generated ABI alignment drift: RegistrySnapshotPageInfo");
+    if (@offsetOf(RegistrySnapshotPageInfo, "version") != 0) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.version");
+    if (@offsetOf(RegistrySnapshotPageInfo, "size") != 4) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.size");
+    if (@offsetOf(RegistrySnapshotPageInfo, "generation") != 8) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.generation");
+    if (@offsetOf(RegistrySnapshotPageInfo, "total") != 16) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.total");
+    if (@offsetOf(RegistrySnapshotPageInfo, "returned") != 20) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.returned");
+    if (@offsetOf(RegistrySnapshotPageInfo, "next_index") != 24) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.next_index");
+    if (@offsetOf(RegistrySnapshotPageInfo, "data_bytes") != 28) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.data_bytes");
+    if (@offsetOf(RegistrySnapshotPageInfo, "kind") != 32) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.kind");
+    if (@offsetOf(RegistrySnapshotPageInfo, "status") != 36) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.status");
+    if (@offsetOf(RegistrySnapshotPageInfo, "reserved0") != 40) @compileError("generated ABI offset drift: RegistrySnapshotPageInfo.reserved0");
     if (@sizeOf(RegistryKeyInfo) != 72) @compileError("generated ABI size drift: RegistryKeyInfo");
     if (@alignOf(RegistryKeyInfo) != 4) @compileError("generated ABI alignment drift: RegistryKeyInfo");
     if (@offsetOf(RegistryKeyInfo, "child_count") != 0) @compileError("generated ABI offset drift: RegistryKeyInfo.child_count");
@@ -8835,7 +8977,7 @@ comptime {
     if (@offsetOf(ServiceDeadlineFooter, "payload_len") != 8) @compileError("generated ABI offset drift: ServiceDeadlineFooter.payload_len");
     if (@offsetOf(ServiceDeadlineFooter, "reserved0") != 12) @compileError("generated ABI offset drift: ServiceDeadlineFooter.reserved0");
     if (@offsetOf(ServiceDeadlineFooter, "deadline_tick") != 16) @compileError("generated ABI offset drift: ServiceDeadlineFooter.deadline_tick");
-    if (@sizeOf(R4XStartR4Sys) != 976) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1000) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -8956,6 +9098,9 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_module_running") != 952) @compileError("generated ABI offset drift: R4XStartR4Sys.program_module_running");
     if (@offsetOf(R4XStartR4Sys, "monotonic_clock") != 960) @compileError("generated ABI offset drift: R4XStartR4Sys.monotonic_clock");
     if (@offsetOf(R4XStartR4Sys, "boot_ready") != 968) @compileError("generated ABI offset drift: R4XStartR4Sys.boot_ready");
+    if (@offsetOf(R4XStartR4Sys, "registry_snapshot_begin") != 976) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_begin");
+    if (@offsetOf(R4XStartR4Sys, "registry_snapshot_page") != 984) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_page");
+    if (@offsetOf(R4XStartR4Sys, "registry_batch_mutate") != 992) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_batch_mutate");
     if (@sizeOf(R4XStartR4Desk) != 440) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
