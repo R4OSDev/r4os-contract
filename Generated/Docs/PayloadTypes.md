@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 127 von 127 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1232; Limits: 102
+- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1238; Limits: 102
 
 ## App-Profile
 
@@ -5134,7 +5134,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `22` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `23` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -5643,6 +5643,12 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `net_diag_op_r4p` | `12` | `u32` | identity | number | `net_diag` | fixed_contract |
 | `net_diag_op_reset` | `6` | `u32` | identity | number | `net_diag` | fixed_contract |
 | `net_diag_op_timing` | `1` | `u32` | identity | count | `net_diag` | fixed_contract |
+| `net_rx_handoff_busy` | `-4` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
+| `net_rx_handoff_invalid_adapter` | `-1` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
+| `net_rx_handoff_invalid_frame` | `-2` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
+| `net_rx_handoff_ok` | `0` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
+| `net_rx_handoff_unavailable` | `-3` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
+| `net_rx_handoff_wrong_context` | `-5` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
 | `net_service_dhcp_action_acquire` | `1` | `u16` | value | number | `net_service` | fixed_contract |
 | `net_service_dhcp_action_release` | `3` | `u16` | value | number | `net_service` | fixed_contract |
 | `net_service_dhcp_action_renew` | `2` | `u16` | value | number | `net_service` | fixed_contract |

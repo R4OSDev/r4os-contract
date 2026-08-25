@@ -68444,7 +68444,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "22",
+      "value": "23",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -73531,6 +73531,66 @@
       "scope": "net_diag",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "net_rx_handoff_busy",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_rx_handoff",
+      "stability": "fixed_contract",
+      "description": "The bounded common RX queue is full; the driver retains the device buffer and schedules retry work."
+    },
+    {
+      "name": "net_rx_handoff_invalid_adapter",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_rx_handoff",
+      "stability": "fixed_contract",
+      "description": "The supplied network adapter index is invalid."
+    },
+    {
+      "name": "net_rx_handoff_invalid_frame",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_rx_handoff",
+      "stability": "fixed_contract",
+      "description": "The supplied frame length is invalid."
+    },
+    {
+      "name": "net_rx_handoff_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_rx_handoff",
+      "stability": "fixed_contract",
+      "description": "The frame or work notification was accepted by Netcore."
+    },
+    {
+      "name": "net_rx_handoff_unavailable",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_rx_handoff",
+      "stability": "fixed_contract",
+      "description": "Netcore RX admission is closed for a lifecycle transition."
+    },
+    {
+      "name": "net_rx_handoff_wrong_context",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_rx_handoff",
+      "stability": "fixed_contract",
+      "description": "A frame-copy submission was attempted from IRQ context; only the work notification is IRQ-safe."
     },
     {
       "name": "net_service_dhcp_action_acquire",

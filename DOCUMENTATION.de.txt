@@ -69,6 +69,16 @@ Queue-Tiefe, maximale Transfergroesse, aktive Transfers, Completions, IRQs,
 Pollfallbacks und Abbrueche aus. Ein fehlgeschlagener Controllerhalt vetoisiert
 den Unload.
 
+DriverApi v22 haengt den ownergebundenen synchronen Display-Blitcallback an;
+Ziel, Fence, Statistik und vollstaendiger CPU-Fallback bleiben Kernelbesitz.
+DriverApi v23 ergaenzt `net_schedule_rx` als einzigen IRQ-sicheren
+Netzwerkaufruf. Der Treiber quittiert und klassifiziert im IRQ nur begrenzt,
+waehrend Framekopie, eine feste 64-Slot-Besitzqueue und Protokollbatches von
+hoechstens 32 Frames dem ereignisgesteuerten `net-rx`-Task gehoeren.
+`net_receive_frame` meldet Queue-Backpressure explizit; der Treiber behaelt
+dann seinen unveraenderten Deskriptor beziehungsweise Ringkopf. Der genaue
+Besitz-, Fehler-, Wakeup- und Teardownvertrag steht in `ABI/R4DDriver.txt`.
+
 Der bestehende R4AUDIO-Aufruf `midi_send` verwendet Status null fuer PCM-
 Renderanforderungen und transportiert die Framezahl little-endian in
 `data1`/`data2`.

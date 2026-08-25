@@ -649,6 +649,12 @@ pub const net_diag_op_power = generated.net_diag_op_power;
 pub const net_diag_op_r4p = generated.net_diag_op_r4p;
 pub const net_diag_op_reset = generated.net_diag_op_reset;
 pub const net_diag_op_timing = generated.net_diag_op_timing;
+pub const net_rx_handoff_busy = generated.net_rx_handoff_busy;
+pub const net_rx_handoff_invalid_adapter = generated.net_rx_handoff_invalid_adapter;
+pub const net_rx_handoff_invalid_frame = generated.net_rx_handoff_invalid_frame;
+pub const net_rx_handoff_ok = generated.net_rx_handoff_ok;
+pub const net_rx_handoff_unavailable = generated.net_rx_handoff_unavailable;
+pub const net_rx_handoff_wrong_context = generated.net_rx_handoff_wrong_context;
 pub const net_service_dhcp_action_acquire = generated.net_service_dhcp_action_acquire;
 pub const net_service_dhcp_action_release = generated.net_service_dhcp_action_release;
 pub const net_service_dhcp_action_renew = generated.net_service_dhcp_action_renew;
@@ -3096,6 +3102,9 @@ pub const DriverApi = extern struct {
     // synchronous display blit backend with kernel-owned fallback.
     register_display_blit_backend: *const fn ([*:0]const u8, *const DisplayBlitBackend) callconv(.c) i32,
     unregister_display_blit_backend: *const fn ([*:0]const u8) callconv(.c) i32,
+    // 0.69.49 (DriverApi Version 23, append-only): IRQ-safe publication of
+    // adapter RX work to the bounded, event-driven Netcore handoff.
+    net_schedule_rx: *const fn (i32) callconv(.c) i32,
 };
 
 pub const ProtocolApi = extern struct {
