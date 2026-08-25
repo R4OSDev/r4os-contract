@@ -1,5 +1,5 @@
-R4D driver DMA and asynchronous storage ABI
-===========================================
+﻿R4D driver DMA, deadline work and asynchronous storage ABI
+==============================================================
 
 Scope
 -----
@@ -7,8 +7,9 @@ Scope
 This document defines the owner and lifetime rules for the technical R4D
 types that accompany the generated R4DEV platform contract. The target is
 trusted little-endian x86_64. DriverApi version 19 appends segment-DMA
-operations; StorageBackend version 2 appends asynchronous block callbacks.
-Neither extension changes an older prefix.
+operations; version 20 appends deadline-isolated audio work. StorageBackend
+version 2 appends asynchronous block callbacks. None of these extensions
+changes an older prefix.
 
 Pinned buffers and DMA mappings
 -------------------------------
@@ -61,6 +62,42 @@ release any private bounce allocation before returning. R4D owner cleanup
 releases mappings before pins and legacy contiguous DMA allocations. The
 existing `alloc_dma_region` and constrained variant remain compatible,
 owner-checked contiguous fast/fallback paths.
+
+Deadline-isolated audio work
+----------------------------
+
+DriverApi version 20 appends `driver_work_submit_request`. Its version-1
+`DriverWorkRequest` is copied during submission and is valid only for the
+call. The only current class is `audio_refill`. It requires a nonzero stable
+device serialization key, an absolute monotonic tick deadline and a callback
+budget from one through four ticks. Flags remain limited to `from_irq`.
+
+Audio requests enter a separate earliest-deadline-first queue and execute on
+the single `r4d-audio` short-completion worker. This makes callbacks globally,
+and therefore per device, serial. The normal IRQ/task FIFO keeps its existing
+bounded IRQ preference and task fairness; normal admission leaves two of the
+16 shared completion slots available to the deadline lane. At most four
+deadline jobs may be queued. The scheduler bounds every short-completion
+activation to four ticks and four dispatches before demotion, so the audio
+lane cannot create an unbounded priority class.
+
+A driver submits one bounded hardware-status, refill or recovery pass per
+request. Work arriving during that pass is represented by a new request with
+a new absolute deadline; the callback does not drain an unbounded private
+loop. A device retains at most one queued successor while its current pass
+runs. Completion handles, cancellation, owner cleanup and release use the
+same generation-safe lifetime as normal Driver Work. Shutdown closes device
+admission, disables its interrupt source, releases device locks and only then
+joins or cancels every retained work handle before DMA or module memory is
+released.
+
+The performance snapshot version 2 reports deadline queue/running/high-water,
+submission/start/completion, admission rejection, queue ticks, start
+lateness and callback budget overruns globally and per selected owner. A miss
+means the callback began after its declared absolute deadline; an overrun
+means the callback used more ticks than its declared budget. These counters
+are observation and conformance data, not permission to ignore a failed
+submission.
 
 Asynchronous storage backend
 ----------------------------

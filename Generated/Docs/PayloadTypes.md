@@ -134,7 +134,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramThreadSnapshot` | extensible | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
 | `ProgramInventorySummary` | extensible | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 | `ProgramDriverWorkPerformanceMetrics` | fixed_layout | extern_struct | 640/8 | 640/8 | 640/8 | 640/8 |
-| `ProgramDriverWorkPerformanceInfo` | extensible | extern_struct | 808/8 | 808/8 | 808/8 | 808/8 |
+| `ProgramDriverWorkPerformanceInfo` | extensible | extern_struct | 928/8 | 928/8 | 928/8 | 928/8 |
 | `ProgramPciInventoryPerformanceInfo` | extensible | extern_struct | 280/8 | 280/8 | 280/8 | 280/8 |
 | `ProgramInputPerformanceInfo` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `ServiceDeadlineFooter` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
@@ -3910,7 +3910,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 808 / 8
+- Version/Größe/Alignment: 2 / 928 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -3956,6 +3956,26 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `owner_waiters_max` | 156 | 4 | 4 | `u32` | - |
 | `long_callback_threshold_ns` | 160 | 8 | 8 | `u64` | - |
 | `metrics` | 168 | 640 | 8 | `r4os.abi.ProgramDriverWorkPerformanceMetrics` | - |
+| `deadline_worker_started` | 808 | 4 | 4 | `u32` | - |
+| `deadline_worker_task_id` | 812 | 4 | 4 | `u32` | - |
+| `deadline_worker_count` | 816 | 4 | 4 | `u32` | - |
+| `deadline_queue_capacity` | 820 | 4 | 4 | `u32` | - |
+| `deadline_queued_slots` | 824 | 4 | 4 | `u32` | - |
+| `deadline_running_slots` | 828 | 4 | 4 | `u32` | - |
+| `deadline_queue_high_water` | 832 | 4 | 4 | `u32` | - |
+| `owner_deadline_queued_slots` | 836 | 4 | 4 | `u32` | - |
+| `owner_deadline_running_slots` | 840 | 4 | 4 | `u32` | - |
+| `owner_deadline_queue_high_water` | 844 | 4 | 4 | `u32` | - |
+| `deadline_submitted` | 848 | 8 | 8 | `u64` | - |
+| `deadline_started` | 856 | 8 | 8 | `u64` | - |
+| `deadline_completed` | 864 | 8 | 8 | `u64` | - |
+| `deadline_misses` | 872 | 8 | 8 | `u64` | - |
+| `deadline_budget_overruns` | 880 | 8 | 8 | `u64` | - |
+| `deadline_queue_rejections` | 888 | 8 | 8 | `u64` | - |
+| `deadline_queue_total_ticks` | 896 | 8 | 8 | `u64` | - |
+| `deadline_queue_max_ticks` | 904 | 8 | 8 | `u64` | - |
+| `deadline_lateness_total_ticks` | 912 | 8 | 8 | `u64` | - |
+| `deadline_lateness_max_ticks` | 920 | 8 | 8 | `u64` | - |
 
 ### `ProgramPciInventoryPerformanceInfo`
 
@@ -4819,7 +4839,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `audio_service_request_magic` | `1364350273` | `u32` | magic | number | `audio_service_request` | fixed_contract |
 | `audio_service_request_version` | `1` | `u16` | version | number | `audio_service_request` | fixed_contract |
 | `audio_service_status_magic` | `1397970241` | `u32` | magic | number | `audio_service_status` | fixed_contract |
-| `audio_service_status_version` | `1` | `u16` | version | number | `audio_service_status` | fixed_contract |
+| `audio_service_status_version` | `2` | `u16` | version | number | `audio_service_status` | fixed_contract |
 | `audio_sid_model_6581` | `2` | `u8` | value | number | `audio_sid` | fixed_contract |
 | `audio_sid_model_8580` | `1` | `u8` | value | number | `audio_sid` | fixed_contract |
 | `audio_sid_op_configure_model` | `1` | `u32` | identity | number | `audio_sid` | fixed_contract |
@@ -4894,7 +4914,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `19` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `20` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |

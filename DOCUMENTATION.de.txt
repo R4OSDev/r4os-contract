@@ -53,8 +53,12 @@ Der technische Zig-Fassadenteil fuehrt seit 0.69.28 den append-only
 Sync-, Unmap- und Unpin-Operationen fuer vorhandene residente DMA-Puffer;
 `StorageBackend` v2 fuegt nonblocking Submit sowie advisory Cancel und
 quieszenzbeweisenden Reset an. Alte Tabellen- und Deskriptorpraefixe bleiben
-unveraendert. Der vollstaendige Besitzer-, Bounce-, Completion-, Flush- und
-Unloadvertrag steht in `ABI/R4DDriver.txt`.
+unveraendert. DriverApi v20 haengt eine versionierte Audio-Refill-Anforderung
+mit absoluter Tickdeadline, einem Budget von hoechstens vier Ticks und einem
+stabilen Geraeteschluessel an. Sie laeuft EDF-sortiert auf dem einzelnen
+`r4d-audio`-Short-Completion-Worker und bleibt von der normalen IRQ-/Task-FIFO
+getrennt. Der vollstaendige Besitzer-, Bounce-, Deadline-, Completion-,
+Flush- und Unloadvertrag steht in `ABI/R4DDriver.txt`.
 
 Der bestehende R4AUDIO-Aufruf `midi_send` verwendet Status null fuer PCM-
 Renderanforderungen und transportiert die Framezahl little-endian in

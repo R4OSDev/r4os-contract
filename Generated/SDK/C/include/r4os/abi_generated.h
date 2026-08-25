@@ -58,7 +58,7 @@ extern "C" {
 #define R4OS_AUDIO_SERVICE_REQUEST_MAGIC 1364350273u
 #define R4OS_AUDIO_SERVICE_REQUEST_VERSION 1u
 #define R4OS_AUDIO_SERVICE_STATUS_MAGIC 1397970241u
-#define R4OS_AUDIO_SERVICE_STATUS_VERSION 1u
+#define R4OS_AUDIO_SERVICE_STATUS_VERSION 2u
 #define R4OS_AUDIO_SID_MODEL_6581 2u
 #define R4OS_AUDIO_SID_MODEL_8580 1u
 #define R4OS_AUDIO_SID_OP_CONFIGURE_MODEL 1u
@@ -133,7 +133,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 19u
+#define R4OS_DRIVER_API_VERSION 20u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
 #define R4OS_DRIVER_WORK_FLAG_NONE 0u
@@ -4737,6 +4737,26 @@ typedef struct R4ProgramDriverWorkPerformanceInfo {
     uint32_t owner_waiters_max;
     uint64_t long_callback_threshold_ns;
     R4ProgramDriverWorkPerformanceMetrics metrics;
+    uint32_t deadline_worker_started;
+    uint32_t deadline_worker_task_id;
+    uint32_t deadline_worker_count;
+    uint32_t deadline_queue_capacity;
+    uint32_t deadline_queued_slots;
+    uint32_t deadline_running_slots;
+    uint32_t deadline_queue_high_water;
+    uint32_t owner_deadline_queued_slots;
+    uint32_t owner_deadline_running_slots;
+    uint32_t owner_deadline_queue_high_water;
+    uint64_t deadline_submitted;
+    uint64_t deadline_started;
+    uint64_t deadline_completed;
+    uint64_t deadline_misses;
+    uint64_t deadline_budget_overruns;
+    uint64_t deadline_queue_rejections;
+    uint64_t deadline_queue_total_ticks;
+    uint64_t deadline_queue_max_ticks;
+    uint64_t deadline_lateness_total_ticks;
+    uint64_t deadline_lateness_max_ticks;
 } R4ProgramDriverWorkPerformanceInfo;
 
 typedef struct R4ProgramPciInventoryPerformanceInfo {
@@ -8311,7 +8331,7 @@ _Static_assert(offsetof(R4ProgramDriverWorkPerformanceMetrics, waiter_cancel_ret
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceMetrics, sleep_waits) == 616u, "ProgramDriverWorkPerformanceMetrics.sleep_waits offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceMetrics, sleep_denied_irq) == 624u, "ProgramDriverWorkPerformanceMetrics.sleep_denied_irq offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceMetrics, sleep_total_ticks) == 632u, "ProgramDriverWorkPerformanceMetrics.sleep_total_ticks offset mismatch");
-_Static_assert(sizeof(R4ProgramDriverWorkPerformanceInfo) == 808u, "ProgramDriverWorkPerformanceInfo size mismatch");
+_Static_assert(sizeof(R4ProgramDriverWorkPerformanceInfo) == 928u, "ProgramDriverWorkPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, version) == 0u, "ProgramDriverWorkPerformanceInfo.version offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, size) == 4u, "ProgramDriverWorkPerformanceInfo.size offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, selected_owner) == 8u, "ProgramDriverWorkPerformanceInfo.selected_owner offset mismatch");
@@ -8354,6 +8374,26 @@ _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, owner_waiters_curren
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, owner_waiters_max) == 156u, "ProgramDriverWorkPerformanceInfo.owner_waiters_max offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, long_callback_threshold_ns) == 160u, "ProgramDriverWorkPerformanceInfo.long_callback_threshold_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, metrics) == 168u, "ProgramDriverWorkPerformanceInfo.metrics offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_worker_started) == 808u, "ProgramDriverWorkPerformanceInfo.deadline_worker_started offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_worker_task_id) == 812u, "ProgramDriverWorkPerformanceInfo.deadline_worker_task_id offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_worker_count) == 816u, "ProgramDriverWorkPerformanceInfo.deadline_worker_count offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_queue_capacity) == 820u, "ProgramDriverWorkPerformanceInfo.deadline_queue_capacity offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_queued_slots) == 824u, "ProgramDriverWorkPerformanceInfo.deadline_queued_slots offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_running_slots) == 828u, "ProgramDriverWorkPerformanceInfo.deadline_running_slots offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_queue_high_water) == 832u, "ProgramDriverWorkPerformanceInfo.deadline_queue_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, owner_deadline_queued_slots) == 836u, "ProgramDriverWorkPerformanceInfo.owner_deadline_queued_slots offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, owner_deadline_running_slots) == 840u, "ProgramDriverWorkPerformanceInfo.owner_deadline_running_slots offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, owner_deadline_queue_high_water) == 844u, "ProgramDriverWorkPerformanceInfo.owner_deadline_queue_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_submitted) == 848u, "ProgramDriverWorkPerformanceInfo.deadline_submitted offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_started) == 856u, "ProgramDriverWorkPerformanceInfo.deadline_started offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_completed) == 864u, "ProgramDriverWorkPerformanceInfo.deadline_completed offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_misses) == 872u, "ProgramDriverWorkPerformanceInfo.deadline_misses offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_budget_overruns) == 880u, "ProgramDriverWorkPerformanceInfo.deadline_budget_overruns offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_queue_rejections) == 888u, "ProgramDriverWorkPerformanceInfo.deadline_queue_rejections offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_queue_total_ticks) == 896u, "ProgramDriverWorkPerformanceInfo.deadline_queue_total_ticks offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_queue_max_ticks) == 904u, "ProgramDriverWorkPerformanceInfo.deadline_queue_max_ticks offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_lateness_total_ticks) == 912u, "ProgramDriverWorkPerformanceInfo.deadline_lateness_total_ticks offset mismatch");
+_Static_assert(offsetof(R4ProgramDriverWorkPerformanceInfo, deadline_lateness_max_ticks) == 920u, "ProgramDriverWorkPerformanceInfo.deadline_lateness_max_ticks offset mismatch");
 _Static_assert(sizeof(R4ProgramPciInventoryPerformanceInfo) == 280u, "ProgramPciInventoryPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, version) == 0u, "ProgramPciInventoryPerformanceInfo.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, size) == 4u, "ProgramPciInventoryPerformanceInfo.size offset mismatch");

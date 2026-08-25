@@ -60387,8 +60387,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 808,
+      "version": 2,
+      "size": 928,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -60405,7 +60405,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "1"
+          "default_value": "2"
         },
         {
           "name": "size",
@@ -60419,7 +60419,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "808"
+          "default_value": "928"
         },
         {
           "name": "selected_owner",
@@ -60979,6 +60979,286 @@
           "alignment": 8,
           "source_type": "r4os.abi.ProgramDriverWorkPerformanceMetrics",
           "default_kind": "empty"
+        },
+        {
+          "name": "deadline_worker_started",
+          "offset": 808,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Whether the isolated audio deadline worker is available.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_worker_task_id",
+          "offset": 812,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Task identifier of the isolated audio deadline worker.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_worker_count",
+          "offset": 816,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of isolated audio deadline workers.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "deadline_queue_capacity",
+          "offset": 820,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum queued audio deadline items.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4"
+        },
+        {
+          "name": "deadline_queued_slots",
+          "offset": 824,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current aggregate audio deadline queue depth.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_running_slots",
+          "offset": 828,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current aggregate running audio deadline callbacks.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_queue_high_water",
+          "offset": 832,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Highest aggregate audio deadline queue depth.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_deadline_queued_slots",
+          "offset": 836,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current audio deadline queue depth for the selected owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_deadline_running_slots",
+          "offset": 840,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current running audio deadline callbacks for the selected owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_deadline_queue_high_water",
+          "offset": 844,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Highest audio deadline queue depth for the selected owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_submitted",
+          "offset": 848,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Accepted audio deadline items for the selected owner view.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_started",
+          "offset": 856,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Started audio deadline items for the selected owner view.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_completed",
+          "offset": 864,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Completed audio deadline items for the selected owner view.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_misses",
+          "offset": 872,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Items which began after their absolute deadline.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_budget_overruns",
+          "offset": 880,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Callbacks whose measured run ticks exceeded their declared budget.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_queue_rejections",
+          "offset": 888,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Audio deadline items rejected by bounded admission or worker availability.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_queue_total_ticks",
+          "offset": 896,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cumulative audio deadline queue ticks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_queue_max_ticks",
+          "offset": 904,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Maximum observed audio deadline queue ticks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_lateness_total_ticks",
+          "offset": 912,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cumulative late-start ticks for missed audio deadlines.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_lateness_max_ticks",
+          "offset": 920,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Maximum late-start ticks for a missed audio deadline.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
@@ -64904,7 +65184,7 @@
     },
     {
       "name": "audio_service_status_version",
-      "value": "1",
+      "value": "2",
       "value_type": "u16",
       "category": "version",
       "unit": "number",
@@ -65654,7 +65934,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "19",
+      "value": "20",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

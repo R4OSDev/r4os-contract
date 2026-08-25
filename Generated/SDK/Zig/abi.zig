@@ -2462,7 +2462,11 @@ pub const AudioServiceStatus = extern struct {
     backend_name: [audio_service_name_bytes]u8 = .{0} ** audio_service_name_bytes,
     mixer_name: [audio_service_name_bytes]u8 = .{0} ** audio_service_name_bytes,
     last_error: [audio_service_error_bytes]u8 = .{0} ** audio_service_error_bytes,
-    reserved1: [32]u8 = .{0} ** 32,
+    materialized_sessions: u32 = 0,
+    lazy_open_count: u32 = 0,
+    silence_write_count: u64 = 0,
+    silence_bytes: u64 = 0,
+    idle_close_count: u64 = 0,
 };
 
 pub const WindowServiceRecord = extern struct {
@@ -2966,6 +2970,10 @@ pub const DriverApi = extern struct {
     dma_sync_for_cpu: *const fn (*const DmaMapping) callconv(.c) i32,
     dma_unmap: *const fn (*DmaMapping) callconv(.c) i32,
     dma_unpin_buffer: *const fn (*DmaPinnedBuffer) callconv(.c) i32,
+    // 0.69.42 (DriverApi Version 20, append-only): isolierte, absolute
+    // Deadlinearbeit fuer Audiorefills mit begrenztem Budget und stabilem
+    // Geraete-Serialisierungsschluessel.
+    driver_work_submit_request: *const fn (*const DriverWorkRequest, *u32) callconv(.c) i32,
 };
 
 pub const ProtocolApi = extern struct {
@@ -3082,6 +3090,22 @@ pub const IrqStats = extern struct {
 };
 
 pub const DriverWorkHandler = *const fn (usize) callconv(.c) i32;
+
+pub const driver_work_request_version: u32 = 1;
+pub const driver_work_class_audio_refill: u32 = 1;
+pub const driver_work_deadline_max_budget_ticks: u64 = 4;
+
+pub const DriverWorkRequest = extern struct {
+    version: u32 = driver_work_request_version,
+    size: u32 = @sizeOf(DriverWorkRequest),
+    handler: DriverWorkHandler,
+    context: usize = 0,
+    flags: u32 = driver_work_flag_none,
+    work_class: u32 = driver_work_class_audio_refill,
+    serial_key: u64 = 0,
+    deadline_tick: u64 = 0,
+    budget_ticks: u64 = 0,
+};
 
 pub const DriverCompletionStatus = extern struct {
     version: u32 = driver_work_version,
