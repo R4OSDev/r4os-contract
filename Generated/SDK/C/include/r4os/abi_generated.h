@@ -113,6 +113,26 @@ extern "C" {
 #define R4OS_DHCP_STATUS_FLAG_PENDING 4u
 #define R4OS_DHCP_STATUS_FLAG_RETRY_WAIT 64u
 #define R4OS_DHCP_STATUS_FLAG_TASK_STARTED 16u
+#define R4OS_DISPLAY_DAMAGE_MAX_REGIONS 8u
+#define R4OS_DISPLAY_PRESENT_BACKEND_BOOTFB_CPU 1u
+#define R4OS_DISPLAY_PRESENT_BACKEND_EXTERNAL_BLIT 2u
+#define R4OS_DISPLAY_PRESENT_CAP_ACCELERATED_BLIT 8u
+#define R4OS_DISPLAY_PRESENT_CAP_CPU_FALLBACK 1u
+#define R4OS_DISPLAY_PRESENT_CAP_EXACT_REGIONS 2u
+#define R4OS_DISPLAY_PRESENT_CAP_EXTERNAL_BACKEND 16u
+#define R4OS_DISPLAY_PRESENT_CAP_SYNC_FENCE 4u
+#define R4OS_DISPLAY_PRESENT_COMPLETION_COMPLETE 1u
+#define R4OS_DISPLAY_PRESENT_ERROR_INVALID ((int32_t)-1)
+#define R4OS_DISPLAY_PRESENT_ERROR_OUT_OF_RANGE ((int32_t)-2)
+#define R4OS_DISPLAY_PRESENT_ERROR_UNAVAILABLE ((int32_t)-3)
+#define R4OS_DISPLAY_PRESENT_FORMAT_XRGB32 1u
+#define R4OS_DISPLAY_PRESENT_MAGIC 1346647122u
+#define R4OS_DISPLAY_PRESENT_REQUEST_FLAG_INPUT_TICK_VALID 1u
+#define R4OS_DISPLAY_PRESENT_RESULT_ACCELERATED 4u
+#define R4OS_DISPLAY_PRESENT_RESULT_COMPLETED 2u
+#define R4OS_DISPLAY_PRESENT_RESULT_FALLBACK 8u
+#define R4OS_DISPLAY_PRESENT_RESULT_SUCCESS 1u
+#define R4OS_DISPLAY_PRESENT_VERSION 1u
 #define R4OS_DISPLAY_SUMMARY_BACKEND_BOOTFB 1u
 #define R4OS_DISPLAY_SUMMARY_BACKEND_NONE 0u
 #define R4OS_DISPLAY_SUMMARY_CACHE_BOOTLOADER_DEFAULT 1u
@@ -133,7 +153,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 21u
+#define R4OS_DRIVER_API_VERSION 22u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
 #define R4OS_DRIVER_WORK_FLAG_NONE 0u
@@ -1667,6 +1687,11 @@ typedef struct R4ProgramMemoryBlockInfo R4ProgramMemoryBlockInfo;
 typedef struct R4ProgramVmReserveProbe R4ProgramVmReserveProbe;
 typedef struct R4ProgramVmRegionInfo R4ProgramVmRegionInfo;
 typedef struct R4PagingSummary R4PagingSummary;
+typedef struct R4DisplayDamageRect R4DisplayDamageRect;
+typedef struct R4DisplayPresentCapabilities R4DisplayPresentCapabilities;
+typedef struct R4DisplayPresentCompletion R4DisplayPresentCompletion;
+typedef struct R4DisplayPresentRequest R4DisplayPresentRequest;
+typedef struct R4DisplayPresentResult R4DisplayPresentResult;
 typedef struct R4DisplaySummary R4DisplaySummary;
 typedef struct R4GuiWindowInfo R4GuiWindowInfo;
 typedef struct R4GuiSize R4GuiSize;
@@ -3227,6 +3252,68 @@ typedef struct R4PagingSummary {
     uint64_t unmap_pages;
     uint64_t invlpg_flushes;
 } R4PagingSummary;
+
+typedef struct R4DisplayDamageRect {
+    int32_t x;
+    int32_t y;
+    uint32_t w;
+    uint32_t h;
+} R4DisplayDamageRect;
+
+typedef struct R4DisplayPresentCapabilities {
+    uint16_t version;
+    uint16_t size;
+    uint32_t flags;
+    uint32_t formats;
+    uint32_t max_regions;
+    uint32_t tile_width;
+    uint32_t tile_height;
+    uint32_t backend_kind;
+    uint32_t reserved0;
+    uint8_t backend_name[24];
+    uint8_t fallback_name[24];
+} R4DisplayPresentCapabilities;
+
+typedef struct R4DisplayPresentCompletion {
+    uint16_t version;
+    uint16_t size;
+    uint32_t flags;
+    uint64_t fence;
+    uint64_t completed_fence;
+    int32_t result;
+    uint32_t reserved0;
+} R4DisplayPresentCompletion;
+
+typedef struct R4DisplayPresentRequest {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint32_t flags;
+    uint32_t format;
+    uint32_t source_width;
+    uint32_t source_height;
+    uint32_t source_stride_pixels;
+    uint32_t reserved0;
+    uint64_t source_generation;
+    uint64_t input_tick;
+} R4DisplayPresentRequest;
+
+typedef struct R4DisplayPresentResult {
+    uint16_t version;
+    uint16_t size;
+    uint32_t flags;
+    uint64_t source_generation;
+    uint64_t present_generation;
+    uint64_t fence;
+    uint64_t completed_fence;
+    uint32_t region_count;
+    uint32_t pixel_count;
+    uint32_t fallback_regions;
+    int32_t backend_error;
+    uint64_t present_tick;
+    uint64_t elapsed_ticks;
+    uint8_t backend_name[24];
+} R4DisplayPresentResult;
 
 typedef struct R4DisplaySummary {
     uint32_t flags;
@@ -5305,6 +5392,7 @@ typedef int32_t (*R4DeskConsolePushInputFn)(uint32_t instance_id, const uint8_t 
 typedef int32_t (*R4DeskRemoteFrameAcquireFn)(void);
 typedef int32_t (*R4DeskRemoteFrameReleaseFn)(void);
 typedef uint32_t (*R4DeskRemoteFrameConsumersFn)(void);
+typedef int32_t (*R4DeskRemoteFramePublishRegionsFn)(const R4RemoteFrameInfo * info, const uint32_t * pixels, uint32_t pixel_count, const R4DisplayDamageRect * regions, uint32_t region_count);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -5367,6 +5455,7 @@ typedef struct R4XStartR4Desk {
     uintptr_t remote_frame_acquire;
     uintptr_t remote_frame_release;
     uintptr_t remote_frame_consumers;
+    uintptr_t remote_frame_publish_regions;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -5402,6 +5491,9 @@ typedef int32_t (*R4DrawGuiFrameCancelFn)(void);
 typedef int32_t (*R4DrawGuiFrameInfoFn)(const R4ProgramProcessHandle * handle, R4GuiFrameInfo * out_info);
 typedef int32_t (*R4DrawGuiFrameReadFn)(const R4ProgramProcessHandle * handle, uint64_t expected_generation, R4GuiFrameCommand * commands, uint64_t command_capacity, uint8_t * resources, uint64_t resource_capacity, R4GuiFrameInfo * out_info);
 typedef int32_t (*R4DrawDisplayBlitXrgb32StrideFn)(int32_t x, int32_t y, uint32_t w, uint32_t h, const uint32_t * pixels, uint32_t pixel_count, uint32_t source_stride_pixels);
+typedef int32_t (*R4DrawDisplayPresentRegionsFn)(const R4DisplayPresentRequest * request, const uint32_t * pixels, uint32_t pixel_count, const R4DisplayDamageRect * regions, uint32_t region_count, R4DisplayPresentResult * out_result);
+typedef int32_t (*R4DrawDisplayPresentCapabilitiesFn)(R4DisplayPresentCapabilities * out_capabilities);
+typedef int32_t (*R4DrawDisplayPresentCompletionFn)(uint64_t fence, R4DisplayPresentCompletion * out_completion);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -5441,6 +5533,9 @@ typedef struct R4XStartR4Draw {
     uintptr_t gui_frame_info;
     uintptr_t gui_frame_read;
     uintptr_t display_blit_xrgb32_stride;
+    uintptr_t display_present_regions;
+    uintptr_t display_present_capabilities;
+    uintptr_t display_present_completion;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -7109,6 +7204,58 @@ _Static_assert(offsetof(R4PagingSummary, root_mismatches) == 120u, "PagingSummar
 _Static_assert(offsetof(R4PagingSummary, map_pages) == 128u, "PagingSummary.map_pages offset mismatch");
 _Static_assert(offsetof(R4PagingSummary, unmap_pages) == 136u, "PagingSummary.unmap_pages offset mismatch");
 _Static_assert(offsetof(R4PagingSummary, invlpg_flushes) == 144u, "PagingSummary.invlpg_flushes offset mismatch");
+_Static_assert(sizeof(R4DisplayDamageRect) == 16u, "DisplayDamageRect size mismatch");
+_Static_assert(offsetof(R4DisplayDamageRect, x) == 0u, "DisplayDamageRect.x offset mismatch");
+_Static_assert(offsetof(R4DisplayDamageRect, y) == 4u, "DisplayDamageRect.y offset mismatch");
+_Static_assert(offsetof(R4DisplayDamageRect, w) == 8u, "DisplayDamageRect.w offset mismatch");
+_Static_assert(offsetof(R4DisplayDamageRect, h) == 12u, "DisplayDamageRect.h offset mismatch");
+_Static_assert(sizeof(R4DisplayPresentCapabilities) == 80u, "DisplayPresentCapabilities size mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, version) == 0u, "DisplayPresentCapabilities.version offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, size) == 2u, "DisplayPresentCapabilities.size offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, flags) == 4u, "DisplayPresentCapabilities.flags offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, formats) == 8u, "DisplayPresentCapabilities.formats offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, max_regions) == 12u, "DisplayPresentCapabilities.max_regions offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, tile_width) == 16u, "DisplayPresentCapabilities.tile_width offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, tile_height) == 20u, "DisplayPresentCapabilities.tile_height offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, backend_kind) == 24u, "DisplayPresentCapabilities.backend_kind offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, reserved0) == 28u, "DisplayPresentCapabilities.reserved0 offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, backend_name) == 32u, "DisplayPresentCapabilities.backend_name offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCapabilities, fallback_name) == 56u, "DisplayPresentCapabilities.fallback_name offset mismatch");
+_Static_assert(sizeof(R4DisplayPresentCompletion) == 32u, "DisplayPresentCompletion size mismatch");
+_Static_assert(offsetof(R4DisplayPresentCompletion, version) == 0u, "DisplayPresentCompletion.version offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCompletion, size) == 2u, "DisplayPresentCompletion.size offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCompletion, flags) == 4u, "DisplayPresentCompletion.flags offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCompletion, fence) == 8u, "DisplayPresentCompletion.fence offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCompletion, completed_fence) == 16u, "DisplayPresentCompletion.completed_fence offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCompletion, result) == 24u, "DisplayPresentCompletion.result offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentCompletion, reserved0) == 28u, "DisplayPresentCompletion.reserved0 offset mismatch");
+_Static_assert(sizeof(R4DisplayPresentRequest) == 48u, "DisplayPresentRequest size mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, magic) == 0u, "DisplayPresentRequest.magic offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, version) == 4u, "DisplayPresentRequest.version offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, size) == 6u, "DisplayPresentRequest.size offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, flags) == 8u, "DisplayPresentRequest.flags offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, format) == 12u, "DisplayPresentRequest.format offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, source_width) == 16u, "DisplayPresentRequest.source_width offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, source_height) == 20u, "DisplayPresentRequest.source_height offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, source_stride_pixels) == 24u, "DisplayPresentRequest.source_stride_pixels offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, reserved0) == 28u, "DisplayPresentRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, source_generation) == 32u, "DisplayPresentRequest.source_generation offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentRequest, input_tick) == 40u, "DisplayPresentRequest.input_tick offset mismatch");
+_Static_assert(sizeof(R4DisplayPresentResult) == 96u, "DisplayPresentResult size mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, version) == 0u, "DisplayPresentResult.version offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, size) == 2u, "DisplayPresentResult.size offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, flags) == 4u, "DisplayPresentResult.flags offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, source_generation) == 8u, "DisplayPresentResult.source_generation offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, present_generation) == 16u, "DisplayPresentResult.present_generation offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, fence) == 24u, "DisplayPresentResult.fence offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, completed_fence) == 32u, "DisplayPresentResult.completed_fence offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, region_count) == 40u, "DisplayPresentResult.region_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, pixel_count) == 44u, "DisplayPresentResult.pixel_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, fallback_regions) == 48u, "DisplayPresentResult.fallback_regions offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, backend_error) == 52u, "DisplayPresentResult.backend_error offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, present_tick) == 56u, "DisplayPresentResult.present_tick offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, elapsed_ticks) == 64u, "DisplayPresentResult.elapsed_ticks offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentResult, backend_name) == 72u, "DisplayPresentResult.backend_name offset mismatch");
 _Static_assert(sizeof(R4DisplaySummary) == 200u, "DisplaySummary size mismatch");
 _Static_assert(offsetof(R4DisplaySummary, flags) == 0u, "DisplaySummary.flags offset mismatch");
 _Static_assert(offsetof(R4DisplaySummary, backend_kind) == 4u, "DisplaySummary.backend_kind offset mismatch");
@@ -8886,7 +9033,7 @@ _Static_assert(offsetof(R4XStartR4Sys, registry_snapshot_page) == 984u, "R4XStar
 _Static_assert(sizeof(R4SysRegistrySnapshotPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, registry_batch_mutate) == 992u, "R4XStartR4Sys.registry_batch_mutate offset mismatch");
 _Static_assert(sizeof(R4SysRegistryBatchMutateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 464u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 472u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -8998,7 +9145,9 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_release) == 448u, "R4XStart
 _Static_assert(sizeof(R4DeskRemoteFrameReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, remote_frame_consumers) == 456u, "R4XStartR4Desk.remote_frame_consumers offset mismatch");
 _Static_assert(sizeof(R4DeskRemoteFrameConsumersFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 280u, "R4XStartR4Draw size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_publish_regions) == 464u, "R4XStartR4Desk.remote_frame_publish_regions offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFramePublishRegionsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 304u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -9065,6 +9214,12 @@ _Static_assert(offsetof(R4XStartR4Draw, gui_frame_read) == 264u, "R4XStartR4Draw
 _Static_assert(sizeof(R4DrawGuiFrameReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, display_blit_xrgb32_stride) == 272u, "R4XStartR4Draw.display_blit_xrgb32_stride offset mismatch");
 _Static_assert(sizeof(R4DrawDisplayBlitXrgb32StrideFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, display_present_regions) == 280u, "R4XStartR4Draw.display_present_regions offset mismatch");
+_Static_assert(sizeof(R4DrawDisplayPresentRegionsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, display_present_capabilities) == 288u, "R4XStartR4Draw.display_present_capabilities offset mismatch");
+_Static_assert(sizeof(R4DrawDisplayPresentCapabilitiesFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, display_present_completion) == 296u, "R4XStartR4Draw.display_present_completion offset mismatch");
+_Static_assert(sizeof(R4DrawDisplayPresentCompletionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 288u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

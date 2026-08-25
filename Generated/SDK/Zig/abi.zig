@@ -100,6 +100,26 @@ pub const dhcp_status_flag_link_up = generated.dhcp_status_flag_link_up;
 pub const dhcp_status_flag_pending = generated.dhcp_status_flag_pending;
 pub const dhcp_status_flag_retry_wait = generated.dhcp_status_flag_retry_wait;
 pub const dhcp_status_flag_task_started = generated.dhcp_status_flag_task_started;
+pub const display_damage_max_regions = generated.display_damage_max_regions;
+pub const display_present_backend_bootfb_cpu = generated.display_present_backend_bootfb_cpu;
+pub const display_present_backend_external_blit = generated.display_present_backend_external_blit;
+pub const display_present_cap_accelerated_blit = generated.display_present_cap_accelerated_blit;
+pub const display_present_cap_cpu_fallback = generated.display_present_cap_cpu_fallback;
+pub const display_present_cap_exact_regions = generated.display_present_cap_exact_regions;
+pub const display_present_cap_external_backend = generated.display_present_cap_external_backend;
+pub const display_present_cap_sync_fence = generated.display_present_cap_sync_fence;
+pub const display_present_completion_complete = generated.display_present_completion_complete;
+pub const display_present_error_invalid = generated.display_present_error_invalid;
+pub const display_present_error_out_of_range = generated.display_present_error_out_of_range;
+pub const display_present_error_unavailable = generated.display_present_error_unavailable;
+pub const display_present_format_xrgb32 = generated.display_present_format_xrgb32;
+pub const display_present_magic = generated.display_present_magic;
+pub const display_present_request_flag_input_tick_valid = generated.display_present_request_flag_input_tick_valid;
+pub const display_present_result_accelerated = generated.display_present_result_accelerated;
+pub const display_present_result_completed = generated.display_present_result_completed;
+pub const display_present_result_fallback = generated.display_present_result_fallback;
+pub const display_present_result_success = generated.display_present_result_success;
+pub const display_present_version = generated.display_present_version;
 pub const display_summary_backend_bootfb = generated.display_summary_backend_bootfb;
 pub const display_summary_backend_none = generated.display_summary_backend_none;
 pub const display_summary_cache_bootloader_default = generated.display_summary_cache_bootloader_default;
@@ -1626,6 +1646,11 @@ pub const ProgramMemoryBlockInfo = generated.ProgramMemoryBlockInfo;
 pub const ProgramVmReserveProbe = generated.ProgramVmReserveProbe;
 pub const ProgramVmRegionInfo = generated.ProgramVmRegionInfo;
 pub const PagingSummary = generated.PagingSummary;
+pub const DisplayDamageRect = generated.DisplayDamageRect;
+pub const DisplayPresentCapabilities = generated.DisplayPresentCapabilities;
+pub const DisplayPresentCompletion = generated.DisplayPresentCompletion;
+pub const DisplayPresentRequest = generated.DisplayPresentRequest;
+pub const DisplayPresentResult = generated.DisplayPresentResult;
 pub const DisplaySummary = generated.DisplaySummary;
 pub const GuiWindowInfo = generated.GuiWindowInfo;
 pub const GuiSize = generated.GuiSize;
@@ -1767,6 +1792,7 @@ pub const DriverType = enum(u16) {
     input = 3,
     synth = 4,
     net = 5,
+    display = 6,
     misc = 255,
 };
 
@@ -2942,6 +2968,48 @@ pub const LaunchPolicy = enum(u32) {
     gui = 2,
 };
 
+pub const display_blit_backend_version: u32 = 1;
+pub const display_blit_backend_flag_xrgb32: u32 = 1 << 0;
+pub const display_blit_backend_flag_synchronous: u32 = 1 << 1;
+pub const display_blit_backend_flag_self_tested: u32 = 1 << 2;
+pub const display_blit_backend_flag_cpu_fast_copy: u32 = 1 << 3;
+
+pub const DisplayBlitRegion = extern struct {
+    dst_x: u32 = 0,
+    dst_y: u32 = 0,
+    src_x: u32 = 0,
+    src_y: u32 = 0,
+    w: u32 = 0,
+    h: u32 = 0,
+};
+
+pub const DisplayBlitJob = extern struct {
+    version: u32 = display_blit_backend_version,
+    size: u32 = @sizeOf(DisplayBlitJob),
+    format: u32 = display_present_format_xrgb32,
+    flags: u32 = 0,
+    target_address: u64 = 0,
+    target_width: u32 = 0,
+    target_height: u32 = 0,
+    target_pitch_pixels: u32 = 0,
+    source_pixel_count: u32 = 0,
+    source_address: u64 = 0,
+    source_stride_pixels: u32 = 0,
+    region_count: u32 = 0,
+    regions_address: u64 = 0,
+};
+
+pub const DisplayBlitPresent = *const fn (usize, *const DisplayBlitJob) callconv(.c) i32;
+
+pub const DisplayBlitBackend = extern struct {
+    version: u32 = display_blit_backend_version,
+    size: u32 = @sizeOf(DisplayBlitBackend),
+    flags: u32 = 0,
+    max_regions: u32 = 0,
+    context: usize = 0,
+    present: DisplayBlitPresent,
+};
+
 pub const DriverApi = extern struct {
     magic: u32,
     version: u32,
@@ -3024,6 +3092,10 @@ pub const DriverApi = extern struct {
     // 0.69.43 (DriverApi Version 21, append-only): ownergebundene Aktivierung
     // eines kernelresidenten USB-Hostbackends ohne zweiten Ressourcenbesitz.
     activate_usb_host_controller: *const fn ([*:0]const u8, u32) callconv(.c) i32,
+    // 0.69.48 (DriverApi Version 22, append-only): one owner-bound,
+    // synchronous display blit backend with kernel-owned fallback.
+    register_display_blit_backend: *const fn ([*:0]const u8, *const DisplayBlitBackend) callconv(.c) i32,
+    unregister_display_blit_backend: *const fn ([*:0]const u8) callconv(.c) i32,
 };
 
 pub const ProtocolApi = extern struct {

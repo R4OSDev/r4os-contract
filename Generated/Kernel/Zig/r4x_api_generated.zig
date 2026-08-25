@@ -101,6 +101,26 @@ pub const dhcp_status_flag_link_up: u32 = 32;
 pub const dhcp_status_flag_pending: u32 = 4;
 pub const dhcp_status_flag_retry_wait: u32 = 64;
 pub const dhcp_status_flag_task_started: u32 = 16;
+pub const display_damage_max_regions: u32 = 8;
+pub const display_present_backend_bootfb_cpu: u32 = 1;
+pub const display_present_backend_external_blit: u32 = 2;
+pub const display_present_cap_accelerated_blit: u32 = 8;
+pub const display_present_cap_cpu_fallback: u32 = 1;
+pub const display_present_cap_exact_regions: u32 = 2;
+pub const display_present_cap_external_backend: u32 = 16;
+pub const display_present_cap_sync_fence: u32 = 4;
+pub const display_present_completion_complete: u32 = 1;
+pub const display_present_error_invalid: i32 = -1;
+pub const display_present_error_out_of_range: i32 = -2;
+pub const display_present_error_unavailable: i32 = -3;
+pub const display_present_format_xrgb32: u32 = 1;
+pub const display_present_magic: u32 = 1346647122;
+pub const display_present_request_flag_input_tick_valid: u32 = 1;
+pub const display_present_result_accelerated: u32 = 4;
+pub const display_present_result_completed: u32 = 2;
+pub const display_present_result_fallback: u32 = 8;
+pub const display_present_result_success: u32 = 1;
+pub const display_present_version: u16 = 1;
 pub const display_summary_backend_bootfb: u8 = 1;
 pub const display_summary_backend_none: u8 = 0;
 pub const display_summary_cache_bootloader_default: u8 = 1;
@@ -121,7 +141,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 21;
+pub const driver_api_version: u32 = 22;
 pub const driver_magic: u32 = 826888260;
 pub const driver_work_flag_from_irq: u32 = 1;
 pub const driver_work_flag_none: u32 = 0;
@@ -3161,6 +3181,68 @@ pub const PagingSummary = extern struct {
     invlpg_flushes: u64 = 0,
 };
 
+pub const DisplayDamageRect = extern struct {
+    x: i32 = 0,
+    y: i32 = 0,
+    w: u32 = 0,
+    h: u32 = 0,
+};
+
+pub const DisplayPresentCapabilities = extern struct {
+    version: u16 = 1,
+    size: u16 = 80,
+    flags: u32 = 0,
+    formats: u32 = 0,
+    max_regions: u32 = 0,
+    tile_width: u32 = 0,
+    tile_height: u32 = 0,
+    backend_kind: u32 = 0,
+    reserved0: u32 = 0,
+    backend_name: [24]u8 = .{0} ** 24,
+    fallback_name: [24]u8 = .{0} ** 24,
+};
+
+pub const DisplayPresentCompletion = extern struct {
+    version: u16 = 1,
+    size: u16 = 32,
+    flags: u32 = 0,
+    fence: u64 = 0,
+    completed_fence: u64 = 0,
+    result: i32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const DisplayPresentRequest = extern struct {
+    magic: u32 = 1346647122,
+    version: u16 = 1,
+    size: u16 = 48,
+    flags: u32 = 0,
+    format: u32 = 1,
+    source_width: u32 = 0,
+    source_height: u32 = 0,
+    source_stride_pixels: u32 = 0,
+    reserved0: u32 = 0,
+    source_generation: u64 = 0,
+    input_tick: u64 = 0,
+};
+
+pub const DisplayPresentResult = extern struct {
+    version: u16 = 1,
+    size: u16 = 96,
+    flags: u32 = 0,
+    source_generation: u64 = 0,
+    present_generation: u64 = 0,
+    fence: u64 = 0,
+    completed_fence: u64 = 0,
+    region_count: u32 = 0,
+    pixel_count: u32 = 0,
+    fallback_regions: u32 = 0,
+    backend_error: i32 = 0,
+    present_tick: u64 = 0,
+    elapsed_ticks: u64 = 0,
+    backend_name: [24]u8 = .{0} ** 24,
+};
+
 pub const DisplaySummary = extern struct {
     flags: u32 = 0,
     backend_kind: u8 = 0,
@@ -5193,12 +5275,13 @@ pub const R4DeskFns = struct {
     pub const remote_frame_acquire = *const fn () callconv(.c) i32;
     pub const remote_frame_release = *const fn () callconv(.c) i32;
     pub const remote_frame_consumers = *const fn () callconv(.c) u32;
+    pub const remote_frame_publish_regions = *const fn (*const RemoteFrameInfo, [*]const u32, u32, [*]const DisplayDamageRect, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 9,
-    size: u32 = 464,
+    abi_version: u32 = 10,
+    size: u32 = 472,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -5256,6 +5339,7 @@ pub const R4XStartR4Desk = extern struct {
     remote_frame_acquire: usize = 0,
     remote_frame_release: usize = 0,
     remote_frame_consumers: usize = 0,
+    remote_frame_publish_regions: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -5292,12 +5376,15 @@ pub const R4DrawFns = struct {
     pub const gui_frame_info = *const fn (?*const ProgramProcessHandle, *GuiFrameInfo) callconv(.c) i32;
     pub const gui_frame_read = *const fn (*const ProgramProcessHandle, u64, ?[*]GuiFrameCommand, u64, ?[*]u8, u64, *GuiFrameInfo) callconv(.c) i32;
     pub const display_blit_xrgb32_stride = *const fn (i32, i32, u32, u32, [*]const u32, u32, u32) callconv(.c) i32;
+    pub const display_present_regions = *const fn (*const DisplayPresentRequest, [*]const u32, u32, [*]const DisplayDamageRect, u32, *DisplayPresentResult) callconv(.c) i32;
+    pub const display_present_capabilities = *const fn (*DisplayPresentCapabilities) callconv(.c) i32;
+    pub const display_present_completion = *const fn (u64, *DisplayPresentCompletion) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 3,
-    size: u32 = 280,
+    abi_version: u32 = 4,
+    size: u32 = 304,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -5332,6 +5419,9 @@ pub const R4XStartR4Draw = extern struct {
     gui_frame_info: usize = 0,
     gui_frame_read: usize = 0,
     display_blit_xrgb32_stride: usize = 0,
+    display_present_regions: usize = 0,
+    display_present_capabilities: usize = 0,
+    display_present_completion: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -5740,6 +5830,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 53, .offset = 440, .name = "remote_frame_acquire", .state = .function, .required = false },
     .{ .number = 54, .offset = 448, .name = "remote_frame_release", .state = .function, .required = false },
     .{ .number = 55, .offset = 456, .name = "remote_frame_consumers", .state = .function, .required = false },
+    .{ .number = 56, .offset = 464, .name = "remote_frame_publish_regions", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -5776,6 +5867,9 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 30, .offset = 256, .name = "gui_frame_info", .state = .function, .required = false },
     .{ .number = 31, .offset = 264, .name = "gui_frame_read", .state = .function, .required = false },
     .{ .number = 32, .offset = 272, .name = "display_blit_xrgb32_stride", .state = .function, .required = false },
+    .{ .number = 33, .offset = 280, .name = "display_present_regions", .state = .function, .required = false },
+    .{ .number = 34, .offset = 288, .name = "display_present_capabilities", .state = .function, .required = false },
+    .{ .number = 35, .offset = 296, .name = "display_present_completion", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -7361,6 +7455,63 @@ comptime {
     if (@offsetOf(PagingSummary, "map_pages") != 128) @compileError("generated ABI offset drift: PagingSummary.map_pages");
     if (@offsetOf(PagingSummary, "unmap_pages") != 136) @compileError("generated ABI offset drift: PagingSummary.unmap_pages");
     if (@offsetOf(PagingSummary, "invlpg_flushes") != 144) @compileError("generated ABI offset drift: PagingSummary.invlpg_flushes");
+    if (@sizeOf(DisplayDamageRect) != 16) @compileError("generated ABI size drift: DisplayDamageRect");
+    if (@alignOf(DisplayDamageRect) != 4) @compileError("generated ABI alignment drift: DisplayDamageRect");
+    if (@offsetOf(DisplayDamageRect, "x") != 0) @compileError("generated ABI offset drift: DisplayDamageRect.x");
+    if (@offsetOf(DisplayDamageRect, "y") != 4) @compileError("generated ABI offset drift: DisplayDamageRect.y");
+    if (@offsetOf(DisplayDamageRect, "w") != 8) @compileError("generated ABI offset drift: DisplayDamageRect.w");
+    if (@offsetOf(DisplayDamageRect, "h") != 12) @compileError("generated ABI offset drift: DisplayDamageRect.h");
+    if (@sizeOf(DisplayPresentCapabilities) != 80) @compileError("generated ABI size drift: DisplayPresentCapabilities");
+    if (@alignOf(DisplayPresentCapabilities) != 4) @compileError("generated ABI alignment drift: DisplayPresentCapabilities");
+    if (@offsetOf(DisplayPresentCapabilities, "version") != 0) @compileError("generated ABI offset drift: DisplayPresentCapabilities.version");
+    if (@offsetOf(DisplayPresentCapabilities, "size") != 2) @compileError("generated ABI offset drift: DisplayPresentCapabilities.size");
+    if (@offsetOf(DisplayPresentCapabilities, "flags") != 4) @compileError("generated ABI offset drift: DisplayPresentCapabilities.flags");
+    if (@offsetOf(DisplayPresentCapabilities, "formats") != 8) @compileError("generated ABI offset drift: DisplayPresentCapabilities.formats");
+    if (@offsetOf(DisplayPresentCapabilities, "max_regions") != 12) @compileError("generated ABI offset drift: DisplayPresentCapabilities.max_regions");
+    if (@offsetOf(DisplayPresentCapabilities, "tile_width") != 16) @compileError("generated ABI offset drift: DisplayPresentCapabilities.tile_width");
+    if (@offsetOf(DisplayPresentCapabilities, "tile_height") != 20) @compileError("generated ABI offset drift: DisplayPresentCapabilities.tile_height");
+    if (@offsetOf(DisplayPresentCapabilities, "backend_kind") != 24) @compileError("generated ABI offset drift: DisplayPresentCapabilities.backend_kind");
+    if (@offsetOf(DisplayPresentCapabilities, "reserved0") != 28) @compileError("generated ABI offset drift: DisplayPresentCapabilities.reserved0");
+    if (@offsetOf(DisplayPresentCapabilities, "backend_name") != 32) @compileError("generated ABI offset drift: DisplayPresentCapabilities.backend_name");
+    if (@offsetOf(DisplayPresentCapabilities, "fallback_name") != 56) @compileError("generated ABI offset drift: DisplayPresentCapabilities.fallback_name");
+    if (@sizeOf(DisplayPresentCompletion) != 32) @compileError("generated ABI size drift: DisplayPresentCompletion");
+    if (@alignOf(DisplayPresentCompletion) != 8) @compileError("generated ABI alignment drift: DisplayPresentCompletion");
+    if (@offsetOf(DisplayPresentCompletion, "version") != 0) @compileError("generated ABI offset drift: DisplayPresentCompletion.version");
+    if (@offsetOf(DisplayPresentCompletion, "size") != 2) @compileError("generated ABI offset drift: DisplayPresentCompletion.size");
+    if (@offsetOf(DisplayPresentCompletion, "flags") != 4) @compileError("generated ABI offset drift: DisplayPresentCompletion.flags");
+    if (@offsetOf(DisplayPresentCompletion, "fence") != 8) @compileError("generated ABI offset drift: DisplayPresentCompletion.fence");
+    if (@offsetOf(DisplayPresentCompletion, "completed_fence") != 16) @compileError("generated ABI offset drift: DisplayPresentCompletion.completed_fence");
+    if (@offsetOf(DisplayPresentCompletion, "result") != 24) @compileError("generated ABI offset drift: DisplayPresentCompletion.result");
+    if (@offsetOf(DisplayPresentCompletion, "reserved0") != 28) @compileError("generated ABI offset drift: DisplayPresentCompletion.reserved0");
+    if (@sizeOf(DisplayPresentRequest) != 48) @compileError("generated ABI size drift: DisplayPresentRequest");
+    if (@alignOf(DisplayPresentRequest) != 8) @compileError("generated ABI alignment drift: DisplayPresentRequest");
+    if (@offsetOf(DisplayPresentRequest, "magic") != 0) @compileError("generated ABI offset drift: DisplayPresentRequest.magic");
+    if (@offsetOf(DisplayPresentRequest, "version") != 4) @compileError("generated ABI offset drift: DisplayPresentRequest.version");
+    if (@offsetOf(DisplayPresentRequest, "size") != 6) @compileError("generated ABI offset drift: DisplayPresentRequest.size");
+    if (@offsetOf(DisplayPresentRequest, "flags") != 8) @compileError("generated ABI offset drift: DisplayPresentRequest.flags");
+    if (@offsetOf(DisplayPresentRequest, "format") != 12) @compileError("generated ABI offset drift: DisplayPresentRequest.format");
+    if (@offsetOf(DisplayPresentRequest, "source_width") != 16) @compileError("generated ABI offset drift: DisplayPresentRequest.source_width");
+    if (@offsetOf(DisplayPresentRequest, "source_height") != 20) @compileError("generated ABI offset drift: DisplayPresentRequest.source_height");
+    if (@offsetOf(DisplayPresentRequest, "source_stride_pixels") != 24) @compileError("generated ABI offset drift: DisplayPresentRequest.source_stride_pixels");
+    if (@offsetOf(DisplayPresentRequest, "reserved0") != 28) @compileError("generated ABI offset drift: DisplayPresentRequest.reserved0");
+    if (@offsetOf(DisplayPresentRequest, "source_generation") != 32) @compileError("generated ABI offset drift: DisplayPresentRequest.source_generation");
+    if (@offsetOf(DisplayPresentRequest, "input_tick") != 40) @compileError("generated ABI offset drift: DisplayPresentRequest.input_tick");
+    if (@sizeOf(DisplayPresentResult) != 96) @compileError("generated ABI size drift: DisplayPresentResult");
+    if (@alignOf(DisplayPresentResult) != 8) @compileError("generated ABI alignment drift: DisplayPresentResult");
+    if (@offsetOf(DisplayPresentResult, "version") != 0) @compileError("generated ABI offset drift: DisplayPresentResult.version");
+    if (@offsetOf(DisplayPresentResult, "size") != 2) @compileError("generated ABI offset drift: DisplayPresentResult.size");
+    if (@offsetOf(DisplayPresentResult, "flags") != 4) @compileError("generated ABI offset drift: DisplayPresentResult.flags");
+    if (@offsetOf(DisplayPresentResult, "source_generation") != 8) @compileError("generated ABI offset drift: DisplayPresentResult.source_generation");
+    if (@offsetOf(DisplayPresentResult, "present_generation") != 16) @compileError("generated ABI offset drift: DisplayPresentResult.present_generation");
+    if (@offsetOf(DisplayPresentResult, "fence") != 24) @compileError("generated ABI offset drift: DisplayPresentResult.fence");
+    if (@offsetOf(DisplayPresentResult, "completed_fence") != 32) @compileError("generated ABI offset drift: DisplayPresentResult.completed_fence");
+    if (@offsetOf(DisplayPresentResult, "region_count") != 40) @compileError("generated ABI offset drift: DisplayPresentResult.region_count");
+    if (@offsetOf(DisplayPresentResult, "pixel_count") != 44) @compileError("generated ABI offset drift: DisplayPresentResult.pixel_count");
+    if (@offsetOf(DisplayPresentResult, "fallback_regions") != 48) @compileError("generated ABI offset drift: DisplayPresentResult.fallback_regions");
+    if (@offsetOf(DisplayPresentResult, "backend_error") != 52) @compileError("generated ABI offset drift: DisplayPresentResult.backend_error");
+    if (@offsetOf(DisplayPresentResult, "present_tick") != 56) @compileError("generated ABI offset drift: DisplayPresentResult.present_tick");
+    if (@offsetOf(DisplayPresentResult, "elapsed_ticks") != 64) @compileError("generated ABI offset drift: DisplayPresentResult.elapsed_ticks");
+    if (@offsetOf(DisplayPresentResult, "backend_name") != 72) @compileError("generated ABI offset drift: DisplayPresentResult.backend_name");
     if (@sizeOf(DisplaySummary) != 200) @compileError("generated ABI size drift: DisplaySummary");
     if (@alignOf(DisplaySummary) != 8) @compileError("generated ABI alignment drift: DisplaySummary");
     if (@offsetOf(DisplaySummary, "flags") != 0) @compileError("generated ABI offset drift: DisplaySummary.flags");
@@ -9113,7 +9264,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_begin") != 976) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_begin");
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_page") != 984) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_page");
     if (@offsetOf(R4XStartR4Sys, "registry_batch_mutate") != 992) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_batch_mutate");
-    if (@sizeOf(R4XStartR4Desk) != 464) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 472) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -9170,7 +9321,8 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_acquire") != 440) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_acquire");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_release") != 448) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_release");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_consumers") != 456) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_consumers");
-    if (@sizeOf(R4XStartR4Draw) != 280) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
+    if (@sizeOf(R4XStartR4Draw) != 304) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -9204,6 +9356,9 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gui_frame_info") != 256) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_info");
     if (@offsetOf(R4XStartR4Draw, "gui_frame_read") != 264) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_read");
     if (@offsetOf(R4XStartR4Draw, "display_blit_xrgb32_stride") != 272) @compileError("generated ABI offset drift: R4XStartR4Draw.display_blit_xrgb32_stride");
+    if (@offsetOf(R4XStartR4Draw, "display_present_regions") != 280) @compileError("generated ABI offset drift: R4XStartR4Draw.display_present_regions");
+    if (@offsetOf(R4XStartR4Draw, "display_present_capabilities") != 288) @compileError("generated ABI offset drift: R4XStartR4Draw.display_present_capabilities");
+    if (@offsetOf(R4XStartR4Draw, "display_present_completion") != 296) @compileError("generated ABI offset drift: R4XStartR4Draw.display_present_completion");
     if (@sizeOf(R4XStartR4Net) != 288) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -9618,13 +9773,14 @@ pub const R4DeskProvider = struct {
     remote_frame_acquire: R4DeskFns.remote_frame_acquire,
     remote_frame_release: R4DeskFns.remote_frame_release,
     remote_frame_consumers: R4DeskFns.remote_frame_consumers,
+    remote_frame_publish_regions: R4DeskFns.remote_frame_publish_regions,
 };
 
 pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
     return .{
         .magic = 826623058,
-        .abi_version = 9,
-        .size = 464,
+        .abi_version = 10,
+        .size = 472,
         .flags = 0,
         .read_key = @intFromPtr(provider.read_key),
         .mouse_state = @intFromPtr(provider.mouse_state),
@@ -9682,6 +9838,7 @@ pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
         .remote_frame_acquire = @intFromPtr(provider.remote_frame_acquire),
         .remote_frame_release = @intFromPtr(provider.remote_frame_release),
         .remote_frame_consumers = @intFromPtr(provider.remote_frame_consumers),
+        .remote_frame_publish_regions = @intFromPtr(provider.remote_frame_publish_regions),
     };
 }
 
@@ -9719,13 +9876,16 @@ pub const R4DrawProvider = struct {
     gui_frame_info: R4DrawFns.gui_frame_info,
     gui_frame_read: R4DrawFns.gui_frame_read,
     display_blit_xrgb32_stride: R4DrawFns.display_blit_xrgb32_stride,
+    display_present_regions: R4DrawFns.display_present_regions,
+    display_present_capabilities: R4DrawFns.display_present_capabilities,
+    display_present_completion: R4DrawFns.display_present_completion,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 3,
-        .size = 280,
+        .abi_version = 4,
+        .size = 304,
         .flags = 0,
         .screen_width = @intFromPtr(provider.screen_width),
         .screen_height = @intFromPtr(provider.screen_height),
@@ -9760,6 +9920,9 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gui_frame_info = @intFromPtr(provider.gui_frame_info),
         .gui_frame_read = @intFromPtr(provider.gui_frame_read),
         .display_blit_xrgb32_stride = @intFromPtr(provider.display_blit_xrgb32_stride),
+        .display_present_regions = @intFromPtr(provider.display_present_regions),
+        .display_present_capabilities = @intFromPtr(provider.display_present_capabilities),
+        .display_present_completion = @intFromPtr(provider.display_present_completion),
     };
 }
 
