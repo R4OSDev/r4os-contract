@@ -2958,6 +2958,14 @@ pub const DriverApi = extern struct {
     // fuer Treiber, deren Laufzeitdaten einen installierten Protokollvertrag
     // durchlaufen muessen.
     protocol_dispatch: ?*const fn ([*:0]const u8, u32, *const ProtocolBuffer, *ProtocolBuffer) callconv(.c) i32 = null,
+    // 0.69.39 (DriverApi Version 19, append-only): ownergebundene Pins und
+    // begrenzte Segment-DMA-Abbildungen fuer vorhandene residente Puffer.
+    dma_pin_buffer: *const fn (u64, u32, u32, *DmaPinnedBuffer) callconv(.c) i32,
+    dma_map_pinned: *const fn (*const DmaPinnedBuffer, *const DmaConstraints, u32, *DmaMapping) callconv(.c) i32,
+    dma_sync_for_device: *const fn (*const DmaMapping) callconv(.c) i32,
+    dma_sync_for_cpu: *const fn (*const DmaMapping) callconv(.c) i32,
+    dma_unmap: *const fn (*DmaMapping) callconv(.c) i32,
+    dma_unpin_buffer: *const fn (*DmaPinnedBuffer) callconv(.c) i32,
 };
 
 pub const ProtocolApi = extern struct {
@@ -2983,6 +2991,61 @@ pub const DmaBuffer = extern struct {
     alignment: u32 = 0,
     flags: u32 = 0,
     reserved: u32 = 0,
+};
+
+pub const dma_abi_version: u32 = 1;
+pub const dma_max_segments: usize = 64;
+pub const dma_mapping_max_bytes: u32 = 16 * 1024 * 1024;
+pub const dma_direction_bidirectional: u32 = 0;
+pub const dma_direction_to_device: u32 = 1;
+pub const dma_direction_from_device: u32 = 2;
+pub const dma_flag_coherent: u16 = 1 << 0;
+pub const dma_flag_streaming: u16 = 1 << 1;
+pub const dma_flag_allow_bounce: u16 = 1 << 2;
+pub const dma_mapping_flag_bounced: u32 = 1 << 16;
+
+pub const DmaSegment = extern struct {
+    phys_addr: u64 = 0,
+    bytes: u32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const DmaPinnedBuffer = extern struct {
+    version: u32 = dma_abi_version,
+    size: u32 = @sizeOf(DmaPinnedBuffer),
+    handle: u64 = 0,
+    virt_addr: u64 = 0,
+    bytes: u32 = 0,
+    page_count: u32 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const DmaConstraints = extern struct {
+    version: u32 = dma_abi_version,
+    size: u32 = @sizeOf(DmaConstraints),
+    dma_mask: u64 = ~@as(u64, 0),
+    boundary: u64 = 0,
+    max_segment_bytes: u32 = 0,
+    alignment: u32 = 1,
+    max_segments: u16 = dma_max_segments,
+    flags: u16 = dma_flag_coherent | dma_flag_allow_bounce,
+    reserved: u32 = 0,
+};
+
+pub const DmaMapping = extern struct {
+    version: u32 = dma_abi_version,
+    size: u32 = @sizeOf(DmaMapping),
+    handle: u64 = 0,
+    pin_handle: u64 = 0,
+    requested_bytes: u32 = 0,
+    mapped_bytes: u32 = 0,
+    direction: u32 = dma_direction_bidirectional,
+    flags: u32 = 0,
+    segment_count: u16 = 0,
+    reserved0: u16 = 0,
+    reserved1: u32 = 0,
+    segments: [dma_max_segments]DmaSegment = .{DmaSegment{}} ** dma_max_segments,
 };
 
 pub const PciDeviceInfo = extern struct {
@@ -3094,6 +3157,41 @@ pub const StorageBackendStatus = extern struct {
     recovery_failures: u64 = 0,
 };
 
+pub const storage_request_version: u32 = 1;
+pub const storage_request_op_none: u32 = 0;
+pub const storage_request_op_read: u32 = 1;
+pub const storage_request_op_write: u32 = 2;
+pub const storage_request_op_flush: u32 = 3;
+pub const storage_request_result_ok: i32 = 0;
+pub const storage_request_result_error: i32 = -1;
+pub const storage_request_result_cancelled: i32 = -2;
+pub const storage_request_result_timeout: i32 = -3;
+pub const storage_request_result_reset: i32 = -4;
+pub const storage_request_result_shutdown: i32 = -5;
+pub const storage_cancel_reason_timeout: u32 = 1;
+pub const storage_cancel_reason_caller: u32 = 2;
+pub const storage_cancel_reason_reset: u32 = 3;
+pub const storage_cancel_reason_shutdown: u32 = 4;
+
+pub const StorageRequestComplete = *const fn (u64, i32, u32) callconv(.c) void;
+
+pub const StorageRequest = extern struct {
+    version: u32 = storage_request_version,
+    size: u32 = @sizeOf(StorageRequest),
+    handle: u64 = 0,
+    operation: u32 = storage_request_op_none,
+    flags: u32 = 0,
+    lba: u64 = 0,
+    sectors: u32 = 0,
+    buffer_bytes: u32 = 0,
+    buffer_addr: u64 = 0,
+    complete: StorageRequestComplete,
+};
+
+pub const StorageSubmitFn = *const fn (?*anyopaque, *const StorageRequest) callconv(.c) i32;
+pub const StorageCancelFn = *const fn (?*anyopaque, u64, u32) callconv(.c) i32;
+pub const StorageResetFn = *const fn (?*anyopaque, u32) callconv(.c) i32;
+
 pub const StorageBackend = extern struct {
     version: u32 = storage_backend_version,
     size: u32 = @sizeOf(StorageBackend),
@@ -3112,6 +3210,11 @@ pub const StorageBackend = extern struct {
     flush: ?*const fn (?*anyopaque) callconv(.c) i32 = null,
     shutdown: ?*const fn (?*anyopaque) callconv(.c) i32 = null,
     status: ?*const fn (?*anyopaque, *StorageBackendStatus) callconv(.c) i32 = null,
+    // v2 append-only: submit is nonblocking and every accepted request owns
+    // exactly one completion. Null keeps the v1 synchronous depth-one path.
+    submit: ?StorageSubmitFn = null,
+    cancel: ?StorageCancelFn = null,
+    reset: ?StorageResetFn = null,
 };
 
 pub const UsbHostStatus = extern struct {

@@ -65654,7 +65654,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "18",
+      "value": "19",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -74874,7 +74874,7 @@
     },
     {
       "name": "storage_backend_version",
-      "value": "1",
+      "value": "2",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

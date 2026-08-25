@@ -26,6 +26,9 @@ R4LQuery.txt
 R4LInterface.txt
   Versioned table header for independent named Runtime-R4Ls.
 
+R4DDriver.txt
+  Owner-bound segment-DMA and asynchronous storage request lifetimes.
+
 Platform tables
 ---------------
 

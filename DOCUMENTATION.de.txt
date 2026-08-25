@@ -49,10 +49,16 @@ Namespace `abi`; fuer C-Builds exportiert das Paket den Include-Pfad
 
 Der technische Zig-Fassadenteil fuehrt seit 0.69.28 den append-only
 `SynthEngine.render_pcm`-Callback. DriverApi v18 haengt den synchronen
-`protocol_dispatch` an; der alte Tabellenpraefix und der Synth-Descriptor-v1-
-Praefix bleiben unveraendert. Der bestehende R4AUDIO-Aufruf `midi_send`
-verwendet Status null fuer PCM-Renderanforderungen und transportiert die
-Framezahl little-endian in `data1`/`data2`.
+`protocol_dispatch` an. DriverApi v19 ergaenzt ownergebundene Pin-, Segment-,
+Sync-, Unmap- und Unpin-Operationen fuer vorhandene residente DMA-Puffer;
+`StorageBackend` v2 fuegt nonblocking Submit sowie advisory Cancel und
+quieszenzbeweisenden Reset an. Alte Tabellen- und Deskriptorpraefixe bleiben
+unveraendert. Der vollstaendige Besitzer-, Bounce-, Completion-, Flush- und
+Unloadvertrag steht in `ABI/R4DDriver.txt`.
+
+Der bestehende R4AUDIO-Aufruf `midi_send` verwendet Status null fuer PCM-
+Renderanforderungen und transportiert die Framezahl little-endian in
+`data1`/`data2`.
 
 `ProgramPerformanceSummary` v12 erweitert den v11-Praefix append-only um die
 generationsgebundenen NTFS-Metadatencaches. Sichtbar sind feste Pro-Volume-

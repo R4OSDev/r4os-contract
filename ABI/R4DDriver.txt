@@ -1,0 +1,122 @@
+R4D driver DMA and asynchronous storage ABI
+===========================================
+
+Scope
+-----
+
+This document defines the owner and lifetime rules for the technical R4D
+types that accompany the generated R4DEV platform contract. The target is
+trusted little-endian x86_64. DriverApi version 19 appends segment-DMA
+operations; StorageBackend version 2 appends asynchronous block callbacks.
+Neither extension changes an older prefix.
+
+Pinned buffers and DMA mappings
+-------------------------------
+
+`dma_pin_buffer` creates an owner-bound lease over an already resident and
+mapped driver buffer. It does not allocate or copy the buffer. The caller must
+not free it, replace its virtual mapping, or unpin it while a mapping exists.
+Pinning is limited to 16 MiB per buffer and to the fixed kernel capacity of 32
+simultaneous pins. Calls from IRQ context are rejected. Flags are zero in
+version 1.
+
+`dma_map_pinned` resolves the pinned pages and returns at most 64 ordered
+`DmaSegment` records. All constraints are hard:
+
+- `dma_mask` is the inclusive highest addressable byte. `0xFFFFFFFF` is the
+  normal 32-bit DMA limit.
+- `boundary` is zero or a power of two. No segment crosses it.
+- `max_segment_bytes` is zero for the ABI `u32` maximum or the maximum length
+  of one segment.
+- `alignment` is a power of two not greater than 4096. Every emitted segment
+  start satisfies it; a nonzero boundary cannot be smaller than alignment.
+- `max_segments` is between 1 and 64.
+- Exactly one of `dma_flag_coherent` and `dma_flag_streaming` is required.
+  `dma_flag_allow_bounce` permits a bounded contiguous fallback.
+
+If the original physical pages cannot meet mask, boundary, alignment, length,
+or count limits, mapping either fails without a public partial result or uses
+a contiguous addressable bounce allocation. A bounced result sets
+`dma_mapping_flag_bounced`. `requested_bytes` and `mapped_bytes` describe the
+valid request payload; only the published `segment_count` entries may be used.
+
+Mapping performs the initial device synchronization. Before every later
+device ownership transfer, the driver calls `dma_sync_for_device`; after a
+device completion and before CPU consumption it calls `dma_sync_for_cpu`.
+Direction controls bounce copies: to-device copies outward, from-device copies
+back, and bidirectional does both. On x86_64 coherent and streaming mappings
+both execute the explicit memory-order boundary; the distinct flags preserve
+the portable ownership contract for later platforms.
+
+Pin, map, synchronization, unmap, and unpin require process or driver-worker
+context because synchronization may copy a bounded bounce buffer. An IRQ
+handler queues driver work when it must synchronize or release a mapping
+before publishing a higher-level completion.
+
+Each successful mapping is unmapped exactly once, then its pin is released.
+Unmap performs the final CPU synchronization and copy-back where applicable.
+Unpin fails while any child mapping remains. Generation handles reject stale,
+duplicate, foreign-owner, and already released operations. Failed map paths
+release any private bounce allocation before returning. R4D owner cleanup
+releases mappings before pins and legacy contiguous DMA allocations. The
+existing `alloc_dma_region` and constrained variant remain compatible,
+owner-checked contiguous fast/fallback paths.
+
+Asynchronous storage backend
+----------------------------
+
+StorageBackend version 2 appends `submit`, `cancel`, and `reset` after the
+complete version-1 descriptor. A version-1 descriptor, a short version-2
+descriptor, or a null `submit` keeps the synchronous callback adapter.
+Synchronous devices always have effective in-flight depth one.
+
+For an asynchronous backend, `queue_depth` is the maximum number of requests
+owned by hardware at once. It no longer describes waiting callers. The block
+core has a separate bounded software queue of 16 slots and admits requests in
+request-ID order.
+
+`submit` is nonblocking and receives a versioned `StorageRequest` descriptor.
+The descriptor pointer is valid only for the callback; the backend copies any
+fields it needs before returning. After a zero return, the copied handle,
+completion function, and request buffer remain valid until terminal
+completion. Operation values are none=0, read=1, write=2, and flush=3. A zero
+return transfers ownership to the backend, which must invoke
+`complete(handle, result, bytes)` exactly once. A nonzero return rejects the
+request and buffer unless the backend already completed inline; an inline
+completion wins that race.
+
+Completion may run in IRQ context. The kernel claims only the exact live
+generation handle there and delegates all queue, waiter, and buffer teardown
+to the owning block worker. Read and write success requires exactly
+`buffer_bytes`; flush success requires zero bytes. Duplicate and late
+completions are rejected and counted without touching reused state.
+
+Cancellation is advisory. `cancel(handle, reason)` is requested at most once
+for timeout, caller cancellation, reset, or shutdown, but it is not proof that
+hardware stopped. An accepted request still requires a completion. A
+successful `reset(reason)` is the sole alternate proof that every old command
+is physically quiescent; the core invalidates old handles before waking
+waiters or releasing buffers. A failed reset leaves the requests owned until
+their real completions arrive.
+
+Ordering and teardown
+---------------------
+
+Reads and writes may occupy the declared in-flight depth. A flush is an
+exclusive FIFO barrier: it waits for all earlier active requests, runs alone,
+and prevents later requests from passing it.
+
+General callers use kernel-owned bounce buffers and may detach after a
+classified timeout; the late physical completion owns final release. A direct
+request borrows a proven resident buffer and therefore waits through timeout
+or cancellation until physical completion or successful reset. Its task holds
+the existing unwind token, so a hard kill is deferred across that lifetime.
+
+Unregister first closes admission and succeeds only when mounts, operation
+pins, queued or active requests, locks, and waiters are all gone. Thus an R4D
+module cannot unload while a backend can still call its code or access its
+buffers. Driver shutdown/finalization runs before generic IRQ, work, DMA, and
+module memory release.
+
+This contract provides the shared foundation only. It does not make an AHCI,
+NVMe, USB, audio, or network driver asynchronous by itself.
