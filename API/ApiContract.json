@@ -65934,7 +65934,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "20",
+      "value": "21",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -75764,7 +75764,7 @@
     },
     {
       "name": "usb_host_backend_version",
-      "value": "1",
+      "value": "2",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -75843,6 +75843,86 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "usb_host_flag_bulk",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_flag_control",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_flag_event_irq",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_flag_hotplug",
+      "value": "128",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_flag_interrupt",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_flag_multi_transfer",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_flag_poll_fallback",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_flag_port_scan",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
       "name": "usb_host_source_builtin",
       "value": "0",
       "value_type": "u32",
@@ -75865,6 +75945,36 @@
     {
       "name": "usb_host_source_preload",
       "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_state_active",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_state_failed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "usb_host",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_host_state_registered",
+      "value": "0",
       "value_type": "u32",
       "category": "value",
       "unit": "number",
@@ -75993,8 +76103,28 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "usb_scsi_op_build_read16",
+      "value": "14",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "usb_scsi",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
       "name": "usb_scsi_op_build_read_capacity10",
       "value": "4",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "bytes",
+      "scope": "usb_scsi",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_scsi_op_build_read_capacity16",
+      "value": "13",
       "value_type": "u32",
       "category": "identity",
       "unit": "bytes",
@@ -76043,8 +76173,28 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "usb_scsi_op_build_write16",
+      "value": "15",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "usb_scsi",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
       "name": "usb_scsi_op_parse_capacity10",
       "value": "10",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "bytes",
+      "scope": "usb_scsi",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "usb_scsi_op_parse_capacity16",
+      "value": "16",
       "value_type": "u32",
       "category": "identity",
       "unit": "bytes",

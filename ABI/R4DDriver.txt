@@ -1,5 +1,5 @@
-﻿R4D driver DMA, deadline work and asynchronous storage ABI
-==============================================================
+﻿R4D driver DMA, deadline work, storage and USB-host ABI
+=========================================================
 
 Scope
 -----
@@ -7,9 +7,11 @@ Scope
 This document defines the owner and lifetime rules for the technical R4D
 types that accompany the generated R4DEV platform contract. The target is
 trusted little-endian x86_64. DriverApi version 19 appends segment-DMA
-operations; version 20 appends deadline-isolated audio work. StorageBackend
-version 2 appends asynchronous block callbacks. None of these extensions
-changes an older prefix.
+operations; version 20 appends deadline-isolated audio work; version 21
+appends canonical USB-host activation. StorageBackend version 2 appends
+asynchronous block callbacks and UsbHostController version 2 appends
+capability, activity and completion status. None of these extensions changes
+an older prefix.
 
 Pinned buffers and DMA mappings
 -------------------------------
@@ -98,6 +100,40 @@ means the callback began after its declared absolute deadline; an overrun
 means the callback used more ticks than its declared budget. These counters
 are observation and conformance data, not permission to ignore a failed
 submission.
+
+Canonical USB-host activation
+-----------------------------
+
+DriverApi version 21 appends `activate_usb_host_controller`. For `XHCI` this
+is an ownership boundary, not a second implementation: XHCI.R4D activates the
+kernel-resident PCI/MMIO/DMA backend with its current R4D owner ID. Exactly one
+registry entry owns controller initialization, transfer and event rings,
+interrupt registration, polling fallback, hotplug and shutdown. The built-in
+path may start only when no activated registry owner exists.
+
+UsbHostController version 2 keeps all version-1 callbacks and makes their
+dispatch productive for port scan, device address/configuration, control,
+bulk, interrupt, reset, clear-halt and bounded poll/completion work. Device
+handles carry the stable registry controller ID; endpoint handles additionally
+carry SuperSpeed `max_burst`. Callers must not bypass that controller identity
+or retain a handle after hot-unplug, reset or host unregister.
+Version-2 registration rejects unknown capability bits, missing mandatory
+operation flags and a capability/callback mismatch. A loadable activation may
+declare preload or disk source; built-in source is reserved for the internal
+fallback.
+
+The status callback reports the registry state and source, capability flags,
+queue depth, maximum transfer bytes, active transfers, completions,
+interrupts, poll fallbacks, cancellations and failures. The event-IRQ flag
+means the backend supports IRQ wakeup; the poll-fallback flag remains set
+because missing or unusable routing must not stop forward progress.
+
+An xHCI transfer has a generation-safe endpoint-bound owner until completion,
+timeout recovery, cancellation or hot-unplug. A multi-TRB TD retains every
+TRB pointer, including both sides of a producer-ring wrap. Errors and late
+events can therefore resolve only that exact transfer. Unregister first masks
+the xHC interrupter, stops the controller and retires transfers and DMA. A
+failed halt vetoes unregister and retains the registry and resources.
 
 Asynchronous storage backend
 ----------------------------

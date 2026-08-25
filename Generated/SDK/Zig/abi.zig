@@ -1111,9 +1111,20 @@ pub const usb_host_endpoint_bulk_in = generated.usb_host_endpoint_bulk_in;
 pub const usb_host_endpoint_bulk_out = generated.usb_host_endpoint_bulk_out;
 pub const usb_host_endpoint_control = generated.usb_host_endpoint_control;
 pub const usb_host_endpoint_interrupt_in = generated.usb_host_endpoint_interrupt_in;
+pub const usb_host_flag_bulk = generated.usb_host_flag_bulk;
+pub const usb_host_flag_control = generated.usb_host_flag_control;
+pub const usb_host_flag_event_irq = generated.usb_host_flag_event_irq;
+pub const usb_host_flag_hotplug = generated.usb_host_flag_hotplug;
+pub const usb_host_flag_interrupt = generated.usb_host_flag_interrupt;
+pub const usb_host_flag_multi_transfer = generated.usb_host_flag_multi_transfer;
+pub const usb_host_flag_poll_fallback = generated.usb_host_flag_poll_fallback;
+pub const usb_host_flag_port_scan = generated.usb_host_flag_port_scan;
 pub const usb_host_source_builtin = generated.usb_host_source_builtin;
 pub const usb_host_source_disk = generated.usb_host_source_disk;
 pub const usb_host_source_preload = generated.usb_host_source_preload;
+pub const usb_host_state_active = generated.usb_host_state_active;
+pub const usb_host_state_failed = generated.usb_host_state_failed;
+pub const usb_host_state_registered = generated.usb_host_state_registered;
 pub const usb_msc_bot_dir_in = generated.usb_msc_bot_dir_in;
 pub const usb_msc_bot_dir_none = generated.usb_msc_bot_dir_none;
 pub const usb_msc_bot_dir_out = generated.usb_msc_bot_dir_out;
@@ -1126,12 +1137,16 @@ pub const usb_scsi_dir_out = generated.usb_scsi_dir_out;
 pub const usb_scsi_op_build_inquiry = generated.usb_scsi_op_build_inquiry;
 pub const usb_scsi_op_build_mode_sense6 = generated.usb_scsi_op_build_mode_sense6;
 pub const usb_scsi_op_build_read10 = generated.usb_scsi_op_build_read10;
+pub const usb_scsi_op_build_read16 = generated.usb_scsi_op_build_read16;
 pub const usb_scsi_op_build_read_capacity10 = generated.usb_scsi_op_build_read_capacity10;
+pub const usb_scsi_op_build_read_capacity16 = generated.usb_scsi_op_build_read_capacity16;
 pub const usb_scsi_op_build_request_sense = generated.usb_scsi_op_build_request_sense;
 pub const usb_scsi_op_build_sync_cache10 = generated.usb_scsi_op_build_sync_cache10;
 pub const usb_scsi_op_build_test_unit_ready = generated.usb_scsi_op_build_test_unit_ready;
 pub const usb_scsi_op_build_write10 = generated.usb_scsi_op_build_write10;
+pub const usb_scsi_op_build_write16 = generated.usb_scsi_op_build_write16;
 pub const usb_scsi_op_parse_capacity10 = generated.usb_scsi_op_parse_capacity10;
+pub const usb_scsi_op_parse_capacity16 = generated.usb_scsi_op_parse_capacity16;
 pub const usb_scsi_op_parse_mode_sense6 = generated.usb_scsi_op_parse_mode_sense6;
 pub const usb_scsi_op_parse_sense = generated.usb_scsi_op_parse_sense;
 pub const usb_scsi_op_self_test = generated.usb_scsi_op_self_test;
@@ -2142,6 +2157,11 @@ pub const UsbScsiBlockOp = extern struct {
     reserved: [2]u8 = .{0} ** 2,
     cdb: [usb_scsi_max_cdb]u8 = .{0} ** usb_scsi_max_cdb,
     data: [usb_scsi_max_data]u8 = .{0} ** usb_scsi_max_data,
+    lba64: u64 = 0,
+    block_count: u32 = 0,
+    logical_block_size: u32 = 0,
+    capacity_format: u8 = 0,
+    reserved2: [7]u8 = .{0} ** 7,
 };
 
 pub const AudioMidiOp = extern struct {
@@ -2974,6 +2994,9 @@ pub const DriverApi = extern struct {
     // Deadlinearbeit fuer Audiorefills mit begrenztem Budget und stabilem
     // Geraete-Serialisierungsschluessel.
     driver_work_submit_request: *const fn (*const DriverWorkRequest, *u32) callconv(.c) i32,
+    // 0.69.43 (DriverApi Version 21, append-only): ownergebundene Aktivierung
+    // eines kernelresidenten USB-Hostbackends ohne zweiten Ressourcenbesitz.
+    activate_usb_host_controller: *const fn ([*:0]const u8, u32) callconv(.c) i32,
 };
 
 pub const ProtocolApi = extern struct {
@@ -3248,6 +3271,15 @@ pub const UsbHostStatus = extern struct {
     devices: u32 = 0,
     transfers: u64 = 0,
     failures: u64 = 0,
+    flags: u32 = 0,
+    queue_depth: u16 = 0,
+    reserved0: u16 = 0,
+    max_transfer_bytes: u32 = 0,
+    active_transfers: u32 = 0,
+    completions: u64 = 0,
+    interrupts: u64 = 0,
+    polls: u64 = 0,
+    cancellations: u64 = 0,
 };
 
 pub const UsbDeviceHandle = extern struct {
@@ -3267,6 +3299,7 @@ pub const UsbEndpointHandle = extern struct {
     endpoint_id: u8 = 0,
     max_packet: u16 = 0,
     interval: u8 = 0,
+    max_burst: u8 = 0,
 };
 
 pub const UsbControlRequest = extern struct {

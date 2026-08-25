@@ -60,6 +60,15 @@ stabilen Geraeteschluessel an. Sie laeuft EDF-sortiert auf dem einzelnen
 getrennt. Der vollstaendige Besitzer-, Bounce-, Deadline-, Completion-,
 Flush- und Unloadvertrag steht in `ABI/R4DDriver.txt`.
 
+DriverApi v21 haengt die ownergebundene Aktivierung des kanonischen
+USB-Hostbackends an. XHCI.R4D aktiviert damit genau den kernelresidenten
+PCI-/MMIO-/DMA-Pfad und erzeugt keinen zweiten Controllerbesitz.
+UsbHostController v2 macht Port-, Control-, Bulk-, Interrupt-, Reset- und
+Poll/Completion-Callbacks produktiv dispatchbar und weist Capabilityflags,
+Queue-Tiefe, maximale Transfergroesse, aktive Transfers, Completions, IRQs,
+Pollfallbacks und Abbrueche aus. Ein fehlgeschlagener Controllerhalt vetoisiert
+den Unload.
+
 Der bestehende R4AUDIO-Aufruf `midi_send` verwendet Status null fuer PCM-
 Renderanforderungen und transportiert die Framezahl little-endian in
 `data1`/`data2`.

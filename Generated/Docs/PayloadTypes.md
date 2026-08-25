@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 117 von 117 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1175; Limits: 102
+- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1190; Limits: 102
 
 ## App-Profile
 
@@ -4914,7 +4914,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `20` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `21` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -5897,7 +5897,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `usb_hid_boot_op_decode_keyboard` | `2` | `u32` | identity | number | `usb_hid` | fixed_contract |
 | `usb_hid_boot_op_decode_mouse` | `3` | `u32` | identity | number | `usb_hid` | fixed_contract |
 | `usb_hid_boot_op_self_test` | `4` | `u32` | identity | number | `usb_hid` | fixed_contract |
-| `usb_host_backend_version` | `1` | `u32` | version | number | `usb_host_backend` | fixed_contract |
+| `usb_host_backend_version` | `2` | `u32` | version | number | `usb_host_backend` | fixed_contract |
 | `usb_host_direction_in` | `1` | `u32` | value | number | `usb_host` | fixed_contract |
 | `usb_host_direction_none` | `0` | `u32` | value | number | `usb_host` | fixed_contract |
 | `usb_host_direction_out` | `2` | `u32` | value | number | `usb_host` | fixed_contract |
@@ -5905,9 +5905,20 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `usb_host_endpoint_bulk_out` | `3` | `u32` | value | number | `usb_host` | fixed_contract |
 | `usb_host_endpoint_control` | `0` | `u32` | value | number | `usb_host` | fixed_contract |
 | `usb_host_endpoint_interrupt_in` | `1` | `u32` | value | number | `usb_host` | fixed_contract |
+| `usb_host_flag_bulk` | `4` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
+| `usb_host_flag_control` | `2` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
+| `usb_host_flag_event_irq` | `16` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
+| `usb_host_flag_hotplug` | `128` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
+| `usb_host_flag_interrupt` | `8` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
+| `usb_host_flag_multi_transfer` | `64` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
+| `usb_host_flag_poll_fallback` | `32` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
+| `usb_host_flag_port_scan` | `1` | `u32` | flag | bitmask | `usb_host` | fixed_contract |
 | `usb_host_source_builtin` | `0` | `u32` | value | number | `usb_host` | fixed_contract |
 | `usb_host_source_disk` | `2` | `u32` | value | number | `usb_host` | fixed_contract |
 | `usb_host_source_preload` | `1` | `u32` | value | number | `usb_host` | fixed_contract |
+| `usb_host_state_active` | `1` | `u32` | value | number | `usb_host` | fixed_contract |
+| `usb_host_state_failed` | `2` | `u32` | value | number | `usb_host` | fixed_contract |
+| `usb_host_state_registered` | `0` | `u32` | value | number | `usb_host` | fixed_contract |
 | `usb_msc_bot_dir_in` | `1` | `u8` | value | number | `usb_msc` | fixed_contract |
 | `usb_msc_bot_dir_none` | `0` | `u8` | value | number | `usb_msc` | fixed_contract |
 | `usb_msc_bot_dir_out` | `2` | `u8` | value | number | `usb_msc` | fixed_contract |
@@ -5920,12 +5931,16 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `usb_scsi_op_build_inquiry` | `1` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_build_mode_sense6` | `5` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_build_read10` | `6` | `u32` | identity | number | `usb_scsi` | fixed_contract |
+| `usb_scsi_op_build_read16` | `14` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_build_read_capacity10` | `4` | `u32` | identity | bytes | `usb_scsi` | fixed_contract |
+| `usb_scsi_op_build_read_capacity16` | `13` | `u32` | identity | bytes | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_build_request_sense` | `3` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_build_sync_cache10` | `8` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_build_test_unit_ready` | `2` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_build_write10` | `7` | `u32` | identity | number | `usb_scsi` | fixed_contract |
+| `usb_scsi_op_build_write16` | `15` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_parse_capacity10` | `10` | `u32` | identity | bytes | `usb_scsi` | fixed_contract |
+| `usb_scsi_op_parse_capacity16` | `16` | `u32` | identity | bytes | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_parse_mode_sense6` | `11` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_parse_sense` | `9` | `u32` | identity | number | `usb_scsi` | fixed_contract |
 | `usb_scsi_op_self_test` | `12` | `u32` | identity | number | `usb_scsi` | fixed_contract |
