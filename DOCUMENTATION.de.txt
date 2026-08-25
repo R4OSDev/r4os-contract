@@ -79,6 +79,16 @@ hoechstens 32 Frames dem ereignisgesteuerten `net-rx`-Task gehoeren.
 dann seinen unveraenderten Deskriptor beziehungsweise Ringkopf. Der genaue
 Besitz-, Fehler-, Wakeup- und Teardownvertrag steht in `ABI/R4DDriver.txt`.
 
+DriverApi v24 fuegt `net_backend_query` und `net_receive_packet` an;
+NetBackend v2 haengt Capabilityangebot, Pflichtmenge, Queue-/Segmentgrenzen,
+Besitzmodi, Moderation und einen optionalen Paket-TX-Callback an den v1-
+Praefix. Unbekannte oder abgelehnte optionale Metadaten verwenden immer die
+mitgelieferten kanonischen Flat-Bytes, waehrend eine abgelehnte Pflicht-
+faehigkeit die Registrierung beendet. Der BSP-Kernel waehlt eine RX-/TX-
+Queue und als ersten produktiven Verbraucher nur validierte RX-TCP-/UDP-
+Pruefsummen. IPv4 und alle nicht ausgehandelten Pfade bleiben software-
+geprueft; Details stehen in `ABI/R4DDriver.txt`.
+
 Der bestehende R4AUDIO-Aufruf `midi_send` verwendet Status null fuer PCM-
 Renderanforderungen und transportiert die Framezahl little-endian in
 `data1`/`data2`.

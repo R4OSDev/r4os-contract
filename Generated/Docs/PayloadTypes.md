@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 127 von 127 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1238; Limits: 102
+- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1266; Limits: 102
 
 ## App-Profile
 
@@ -5134,7 +5134,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `23` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `24` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -5589,10 +5589,24 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `memory_window_temp_kernel` | `0` | `u8` | value | number | `memory_window` | fixed_contract |
 | `mmio_map_write_combining` | `1` | `u32` | value | number | `mmio_map` | fixed_contract |
 | `nanoseconds_per_second` | `1000000000` | `u64` | value | nanoseconds | `text_path_time` | fixed_contract |
+| `net_backend_cap_async_tx_completion` | `1024` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_interrupt_moderation` | `128` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_multiqueue` | `512` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_rx_l4_checksum_valid` | `1` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_rx_scatter` | `4` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_rx_vlan_strip` | `16` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_tx_l4_checksum_partial` | `2` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_tx_notification_suppression` | `256` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_tx_scatter` | `8` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_tx_segmentation` | `64` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
+| `net_backend_cap_tx_vlan_insert` | `32` | `u64` | flag | bitmask | `net_backend` | fixed_contract |
 | `net_backend_flag_broadcast` | `2` | `u32` | flag | bitmask | `net_backend` | fixed_contract |
 | `net_backend_flag_link_up` | `1` | `u32` | flag | bitmask | `net_backend` | fixed_contract |
 | `net_backend_flag_trusted` | `4` | `u32` | flag | bitmask | `net_backend` | fixed_contract |
-| `net_backend_version` | `1` | `u32` | version | number | `net_backend` | fixed_contract |
+| `net_backend_negotiation_version` | `1` | `u32` | version | number | `net_backend` | fixed_contract |
+| `net_backend_version` | `2` | `u32` | version | number | `net_backend` | fixed_contract |
+| `net_buffer_ownership_borrowed_until_return` | `0` | `u32` | value | enumeration | `net_buffer_ownership` | fixed_contract |
+| `net_buffer_ownership_transferred_until_completion` | `1` | `u32` | value | enumeration | `net_buffer_ownership` | fixed_contract |
 | `net_bus_pci` | `1` | `u8` | value | number | `net_bus` | fixed_contract |
 | `net_bus_pcie` | `2` | `u8` | value | number | `net_bus` | fixed_contract |
 | `net_bus_serial` | `3` | `u8` | value | number | `net_bus` | fixed_contract |
@@ -5643,10 +5657,23 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `net_diag_op_r4p` | `12` | `u32` | identity | number | `net_diag` | fixed_contract |
 | `net_diag_op_reset` | `6` | `u32` | identity | number | `net_diag` | fixed_contract |
 | `net_diag_op_timing` | `1` | `u32` | identity | count | `net_diag` | fixed_contract |
+| `net_packet_completion_cancelled` | `-2` | `i32` | value | number | `net_packet_completion` | fixed_contract |
+| `net_packet_completion_error` | `-1` | `i32` | value | number | `net_packet_completion` | fixed_contract |
+| `net_packet_completion_ok` | `0` | `i32` | value | number | `net_packet_completion` | fixed_contract |
+| `net_packet_completion_shutdown` | `-4` | `i32` | value | number | `net_packet_completion` | fixed_contract |
+| `net_packet_completion_timeout` | `-3` | `i32` | value | number | `net_packet_completion` | fixed_contract |
+| `net_packet_flag_rx_l4_checksum_valid` | `1` | `u64` | flag | bitmask | `net_packet` | fixed_contract |
+| `net_packet_flag_scatter` | `16` | `u64` | flag | bitmask | `net_packet` | fixed_contract |
+| `net_packet_flag_segmentation` | `8` | `u64` | flag | bitmask | `net_packet` | fixed_contract |
+| `net_packet_flag_tx_l4_checksum_partial` | `2` | `u64` | flag | bitmask | `net_packet` | fixed_contract |
+| `net_packet_flag_vlan_tag_valid` | `4` | `u64` | flag | bitmask | `net_packet` | fixed_contract |
+| `net_packet_max_segments` | `8` | `u16` | value | count | `net_packet` | fixed_contract |
+| `net_packet_version` | `1` | `u32` | version | number | `net_packet` | fixed_contract |
 | `net_rx_handoff_busy` | `-4` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
 | `net_rx_handoff_invalid_adapter` | `-1` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
 | `net_rx_handoff_invalid_frame` | `-2` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
 | `net_rx_handoff_ok` | `0` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
+| `net_rx_handoff_software_fallback` | `1` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
 | `net_rx_handoff_unavailable` | `-3` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
 | `net_rx_handoff_wrong_context` | `-5` | `i32` | value | number | `net_rx_handoff` | fixed_contract |
 | `net_service_dhcp_action_acquire` | `1` | `u16` | value | number | `net_service` | fixed_contract |
@@ -5932,6 +5959,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `program_registry_self_test_phase_task` | `5` | `u32` | value | enumeration | `program_registry_self_test` | fixed_contract |
 | `program_registry_summary_flag_failure_armed` | `1` | `u32` | flag | bitmask | `program_registry_summary` | fixed_contract |
 | `protocol_api_version` | `1` | `u32` | version | number | `protocol_api` | fixed_contract |
+| `protocol_buffer_flag_rx_l4_checksum_valid` | `1` | `u32` | flag | bitmask | `protocol_buffer` | fixed_contract |
 | `protocol_magic` | `826888272` | `u32` | magic | number | `protocol` | fixed_contract |
 | `r4d_version` | `1` | `u32` | version | number | `r4d` | fixed_contract |
 | `r4l_abi_magic` | `827077714` | `u32` | magic | number | `r4l_abi` | fixed_contract |

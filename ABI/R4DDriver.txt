@@ -9,10 +9,11 @@ types that accompany the generated R4DEV platform contract. The target is
 trusted little-endian x86_64. DriverApi version 19 appends segment-DMA
 operations; version 20 appends deadline-isolated audio work; version 21
 appends canonical USB-host activation; version 22 appends the display-blit
-backend; version 23 appends network RX-work publication. StorageBackend
-version 2 appends asynchronous block callbacks and UsbHostController version
-2 appends capability, activity and completion status. None of these
-extensions changes an older prefix.
+backend; version 23 appends network RX-work publication; version 24 appends
+network capability selection and metadata intake. StorageBackend version 2
+appends asynchronous block callbacks, UsbHostController version 2 appends
+capability, activity and completion status, and NetBackend version 2 appends
+its offer. None of these extensions changes an older prefix.
 
 Pinned buffers and DMA mappings
 -------------------------------
@@ -176,6 +177,62 @@ transition may cancel queued ownership only after producer and consumer
 callbacks have drained. Accepted, released, cancelled and occupied counts,
 queue high-water/backpressure, batch ends, event/fallback wakes and schedule-
 plus-handoff tail latency remain diagnostically visible.
+
+Negotiated network queues and offloads
+---------------------------------------
+
+NetBackend version 2 appends an offered and required 64-bit capability set,
+RX/TX queue and segment maxima, RX/TX ownership modes, an interrupt-moderation
+offer and the optional packet TX callback after the complete version-1
+descriptor. A version-1 descriptor remains the flat single-queue backend.
+Unknown and unsupported optional bits appear in `rejected`; a required bit
+which is absent, unknown or unsupported rejects registration. No partial
+required selection is possible.
+
+After successful registration DriverApi version 24
+`net_backend_query(adapter, selection)` returns immutable offered, accepted
+and rejected masks plus the selected queue, segment, ownership and moderation
+values. The current BSP Netcore selects exactly one RX and one TX queue, one
+flat segment, borrowed-until-return ownership and zero moderation. Multiqueue,
+scatter, VLAN insertion/removal, TX checksum/segmentation, notification
+suppression and asynchronous completion are therefore specified but rejected.
+SMP may select more queues later without changing either prefix.
+
+`NetPacket` always names one canonical `fallback_addr/fallback_bytes` byte
+stream. Segment address/count, checksum start/offset, VLAN tag and GSO size
+are only interpretations selected by accepted direction capabilities; they
+never replace the flat bytes for fallback. At most eight segments may be
+described. Unknown packet flags, rejected capabilities and structurally
+inapplicable metadata are stripped together and the flat bytes enter normal
+software processing unchanged. DriverApi `net_receive_packet` returns 0 for
+ordinary acceptance, 1 for accepted software fallback, and the existing
+-1..-5 adapter/frame/admission/backpressure/context errors. Both successful
+values transfer exactly one copied frame to the bounded queue. On -4 the
+driver still owns the exact device descriptor and retries it unchanged.
+
+Borrowed-until-return means no pointer may be retained beyond the call.
+Transferred-until-completion is valid only after the corresponding TX
+capability was selected. A future accepted `NetTxRequest` then copies the
+completion handle and callback and terminates it exactly once with success,
+error, cancellation, timeout or shutdown. A rejected submission transfers
+nothing. Duplicate or late completions must not touch a reused request.
+Current Netcore accepts no transferred TX path and continues to call the
+version-1 synchronous transmit callback with the flat bytes.
+
+The first productive capability is `rx_l4_checksum_valid`. Only a driver
+which offered it and received it in `accepted` may mark a complete flat IPv4
+TCP/UDP packet. Netcore still validates Ethernet shape, IPv4 shape,
+fragmentation and the IPv4 header checksum. It then sets
+`ProtocolBuffer.flags.rx_l4_checksum_valid` only for the matching RX dispatch;
+NetUdp/NetTcp skip exactly their duplicate L4 checksum pass. TX operations,
+ICMP, unknown flags, VLAN-wrapped frames, fragments and incapable adapters
+retain software verification. Virtio `NEEDS_CSUM` is completed first and then
+software-verified; only `DATA_VALID` consumes the negotiated bypass.
+
+Selection, metadata usage, byte-preserving fallbacks and malformed metadata
+are visible in NETRX and backend status. Teardown first closes admission and
+drains callbacks as before; the copied common-queue slot remains the sole RX
+owner after a successful return, independent of the optional metadata.
 
 Asynchronous storage backend
 ----------------------------

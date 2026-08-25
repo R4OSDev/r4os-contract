@@ -21,6 +21,11 @@ matching baseline.
 Detailed German migration notes are preserved in
 `DOCUMENTATION.de.txt`.
 
+DriverApi v24 and NetBackend v2 provide append-only network capability
+selection. Every packet descriptor retains canonical flat fallback bytes;
+the current single-queue implementation admits only validated RX TCP/UDP
+checksums and rejects all other optional offloads explicitly.
+
 ## License
 
 Original R4OS material is licensed under Apache License 2.0. See `LICENSE`,

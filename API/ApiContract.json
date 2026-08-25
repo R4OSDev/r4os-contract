@@ -68444,7 +68444,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "23",
+      "value": "24",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -72993,6 +72993,116 @@
       "description": "Nanoseconds per second for public duration and instant types."
     },
     {
+      "name": "net_backend_cap_async_tx_completion",
+      "value": "1024",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "Accepted TX buffers remain backend-owned until their generation-bound completion callback fires exactly once."
+    },
+    {
+      "name": "net_backend_cap_interrupt_moderation",
+      "value": "128",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "The backend can apply the selected bounded interrupt-moderation interval."
+    },
+    {
+      "name": "net_backend_cap_multiqueue",
+      "value": "512",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "The backend offers multiple RX/TX queue pairs; BSP Netcore currently selects one."
+    },
+    {
+      "name": "net_backend_cap_rx_l4_checksum_valid",
+      "value": "1",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "RX packet metadata may prove a complete TCP or UDP checksum valid after negotiation."
+    },
+    {
+      "name": "net_backend_cap_rx_scatter",
+      "value": "4",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "RX packets may reference the negotiated bounded segment list in addition to their mandatory flat fallback."
+    },
+    {
+      "name": "net_backend_cap_rx_vlan_strip",
+      "value": "16",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "RX metadata may carry a VLAN tag stripped by the backend."
+    },
+    {
+      "name": "net_backend_cap_tx_l4_checksum_partial",
+      "value": "2",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "TX metadata may request checksum completion at negotiated start and offset fields."
+    },
+    {
+      "name": "net_backend_cap_tx_notification_suppression",
+      "value": "256",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "The backend can suppress redundant TX queue notifications under the negotiated policy."
+    },
+    {
+      "name": "net_backend_cap_tx_scatter",
+      "value": "8",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "TX packets may reference the negotiated bounded segment list in addition to their mandatory flat fallback."
+    },
+    {
+      "name": "net_backend_cap_tx_segmentation",
+      "value": "64",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "TX metadata may request bounded segmentation using the negotiated GSO size."
+    },
+    {
+      "name": "net_backend_cap_tx_vlan_insert",
+      "value": "32",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
+      "description": "TX metadata may request insertion of its negotiated VLAN tag."
+    },
+    {
       "name": "net_backend_flag_broadcast",
       "value": "2",
       "value_type": "u32",
@@ -73023,14 +73133,44 @@
       "description": "Public fixed contract constant."
     },
     {
-      "name": "net_backend_version",
+      "name": "net_backend_negotiation_version",
       "value": "1",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
       "scope": "net_backend",
       "stability": "fixed_contract",
+      "description": "Version of the append-only network capability selection snapshot."
+    },
+    {
+      "name": "net_backend_version",
+      "value": "2",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "net_backend",
+      "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "net_buffer_ownership_borrowed_until_return",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "enumeration",
+      "scope": "net_buffer_ownership",
+      "stability": "fixed_contract",
+      "description": "The caller retains ownership and the callee may access bytes only during the callback or DriverApi call."
+    },
+    {
+      "name": "net_buffer_ownership_transferred_until_completion",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "enumeration",
+      "scope": "net_buffer_ownership",
+      "stability": "fixed_contract",
+      "description": "Ownership remains with the accepting backend until the exact completion handle terminates once."
     },
     {
       "name": "net_bus_pci",
@@ -73533,6 +73673,126 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "net_packet_completion_cancelled",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_packet_completion",
+      "stability": "fixed_contract",
+      "description": "The transferred packet was cancelled before transmission completed."
+    },
+    {
+      "name": "net_packet_completion_error",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_packet_completion",
+      "stability": "fixed_contract",
+      "description": "The transferred packet terminated with a backend error."
+    },
+    {
+      "name": "net_packet_completion_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_packet_completion",
+      "stability": "fixed_contract",
+      "description": "The transferred packet completed successfully."
+    },
+    {
+      "name": "net_packet_completion_shutdown",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_packet_completion",
+      "stability": "fixed_contract",
+      "description": "The transferred packet terminated during backend shutdown."
+    },
+    {
+      "name": "net_packet_completion_timeout",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_packet_completion",
+      "stability": "fixed_contract",
+      "description": "The transferred packet exceeded its bounded completion deadline."
+    },
+    {
+      "name": "net_packet_flag_rx_l4_checksum_valid",
+      "value": "1",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_packet",
+      "stability": "fixed_contract",
+      "description": "The negotiated backend validated the complete received TCP or UDP checksum."
+    },
+    {
+      "name": "net_packet_flag_scatter",
+      "value": "16",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_packet",
+      "stability": "fixed_contract",
+      "description": "The bounded segment list describes this packet when scatter capability was accepted."
+    },
+    {
+      "name": "net_packet_flag_segmentation",
+      "value": "8",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_packet",
+      "stability": "fixed_contract",
+      "description": "The GSO size requests segmentation when TX segmentation capability was accepted."
+    },
+    {
+      "name": "net_packet_flag_tx_l4_checksum_partial",
+      "value": "2",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_packet",
+      "stability": "fixed_contract",
+      "description": "Checksum start and offset request TX checksum completion when accepted."
+    },
+    {
+      "name": "net_packet_flag_vlan_tag_valid",
+      "value": "4",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "net_packet",
+      "stability": "fixed_contract",
+      "description": "The VLAN tag field is meaningful only with the corresponding accepted direction capability."
+    },
+    {
+      "name": "net_packet_max_segments",
+      "value": "8",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "count",
+      "scope": "net_packet",
+      "stability": "fixed_contract",
+      "description": "Hard upper bound for a network packet segment list."
+    },
+    {
+      "name": "net_packet_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "net_packet",
+      "stability": "fixed_contract",
+      "description": "Version of the common flat-fallback network packet descriptor."
+    },
+    {
       "name": "net_rx_handoff_busy",
       "value": "-4",
       "value_type": "i32",
@@ -73571,6 +73831,16 @@
       "scope": "net_rx_handoff",
       "stability": "fixed_contract",
       "description": "The frame or work notification was accepted by Netcore."
+    },
+    {
+      "name": "net_rx_handoff_software_fallback",
+      "value": "1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "net_rx_handoff",
+      "stability": "fixed_contract",
+      "description": "The canonical frame was accepted after unknown, rejected or inapplicable metadata selected byte-identical software verification."
     },
     {
       "name": "net_rx_handoff_unavailable",
@@ -76421,6 +76691,16 @@
       "scope": "protocol_api",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "protocol_buffer_flag_rx_l4_checksum_valid",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "protocol_buffer",
+      "stability": "fixed_contract",
+      "description": "The caller's negotiated RX backend already validated this TCP or UDP checksum; other operations and unknown flags retain software verification."
     },
     {
       "name": "protocol_magic",

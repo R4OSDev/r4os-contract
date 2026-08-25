@@ -595,10 +595,24 @@ pub const memory_window_r4x_vm = generated.memory_window_r4x_vm;
 pub const memory_window_temp_kernel = generated.memory_window_temp_kernel;
 pub const mmio_map_write_combining = generated.mmio_map_write_combining;
 pub const nanoseconds_per_second = generated.nanoseconds_per_second;
+pub const net_backend_cap_async_tx_completion = generated.net_backend_cap_async_tx_completion;
+pub const net_backend_cap_interrupt_moderation = generated.net_backend_cap_interrupt_moderation;
+pub const net_backend_cap_multiqueue = generated.net_backend_cap_multiqueue;
+pub const net_backend_cap_rx_l4_checksum_valid = generated.net_backend_cap_rx_l4_checksum_valid;
+pub const net_backend_cap_rx_scatter = generated.net_backend_cap_rx_scatter;
+pub const net_backend_cap_rx_vlan_strip = generated.net_backend_cap_rx_vlan_strip;
+pub const net_backend_cap_tx_l4_checksum_partial = generated.net_backend_cap_tx_l4_checksum_partial;
+pub const net_backend_cap_tx_notification_suppression = generated.net_backend_cap_tx_notification_suppression;
+pub const net_backend_cap_tx_scatter = generated.net_backend_cap_tx_scatter;
+pub const net_backend_cap_tx_segmentation = generated.net_backend_cap_tx_segmentation;
+pub const net_backend_cap_tx_vlan_insert = generated.net_backend_cap_tx_vlan_insert;
 pub const net_backend_flag_broadcast = generated.net_backend_flag_broadcast;
 pub const net_backend_flag_link_up = generated.net_backend_flag_link_up;
 pub const net_backend_flag_trusted = generated.net_backend_flag_trusted;
+pub const net_backend_negotiation_version = generated.net_backend_negotiation_version;
 pub const net_backend_version = generated.net_backend_version;
+pub const net_buffer_ownership_borrowed_until_return = generated.net_buffer_ownership_borrowed_until_return;
+pub const net_buffer_ownership_transferred_until_completion = generated.net_buffer_ownership_transferred_until_completion;
 pub const net_bus_pci = generated.net_bus_pci;
 pub const net_bus_pcie = generated.net_bus_pcie;
 pub const net_bus_serial = generated.net_bus_serial;
@@ -649,10 +663,23 @@ pub const net_diag_op_power = generated.net_diag_op_power;
 pub const net_diag_op_r4p = generated.net_diag_op_r4p;
 pub const net_diag_op_reset = generated.net_diag_op_reset;
 pub const net_diag_op_timing = generated.net_diag_op_timing;
+pub const net_packet_completion_cancelled = generated.net_packet_completion_cancelled;
+pub const net_packet_completion_error = generated.net_packet_completion_error;
+pub const net_packet_completion_ok = generated.net_packet_completion_ok;
+pub const net_packet_completion_shutdown = generated.net_packet_completion_shutdown;
+pub const net_packet_completion_timeout = generated.net_packet_completion_timeout;
+pub const net_packet_flag_rx_l4_checksum_valid = generated.net_packet_flag_rx_l4_checksum_valid;
+pub const net_packet_flag_scatter = generated.net_packet_flag_scatter;
+pub const net_packet_flag_segmentation = generated.net_packet_flag_segmentation;
+pub const net_packet_flag_tx_l4_checksum_partial = generated.net_packet_flag_tx_l4_checksum_partial;
+pub const net_packet_flag_vlan_tag_valid = generated.net_packet_flag_vlan_tag_valid;
+pub const net_packet_max_segments = generated.net_packet_max_segments;
+pub const net_packet_version = generated.net_packet_version;
 pub const net_rx_handoff_busy = generated.net_rx_handoff_busy;
 pub const net_rx_handoff_invalid_adapter = generated.net_rx_handoff_invalid_adapter;
 pub const net_rx_handoff_invalid_frame = generated.net_rx_handoff_invalid_frame;
 pub const net_rx_handoff_ok = generated.net_rx_handoff_ok;
+pub const net_rx_handoff_software_fallback = generated.net_rx_handoff_software_fallback;
 pub const net_rx_handoff_unavailable = generated.net_rx_handoff_unavailable;
 pub const net_rx_handoff_wrong_context = generated.net_rx_handoff_wrong_context;
 pub const net_service_dhcp_action_acquire = generated.net_service_dhcp_action_acquire;
@@ -938,6 +965,7 @@ pub const program_registry_self_test_phase_storage_release = generated.program_r
 pub const program_registry_self_test_phase_task = generated.program_registry_self_test_phase_task;
 pub const program_registry_summary_flag_failure_armed = generated.program_registry_summary_flag_failure_armed;
 pub const protocol_api_version = generated.protocol_api_version;
+pub const protocol_buffer_flag_rx_l4_checksum_valid = generated.protocol_buffer_flag_rx_l4_checksum_valid;
 pub const protocol_magic = generated.protocol_magic;
 pub const r4d_version = generated.r4d_version;
 pub const r4l_abi_magic = generated.r4l_abi_magic;
@@ -3105,6 +3133,11 @@ pub const DriverApi = extern struct {
     // 0.69.49 (DriverApi Version 23, append-only): IRQ-safe publication of
     // adapter RX work to the bounded, event-driven Netcore handoff.
     net_schedule_rx: *const fn (i32) callconv(.c) i32,
+    // 0.69.50 (DriverApi Version 24, append-only): capability selection is
+    // queried after registration; packet metadata always retains a flat,
+    // byte-identical software fallback.
+    net_backend_query: *const fn (i32, *NetBackendNegotiation) callconv(.c) i32,
+    net_receive_packet: *const fn (i32, *const NetPacket) callconv(.c) i32,
 };
 
 pub const ProtocolApi = extern struct {
@@ -3535,6 +3568,67 @@ pub const NetBackendStatus = extern struct {
     tx_errors: u64 = 0,
     rx_overflows: u64 = 0,
     rx_recoveries: u64 = 0,
+    // 0.69.50: negotiated backend/offload visibility. Drivers that retain
+    // the v1 flat path leave these append-only counters at zero.
+    offered_capabilities: u64 = 0,
+    accepted_capabilities: u64 = 0,
+    rx_offload_packets: u64 = 0,
+    rx_software_fallbacks: u64 = 0,
+    rx_metadata_errors: u64 = 0,
+};
+
+pub const NetBufferSegment = extern struct {
+    address: u64 = 0,
+    bytes: u32 = 0,
+    reserved: u32 = 0,
+};
+
+/// The flat fallback is mandatory and canonical. Segment, checksum, VLAN and
+/// segmentation fields are meaningful only when their direction capability
+/// is present in NetBackendNegotiation.accepted.
+pub const NetPacket = extern struct {
+    version: u32 = net_packet_version,
+    size: u32 = @sizeOf(NetPacket),
+    flags: u64 = 0,
+    fallback_addr: u64 = 0,
+    segments_addr: u64 = 0,
+    completion_handle: u64 = 0,
+    fallback_bytes: u32 = 0,
+    ownership: u32 = net_buffer_ownership_borrowed_until_return,
+    queue_index: u16 = 0,
+    segment_count: u16 = 0,
+    checksum_start: u16 = 0,
+    checksum_offset: u16 = 0,
+    vlan_tag: u16 = 0,
+    gso_size: u16 = 0,
+    reserved: u32 = 0,
+};
+
+pub const NetTxComplete = *const fn (u64, i32, u32) callconv(.c) void;
+
+pub const NetTxRequest = extern struct {
+    version: u32 = net_packet_version,
+    size: u32 = @sizeOf(NetTxRequest),
+    packet: NetPacket = .{},
+    complete: ?NetTxComplete = null,
+};
+
+pub const NetTransmitPacketFn = *const fn (?*anyopaque, *const NetTxRequest) callconv(.c) i32;
+
+pub const NetBackendNegotiation = extern struct {
+    version: u32 = net_backend_negotiation_version,
+    size: u32 = @sizeOf(NetBackendNegotiation),
+    offered: u64 = 0,
+    accepted: u64 = 0,
+    rejected: u64 = 0,
+    rx_queue_count: u16 = 1,
+    tx_queue_count: u16 = 1,
+    max_rx_segments: u16 = 1,
+    max_tx_segments: u16 = 1,
+    rx_ownership: u32 = net_buffer_ownership_borrowed_until_return,
+    tx_ownership: u32 = net_buffer_ownership_borrowed_until_return,
+    interrupt_moderation_us: u32 = 0,
+    reserved: u32 = 0,
 };
 
 pub const NetBackend = extern struct {
@@ -3556,4 +3650,18 @@ pub const NetBackend = extern struct {
     poll: ?*const fn (?*anyopaque) callconv(.c) void = null,
     shutdown: ?*const fn (?*anyopaque) callconv(.c) i32 = null,
     status: ?*const fn (?*anyopaque, *NetBackendStatus) callconv(.c) i32 = null,
+    // Version 2 append-only capability offer. Required bits reject
+    // registration unless selected; optional rejected bits use the flat v1
+    // transmit/receive path. The first selected consumer is RX L4 checksum.
+    offered_capabilities: u64 = 0,
+    required_capabilities: u64 = 0,
+    rx_queue_count: u16 = 1,
+    tx_queue_count: u16 = 1,
+    max_rx_segments: u16 = 1,
+    max_tx_segments: u16 = 1,
+    rx_ownership: u32 = net_buffer_ownership_borrowed_until_return,
+    tx_ownership: u32 = net_buffer_ownership_borrowed_until_return,
+    interrupt_moderation_us: u32 = 0,
+    reserved2: u32 = 0,
+    transmit_packet: ?NetTransmitPacketFn = null,
 };
