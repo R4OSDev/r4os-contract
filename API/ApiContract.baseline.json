@@ -13523,10 +13523,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 4,
+      "abi_version": 5,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 304,
+      "size": 328,
       "slots": [
         {
           "number": 0,
@@ -16029,6 +16029,310 @@
             "side_effects": "none",
             "retry": "idempotent",
             "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 36,
+          "offset": 304,
+          "name": "gui_frame_begin_damage",
+          "state": "function",
+          "required": false,
+          "description": "Begins a private transactional GUI delta frame for the current GUI program. The bounded client-local regions are copied during the call and describe every pixel that the appended commands may change. A successful commit retains the previous immutable generation as its base without cloning it.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "regions",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayDamageRect"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "region_count",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "region_count",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 37,
+          "offset": 312,
+          "name": "gui_frame_generation_info",
+          "state": "function",
+          "required": false,
+          "description": "Returns exact local counts, base generation, damage regions and telemetry for one immutable generation in the current committed chain. The generation must be nonzero and the process handle is mandatory.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramProcessHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "generation",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out_info",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiFrameGenerationInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 38,
+          "offset": 320,
+          "name": "gui_frame_generation_read",
+          "state": "function",
+          "required": false,
+          "description": "Copies only the commands, resources and exact client-local damage regions owned by one immutable generation. Resource offsets remain local to the returned blob. On stale, buffer-too-small or invalid input no payload buffer is modified and out_info reports the generation requirements when available.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramProcessHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "generation",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "commands",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiFrameCommand"
+                  },
+                  "direction": "output",
+                  "nullable": true,
+                  "length_by": "command_capacity",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "command_capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "resources",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "output",
+                  "nullable": true,
+                  "length_by": "resource_capacity",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "resource_capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "regions",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayDamageRect"
+                  },
+                  "direction": "output",
+                  "nullable": true,
+                  "length_by": "region_capacity",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "region_capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_info",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiFrameGenerationInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "valid_on_documented_error",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "required_size_reported",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -45047,6 +45351,314 @@
       "description": "Versioned shape resource header followed by segment_count GuiPathSegment records. It describes path fill/stroke, rounded rectangles and one outer or inset shadow layer without pointers."
     },
     {
+      "name": "GuiFrameGenerationInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 144,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "GuiFrameGenerationInfo contract version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller-visible GuiFrameGenerationInfo byte size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "144"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gui_frame_generation_flag bitmask for this immutable generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "damage_count",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact DisplayDamageRect count required by gui_frame_generation_read; zero for a full generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Generation-exact process owner.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Immutable generation described by this record.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "base_generation",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Immediate immutable base generation for a delta, or zero for a complete frame.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "command_count",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Commands owned locally by this generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "resource_bytes",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Resource bytes owned locally by this generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_command_count",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Flattened command count through this generation and all of its bases.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_resource_bytes",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Flattened resource bytes through this generation and all of its bases.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "chain_depth",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of retained generations including this one; bounded by gui_frame_max_delta_chain.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "command_version",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "GuiFrameCommand version emitted by generation reads.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "command_size",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "GuiFrameCommand byte size emitted by generation reads.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "region_size",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "DisplayDamageRect byte size emitted by generation reads.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "delta_commit_count",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful delta commits by this owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "full_commit_count",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful complete-frame commits by this owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "indexed8_command_count",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Committed Indexed8 commands by this owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "indexed8_resource_bytes",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Committed Indexed8 resource bytes by this owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "avoided_clone_bytes",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Committed base-chain bytes retained instead of deep-cloned for delta frames.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation_read_count",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful generation-local payload reads by this owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Extensible immutable GUI generation metadata. A complete generation has no base and no damage regions; a delta contains only local commands, resources and up to eight exact client-local regions."
+    },
+    {
       "name": "GuiFrameInfo",
       "source": "API/ApiContract.json",
       "classification": "extensible",
@@ -45409,6 +46021,244 @@
       ],
       "values": [],
       "description": "Extensible transactional GUI frame state, capacity requirements and per-owner telemetry. Version 1 or newer with size at least 176 negotiates the supported v1/176 prefix; invalid headers remain unchanged."
+    },
+    {
+      "name": "GuiIndexed8Resource",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "GuiIndexed8Resource contract version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fixed header size before palette and pixel bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "source_x",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "First guest-space source column stored in the pixel payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_y",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "First guest-space source row stored in the pixel payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_w",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Stored guest-space source width.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_h",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Stored guest-space source height.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "guest_w",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete guest surface width used for nearest-neighbour mapping.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "guest_h",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete guest surface height used for nearest-neighbour mapping.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_x",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Client-local x origin of the complete aspect-preserving viewport.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_y",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Client-local y origin of the complete aspect-preserving viewport.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_w",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete client-space viewport width.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_h",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete client-space viewport height.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "palette_entries",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Palette entry count; version 1 requires exactly 256 XRGB32 entries.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "256"
+        },
+        {
+          "name": "palette_offset",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Byte offset of the 256 little-endian XRGB32 palette entries; version 1 requires 64.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "pixels_offset",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Byte offset of the tight row-major Indexed8 source tile; version 1 requires 1088.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1088"
+        },
+        {
+          "name": "pixel_stride",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Indexed8 source row stride in bytes; version 1 requires source_w.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fixed Indexed8 GUI resource header. It is followed by 256 little-endian XRGB32 palette entries and a tight source tile. Global guest and viewport geometry preserves pixel-identical nearest-neighbour mapping for integer and fractional scaling without per-target-pixel division."
     },
     {
       "name": "GuiFontInfo",
@@ -68903,6 +69753,16 @@
       "description": "Straight-alpha ARGB32 source-over raster command. The resource is exactly w*h*4 row-major little-endian 0xAARRGGBB bytes; parameter0 is scale 1 through 16 and parameter1 is zero."
     },
     {
+      "name": "gui_frame_command_kind_indexed8",
+      "value": "11",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "Indexed8 nearest-neighbour raster command. x/y/w/h are the bounded destination tile; the resource is one GuiIndexed8Resource with palette and source indices, and all other command fields and parameters are zero."
+    },
+    {
       "name": "gui_path_segment_kind_close",
       "value": "5",
       "value_type": "u32",
@@ -69211,6 +70071,126 @@
       "scope": "gui_frame",
       "stability": "fixed_contract",
       "description": "Current GuiFrameInfo contract version."
+    },
+    {
+      "name": "gui_frame_generation_flag_delta",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "The generation contains only a retained-base delta and exact damage regions."
+    },
+    {
+      "name": "gui_frame_generation_flag_full",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "The generation is a complete frame with no retained base."
+    },
+    {
+      "name": "gui_frame_generation_flag_indexed8",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "The generation contains at least one Indexed8 command."
+    },
+    {
+      "name": "gui_frame_generation_info_size",
+      "value": "144",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "bytes",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "GuiFrameGenerationInfo v1 structure size."
+    },
+    {
+      "name": "gui_frame_generation_info_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "Current GuiFrameGenerationInfo contract version."
+    },
+    {
+      "name": "gui_frame_max_damage_regions",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "records",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "Maximum exact client-local damage rectangles carried by one GUI delta generation."
+    },
+    {
+      "name": "gui_frame_max_delta_chain",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "generations",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "Maximum retained GUI generation chain depth before a producer must publish a complete frame."
+    },
+    {
+      "name": "gui_indexed8_palette_entries",
+      "value": "256",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "entries",
+      "scope": "gui_indexed8",
+      "stability": "fixed_contract",
+      "description": "GuiIndexed8Resource v1 XRGB32 palette entry count."
+    },
+    {
+      "name": "gui_indexed8_palette_offset",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "bytes",
+      "scope": "gui_indexed8",
+      "stability": "fixed_contract",
+      "description": "GuiIndexed8Resource v1 palette offset."
+    },
+    {
+      "name": "gui_indexed8_pixels_offset",
+      "value": "1088",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "bytes",
+      "scope": "gui_indexed8",
+      "stability": "fixed_contract",
+      "description": "GuiIndexed8Resource v1 pixel payload offset after its header and palette."
+    },
+    {
+      "name": "gui_indexed8_resource_size",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "bytes",
+      "scope": "gui_indexed8",
+      "stability": "fixed_contract",
+      "description": "GuiIndexed8Resource v1 fixed header size."
+    },
+    {
+      "name": "gui_indexed8_resource_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "gui_indexed8",
+      "stability": "fixed_contract",
+      "description": "Current GuiIndexed8Resource contract version."
     },
     {
       "name": "gui_frame_state_building",

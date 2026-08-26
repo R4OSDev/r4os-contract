@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 313; Funktionen: 305; reserviert/Tombstone: 8
-- Sichtbarkeit: public=215, advanced=90, internal=8
+- Physische Gruppenslots: 316; Funktionen: 308; reserviert/Tombstone: 8
+- Sichtbarkeit: public=218, advanced=90, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 16
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -249,6 +249,9 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DRAW | 33 | `display_present_regions` | function | public | R4DRAW | ja | `draw` | caller_buffer | call | nonblocking | owner_thread_only | none | valid_on_documented_error | atomic_on_success | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DRAW | 34 | `display_present_capabilities` | function | public | R4DRAW | ja | `draw` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DRAW | 35 | `display_present_completion` | function | public | R4DRAW | ja | `draw` | caller_buffer | call | nonblocking | owner_thread_only | none | valid_on_documented_error | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
+| R4DRAW | 36 | `gui_frame_begin_damage` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | owner_thread_only | none | none | atomic_on_success | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
+| R4DRAW | 37 | `gui_frame_generation_info` | function | public | R4DRAW | ja | `draw` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 38 | `gui_frame_generation_read` | function | public | R4DRAW | ja | `draw` | caller_buffer | call | nonblocking | thread_safe | none | valid_on_documented_error | none | idempotent | required_size_reported | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4NET | 0 | `tcp_connect` | function | public | R4NET | ja | `network` | returns_owned_handle | none | may_block | thread_safe | explicit_close_required | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
 | R4NET | 1 | `tcp_write` | function | public | R4NET | ja | `network` | borrowed | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4NET | 2 | `tcp_read` | function | public | R4NET | ja | `network` | caller_buffer | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |

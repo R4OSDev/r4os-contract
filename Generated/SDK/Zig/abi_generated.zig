@@ -187,6 +187,7 @@ pub const gui_frame_command_kind_path_stroke: u32 = 7;
 pub const gui_frame_command_kind_rounded_rect: u32 = 8;
 pub const gui_frame_command_kind_shadow: u32 = 9;
 pub const gui_frame_command_kind_argb32: u32 = 10;
+pub const gui_frame_command_kind_indexed8: u32 = 11;
 pub const gui_path_segment_kind_close: u32 = 5;
 pub const gui_path_segment_kind_cubic: u32 = 4;
 pub const gui_path_segment_kind_line: u32 = 2;
@@ -218,6 +219,18 @@ pub const gui_frame_flag_committed: u32 = 1;
 pub const gui_frame_flag_last_oom: u32 = 4;
 pub const gui_frame_info_size: u32 = 176;
 pub const gui_frame_info_version: u32 = 1;
+pub const gui_frame_generation_flag_delta: u32 = 2;
+pub const gui_frame_generation_flag_full: u32 = 1;
+pub const gui_frame_generation_flag_indexed8: u32 = 4;
+pub const gui_frame_generation_info_size: u32 = 144;
+pub const gui_frame_generation_info_version: u32 = 1;
+pub const gui_frame_max_damage_regions: u32 = 8;
+pub const gui_frame_max_delta_chain: u32 = 32;
+pub const gui_indexed8_palette_entries: u32 = 256;
+pub const gui_indexed8_palette_offset: u32 = 64;
+pub const gui_indexed8_pixels_offset: u32 = 1088;
+pub const gui_indexed8_resource_size: u32 = 64;
+pub const gui_indexed8_resource_version: u32 = 1;
 pub const gui_frame_state_building: u32 = 1;
 pub const gui_frame_state_idle: u32 = 0;
 pub const gui_font_builtin_id: u32 = 0;
@@ -3435,6 +3448,30 @@ pub const GuiShapeResource = extern struct {
     reserved2: u32 = 0,
 };
 
+pub const GuiFrameGenerationInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 144,
+    flags: u32 = 0,
+    damage_count: u32 = 0,
+    owner: ProgramProcessHandle = .{},
+    generation: u64 = 0,
+    base_generation: u64 = 0,
+    command_count: u64 = 0,
+    resource_bytes: u64 = 0,
+    total_command_count: u64 = 0,
+    total_resource_bytes: u64 = 0,
+    chain_depth: u32 = 0,
+    command_version: u32 = 1,
+    command_size: u32 = 96,
+    region_size: u32 = 16,
+    delta_commit_count: u64 = 0,
+    full_commit_count: u64 = 0,
+    indexed8_command_count: u64 = 0,
+    indexed8_resource_bytes: u64 = 0,
+    avoided_clone_bytes: u64 = 0,
+    generation_read_count: u64 = 0,
+};
+
 pub const GuiFrameInfo = extern struct {
     version: u32 = 1,
     size: u32 = 176,
@@ -3461,6 +3498,25 @@ pub const GuiFrameInfo = extern struct {
     reserved2: u64 = 0,
     reserved3: u64 = 0,
     reserved4: u64 = 0,
+};
+
+pub const GuiIndexed8Resource = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    source_x: u32 = 0,
+    source_y: u32 = 0,
+    source_w: u32 = 0,
+    source_h: u32 = 0,
+    guest_w: u32 = 0,
+    guest_h: u32 = 0,
+    viewport_x: i32 = 0,
+    viewport_y: i32 = 0,
+    viewport_w: u32 = 0,
+    viewport_h: u32 = 0,
+    palette_entries: u32 = 256,
+    palette_offset: u32 = 64,
+    pixels_offset: u32 = 1088,
+    pixel_stride: u32 = 0,
 };
 
 pub const GuiFontInfo = extern struct {
@@ -5413,12 +5469,15 @@ pub const R4DrawFns = struct {
     pub const display_present_regions = *const fn (*const DisplayPresentRequest, [*]const u32, u32, [*]const DisplayDamageRect, u32, *DisplayPresentResult) callconv(.c) i32;
     pub const display_present_capabilities = *const fn (*DisplayPresentCapabilities) callconv(.c) i32;
     pub const display_present_completion = *const fn (u64, *DisplayPresentCompletion) callconv(.c) i32;
+    pub const gui_frame_begin_damage = *const fn ([*]const DisplayDamageRect, u32) callconv(.c) i32;
+    pub const gui_frame_generation_info = *const fn (*const ProgramProcessHandle, u64, *GuiFrameGenerationInfo) callconv(.c) i32;
+    pub const gui_frame_generation_read = *const fn (*const ProgramProcessHandle, u64, ?[*]GuiFrameCommand, u64, ?[*]u8, u64, ?[*]DisplayDamageRect, u32, *GuiFrameGenerationInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 4,
-    size: u32 = 304,
+    abi_version: u32 = 5,
+    size: u32 = 328,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -5456,6 +5515,9 @@ pub const R4XStartR4Draw = extern struct {
     display_present_regions: usize = 0,
     display_present_capabilities: usize = 0,
     display_present_completion: usize = 0,
+    gui_frame_begin_damage: usize = 0,
+    gui_frame_generation_info: usize = 0,
+    gui_frame_generation_read: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -5904,6 +5966,9 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 33, .offset = 280, .name = "display_present_regions", .state = .function, .required = false },
     .{ .number = 34, .offset = 288, .name = "display_present_capabilities", .state = .function, .required = false },
     .{ .number = 35, .offset = 296, .name = "display_present_completion", .state = .function, .required = false },
+    .{ .number = 36, .offset = 304, .name = "gui_frame_begin_damage", .state = .function, .required = false },
+    .{ .number = 37, .offset = 312, .name = "gui_frame_generation_info", .state = .function, .required = false },
+    .{ .number = 38, .offset = 320, .name = "gui_frame_generation_read", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -7696,6 +7761,29 @@ comptime {
     if (@offsetOf(GuiShapeResource, "reserved0") != 148) @compileError("generated ABI offset drift: GuiShapeResource.reserved0");
     if (@offsetOf(GuiShapeResource, "reserved1") != 152) @compileError("generated ABI offset drift: GuiShapeResource.reserved1");
     if (@offsetOf(GuiShapeResource, "reserved2") != 156) @compileError("generated ABI offset drift: GuiShapeResource.reserved2");
+    if (@sizeOf(GuiFrameGenerationInfo) != 144) @compileError("generated ABI size drift: GuiFrameGenerationInfo");
+    if (@alignOf(GuiFrameGenerationInfo) != 8) @compileError("generated ABI alignment drift: GuiFrameGenerationInfo");
+    if (@offsetOf(GuiFrameGenerationInfo, "version") != 0) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.version");
+    if (@offsetOf(GuiFrameGenerationInfo, "size") != 4) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.size");
+    if (@offsetOf(GuiFrameGenerationInfo, "flags") != 8) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.flags");
+    if (@offsetOf(GuiFrameGenerationInfo, "damage_count") != 12) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.damage_count");
+    if (@offsetOf(GuiFrameGenerationInfo, "owner") != 16) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.owner");
+    if (@offsetOf(GuiFrameGenerationInfo, "generation") != 32) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.generation");
+    if (@offsetOf(GuiFrameGenerationInfo, "base_generation") != 40) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.base_generation");
+    if (@offsetOf(GuiFrameGenerationInfo, "command_count") != 48) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.command_count");
+    if (@offsetOf(GuiFrameGenerationInfo, "resource_bytes") != 56) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.resource_bytes");
+    if (@offsetOf(GuiFrameGenerationInfo, "total_command_count") != 64) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.total_command_count");
+    if (@offsetOf(GuiFrameGenerationInfo, "total_resource_bytes") != 72) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.total_resource_bytes");
+    if (@offsetOf(GuiFrameGenerationInfo, "chain_depth") != 80) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.chain_depth");
+    if (@offsetOf(GuiFrameGenerationInfo, "command_version") != 84) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.command_version");
+    if (@offsetOf(GuiFrameGenerationInfo, "command_size") != 88) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.command_size");
+    if (@offsetOf(GuiFrameGenerationInfo, "region_size") != 92) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.region_size");
+    if (@offsetOf(GuiFrameGenerationInfo, "delta_commit_count") != 96) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.delta_commit_count");
+    if (@offsetOf(GuiFrameGenerationInfo, "full_commit_count") != 104) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.full_commit_count");
+    if (@offsetOf(GuiFrameGenerationInfo, "indexed8_command_count") != 112) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.indexed8_command_count");
+    if (@offsetOf(GuiFrameGenerationInfo, "indexed8_resource_bytes") != 120) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.indexed8_resource_bytes");
+    if (@offsetOf(GuiFrameGenerationInfo, "avoided_clone_bytes") != 128) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.avoided_clone_bytes");
+    if (@offsetOf(GuiFrameGenerationInfo, "generation_read_count") != 136) @compileError("generated ABI offset drift: GuiFrameGenerationInfo.generation_read_count");
     if (@sizeOf(GuiFrameInfo) != 176) @compileError("generated ABI size drift: GuiFrameInfo");
     if (@alignOf(GuiFrameInfo) != 8) @compileError("generated ABI alignment drift: GuiFrameInfo");
     if (@offsetOf(GuiFrameInfo, "version") != 0) @compileError("generated ABI offset drift: GuiFrameInfo.version");
@@ -7723,6 +7811,24 @@ comptime {
     if (@offsetOf(GuiFrameInfo, "reserved2") != 152) @compileError("generated ABI offset drift: GuiFrameInfo.reserved2");
     if (@offsetOf(GuiFrameInfo, "reserved3") != 160) @compileError("generated ABI offset drift: GuiFrameInfo.reserved3");
     if (@offsetOf(GuiFrameInfo, "reserved4") != 168) @compileError("generated ABI offset drift: GuiFrameInfo.reserved4");
+    if (@sizeOf(GuiIndexed8Resource) != 64) @compileError("generated ABI size drift: GuiIndexed8Resource");
+    if (@alignOf(GuiIndexed8Resource) != 4) @compileError("generated ABI alignment drift: GuiIndexed8Resource");
+    if (@offsetOf(GuiIndexed8Resource, "version") != 0) @compileError("generated ABI offset drift: GuiIndexed8Resource.version");
+    if (@offsetOf(GuiIndexed8Resource, "size") != 4) @compileError("generated ABI offset drift: GuiIndexed8Resource.size");
+    if (@offsetOf(GuiIndexed8Resource, "source_x") != 8) @compileError("generated ABI offset drift: GuiIndexed8Resource.source_x");
+    if (@offsetOf(GuiIndexed8Resource, "source_y") != 12) @compileError("generated ABI offset drift: GuiIndexed8Resource.source_y");
+    if (@offsetOf(GuiIndexed8Resource, "source_w") != 16) @compileError("generated ABI offset drift: GuiIndexed8Resource.source_w");
+    if (@offsetOf(GuiIndexed8Resource, "source_h") != 20) @compileError("generated ABI offset drift: GuiIndexed8Resource.source_h");
+    if (@offsetOf(GuiIndexed8Resource, "guest_w") != 24) @compileError("generated ABI offset drift: GuiIndexed8Resource.guest_w");
+    if (@offsetOf(GuiIndexed8Resource, "guest_h") != 28) @compileError("generated ABI offset drift: GuiIndexed8Resource.guest_h");
+    if (@offsetOf(GuiIndexed8Resource, "viewport_x") != 32) @compileError("generated ABI offset drift: GuiIndexed8Resource.viewport_x");
+    if (@offsetOf(GuiIndexed8Resource, "viewport_y") != 36) @compileError("generated ABI offset drift: GuiIndexed8Resource.viewport_y");
+    if (@offsetOf(GuiIndexed8Resource, "viewport_w") != 40) @compileError("generated ABI offset drift: GuiIndexed8Resource.viewport_w");
+    if (@offsetOf(GuiIndexed8Resource, "viewport_h") != 44) @compileError("generated ABI offset drift: GuiIndexed8Resource.viewport_h");
+    if (@offsetOf(GuiIndexed8Resource, "palette_entries") != 48) @compileError("generated ABI offset drift: GuiIndexed8Resource.palette_entries");
+    if (@offsetOf(GuiIndexed8Resource, "palette_offset") != 52) @compileError("generated ABI offset drift: GuiIndexed8Resource.palette_offset");
+    if (@offsetOf(GuiIndexed8Resource, "pixels_offset") != 56) @compileError("generated ABI offset drift: GuiIndexed8Resource.pixels_offset");
+    if (@offsetOf(GuiIndexed8Resource, "pixel_stride") != 60) @compileError("generated ABI offset drift: GuiIndexed8Resource.pixel_stride");
     if (@sizeOf(GuiFontInfo) != 316) @compileError("generated ABI size drift: GuiFontInfo");
     if (@alignOf(GuiFontInfo) != 4) @compileError("generated ABI alignment drift: GuiFontInfo");
     if (@offsetOf(GuiFontInfo, "id") != 0) @compileError("generated ABI offset drift: GuiFontInfo.id");
@@ -9356,7 +9462,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_release") != 448) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_release");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_consumers") != 456) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_consumers");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
-    if (@sizeOf(R4XStartR4Draw) != 304) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 328) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -9393,6 +9499,9 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "display_present_regions") != 280) @compileError("generated ABI offset drift: R4XStartR4Draw.display_present_regions");
     if (@offsetOf(R4XStartR4Draw, "display_present_capabilities") != 288) @compileError("generated ABI offset drift: R4XStartR4Draw.display_present_capabilities");
     if (@offsetOf(R4XStartR4Draw, "display_present_completion") != 296) @compileError("generated ABI offset drift: R4XStartR4Draw.display_present_completion");
+    if (@offsetOf(R4XStartR4Draw, "gui_frame_begin_damage") != 304) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_begin_damage");
+    if (@offsetOf(R4XStartR4Draw, "gui_frame_generation_info") != 312) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_generation_info");
+    if (@offsetOf(R4XStartR4Draw, "gui_frame_generation_read") != 320) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_generation_read");
     if (@sizeOf(R4XStartR4Net) != 288) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");

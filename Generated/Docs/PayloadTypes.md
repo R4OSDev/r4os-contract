@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 127 von 127 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 129 von 129 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1266; Limits: 102
+- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1279; Limits: 102
 
 ## App-Profile
 
@@ -61,7 +61,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GuiFrameCommand` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `GuiPathSegment` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
 | `GuiShapeResource` | fixed_layout | extern_struct | 160/4 | 160/4 | 160/4 | 160/4 |
+| `GuiFrameGenerationInfo` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 | `GuiFrameInfo` | extensible | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
+| `GuiIndexed8Resource` | fixed_layout | extern_struct | 64/4 | 64/4 | 64/4 | 64/4 |
 | `GuiFontInfo` | fixed_layout | extern_struct | 316/4 | 316/4 | 316/4 | 316/4 |
 | `GuiTextMetrics` | fixed_layout | extern_struct | 24/4 | 24/4 | 24/4 | 24/4 |
 | `ClipboardInfo` | fixed_layout | extern_struct | 16/4 | 16/4 | 16/4 | 16/4 |
@@ -2116,6 +2118,37 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved1` | 152 | 4 | 4 | `u32` | - |
 | `reserved2` | 156 | 4 | 4 | `u32` | - |
 
+### `GuiFrameGenerationInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 144 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `damage_count` | 12 | 4 | 4 | `u32` | - |
+| `owner` | 16 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `generation` | 32 | 8 | 8 | `u64` | - |
+| `base_generation` | 40 | 8 | 8 | `u64` | - |
+| `command_count` | 48 | 8 | 8 | `u64` | - |
+| `resource_bytes` | 56 | 8 | 8 | `u64` | - |
+| `total_command_count` | 64 | 8 | 8 | `u64` | - |
+| `total_resource_bytes` | 72 | 8 | 8 | `u64` | - |
+| `chain_depth` | 80 | 4 | 4 | `u32` | - |
+| `command_version` | 84 | 4 | 4 | `u32` | - |
+| `command_size` | 88 | 4 | 4 | `u32` | - |
+| `region_size` | 92 | 4 | 4 | `u32` | - |
+| `delta_commit_count` | 96 | 8 | 8 | `u64` | - |
+| `full_commit_count` | 104 | 8 | 8 | `u64` | - |
+| `indexed8_command_count` | 112 | 8 | 8 | `u64` | - |
+| `indexed8_resource_bytes` | 120 | 8 | 8 | `u64` | - |
+| `avoided_clone_bytes` | 128 | 8 | 8 | `u64` | - |
+| `generation_read_count` | 136 | 8 | 8 | `u64` | - |
+
 ### `GuiFrameInfo`
 
 - Quelle: `API/ApiContract.json`
@@ -2150,6 +2183,32 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved2` | 152 | 8 | 8 | `u64` | - |
 | `reserved3` | 160 | 8 | 8 | `u64` | - |
 | `reserved4` | 168 | 8 | 8 | `u64` | - |
+
+### `GuiIndexed8Resource`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `source_x` | 8 | 4 | 4 | `u32` | - |
+| `source_y` | 12 | 4 | 4 | `u32` | - |
+| `source_w` | 16 | 4 | 4 | `u32` | - |
+| `source_h` | 20 | 4 | 4 | `u32` | - |
+| `guest_w` | 24 | 4 | 4 | `u32` | - |
+| `guest_h` | 28 | 4 | 4 | `u32` | - |
+| `viewport_x` | 32 | 4 | 4 | `i32` | - |
+| `viewport_y` | 36 | 4 | 4 | `i32` | - |
+| `viewport_w` | 40 | 4 | 4 | `u32` | - |
+| `viewport_h` | 44 | 4 | 4 | `u32` | - |
+| `palette_entries` | 48 | 4 | 4 | `u32` | - |
+| `palette_offset` | 52 | 4 | 4 | `u32` | - |
+| `pixels_offset` | 56 | 4 | 4 | `u32` | - |
+| `pixel_stride` | 60 | 4 | 4 | `u32` | - |
 
 ### `GuiFontInfo`
 
@@ -5180,6 +5239,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `gui_frame_command_kind_rounded_rect` | `8` | `u32` | value | number | `gui_frame` | fixed_contract |
 | `gui_frame_command_kind_shadow` | `9` | `u32` | value | number | `gui_frame` | fixed_contract |
 | `gui_frame_command_kind_argb32` | `10` | `u32` | value | number | `gui_frame` | fixed_contract |
+| `gui_frame_command_kind_indexed8` | `11` | `u32` | value | number | `gui_frame` | fixed_contract |
 | `gui_path_segment_kind_close` | `5` | `u32` | value | number | `gui_path` | fixed_contract |
 | `gui_path_segment_kind_cubic` | `4` | `u32` | value | number | `gui_path` | fixed_contract |
 | `gui_path_segment_kind_line` | `2` | `u32` | value | number | `gui_path` | fixed_contract |
@@ -5211,6 +5271,18 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `gui_frame_flag_last_oom` | `4` | `u32` | flag | bitmask | `gui_frame` | fixed_contract |
 | `gui_frame_info_size` | `176` | `u32` | value | bytes | `gui_frame` | fixed_contract |
 | `gui_frame_info_version` | `1` | `u32` | version | number | `gui_frame` | fixed_contract |
+| `gui_frame_generation_flag_delta` | `2` | `u32` | flag | bitmask | `gui_frame` | fixed_contract |
+| `gui_frame_generation_flag_full` | `1` | `u32` | flag | bitmask | `gui_frame` | fixed_contract |
+| `gui_frame_generation_flag_indexed8` | `4` | `u32` | flag | bitmask | `gui_frame` | fixed_contract |
+| `gui_frame_generation_info_size` | `144` | `u32` | value | bytes | `gui_frame` | fixed_contract |
+| `gui_frame_generation_info_version` | `1` | `u32` | version | number | `gui_frame` | fixed_contract |
+| `gui_frame_max_damage_regions` | `8` | `u32` | value | records | `gui_frame` | fixed_contract |
+| `gui_frame_max_delta_chain` | `32` | `u32` | value | generations | `gui_frame` | fixed_contract |
+| `gui_indexed8_palette_entries` | `256` | `u32` | value | entries | `gui_indexed8` | fixed_contract |
+| `gui_indexed8_palette_offset` | `64` | `u32` | value | bytes | `gui_indexed8` | fixed_contract |
+| `gui_indexed8_pixels_offset` | `1088` | `u32` | value | bytes | `gui_indexed8` | fixed_contract |
+| `gui_indexed8_resource_size` | `64` | `u32` | value | bytes | `gui_indexed8` | fixed_contract |
+| `gui_indexed8_resource_version` | `1` | `u32` | version | number | `gui_indexed8` | fixed_contract |
 | `gui_frame_state_building` | `1` | `u32` | value | number | `gui_frame` | fixed_contract |
 | `gui_frame_state_idle` | `0` | `u32` | value | number | `gui_frame` | fixed_contract |
 | `gui_font_builtin_id` | `0` | `u32` | value | number | `gui_font` | fixed_contract |

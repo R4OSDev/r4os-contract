@@ -215,6 +215,9 @@ static R4DrawDisplayBlitXrgb32StrideFn r4os_probe_r4draw_display_blit_xrgb32_str
 static R4DrawDisplayPresentRegionsFn r4os_probe_r4draw_display_present_regions = (R4DrawDisplayPresentRegionsFn)0;
 static R4DrawDisplayPresentCapabilitiesFn r4os_probe_r4draw_display_present_capabilities = (R4DrawDisplayPresentCapabilitiesFn)0;
 static R4DrawDisplayPresentCompletionFn r4os_probe_r4draw_display_present_completion = (R4DrawDisplayPresentCompletionFn)0;
+static R4DrawGuiFrameBeginDamageFn r4os_probe_r4draw_gui_frame_begin_damage = (R4DrawGuiFrameBeginDamageFn)0;
+static R4DrawGuiFrameGenerationInfoFn r4os_probe_r4draw_gui_frame_generation_info = (R4DrawGuiFrameGenerationInfoFn)0;
+static R4DrawGuiFrameGenerationReadFn r4os_probe_r4draw_gui_frame_generation_read = (R4DrawGuiFrameGenerationReadFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

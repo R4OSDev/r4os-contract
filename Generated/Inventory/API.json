@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 305,
-    "group_slot_count": 305,
+    "function_count": 308,
+    "group_slot_count": 308,
     "sdk_only_count": 0,
-    "public_count": 215,
+    "public_count": 218,
     "advanced_count": 90
   },
   "functions": [
@@ -2549,6 +2549,42 @@
       "slot": 35,
       "exposure": "public",
       "description": "Polls completion of a canonical present fence. The current bootframebuffer and external blit backends complete synchronously.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_frame_begin_damage",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 36,
+      "exposure": "public",
+      "description": "Begins a private transactional GUI delta frame for the current GUI program. The bounded client-local regions are copied during the call and describe every pixel that the appended commands may change. A successful commit retains the previous immutable generation as its base without cloning it.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_frame_generation_info",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 37,
+      "exposure": "public",
+      "description": "Returns exact local counts, base generation, damage regions and telemetry for one immutable generation in the current committed chain. The generation must be nonzero and the process handle is mandatory.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_frame_generation_read",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 38,
+      "exposure": "public",
+      "description": "Copies only the commands, resources and exact client-local damage regions owned by one immutable generation. Resource offsets remain local to the returned blob. On stale, buffer-too-small or invalid input no payload buffer is modified and out_info reports the generation requirements when available.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
