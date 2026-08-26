@@ -179,6 +179,7 @@ static R4DeskRemoteFrameAcquireFn r4os_probe_r4desk_remote_frame_acquire = (R4De
 static R4DeskRemoteFrameReleaseFn r4os_probe_r4desk_remote_frame_release = (R4DeskRemoteFrameReleaseFn)0;
 static R4DeskRemoteFrameConsumersFn r4os_probe_r4desk_remote_frame_consumers = (R4DeskRemoteFrameConsumersFn)0;
 static R4DeskRemoteFramePublishRegionsFn r4os_probe_r4desk_remote_frame_publish_regions = (R4DeskRemoteFramePublishRegionsFn)0;
+static R4DeskConsoleInputWaitFn r4os_probe_r4desk_console_input_wait = (R4DeskConsoleInputWaitFn)0;
 static R4DrawScreenWidthFn r4os_probe_r4draw_screen_width = (R4DrawScreenWidthFn)0;
 static R4DrawScreenHeightFn r4os_probe_r4draw_screen_height = (R4DrawScreenHeightFn)0;
 static R4DrawClearFn r4os_probe_r4draw_clear = (R4DrawClearFn)0;

@@ -1418,6 +1418,12 @@ extern "C" {
 #define R4OS_CLIPBOARD_ERROR_INVALID ((int32_t)-1)
 #define R4OS_CLIPBOARD_ERROR_TOO_LARGE ((int32_t)-2)
 #define R4OS_CLIPBOARD_ERROR_UNSUPPORTED ((int32_t)-4)
+#define R4OS_CONSOLE_INPUT_WAIT_READY ((int32_t)1)
+#define R4OS_CONSOLE_INPUT_WAIT_TIMEOUT ((int32_t)0)
+#define R4OS_CONSOLE_INPUT_WAIT_ERROR_INVALID ((int32_t)-1)
+#define R4OS_CONSOLE_INPUT_WAIT_ERROR_CLOSED ((int32_t)-2)
+#define R4OS_CONSOLE_INPUT_WAIT_ERROR_FAILED ((int32_t)-3)
+#define R4OS_CONSOLE_INPUT_WAIT_ERROR_UNSUPPORTED ((int32_t)-4)
 #define R4OS_DHCP_RESULT_BUFFER_SMALL ((int32_t)-3)
 #define R4OS_DHCP_RESULT_IGNORED ((int32_t)1)
 #define R4OS_DHCP_RESULT_NO_TYPE ((int32_t)-2)
@@ -5119,6 +5125,26 @@ typedef struct R4ProgramInputPerformanceInfo {
     uint64_t program_launch_attempts;
     uint64_t program_entries_started;
     uint64_t program_attach_wait_events;
+    uint64_t console_read_calls;
+    uint64_t console_read_empty;
+    uint64_t console_read_bytes;
+    uint64_t console_wait_calls;
+    uint64_t console_wait_blocks;
+    uint64_t console_wait_immediate;
+    uint64_t console_wait_wakes;
+    uint64_t console_wait_timeouts;
+    uint64_t console_wait_cancellations;
+    uint64_t console_output_write_calls;
+    uint64_t console_output_source_bytes;
+    uint64_t console_output_visible_append_bytes;
+    uint64_t console_output_capture_append_bytes;
+    uint64_t console_output_shared_bytes;
+    uint64_t console_output_revision_batches;
+    uint64_t console_output_desktop_signals;
+    uint64_t console_output_compactions;
+    uint64_t console_output_compaction_bytes;
+    uint64_t console_output_segment_drops;
+    uint64_t console_output_segment_drop_bytes;
 } R4ProgramInputPerformanceInfo;
 
 typedef struct R4ServiceDeadlineFooter {
@@ -5485,6 +5511,7 @@ typedef int32_t (*R4DeskRemoteFrameAcquireFn)(void);
 typedef int32_t (*R4DeskRemoteFrameReleaseFn)(void);
 typedef uint32_t (*R4DeskRemoteFrameConsumersFn)(void);
 typedef int32_t (*R4DeskRemoteFramePublishRegionsFn)(const R4RemoteFrameInfo * info, const uint32_t * pixels, uint32_t pixel_count, const R4DisplayDamageRect * regions, uint32_t region_count);
+typedef int32_t (*R4DeskConsoleInputWaitFn)(uint64_t last_generation, uint64_t timeout_ticks, uint64_t * out_generation);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -5548,6 +5575,7 @@ typedef struct R4XStartR4Desk {
     uintptr_t remote_frame_release;
     uintptr_t remote_frame_consumers;
     uintptr_t remote_frame_publish_regions;
+    uintptr_t console_input_wait;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -8880,7 +8908,7 @@ _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, enumeration_total_
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, ecam_enumeration_ns) == 256u, "ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, legacy_enumeration_ns) == 264u, "ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns offset mismatch");
 _Static_assert(offsetof(R4ProgramPciInventoryPerformanceInfo, timing_unavailable) == 272u, "ProgramPciInventoryPerformanceInfo.timing_unavailable offset mismatch");
-_Static_assert(sizeof(R4ProgramInputPerformanceInfo) == 248u, "ProgramInputPerformanceInfo size mismatch");
+_Static_assert(sizeof(R4ProgramInputPerformanceInfo) == 408u, "ProgramInputPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, version) == 0u, "ProgramInputPerformanceInfo.version offset mismatch");
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, size) == 4u, "ProgramInputPerformanceInfo.size offset mismatch");
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, keyboard_queue_capacity) == 8u, "ProgramInputPerformanceInfo.keyboard_queue_capacity offset mismatch");
@@ -8919,6 +8947,26 @@ _Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_full_events) == 2
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_launch_attempts) == 224u, "ProgramInputPerformanceInfo.program_launch_attempts offset mismatch");
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_entries_started) == 232u, "ProgramInputPerformanceInfo.program_entries_started offset mismatch");
 _Static_assert(offsetof(R4ProgramInputPerformanceInfo, program_attach_wait_events) == 240u, "ProgramInputPerformanceInfo.program_attach_wait_events offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_read_calls) == 248u, "ProgramInputPerformanceInfo.console_read_calls offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_read_empty) == 256u, "ProgramInputPerformanceInfo.console_read_empty offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_read_bytes) == 264u, "ProgramInputPerformanceInfo.console_read_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_wait_calls) == 272u, "ProgramInputPerformanceInfo.console_wait_calls offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_wait_blocks) == 280u, "ProgramInputPerformanceInfo.console_wait_blocks offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_wait_immediate) == 288u, "ProgramInputPerformanceInfo.console_wait_immediate offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_wait_wakes) == 296u, "ProgramInputPerformanceInfo.console_wait_wakes offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_wait_timeouts) == 304u, "ProgramInputPerformanceInfo.console_wait_timeouts offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_wait_cancellations) == 312u, "ProgramInputPerformanceInfo.console_wait_cancellations offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_write_calls) == 320u, "ProgramInputPerformanceInfo.console_output_write_calls offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_source_bytes) == 328u, "ProgramInputPerformanceInfo.console_output_source_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_visible_append_bytes) == 336u, "ProgramInputPerformanceInfo.console_output_visible_append_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_capture_append_bytes) == 344u, "ProgramInputPerformanceInfo.console_output_capture_append_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_shared_bytes) == 352u, "ProgramInputPerformanceInfo.console_output_shared_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_revision_batches) == 360u, "ProgramInputPerformanceInfo.console_output_revision_batches offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_desktop_signals) == 368u, "ProgramInputPerformanceInfo.console_output_desktop_signals offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_compactions) == 376u, "ProgramInputPerformanceInfo.console_output_compactions offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_compaction_bytes) == 384u, "ProgramInputPerformanceInfo.console_output_compaction_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_segment_drops) == 392u, "ProgramInputPerformanceInfo.console_output_segment_drops offset mismatch");
+_Static_assert(offsetof(R4ProgramInputPerformanceInfo, console_output_segment_drop_bytes) == 400u, "ProgramInputPerformanceInfo.console_output_segment_drop_bytes offset mismatch");
 _Static_assert(sizeof(R4ServiceDeadlineFooter) == 24u, "ServiceDeadlineFooter size mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, magic) == 0u, "ServiceDeadlineFooter.magic offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, version) == 4u, "ServiceDeadlineFooter.version offset mismatch");
@@ -9170,7 +9218,7 @@ _Static_assert(offsetof(R4XStartR4Sys, registry_snapshot_page) == 984u, "R4XStar
 _Static_assert(sizeof(R4SysRegistrySnapshotPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, registry_batch_mutate) == 992u, "R4XStartR4Sys.registry_batch_mutate offset mismatch");
 _Static_assert(sizeof(R4SysRegistryBatchMutateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 472u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 480u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -9284,6 +9332,8 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_consumers) == 456u, "R4XSta
 _Static_assert(sizeof(R4DeskRemoteFrameConsumersFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, remote_frame_publish_regions) == 464u, "R4XStartR4Desk.remote_frame_publish_regions offset mismatch");
 _Static_assert(sizeof(R4DeskRemoteFramePublishRegionsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, console_input_wait) == 472u, "R4XStartR4Desk.console_input_wait offset mismatch");
+_Static_assert(sizeof(R4DeskConsoleInputWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 328u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

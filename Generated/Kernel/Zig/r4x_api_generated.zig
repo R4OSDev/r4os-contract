@@ -1406,6 +1406,12 @@ pub const clipboard_error_buffer_too_small: i32 = -3;
 pub const clipboard_error_invalid: i32 = -1;
 pub const clipboard_error_too_large: i32 = -2;
 pub const clipboard_error_unsupported: i32 = -4;
+pub const console_input_wait_ready: i32 = 1;
+pub const console_input_wait_timeout: i32 = 0;
+pub const console_input_wait_error_invalid: i32 = -1;
+pub const console_input_wait_error_closed: i32 = -2;
+pub const console_input_wait_error_failed: i32 = -3;
+pub const console_input_wait_error_unsupported: i32 = -4;
 pub const dhcp_result_buffer_small: i32 = -3;
 pub const dhcp_result_ignored: i32 = 1;
 pub const dhcp_result_no_type: i32 = -2;
@@ -5007,8 +5013,8 @@ pub const ProgramPciInventoryPerformanceInfo = extern struct {
 };
 
 pub const ProgramInputPerformanceInfo = extern struct {
-    version: u32 = 1,
-    size: u32 = 248,
+    version: u32 = 2,
+    size: u32 = 408,
     keyboard_queue_capacity: u32 = 0,
     keyboard_queue_pending: u32 = 0,
     keyboard_queue_high_water: u32 = 0,
@@ -5045,6 +5051,26 @@ pub const ProgramInputPerformanceInfo = extern struct {
     program_launch_attempts: u64 = 0,
     program_entries_started: u64 = 0,
     program_attach_wait_events: u64 = 0,
+    console_read_calls: u64 = 0,
+    console_read_empty: u64 = 0,
+    console_read_bytes: u64 = 0,
+    console_wait_calls: u64 = 0,
+    console_wait_blocks: u64 = 0,
+    console_wait_immediate: u64 = 0,
+    console_wait_wakes: u64 = 0,
+    console_wait_timeouts: u64 = 0,
+    console_wait_cancellations: u64 = 0,
+    console_output_write_calls: u64 = 0,
+    console_output_source_bytes: u64 = 0,
+    console_output_visible_append_bytes: u64 = 0,
+    console_output_capture_append_bytes: u64 = 0,
+    console_output_shared_bytes: u64 = 0,
+    console_output_revision_batches: u64 = 0,
+    console_output_desktop_signals: u64 = 0,
+    console_output_compactions: u64 = 0,
+    console_output_compaction_bytes: u64 = 0,
+    console_output_segment_drops: u64 = 0,
+    console_output_segment_drop_bytes: u64 = 0,
 };
 
 pub const ServiceDeadlineFooter = extern struct {
@@ -5366,12 +5392,13 @@ pub const R4DeskFns = struct {
     pub const remote_frame_release = *const fn () callconv(.c) i32;
     pub const remote_frame_consumers = *const fn () callconv(.c) u32;
     pub const remote_frame_publish_regions = *const fn (*const RemoteFrameInfo, [*]const u32, u32, [*]const DisplayDamageRect, u32) callconv(.c) i32;
+    pub const console_input_wait = *const fn (u64, u64, *u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 10,
-    size: u32 = 472,
+    abi_version: u32 = 11,
+    size: u32 = 480,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -5430,6 +5457,7 @@ pub const R4XStartR4Desk = extern struct {
     remote_frame_release: usize = 0,
     remote_frame_consumers: usize = 0,
     remote_frame_publish_regions: usize = 0,
+    console_input_wait: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -5927,6 +5955,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 54, .offset = 448, .name = "remote_frame_release", .state = .function, .required = false },
     .{ .number = 55, .offset = 456, .name = "remote_frame_consumers", .state = .function, .required = false },
     .{ .number = 56, .offset = 464, .name = "remote_frame_publish_regions", .state = .function, .required = false },
+    .{ .number = 57, .offset = 472, .name = "console_input_wait", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -9232,7 +9261,7 @@ comptime {
     if (@offsetOf(ProgramPciInventoryPerformanceInfo, "ecam_enumeration_ns") != 256) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.ecam_enumeration_ns");
     if (@offsetOf(ProgramPciInventoryPerformanceInfo, "legacy_enumeration_ns") != 264) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.legacy_enumeration_ns");
     if (@offsetOf(ProgramPciInventoryPerformanceInfo, "timing_unavailable") != 272) @compileError("generated ABI offset drift: ProgramPciInventoryPerformanceInfo.timing_unavailable");
-    if (@sizeOf(ProgramInputPerformanceInfo) != 248) @compileError("generated ABI size drift: ProgramInputPerformanceInfo");
+    if (@sizeOf(ProgramInputPerformanceInfo) != 408) @compileError("generated ABI size drift: ProgramInputPerformanceInfo");
     if (@alignOf(ProgramInputPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramInputPerformanceInfo");
     if (@offsetOf(ProgramInputPerformanceInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.version");
     if (@offsetOf(ProgramInputPerformanceInfo, "size") != 4) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.size");
@@ -9272,6 +9301,26 @@ comptime {
     if (@offsetOf(ProgramInputPerformanceInfo, "program_launch_attempts") != 224) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_launch_attempts");
     if (@offsetOf(ProgramInputPerformanceInfo, "program_entries_started") != 232) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_entries_started");
     if (@offsetOf(ProgramInputPerformanceInfo, "program_attach_wait_events") != 240) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.program_attach_wait_events");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_read_calls") != 248) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_read_calls");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_read_empty") != 256) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_read_empty");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_read_bytes") != 264) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_read_bytes");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_wait_calls") != 272) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_wait_calls");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_wait_blocks") != 280) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_wait_blocks");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_wait_immediate") != 288) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_wait_immediate");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_wait_wakes") != 296) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_wait_wakes");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_wait_timeouts") != 304) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_wait_timeouts");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_wait_cancellations") != 312) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_wait_cancellations");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_write_calls") != 320) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_write_calls");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_source_bytes") != 328) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_source_bytes");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_visible_append_bytes") != 336) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_visible_append_bytes");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_capture_append_bytes") != 344) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_capture_append_bytes");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_shared_bytes") != 352) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_shared_bytes");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_revision_batches") != 360) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_revision_batches");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_desktop_signals") != 368) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_desktop_signals");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_compactions") != 376) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_compactions");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_compaction_bytes") != 384) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_compaction_bytes");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_segment_drops") != 392) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_segment_drops");
+    if (@offsetOf(ProgramInputPerformanceInfo, "console_output_segment_drop_bytes") != 400) @compileError("generated ABI offset drift: ProgramInputPerformanceInfo.console_output_segment_drop_bytes");
     if (@sizeOf(ServiceDeadlineFooter) != 24) @compileError("generated ABI size drift: ServiceDeadlineFooter");
     if (@alignOf(ServiceDeadlineFooter) != 8) @compileError("generated ABI alignment drift: ServiceDeadlineFooter");
     if (@offsetOf(ServiceDeadlineFooter, "magic") != 0) @compileError("generated ABI offset drift: ServiceDeadlineFooter.magic");
@@ -9404,7 +9453,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_begin") != 976) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_begin");
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_page") != 984) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_page");
     if (@offsetOf(R4XStartR4Sys, "registry_batch_mutate") != 992) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_batch_mutate");
-    if (@sizeOf(R4XStartR4Desk) != 472) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 480) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -9462,6 +9511,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_release") != 448) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_release");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_consumers") != 456) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_consumers");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
+    if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@sizeOf(R4XStartR4Draw) != 328) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
@@ -9917,13 +9967,14 @@ pub const R4DeskProvider = struct {
     remote_frame_release: R4DeskFns.remote_frame_release,
     remote_frame_consumers: R4DeskFns.remote_frame_consumers,
     remote_frame_publish_regions: R4DeskFns.remote_frame_publish_regions,
+    console_input_wait: R4DeskFns.console_input_wait,
 };
 
 pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
     return .{
         .magic = 826623058,
-        .abi_version = 10,
-        .size = 472,
+        .abi_version = 11,
+        .size = 480,
         .flags = 0,
         .read_key = @intFromPtr(provider.read_key),
         .mouse_state = @intFromPtr(provider.mouse_state),
@@ -9982,6 +10033,7 @@ pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
         .remote_frame_release = @intFromPtr(provider.remote_frame_release),
         .remote_frame_consumers = @intFromPtr(provider.remote_frame_consumers),
         .remote_frame_publish_regions = @intFromPtr(provider.remote_frame_publish_regions),
+        .console_input_wait = @intFromPtr(provider.console_input_wait),
     };
 }
 

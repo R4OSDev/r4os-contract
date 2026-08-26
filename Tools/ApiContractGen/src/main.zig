@@ -392,8 +392,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47
     // appends explicit remote-frame consumer lifetime at slots 53..55;
-    // 0.69.48 adds one-generation multi-region publication at slot 56.
-    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 56, .reserved = 1, .tombstones = 0 },
+    // 0.69.48 adds one-generation multi-region publication at slot 56;
+    // 0.69.67 appends the generation-bound console-input wait at slot 57.
+    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 57, .reserved = 1, .tombstones = 0 },
     // 0.62.3 used the first public R4DRAW extension slot for font_reload;
     // 0.62.4 added the transient glyph-row query, 0.62.41 appends the
     // font-neutral hosted Alpha8 coverage-mask transport, and 0.62.43 adds

@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 129 von 129 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 61; Konstanten: 1279; Limits: 102
+- Operationen: 0; Fehlerdomänen: 62; Konstanten: 1279; Limits: 102
 
 ## App-Profile
 
@@ -148,7 +148,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramDriverWorkPerformanceMetrics` | fixed_layout | extern_struct | 640/8 | 640/8 | 640/8 | 640/8 |
 | `ProgramDriverWorkPerformanceInfo` | extensible | extern_struct | 928/8 | 928/8 | 928/8 | 928/8 |
 | `ProgramPciInventoryPerformanceInfo` | extensible | extern_struct | 280/8 | 280/8 | 280/8 | 280/8 |
-| `ProgramInputPerformanceInfo` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
+| `ProgramInputPerformanceInfo` | extensible | extern_struct | 408/8 | 408/8 | 408/8 | 408/8 |
 | `ServiceDeadlineFooter` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 
 ## Typdetails
@@ -4290,7 +4290,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 248 / 8
+- Version/Größe/Alignment: 2 / 408 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -4332,6 +4332,26 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `program_launch_attempts` | 224 | 8 | 8 | `u64` | - |
 | `program_entries_started` | 232 | 8 | 8 | `u64` | - |
 | `program_attach_wait_events` | 240 | 8 | 8 | `u64` | - |
+| `console_read_calls` | 248 | 8 | 8 | `u64` | - |
+| `console_read_empty` | 256 | 8 | 8 | `u64` | - |
+| `console_read_bytes` | 264 | 8 | 8 | `u64` | - |
+| `console_wait_calls` | 272 | 8 | 8 | `u64` | - |
+| `console_wait_blocks` | 280 | 8 | 8 | `u64` | - |
+| `console_wait_immediate` | 288 | 8 | 8 | `u64` | - |
+| `console_wait_wakes` | 296 | 8 | 8 | `u64` | - |
+| `console_wait_timeouts` | 304 | 8 | 8 | `u64` | - |
+| `console_wait_cancellations` | 312 | 8 | 8 | `u64` | - |
+| `console_output_write_calls` | 320 | 8 | 8 | `u64` | - |
+| `console_output_source_bytes` | 328 | 8 | 8 | `u64` | - |
+| `console_output_visible_append_bytes` | 336 | 8 | 8 | `u64` | - |
+| `console_output_capture_append_bytes` | 344 | 8 | 8 | `u64` | - |
+| `console_output_shared_bytes` | 352 | 8 | 8 | `u64` | - |
+| `console_output_revision_batches` | 360 | 8 | 8 | `u64` | - |
+| `console_output_desktop_signals` | 368 | 8 | 8 | `u64` | - |
+| `console_output_compactions` | 376 | 8 | 8 | `u64` | - |
+| `console_output_compaction_bytes` | 384 | 8 | 8 | `u64` | - |
+| `console_output_segment_drops` | 392 | 8 | 8 | `u64` | - |
+| `console_output_segment_drop_bytes` | 400 | 8 | 8 | `u64` | - |
 
 ### `ServiceDeadlineFooter`
 
@@ -4416,6 +4436,19 @@ Geltung: `clipboard`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `clipboard_error_invalid` | -1 | `i32` |
 | `clipboard_error_too_large` | -2 | `i32` |
 | `clipboard_error_unsupported` | -4 | `i32` |
+
+### `console_input_wait`
+
+Geltung: `console_input_wait`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `console_input_wait_ready` | 1 | `i32` |
+| `console_input_wait_timeout` | 0 | `i32` |
+| `console_input_wait_error_invalid` | -1 | `i32` |
+| `console_input_wait_error_closed` | -2 | `i32` |
+| `console_input_wait_error_failed` | -3 | `i32` |
+| `console_input_wait_error_unsupported` | -4 | `i32` |
 
 ### `dhcp`
 

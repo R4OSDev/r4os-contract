@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 308,
-    "group_slot_count": 308,
+    "function_count": 309,
+    "group_slot_count": 309,
     "sdk_only_count": 0,
-    "public_count": 218,
+    "public_count": 219,
     "advanced_count": 90
   },
   "functions": [
@@ -2117,6 +2117,18 @@
       "slot": 56,
       "exposure": "advanced",
       "description": "Publishes several bounded XRGB32 desktop damage regions as one remote-frame generation. Legacy readers receive their bounding dirty rectangle.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.console_input_wait",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 57,
+      "exposure": "public",
+      "description": "Waits generation-safely until the calling console input source is readable, changes generation, times out, or is closed.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

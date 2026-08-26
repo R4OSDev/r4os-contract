@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 316; Funktionen: 308; reserviert/Tombstone: 8
-- Sichtbarkeit: public=218, advanced=90, internal=8
+- Physische Gruppenslots: 317; Funktionen: 309; reserviert/Tombstone: 8
+- Sichtbarkeit: public=219, advanced=90, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 16
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -213,6 +213,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DESK | 54 | `remote_frame_release` | function | advanced | R4DESK | ja | `desktop` | none | none | nonblocking | thread_safe | none | none | atomic_on_success | idempotent | none | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
 | R4DESK | 55 | `remote_frame_consumers` | function | advanced | R4DESK | ja | `desktop` | none | none | nonblocking | thread_safe | none | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
 | R4DESK | 56 | `remote_frame_publish_regions` | function | advanced | R4DESK | ja | `desktop` | borrowed | call | nonblocking | owner_thread_only | none | none | atomic_on_success | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
+| R4DESK | 57 | `console_input_wait` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | blocking_wait | owner_thread_only | none | valid_on_documented_error | none | never_automatic | none | zig_and_c_required | wait_budget | shutdown_wakeup | completion_wins | owner_thread_only | none | call | request_close_wait_reap |
 | R4DRAW | 0 | `screen_width` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DRAW | 1 | `screen_height` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DRAW | 2 | `clear` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
