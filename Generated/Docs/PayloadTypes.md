@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 129 von 129 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 62; Konstanten: 1279; Limits: 102
+- Operationen: 0; Fehlerdomänen: 62; Konstanten: 1283; Limits: 102
 
 ## App-Profile
 
@@ -4564,6 +4564,7 @@ Geltung: `io`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `io_error_busy` | -7 | `i32` |
 | `io_error_cancelled` | -9 | `i32` |
 | `io_error_invalid` | -1 | `i32` |
+| `io_error_lock_violation` | -11 | `i32` |
 | `io_error_no_instance` | -2 | `i32` |
 | `io_error_no_slots` | -3 | `i32` |
 | `io_error_not_found` | -5 | `i32` |
@@ -5349,8 +5350,11 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `icmp_op_handle_rx` | `1` | `u32` | identity | number | `icmp_op` | fixed_contract |
 | `icmp_op_handle_tx` | `2` | `u32` | identity | number | `icmp_op` | fixed_contract |
 | `icmp_op_is_echo_request` | `5` | `u32` | identity | number | `icmp_op` | fixed_contract |
+| `io_file_lock_flag_unlock` | `1` | `u32` | flag | bitmask | `io_file_lock` | fixed_contract |
 | `io_info_version` | `1` | `u32` | version | number | `io_info` | fixed_contract |
 | `io_kind_file_append` | `4` | `u32` | identity | number | `io_kind` | fixed_contract |
+| `io_kind_file_info` | `11` | `u32` | identity | number | `io_kind` | fixed_contract |
+| `io_kind_file_lock` | `12` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_kind_file_read` | `1` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_kind_file_read_at` | `2` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_kind_file_stream_abort` | `8` | `u32` | identity | number | `io_kind` | fixed_contract |
@@ -5358,6 +5362,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `io_kind_file_stream_finish` | `7` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_kind_file_stream_write` | `6` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_kind_file_write` | `3` | `u32` | identity | number | `io_kind` | fixed_contract |
+| `io_kind_file_write_at` | `10` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_kind_none` | `0` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_kind_service_call` | `9` | `u32` | identity | number | `io_kind` | fixed_contract |
 | `io_state_completed` | `3` | `u32` | identity | number | `io_state` | fixed_contract |
@@ -6446,7 +6451,7 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `r4xstart_r4dev_size` | `344` | `u32` | bytes | `r4xstart_r4dev` | fixed_contract |
 | `r4xstart_r4draw_size` | `272` | `u32` | bytes | `r4xstart_r4draw` | fixed_contract |
 | `r4xstart_r4net_size` | `288` | `u32` | bytes | `r4xstart_r4net` | fixed_contract |
-| `r4xstart_r4sys_size` | `1000` | `u32` | bytes | `r4xstart_r4sys` | fixed_contract |
+| `r4xstart_r4sys_size` | `1024` | `u32` | bytes | `r4xstart_r4sys` | fixed_contract |
 | `registry_name_max` | `64` | `usize` | count | `registry_name` | fixed_contract |
 | `serial_link_payload_max` | `256` | `usize` | count | `serial_link` | fixed_contract |
 | `service_api_endpoint_queue_depth` | `8` | `usize` | count | `service_api` | fixed_contract |

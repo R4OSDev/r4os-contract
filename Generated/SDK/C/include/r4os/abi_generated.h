@@ -276,8 +276,11 @@ extern "C" {
 #define R4OS_ICMP_OP_HANDLE_RX 1u
 #define R4OS_ICMP_OP_HANDLE_TX 2u
 #define R4OS_ICMP_OP_IS_ECHO_REQUEST 5u
+#define R4OS_IO_FILE_LOCK_FLAG_UNLOCK 1u
 #define R4OS_IO_INFO_VERSION 1u
 #define R4OS_IO_KIND_FILE_APPEND 4u
+#define R4OS_IO_KIND_FILE_INFO 11u
+#define R4OS_IO_KIND_FILE_LOCK 12u
 #define R4OS_IO_KIND_FILE_READ 1u
 #define R4OS_IO_KIND_FILE_READ_AT 2u
 #define R4OS_IO_KIND_FILE_STREAM_ABORT 8u
@@ -285,6 +288,7 @@ extern "C" {
 #define R4OS_IO_KIND_FILE_STREAM_FINISH 7u
 #define R4OS_IO_KIND_FILE_STREAM_WRITE 6u
 #define R4OS_IO_KIND_FILE_WRITE 3u
+#define R4OS_IO_KIND_FILE_WRITE_AT 10u
 #define R4OS_IO_KIND_NONE 0u
 #define R4OS_IO_KIND_SERVICE_CALL 9u
 #define R4OS_IO_STATE_COMPLETED 3u
@@ -1368,7 +1372,7 @@ extern "C" {
 #define R4XSTART_R4DEV_SIZE 344u
 #define R4XSTART_R4DRAW_SIZE 272u
 #define R4XSTART_R4NET_SIZE 288u
-#define R4XSTART_R4SYS_SIZE 1000u
+#define R4XSTART_R4SYS_SIZE 1024u
 #define R4OS_REGISTRY_NAME_MAX 64ull
 #define R4OS_SERIAL_LINK_PAYLOAD_MAX 256ull
 #define R4OS_SERVICE_API_ENDPOINT_QUEUE_DEPTH 8ull
@@ -1476,6 +1480,7 @@ extern "C" {
 #define R4OS_IO_ERROR_BUSY ((int32_t)-7)
 #define R4OS_IO_ERROR_CANCELLED ((int32_t)-9)
 #define R4OS_IO_ERROR_INVALID ((int32_t)-1)
+#define R4OS_IO_ERROR_LOCK_VIOLATION ((int32_t)-11)
 #define R4OS_IO_ERROR_NO_INSTANCE ((int32_t)-2)
 #define R4OS_IO_ERROR_NO_SLOTS ((int32_t)-3)
 #define R4OS_IO_ERROR_NOT_FOUND ((int32_t)-5)
@@ -5324,6 +5329,9 @@ typedef int32_t (*R4SysBootReadyFn)(void);
 typedef int32_t (*R4SysRegistrySnapshotBeginFn)(const uint8_t * key_path, uint32_t kind, R4RegistrySnapshotCursor * cursor);
 typedef int32_t (*R4SysRegistrySnapshotPageFn)(R4RegistrySnapshotCursor * cursor, R4RegistrySnapshotEntry * out_entries, uint32_t entry_capacity, uint8_t * out_data, uint32_t data_capacity, R4RegistrySnapshotPageInfo * out_page);
 typedef int32_t (*R4SysRegistryBatchMutateFn)(const R4RegistryBatchOperation * operations, uint32_t operation_count, const uint8_t * blob, uint32_t blob_len, R4RegistryBatchResult * out_result);
+typedef int32_t (*R4SysIoFileWriteAtFn)(const uint8_t * path, uint64_t offset, const uint8_t * data, uint64_t data_len, uint32_t flags, uint32_t * out_request_id);
+typedef int32_t (*R4SysIoFileInfoFn)(const uint8_t * path, uint32_t flags, uint32_t * out_request_id);
+typedef int32_t (*R4SysIoFileLockFn)(const uint8_t * path, uint64_t offset, uint64_t length, uint32_t flags, uint32_t * out_request_id);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -5453,6 +5461,9 @@ typedef struct R4XStartR4Sys {
     uintptr_t registry_snapshot_begin;
     uintptr_t registry_snapshot_page;
     uintptr_t registry_batch_mutate;
+    uintptr_t io_file_write_at;
+    uintptr_t io_file_info;
+    uintptr_t io_file_lock;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -8974,7 +8985,7 @@ _Static_assert(offsetof(R4ServiceDeadlineFooter, size) == 6u, "ServiceDeadlineFo
 _Static_assert(offsetof(R4ServiceDeadlineFooter, payload_len) == 8u, "ServiceDeadlineFooter.payload_len offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, reserved0) == 12u, "ServiceDeadlineFooter.reserved0 offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, deadline_tick) == 16u, "ServiceDeadlineFooter.deadline_tick offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1000u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1024u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -9218,6 +9229,12 @@ _Static_assert(offsetof(R4XStartR4Sys, registry_snapshot_page) == 984u, "R4XStar
 _Static_assert(sizeof(R4SysRegistrySnapshotPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, registry_batch_mutate) == 992u, "R4XStartR4Sys.registry_batch_mutate offset mismatch");
 _Static_assert(sizeof(R4SysRegistryBatchMutateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, io_file_write_at) == 1000u, "R4XStartR4Sys.io_file_write_at offset mismatch");
+_Static_assert(sizeof(R4SysIoFileWriteAtFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, io_file_info) == 1008u, "R4XStartR4Sys.io_file_info offset mismatch");
+_Static_assert(sizeof(R4SysIoFileInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, io_file_lock) == 1016u, "R4XStartR4Sys.io_file_lock offset mismatch");
+_Static_assert(sizeof(R4SysIoFileLockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 480u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

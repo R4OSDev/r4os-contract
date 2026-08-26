@@ -3096,7 +3096,7 @@ comptime {
     if (@offsetOf(abi.ServiceDeadlineFooter, "payload_len") != 8) @compileError("ServiceDeadlineFooter.payload_len offset");
     if (@offsetOf(abi.ServiceDeadlineFooter, "reserved0") != 12) @compileError("ServiceDeadlineFooter.reserved0 offset");
     if (@offsetOf(abi.ServiceDeadlineFooter, "deadline_tick") != 16) @compileError("ServiceDeadlineFooter.deadline_tick offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1000) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1024) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -3340,6 +3340,12 @@ comptime {
     if (@sizeOf(abi.R4SysFns.registry_snapshot_page) != 8) @compileError("R4SysFns.registry_snapshot_page signature");
     if (@offsetOf(abi.R4XStartR4Sys, "registry_batch_mutate") != 992) @compileError("R4XStartR4Sys.registry_batch_mutate offset");
     if (@sizeOf(abi.R4SysFns.registry_batch_mutate) != 8) @compileError("R4SysFns.registry_batch_mutate signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "io_file_write_at") != 1000) @compileError("R4XStartR4Sys.io_file_write_at offset");
+    if (@sizeOf(abi.R4SysFns.io_file_write_at) != 8) @compileError("R4SysFns.io_file_write_at signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "io_file_info") != 1008) @compileError("R4XStartR4Sys.io_file_info offset");
+    if (@sizeOf(abi.R4SysFns.io_file_info) != 8) @compileError("R4SysFns.io_file_info signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "io_file_lock") != 1016) @compileError("R4XStartR4Sys.io_file_lock offset");
+    if (@sizeOf(abi.R4SysFns.io_file_lock) != 8) @compileError("R4SysFns.io_file_lock signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 480) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

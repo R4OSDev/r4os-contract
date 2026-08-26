@@ -264,8 +264,11 @@ pub const icmp_op_build_echo_request: u32 = 3;
 pub const icmp_op_handle_rx: u32 = 1;
 pub const icmp_op_handle_tx: u32 = 2;
 pub const icmp_op_is_echo_request: u32 = 5;
+pub const io_file_lock_flag_unlock: u32 = 1;
 pub const io_info_version: u32 = 1;
 pub const io_kind_file_append: u32 = 4;
+pub const io_kind_file_info: u32 = 11;
+pub const io_kind_file_lock: u32 = 12;
 pub const io_kind_file_read: u32 = 1;
 pub const io_kind_file_read_at: u32 = 2;
 pub const io_kind_file_stream_abort: u32 = 8;
@@ -273,6 +276,7 @@ pub const io_kind_file_stream_begin: u32 = 5;
 pub const io_kind_file_stream_finish: u32 = 7;
 pub const io_kind_file_stream_write: u32 = 6;
 pub const io_kind_file_write: u32 = 3;
+pub const io_kind_file_write_at: u32 = 10;
 pub const io_kind_none: u32 = 0;
 pub const io_kind_service_call: u32 = 9;
 pub const io_state_completed: u32 = 3;
@@ -1356,7 +1360,7 @@ pub const r4xstart_r4desk_size: u32 = 432;
 pub const r4xstart_r4dev_size: u32 = 344;
 pub const r4xstart_r4draw_size: u32 = 272;
 pub const r4xstart_r4net_size: u32 = 288;
-pub const r4xstart_r4sys_size: u32 = 1000;
+pub const r4xstart_r4sys_size: u32 = 1024;
 pub const registry_name_max: usize = 64;
 pub const serial_link_payload_max: usize = 256;
 pub const service_api_endpoint_queue_depth: usize = 8;
@@ -1464,6 +1468,7 @@ pub const icmp_result_short: i32 = -1;
 pub const io_error_busy: i32 = -7;
 pub const io_error_cancelled: i32 = -9;
 pub const io_error_invalid: i32 = -1;
+pub const io_error_lock_violation: i32 = -11;
 pub const io_error_no_instance: i32 = -2;
 pub const io_error_no_slots: i32 = -3;
 pub const io_error_not_found: i32 = -5;
@@ -5203,12 +5208,15 @@ pub const R4SysFns = struct {
     pub const registry_snapshot_begin = *const fn ([*:0]const u8, u32, *RegistrySnapshotCursor) callconv(.c) i32;
     pub const registry_snapshot_page = *const fn (*RegistrySnapshotCursor, [*]RegistrySnapshotEntry, u32, [*]u8, u32, *RegistrySnapshotPageInfo) callconv(.c) i32;
     pub const registry_batch_mutate = *const fn ([*]const RegistryBatchOperation, u32, [*]const u8, u32, *RegistryBatchResult) callconv(.c) i32;
+    pub const io_file_write_at = *const fn ([*:0]const u8, u64, [*]const u8, u64, u32, *u32) callconv(.c) i32;
+    pub const io_file_info = *const fn ([*:0]const u8, u32, *u32) callconv(.c) i32;
+    pub const io_file_lock = *const fn ([*:0]const u8, u64, u64, u32, *u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 14,
-    size: u32 = 1000,
+    abi_version: u32 = 15,
+    size: u32 = 1024,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -5333,6 +5341,9 @@ pub const R4XStartR4Sys = extern struct {
     registry_snapshot_begin: usize = 0,
     registry_snapshot_page: usize = 0,
     registry_batch_mutate: usize = 0,
+    io_file_write_at: usize = 0,
+    io_file_info: usize = 0,
+    io_file_lock: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -5895,6 +5906,9 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 120, .offset = 976, .name = "registry_snapshot_begin", .state = .function, .required = false },
     .{ .number = 121, .offset = 984, .name = "registry_snapshot_page", .state = .function, .required = false },
     .{ .number = 122, .offset = 992, .name = "registry_batch_mutate", .state = .function, .required = false },
+    .{ .number = 123, .offset = 1000, .name = "io_file_write_at", .state = .function, .required = false },
+    .{ .number = 124, .offset = 1008, .name = "io_file_info", .state = .function, .required = false },
+    .{ .number = 125, .offset = 1016, .name = "io_file_lock", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -9329,7 +9343,7 @@ comptime {
     if (@offsetOf(ServiceDeadlineFooter, "payload_len") != 8) @compileError("generated ABI offset drift: ServiceDeadlineFooter.payload_len");
     if (@offsetOf(ServiceDeadlineFooter, "reserved0") != 12) @compileError("generated ABI offset drift: ServiceDeadlineFooter.reserved0");
     if (@offsetOf(ServiceDeadlineFooter, "deadline_tick") != 16) @compileError("generated ABI offset drift: ServiceDeadlineFooter.deadline_tick");
-    if (@sizeOf(R4XStartR4Sys) != 1000) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1024) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -9453,6 +9467,9 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_begin") != 976) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_begin");
     if (@offsetOf(R4XStartR4Sys, "registry_snapshot_page") != 984) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_snapshot_page");
     if (@offsetOf(R4XStartR4Sys, "registry_batch_mutate") != 992) @compileError("generated ABI offset drift: R4XStartR4Sys.registry_batch_mutate");
+    if (@offsetOf(R4XStartR4Sys, "io_file_write_at") != 1000) @compileError("generated ABI offset drift: R4XStartR4Sys.io_file_write_at");
+    if (@offsetOf(R4XStartR4Sys, "io_file_info") != 1008) @compileError("generated ABI offset drift: R4XStartR4Sys.io_file_info");
+    if (@offsetOf(R4XStartR4Sys, "io_file_lock") != 1016) @compileError("generated ABI offset drift: R4XStartR4Sys.io_file_lock");
     if (@sizeOf(R4XStartR4Desk) != 480) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 309,
+    "group_function_signatures": 312,
     "sdk_operation_contracts": 0,
-    "parity_entries": 309,
+    "parity_entries": 312,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1088,6 +1088,33 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.registry_batch_mutate",
       "c_contract": "R4SysRegistryBatchMutateFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.io_file_write_at",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.io_file_write_at",
+      "c_contract": "R4SysIoFileWriteAtFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.io_file_info",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.io_file_info",
+      "c_contract": "R4SysIoFileInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.io_file_lock",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.io_file_lock",
+      "c_contract": "R4SysIoFileLockFn",
       "coverage": "generated_signature"
     },
     {

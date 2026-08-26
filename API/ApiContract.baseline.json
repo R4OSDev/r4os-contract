@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 14,
+      "abi_version": 15,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1000,
+      "size": 1024,
       "slots": [
         {
           "number": 0,
@@ -10002,6 +10002,303 @@
             "side_effects": "atomic_on_success",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 123,
+          "offset": 1000,
+          "name": "io_file_write_at",
+          "state": "function",
+          "required": false,
+          "description": "Starts an asynchronous, progress-reporting file write at an absolute byte offset without truncating unrelated data.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "data",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": true,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "data_len",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "data_len",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "flags",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_request_id",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u32"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "io",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "process",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "completion_or_cancel",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "progress_reported",
+            "side_effects": "confirmed_progress",
+            "retry": "retry_from_reported_progress",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 124,
+          "offset": 1008,
+          "name": "io_file_info",
+          "state": "function",
+          "required": false,
+          "description": "Starts an asynchronous metadata query; the terminal IoStatus result is the file size in bytes or an I/O error.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "flags",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_request_id",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u32"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "io",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "progress_reported",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 125,
+          "offset": 1016,
+          "name": "io_file_lock",
+          "state": "function",
+          "required": false,
+          "description": "Asynchronously acquires or exactly releases a caller-owned advisory byte-range lock; conflicts complete with io_error_lock_violation.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "length",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "flags",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_request_id",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u32"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "io",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "progress_reported",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -66702,6 +66999,12 @@
           "description": "Public result or error value."
         },
         {
+          "name": "io_error_lock_violation",
+          "value": -11,
+          "value_type": "i32",
+          "description": "The requested byte range conflicts with an advisory file lock owned by another program instance."
+        },
+        {
           "name": "io_error_no_instance",
           "value": -2,
           "value_type": "i32",
@@ -70921,6 +71224,16 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "io_file_lock_flag_unlock",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "io_file_lock",
+      "stability": "fixed_contract",
+      "description": "Releases an exactly matching caller-owned file range instead of acquiring it."
+    },
+    {
       "name": "io_info_version",
       "value": "1",
       "value_type": "u32",
@@ -70933,6 +71246,26 @@
     {
       "name": "io_kind_file_append",
       "value": "4",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "io_kind",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "io_kind_file_info",
+      "value": "11",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "io_kind",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "io_kind_file_lock",
+      "value": "12",
       "value_type": "u32",
       "category": "identity",
       "unit": "number",
@@ -71003,6 +71336,16 @@
     {
       "name": "io_kind_file_write",
       "value": "3",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "io_kind",
+      "stability": "fixed_contract",
+      "description": "Public fixed contract constant."
+    },
+    {
+      "name": "io_kind_file_write_at",
+      "value": "10",
       "value_type": "u32",
       "category": "identity",
       "unit": "number",
@@ -81768,7 +82111,7 @@
     },
     {
       "name": "r4xstart_r4sys_size",
-      "value": "1000",
+      "value": "1024",
       "value_type": "u32",
       "unit": "bytes",
       "scope": "r4xstart_r4sys",
