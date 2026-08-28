@@ -66279,6 +66279,1022 @@
       ],
       "values": [],
       "description": "Optional suffix for carrying one end-to-end monotonic deadline through nested service requests."
+    },
+    {
+      "name": "TrayServiceRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1184,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4TQ marker for a Desktop tray service request.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1364472914"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Tray service request contract version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Tray service request size in bytes.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1184"
+        },
+        {
+          "name": "owner",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact generation-safe owner of the tray item.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "item_id",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Stable owner-local tray item identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "item_revision",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic owner-provided item revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "item_flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Visibility, enabled and attention flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status_flags",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Opaque provider status flags copied atomically with the item.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "after_sequence",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last activation sequence already consumed by the owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_tick",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Finite absolute monotonic deadline for a wait-event request.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tooltip_length",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Meaningful UTF-8 bytes in tooltip.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "icon_width",
+          "offset": 66,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Icon width; version one requires 16 pixels.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "icon_height",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Icon height; version one requires 16 pixels.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "icon_format",
+          "offset": 70,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Pixel format identity for the copied icon payload.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tooltip",
+          "offset": 72,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Bounded UTF-8 tooltip bytes copied by the Desktop.",
+          "size": 64,
+          "alignment": 1,
+          "source_type": "[64]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "icon",
+          "offset": 136,
+          "type": {
+            "kind": "array",
+            "length": 256,
+            "child": {
+              "kind": "scalar",
+              "name": "u32"
+            }
+          },
+          "description": "Copied 16 by 16 straight-alpha ARGB32 icon pixels.",
+          "size": 1024,
+          "alignment": 4,
+          "source_type": "[256]u32",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reserved0",
+          "offset": 1160,
+          "type": {
+            "kind": "array",
+            "length": 24,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 24,
+          "alignment": 1,
+          "source_type": "[24]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Fixed-layout provider request for the WINSVC-mediated notification-area contract."
+    },
+    {
+      "name": "TrayEvent",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4TE marker for a tray activation event.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1163146322"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Tray activation event contract version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Tray activation event size in bytes.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "sequence",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic sequence within the owner event stream.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact generation-safe event recipient.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "item_id",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Owner-local identity of the activated item.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "item_revision",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Published item revision observed at activation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "kind",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Primary, double, context or wheel activation kind.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 50,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Activation delivery flags.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wheel_delta",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Signed wheel delta for wheel activation, otherwise zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "x",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Desktop X coordinate at activation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "y",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Desktop Y coordinate at activation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tick",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Desktop monotonic tick at activation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dropped_before",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of older events dropped before this delivery.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Sequenced bounded activation event delivered to a tray item owner."
+    },
+    {
+      "name": "TrayServiceResponse",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 192,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4TP marker for a Desktop tray service response.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1347695698"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Tray service response contract version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Tray service response size in bytes.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "192"
+        },
+        {
+          "name": "result",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Tray operation result.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existence, layout visibility and change flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "desktop_epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Desktop generation identifying registry lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "registry_revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic Desktop tray registry revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact owner addressed by the operation.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "item_id",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Owner-local item identity addressed by the operation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "item_revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current published item revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "item_flags",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current item flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status_flags",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current opaque provider status flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "registered_count",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Current number of registered external tray items.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "visible_count",
+          "offset": 74,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Current number of externally visible tray items.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Fixed external item registry capacity.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queued_events",
+          "offset": 78,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Activation events queued for this owner.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dropped_events",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Activation events dropped since the last delivered event.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event",
+          "offset": 88,
+          "type": {
+            "kind": "named",
+            "name": "TrayEvent"
+          },
+          "description": "Activation event returned by wait-event, otherwise empty.",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "r4os.abi.TrayEvent",
+          "default_kind": "empty"
+        },
+        {
+          "name": "reserved1",
+          "offset": 168,
+          "type": {
+            "kind": "array",
+            "length": 24,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 24,
+          "alignment": 1,
+          "source_type": "[24]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Fixed-layout provider response for the WINSVC-mediated notification-area contract."
+    },
+    {
+      "name": "TrayDesktopExchange",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1344,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4TD marker for a Desktop-to-tray-broker exchange.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1146369106"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Desktop tray exchange contract version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Desktop tray exchange size in bytes.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1344"
+        },
+        {
+          "name": "desktop_owner",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact shell generation owning notification-area layout and input.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "known_revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Broker registry revision already published by the Desktop.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Bounded broker slot cursor or the poll sentinel.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "65535"
+        },
+        {
+          "name": "next_cursor",
+          "offset": 34,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Next bounded slot cursor in a stable snapshot scan.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "65535"
+        },
+        {
+          "name": "flags",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Snapshot item, completion, restart and layout visibility flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "result",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Desktop exchange result.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "registered_count",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Registered provider items in the broker generation.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 46,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Fixed provider-item capacity.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "desktop_epoch",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact Desktop generation identifying registry lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "registry_revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Broker item-state revision scanned atomically by the Desktop.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event",
+          "offset": 64,
+          "type": {
+            "kind": "named",
+            "name": "TrayEvent"
+          },
+          "description": "Unsequenced activation submitted by the exact Desktop owner.",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "r4os.abi.TrayEvent",
+          "default_kind": "empty"
+        },
+        {
+          "name": "item",
+          "offset": 144,
+          "type": {
+            "kind": "named",
+            "name": "TrayServiceRequest"
+          },
+          "description": "One copied provider item in a paged Desktop snapshot exchange.",
+          "size": 1184,
+          "alignment": 8,
+          "source_type": "r4os.abi.TrayServiceRequest",
+          "default_kind": "empty"
+        },
+        {
+          "name": "reserved0",
+          "offset": 1328,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Paged transport exchange between the Desktop owner and the existing WindowService tray broker."
     }
   ],
   "operations": [],
@@ -81422,6 +82438,416 @@
       "scope": "window_service_status",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "tray_event_flag_overflow",
+      "value": "1",
+      "value_type": "u16",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "Older activation events were dropped before this delivery."
+    },
+    {
+      "name": "tray_event_kind_primary",
+      "value": "1",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "Primary-button activation."
+    },
+    {
+      "name": "tray_event_kind_double",
+      "value": "2",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "Primary-button double activation."
+    },
+    {
+      "name": "tray_event_kind_context",
+      "value": "3",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "Context-button activation."
+    },
+    {
+      "name": "tray_event_kind_wheel",
+      "value": "4",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "Mouse-wheel activation."
+    },
+    {
+      "name": "tray_icon_format_argb32",
+      "value": "1",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_icon",
+      "stability": "fixed_contract",
+      "description": "Straight-alpha ARGB32 pixels in row-major order."
+    },
+    {
+      "name": "tray_item_flag_visible",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_item",
+      "stability": "fixed_contract",
+      "description": "Provider requests a visible notification-area item."
+    },
+    {
+      "name": "tray_item_flag_enabled",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_item",
+      "stability": "fixed_contract",
+      "description": "Item accepts activation events."
+    },
+    {
+      "name": "tray_item_flag_attention",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_item",
+      "stability": "fixed_contract",
+      "description": "Provider requests attention styling."
+    },
+    {
+      "name": "tray_response_flag_exists",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_response",
+      "stability": "fixed_contract",
+      "description": "The addressed item exists in the current Desktop registry."
+    },
+    {
+      "name": "tray_response_flag_layout_visible",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_response",
+      "stability": "fixed_contract",
+      "description": "The item currently has notification-area geometry."
+    },
+    {
+      "name": "tray_response_flag_changed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_response",
+      "stability": "fixed_contract",
+      "description": "The operation changed the Desktop registry."
+    },
+    {
+      "name": "tray_response_flag_event",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_response",
+      "stability": "fixed_contract",
+      "description": "The response carries a delivered activation event."
+    },
+    {
+      "name": "tray_service_op_status",
+      "value": "1792",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_service",
+      "stability": "fixed_contract",
+      "description": "Read Desktop epoch, registry status and an optional item snapshot."
+    },
+    {
+      "name": "tray_service_op_upsert",
+      "value": "1793",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_service",
+      "stability": "fixed_contract",
+      "description": "Create or atomically update one owner-local tray item."
+    },
+    {
+      "name": "tray_service_op_remove",
+      "value": "1794",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_service",
+      "stability": "fixed_contract",
+      "description": "Idempotently remove one owner-local tray item."
+    },
+    {
+      "name": "tray_service_op_wait_event",
+      "value": "1795",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_service",
+      "stability": "fixed_contract",
+      "description": "Perform one bounded long-poll for the next sequenced owner event."
+    },
+    {
+      "name": "tray_service_op_desktop_sync",
+      "value": "1796",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_service",
+      "stability": "fixed_contract",
+      "description": "Bind the exact Desktop generation and page through the broker snapshot."
+    },
+    {
+      "name": "tray_service_op_desktop_activate",
+      "value": "1797",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_service",
+      "stability": "fixed_contract",
+      "description": "Submit one validated Desktop-owned notification-area activation."
+    },
+    {
+      "name": "tray_service_op_desktop_visibility",
+      "value": "1798",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_service",
+      "stability": "fixed_contract",
+      "description": "Publish whether an item currently has Desktop notification-area geometry."
+    },
+    {
+      "name": "tray_desktop_exchange_magic",
+      "value": "1146369106",
+      "value_type": "u32",
+      "category": "magic",
+      "unit": "number",
+      "scope": "tray_desktop_exchange",
+      "stability": "fixed_contract",
+      "description": "R4TD Desktop exchange marker."
+    },
+    {
+      "name": "tray_desktop_exchange_version",
+      "value": "1",
+      "value_type": "u16",
+      "category": "version",
+      "unit": "number",
+      "scope": "tray_desktop_exchange",
+      "stability": "fixed_contract",
+      "description": "Desktop tray exchange contract version."
+    },
+    {
+      "name": "tray_desktop_flag_item",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_desktop_exchange",
+      "stability": "fixed_contract",
+      "description": "The exchange contains one copied registry item."
+    },
+    {
+      "name": "tray_desktop_flag_complete",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_desktop_exchange",
+      "stability": "fixed_contract",
+      "description": "The requested registry snapshot is complete."
+    },
+    {
+      "name": "tray_desktop_flag_restart",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_desktop_exchange",
+      "stability": "fixed_contract",
+      "description": "Discard a partial snapshot and restart from its first item."
+    },
+    {
+      "name": "tray_desktop_flag_layout_visible",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "tray_desktop_exchange",
+      "stability": "fixed_contract",
+      "description": "The addressed item currently has Desktop notification-area geometry."
+    },
+    {
+      "name": "tray_desktop_cursor_poll",
+      "value": "65535",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "tray_desktop_exchange",
+      "stability": "fixed_contract",
+      "description": "Poll cursor that only starts paging when the registry revision changed."
+    },
+    {
+      "name": "tray_service_request_magic",
+      "value": "1364472914",
+      "value_type": "u32",
+      "category": "magic",
+      "unit": "number",
+      "scope": "tray_service_request",
+      "stability": "fixed_contract",
+      "description": "R4TQ request marker."
+    },
+    {
+      "name": "tray_service_request_version",
+      "value": "1",
+      "value_type": "u16",
+      "category": "version",
+      "unit": "number",
+      "scope": "tray_service_request",
+      "stability": "fixed_contract",
+      "description": "Tray service request contract version."
+    },
+    {
+      "name": "tray_service_response_magic",
+      "value": "1347695698",
+      "value_type": "u32",
+      "category": "magic",
+      "unit": "number",
+      "scope": "tray_service_response",
+      "stability": "fixed_contract",
+      "description": "R4TP response marker."
+    },
+    {
+      "name": "tray_service_response_version",
+      "value": "1",
+      "value_type": "u16",
+      "category": "version",
+      "unit": "number",
+      "scope": "tray_service_response",
+      "stability": "fixed_contract",
+      "description": "Tray service response contract version."
+    },
+    {
+      "name": "tray_event_magic",
+      "value": "1163146322",
+      "value_type": "u32",
+      "category": "magic",
+      "unit": "number",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "R4TE activation-event marker."
+    },
+    {
+      "name": "tray_event_version",
+      "value": "1",
+      "value_type": "u16",
+      "category": "version",
+      "unit": "number",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "Tray activation-event contract version."
+    },
+    {
+      "name": "tray_result_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "Tray operation completed successfully."
+    },
+    {
+      "name": "tray_result_not_found",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "Addressed item was not found."
+    },
+    {
+      "name": "tray_result_full",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "The bounded tray registry has no free item slot."
+    },
+    {
+      "name": "tray_result_bad_request",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "Request shape, flags, text or icon payload is invalid."
+    },
+    {
+      "name": "tray_result_stale",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "Item revision is older than or conflicts with published state."
+    },
+    {
+      "name": "tray_result_not_owner",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "Caller does not match the exact generation-safe item owner."
+    },
+    {
+      "name": "tray_result_busy",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "The owner already has its one bounded wait-event request."
+    },
+    {
+      "name": "tray_result_timeout",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status_code",
+      "scope": "tray_result",
+      "stability": "fixed_contract",
+      "description": "No activation event arrived before the finite deadline."
     }
   ],
   "limits": [
@@ -82342,6 +83768,69 @@
       "scope": "window_service",
       "stability": "fixed_contract",
       "description": "Public fixed contract limit."
+    },
+    {
+      "name": "tray_event_queue_capacity",
+      "value": "8",
+      "value_type": "usize",
+      "unit": "count",
+      "scope": "tray_event",
+      "stability": "fixed_contract",
+      "description": "Maximum queued activation events per exact owner."
+    },
+    {
+      "name": "tray_icon_height",
+      "value": "16",
+      "value_type": "usize",
+      "unit": "pixels",
+      "scope": "tray_icon",
+      "stability": "fixed_contract",
+      "description": "Version-one tray icon height."
+    },
+    {
+      "name": "tray_icon_pixel_count",
+      "value": "256",
+      "value_type": "usize",
+      "unit": "count",
+      "scope": "tray_icon",
+      "stability": "fixed_contract",
+      "description": "Version-one tray icon pixel count."
+    },
+    {
+      "name": "tray_icon_width",
+      "value": "16",
+      "value_type": "usize",
+      "unit": "pixels",
+      "scope": "tray_icon",
+      "stability": "fixed_contract",
+      "description": "Version-one tray icon width."
+    },
+    {
+      "name": "tray_max_items",
+      "value": "16",
+      "value_type": "usize",
+      "unit": "count",
+      "scope": "tray_registry",
+      "stability": "fixed_contract",
+      "description": "Maximum registered external tray items in one Desktop registry lifetime."
+    },
+    {
+      "name": "tray_max_owners",
+      "value": "16",
+      "value_type": "usize",
+      "unit": "count",
+      "scope": "tray_registry",
+      "stability": "fixed_contract",
+      "description": "Maximum exact owners with registered items or event state."
+    },
+    {
+      "name": "tray_tooltip_bytes",
+      "value": "64",
+      "value_type": "usize",
+      "unit": "bytes",
+      "scope": "tray_item",
+      "stability": "fixed_contract",
+      "description": "Maximum copied UTF-8 tooltip bytes per tray item."
     }
   ],
   "artifact_metadata": {

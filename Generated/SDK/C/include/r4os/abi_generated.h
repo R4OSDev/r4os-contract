@@ -1296,6 +1296,47 @@ extern "C" {
 #define R4OS_WINDOW_SERVICE_SNAPSHOT_VERSION 1u
 #define R4OS_WINDOW_SERVICE_STATUS_MAGIC 1398230615u
 #define R4OS_WINDOW_SERVICE_STATUS_VERSION 1u
+#define R4OS_TRAY_EVENT_FLAG_OVERFLOW 1u
+#define R4OS_TRAY_EVENT_KIND_PRIMARY 1u
+#define R4OS_TRAY_EVENT_KIND_DOUBLE 2u
+#define R4OS_TRAY_EVENT_KIND_CONTEXT 3u
+#define R4OS_TRAY_EVENT_KIND_WHEEL 4u
+#define R4OS_TRAY_ICON_FORMAT_ARGB32 1u
+#define R4OS_TRAY_ITEM_FLAG_VISIBLE 1u
+#define R4OS_TRAY_ITEM_FLAG_ENABLED 2u
+#define R4OS_TRAY_ITEM_FLAG_ATTENTION 4u
+#define R4OS_TRAY_RESPONSE_FLAG_EXISTS 1u
+#define R4OS_TRAY_RESPONSE_FLAG_LAYOUT_VISIBLE 2u
+#define R4OS_TRAY_RESPONSE_FLAG_CHANGED 4u
+#define R4OS_TRAY_RESPONSE_FLAG_EVENT 8u
+#define R4OS_TRAY_SERVICE_OP_STATUS 1792u
+#define R4OS_TRAY_SERVICE_OP_UPSERT 1793u
+#define R4OS_TRAY_SERVICE_OP_REMOVE 1794u
+#define R4OS_TRAY_SERVICE_OP_WAIT_EVENT 1795u
+#define R4OS_TRAY_SERVICE_OP_DESKTOP_SYNC 1796u
+#define R4OS_TRAY_SERVICE_OP_DESKTOP_ACTIVATE 1797u
+#define R4OS_TRAY_SERVICE_OP_DESKTOP_VISIBILITY 1798u
+#define R4OS_TRAY_DESKTOP_EXCHANGE_MAGIC 1146369106u
+#define R4OS_TRAY_DESKTOP_EXCHANGE_VERSION 1u
+#define R4OS_TRAY_DESKTOP_FLAG_ITEM 1u
+#define R4OS_TRAY_DESKTOP_FLAG_COMPLETE 2u
+#define R4OS_TRAY_DESKTOP_FLAG_RESTART 4u
+#define R4OS_TRAY_DESKTOP_FLAG_LAYOUT_VISIBLE 8u
+#define R4OS_TRAY_DESKTOP_CURSOR_POLL 65535u
+#define R4OS_TRAY_SERVICE_REQUEST_MAGIC 1364472914u
+#define R4OS_TRAY_SERVICE_REQUEST_VERSION 1u
+#define R4OS_TRAY_SERVICE_RESPONSE_MAGIC 1347695698u
+#define R4OS_TRAY_SERVICE_RESPONSE_VERSION 1u
+#define R4OS_TRAY_EVENT_MAGIC 1163146322u
+#define R4OS_TRAY_EVENT_VERSION 1u
+#define R4OS_TRAY_RESULT_OK ((int32_t)0)
+#define R4OS_TRAY_RESULT_NOT_FOUND ((int32_t)-1)
+#define R4OS_TRAY_RESULT_FULL ((int32_t)-2)
+#define R4OS_TRAY_RESULT_BAD_REQUEST ((int32_t)-3)
+#define R4OS_TRAY_RESULT_STALE ((int32_t)-4)
+#define R4OS_TRAY_RESULT_NOT_OWNER ((int32_t)-5)
+#define R4OS_TRAY_RESULT_BUSY ((int32_t)-6)
+#define R4OS_TRAY_RESULT_TIMEOUT ((int32_t)-7)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -1398,6 +1439,13 @@ extern "C" {
 #define R4OS_WINDOW_SERVICE_MAX_WINDOWS 16ull
 #define R4OS_WINDOW_SERVICE_PATH_BYTES 96ull
 #define R4OS_WINDOW_SERVICE_TITLE_BYTES 48ull
+#define R4OS_TRAY_EVENT_QUEUE_CAPACITY 8ull
+#define R4OS_TRAY_ICON_HEIGHT 16ull
+#define R4OS_TRAY_ICON_PIXEL_COUNT 256ull
+#define R4OS_TRAY_ICON_WIDTH 16ull
+#define R4OS_TRAY_MAX_ITEMS 16ull
+#define R4OS_TRAY_MAX_OWNERS 16ull
+#define R4OS_TRAY_TOOLTIP_BYTES 64ull
 #define R4OS_ARP_RESULT_BUFFER_SMALL ((int32_t)-4)
 #define R4OS_ARP_RESULT_NOT_ARP ((int32_t)1)
 #define R4OS_ARP_RESULT_OK ((int32_t)0)
@@ -1847,6 +1895,10 @@ typedef struct R4ProgramDriverWorkPerformanceInfo R4ProgramDriverWorkPerformance
 typedef struct R4ProgramPciInventoryPerformanceInfo R4ProgramPciInventoryPerformanceInfo;
 typedef struct R4ProgramInputPerformanceInfo R4ProgramInputPerformanceInfo;
 typedef struct R4ServiceDeadlineFooter R4ServiceDeadlineFooter;
+typedef struct R4TrayServiceRequest R4TrayServiceRequest;
+typedef struct R4TrayEvent R4TrayEvent;
+typedef struct R4TrayServiceResponse R4TrayServiceResponse;
+typedef struct R4TrayDesktopExchange R4TrayDesktopExchange;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -5160,6 +5212,86 @@ typedef struct R4ServiceDeadlineFooter {
     uint32_t reserved0;
     uint64_t deadline_tick;
 } R4ServiceDeadlineFooter;
+
+typedef struct R4TrayServiceRequest {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    R4ProgramProcessHandle owner;
+    uint64_t item_id;
+    uint64_t item_revision;
+    uint32_t item_flags;
+    uint32_t status_flags;
+    uint64_t after_sequence;
+    uint64_t deadline_tick;
+    uint16_t tooltip_length;
+    uint16_t icon_width;
+    uint16_t icon_height;
+    uint16_t icon_format;
+    uint8_t tooltip[64];
+    uint32_t icon[256];
+    uint8_t reserved0[24];
+} R4TrayServiceRequest;
+
+typedef struct R4TrayEvent {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint64_t sequence;
+    R4ProgramProcessHandle owner;
+    uint64_t item_id;
+    uint64_t item_revision;
+    uint16_t kind;
+    uint16_t flags;
+    int32_t wheel_delta;
+    int32_t x;
+    int32_t y;
+    uint64_t tick;
+    uint32_t dropped_before;
+    uint32_t reserved0;
+} R4TrayEvent;
+
+typedef struct R4TrayServiceResponse {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    int32_t result;
+    uint32_t flags;
+    uint64_t desktop_epoch;
+    uint64_t registry_revision;
+    R4ProgramProcessHandle owner;
+    uint64_t item_id;
+    uint64_t item_revision;
+    uint32_t item_flags;
+    uint32_t status_flags;
+    uint16_t registered_count;
+    uint16_t visible_count;
+    uint16_t capacity;
+    uint16_t queued_events;
+    uint32_t dropped_events;
+    uint32_t reserved0;
+    R4TrayEvent event;
+    uint8_t reserved1[24];
+} R4TrayServiceResponse;
+
+typedef struct R4TrayDesktopExchange {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    R4ProgramProcessHandle desktop_owner;
+    uint64_t known_revision;
+    uint16_t cursor;
+    uint16_t next_cursor;
+    uint32_t flags;
+    int32_t result;
+    uint16_t registered_count;
+    uint16_t capacity;
+    uint64_t desktop_epoch;
+    uint64_t registry_revision;
+    R4TrayEvent event;
+    R4TrayServiceRequest item;
+    uint8_t reserved0[16];
+} R4TrayDesktopExchange;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8985,6 +9117,78 @@ _Static_assert(offsetof(R4ServiceDeadlineFooter, size) == 6u, "ServiceDeadlineFo
 _Static_assert(offsetof(R4ServiceDeadlineFooter, payload_len) == 8u, "ServiceDeadlineFooter.payload_len offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, reserved0) == 12u, "ServiceDeadlineFooter.reserved0 offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, deadline_tick) == 16u, "ServiceDeadlineFooter.deadline_tick offset mismatch");
+_Static_assert(sizeof(R4TrayServiceRequest) == 1184u, "TrayServiceRequest size mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, magic) == 0u, "TrayServiceRequest.magic offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, version) == 4u, "TrayServiceRequest.version offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, size) == 6u, "TrayServiceRequest.size offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, owner) == 8u, "TrayServiceRequest.owner offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, item_id) == 24u, "TrayServiceRequest.item_id offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, item_revision) == 32u, "TrayServiceRequest.item_revision offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, item_flags) == 40u, "TrayServiceRequest.item_flags offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, status_flags) == 44u, "TrayServiceRequest.status_flags offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, after_sequence) == 48u, "TrayServiceRequest.after_sequence offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, deadline_tick) == 56u, "TrayServiceRequest.deadline_tick offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, tooltip_length) == 64u, "TrayServiceRequest.tooltip_length offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, icon_width) == 66u, "TrayServiceRequest.icon_width offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, icon_height) == 68u, "TrayServiceRequest.icon_height offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, icon_format) == 70u, "TrayServiceRequest.icon_format offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, tooltip) == 72u, "TrayServiceRequest.tooltip offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, icon) == 136u, "TrayServiceRequest.icon offset mismatch");
+_Static_assert(offsetof(R4TrayServiceRequest, reserved0) == 1160u, "TrayServiceRequest.reserved0 offset mismatch");
+_Static_assert(sizeof(R4TrayEvent) == 80u, "TrayEvent size mismatch");
+_Static_assert(offsetof(R4TrayEvent, magic) == 0u, "TrayEvent.magic offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, version) == 4u, "TrayEvent.version offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, size) == 6u, "TrayEvent.size offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, sequence) == 8u, "TrayEvent.sequence offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, owner) == 16u, "TrayEvent.owner offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, item_id) == 32u, "TrayEvent.item_id offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, item_revision) == 40u, "TrayEvent.item_revision offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, kind) == 48u, "TrayEvent.kind offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, flags) == 50u, "TrayEvent.flags offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, wheel_delta) == 52u, "TrayEvent.wheel_delta offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, x) == 56u, "TrayEvent.x offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, y) == 60u, "TrayEvent.y offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, tick) == 64u, "TrayEvent.tick offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, dropped_before) == 72u, "TrayEvent.dropped_before offset mismatch");
+_Static_assert(offsetof(R4TrayEvent, reserved0) == 76u, "TrayEvent.reserved0 offset mismatch");
+_Static_assert(sizeof(R4TrayServiceResponse) == 192u, "TrayServiceResponse size mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, magic) == 0u, "TrayServiceResponse.magic offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, version) == 4u, "TrayServiceResponse.version offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, size) == 6u, "TrayServiceResponse.size offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, result) == 8u, "TrayServiceResponse.result offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, flags) == 12u, "TrayServiceResponse.flags offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, desktop_epoch) == 16u, "TrayServiceResponse.desktop_epoch offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, registry_revision) == 24u, "TrayServiceResponse.registry_revision offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, owner) == 32u, "TrayServiceResponse.owner offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, item_id) == 48u, "TrayServiceResponse.item_id offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, item_revision) == 56u, "TrayServiceResponse.item_revision offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, item_flags) == 64u, "TrayServiceResponse.item_flags offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, status_flags) == 68u, "TrayServiceResponse.status_flags offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, registered_count) == 72u, "TrayServiceResponse.registered_count offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, visible_count) == 74u, "TrayServiceResponse.visible_count offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, capacity) == 76u, "TrayServiceResponse.capacity offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, queued_events) == 78u, "TrayServiceResponse.queued_events offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, dropped_events) == 80u, "TrayServiceResponse.dropped_events offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, reserved0) == 84u, "TrayServiceResponse.reserved0 offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, event) == 88u, "TrayServiceResponse.event offset mismatch");
+_Static_assert(offsetof(R4TrayServiceResponse, reserved1) == 168u, "TrayServiceResponse.reserved1 offset mismatch");
+_Static_assert(sizeof(R4TrayDesktopExchange) == 1344u, "TrayDesktopExchange size mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, magic) == 0u, "TrayDesktopExchange.magic offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, version) == 4u, "TrayDesktopExchange.version offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, size) == 6u, "TrayDesktopExchange.size offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, desktop_owner) == 8u, "TrayDesktopExchange.desktop_owner offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, known_revision) == 24u, "TrayDesktopExchange.known_revision offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, cursor) == 32u, "TrayDesktopExchange.cursor offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, next_cursor) == 34u, "TrayDesktopExchange.next_cursor offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, flags) == 36u, "TrayDesktopExchange.flags offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, result) == 40u, "TrayDesktopExchange.result offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, registered_count) == 44u, "TrayDesktopExchange.registered_count offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, capacity) == 46u, "TrayDesktopExchange.capacity offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, desktop_epoch) == 48u, "TrayDesktopExchange.desktop_epoch offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, registry_revision) == 56u, "TrayDesktopExchange.registry_revision offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, event) == 64u, "TrayDesktopExchange.event offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, item) == 144u, "TrayDesktopExchange.item offset mismatch");
+_Static_assert(offsetof(R4TrayDesktopExchange, reserved0) == 1328u, "TrayDesktopExchange.reserved0 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1024u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
