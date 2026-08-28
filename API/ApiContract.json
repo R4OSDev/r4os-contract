@@ -66281,6 +66281,362 @@
       "description": "Optional suffix for carrying one end-to-end monotonic deadline through nested service requests."
     },
     {
+      "name": "AudioServiceMasterRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4AM marker for an explicit AUDSVC master-state request.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1296118866"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Explicit master-state request contract version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Explicit master-state request size in bytes.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fields to update and the requested mute value.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fixed_volume",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Selected unsigned 16.16 master gain when volume is updated.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "65536"
+        },
+        {
+          "name": "expected_revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Expected master revision, or zero for an unconditional update.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 24,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 8,
+          "alignment": 1,
+          "source_type": "[8]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Append-only explicit AUDSVC master volume and mute request."
+    },
+    {
+      "name": "AudioServiceMasterState",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4AS marker for explicit AUDSVC master state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1396782162"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Explicit master-state contract version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Explicit master-state size in bytes.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Mute and AUDSVC-owned configuration state flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing AUDSVC readiness, backend, mixer and session flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "master_revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic revision of selected gain or mute state.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "service_epoch",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Concrete AUDSVC program instance identifying service lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selected_volume_fixed",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Selected unsigned 16.16 master gain retained while muted.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "65536"
+        },
+        {
+          "name": "effective_volume_fixed",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Effective unsigned 16.16 master gain; zero while muted.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "65536"
+        },
+        {
+          "name": "last_audible_volume_fixed",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last positive selected gain available for unmute restoration.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "65536"
+        },
+        {
+          "name": "reserved0",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "persist_writes",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful coalesced master-configuration writes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "persist_failures",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Failed master-configuration write attempts.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "master_changes",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual selected-gain or mute state changes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "config_loads",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful persisted master-configuration loads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 80,
+          "type": {
+            "kind": "array",
+            "length": 48,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Reserved and required to be zero.",
+          "size": 48,
+          "alignment": 1,
+          "source_type": "[48]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Append-only explicit AUDSVC master volume, mute and persistence state."
+    },
+    {
       "name": "TrayServiceRequest",
       "source": "API/ApiContract.json",
       "classification": "fixed_layout",
@@ -69790,6 +70146,126 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "audio_master_request_flag_muted",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_request",
+      "stability": "fixed_contract",
+      "description": "Requested mute value when the set-muted flag is present."
+    },
+    {
+      "name": "audio_master_request_flag_set_muted",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_request",
+      "stability": "fixed_contract",
+      "description": "Updates the explicit master mute state."
+    },
+    {
+      "name": "audio_master_request_flag_set_volume",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_request",
+      "stability": "fixed_contract",
+      "description": "Updates the selected master volume."
+    },
+    {
+      "name": "audio_master_request_magic",
+      "value": "1296118866",
+      "value_type": "u32",
+      "category": "magic",
+      "unit": "number",
+      "scope": "audio_master_request",
+      "stability": "fixed_contract",
+      "description": "R4AM marker for explicit AUDSVC master-state requests."
+    },
+    {
+      "name": "audio_master_request_version",
+      "value": "1",
+      "value_type": "u16",
+      "category": "version",
+      "unit": "number",
+      "scope": "audio_master_request",
+      "stability": "fixed_contract",
+      "description": "Explicit AUDSVC master-state request contract version."
+    },
+    {
+      "name": "audio_master_state_flag_config_defaulted",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_state",
+      "stability": "fixed_contract",
+      "description": "AUDSVC safely selected defaults because no valid persisted state was available."
+    },
+    {
+      "name": "audio_master_state_flag_config_error",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_state",
+      "stability": "fixed_contract",
+      "description": "The most recent AUDSVC configuration load or save encountered an error."
+    },
+    {
+      "name": "audio_master_state_flag_config_loaded",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_state",
+      "stability": "fixed_contract",
+      "description": "AUDSVC loaded a valid persisted master state."
+    },
+    {
+      "name": "audio_master_state_flag_muted",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_state",
+      "stability": "fixed_contract",
+      "description": "The global AUDSVC master output is muted."
+    },
+    {
+      "name": "audio_master_state_flag_persist_pending",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_master_state",
+      "stability": "fixed_contract",
+      "description": "A coalesced AUDSVC master-state persistence write is pending."
+    },
+    {
+      "name": "audio_master_state_magic",
+      "value": "1396782162",
+      "value_type": "u32",
+      "category": "magic",
+      "unit": "number",
+      "scope": "audio_master_state",
+      "stability": "fixed_contract",
+      "description": "R4AS marker for explicit AUDSVC master state."
+    },
+    {
+      "name": "audio_master_state_version",
+      "value": "1",
+      "value_type": "u16",
+      "category": "version",
+      "unit": "number",
+      "scope": "audio_master_state",
+      "stability": "fixed_contract",
+      "description": "Explicit AUDSVC master-state contract version."
+    },
+    {
       "name": "audio_opl3_action_all_notes_off",
       "value": "5",
       "value_type": "u8",
@@ -69980,6 +70456,16 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "audio_service_op_master_status",
+      "value": "7",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service",
+      "stability": "fixed_contract",
+      "description": "Returns the append-only explicit master volume, mute and persistence state."
+    },
+    {
       "name": "audio_service_op_open_stream",
       "value": "3",
       "value_type": "u16",
@@ -69998,6 +70484,16 @@
       "scope": "audio_service",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "audio_service_op_set_master_state",
+      "value": "8",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service",
+      "stability": "fixed_contract",
+      "description": "Updates explicit master volume and mute state with optional revision matching."
     },
     {
       "name": "audio_service_op_set_stream_volume",

@@ -31,6 +31,18 @@ extern "C" {
 #define R4OS_AUDIO_MIDI_EVENT_PROGRAM 4u
 #define R4OS_AUDIO_MIDI_OP_CLASSIFY_EVENT 1u
 #define R4OS_AUDIO_MIDI_OP_SELF_TEST 2u
+#define R4OS_AUDIO_MASTER_REQUEST_FLAG_MUTED 4u
+#define R4OS_AUDIO_MASTER_REQUEST_FLAG_SET_MUTED 2u
+#define R4OS_AUDIO_MASTER_REQUEST_FLAG_SET_VOLUME 1u
+#define R4OS_AUDIO_MASTER_REQUEST_MAGIC 1296118866u
+#define R4OS_AUDIO_MASTER_REQUEST_VERSION 1u
+#define R4OS_AUDIO_MASTER_STATE_FLAG_CONFIG_DEFAULTED 4u
+#define R4OS_AUDIO_MASTER_STATE_FLAG_CONFIG_ERROR 16u
+#define R4OS_AUDIO_MASTER_STATE_FLAG_CONFIG_LOADED 2u
+#define R4OS_AUDIO_MASTER_STATE_FLAG_MUTED 1u
+#define R4OS_AUDIO_MASTER_STATE_FLAG_PERSIST_PENDING 8u
+#define R4OS_AUDIO_MASTER_STATE_MAGIC 1396782162u
+#define R4OS_AUDIO_MASTER_STATE_VERSION 1u
 #define R4OS_AUDIO_OPL3_ACTION_ALL_NOTES_OFF 5u
 #define R4OS_AUDIO_OPL3_ACTION_CONTROL 4u
 #define R4OS_AUDIO_OPL3_ACTION_IGNORE 0u
@@ -50,8 +62,10 @@ extern "C" {
 #define R4OS_AUDIO_SERVICE_FLAG_SERVICE_READY 8u
 #define R4OS_AUDIO_SERVICE_FLAG_SESSIONS_OPEN 4u
 #define R4OS_AUDIO_SERVICE_OP_CLOSE_STREAM 5u
+#define R4OS_AUDIO_SERVICE_OP_MASTER_STATUS 7u
 #define R4OS_AUDIO_SERVICE_OP_OPEN_STREAM 3u
 #define R4OS_AUDIO_SERVICE_OP_SET_MASTER_VOLUME 2u
+#define R4OS_AUDIO_SERVICE_OP_SET_MASTER_STATE 8u
 #define R4OS_AUDIO_SERVICE_OP_SET_STREAM_VOLUME 6u
 #define R4OS_AUDIO_SERVICE_OP_STATUS 1u
 #define R4OS_AUDIO_SERVICE_OP_WRITE_STREAM 4u
@@ -1895,6 +1909,8 @@ typedef struct R4ProgramDriverWorkPerformanceInfo R4ProgramDriverWorkPerformance
 typedef struct R4ProgramPciInventoryPerformanceInfo R4ProgramPciInventoryPerformanceInfo;
 typedef struct R4ProgramInputPerformanceInfo R4ProgramInputPerformanceInfo;
 typedef struct R4ServiceDeadlineFooter R4ServiceDeadlineFooter;
+typedef struct R4AudioServiceMasterRequest R4AudioServiceMasterRequest;
+typedef struct R4AudioServiceMasterState R4AudioServiceMasterState;
 typedef struct R4TrayServiceRequest R4TrayServiceRequest;
 typedef struct R4TrayEvent R4TrayEvent;
 typedef struct R4TrayServiceResponse R4TrayServiceResponse;
@@ -5212,6 +5228,35 @@ typedef struct R4ServiceDeadlineFooter {
     uint32_t reserved0;
     uint64_t deadline_tick;
 } R4ServiceDeadlineFooter;
+
+typedef struct R4AudioServiceMasterRequest {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint32_t flags;
+    uint32_t fixed_volume;
+    uint64_t expected_revision;
+    uint8_t reserved0[8];
+} R4AudioServiceMasterRequest;
+
+typedef struct R4AudioServiceMasterState {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint32_t flags;
+    uint32_t service_flags;
+    uint64_t master_revision;
+    uint64_t service_epoch;
+    uint32_t selected_volume_fixed;
+    uint32_t effective_volume_fixed;
+    uint32_t last_audible_volume_fixed;
+    uint32_t reserved0;
+    uint64_t persist_writes;
+    uint64_t persist_failures;
+    uint64_t master_changes;
+    uint64_t config_loads;
+    uint8_t reserved1[48];
+} R4AudioServiceMasterState;
 
 typedef struct R4TrayServiceRequest {
     uint32_t magic;
@@ -9117,6 +9162,31 @@ _Static_assert(offsetof(R4ServiceDeadlineFooter, size) == 6u, "ServiceDeadlineFo
 _Static_assert(offsetof(R4ServiceDeadlineFooter, payload_len) == 8u, "ServiceDeadlineFooter.payload_len offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, reserved0) == 12u, "ServiceDeadlineFooter.reserved0 offset mismatch");
 _Static_assert(offsetof(R4ServiceDeadlineFooter, deadline_tick) == 16u, "ServiceDeadlineFooter.deadline_tick offset mismatch");
+_Static_assert(sizeof(R4AudioServiceMasterRequest) == 32u, "AudioServiceMasterRequest size mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterRequest, magic) == 0u, "AudioServiceMasterRequest.magic offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterRequest, version) == 4u, "AudioServiceMasterRequest.version offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterRequest, size) == 6u, "AudioServiceMasterRequest.size offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterRequest, flags) == 8u, "AudioServiceMasterRequest.flags offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterRequest, fixed_volume) == 12u, "AudioServiceMasterRequest.fixed_volume offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterRequest, expected_revision) == 16u, "AudioServiceMasterRequest.expected_revision offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterRequest, reserved0) == 24u, "AudioServiceMasterRequest.reserved0 offset mismatch");
+_Static_assert(sizeof(R4AudioServiceMasterState) == 128u, "AudioServiceMasterState size mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, magic) == 0u, "AudioServiceMasterState.magic offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, version) == 4u, "AudioServiceMasterState.version offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, size) == 6u, "AudioServiceMasterState.size offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, flags) == 8u, "AudioServiceMasterState.flags offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, service_flags) == 12u, "AudioServiceMasterState.service_flags offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, master_revision) == 16u, "AudioServiceMasterState.master_revision offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, service_epoch) == 24u, "AudioServiceMasterState.service_epoch offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, selected_volume_fixed) == 32u, "AudioServiceMasterState.selected_volume_fixed offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, effective_volume_fixed) == 36u, "AudioServiceMasterState.effective_volume_fixed offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, last_audible_volume_fixed) == 40u, "AudioServiceMasterState.last_audible_volume_fixed offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, reserved0) == 44u, "AudioServiceMasterState.reserved0 offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, persist_writes) == 48u, "AudioServiceMasterState.persist_writes offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, persist_failures) == 56u, "AudioServiceMasterState.persist_failures offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, master_changes) == 64u, "AudioServiceMasterState.master_changes offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, config_loads) == 72u, "AudioServiceMasterState.config_loads offset mismatch");
+_Static_assert(offsetof(R4AudioServiceMasterState, reserved1) == 80u, "AudioServiceMasterState.reserved1 offset mismatch");
 _Static_assert(sizeof(R4TrayServiceRequest) == 1184u, "TrayServiceRequest size mismatch");
 _Static_assert(offsetof(R4TrayServiceRequest, magic) == 0u, "TrayServiceRequest.magic offset mismatch");
 _Static_assert(offsetof(R4TrayServiceRequest, version) == 4u, "TrayServiceRequest.version offset mismatch");
