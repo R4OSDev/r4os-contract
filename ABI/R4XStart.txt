@@ -84,8 +84,8 @@ Gruppentabellen
 
     R4XSTART_R4SYS_VERSION = 15
     R4XSTART_R4SYS_SIZE    = 1024
-    R4XSTART_R4DESK_VERSION = 11
-    R4XSTART_R4DESK_SIZE    = 480
+    R4XSTART_R4DESK_VERSION = 12
+    R4XSTART_R4DESK_SIZE    = 488
     R4XSTART_R4DRAW_VERSION = 5
     R4XSTART_R4DRAW_SIZE    = 328
     R4XSTART_R4NET_VERSION = 1
@@ -123,11 +123,14 @@ GUI-Ereignisse
 
 `GuiEvent.kind` verwendet die append-only Werte `none=0`, `close=1`,
 `resize=2`, `mouse_down=3`, `mouse_up=4`, `mouse_move=5`, `key_down=6`,
-`font_changed=7`, `focus_gained=8` und `focus_lost=9`. Die beiden Fokuswerte
-werden beim Wechsel des aktiven gehosteten GUI-Fensters an die betroffenen
-Programminstanzen gestellt. Das bestehende 40-Byte-Layout von `GuiEvent`
-bleibt dabei unveraendert; unbekannte kuenftige Werte muessen von Verbrauchern
-ignoriert werden.
+`font_changed=7`, `focus_gained=8`, `focus_lost=9`,
+`physical_key_down=10`, `physical_key_up=11` und `physical_key_reset=12`.
+Die beiden Fokuswerte werden beim Wechsel des aktiven gehosteten GUI-Fensters
+an die betroffenen Programminstanzen gestellt. Physische Tasteneintraege
+tragen in `key` die layoutunabhaengige USB-HID-Keyboard-Page-Usage, in
+`modifiers` den seitenspezifischen Zustand und bei einem Reset den Wert 0.
+Das bestehende 40-Byte-Layout von `GuiEvent` bleibt dabei unveraendert;
+unbekannte kuenftige Werte muessen von Verbrauchern ignoriert werden.
 
 Stabilitaet
 -----------

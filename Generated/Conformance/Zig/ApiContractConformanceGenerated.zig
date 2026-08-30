@@ -1559,6 +1559,16 @@ comptime {
     if (@offsetOf(abi.GuiEvent, "buttons") != 20) @compileError("GuiEvent.buttons offset");
     if (@offsetOf(abi.GuiEvent, "modifiers") != 24) @compileError("GuiEvent.modifiers offset");
     if (@offsetOf(abi.GuiEvent, "tick") != 32) @compileError("GuiEvent.tick offset");
+    if (@sizeOf(abi.PhysicalKeyEvent) != 40) @compileError("PhysicalKeyEvent size");
+    if (@offsetOf(abi.PhysicalKeyEvent, "magic") != 0) @compileError("PhysicalKeyEvent.magic offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "version") != 4) @compileError("PhysicalKeyEvent.version offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "size") != 6) @compileError("PhysicalKeyEvent.size offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "kind") != 8) @compileError("PhysicalKeyEvent.kind offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "key") != 12) @compileError("PhysicalKeyEvent.key offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "modifiers") != 16) @compileError("PhysicalKeyEvent.modifiers offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "flags") != 20) @compileError("PhysicalKeyEvent.flags offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "sequence") != 24) @compileError("PhysicalKeyEvent.sequence offset");
+    if (@offsetOf(abi.PhysicalKeyEvent, "tick") != 32) @compileError("PhysicalKeyEvent.tick offset");
     if (@sizeOf(abi.GuiCommand) != 120) @compileError("GuiCommand size");
     if (@offsetOf(abi.GuiCommand, "kind") != 0) @compileError("GuiCommand.kind offset");
     if (@offsetOf(abi.GuiCommand, "x") != 4) @compileError("GuiCommand.x offset");
@@ -3443,7 +3453,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.io_file_info) != 8) @compileError("R4SysFns.io_file_info signature");
     if (@offsetOf(abi.R4XStartR4Sys, "io_file_lock") != 1016) @compileError("R4XStartR4Sys.io_file_lock offset");
     if (@sizeOf(abi.R4SysFns.io_file_lock) != 8) @compileError("R4SysFns.io_file_lock signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 480) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 488) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -3559,6 +3569,8 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.remote_frame_publish_regions) != 8) @compileError("R4DeskFns.remote_frame_publish_regions signature");
     if (@offsetOf(abi.R4XStartR4Desk, "console_input_wait") != 472) @compileError("R4XStartR4Desk.console_input_wait offset");
     if (@sizeOf(abi.R4DeskFns.console_input_wait) != 8) @compileError("R4DeskFns.console_input_wait signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "physical_key_poll") != 480) @compileError("R4XStartR4Desk.physical_key_poll offset");
+    if (@sizeOf(abi.R4DeskFns.physical_key_poll) != 8) @compileError("R4DeskFns.physical_key_poll signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 328) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");

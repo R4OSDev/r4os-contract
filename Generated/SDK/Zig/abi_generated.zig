@@ -941,6 +941,34 @@ pub const performance_simd_abi_avx2: u32 = 3;
 pub const performance_simd_abi_none: u32 = 0;
 pub const performance_simd_abi_sse2: u32 = 1;
 pub const performance_snapshot_version: u32 = 12;
+pub const physical_key_flag_repeat: u32 = 1;
+pub const physical_key_kind_down: u32 = 1;
+pub const physical_key_kind_reset: u32 = 3;
+pub const physical_key_kind_up: u32 = 2;
+pub const physical_key_magic: u32 = 1263547474;
+pub const physical_key_modifier_left_alt: u32 = 4;
+pub const physical_key_modifier_left_control: u32 = 1;
+pub const physical_key_modifier_left_gui: u32 = 64;
+pub const physical_key_modifier_left_shift: u32 = 16;
+pub const physical_key_modifier_right_alt: u32 = 8;
+pub const physical_key_modifier_right_control: u32 = 2;
+pub const physical_key_modifier_right_gui: u32 = 128;
+pub const physical_key_modifier_right_shift: u32 = 32;
+pub const physical_key_poll_empty: i32 = 0;
+pub const physical_key_poll_error_invalid: i32 = -1;
+pub const physical_key_poll_error_unsupported: i32 = -2;
+pub const physical_key_poll_ready: i32 = 1;
+pub const physical_key_usage_down: u32 = 81;
+pub const physical_key_usage_enter: u32 = 40;
+pub const physical_key_usage_left: u32 = 80;
+pub const physical_key_usage_left_alt: u32 = 226;
+pub const physical_key_usage_left_control: u32 = 224;
+pub const physical_key_usage_right: u32 = 79;
+pub const physical_key_usage_right_alt: u32 = 230;
+pub const physical_key_usage_right_control: u32 = 228;
+pub const physical_key_usage_space: u32 = 44;
+pub const physical_key_usage_up: u32 = 82;
+pub const physical_key_version: u16 = 1;
 pub const program_completion_flag_display_used: u32 = 4;
 pub const program_completion_flag_output: u32 = 2;
 pub const program_completion_flag_owner: u32 = 8;
@@ -3426,6 +3454,18 @@ pub const GuiEvent = extern struct {
     tick: u64 = 0,
 };
 
+pub const PhysicalKeyEvent = extern struct {
+    magic: u32 = 1263547474,
+    version: u16 = 1,
+    size: u16 = 40,
+    kind: u32 = 0,
+    key: u32 = 0,
+    modifiers: u32 = 0,
+    flags: u32 = 0,
+    sequence: u64 = 0,
+    tick: u64 = 0,
+};
+
 pub const GuiCommand = extern struct {
     kind: u32 = 0,
     x: i32 = 0,
@@ -5575,12 +5615,13 @@ pub const R4DeskFns = struct {
     pub const remote_frame_consumers = *const fn () callconv(.c) u32;
     pub const remote_frame_publish_regions = *const fn (*const RemoteFrameInfo, [*]const u32, u32, [*]const DisplayDamageRect, u32) callconv(.c) i32;
     pub const console_input_wait = *const fn (u64, u64, *u64) callconv(.c) i32;
+    pub const physical_key_poll = *const fn (*PhysicalKeyEvent) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 11,
-    size: u32 = 480,
+    abi_version: u32 = 12,
+    size: u32 = 488,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -5640,6 +5681,7 @@ pub const R4XStartR4Desk = extern struct {
     remote_frame_consumers: usize = 0,
     remote_frame_publish_regions: usize = 0,
     console_input_wait: usize = 0,
+    physical_key_poll: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -6141,6 +6183,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 55, .offset = 456, .name = "remote_frame_consumers", .state = .function, .required = false },
     .{ .number = 56, .offset = 464, .name = "remote_frame_publish_regions", .state = .function, .required = false },
     .{ .number = 57, .offset = 472, .name = "console_input_wait", .state = .function, .required = false },
+    .{ .number = 58, .offset = 480, .name = "physical_key_poll", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -7884,6 +7927,17 @@ comptime {
     if (@offsetOf(GuiEvent, "buttons") != 20) @compileError("generated ABI offset drift: GuiEvent.buttons");
     if (@offsetOf(GuiEvent, "modifiers") != 24) @compileError("generated ABI offset drift: GuiEvent.modifiers");
     if (@offsetOf(GuiEvent, "tick") != 32) @compileError("generated ABI offset drift: GuiEvent.tick");
+    if (@sizeOf(PhysicalKeyEvent) != 40) @compileError("generated ABI size drift: PhysicalKeyEvent");
+    if (@alignOf(PhysicalKeyEvent) != 8) @compileError("generated ABI alignment drift: PhysicalKeyEvent");
+    if (@offsetOf(PhysicalKeyEvent, "magic") != 0) @compileError("generated ABI offset drift: PhysicalKeyEvent.magic");
+    if (@offsetOf(PhysicalKeyEvent, "version") != 4) @compileError("generated ABI offset drift: PhysicalKeyEvent.version");
+    if (@offsetOf(PhysicalKeyEvent, "size") != 6) @compileError("generated ABI offset drift: PhysicalKeyEvent.size");
+    if (@offsetOf(PhysicalKeyEvent, "kind") != 8) @compileError("generated ABI offset drift: PhysicalKeyEvent.kind");
+    if (@offsetOf(PhysicalKeyEvent, "key") != 12) @compileError("generated ABI offset drift: PhysicalKeyEvent.key");
+    if (@offsetOf(PhysicalKeyEvent, "modifiers") != 16) @compileError("generated ABI offset drift: PhysicalKeyEvent.modifiers");
+    if (@offsetOf(PhysicalKeyEvent, "flags") != 20) @compileError("generated ABI offset drift: PhysicalKeyEvent.flags");
+    if (@offsetOf(PhysicalKeyEvent, "sequence") != 24) @compileError("generated ABI offset drift: PhysicalKeyEvent.sequence");
+    if (@offsetOf(PhysicalKeyEvent, "tick") != 32) @compileError("generated ABI offset drift: PhysicalKeyEvent.tick");
     if (@sizeOf(GuiCommand) != 120) @compileError("generated ABI size drift: GuiCommand");
     if (@alignOf(GuiCommand) != 4) @compileError("generated ABI alignment drift: GuiCommand");
     if (@offsetOf(GuiCommand, "kind") != 0) @compileError("generated ABI offset drift: GuiCommand.kind");
@@ -9744,7 +9798,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "io_file_write_at") != 1000) @compileError("generated ABI offset drift: R4XStartR4Sys.io_file_write_at");
     if (@offsetOf(R4XStartR4Sys, "io_file_info") != 1008) @compileError("generated ABI offset drift: R4XStartR4Sys.io_file_info");
     if (@offsetOf(R4XStartR4Sys, "io_file_lock") != 1016) @compileError("generated ABI offset drift: R4XStartR4Sys.io_file_lock");
-    if (@sizeOf(R4XStartR4Desk) != 480) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 488) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -9803,6 +9857,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_consumers") != 456) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_consumers");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
+    if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
     if (@sizeOf(R4XStartR4Draw) != 328) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");

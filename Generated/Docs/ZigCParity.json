@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 312,
+    "group_function_signatures": 313,
     "sdk_operation_contracts": 0,
-    "parity_entries": 312,
+    "parity_entries": 313,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1628,6 +1628,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DeskFns.console_input_wait",
       "c_contract": "R4DeskConsoleInputWaitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.physical_key_poll",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.physical_key_poll",
+      "c_contract": "R4DeskPhysicalKeyPollFn",
       "coverage": "generated_signature"
     },
     {

@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 312,
-    "group_slot_count": 312,
+    "function_count": 313,
+    "group_slot_count": 313,
     "sdk_only_count": 0,
     "public_count": 222,
-    "advanced_count": 90
+    "advanced_count": 91
   },
   "functions": [
     {
@@ -2165,6 +2165,18 @@
       "slot": 57,
       "exposure": "public",
       "description": "Waits generation-safely until the calling console input source is readable, changes generation, times out, or is closed.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.physical_key_poll",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 58,
+      "exposure": "advanced",
+      "description": "Takes the next ordered layout-independent physical keyboard transition for the desktop host.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

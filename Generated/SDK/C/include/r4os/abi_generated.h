@@ -953,6 +953,34 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
 #define R4OS_PERFORMANCE_SNAPSHOT_VERSION 12u
+#define R4OS_PHYSICAL_KEY_FLAG_REPEAT 1u
+#define R4OS_PHYSICAL_KEY_KIND_DOWN 1u
+#define R4OS_PHYSICAL_KEY_KIND_RESET 3u
+#define R4OS_PHYSICAL_KEY_KIND_UP 2u
+#define R4OS_PHYSICAL_KEY_MAGIC 1263547474u
+#define R4OS_PHYSICAL_KEY_MODIFIER_LEFT_ALT 4u
+#define R4OS_PHYSICAL_KEY_MODIFIER_LEFT_CONTROL 1u
+#define R4OS_PHYSICAL_KEY_MODIFIER_LEFT_GUI 64u
+#define R4OS_PHYSICAL_KEY_MODIFIER_LEFT_SHIFT 16u
+#define R4OS_PHYSICAL_KEY_MODIFIER_RIGHT_ALT 8u
+#define R4OS_PHYSICAL_KEY_MODIFIER_RIGHT_CONTROL 2u
+#define R4OS_PHYSICAL_KEY_MODIFIER_RIGHT_GUI 128u
+#define R4OS_PHYSICAL_KEY_MODIFIER_RIGHT_SHIFT 32u
+#define R4OS_PHYSICAL_KEY_POLL_EMPTY ((int32_t)0)
+#define R4OS_PHYSICAL_KEY_POLL_ERROR_INVALID ((int32_t)-1)
+#define R4OS_PHYSICAL_KEY_POLL_ERROR_UNSUPPORTED ((int32_t)-2)
+#define R4OS_PHYSICAL_KEY_POLL_READY ((int32_t)1)
+#define R4OS_PHYSICAL_KEY_USAGE_DOWN 81u
+#define R4OS_PHYSICAL_KEY_USAGE_ENTER 40u
+#define R4OS_PHYSICAL_KEY_USAGE_LEFT 80u
+#define R4OS_PHYSICAL_KEY_USAGE_LEFT_ALT 226u
+#define R4OS_PHYSICAL_KEY_USAGE_LEFT_CONTROL 224u
+#define R4OS_PHYSICAL_KEY_USAGE_RIGHT 79u
+#define R4OS_PHYSICAL_KEY_USAGE_RIGHT_ALT 230u
+#define R4OS_PHYSICAL_KEY_USAGE_RIGHT_CONTROL 228u
+#define R4OS_PHYSICAL_KEY_USAGE_SPACE 44u
+#define R4OS_PHYSICAL_KEY_USAGE_UP 82u
+#define R4OS_PHYSICAL_KEY_VERSION 1u
 #define R4OS_PROGRAM_COMPLETION_FLAG_DISPLAY_USED 4u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT 2u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OWNER 8u
@@ -1816,6 +1844,7 @@ typedef struct R4DisplaySummary R4DisplaySummary;
 typedef struct R4GuiWindowInfo R4GuiWindowInfo;
 typedef struct R4GuiSize R4GuiSize;
 typedef struct R4GuiEvent R4GuiEvent;
+typedef struct R4PhysicalKeyEvent R4PhysicalKeyEvent;
 typedef struct R4GuiCommand R4GuiCommand;
 typedef struct R4GuiFrameCommand R4GuiFrameCommand;
 typedef struct R4GuiPathSegment R4GuiPathSegment;
@@ -3505,6 +3534,18 @@ typedef struct R4GuiEvent {
     uint32_t modifiers;
     uint64_t tick;
 } R4GuiEvent;
+
+typedef struct R4PhysicalKeyEvent {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint32_t kind;
+    uint32_t key;
+    uint32_t modifiers;
+    uint32_t flags;
+    uint64_t sequence;
+    uint64_t tick;
+} R4PhysicalKeyEvent;
 
 typedef struct R4GuiCommand {
     uint32_t kind;
@@ -5700,6 +5741,7 @@ typedef int32_t (*R4DeskRemoteFrameReleaseFn)(void);
 typedef uint32_t (*R4DeskRemoteFrameConsumersFn)(void);
 typedef int32_t (*R4DeskRemoteFramePublishRegionsFn)(const R4RemoteFrameInfo * info, const uint32_t * pixels, uint32_t pixel_count, const R4DisplayDamageRect * regions, uint32_t region_count);
 typedef int32_t (*R4DeskConsoleInputWaitFn)(uint64_t last_generation, uint64_t timeout_ticks, uint64_t * out_generation);
+typedef int32_t (*R4DeskPhysicalKeyPollFn)(R4PhysicalKeyEvent * out_event);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -5764,6 +5806,7 @@ typedef struct R4XStartR4Desk {
     uintptr_t remote_frame_consumers;
     uintptr_t remote_frame_publish_regions;
     uintptr_t console_input_wait;
+    uintptr_t physical_key_poll;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -7625,6 +7668,16 @@ _Static_assert(offsetof(R4GuiEvent, key) == 16u, "GuiEvent.key offset mismatch")
 _Static_assert(offsetof(R4GuiEvent, buttons) == 20u, "GuiEvent.buttons offset mismatch");
 _Static_assert(offsetof(R4GuiEvent, modifiers) == 24u, "GuiEvent.modifiers offset mismatch");
 _Static_assert(offsetof(R4GuiEvent, tick) == 32u, "GuiEvent.tick offset mismatch");
+_Static_assert(sizeof(R4PhysicalKeyEvent) == 40u, "PhysicalKeyEvent size mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, magic) == 0u, "PhysicalKeyEvent.magic offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, version) == 4u, "PhysicalKeyEvent.version offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, size) == 6u, "PhysicalKeyEvent.size offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, kind) == 8u, "PhysicalKeyEvent.kind offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, key) == 12u, "PhysicalKeyEvent.key offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, modifiers) == 16u, "PhysicalKeyEvent.modifiers offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, flags) == 20u, "PhysicalKeyEvent.flags offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, sequence) == 24u, "PhysicalKeyEvent.sequence offset mismatch");
+_Static_assert(offsetof(R4PhysicalKeyEvent, tick) == 32u, "PhysicalKeyEvent.tick offset mismatch");
 _Static_assert(sizeof(R4GuiCommand) == 120u, "GuiCommand size mismatch");
 _Static_assert(offsetof(R4GuiCommand, kind) == 0u, "GuiCommand.kind offset mismatch");
 _Static_assert(offsetof(R4GuiCommand, x) == 4u, "GuiCommand.x offset mismatch");
@@ -9509,7 +9562,7 @@ _Static_assert(offsetof(R4XStartR4Sys, io_file_info) == 1008u, "R4XStartR4Sys.io
 _Static_assert(sizeof(R4SysIoFileInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, io_file_lock) == 1016u, "R4XStartR4Sys.io_file_lock offset mismatch");
 _Static_assert(sizeof(R4SysIoFileLockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 480u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 488u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -9625,6 +9678,8 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_publish_regions) == 464u, "
 _Static_assert(sizeof(R4DeskRemoteFramePublishRegionsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, console_input_wait) == 472u, "R4XStartR4Desk.console_input_wait offset mismatch");
 _Static_assert(sizeof(R4DeskConsoleInputWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4Desk.physical_key_poll offset mismatch");
+_Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 328u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
