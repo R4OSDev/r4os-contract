@@ -79755,6 +79755,66 @@
       "description": "USB HID keyboard-page Enter usage."
     },
     {
+      "name": "physical_key_usage_keypad_2",
+      "value": "90",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "hid_usage",
+      "scope": "physical_key",
+      "stability": "fixed_contract",
+      "description": "USB HID keyboard-page Keypad 2 usage."
+    },
+    {
+      "name": "physical_key_usage_keypad_4",
+      "value": "92",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "hid_usage",
+      "scope": "physical_key",
+      "stability": "fixed_contract",
+      "description": "USB HID keyboard-page Keypad 4 usage."
+    },
+    {
+      "name": "physical_key_usage_keypad_6",
+      "value": "94",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "hid_usage",
+      "scope": "physical_key",
+      "stability": "fixed_contract",
+      "description": "USB HID keyboard-page Keypad 6 usage."
+    },
+    {
+      "name": "physical_key_usage_keypad_7",
+      "value": "95",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "hid_usage",
+      "scope": "physical_key",
+      "stability": "fixed_contract",
+      "description": "USB HID keyboard-page Keypad 7 usage."
+    },
+    {
+      "name": "physical_key_usage_keypad_8",
+      "value": "96",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "hid_usage",
+      "scope": "physical_key",
+      "stability": "fixed_contract",
+      "description": "USB HID keyboard-page Keypad 8 usage."
+    },
+    {
+      "name": "physical_key_usage_keypad_9",
+      "value": "97",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "hid_usage",
+      "scope": "physical_key",
+      "stability": "fixed_contract",
+      "description": "USB HID keyboard-page Keypad 9 usage."
+    },
+    {
       "name": "physical_key_usage_left",
       "value": "80",
       "value_type": "u32",

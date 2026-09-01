@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 136 von 136 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 62; Konstanten: 1366; Limits: 109
+- Operationen: 0; Fehlerdomänen: 62; Konstanten: 1372; Limits: 109
 
 ## App-Profile
 
@@ -6223,6 +6223,12 @@ Geltung: `window_service`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `physical_key_poll_ready` | `1` | `i32` | value | result | `physical_key` | fixed_contract |
 | `physical_key_usage_down` | `81` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
 | `physical_key_usage_enter` | `40` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
+| `physical_key_usage_keypad_2` | `90` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
+| `physical_key_usage_keypad_4` | `92` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
+| `physical_key_usage_keypad_6` | `94` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
+| `physical_key_usage_keypad_7` | `95` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
+| `physical_key_usage_keypad_8` | `96` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
+| `physical_key_usage_keypad_9` | `97` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
 | `physical_key_usage_left` | `80` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
 | `physical_key_usage_left_alt` | `226` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
 | `physical_key_usage_left_control` | `224` | `u32` | identity | hid_usage | `physical_key` | fixed_contract |
