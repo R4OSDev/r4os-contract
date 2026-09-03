@@ -952,7 +952,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 12u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 13u
 #define R4OS_PHYSICAL_KEY_FLAG_REPEAT 1u
 #define R4OS_PHYSICAL_KEY_KIND_DOWN 1u
 #define R4OS_PHYSICAL_KEY_KIND_RESET 3u
@@ -3154,6 +3154,32 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t ntfs_metadata_reclaim_requests;
     uint64_t ntfs_metadata_reclaim_scans;
     uint64_t ntfs_metadata_reclaimed_entries;
+    uint32_t fs_cache_capacity_min_pages;
+    uint32_t fs_cache_capacity_max_pages;
+    uint32_t fs_cache_capacity_ram_limit_pages;
+    uint32_t fs_cache_capacity_active_limit_pages;
+    uint32_t fs_cache_capacity_pressure_level;
+    uint32_t fs_cache_read_ahead_window_pages;
+    uint32_t fs_cache_read_ahead_window_max_pages;
+    uint32_t fs_cache_capacity_reserved0;
+    uint64_t fs_cache_fill_run_requests;
+    uint64_t fs_cache_fill_run_backend_requests;
+    uint64_t fs_cache_fill_run_pages;
+    uint64_t fs_cache_fill_run_sectors;
+    uint64_t fs_cache_fill_run_bytes;
+    uint64_t fs_cache_fill_run_failures;
+    uint64_t fs_cache_fill_run_retries;
+    uint64_t fs_cache_fill_run_max_pages;
+    uint64_t fs_cache_fill_scatter_copy_bytes;
+    uint64_t fs_cache_read_staging_copy_bytes;
+    uint64_t fs_cache_read_caller_copy_bytes;
+    uint64_t fs_cache_read_publish_lock_drops;
+    uint64_t fs_cache_fill_lock_drops;
+    uint64_t fs_cache_capacity_reductions;
+    uint64_t fs_cache_capacity_trimmed_pages;
+    uint64_t fs_cache_read_ahead_pages_scheduled;
+    uint64_t fs_cache_read_ahead_pages_issued;
+    uint64_t fs_cache_read_ahead_random_resets;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -6520,7 +6546,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 6000u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 6176u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -7341,6 +7367,32 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_invalidated_e
 _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_reclaim_requests) == 5976u, "ProgramPerformanceSummary.ntfs_metadata_reclaim_requests offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_reclaim_scans) == 5984u, "ProgramPerformanceSummary.ntfs_metadata_reclaim_scans offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_reclaimed_entries) == 5992u, "ProgramPerformanceSummary.ntfs_metadata_reclaimed_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_min_pages) == 6000u, "ProgramPerformanceSummary.fs_cache_capacity_min_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_max_pages) == 6004u, "ProgramPerformanceSummary.fs_cache_capacity_max_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_ram_limit_pages) == 6008u, "ProgramPerformanceSummary.fs_cache_capacity_ram_limit_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_active_limit_pages) == 6012u, "ProgramPerformanceSummary.fs_cache_capacity_active_limit_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_pressure_level) == 6016u, "ProgramPerformanceSummary.fs_cache_capacity_pressure_level offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_window_pages) == 6020u, "ProgramPerformanceSummary.fs_cache_read_ahead_window_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_window_max_pages) == 6024u, "ProgramPerformanceSummary.fs_cache_read_ahead_window_max_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_reserved0) == 6028u, "ProgramPerformanceSummary.fs_cache_capacity_reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_requests) == 6032u, "ProgramPerformanceSummary.fs_cache_fill_run_requests offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_backend_requests) == 6040u, "ProgramPerformanceSummary.fs_cache_fill_run_backend_requests offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_pages) == 6048u, "ProgramPerformanceSummary.fs_cache_fill_run_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_sectors) == 6056u, "ProgramPerformanceSummary.fs_cache_fill_run_sectors offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_bytes) == 6064u, "ProgramPerformanceSummary.fs_cache_fill_run_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_failures) == 6072u, "ProgramPerformanceSummary.fs_cache_fill_run_failures offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_retries) == 6080u, "ProgramPerformanceSummary.fs_cache_fill_run_retries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_run_max_pages) == 6088u, "ProgramPerformanceSummary.fs_cache_fill_run_max_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_scatter_copy_bytes) == 6096u, "ProgramPerformanceSummary.fs_cache_fill_scatter_copy_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_staging_copy_bytes) == 6104u, "ProgramPerformanceSummary.fs_cache_read_staging_copy_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_caller_copy_bytes) == 6112u, "ProgramPerformanceSummary.fs_cache_read_caller_copy_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_publish_lock_drops) == 6120u, "ProgramPerformanceSummary.fs_cache_read_publish_lock_drops offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_fill_lock_drops) == 6128u, "ProgramPerformanceSummary.fs_cache_fill_lock_drops offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_reductions) == 6136u, "ProgramPerformanceSummary.fs_cache_capacity_reductions offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_trimmed_pages) == 6144u, "ProgramPerformanceSummary.fs_cache_capacity_trimmed_pages offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_pages_scheduled) == 6152u, "ProgramPerformanceSummary.fs_cache_read_ahead_pages_scheduled offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_pages_issued) == 6160u, "ProgramPerformanceSummary.fs_cache_read_ahead_pages_issued offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_random_resets) == 6168u, "ProgramPerformanceSummary.fs_cache_read_ahead_random_resets offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");

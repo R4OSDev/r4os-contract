@@ -28241,8 +28241,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 12,
-      "size": 6000,
+      "version": 13,
+      "size": 6176,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -28259,7 +28259,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "12"
+          "default_value": "13"
         },
         {
           "name": "size",
@@ -28273,7 +28273,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "6000"
+          "default_value": "6176"
         },
         {
           "name": "flags",
@@ -39748,6 +39748,370 @@
             "name": "u64"
           },
           "description": "Decoded NTFS metadata entries discarded by global pressure reclaim.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_min_pages",
+          "offset": 6000,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Minimum admitted page-cache payload capacity in 4 KB pages.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_max_pages",
+          "offset": 6004,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum admitted page-cache payload capacity in 4 KB pages.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_ram_limit_pages",
+          "offset": 6008,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Boot-RAM-derived page-cache payload limit in 4 KB pages.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_active_limit_pages",
+          "offset": 6012,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current pressure-adjusted page-cache payload limit in 4 KB pages.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_pressure_level",
+          "offset": 6016,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current page-cache pressure level from zero through three.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_window_pages",
+          "offset": 6020,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Largest currently learned sequential read-ahead window in 4 KB pages.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_window_max_pages",
+          "offset": 6024,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current pressure-adjusted maximum read-ahead window in 4 KB pages.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_reserved0",
+          "offset": 6028,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved page-cache capacity telemetry field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_requests",
+          "offset": 6032,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Contiguous multi-page cache-fill runs submitted by demand or read-ahead.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_backend_requests",
+          "offset": 6040,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Raw backend read attempts used by contiguous multi-page cache fills.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_pages",
+          "offset": 6048,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cache pages reserved across contiguous multi-page fill runs.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_sectors",
+          "offset": 6056,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Device sectors requested across contiguous multi-page fill runs.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_bytes",
+          "offset": 6064,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Device bytes requested across contiguous multi-page fill runs.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_failures",
+          "offset": 6072,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Contiguous fill runs that failed I/O or atomic publication validation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_retries",
+          "offset": 6080,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cache-owned retry attempts for contiguous fills; USB mass storage owns its retry below this layer.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_run_max_pages",
+          "offset": 6088,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Largest contiguous fill run observed in 4 KB pages.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_scatter_copy_bytes",
+          "offset": 6096,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes copied from resident contiguous-fill staging into cache payload pages.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_staging_copy_bytes",
+          "offset": 6104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes copied from cache payload pages into resident per-read staging.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_caller_copy_bytes",
+          "offset": 6112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes copied from resident per-read staging into potentially pageable caller buffers.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_publish_lock_drops",
+          "offset": 6120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cache-lock releases before writes into potentially pageable caller buffers.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_fill_lock_drops",
+          "offset": 6128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cache-lock releases used to submit contiguous multi-page backend fills.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_reductions",
+          "offset": 6136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Observed transitions to a smaller pressure-adjusted cache capacity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_capacity_trimmed_pages",
+          "offset": 6144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Clean cache payload pages reclaimed to meet a reduced active limit.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_pages_scheduled",
+          "offset": 6152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Sequential read-ahead pages scheduled before cancellation or admission checks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_pages_issued",
+          "offset": 6160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Sequential read-ahead pages successfully published as speculative residency.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fs_cache_read_ahead_random_resets",
+          "offset": 6168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Non-adjacent demand observations that reset sequential read-ahead confidence.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -79785,7 +80149,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "12",
+      "value": "13",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
