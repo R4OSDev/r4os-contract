@@ -5741,12 +5741,13 @@ pub const R4DrawFns = struct {
     pub const gui_frame_generation_info = *const fn (*const ProgramProcessHandle, u64, *GuiFrameGenerationInfo) callconv(.c) i32;
     pub const gui_frame_generation_read = *const fn (*const ProgramProcessHandle, u64, ?[*]GuiFrameCommand, u64, ?[*]u8, u64, ?[*]DisplayDamageRect, u32, *GuiFrameGenerationInfo) callconv(.c) i32;
     pub const font_glyph_bitmap = *const fn (u32, u32, *GuiGlyphBitmap) callconv(.c) i32;
+    pub const font_revision = *const fn () callconv(.c) u32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 6,
-    size: u32 = 336,
+    abi_version: u32 = 7,
+    size: u32 = 344,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -5788,6 +5789,7 @@ pub const R4XStartR4Draw = extern struct {
     gui_frame_generation_info: usize = 0,
     gui_frame_generation_read: usize = 0,
     font_glyph_bitmap: usize = 0,
+    font_revision: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -6245,6 +6247,7 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 37, .offset = 312, .name = "gui_frame_generation_info", .state = .function, .required = false },
     .{ .number = 38, .offset = 320, .name = "gui_frame_generation_read", .state = .function, .required = false },
     .{ .number = 39, .offset = 328, .name = "font_glyph_bitmap", .state = .function, .required = false },
+    .{ .number = 40, .offset = 336, .name = "font_revision", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -9886,7 +9889,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
-    if (@sizeOf(R4XStartR4Draw) != 336) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 344) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -9927,6 +9930,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gui_frame_generation_info") != 312) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_generation_info");
     if (@offsetOf(R4XStartR4Draw, "gui_frame_generation_read") != 320) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_generation_read");
     if (@offsetOf(R4XStartR4Draw, "font_glyph_bitmap") != 328) @compileError("generated ABI offset drift: R4XStartR4Draw.font_glyph_bitmap");
+    if (@offsetOf(R4XStartR4Draw, "font_revision") != 336) @compileError("generated ABI offset drift: R4XStartR4Draw.font_revision");
     if (@sizeOf(R4XStartR4Net) != 288) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -10461,13 +10465,14 @@ pub const R4DrawProvider = struct {
     gui_frame_generation_info: R4DrawFns.gui_frame_generation_info,
     gui_frame_generation_read: R4DrawFns.gui_frame_generation_read,
     font_glyph_bitmap: R4DrawFns.font_glyph_bitmap,
+    font_revision: R4DrawFns.font_revision,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 6,
-        .size = 336,
+        .abi_version = 7,
+        .size = 344,
         .flags = 0,
         .screen_width = @intFromPtr(provider.screen_width),
         .screen_height = @intFromPtr(provider.screen_height),
@@ -10509,6 +10514,7 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gui_frame_generation_info = @intFromPtr(provider.gui_frame_generation_info),
         .gui_frame_generation_read = @intFromPtr(provider.gui_frame_generation_read),
         .font_glyph_bitmap = @intFromPtr(provider.font_glyph_bitmap),
+        .font_revision = @intFromPtr(provider.font_revision),
     };
 }
 

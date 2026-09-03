@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 314,
-    "group_slot_count": 314,
+    "function_count": 315,
+    "group_slot_count": 315,
     "sdk_only_count": 0,
-    "public_count": 223,
+    "public_count": 224,
     "advanced_count": 91
   },
   "functions": [
@@ -2657,6 +2657,18 @@
       "slot": 39,
       "exposure": "public",
       "description": "Copies one complete cached monochrome glyph, including its metrics and least-significant-bit-first row masks, after resolving the glyph exactly once. Missing glyphs use the same built-in fallback as the existing font renderer.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.font_revision",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 40,
+      "exposure": "public",
+      "description": "Returns the non-zero generation of the live system-font catalogue. Every completed catalogue reload advances the generation so consumers can invalidate font-id keyed caches even when ids or metadata are reused.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

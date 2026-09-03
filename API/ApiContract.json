@@ -13952,10 +13952,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 6,
+      "abi_version": 7,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 336,
+      "size": 344,
       "slots": [
         {
           "number": 0,
@@ -16835,6 +16835,47 @@
             "side_effects": "none",
             "retry": "idempotent",
             "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 40,
+          "offset": 336,
+          "name": "font_revision",
+          "state": "function",
+          "required": false,
+          "description": "Returns the non-zero generation of the live system-font catalogue. Every completed catalogue reload advances the generation so consumers can invalidate font-id keyed caches even when ids or metadata are reused.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "u32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
         }
