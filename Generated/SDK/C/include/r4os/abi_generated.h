@@ -1950,6 +1950,7 @@ typedef struct R4TrayServiceRequest R4TrayServiceRequest;
 typedef struct R4TrayEvent R4TrayEvent;
 typedef struct R4TrayServiceResponse R4TrayServiceResponse;
 typedef struct R4TrayDesktopExchange R4TrayDesktopExchange;
+typedef struct R4GuiGlyphBitmap R4GuiGlyphBitmap;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -5385,6 +5386,16 @@ typedef struct R4TrayDesktopExchange {
     uint8_t reserved0[16];
 } R4TrayDesktopExchange;
 
+typedef struct R4GuiGlyphBitmap {
+    uint32_t width;
+    uint32_t height;
+    uint32_t advance;
+    uint32_t line_height;
+    int32_t baseline;
+    uint32_t reserved0;
+    uint64_t rows[40];
+} R4GuiGlyphBitmap;
+
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
 typedef struct R4XStartContext {
@@ -5854,6 +5865,7 @@ typedef int32_t (*R4DrawDisplayPresentCompletionFn)(uint64_t fence, R4DisplayPre
 typedef int32_t (*R4DrawGuiFrameBeginDamageFn)(const R4DisplayDamageRect * regions, uint32_t region_count);
 typedef int32_t (*R4DrawGuiFrameGenerationInfoFn)(const R4ProgramProcessHandle * handle, uint64_t generation, R4GuiFrameGenerationInfo * out_info);
 typedef int32_t (*R4DrawGuiFrameGenerationReadFn)(const R4ProgramProcessHandle * handle, uint64_t generation, R4GuiFrameCommand * commands, uint64_t command_capacity, uint8_t * resources, uint64_t resource_capacity, R4DisplayDamageRect * regions, uint32_t region_capacity, R4GuiFrameGenerationInfo * out_info);
+typedef int32_t (*R4DrawFontGlyphBitmapFn)(uint32_t font_id, uint32_t codepoint, R4GuiGlyphBitmap * out_bitmap);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -5899,6 +5911,7 @@ typedef struct R4XStartR4Draw {
     uintptr_t gui_frame_begin_damage;
     uintptr_t gui_frame_generation_info;
     uintptr_t gui_frame_generation_read;
+    uintptr_t font_glyph_bitmap;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -9318,6 +9331,14 @@ _Static_assert(offsetof(R4TrayDesktopExchange, registry_revision) == 56u, "TrayD
 _Static_assert(offsetof(R4TrayDesktopExchange, event) == 64u, "TrayDesktopExchange.event offset mismatch");
 _Static_assert(offsetof(R4TrayDesktopExchange, item) == 144u, "TrayDesktopExchange.item offset mismatch");
 _Static_assert(offsetof(R4TrayDesktopExchange, reserved0) == 1328u, "TrayDesktopExchange.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GuiGlyphBitmap) == 344u, "GuiGlyphBitmap size mismatch");
+_Static_assert(offsetof(R4GuiGlyphBitmap, width) == 0u, "GuiGlyphBitmap.width offset mismatch");
+_Static_assert(offsetof(R4GuiGlyphBitmap, height) == 4u, "GuiGlyphBitmap.height offset mismatch");
+_Static_assert(offsetof(R4GuiGlyphBitmap, advance) == 8u, "GuiGlyphBitmap.advance offset mismatch");
+_Static_assert(offsetof(R4GuiGlyphBitmap, line_height) == 12u, "GuiGlyphBitmap.line_height offset mismatch");
+_Static_assert(offsetof(R4GuiGlyphBitmap, baseline) == 16u, "GuiGlyphBitmap.baseline offset mismatch");
+_Static_assert(offsetof(R4GuiGlyphBitmap, reserved0) == 20u, "GuiGlyphBitmap.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GuiGlyphBitmap, rows) == 24u, "GuiGlyphBitmap.rows offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1024u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -9686,7 +9707,7 @@ _Static_assert(offsetof(R4XStartR4Desk, console_input_wait) == 472u, "R4XStartR4
 _Static_assert(sizeof(R4DeskConsoleInputWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4Desk.physical_key_poll offset mismatch");
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 328u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 336u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -9765,6 +9786,8 @@ _Static_assert(offsetof(R4XStartR4Draw, gui_frame_generation_info) == 312u, "R4X
 _Static_assert(sizeof(R4DrawGuiFrameGenerationInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gui_frame_generation_read) == 320u, "R4XStartR4Draw.gui_frame_generation_read offset mismatch");
 _Static_assert(sizeof(R4DrawGuiFrameGenerationReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, font_glyph_bitmap) == 328u, "R4XStartR4Draw.font_glyph_bitmap offset mismatch");
+_Static_assert(sizeof(R4DrawFontGlyphBitmapFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 288u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

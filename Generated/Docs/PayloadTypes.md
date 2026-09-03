@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 136 von 136 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 137 von 137 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 62; Konstanten: 1372; Limits: 109
 
@@ -157,6 +157,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `TrayEvent` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `TrayServiceResponse` | fixed_layout | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
 | `TrayDesktopExchange` | fixed_layout | extern_struct | 1344/8 | 1344/8 | 1344/8 | 1344/8 |
+| `GuiGlyphBitmap` | fixed_layout | extern_struct | 344/8 | 344/8 | 344/8 | 344/8 |
 
 ## Typdetails
 
@@ -4545,6 +4546,23 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `event` | 64 | 80 | 8 | `r4os.abi.TrayEvent` | - |
 | `item` | 144 | 1184 | 8 | `r4os.abi.TrayServiceRequest` | - |
 | `reserved0` | 1328 | 16 | 1 | `[16]u8` | - |
+
+### `GuiGlyphBitmap`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 344 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `width` | 0 | 4 | 4 | `u32` | - |
+| `height` | 4 | 4 | 4 | `u32` | - |
+| `advance` | 8 | 4 | 4 | `u32` | - |
+| `line_height` | 12 | 4 | 4 | `u32` | - |
+| `baseline` | 16 | 4 | 4 | `i32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `rows` | 24 | 320 | 8 | `[40]u64` | - |
 
 ## Fehlerdomänen
 

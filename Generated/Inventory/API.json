@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 313,
-    "group_slot_count": 313,
+    "function_count": 314,
+    "group_slot_count": 314,
     "sdk_only_count": 0,
-    "public_count": 222,
+    "public_count": 223,
     "advanced_count": 91
   },
   "functions": [
@@ -2645,6 +2645,18 @@
       "slot": 38,
       "exposure": "public",
       "description": "Copies only the commands, resources and exact client-local damage regions owned by one immutable generation. Resource offsets remain local to the returned blob. On stale, buffer-too-small or invalid input no payload buffer is modified and out_info reports the generation requirements when available.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.font_glyph_bitmap",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 39,
+      "exposure": "public",
+      "description": "Copies one complete cached monochrome glyph, including its metrics and least-significant-bit-first row masks, after resolving the glyph exactly once. Missing glyphs use the same built-in fallback as the existing font renderer.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

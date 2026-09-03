@@ -3203,6 +3203,14 @@ comptime {
     if (@offsetOf(abi.TrayDesktopExchange, "event") != 64) @compileError("TrayDesktopExchange.event offset");
     if (@offsetOf(abi.TrayDesktopExchange, "item") != 144) @compileError("TrayDesktopExchange.item offset");
     if (@offsetOf(abi.TrayDesktopExchange, "reserved0") != 1328) @compileError("TrayDesktopExchange.reserved0 offset");
+    if (@sizeOf(abi.GuiGlyphBitmap) != 344) @compileError("GuiGlyphBitmap size");
+    if (@offsetOf(abi.GuiGlyphBitmap, "width") != 0) @compileError("GuiGlyphBitmap.width offset");
+    if (@offsetOf(abi.GuiGlyphBitmap, "height") != 4) @compileError("GuiGlyphBitmap.height offset");
+    if (@offsetOf(abi.GuiGlyphBitmap, "advance") != 8) @compileError("GuiGlyphBitmap.advance offset");
+    if (@offsetOf(abi.GuiGlyphBitmap, "line_height") != 12) @compileError("GuiGlyphBitmap.line_height offset");
+    if (@offsetOf(abi.GuiGlyphBitmap, "baseline") != 16) @compileError("GuiGlyphBitmap.baseline offset");
+    if (@offsetOf(abi.GuiGlyphBitmap, "reserved0") != 20) @compileError("GuiGlyphBitmap.reserved0 offset");
+    if (@offsetOf(abi.GuiGlyphBitmap, "rows") != 24) @compileError("GuiGlyphBitmap.rows offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1024) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -3571,7 +3579,7 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.console_input_wait) != 8) @compileError("R4DeskFns.console_input_wait signature");
     if (@offsetOf(abi.R4XStartR4Desk, "physical_key_poll") != 480) @compileError("R4XStartR4Desk.physical_key_poll offset");
     if (@sizeOf(abi.R4DeskFns.physical_key_poll) != 8) @compileError("R4DeskFns.physical_key_poll signature");
-    if (@sizeOf(abi.R4XStartR4Draw) != 328) @compileError("R4XStartR4Draw size");
+    if (@sizeOf(abi.R4XStartR4Draw) != 336) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_height") != 24) @compileError("R4XStartR4Draw.screen_height offset");
@@ -3650,6 +3658,8 @@ comptime {
     if (@sizeOf(abi.R4DrawFns.gui_frame_generation_info) != 8) @compileError("R4DrawFns.gui_frame_generation_info signature");
     if (@offsetOf(abi.R4XStartR4Draw, "gui_frame_generation_read") != 320) @compileError("R4XStartR4Draw.gui_frame_generation_read offset");
     if (@sizeOf(abi.R4DrawFns.gui_frame_generation_read) != 8) @compileError("R4DrawFns.gui_frame_generation_read signature");
+    if (@offsetOf(abi.R4XStartR4Draw, "font_glyph_bitmap") != 328) @compileError("R4XStartR4Draw.font_glyph_bitmap offset");
+    if (@sizeOf(abi.R4DrawFns.font_glyph_bitmap) != 8) @compileError("R4DrawFns.font_glyph_bitmap signature");
     if (@sizeOf(abi.R4XStartR4Net) != 288) @compileError("R4XStartR4Net size");
     if (@offsetOf(abi.R4XStartR4Net, "tcp_connect") != 16) @compileError("R4XStartR4Net.tcp_connect offset");
     if (@sizeOf(abi.R4NetFns.tcp_connect) != 8) @compileError("R4NetFns.tcp_connect signature");

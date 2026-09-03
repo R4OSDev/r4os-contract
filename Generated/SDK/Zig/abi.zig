@@ -1909,6 +1909,7 @@ pub const TrayServiceRequest = generated.TrayServiceRequest;
 pub const TrayEvent = generated.TrayEvent;
 pub const TrayServiceResponse = generated.TrayServiceResponse;
 pub const TrayDesktopExchange = generated.TrayDesktopExchange;
+pub const GuiGlyphBitmap = generated.GuiGlyphBitmap;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;
