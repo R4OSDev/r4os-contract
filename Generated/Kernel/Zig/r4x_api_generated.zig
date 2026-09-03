@@ -940,7 +940,7 @@ pub const performance_simd_abi_avx: u32 = 2;
 pub const performance_simd_abi_avx2: u32 = 3;
 pub const performance_simd_abi_none: u32 = 0;
 pub const performance_simd_abi_sse2: u32 = 1;
-pub const performance_snapshot_version: u32 = 13;
+pub const performance_snapshot_version: u32 = 14;
 pub const physical_key_flag_repeat: u32 = 1;
 pub const physical_key_kind_down: u32 = 1;
 pub const physical_key_kind_reset: u32 = 3;
@@ -2252,8 +2252,8 @@ pub const ProgramMemoryVmPageStateProbe = extern struct {
 };
 
 pub const ProgramPerformanceSummary = extern struct {
-    version: u32 = 13,
-    size: u32 = 6176,
+    version: u32 = 14,
+    size: u32 = 6272,
     flags: u32 = 0,
     missing_flags: u32 = 0,
     ticks: u64 = 0,
@@ -3098,6 +3098,18 @@ pub const ProgramPerformanceSummary = extern struct {
     fs_cache_read_ahead_pages_scheduled: u64 = 0,
     fs_cache_read_ahead_pages_issued: u64 = 0,
     fs_cache_read_ahead_random_resets: u64 = 0,
+    ntfs_metadata_payload_write_retentions: u64 = 0,
+    ntfs_metadata_system_write_retentions: u64 = 0,
+    ntfs_metadata_targeted_invalidations: u64 = 0,
+    ntfs_metadata_targeted_record_invalidations: u64 = 0,
+    ntfs_metadata_targeted_attribute_invalidations: u64 = 0,
+    ntfs_metadata_targeted_directory_invalidations: u64 = 0,
+    ntfs_metadata_global_mutation_invalidations: u64 = 0,
+    ntfs_metadata_recovery_invalidations: u64 = 0,
+    ntfs_metadata_mutation_invalidated_record_entries: u64 = 0,
+    ntfs_metadata_mutation_invalidated_attribute_entries: u64 = 0,
+    ntfs_metadata_mutation_invalidated_index_entries: u64 = 0,
+    ntfs_metadata_mutation_invalidated_path_entries: u64 = 0,
 };
 
 pub const ProgramTaskPerformanceInfo = extern struct {
@@ -6786,7 +6798,7 @@ comptime {
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.table_full_failures");
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.cleanup_pages");
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.reserved1");
-    if (@sizeOf(ProgramPerformanceSummary) != 6176) @compileError("generated ABI size drift: ProgramPerformanceSummary");
+    if (@sizeOf(ProgramPerformanceSummary) != 6272) @compileError("generated ABI size drift: ProgramPerformanceSummary");
     if (@alignOf(ProgramPerformanceSummary) != 8) @compileError("generated ABI alignment drift: ProgramPerformanceSummary");
     if (@offsetOf(ProgramPerformanceSummary, "version") != 0) @compileError("generated ABI offset drift: ProgramPerformanceSummary.version");
     if (@offsetOf(ProgramPerformanceSummary, "size") != 4) @compileError("generated ABI offset drift: ProgramPerformanceSummary.size");
@@ -7634,6 +7646,18 @@ comptime {
     if (@offsetOf(ProgramPerformanceSummary, "fs_cache_read_ahead_pages_scheduled") != 6152) @compileError("generated ABI offset drift: ProgramPerformanceSummary.fs_cache_read_ahead_pages_scheduled");
     if (@offsetOf(ProgramPerformanceSummary, "fs_cache_read_ahead_pages_issued") != 6160) @compileError("generated ABI offset drift: ProgramPerformanceSummary.fs_cache_read_ahead_pages_issued");
     if (@offsetOf(ProgramPerformanceSummary, "fs_cache_read_ahead_random_resets") != 6168) @compileError("generated ABI offset drift: ProgramPerformanceSummary.fs_cache_read_ahead_random_resets");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_payload_write_retentions") != 6176) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_payload_write_retentions");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_system_write_retentions") != 6184) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_system_write_retentions");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_targeted_invalidations") != 6192) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_targeted_invalidations");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_targeted_record_invalidations") != 6200) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_targeted_record_invalidations");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_targeted_attribute_invalidations") != 6208) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_targeted_attribute_invalidations");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_targeted_directory_invalidations") != 6216) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_targeted_directory_invalidations");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_global_mutation_invalidations") != 6224) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_global_mutation_invalidations");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_recovery_invalidations") != 6232) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_recovery_invalidations");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_record_entries") != 6240) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_record_entries");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_attribute_entries") != 6248) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_attribute_entries");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_index_entries") != 6256) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_index_entries");
+    if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_path_entries") != 6264) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_path_entries");
     if (@sizeOf(ProgramTaskPerformanceInfo) != 304) @compileError("generated ABI size drift: ProgramTaskPerformanceInfo");
     if (@alignOf(ProgramTaskPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramTaskPerformanceInfo");
     if (@offsetOf(ProgramTaskPerformanceInfo, "index") != 0) @compileError("generated ABI offset drift: ProgramTaskPerformanceInfo.index");

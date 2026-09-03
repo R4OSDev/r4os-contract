@@ -28241,8 +28241,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 13,
-      "size": 6176,
+      "version": 14,
+      "size": 6272,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -28259,7 +28259,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "13"
+          "default_value": "14"
         },
         {
           "name": "size",
@@ -28273,7 +28273,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "6176"
+          "default_value": "6272"
         },
         {
           "name": "flags",
@@ -40112,6 +40112,174 @@
             "name": "u64"
           },
           "description": "Non-adjacent demand observations that reset sequential read-ahead confidence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_payload_write_retentions",
+          "offset": 6176,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Physical payload-write submissions that deliberately retained decoded NTFS metadata.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_system_write_retentions",
+          "offset": 6184,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fully classified cache-independent NTFS system-metadata writes, including MFT mirror updates.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_targeted_invalidations",
+          "offset": 6192,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Record-, attribute-, or directory-identified NTFS metadata invalidation requests.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_targeted_record_invalidations",
+          "offset": 6200,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Targeted invalidation requests carrying an exact MFT record identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_targeted_attribute_invalidations",
+          "offset": 6208,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Targeted invalidation requests carrying an exact MFT record and attribute type identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_targeted_directory_invalidations",
+          "offset": 6216,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Targeted invalidation requests carrying an exact directory identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_global_mutation_invalidations",
+          "offset": 6224,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Conservative whole-cache invalidation requests for unknown or recovery mutations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_recovery_invalidations",
+          "offset": 6232,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Whole-cache invalidation requests issued by recovery or ambiguous rollback paths.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_mutation_invalidated_record_entries",
+          "offset": 6240,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded record-cache entries removed by NTFS mutations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_mutation_invalidated_attribute_entries",
+          "offset": 6248,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded attribute-cache entries removed by NTFS mutations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_mutation_invalidated_index_entries",
+          "offset": 6256,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Decoded directory-index entries removed by NTFS mutations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ntfs_metadata_mutation_invalidated_path_entries",
+          "offset": 6264,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Positive or negative path-cache entries removed by NTFS mutations.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -80149,7 +80317,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "13",
+      "value": "14",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

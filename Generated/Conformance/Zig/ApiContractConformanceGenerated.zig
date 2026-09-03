@@ -390,7 +390,7 @@ comptime {
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("ProgramMemoryVmPageStateProbe.table_full_failures offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("ProgramMemoryVmPageStateProbe.cleanup_pages offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("ProgramMemoryVmPageStateProbe.reserved1 offset");
-    if (@sizeOf(abi.ProgramPerformanceSummary) != 6176) @compileError("ProgramPerformanceSummary size");
+    if (@sizeOf(abi.ProgramPerformanceSummary) != 6272) @compileError("ProgramPerformanceSummary size");
     if (@offsetOf(abi.ProgramPerformanceSummary, "version") != 0) @compileError("ProgramPerformanceSummary.version offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "size") != 4) @compileError("ProgramPerformanceSummary.size offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "flags") != 8) @compileError("ProgramPerformanceSummary.flags offset");
@@ -1237,6 +1237,18 @@ comptime {
     if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_read_ahead_pages_scheduled") != 6152) @compileError("ProgramPerformanceSummary.fs_cache_read_ahead_pages_scheduled offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_read_ahead_pages_issued") != 6160) @compileError("ProgramPerformanceSummary.fs_cache_read_ahead_pages_issued offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "fs_cache_read_ahead_random_resets") != 6168) @compileError("ProgramPerformanceSummary.fs_cache_read_ahead_random_resets offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_payload_write_retentions") != 6176) @compileError("ProgramPerformanceSummary.ntfs_metadata_payload_write_retentions offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_system_write_retentions") != 6184) @compileError("ProgramPerformanceSummary.ntfs_metadata_system_write_retentions offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_targeted_invalidations") != 6192) @compileError("ProgramPerformanceSummary.ntfs_metadata_targeted_invalidations offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_targeted_record_invalidations") != 6200) @compileError("ProgramPerformanceSummary.ntfs_metadata_targeted_record_invalidations offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_targeted_attribute_invalidations") != 6208) @compileError("ProgramPerformanceSummary.ntfs_metadata_targeted_attribute_invalidations offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_targeted_directory_invalidations") != 6216) @compileError("ProgramPerformanceSummary.ntfs_metadata_targeted_directory_invalidations offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_global_mutation_invalidations") != 6224) @compileError("ProgramPerformanceSummary.ntfs_metadata_global_mutation_invalidations offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_recovery_invalidations") != 6232) @compileError("ProgramPerformanceSummary.ntfs_metadata_recovery_invalidations offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_record_entries") != 6240) @compileError("ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_record_entries offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_attribute_entries") != 6248) @compileError("ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_attribute_entries offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_index_entries") != 6256) @compileError("ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_index_entries offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_path_entries") != 6264) @compileError("ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_path_entries offset");
     if (@sizeOf(abi.ProgramTaskPerformanceInfo) != 304) @compileError("ProgramTaskPerformanceInfo size");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "index") != 0) @compileError("ProgramTaskPerformanceInfo.index offset");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "id") != 4) @compileError("ProgramTaskPerformanceInfo.id offset");

@@ -952,7 +952,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 13u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 14u
 #define R4OS_PHYSICAL_KEY_FLAG_REPEAT 1u
 #define R4OS_PHYSICAL_KEY_KIND_DOWN 1u
 #define R4OS_PHYSICAL_KEY_KIND_RESET 3u
@@ -3180,6 +3180,18 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t fs_cache_read_ahead_pages_scheduled;
     uint64_t fs_cache_read_ahead_pages_issued;
     uint64_t fs_cache_read_ahead_random_resets;
+    uint64_t ntfs_metadata_payload_write_retentions;
+    uint64_t ntfs_metadata_system_write_retentions;
+    uint64_t ntfs_metadata_targeted_invalidations;
+    uint64_t ntfs_metadata_targeted_record_invalidations;
+    uint64_t ntfs_metadata_targeted_attribute_invalidations;
+    uint64_t ntfs_metadata_targeted_directory_invalidations;
+    uint64_t ntfs_metadata_global_mutation_invalidations;
+    uint64_t ntfs_metadata_recovery_invalidations;
+    uint64_t ntfs_metadata_mutation_invalidated_record_entries;
+    uint64_t ntfs_metadata_mutation_invalidated_attribute_entries;
+    uint64_t ntfs_metadata_mutation_invalidated_index_entries;
+    uint64_t ntfs_metadata_mutation_invalidated_path_entries;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -6546,7 +6558,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 6176u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 6272u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -7393,6 +7405,18 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_capacity_trimmed_p
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_pages_scheduled) == 6152u, "ProgramPerformanceSummary.fs_cache_read_ahead_pages_scheduled offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_pages_issued) == 6160u, "ProgramPerformanceSummary.fs_cache_read_ahead_pages_issued offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, fs_cache_read_ahead_random_resets) == 6168u, "ProgramPerformanceSummary.fs_cache_read_ahead_random_resets offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_payload_write_retentions) == 6176u, "ProgramPerformanceSummary.ntfs_metadata_payload_write_retentions offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_system_write_retentions) == 6184u, "ProgramPerformanceSummary.ntfs_metadata_system_write_retentions offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_targeted_invalidations) == 6192u, "ProgramPerformanceSummary.ntfs_metadata_targeted_invalidations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_targeted_record_invalidations) == 6200u, "ProgramPerformanceSummary.ntfs_metadata_targeted_record_invalidations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_targeted_attribute_invalidations) == 6208u, "ProgramPerformanceSummary.ntfs_metadata_targeted_attribute_invalidations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_targeted_directory_invalidations) == 6216u, "ProgramPerformanceSummary.ntfs_metadata_targeted_directory_invalidations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_global_mutation_invalidations) == 6224u, "ProgramPerformanceSummary.ntfs_metadata_global_mutation_invalidations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_recovery_invalidations) == 6232u, "ProgramPerformanceSummary.ntfs_metadata_recovery_invalidations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_invalidated_record_entries) == 6240u, "ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_record_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_invalidated_attribute_entries) == 6248u, "ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_attribute_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_invalidated_index_entries) == 6256u, "ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_index_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_invalidated_path_entries) == 6264u, "ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_path_entries offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");
