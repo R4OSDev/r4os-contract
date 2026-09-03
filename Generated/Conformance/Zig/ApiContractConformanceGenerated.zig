@@ -390,7 +390,7 @@ comptime {
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("ProgramMemoryVmPageStateProbe.table_full_failures offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("ProgramMemoryVmPageStateProbe.cleanup_pages offset");
     if (@offsetOf(abi.ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("ProgramMemoryVmPageStateProbe.reserved1 offset");
-    if (@sizeOf(abi.ProgramPerformanceSummary) != 6272) @compileError("ProgramPerformanceSummary size");
+    if (@sizeOf(abi.ProgramPerformanceSummary) != 6352) @compileError("ProgramPerformanceSummary size");
     if (@offsetOf(abi.ProgramPerformanceSummary, "version") != 0) @compileError("ProgramPerformanceSummary.version offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "size") != 4) @compileError("ProgramPerformanceSummary.size offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "flags") != 8) @compileError("ProgramPerformanceSummary.flags offset");
@@ -1249,6 +1249,16 @@ comptime {
     if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_attribute_entries") != 6248) @compileError("ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_attribute_entries offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_index_entries") != 6256) @compileError("ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_index_entries offset");
     if (@offsetOf(abi.ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_path_entries") != 6264) @compileError("ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_path_entries offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_file_range_read_bytes") != 6272) @compileError("ProgramPerformanceSummary.loader_file_range_read_bytes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_reader_initializations") != 6280) @compileError("ProgramPerformanceSummary.loader_metadata_reader_initializations offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_logical_reads") != 6288) @compileError("ProgramPerformanceSummary.loader_metadata_logical_reads offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_logical_bytes") != 6296) @compileError("ProgramPerformanceSummary.loader_metadata_logical_bytes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_window_hits") != 6304) @compileError("ProgramPerformanceSummary.loader_metadata_window_hits offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_window_fills") != 6312) @compileError("ProgramPerformanceSummary.loader_metadata_window_fills offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_window_fill_bytes") != 6320) @compileError("ProgramPerformanceSummary.loader_metadata_window_fill_bytes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_direct_reads") != 6328) @compileError("ProgramPerformanceSummary.loader_metadata_direct_reads offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_direct_bytes") != 6336) @compileError("ProgramPerformanceSummary.loader_metadata_direct_bytes offset");
+    if (@offsetOf(abi.ProgramPerformanceSummary, "loader_metadata_window_capacity_bytes") != 6344) @compileError("ProgramPerformanceSummary.loader_metadata_window_capacity_bytes offset");
     if (@sizeOf(abi.ProgramTaskPerformanceInfo) != 304) @compileError("ProgramTaskPerformanceInfo size");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "index") != 0) @compileError("ProgramTaskPerformanceInfo.index offset");
     if (@offsetOf(abi.ProgramTaskPerformanceInfo, "id") != 4) @compileError("ProgramTaskPerformanceInfo.id offset");

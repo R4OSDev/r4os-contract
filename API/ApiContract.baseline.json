@@ -28241,8 +28241,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 14,
-      "size": 6272,
+      "version": 15,
+      "size": 6352,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -28259,7 +28259,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "14"
+          "default_value": "15"
         },
         {
           "name": "size",
@@ -28273,7 +28273,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "6272"
+          "default_value": "6352"
         },
         {
           "name": "flags",
@@ -40280,6 +40280,146 @@
             "name": "u64"
           },
           "description": "Positive or negative path-cache entries removed by NTFS mutations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_file_range_read_bytes",
+          "offset": 6272,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Physical bytes returned by loader file-range reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_reader_initializations",
+          "offset": 6280,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bounded R4M0 metadata-reader instances initialized by loader paths.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_logical_reads",
+          "offset": 6288,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Logical exact reads requested through bounded R4M0 metadata readers.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_logical_bytes",
+          "offset": 6296,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Logical bytes requested through bounded R4M0 metadata readers.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_window_hits",
+          "offset": 6304,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Logical metadata reads served by an existing bounded reader window.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_window_fills",
+          "offset": 6312,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Physical file-range reads used to fill bounded metadata windows.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_window_fill_bytes",
+          "offset": 6320,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Physical bytes returned while filling bounded metadata windows.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_direct_reads",
+          "offset": 6328,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Oversized logical metadata reads intentionally bypassing reader windows.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_direct_bytes",
+          "offset": 6336,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes requested by oversized logical metadata reads that bypass reader windows.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "loader_metadata_window_capacity_bytes",
+          "offset": 6344,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fixed per-reader byte capacity reserved for bounded metadata windows.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -80317,7 +80457,7 @@
     },
     {
       "name": "performance_snapshot_version",
-      "value": "14",
+      "value": "15",
       "value_type": "u32",
       "category": "version",
       "unit": "number",

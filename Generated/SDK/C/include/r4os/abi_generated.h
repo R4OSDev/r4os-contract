@@ -952,7 +952,7 @@ extern "C" {
 #define R4OS_PERFORMANCE_SIMD_ABI_AVX2 3u
 #define R4OS_PERFORMANCE_SIMD_ABI_NONE 0u
 #define R4OS_PERFORMANCE_SIMD_ABI_SSE2 1u
-#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 14u
+#define R4OS_PERFORMANCE_SNAPSHOT_VERSION 15u
 #define R4OS_PHYSICAL_KEY_FLAG_REPEAT 1u
 #define R4OS_PHYSICAL_KEY_KIND_DOWN 1u
 #define R4OS_PHYSICAL_KEY_KIND_RESET 3u
@@ -3192,6 +3192,16 @@ typedef struct R4ProgramPerformanceSummary {
     uint64_t ntfs_metadata_mutation_invalidated_attribute_entries;
     uint64_t ntfs_metadata_mutation_invalidated_index_entries;
     uint64_t ntfs_metadata_mutation_invalidated_path_entries;
+    uint64_t loader_file_range_read_bytes;
+    uint64_t loader_metadata_reader_initializations;
+    uint64_t loader_metadata_logical_reads;
+    uint64_t loader_metadata_logical_bytes;
+    uint64_t loader_metadata_window_hits;
+    uint64_t loader_metadata_window_fills;
+    uint64_t loader_metadata_window_fill_bytes;
+    uint64_t loader_metadata_direct_reads;
+    uint64_t loader_metadata_direct_bytes;
+    uint64_t loader_metadata_window_capacity_bytes;
 } R4ProgramPerformanceSummary;
 
 typedef struct R4ProgramTaskPerformanceInfo {
@@ -6558,7 +6568,7 @@ _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, error_clears) == 232u, 
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, table_full_failures) == 240u, "ProgramMemoryVmPageStateProbe.table_full_failures offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, cleanup_pages) == 248u, "ProgramMemoryVmPageStateProbe.cleanup_pages offset mismatch");
 _Static_assert(offsetof(R4ProgramMemoryVmPageStateProbe, reserved1) == 256u, "ProgramMemoryVmPageStateProbe.reserved1 offset mismatch");
-_Static_assert(sizeof(R4ProgramPerformanceSummary) == 6272u, "ProgramPerformanceSummary size mismatch");
+_Static_assert(sizeof(R4ProgramPerformanceSummary) == 6352u, "ProgramPerformanceSummary size mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, version) == 0u, "ProgramPerformanceSummary.version offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, size) == 4u, "ProgramPerformanceSummary.size offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, flags) == 8u, "ProgramPerformanceSummary.flags offset mismatch");
@@ -7417,6 +7427,16 @@ _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_inva
 _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_invalidated_attribute_entries) == 6248u, "ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_attribute_entries offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_invalidated_index_entries) == 6256u, "ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_index_entries offset mismatch");
 _Static_assert(offsetof(R4ProgramPerformanceSummary, ntfs_metadata_mutation_invalidated_path_entries) == 6264u, "ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_path_entries offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_file_range_read_bytes) == 6272u, "ProgramPerformanceSummary.loader_file_range_read_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_reader_initializations) == 6280u, "ProgramPerformanceSummary.loader_metadata_reader_initializations offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_logical_reads) == 6288u, "ProgramPerformanceSummary.loader_metadata_logical_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_logical_bytes) == 6296u, "ProgramPerformanceSummary.loader_metadata_logical_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_window_hits) == 6304u, "ProgramPerformanceSummary.loader_metadata_window_hits offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_window_fills) == 6312u, "ProgramPerformanceSummary.loader_metadata_window_fills offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_window_fill_bytes) == 6320u, "ProgramPerformanceSummary.loader_metadata_window_fill_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_direct_reads) == 6328u, "ProgramPerformanceSummary.loader_metadata_direct_reads offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_direct_bytes) == 6336u, "ProgramPerformanceSummary.loader_metadata_direct_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramPerformanceSummary, loader_metadata_window_capacity_bytes) == 6344u, "ProgramPerformanceSummary.loader_metadata_window_capacity_bytes offset mismatch");
 _Static_assert(sizeof(R4ProgramTaskPerformanceInfo) == 304u, "ProgramTaskPerformanceInfo size mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, index) == 0u, "ProgramTaskPerformanceInfo.index offset mismatch");
 _Static_assert(offsetof(R4ProgramTaskPerformanceInfo, id) == 4u, "ProgramTaskPerformanceInfo.id offset mismatch");

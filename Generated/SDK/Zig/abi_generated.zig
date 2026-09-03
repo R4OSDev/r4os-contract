@@ -940,7 +940,7 @@ pub const performance_simd_abi_avx: u32 = 2;
 pub const performance_simd_abi_avx2: u32 = 3;
 pub const performance_simd_abi_none: u32 = 0;
 pub const performance_simd_abi_sse2: u32 = 1;
-pub const performance_snapshot_version: u32 = 14;
+pub const performance_snapshot_version: u32 = 15;
 pub const physical_key_flag_repeat: u32 = 1;
 pub const physical_key_kind_down: u32 = 1;
 pub const physical_key_kind_reset: u32 = 3;
@@ -2252,8 +2252,8 @@ pub const ProgramMemoryVmPageStateProbe = extern struct {
 };
 
 pub const ProgramPerformanceSummary = extern struct {
-    version: u32 = 14,
-    size: u32 = 6272,
+    version: u32 = 15,
+    size: u32 = 6352,
     flags: u32 = 0,
     missing_flags: u32 = 0,
     ticks: u64 = 0,
@@ -3110,6 +3110,16 @@ pub const ProgramPerformanceSummary = extern struct {
     ntfs_metadata_mutation_invalidated_attribute_entries: u64 = 0,
     ntfs_metadata_mutation_invalidated_index_entries: u64 = 0,
     ntfs_metadata_mutation_invalidated_path_entries: u64 = 0,
+    loader_file_range_read_bytes: u64 = 0,
+    loader_metadata_reader_initializations: u64 = 0,
+    loader_metadata_logical_reads: u64 = 0,
+    loader_metadata_logical_bytes: u64 = 0,
+    loader_metadata_window_hits: u64 = 0,
+    loader_metadata_window_fills: u64 = 0,
+    loader_metadata_window_fill_bytes: u64 = 0,
+    loader_metadata_direct_reads: u64 = 0,
+    loader_metadata_direct_bytes: u64 = 0,
+    loader_metadata_window_capacity_bytes: u64 = 0,
 };
 
 pub const ProgramTaskPerformanceInfo = extern struct {
@@ -6798,7 +6808,7 @@ comptime {
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "table_full_failures") != 240) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.table_full_failures");
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "cleanup_pages") != 248) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.cleanup_pages");
     if (@offsetOf(ProgramMemoryVmPageStateProbe, "reserved1") != 256) @compileError("generated ABI offset drift: ProgramMemoryVmPageStateProbe.reserved1");
-    if (@sizeOf(ProgramPerformanceSummary) != 6272) @compileError("generated ABI size drift: ProgramPerformanceSummary");
+    if (@sizeOf(ProgramPerformanceSummary) != 6352) @compileError("generated ABI size drift: ProgramPerformanceSummary");
     if (@alignOf(ProgramPerformanceSummary) != 8) @compileError("generated ABI alignment drift: ProgramPerformanceSummary");
     if (@offsetOf(ProgramPerformanceSummary, "version") != 0) @compileError("generated ABI offset drift: ProgramPerformanceSummary.version");
     if (@offsetOf(ProgramPerformanceSummary, "size") != 4) @compileError("generated ABI offset drift: ProgramPerformanceSummary.size");
@@ -7658,6 +7668,16 @@ comptime {
     if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_attribute_entries") != 6248) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_attribute_entries");
     if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_index_entries") != 6256) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_index_entries");
     if (@offsetOf(ProgramPerformanceSummary, "ntfs_metadata_mutation_invalidated_path_entries") != 6264) @compileError("generated ABI offset drift: ProgramPerformanceSummary.ntfs_metadata_mutation_invalidated_path_entries");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_file_range_read_bytes") != 6272) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_file_range_read_bytes");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_reader_initializations") != 6280) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_reader_initializations");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_logical_reads") != 6288) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_logical_reads");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_logical_bytes") != 6296) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_logical_bytes");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_window_hits") != 6304) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_window_hits");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_window_fills") != 6312) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_window_fills");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_window_fill_bytes") != 6320) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_window_fill_bytes");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_direct_reads") != 6328) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_direct_reads");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_direct_bytes") != 6336) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_direct_bytes");
+    if (@offsetOf(ProgramPerformanceSummary, "loader_metadata_window_capacity_bytes") != 6344) @compileError("generated ABI offset drift: ProgramPerformanceSummary.loader_metadata_window_capacity_bytes");
     if (@sizeOf(ProgramTaskPerformanceInfo) != 304) @compileError("generated ABI size drift: ProgramTaskPerformanceInfo");
     if (@alignOf(ProgramTaskPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramTaskPerformanceInfo");
     if (@offsetOf(ProgramTaskPerformanceInfo, "index") != 0) @compileError("generated ABI offset drift: ProgramTaskPerformanceInfo.index");
