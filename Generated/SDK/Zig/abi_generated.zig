@@ -202,6 +202,7 @@ pub const gui_frame_command_kind_rounded_rect: u32 = 8;
 pub const gui_frame_command_kind_shadow: u32 = 9;
 pub const gui_frame_command_kind_argb32: u32 = 10;
 pub const gui_frame_command_kind_indexed8: u32 = 11;
+pub const gui_frame_command_kind_xrgb32_nearest: u32 = 12;
 pub const gui_path_segment_kind_close: u32 = 5;
 pub const gui_path_segment_kind_cubic: u32 = 4;
 pub const gui_path_segment_kind_line: u32 = 2;
@@ -236,8 +237,11 @@ pub const gui_frame_info_version: u32 = 1;
 pub const gui_frame_generation_flag_delta: u32 = 2;
 pub const gui_frame_generation_flag_full: u32 = 1;
 pub const gui_frame_generation_flag_indexed8: u32 = 4;
+pub const gui_frame_generation_flag_replacement: u32 = 8;
 pub const gui_frame_generation_info_size: u32 = 144;
 pub const gui_frame_generation_info_version: u32 = 1;
+pub const gui_frame_stream_info_size: u32 = 112;
+pub const gui_frame_stream_info_version: u32 = 1;
 pub const gui_frame_max_damage_regions: u32 = 8;
 pub const gui_frame_max_delta_chain: u32 = 32;
 pub const gui_indexed8_palette_entries: u32 = 256;
@@ -245,6 +249,9 @@ pub const gui_indexed8_palette_offset: u32 = 64;
 pub const gui_indexed8_pixels_offset: u32 = 1088;
 pub const gui_indexed8_resource_size: u32 = 64;
 pub const gui_indexed8_resource_version: u32 = 1;
+pub const gui_xrgb32_pixels_offset: u32 = 64;
+pub const gui_xrgb32_resource_size: u32 = 64;
+pub const gui_xrgb32_resource_version: u32 = 1;
 pub const gui_frame_state_building: u32 = 1;
 pub const gui_frame_state_idle: u32 = 0;
 pub const gui_font_builtin_id: u32 = 0;
@@ -5362,6 +5369,43 @@ pub const GuiGlyphBitmap = extern struct {
     rows: [40]u64 = .{0} ** 40,
 };
 
+pub const GuiXrgb32Resource = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    source_x: u32 = 0,
+    source_y: u32 = 0,
+    source_w: u32 = 0,
+    source_h: u32 = 0,
+    guest_w: u32 = 0,
+    guest_h: u32 = 0,
+    viewport_x: i32 = 0,
+    viewport_y: i32 = 0,
+    viewport_w: u32 = 0,
+    viewport_h: u32 = 0,
+    pixels_offset: u32 = 64,
+    pixel_stride: u32 = 0,
+    flags: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const GuiFrameStreamInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    flags: u32 = 0,
+    live_generation_count: u32 = 0,
+    owner: ProgramProcessHandle = .{},
+    committed_generation: u64 = 0,
+    replacement_commit_count: u64 = 0,
+    superseded_generation_count: u64 = 0,
+    coalesced_generation_count: u64 = 0,
+    reader_retired_generation_count: u64 = 0,
+    xrgb32_nearest_command_count: u64 = 0,
+    xrgb32_nearest_resource_bytes: u64 = 0,
+    current_frame_bytes: u64 = 0,
+    peak_frame_bytes: u64 = 0,
+    reserved0: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -5790,12 +5834,14 @@ pub const R4DrawFns = struct {
     pub const gui_frame_generation_read = *const fn (*const ProgramProcessHandle, u64, ?[*]GuiFrameCommand, u64, ?[*]u8, u64, ?[*]DisplayDamageRect, u32, *GuiFrameGenerationInfo) callconv(.c) i32;
     pub const font_glyph_bitmap = *const fn (u32, u32, *GuiGlyphBitmap) callconv(.c) i32;
     pub const font_revision = *const fn () callconv(.c) u32;
+    pub const gui_frame_begin_replace = *const fn ([*]const DisplayDamageRect, u32) callconv(.c) i32;
+    pub const gui_frame_stream_info = *const fn (*const ProgramProcessHandle, *GuiFrameStreamInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 7,
-    size: u32 = 344,
+    abi_version: u32 = 8,
+    size: u32 = 360,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -5838,6 +5884,8 @@ pub const R4XStartR4Draw = extern struct {
     gui_frame_generation_read: usize = 0,
     font_glyph_bitmap: usize = 0,
     font_revision: usize = 0,
+    gui_frame_begin_replace: usize = 0,
+    gui_frame_stream_info: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -6296,6 +6344,8 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 38, .offset = 320, .name = "gui_frame_generation_read", .state = .function, .required = false },
     .{ .number = 39, .offset = 328, .name = "font_glyph_bitmap", .state = .function, .required = false },
     .{ .number = 40, .offset = 336, .name = "font_revision", .state = .function, .required = false },
+    .{ .number = 41, .offset = 344, .name = "gui_frame_begin_replace", .state = .function, .required = false },
+    .{ .number = 42, .offset = 352, .name = "gui_frame_stream_info", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -9798,6 +9848,41 @@ comptime {
     if (@offsetOf(GuiGlyphBitmap, "baseline") != 16) @compileError("generated ABI offset drift: GuiGlyphBitmap.baseline");
     if (@offsetOf(GuiGlyphBitmap, "reserved0") != 20) @compileError("generated ABI offset drift: GuiGlyphBitmap.reserved0");
     if (@offsetOf(GuiGlyphBitmap, "rows") != 24) @compileError("generated ABI offset drift: GuiGlyphBitmap.rows");
+    if (@sizeOf(GuiXrgb32Resource) != 64) @compileError("generated ABI size drift: GuiXrgb32Resource");
+    if (@alignOf(GuiXrgb32Resource) != 4) @compileError("generated ABI alignment drift: GuiXrgb32Resource");
+    if (@offsetOf(GuiXrgb32Resource, "version") != 0) @compileError("generated ABI offset drift: GuiXrgb32Resource.version");
+    if (@offsetOf(GuiXrgb32Resource, "size") != 4) @compileError("generated ABI offset drift: GuiXrgb32Resource.size");
+    if (@offsetOf(GuiXrgb32Resource, "source_x") != 8) @compileError("generated ABI offset drift: GuiXrgb32Resource.source_x");
+    if (@offsetOf(GuiXrgb32Resource, "source_y") != 12) @compileError("generated ABI offset drift: GuiXrgb32Resource.source_y");
+    if (@offsetOf(GuiXrgb32Resource, "source_w") != 16) @compileError("generated ABI offset drift: GuiXrgb32Resource.source_w");
+    if (@offsetOf(GuiXrgb32Resource, "source_h") != 20) @compileError("generated ABI offset drift: GuiXrgb32Resource.source_h");
+    if (@offsetOf(GuiXrgb32Resource, "guest_w") != 24) @compileError("generated ABI offset drift: GuiXrgb32Resource.guest_w");
+    if (@offsetOf(GuiXrgb32Resource, "guest_h") != 28) @compileError("generated ABI offset drift: GuiXrgb32Resource.guest_h");
+    if (@offsetOf(GuiXrgb32Resource, "viewport_x") != 32) @compileError("generated ABI offset drift: GuiXrgb32Resource.viewport_x");
+    if (@offsetOf(GuiXrgb32Resource, "viewport_y") != 36) @compileError("generated ABI offset drift: GuiXrgb32Resource.viewport_y");
+    if (@offsetOf(GuiXrgb32Resource, "viewport_w") != 40) @compileError("generated ABI offset drift: GuiXrgb32Resource.viewport_w");
+    if (@offsetOf(GuiXrgb32Resource, "viewport_h") != 44) @compileError("generated ABI offset drift: GuiXrgb32Resource.viewport_h");
+    if (@offsetOf(GuiXrgb32Resource, "pixels_offset") != 48) @compileError("generated ABI offset drift: GuiXrgb32Resource.pixels_offset");
+    if (@offsetOf(GuiXrgb32Resource, "pixel_stride") != 52) @compileError("generated ABI offset drift: GuiXrgb32Resource.pixel_stride");
+    if (@offsetOf(GuiXrgb32Resource, "flags") != 56) @compileError("generated ABI offset drift: GuiXrgb32Resource.flags");
+    if (@offsetOf(GuiXrgb32Resource, "reserved0") != 60) @compileError("generated ABI offset drift: GuiXrgb32Resource.reserved0");
+    if (@sizeOf(GuiFrameStreamInfo) != 112) @compileError("generated ABI size drift: GuiFrameStreamInfo");
+    if (@alignOf(GuiFrameStreamInfo) != 8) @compileError("generated ABI alignment drift: GuiFrameStreamInfo");
+    if (@offsetOf(GuiFrameStreamInfo, "version") != 0) @compileError("generated ABI offset drift: GuiFrameStreamInfo.version");
+    if (@offsetOf(GuiFrameStreamInfo, "size") != 4) @compileError("generated ABI offset drift: GuiFrameStreamInfo.size");
+    if (@offsetOf(GuiFrameStreamInfo, "flags") != 8) @compileError("generated ABI offset drift: GuiFrameStreamInfo.flags");
+    if (@offsetOf(GuiFrameStreamInfo, "live_generation_count") != 12) @compileError("generated ABI offset drift: GuiFrameStreamInfo.live_generation_count");
+    if (@offsetOf(GuiFrameStreamInfo, "owner") != 16) @compileError("generated ABI offset drift: GuiFrameStreamInfo.owner");
+    if (@offsetOf(GuiFrameStreamInfo, "committed_generation") != 32) @compileError("generated ABI offset drift: GuiFrameStreamInfo.committed_generation");
+    if (@offsetOf(GuiFrameStreamInfo, "replacement_commit_count") != 40) @compileError("generated ABI offset drift: GuiFrameStreamInfo.replacement_commit_count");
+    if (@offsetOf(GuiFrameStreamInfo, "superseded_generation_count") != 48) @compileError("generated ABI offset drift: GuiFrameStreamInfo.superseded_generation_count");
+    if (@offsetOf(GuiFrameStreamInfo, "coalesced_generation_count") != 56) @compileError("generated ABI offset drift: GuiFrameStreamInfo.coalesced_generation_count");
+    if (@offsetOf(GuiFrameStreamInfo, "reader_retired_generation_count") != 64) @compileError("generated ABI offset drift: GuiFrameStreamInfo.reader_retired_generation_count");
+    if (@offsetOf(GuiFrameStreamInfo, "xrgb32_nearest_command_count") != 72) @compileError("generated ABI offset drift: GuiFrameStreamInfo.xrgb32_nearest_command_count");
+    if (@offsetOf(GuiFrameStreamInfo, "xrgb32_nearest_resource_bytes") != 80) @compileError("generated ABI offset drift: GuiFrameStreamInfo.xrgb32_nearest_resource_bytes");
+    if (@offsetOf(GuiFrameStreamInfo, "current_frame_bytes") != 88) @compileError("generated ABI offset drift: GuiFrameStreamInfo.current_frame_bytes");
+    if (@offsetOf(GuiFrameStreamInfo, "peak_frame_bytes") != 96) @compileError("generated ABI offset drift: GuiFrameStreamInfo.peak_frame_bytes");
+    if (@offsetOf(GuiFrameStreamInfo, "reserved0") != 104) @compileError("generated ABI offset drift: GuiFrameStreamInfo.reserved0");
     if (@sizeOf(R4XStartR4Sys) != 1024) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -9985,7 +10070,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
-    if (@sizeOf(R4XStartR4Draw) != 344) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 360) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -10027,6 +10112,8 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gui_frame_generation_read") != 320) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_generation_read");
     if (@offsetOf(R4XStartR4Draw, "font_glyph_bitmap") != 328) @compileError("generated ABI offset drift: R4XStartR4Draw.font_glyph_bitmap");
     if (@offsetOf(R4XStartR4Draw, "font_revision") != 336) @compileError("generated ABI offset drift: R4XStartR4Draw.font_revision");
+    if (@offsetOf(R4XStartR4Draw, "gui_frame_begin_replace") != 344) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_begin_replace");
+    if (@offsetOf(R4XStartR4Draw, "gui_frame_stream_info") != 352) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_stream_info");
     if (@sizeOf(R4XStartR4Net) != 288) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");

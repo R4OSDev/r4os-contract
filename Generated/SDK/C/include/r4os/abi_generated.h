@@ -214,6 +214,7 @@ extern "C" {
 #define R4OS_GUI_FRAME_COMMAND_KIND_SHADOW 9u
 #define R4OS_GUI_FRAME_COMMAND_KIND_ARGB32 10u
 #define R4OS_GUI_FRAME_COMMAND_KIND_INDEXED8 11u
+#define R4OS_GUI_FRAME_COMMAND_KIND_XRGB32_NEAREST 12u
 #define R4OS_GUI_PATH_SEGMENT_KIND_CLOSE 5u
 #define R4OS_GUI_PATH_SEGMENT_KIND_CUBIC 4u
 #define R4OS_GUI_PATH_SEGMENT_KIND_LINE 2u
@@ -248,8 +249,11 @@ extern "C" {
 #define R4OS_GUI_FRAME_GENERATION_FLAG_DELTA 2u
 #define R4OS_GUI_FRAME_GENERATION_FLAG_FULL 1u
 #define R4OS_GUI_FRAME_GENERATION_FLAG_INDEXED8 4u
+#define R4OS_GUI_FRAME_GENERATION_FLAG_REPLACEMENT 8u
 #define R4OS_GUI_FRAME_GENERATION_INFO_SIZE 144u
 #define R4OS_GUI_FRAME_GENERATION_INFO_VERSION 1u
+#define R4OS_GUI_FRAME_STREAM_INFO_SIZE 112u
+#define R4OS_GUI_FRAME_STREAM_INFO_VERSION 1u
 #define R4OS_GUI_FRAME_MAX_DAMAGE_REGIONS 8u
 #define R4OS_GUI_FRAME_MAX_DELTA_CHAIN 32u
 #define R4OS_GUI_INDEXED8_PALETTE_ENTRIES 256u
@@ -257,6 +261,9 @@ extern "C" {
 #define R4OS_GUI_INDEXED8_PIXELS_OFFSET 1088u
 #define R4OS_GUI_INDEXED8_RESOURCE_SIZE 64u
 #define R4OS_GUI_INDEXED8_RESOURCE_VERSION 1u
+#define R4OS_GUI_XRGB32_PIXELS_OFFSET 64u
+#define R4OS_GUI_XRGB32_RESOURCE_SIZE 64u
+#define R4OS_GUI_XRGB32_RESOURCE_VERSION 1u
 #define R4OS_GUI_FRAME_STATE_BUILDING 1u
 #define R4OS_GUI_FRAME_STATE_IDLE 0u
 #define R4OS_GUI_FONT_BUILTIN_ID 0u
@@ -1951,6 +1958,8 @@ typedef struct R4TrayEvent R4TrayEvent;
 typedef struct R4TrayServiceResponse R4TrayServiceResponse;
 typedef struct R4TrayDesktopExchange R4TrayDesktopExchange;
 typedef struct R4GuiGlyphBitmap R4GuiGlyphBitmap;
+typedef struct R4GuiXrgb32Resource R4GuiXrgb32Resource;
+typedef struct R4GuiFrameStreamInfo R4GuiFrameStreamInfo;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -5444,6 +5453,43 @@ typedef struct R4GuiGlyphBitmap {
     uint64_t rows[40];
 } R4GuiGlyphBitmap;
 
+typedef struct R4GuiXrgb32Resource {
+    uint32_t version;
+    uint32_t size;
+    uint32_t source_x;
+    uint32_t source_y;
+    uint32_t source_w;
+    uint32_t source_h;
+    uint32_t guest_w;
+    uint32_t guest_h;
+    int32_t viewport_x;
+    int32_t viewport_y;
+    uint32_t viewport_w;
+    uint32_t viewport_h;
+    uint32_t pixels_offset;
+    uint32_t pixel_stride;
+    uint32_t flags;
+    uint32_t reserved0;
+} R4GuiXrgb32Resource;
+
+typedef struct R4GuiFrameStreamInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t live_generation_count;
+    R4ProgramProcessHandle owner;
+    uint64_t committed_generation;
+    uint64_t replacement_commit_count;
+    uint64_t superseded_generation_count;
+    uint64_t coalesced_generation_count;
+    uint64_t reader_retired_generation_count;
+    uint64_t xrgb32_nearest_command_count;
+    uint64_t xrgb32_nearest_resource_bytes;
+    uint64_t current_frame_bytes;
+    uint64_t peak_frame_bytes;
+    uint64_t reserved0;
+} R4GuiFrameStreamInfo;
+
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
 typedef struct R4XStartContext {
@@ -5915,6 +5961,8 @@ typedef int32_t (*R4DrawGuiFrameGenerationInfoFn)(const R4ProgramProcessHandle *
 typedef int32_t (*R4DrawGuiFrameGenerationReadFn)(const R4ProgramProcessHandle * handle, uint64_t generation, R4GuiFrameCommand * commands, uint64_t command_capacity, uint8_t * resources, uint64_t resource_capacity, R4DisplayDamageRect * regions, uint32_t region_capacity, R4GuiFrameGenerationInfo * out_info);
 typedef int32_t (*R4DrawFontGlyphBitmapFn)(uint32_t font_id, uint32_t codepoint, R4GuiGlyphBitmap * out_bitmap);
 typedef uint32_t (*R4DrawFontRevisionFn)(void);
+typedef int32_t (*R4DrawGuiFrameBeginReplaceFn)(const R4DisplayDamageRect * regions, uint32_t region_count);
+typedef int32_t (*R4DrawGuiFrameStreamInfoFn)(const R4ProgramProcessHandle * handle, R4GuiFrameStreamInfo * out_info);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -5962,6 +6010,8 @@ typedef struct R4XStartR4Draw {
     uintptr_t gui_frame_generation_read;
     uintptr_t font_glyph_bitmap;
     uintptr_t font_revision;
+    uintptr_t gui_frame_begin_replace;
+    uintptr_t gui_frame_stream_info;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -9437,6 +9487,39 @@ _Static_assert(offsetof(R4GuiGlyphBitmap, line_height) == 12u, "GuiGlyphBitmap.l
 _Static_assert(offsetof(R4GuiGlyphBitmap, baseline) == 16u, "GuiGlyphBitmap.baseline offset mismatch");
 _Static_assert(offsetof(R4GuiGlyphBitmap, reserved0) == 20u, "GuiGlyphBitmap.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GuiGlyphBitmap, rows) == 24u, "GuiGlyphBitmap.rows offset mismatch");
+_Static_assert(sizeof(R4GuiXrgb32Resource) == 64u, "GuiXrgb32Resource size mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, version) == 0u, "GuiXrgb32Resource.version offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, size) == 4u, "GuiXrgb32Resource.size offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, source_x) == 8u, "GuiXrgb32Resource.source_x offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, source_y) == 12u, "GuiXrgb32Resource.source_y offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, source_w) == 16u, "GuiXrgb32Resource.source_w offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, source_h) == 20u, "GuiXrgb32Resource.source_h offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, guest_w) == 24u, "GuiXrgb32Resource.guest_w offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, guest_h) == 28u, "GuiXrgb32Resource.guest_h offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, viewport_x) == 32u, "GuiXrgb32Resource.viewport_x offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, viewport_y) == 36u, "GuiXrgb32Resource.viewport_y offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, viewport_w) == 40u, "GuiXrgb32Resource.viewport_w offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, viewport_h) == 44u, "GuiXrgb32Resource.viewport_h offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, pixels_offset) == 48u, "GuiXrgb32Resource.pixels_offset offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, pixel_stride) == 52u, "GuiXrgb32Resource.pixel_stride offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, flags) == 56u, "GuiXrgb32Resource.flags offset mismatch");
+_Static_assert(offsetof(R4GuiXrgb32Resource, reserved0) == 60u, "GuiXrgb32Resource.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GuiFrameStreamInfo) == 112u, "GuiFrameStreamInfo size mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, version) == 0u, "GuiFrameStreamInfo.version offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, size) == 4u, "GuiFrameStreamInfo.size offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, flags) == 8u, "GuiFrameStreamInfo.flags offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, live_generation_count) == 12u, "GuiFrameStreamInfo.live_generation_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, owner) == 16u, "GuiFrameStreamInfo.owner offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, committed_generation) == 32u, "GuiFrameStreamInfo.committed_generation offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, replacement_commit_count) == 40u, "GuiFrameStreamInfo.replacement_commit_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, superseded_generation_count) == 48u, "GuiFrameStreamInfo.superseded_generation_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, coalesced_generation_count) == 56u, "GuiFrameStreamInfo.coalesced_generation_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, reader_retired_generation_count) == 64u, "GuiFrameStreamInfo.reader_retired_generation_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, xrgb32_nearest_command_count) == 72u, "GuiFrameStreamInfo.xrgb32_nearest_command_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, xrgb32_nearest_resource_bytes) == 80u, "GuiFrameStreamInfo.xrgb32_nearest_resource_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, current_frame_bytes) == 88u, "GuiFrameStreamInfo.current_frame_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, peak_frame_bytes) == 96u, "GuiFrameStreamInfo.peak_frame_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, reserved0) == 104u, "GuiFrameStreamInfo.reserved0 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1024u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -9805,7 +9888,7 @@ _Static_assert(offsetof(R4XStartR4Desk, console_input_wait) == 472u, "R4XStartR4
 _Static_assert(sizeof(R4DeskConsoleInputWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4Desk.physical_key_poll offset mismatch");
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 344u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 360u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -9888,6 +9971,10 @@ _Static_assert(offsetof(R4XStartR4Draw, font_glyph_bitmap) == 328u, "R4XStartR4D
 _Static_assert(sizeof(R4DrawFontGlyphBitmapFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, font_revision) == 336u, "R4XStartR4Draw.font_revision offset mismatch");
 _Static_assert(sizeof(R4DrawFontRevisionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_frame_begin_replace) == 344u, "R4XStartR4Draw.gui_frame_begin_replace offset mismatch");
+_Static_assert(sizeof(R4DrawGuiFrameBeginReplaceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_frame_stream_info) == 352u, "R4XStartR4Draw.gui_frame_stream_info offset mismatch");
+_Static_assert(sizeof(R4DrawGuiFrameStreamInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 288u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

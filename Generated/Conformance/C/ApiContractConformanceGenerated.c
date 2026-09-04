@@ -225,6 +225,8 @@ static R4DrawGuiFrameGenerationInfoFn r4os_probe_r4draw_gui_frame_generation_inf
 static R4DrawGuiFrameGenerationReadFn r4os_probe_r4draw_gui_frame_generation_read = (R4DrawGuiFrameGenerationReadFn)0;
 static R4DrawFontGlyphBitmapFn r4os_probe_r4draw_font_glyph_bitmap = (R4DrawFontGlyphBitmapFn)0;
 static R4DrawFontRevisionFn r4os_probe_r4draw_font_revision = (R4DrawFontRevisionFn)0;
+static R4DrawGuiFrameBeginReplaceFn r4os_probe_r4draw_gui_frame_begin_replace = (R4DrawGuiFrameBeginReplaceFn)0;
+static R4DrawGuiFrameStreamInfoFn r4os_probe_r4draw_gui_frame_stream_info = (R4DrawGuiFrameStreamInfoFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

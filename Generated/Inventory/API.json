@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 315,
-    "group_slot_count": 315,
+    "function_count": 317,
+    "group_slot_count": 317,
     "sdk_only_count": 0,
-    "public_count": 224,
+    "public_count": 226,
     "advanced_count": 91
   },
   "functions": [
@@ -2669,6 +2669,30 @@
       "slot": 40,
       "exposure": "public",
       "description": "Returns the non-zero generation of the live system-font catalogue. Every completed catalogue reload advances the generation so consumers can invalidate font-id keyed caches even when ids or metadata are reused.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_frame_begin_replace",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 41,
+      "exposure": "public",
+      "description": "Begins a private transactional complete replacement GUI frame for the current GUI program. The bounded client-local regions are copied during the call and describe every pixel changed from the prior generation. A successful commit publishes a standalone complete generation and supersedes the prior committed chain without retaining it as a base.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_frame_stream_info",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 42,
+      "exposure": "public",
+      "description": "Returns bounded replacement-stream lifecycle and native XRGB32 transport counters for one GUI program. The process handle is mandatory and invalid caller headers remain unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
