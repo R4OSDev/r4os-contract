@@ -32,7 +32,7 @@ Fields in canonical order:
   GUEST_FEATURE=<format ID>:<feature>  subsystem only, optional, repeatable
   TARGET=/<absolute image path ending in the KIND extension>
   IMAGE_SCOPE=slim|full|test|none      required for every kind
-  OPTIMIZE=size|speed                  optional for R4X, default size
+  OPTIMIZE=size|speed                  optional for every kind, default size
   PACKAGE=<group name>                 optional for R4X, no build semantics
   ZIG_MODULE=<alias>:<relative .zig>   optional for R4X, repeatable, Zig only
   C_INCLUDE=<relative include root>    optional, repeatable, C inputs only
@@ -94,12 +94,12 @@ and is restricted to the reasoned startup, loader and SIMD fixtures. PACKAGE
 only groups installation and documentation.
 It is present in the catalog but is not read by the SDK build driver.
 
-OPTIMIZE selects the code-generation goal of an R4X without creating a
-project-local build truth. `size` maps to ReleaseSmall and remains the default;
-`speed` maps to ReleaseFast for modules whose measured hot path justifies the
-larger artifact. The field is forbidden for non-R4X modules until their
-individual build paths consume it. It changes code generation only, never
-runtime memory profiles, imports, ABI, metadata or image placement.
+OPTIMIZE selects the code-generation goal of an R4X, R4L, R4D or R4P without
+creating a project-local build truth. `size` maps to ReleaseSmall and remains
+the default; `speed` maps to ReleaseFast for modules whose measured hot path
+justifies the larger artifact. All compiled manifest build paths consume the
+same field. It changes code generation only, never runtime memory profiles,
+imports, ABI, metadata or image placement.
 
 ZIG_MODULE binds a source import name to one shared Zig file. The alias is a
 Zig identifier and unique inside the manifest. Its forward-slash path is
