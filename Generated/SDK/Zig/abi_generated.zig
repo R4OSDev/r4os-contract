@@ -1380,6 +1380,25 @@ pub const tray_result_stale: i32 = -4;
 pub const tray_result_not_owner: i32 = -5;
 pub const tray_result_busy: i32 = -6;
 pub const tray_result_timeout: i32 = -7;
+pub const gui_frame_command_kind_shared_raster: u32 = 13;
+pub const gui_frame_generation_flag_shared_raster: u32 = 16;
+pub const gui_shared_raster_buffer_count: u32 = 3;
+pub const gui_shared_raster_create_info_size: u32 = 48;
+pub const gui_shared_raster_create_info_version: u32 = 1;
+pub const gui_shared_raster_format_alpha8: u32 = 3;
+pub const gui_shared_raster_format_indexed8: u32 = 2;
+pub const gui_shared_raster_format_xrgb32: u32 = 1;
+pub const gui_shared_raster_handle_size: u32 = 16;
+pub const gui_shared_raster_lease_size: u32 = 48;
+pub const gui_shared_raster_lease_version: u32 = 1;
+pub const gui_shared_raster_map_size: u32 = 120;
+pub const gui_shared_raster_map_version: u32 = 1;
+pub const gui_shared_raster_max_bytes: u64 = 1048576;
+pub const gui_shared_raster_max_frame_resources: u32 = 8;
+pub const gui_shared_raster_resource_size: u32 = 80;
+pub const gui_shared_raster_resource_version: u32 = 1;
+pub const gui_shared_raster_write_map_size: u32 = 56;
+pub const gui_shared_raster_write_map_version: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -5389,8 +5408,8 @@ pub const GuiXrgb32Resource = extern struct {
 };
 
 pub const GuiFrameStreamInfo = extern struct {
-    version: u32 = 1,
-    size: u32 = 112,
+    version: u32 = 2,
+    size: u32 = 176,
     flags: u32 = 0,
     live_generation_count: u32 = 0,
     owner: ProgramProcessHandle = .{},
@@ -5404,6 +5423,87 @@ pub const GuiFrameStreamInfo = extern struct {
     current_frame_bytes: u64 = 0,
     peak_frame_bytes: u64 = 0,
     reserved0: u64 = 0,
+    shared_publish_count: u64 = 0,
+    shared_acquire_count: u64 = 0,
+    shared_release_count: u64 = 0,
+    shared_backpressure_count: u64 = 0,
+    shared_published_bytes: u64 = 0,
+    shared_frame_bytes_avoided: u64 = 0,
+    shared_acquired_bytes: u64 = 0,
+    shared_live_bytes: u64 = 0,
+};
+
+pub const GuiSharedRasterHandle = extern struct {
+    id: u64 = 0,
+    generation: u64 = 0,
+};
+
+pub const GuiSharedRasterCreateInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    format: u32 = 0,
+    width: u32 = 0,
+    height: u32 = 0,
+    stride_bytes: u32 = 0,
+    data_offset: u32 = 0,
+    flags: u32 = 0,
+    data_bytes: u64 = 0,
+    reserved0: u64 = 0,
+};
+
+pub const GuiSharedRasterWriteMap = extern struct {
+    version: u32 = 1,
+    size: u32 = 56,
+    handle: GuiSharedRasterHandle = .{},
+    data_address: u64 = 0,
+    byte_length: u64 = 0,
+    write_token: u64 = 0,
+    buffer_index: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const GuiSharedRasterLease = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    handle: GuiSharedRasterHandle = .{},
+    raster_generation: u64 = 0,
+    lease_token: u64 = 0,
+    reserved0: u64 = 0,
+};
+
+pub const GuiSharedRasterMap = extern struct {
+    version: u32 = 1,
+    size: u32 = 120,
+    frame_owner: ProgramProcessHandle = .{},
+    frame_generation: u64 = 0,
+    lease: GuiSharedRasterLease = .{},
+    data_address: u64 = 0,
+    byte_length: u64 = 0,
+    format: u32 = 0,
+    width: u32 = 0,
+    height: u32 = 0,
+    stride_bytes: u32 = 0,
+    data_offset: u32 = 0,
+    flags: u32 = 0,
+};
+
+pub const GuiSharedRasterResource = extern struct {
+    version: u32 = 1,
+    size: u32 = 80,
+    handle: GuiSharedRasterHandle = .{},
+    raster_generation: u64 = 0,
+    format: u32 = 0,
+    source_x: u32 = 0,
+    source_y: u32 = 0,
+    source_w: u32 = 0,
+    source_h: u32 = 0,
+    guest_w: u32 = 0,
+    guest_h: u32 = 0,
+    viewport_x: i32 = 0,
+    viewport_y: i32 = 0,
+    viewport_w: u32 = 0,
+    viewport_h: u32 = 0,
+    flags: u32 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -5836,12 +5936,18 @@ pub const R4DrawFns = struct {
     pub const font_revision = *const fn () callconv(.c) u32;
     pub const gui_frame_begin_replace = *const fn ([*]const DisplayDamageRect, u32) callconv(.c) i32;
     pub const gui_frame_stream_info = *const fn (*const ProgramProcessHandle, *GuiFrameStreamInfo) callconv(.c) i32;
+    pub const gui_shared_raster_create = *const fn (*const GuiSharedRasterCreateInfo, *GuiSharedRasterHandle) callconv(.c) i32;
+    pub const gui_shared_raster_destroy = *const fn (*const GuiSharedRasterHandle) callconv(.c) i32;
+    pub const gui_shared_raster_map_write = *const fn (*const GuiSharedRasterHandle, *GuiSharedRasterWriteMap) callconv(.c) i32;
+    pub const gui_shared_raster_publish = *const fn (*const GuiSharedRasterWriteMap, *u64) callconv(.c) i32;
+    pub const gui_shared_raster_acquire = *const fn (*const ProgramProcessHandle, u64, *const GuiSharedRasterHandle, u64, *GuiSharedRasterMap) callconv(.c) i32;
+    pub const gui_shared_raster_release = *const fn (*const GuiSharedRasterLease) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 8,
-    size: u32 = 360,
+    abi_version: u32 = 9,
+    size: u32 = 408,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -5886,6 +5992,12 @@ pub const R4XStartR4Draw = extern struct {
     font_revision: usize = 0,
     gui_frame_begin_replace: usize = 0,
     gui_frame_stream_info: usize = 0,
+    gui_shared_raster_create: usize = 0,
+    gui_shared_raster_destroy: usize = 0,
+    gui_shared_raster_map_write: usize = 0,
+    gui_shared_raster_publish: usize = 0,
+    gui_shared_raster_acquire: usize = 0,
+    gui_shared_raster_release: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -6346,6 +6458,12 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 40, .offset = 336, .name = "font_revision", .state = .function, .required = false },
     .{ .number = 41, .offset = 344, .name = "gui_frame_begin_replace", .state = .function, .required = false },
     .{ .number = 42, .offset = 352, .name = "gui_frame_stream_info", .state = .function, .required = false },
+    .{ .number = 43, .offset = 360, .name = "gui_shared_raster_create", .state = .function, .required = false },
+    .{ .number = 44, .offset = 368, .name = "gui_shared_raster_destroy", .state = .function, .required = false },
+    .{ .number = 45, .offset = 376, .name = "gui_shared_raster_map_write", .state = .function, .required = false },
+    .{ .number = 46, .offset = 384, .name = "gui_shared_raster_publish", .state = .function, .required = false },
+    .{ .number = 47, .offset = 392, .name = "gui_shared_raster_acquire", .state = .function, .required = false },
+    .{ .number = 48, .offset = 400, .name = "gui_shared_raster_release", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -9866,7 +9984,7 @@ comptime {
     if (@offsetOf(GuiXrgb32Resource, "pixel_stride") != 52) @compileError("generated ABI offset drift: GuiXrgb32Resource.pixel_stride");
     if (@offsetOf(GuiXrgb32Resource, "flags") != 56) @compileError("generated ABI offset drift: GuiXrgb32Resource.flags");
     if (@offsetOf(GuiXrgb32Resource, "reserved0") != 60) @compileError("generated ABI offset drift: GuiXrgb32Resource.reserved0");
-    if (@sizeOf(GuiFrameStreamInfo) != 112) @compileError("generated ABI size drift: GuiFrameStreamInfo");
+    if (@sizeOf(GuiFrameStreamInfo) != 176) @compileError("generated ABI size drift: GuiFrameStreamInfo");
     if (@alignOf(GuiFrameStreamInfo) != 8) @compileError("generated ABI alignment drift: GuiFrameStreamInfo");
     if (@offsetOf(GuiFrameStreamInfo, "version") != 0) @compileError("generated ABI offset drift: GuiFrameStreamInfo.version");
     if (@offsetOf(GuiFrameStreamInfo, "size") != 4) @compileError("generated ABI offset drift: GuiFrameStreamInfo.size");
@@ -9883,6 +10001,81 @@ comptime {
     if (@offsetOf(GuiFrameStreamInfo, "current_frame_bytes") != 88) @compileError("generated ABI offset drift: GuiFrameStreamInfo.current_frame_bytes");
     if (@offsetOf(GuiFrameStreamInfo, "peak_frame_bytes") != 96) @compileError("generated ABI offset drift: GuiFrameStreamInfo.peak_frame_bytes");
     if (@offsetOf(GuiFrameStreamInfo, "reserved0") != 104) @compileError("generated ABI offset drift: GuiFrameStreamInfo.reserved0");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_publish_count") != 112) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_publish_count");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_acquire_count") != 120) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_acquire_count");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_release_count") != 128) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_release_count");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_backpressure_count") != 136) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_backpressure_count");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_published_bytes") != 144) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_published_bytes");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_frame_bytes_avoided") != 152) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_frame_bytes_avoided");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_acquired_bytes") != 160) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_acquired_bytes");
+    if (@offsetOf(GuiFrameStreamInfo, "shared_live_bytes") != 168) @compileError("generated ABI offset drift: GuiFrameStreamInfo.shared_live_bytes");
+    if (@sizeOf(GuiSharedRasterHandle) != 16) @compileError("generated ABI size drift: GuiSharedRasterHandle");
+    if (@alignOf(GuiSharedRasterHandle) != 8) @compileError("generated ABI alignment drift: GuiSharedRasterHandle");
+    if (@offsetOf(GuiSharedRasterHandle, "id") != 0) @compileError("generated ABI offset drift: GuiSharedRasterHandle.id");
+    if (@offsetOf(GuiSharedRasterHandle, "generation") != 8) @compileError("generated ABI offset drift: GuiSharedRasterHandle.generation");
+    if (@sizeOf(GuiSharedRasterCreateInfo) != 48) @compileError("generated ABI size drift: GuiSharedRasterCreateInfo");
+    if (@alignOf(GuiSharedRasterCreateInfo) != 8) @compileError("generated ABI alignment drift: GuiSharedRasterCreateInfo");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "version") != 0) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.version");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "size") != 4) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.size");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "format") != 8) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.format");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "width") != 12) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.width");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "height") != 16) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.height");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "stride_bytes") != 20) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.stride_bytes");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "data_offset") != 24) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.data_offset");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "flags") != 28) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.flags");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "data_bytes") != 32) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.data_bytes");
+    if (@offsetOf(GuiSharedRasterCreateInfo, "reserved0") != 40) @compileError("generated ABI offset drift: GuiSharedRasterCreateInfo.reserved0");
+    if (@sizeOf(GuiSharedRasterWriteMap) != 56) @compileError("generated ABI size drift: GuiSharedRasterWriteMap");
+    if (@alignOf(GuiSharedRasterWriteMap) != 8) @compileError("generated ABI alignment drift: GuiSharedRasterWriteMap");
+    if (@offsetOf(GuiSharedRasterWriteMap, "version") != 0) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.version");
+    if (@offsetOf(GuiSharedRasterWriteMap, "size") != 4) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.size");
+    if (@offsetOf(GuiSharedRasterWriteMap, "handle") != 8) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.handle");
+    if (@offsetOf(GuiSharedRasterWriteMap, "data_address") != 24) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.data_address");
+    if (@offsetOf(GuiSharedRasterWriteMap, "byte_length") != 32) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.byte_length");
+    if (@offsetOf(GuiSharedRasterWriteMap, "write_token") != 40) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.write_token");
+    if (@offsetOf(GuiSharedRasterWriteMap, "buffer_index") != 48) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.buffer_index");
+    if (@offsetOf(GuiSharedRasterWriteMap, "reserved0") != 52) @compileError("generated ABI offset drift: GuiSharedRasterWriteMap.reserved0");
+    if (@sizeOf(GuiSharedRasterLease) != 48) @compileError("generated ABI size drift: GuiSharedRasterLease");
+    if (@alignOf(GuiSharedRasterLease) != 8) @compileError("generated ABI alignment drift: GuiSharedRasterLease");
+    if (@offsetOf(GuiSharedRasterLease, "version") != 0) @compileError("generated ABI offset drift: GuiSharedRasterLease.version");
+    if (@offsetOf(GuiSharedRasterLease, "size") != 4) @compileError("generated ABI offset drift: GuiSharedRasterLease.size");
+    if (@offsetOf(GuiSharedRasterLease, "handle") != 8) @compileError("generated ABI offset drift: GuiSharedRasterLease.handle");
+    if (@offsetOf(GuiSharedRasterLease, "raster_generation") != 24) @compileError("generated ABI offset drift: GuiSharedRasterLease.raster_generation");
+    if (@offsetOf(GuiSharedRasterLease, "lease_token") != 32) @compileError("generated ABI offset drift: GuiSharedRasterLease.lease_token");
+    if (@offsetOf(GuiSharedRasterLease, "reserved0") != 40) @compileError("generated ABI offset drift: GuiSharedRasterLease.reserved0");
+    if (@sizeOf(GuiSharedRasterMap) != 120) @compileError("generated ABI size drift: GuiSharedRasterMap");
+    if (@alignOf(GuiSharedRasterMap) != 8) @compileError("generated ABI alignment drift: GuiSharedRasterMap");
+    if (@offsetOf(GuiSharedRasterMap, "version") != 0) @compileError("generated ABI offset drift: GuiSharedRasterMap.version");
+    if (@offsetOf(GuiSharedRasterMap, "size") != 4) @compileError("generated ABI offset drift: GuiSharedRasterMap.size");
+    if (@offsetOf(GuiSharedRasterMap, "frame_owner") != 8) @compileError("generated ABI offset drift: GuiSharedRasterMap.frame_owner");
+    if (@offsetOf(GuiSharedRasterMap, "frame_generation") != 24) @compileError("generated ABI offset drift: GuiSharedRasterMap.frame_generation");
+    if (@offsetOf(GuiSharedRasterMap, "lease") != 32) @compileError("generated ABI offset drift: GuiSharedRasterMap.lease");
+    if (@offsetOf(GuiSharedRasterMap, "data_address") != 80) @compileError("generated ABI offset drift: GuiSharedRasterMap.data_address");
+    if (@offsetOf(GuiSharedRasterMap, "byte_length") != 88) @compileError("generated ABI offset drift: GuiSharedRasterMap.byte_length");
+    if (@offsetOf(GuiSharedRasterMap, "format") != 96) @compileError("generated ABI offset drift: GuiSharedRasterMap.format");
+    if (@offsetOf(GuiSharedRasterMap, "width") != 100) @compileError("generated ABI offset drift: GuiSharedRasterMap.width");
+    if (@offsetOf(GuiSharedRasterMap, "height") != 104) @compileError("generated ABI offset drift: GuiSharedRasterMap.height");
+    if (@offsetOf(GuiSharedRasterMap, "stride_bytes") != 108) @compileError("generated ABI offset drift: GuiSharedRasterMap.stride_bytes");
+    if (@offsetOf(GuiSharedRasterMap, "data_offset") != 112) @compileError("generated ABI offset drift: GuiSharedRasterMap.data_offset");
+    if (@offsetOf(GuiSharedRasterMap, "flags") != 116) @compileError("generated ABI offset drift: GuiSharedRasterMap.flags");
+    if (@sizeOf(GuiSharedRasterResource) != 80) @compileError("generated ABI size drift: GuiSharedRasterResource");
+    if (@alignOf(GuiSharedRasterResource) != 8) @compileError("generated ABI alignment drift: GuiSharedRasterResource");
+    if (@offsetOf(GuiSharedRasterResource, "version") != 0) @compileError("generated ABI offset drift: GuiSharedRasterResource.version");
+    if (@offsetOf(GuiSharedRasterResource, "size") != 4) @compileError("generated ABI offset drift: GuiSharedRasterResource.size");
+    if (@offsetOf(GuiSharedRasterResource, "handle") != 8) @compileError("generated ABI offset drift: GuiSharedRasterResource.handle");
+    if (@offsetOf(GuiSharedRasterResource, "raster_generation") != 24) @compileError("generated ABI offset drift: GuiSharedRasterResource.raster_generation");
+    if (@offsetOf(GuiSharedRasterResource, "format") != 32) @compileError("generated ABI offset drift: GuiSharedRasterResource.format");
+    if (@offsetOf(GuiSharedRasterResource, "source_x") != 36) @compileError("generated ABI offset drift: GuiSharedRasterResource.source_x");
+    if (@offsetOf(GuiSharedRasterResource, "source_y") != 40) @compileError("generated ABI offset drift: GuiSharedRasterResource.source_y");
+    if (@offsetOf(GuiSharedRasterResource, "source_w") != 44) @compileError("generated ABI offset drift: GuiSharedRasterResource.source_w");
+    if (@offsetOf(GuiSharedRasterResource, "source_h") != 48) @compileError("generated ABI offset drift: GuiSharedRasterResource.source_h");
+    if (@offsetOf(GuiSharedRasterResource, "guest_w") != 52) @compileError("generated ABI offset drift: GuiSharedRasterResource.guest_w");
+    if (@offsetOf(GuiSharedRasterResource, "guest_h") != 56) @compileError("generated ABI offset drift: GuiSharedRasterResource.guest_h");
+    if (@offsetOf(GuiSharedRasterResource, "viewport_x") != 60) @compileError("generated ABI offset drift: GuiSharedRasterResource.viewport_x");
+    if (@offsetOf(GuiSharedRasterResource, "viewport_y") != 64) @compileError("generated ABI offset drift: GuiSharedRasterResource.viewport_y");
+    if (@offsetOf(GuiSharedRasterResource, "viewport_w") != 68) @compileError("generated ABI offset drift: GuiSharedRasterResource.viewport_w");
+    if (@offsetOf(GuiSharedRasterResource, "viewport_h") != 72) @compileError("generated ABI offset drift: GuiSharedRasterResource.viewport_h");
+    if (@offsetOf(GuiSharedRasterResource, "flags") != 76) @compileError("generated ABI offset drift: GuiSharedRasterResource.flags");
     if (@sizeOf(R4XStartR4Sys) != 1024) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -10070,7 +10263,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
-    if (@sizeOf(R4XStartR4Draw) != 360) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 408) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -10114,6 +10307,12 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "font_revision") != 336) @compileError("generated ABI offset drift: R4XStartR4Draw.font_revision");
     if (@offsetOf(R4XStartR4Draw, "gui_frame_begin_replace") != 344) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_begin_replace");
     if (@offsetOf(R4XStartR4Draw, "gui_frame_stream_info") != 352) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_frame_stream_info");
+    if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_create") != 360) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_create");
+    if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_destroy") != 368) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_destroy");
+    if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_map_write") != 376) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_map_write");
+    if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_publish") != 384) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_publish");
+    if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_acquire") != 392) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_acquire");
+    if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_release") != 400) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_release");
     if (@sizeOf(R4XStartR4Net) != 288) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");

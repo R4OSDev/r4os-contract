@@ -1392,6 +1392,25 @@ extern "C" {
 #define R4OS_TRAY_RESULT_NOT_OWNER ((int32_t)-5)
 #define R4OS_TRAY_RESULT_BUSY ((int32_t)-6)
 #define R4OS_TRAY_RESULT_TIMEOUT ((int32_t)-7)
+#define R4OS_GUI_FRAME_COMMAND_KIND_SHARED_RASTER 13u
+#define R4OS_GUI_FRAME_GENERATION_FLAG_SHARED_RASTER 16u
+#define R4OS_GUI_SHARED_RASTER_BUFFER_COUNT 3u
+#define R4OS_GUI_SHARED_RASTER_CREATE_INFO_SIZE 48u
+#define R4OS_GUI_SHARED_RASTER_CREATE_INFO_VERSION 1u
+#define R4OS_GUI_SHARED_RASTER_FORMAT_ALPHA8 3u
+#define R4OS_GUI_SHARED_RASTER_FORMAT_INDEXED8 2u
+#define R4OS_GUI_SHARED_RASTER_FORMAT_XRGB32 1u
+#define R4OS_GUI_SHARED_RASTER_HANDLE_SIZE 16u
+#define R4OS_GUI_SHARED_RASTER_LEASE_SIZE 48u
+#define R4OS_GUI_SHARED_RASTER_LEASE_VERSION 1u
+#define R4OS_GUI_SHARED_RASTER_MAP_SIZE 120u
+#define R4OS_GUI_SHARED_RASTER_MAP_VERSION 1u
+#define R4OS_GUI_SHARED_RASTER_MAX_BYTES 1048576ull
+#define R4OS_GUI_SHARED_RASTER_MAX_FRAME_RESOURCES 8u
+#define R4OS_GUI_SHARED_RASTER_RESOURCE_SIZE 80u
+#define R4OS_GUI_SHARED_RASTER_RESOURCE_VERSION 1u
+#define R4OS_GUI_SHARED_RASTER_WRITE_MAP_SIZE 56u
+#define R4OS_GUI_SHARED_RASTER_WRITE_MAP_VERSION 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -1960,6 +1979,12 @@ typedef struct R4TrayDesktopExchange R4TrayDesktopExchange;
 typedef struct R4GuiGlyphBitmap R4GuiGlyphBitmap;
 typedef struct R4GuiXrgb32Resource R4GuiXrgb32Resource;
 typedef struct R4GuiFrameStreamInfo R4GuiFrameStreamInfo;
+typedef struct R4GuiSharedRasterHandle R4GuiSharedRasterHandle;
+typedef struct R4GuiSharedRasterCreateInfo R4GuiSharedRasterCreateInfo;
+typedef struct R4GuiSharedRasterWriteMap R4GuiSharedRasterWriteMap;
+typedef struct R4GuiSharedRasterLease R4GuiSharedRasterLease;
+typedef struct R4GuiSharedRasterMap R4GuiSharedRasterMap;
+typedef struct R4GuiSharedRasterResource R4GuiSharedRasterResource;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -5488,7 +5513,88 @@ typedef struct R4GuiFrameStreamInfo {
     uint64_t current_frame_bytes;
     uint64_t peak_frame_bytes;
     uint64_t reserved0;
+    uint64_t shared_publish_count;
+    uint64_t shared_acquire_count;
+    uint64_t shared_release_count;
+    uint64_t shared_backpressure_count;
+    uint64_t shared_published_bytes;
+    uint64_t shared_frame_bytes_avoided;
+    uint64_t shared_acquired_bytes;
+    uint64_t shared_live_bytes;
 } R4GuiFrameStreamInfo;
+
+typedef struct R4GuiSharedRasterHandle {
+    uint64_t id;
+    uint64_t generation;
+} R4GuiSharedRasterHandle;
+
+typedef struct R4GuiSharedRasterCreateInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t format;
+    uint32_t width;
+    uint32_t height;
+    uint32_t stride_bytes;
+    uint32_t data_offset;
+    uint32_t flags;
+    uint64_t data_bytes;
+    uint64_t reserved0;
+} R4GuiSharedRasterCreateInfo;
+
+typedef struct R4GuiSharedRasterWriteMap {
+    uint32_t version;
+    uint32_t size;
+    R4GuiSharedRasterHandle handle;
+    uint64_t data_address;
+    uint64_t byte_length;
+    uint64_t write_token;
+    uint32_t buffer_index;
+    uint32_t reserved0;
+} R4GuiSharedRasterWriteMap;
+
+typedef struct R4GuiSharedRasterLease {
+    uint32_t version;
+    uint32_t size;
+    R4GuiSharedRasterHandle handle;
+    uint64_t raster_generation;
+    uint64_t lease_token;
+    uint64_t reserved0;
+} R4GuiSharedRasterLease;
+
+typedef struct R4GuiSharedRasterMap {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle frame_owner;
+    uint64_t frame_generation;
+    R4GuiSharedRasterLease lease;
+    uint64_t data_address;
+    uint64_t byte_length;
+    uint32_t format;
+    uint32_t width;
+    uint32_t height;
+    uint32_t stride_bytes;
+    uint32_t data_offset;
+    uint32_t flags;
+} R4GuiSharedRasterMap;
+
+typedef struct R4GuiSharedRasterResource {
+    uint32_t version;
+    uint32_t size;
+    R4GuiSharedRasterHandle handle;
+    uint64_t raster_generation;
+    uint32_t format;
+    uint32_t source_x;
+    uint32_t source_y;
+    uint32_t source_w;
+    uint32_t source_h;
+    uint32_t guest_w;
+    uint32_t guest_h;
+    int32_t viewport_x;
+    int32_t viewport_y;
+    uint32_t viewport_w;
+    uint32_t viewport_h;
+    uint32_t flags;
+} R4GuiSharedRasterResource;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -5963,6 +6069,12 @@ typedef int32_t (*R4DrawFontGlyphBitmapFn)(uint32_t font_id, uint32_t codepoint,
 typedef uint32_t (*R4DrawFontRevisionFn)(void);
 typedef int32_t (*R4DrawGuiFrameBeginReplaceFn)(const R4DisplayDamageRect * regions, uint32_t region_count);
 typedef int32_t (*R4DrawGuiFrameStreamInfoFn)(const R4ProgramProcessHandle * handle, R4GuiFrameStreamInfo * out_info);
+typedef int32_t (*R4DrawGuiSharedRasterCreateFn)(const R4GuiSharedRasterCreateInfo * info, R4GuiSharedRasterHandle * out_handle);
+typedef int32_t (*R4DrawGuiSharedRasterDestroyFn)(const R4GuiSharedRasterHandle * handle);
+typedef int32_t (*R4DrawGuiSharedRasterMapWriteFn)(const R4GuiSharedRasterHandle * handle, R4GuiSharedRasterWriteMap * out_map);
+typedef int32_t (*R4DrawGuiSharedRasterPublishFn)(const R4GuiSharedRasterWriteMap * map, uint64_t * out_generation);
+typedef int32_t (*R4DrawGuiSharedRasterAcquireFn)(const R4ProgramProcessHandle * frame_owner, uint64_t frame_generation, const R4GuiSharedRasterHandle * raster_handle, uint64_t raster_generation, R4GuiSharedRasterMap * out_map);
+typedef int32_t (*R4DrawGuiSharedRasterReleaseFn)(const R4GuiSharedRasterLease * lease);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -6012,6 +6124,12 @@ typedef struct R4XStartR4Draw {
     uintptr_t font_revision;
     uintptr_t gui_frame_begin_replace;
     uintptr_t gui_frame_stream_info;
+    uintptr_t gui_shared_raster_create;
+    uintptr_t gui_shared_raster_destroy;
+    uintptr_t gui_shared_raster_map_write;
+    uintptr_t gui_shared_raster_publish;
+    uintptr_t gui_shared_raster_acquire;
+    uintptr_t gui_shared_raster_release;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -9504,7 +9622,7 @@ _Static_assert(offsetof(R4GuiXrgb32Resource, pixels_offset) == 48u, "GuiXrgb32Re
 _Static_assert(offsetof(R4GuiXrgb32Resource, pixel_stride) == 52u, "GuiXrgb32Resource.pixel_stride offset mismatch");
 _Static_assert(offsetof(R4GuiXrgb32Resource, flags) == 56u, "GuiXrgb32Resource.flags offset mismatch");
 _Static_assert(offsetof(R4GuiXrgb32Resource, reserved0) == 60u, "GuiXrgb32Resource.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GuiFrameStreamInfo) == 112u, "GuiFrameStreamInfo size mismatch");
+_Static_assert(sizeof(R4GuiFrameStreamInfo) == 176u, "GuiFrameStreamInfo size mismatch");
 _Static_assert(offsetof(R4GuiFrameStreamInfo, version) == 0u, "GuiFrameStreamInfo.version offset mismatch");
 _Static_assert(offsetof(R4GuiFrameStreamInfo, size) == 4u, "GuiFrameStreamInfo.size offset mismatch");
 _Static_assert(offsetof(R4GuiFrameStreamInfo, flags) == 8u, "GuiFrameStreamInfo.flags offset mismatch");
@@ -9520,6 +9638,75 @@ _Static_assert(offsetof(R4GuiFrameStreamInfo, xrgb32_nearest_resource_bytes) == 
 _Static_assert(offsetof(R4GuiFrameStreamInfo, current_frame_bytes) == 88u, "GuiFrameStreamInfo.current_frame_bytes offset mismatch");
 _Static_assert(offsetof(R4GuiFrameStreamInfo, peak_frame_bytes) == 96u, "GuiFrameStreamInfo.peak_frame_bytes offset mismatch");
 _Static_assert(offsetof(R4GuiFrameStreamInfo, reserved0) == 104u, "GuiFrameStreamInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_publish_count) == 112u, "GuiFrameStreamInfo.shared_publish_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_acquire_count) == 120u, "GuiFrameStreamInfo.shared_acquire_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_release_count) == 128u, "GuiFrameStreamInfo.shared_release_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_backpressure_count) == 136u, "GuiFrameStreamInfo.shared_backpressure_count offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_published_bytes) == 144u, "GuiFrameStreamInfo.shared_published_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_frame_bytes_avoided) == 152u, "GuiFrameStreamInfo.shared_frame_bytes_avoided offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_acquired_bytes) == 160u, "GuiFrameStreamInfo.shared_acquired_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiFrameStreamInfo, shared_live_bytes) == 168u, "GuiFrameStreamInfo.shared_live_bytes offset mismatch");
+_Static_assert(sizeof(R4GuiSharedRasterHandle) == 16u, "GuiSharedRasterHandle size mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterHandle, id) == 0u, "GuiSharedRasterHandle.id offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterHandle, generation) == 8u, "GuiSharedRasterHandle.generation offset mismatch");
+_Static_assert(sizeof(R4GuiSharedRasterCreateInfo) == 48u, "GuiSharedRasterCreateInfo size mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, version) == 0u, "GuiSharedRasterCreateInfo.version offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, size) == 4u, "GuiSharedRasterCreateInfo.size offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, format) == 8u, "GuiSharedRasterCreateInfo.format offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, width) == 12u, "GuiSharedRasterCreateInfo.width offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, height) == 16u, "GuiSharedRasterCreateInfo.height offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, stride_bytes) == 20u, "GuiSharedRasterCreateInfo.stride_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, data_offset) == 24u, "GuiSharedRasterCreateInfo.data_offset offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, flags) == 28u, "GuiSharedRasterCreateInfo.flags offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, data_bytes) == 32u, "GuiSharedRasterCreateInfo.data_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterCreateInfo, reserved0) == 40u, "GuiSharedRasterCreateInfo.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GuiSharedRasterWriteMap) == 56u, "GuiSharedRasterWriteMap size mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, version) == 0u, "GuiSharedRasterWriteMap.version offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, size) == 4u, "GuiSharedRasterWriteMap.size offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, handle) == 8u, "GuiSharedRasterWriteMap.handle offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, data_address) == 24u, "GuiSharedRasterWriteMap.data_address offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, byte_length) == 32u, "GuiSharedRasterWriteMap.byte_length offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, write_token) == 40u, "GuiSharedRasterWriteMap.write_token offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, buffer_index) == 48u, "GuiSharedRasterWriteMap.buffer_index offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterWriteMap, reserved0) == 52u, "GuiSharedRasterWriteMap.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GuiSharedRasterLease) == 48u, "GuiSharedRasterLease size mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterLease, version) == 0u, "GuiSharedRasterLease.version offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterLease, size) == 4u, "GuiSharedRasterLease.size offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterLease, handle) == 8u, "GuiSharedRasterLease.handle offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterLease, raster_generation) == 24u, "GuiSharedRasterLease.raster_generation offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterLease, lease_token) == 32u, "GuiSharedRasterLease.lease_token offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterLease, reserved0) == 40u, "GuiSharedRasterLease.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GuiSharedRasterMap) == 120u, "GuiSharedRasterMap size mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, version) == 0u, "GuiSharedRasterMap.version offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, size) == 4u, "GuiSharedRasterMap.size offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, frame_owner) == 8u, "GuiSharedRasterMap.frame_owner offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, frame_generation) == 24u, "GuiSharedRasterMap.frame_generation offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, lease) == 32u, "GuiSharedRasterMap.lease offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, data_address) == 80u, "GuiSharedRasterMap.data_address offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, byte_length) == 88u, "GuiSharedRasterMap.byte_length offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, format) == 96u, "GuiSharedRasterMap.format offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, width) == 100u, "GuiSharedRasterMap.width offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, height) == 104u, "GuiSharedRasterMap.height offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, stride_bytes) == 108u, "GuiSharedRasterMap.stride_bytes offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, data_offset) == 112u, "GuiSharedRasterMap.data_offset offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterMap, flags) == 116u, "GuiSharedRasterMap.flags offset mismatch");
+_Static_assert(sizeof(R4GuiSharedRasterResource) == 80u, "GuiSharedRasterResource size mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, version) == 0u, "GuiSharedRasterResource.version offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, size) == 4u, "GuiSharedRasterResource.size offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, handle) == 8u, "GuiSharedRasterResource.handle offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, raster_generation) == 24u, "GuiSharedRasterResource.raster_generation offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, format) == 32u, "GuiSharedRasterResource.format offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, source_x) == 36u, "GuiSharedRasterResource.source_x offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, source_y) == 40u, "GuiSharedRasterResource.source_y offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, source_w) == 44u, "GuiSharedRasterResource.source_w offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, source_h) == 48u, "GuiSharedRasterResource.source_h offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, guest_w) == 52u, "GuiSharedRasterResource.guest_w offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, guest_h) == 56u, "GuiSharedRasterResource.guest_h offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, viewport_x) == 60u, "GuiSharedRasterResource.viewport_x offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, viewport_y) == 64u, "GuiSharedRasterResource.viewport_y offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, viewport_w) == 68u, "GuiSharedRasterResource.viewport_w offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, viewport_h) == 72u, "GuiSharedRasterResource.viewport_h offset mismatch");
+_Static_assert(offsetof(R4GuiSharedRasterResource, flags) == 76u, "GuiSharedRasterResource.flags offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1024u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -9888,7 +10075,7 @@ _Static_assert(offsetof(R4XStartR4Desk, console_input_wait) == 472u, "R4XStartR4
 _Static_assert(sizeof(R4DeskConsoleInputWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4Desk.physical_key_poll offset mismatch");
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 360u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 408u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -9975,6 +10162,18 @@ _Static_assert(offsetof(R4XStartR4Draw, gui_frame_begin_replace) == 344u, "R4XSt
 _Static_assert(sizeof(R4DrawGuiFrameBeginReplaceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gui_frame_stream_info) == 352u, "R4XStartR4Draw.gui_frame_stream_info offset mismatch");
 _Static_assert(sizeof(R4DrawGuiFrameStreamInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_create) == 360u, "R4XStartR4Draw.gui_shared_raster_create offset mismatch");
+_Static_assert(sizeof(R4DrawGuiSharedRasterCreateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_destroy) == 368u, "R4XStartR4Draw.gui_shared_raster_destroy offset mismatch");
+_Static_assert(sizeof(R4DrawGuiSharedRasterDestroyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_map_write) == 376u, "R4XStartR4Draw.gui_shared_raster_map_write offset mismatch");
+_Static_assert(sizeof(R4DrawGuiSharedRasterMapWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_publish) == 384u, "R4XStartR4Draw.gui_shared_raster_publish offset mismatch");
+_Static_assert(sizeof(R4DrawGuiSharedRasterPublishFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_acquire) == 392u, "R4XStartR4Draw.gui_shared_raster_acquire offset mismatch");
+_Static_assert(sizeof(R4DrawGuiSharedRasterAcquireFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_release) == 400u, "R4XStartR4Draw.gui_shared_raster_release offset mismatch");
+_Static_assert(sizeof(R4DrawGuiSharedRasterReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 288u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

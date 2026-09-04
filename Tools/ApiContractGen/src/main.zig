@@ -405,8 +405,10 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.69.48 adds canonical regions, capabilities and completion at 33..35;
     // 0.69.62 appends bounded GUI damage generations at slots 36..38;
     // 0.75.4 adds the one-lookup bulk glyph snapshot at slot 39; 0.75.5
-    // appends the font-catalogue generation used by consumer caches at 40.
-    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 43, .reserved = 0, .tombstones = 0 },
+    // appends the font-catalogue generation used by consumer caches at 40;
+    // 0.75.16 adds replacement streams at 41..42 and 0.75.17 appends the
+    // bounded shared-raster lifecycle at 43..48.
+    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 49, .reserved = 0, .tombstones = 0 },
     // 0.69.12 activates the two preallocated R4NET extension slots for the
     // generation-bound service request path and its kernel-channel telemetry.
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 34, .reserved = 0, .tombstones = 0 },

@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 317,
-    "group_slot_count": 317,
+    "function_count": 323,
+    "group_slot_count": 323,
     "sdk_only_count": 0,
-    "public_count": 226,
+    "public_count": 232,
     "advanced_count": 91
   },
   "functions": [
@@ -2693,6 +2693,78 @@
       "slot": 42,
       "exposure": "public",
       "description": "Returns bounded replacement-stream lifecycle and native XRGB32 transport counters for one GUI program. The process handle is mandatory and invalid caller headers remain unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_shared_raster_create",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 43,
+      "exposure": "public",
+      "description": "Creates one producer-owned bounded shared raster with three reusable backing buffers. The returned generation-exact handle is destroyed explicitly or automatically at producer exit.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_shared_raster_destroy",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 44,
+      "exposure": "public",
+      "description": "Closes one exact producer-owned shared raster. Existing immutable frame and consumer references remain valid until their final release; no new write mapping is accepted.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_shared_raster_map_write",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 45,
+      "exposure": "public",
+      "description": "Reserves one currently unreferenced backing buffer and returns its direct producer-writable address and an unforgeable write token. The mapping becomes immutable when published.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_shared_raster_publish",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 46,
+      "exposure": "public",
+      "description": "Publishes one exact write mapping as a new immutable raster generation. The generation may be referenced by a standalone full or replacement GUI frame until its backing buffer is reused.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_shared_raster_acquire",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 47,
+      "exposure": "public",
+      "description": "Acquires one immutable shared raster generation referenced by the exact captured GUI frame generation and returns the direct consumer mapping plus an explicit lease.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gui_shared_raster_release",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 48,
+      "exposure": "public",
+      "description": "Releases one exact consumer lease. A stale, foreign or duplicate lease is rejected without changing shared-raster ownership.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
