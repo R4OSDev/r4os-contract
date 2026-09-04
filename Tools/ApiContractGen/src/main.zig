@@ -410,8 +410,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // bounded shared-raster lifecycle at 43..48.
     .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 49, .reserved = 0, .tombstones = 0 },
     // 0.69.12 activates the two preallocated R4NET extension slots for the
-    // generation-bound service request path and its kernel-channel telemetry.
-    .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 34, .reserved = 0, .tombstones = 0 },
+    // generation-bound service request path and its kernel-channel telemetry;
+    // 0.75.18 appends the TCP burst/ACK/poll performance snapshot at slot 34.
+    .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 35, .reserved = 0, .tombstones = 0 },
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 19, .reserved = 2, .tombstones = 0 },
     // R4DEV extends the passive diagnostic tail through slot 41 with the
     // canonical PCI and input snapshots; slot 27 remains frozen.

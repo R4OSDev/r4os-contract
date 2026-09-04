@@ -5506,6 +5506,40 @@ pub const GuiSharedRasterResource = extern struct {
     flags: u32 = 0,
 };
 
+pub const TcpPerformanceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 208,
+    local_mss: u32 = 0,
+    catalog_capacity: u32 = 0,
+    delayed_ack_ms: u32 = 0,
+    local_window_scale: u32 = 0,
+    outstanding_segments: u32 = 0,
+    outstanding_bytes: u32 = 0,
+    outstanding_segments_peak: u32 = 0,
+    outstanding_bytes_peak: u32 = 0,
+    write_calls: u64 = 0,
+    write_requested_bytes: u64 = 0,
+    write_completed_bytes: u64 = 0,
+    write_segments: u64 = 0,
+    write_partial: u64 = 0,
+    remote_window_stalls: u64 = 0,
+    catalog_stalls: u64 = 0,
+    backend_busy_stalls: u64 = 0,
+    pure_ack_tx: u64 = 0,
+    delayed_ack_requests: u64 = 0,
+    delayed_ack_tx: u64 = 0,
+    immediate_ack_tx: u64 = 0,
+    ack_coalesced: u64 = 0,
+    ack_piggybacked: u64 = 0,
+    window_update_tx: u64 = 0,
+    adapter_poll_rounds: u64 = 0,
+    service_poll_requests: u64 = 0,
+    service_poll_skips: u64 = 0,
+    retransmits: u64 = 0,
+    mss_negotiated: u64 = 0,
+    window_scale_negotiated: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -6035,12 +6069,13 @@ pub const R4NetFns = struct {
     pub const serial_link_inbox = *const fn (*SerialLinkMessage) callconv(.c) i32;
     pub const net_service_request = *const fn (u32, u16, u32, u16, [*]const u8, u32, [*]u8, u32) callconv(.c) i32;
     pub const ipc_performance = *const fn (u32, *IpcPerformanceSummary) callconv(.c) i32;
+    pub const tcp_performance = *const fn (*TcpPerformanceInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Net = extern struct {
     magic: u32 = 826625618,
-    abi_version: u32 = 1,
-    size: u32 = 288,
+    abi_version: u32 = 2,
+    size: u32 = 296,
     flags: u32 = 0,
     tcp_connect: usize = 0,
     tcp_write: usize = 0,
@@ -6076,6 +6111,7 @@ pub const R4XStartR4Net = extern struct {
     serial_link_inbox: usize = 0,
     net_service_request: usize = 0,
     ipc_performance: usize = 0,
+    tcp_performance: usize = 0,
 };
 
 pub const R4AudioFns = struct {
@@ -6501,6 +6537,7 @@ pub const R4NetSlots = [_]R4ApiSlotMeta{
     .{ .number = 31, .offset = 264, .name = "serial_link_inbox", .state = .function, .required = false },
     .{ .number = 32, .offset = 272, .name = "net_service_request", .state = .function, .required = false },
     .{ .number = 33, .offset = 280, .name = "ipc_performance", .state = .function, .required = false },
+    .{ .number = 34, .offset = 288, .name = "tcp_performance", .state = .function, .required = false },
 };
 
 pub const R4AudioSlots = [_]R4ApiSlotMeta{
@@ -10076,6 +10113,39 @@ comptime {
     if (@offsetOf(GuiSharedRasterResource, "viewport_w") != 68) @compileError("generated ABI offset drift: GuiSharedRasterResource.viewport_w");
     if (@offsetOf(GuiSharedRasterResource, "viewport_h") != 72) @compileError("generated ABI offset drift: GuiSharedRasterResource.viewport_h");
     if (@offsetOf(GuiSharedRasterResource, "flags") != 76) @compileError("generated ABI offset drift: GuiSharedRasterResource.flags");
+    if (@sizeOf(TcpPerformanceInfo) != 208) @compileError("generated ABI size drift: TcpPerformanceInfo");
+    if (@alignOf(TcpPerformanceInfo) != 8) @compileError("generated ABI alignment drift: TcpPerformanceInfo");
+    if (@offsetOf(TcpPerformanceInfo, "version") != 0) @compileError("generated ABI offset drift: TcpPerformanceInfo.version");
+    if (@offsetOf(TcpPerformanceInfo, "size") != 4) @compileError("generated ABI offset drift: TcpPerformanceInfo.size");
+    if (@offsetOf(TcpPerformanceInfo, "local_mss") != 8) @compileError("generated ABI offset drift: TcpPerformanceInfo.local_mss");
+    if (@offsetOf(TcpPerformanceInfo, "catalog_capacity") != 12) @compileError("generated ABI offset drift: TcpPerformanceInfo.catalog_capacity");
+    if (@offsetOf(TcpPerformanceInfo, "delayed_ack_ms") != 16) @compileError("generated ABI offset drift: TcpPerformanceInfo.delayed_ack_ms");
+    if (@offsetOf(TcpPerformanceInfo, "local_window_scale") != 20) @compileError("generated ABI offset drift: TcpPerformanceInfo.local_window_scale");
+    if (@offsetOf(TcpPerformanceInfo, "outstanding_segments") != 24) @compileError("generated ABI offset drift: TcpPerformanceInfo.outstanding_segments");
+    if (@offsetOf(TcpPerformanceInfo, "outstanding_bytes") != 28) @compileError("generated ABI offset drift: TcpPerformanceInfo.outstanding_bytes");
+    if (@offsetOf(TcpPerformanceInfo, "outstanding_segments_peak") != 32) @compileError("generated ABI offset drift: TcpPerformanceInfo.outstanding_segments_peak");
+    if (@offsetOf(TcpPerformanceInfo, "outstanding_bytes_peak") != 36) @compileError("generated ABI offset drift: TcpPerformanceInfo.outstanding_bytes_peak");
+    if (@offsetOf(TcpPerformanceInfo, "write_calls") != 40) @compileError("generated ABI offset drift: TcpPerformanceInfo.write_calls");
+    if (@offsetOf(TcpPerformanceInfo, "write_requested_bytes") != 48) @compileError("generated ABI offset drift: TcpPerformanceInfo.write_requested_bytes");
+    if (@offsetOf(TcpPerformanceInfo, "write_completed_bytes") != 56) @compileError("generated ABI offset drift: TcpPerformanceInfo.write_completed_bytes");
+    if (@offsetOf(TcpPerformanceInfo, "write_segments") != 64) @compileError("generated ABI offset drift: TcpPerformanceInfo.write_segments");
+    if (@offsetOf(TcpPerformanceInfo, "write_partial") != 72) @compileError("generated ABI offset drift: TcpPerformanceInfo.write_partial");
+    if (@offsetOf(TcpPerformanceInfo, "remote_window_stalls") != 80) @compileError("generated ABI offset drift: TcpPerformanceInfo.remote_window_stalls");
+    if (@offsetOf(TcpPerformanceInfo, "catalog_stalls") != 88) @compileError("generated ABI offset drift: TcpPerformanceInfo.catalog_stalls");
+    if (@offsetOf(TcpPerformanceInfo, "backend_busy_stalls") != 96) @compileError("generated ABI offset drift: TcpPerformanceInfo.backend_busy_stalls");
+    if (@offsetOf(TcpPerformanceInfo, "pure_ack_tx") != 104) @compileError("generated ABI offset drift: TcpPerformanceInfo.pure_ack_tx");
+    if (@offsetOf(TcpPerformanceInfo, "delayed_ack_requests") != 112) @compileError("generated ABI offset drift: TcpPerformanceInfo.delayed_ack_requests");
+    if (@offsetOf(TcpPerformanceInfo, "delayed_ack_tx") != 120) @compileError("generated ABI offset drift: TcpPerformanceInfo.delayed_ack_tx");
+    if (@offsetOf(TcpPerformanceInfo, "immediate_ack_tx") != 128) @compileError("generated ABI offset drift: TcpPerformanceInfo.immediate_ack_tx");
+    if (@offsetOf(TcpPerformanceInfo, "ack_coalesced") != 136) @compileError("generated ABI offset drift: TcpPerformanceInfo.ack_coalesced");
+    if (@offsetOf(TcpPerformanceInfo, "ack_piggybacked") != 144) @compileError("generated ABI offset drift: TcpPerformanceInfo.ack_piggybacked");
+    if (@offsetOf(TcpPerformanceInfo, "window_update_tx") != 152) @compileError("generated ABI offset drift: TcpPerformanceInfo.window_update_tx");
+    if (@offsetOf(TcpPerformanceInfo, "adapter_poll_rounds") != 160) @compileError("generated ABI offset drift: TcpPerformanceInfo.adapter_poll_rounds");
+    if (@offsetOf(TcpPerformanceInfo, "service_poll_requests") != 168) @compileError("generated ABI offset drift: TcpPerformanceInfo.service_poll_requests");
+    if (@offsetOf(TcpPerformanceInfo, "service_poll_skips") != 176) @compileError("generated ABI offset drift: TcpPerformanceInfo.service_poll_skips");
+    if (@offsetOf(TcpPerformanceInfo, "retransmits") != 184) @compileError("generated ABI offset drift: TcpPerformanceInfo.retransmits");
+    if (@offsetOf(TcpPerformanceInfo, "mss_negotiated") != 192) @compileError("generated ABI offset drift: TcpPerformanceInfo.mss_negotiated");
+    if (@offsetOf(TcpPerformanceInfo, "window_scale_negotiated") != 200) @compileError("generated ABI offset drift: TcpPerformanceInfo.window_scale_negotiated");
     if (@sizeOf(R4XStartR4Sys) != 1024) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -10313,7 +10383,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_publish") != 384) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_publish");
     if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_acquire") != 392) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_acquire");
     if (@offsetOf(R4XStartR4Draw, "gui_shared_raster_release") != 400) @compileError("generated ABI offset drift: R4XStartR4Draw.gui_shared_raster_release");
-    if (@sizeOf(R4XStartR4Net) != 288) @compileError("generated ABI size drift: R4XStartR4Net");
+    if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
     if (@offsetOf(R4XStartR4Net, "tcp_read") != 32) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_read");
@@ -10348,6 +10418,7 @@ comptime {
     if (@offsetOf(R4XStartR4Net, "serial_link_inbox") != 264) @compileError("generated ABI offset drift: R4XStartR4Net.serial_link_inbox");
     if (@offsetOf(R4XStartR4Net, "net_service_request") != 272) @compileError("generated ABI offset drift: R4XStartR4Net.net_service_request");
     if (@offsetOf(R4XStartR4Net, "ipc_performance") != 280) @compileError("generated ABI offset drift: R4XStartR4Net.ipc_performance");
+    if (@offsetOf(R4XStartR4Net, "tcp_performance") != 288) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_performance");
     if (@sizeOf(R4XStartR4Audio) != 184) @compileError("generated ABI size drift: R4XStartR4Audio");
     if (@offsetOf(R4XStartR4Audio, "audio_open_stream") != 16) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_open_stream");
     if (@offsetOf(R4XStartR4Audio, "audio_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_write");

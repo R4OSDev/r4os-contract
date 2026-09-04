@@ -267,6 +267,7 @@ static R4NetSerialLinkHostTestFn r4os_probe_r4net_serial_link_host_test = (R4Net
 static R4NetSerialLinkInboxFn r4os_probe_r4net_serial_link_inbox = (R4NetSerialLinkInboxFn)0;
 static R4NetNetServiceRequestFn r4os_probe_r4net_net_service_request = (R4NetNetServiceRequestFn)0;
 static R4NetIpcPerformanceFn r4os_probe_r4net_ipc_performance = (R4NetIpcPerformanceFn)0;
+static R4NetTcpPerformanceFn r4os_probe_r4net_tcp_performance = (R4NetTcpPerformanceFn)0;
 static R4AudioAudioOpenStreamFn r4os_probe_r4audio_audio_open_stream = (R4AudioAudioOpenStreamFn)0;
 static R4AudioAudioWriteFn r4os_probe_r4audio_audio_write = (R4AudioAudioWriteFn)0;
 static R4AudioAudioCloseFn r4os_probe_r4audio_audio_close = (R4AudioAudioCloseFn)0;

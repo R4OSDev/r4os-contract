@@ -1944,6 +1944,7 @@ pub const GuiSharedRasterWriteMap = generated.GuiSharedRasterWriteMap;
 pub const GuiSharedRasterLease = generated.GuiSharedRasterLease;
 pub const GuiSharedRasterMap = generated.GuiSharedRasterMap;
 pub const GuiSharedRasterResource = generated.GuiSharedRasterResource;
+pub const TcpPerformanceInfo = generated.TcpPerformanceInfo;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

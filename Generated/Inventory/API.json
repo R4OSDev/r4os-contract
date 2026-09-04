@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 323,
-    "group_slot_count": 323,
+    "function_count": 324,
+    "group_slot_count": 324,
     "sdk_only_count": 0,
     "public_count": 232,
-    "advanced_count": 91
+    "advanced_count": 92
   },
   "functions": [
     {
@@ -3173,6 +3173,18 @@
       "slot": 33,
       "exposure": "advanced",
       "description": "Returns append-only kernel-channel worker, byte-work, queue, wait and timing counters for one channel or channel zero for the aggregate.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4NET.tcp_performance",
+      "group": "R4NET",
+      "kind": "group_slot",
+      "slot": 34,
+      "exposure": "advanced",
+      "description": "Returns append-only TCP write-burst, outstanding-data, ACK-coalescing, polling, retransmit and negotiated-option counters.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

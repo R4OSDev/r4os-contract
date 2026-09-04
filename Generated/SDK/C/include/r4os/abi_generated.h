@@ -1985,6 +1985,7 @@ typedef struct R4GuiSharedRasterWriteMap R4GuiSharedRasterWriteMap;
 typedef struct R4GuiSharedRasterLease R4GuiSharedRasterLease;
 typedef struct R4GuiSharedRasterMap R4GuiSharedRasterMap;
 typedef struct R4GuiSharedRasterResource R4GuiSharedRasterResource;
+typedef struct R4TcpPerformanceInfo R4TcpPerformanceInfo;
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -5596,6 +5597,40 @@ typedef struct R4GuiSharedRasterResource {
     uint32_t flags;
 } R4GuiSharedRasterResource;
 
+typedef struct R4TcpPerformanceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t local_mss;
+    uint32_t catalog_capacity;
+    uint32_t delayed_ack_ms;
+    uint32_t local_window_scale;
+    uint32_t outstanding_segments;
+    uint32_t outstanding_bytes;
+    uint32_t outstanding_segments_peak;
+    uint32_t outstanding_bytes_peak;
+    uint64_t write_calls;
+    uint64_t write_requested_bytes;
+    uint64_t write_completed_bytes;
+    uint64_t write_segments;
+    uint64_t write_partial;
+    uint64_t remote_window_stalls;
+    uint64_t catalog_stalls;
+    uint64_t backend_busy_stalls;
+    uint64_t pure_ack_tx;
+    uint64_t delayed_ack_requests;
+    uint64_t delayed_ack_tx;
+    uint64_t immediate_ack_tx;
+    uint64_t ack_coalesced;
+    uint64_t ack_piggybacked;
+    uint64_t window_update_tx;
+    uint64_t adapter_poll_rounds;
+    uint64_t service_poll_requests;
+    uint64_t service_poll_skips;
+    uint64_t retransmits;
+    uint64_t mss_negotiated;
+    uint64_t window_scale_negotiated;
+} R4TcpPerformanceInfo;
+
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
 typedef struct R4XStartContext {
@@ -6166,6 +6201,7 @@ typedef int32_t (*R4NetSerialLinkHostTestFn)(void);
 typedef int32_t (*R4NetSerialLinkInboxFn)(R4SerialLinkMessage * arg0);
 typedef int32_t (*R4NetNetServiceRequestFn)(uint32_t arg0, uint16_t arg1, uint32_t arg2, uint16_t arg3, const uint8_t * arg4, uint32_t arg5, uint8_t * arg6, uint32_t arg7);
 typedef int32_t (*R4NetIpcPerformanceFn)(uint32_t arg0, R4IpcPerformanceSummary * arg1);
+typedef int32_t (*R4NetTcpPerformanceFn)(R4TcpPerformanceInfo * arg0);
 
 typedef struct R4XStartR4Net {
     uint32_t magic;
@@ -6206,6 +6242,7 @@ typedef struct R4XStartR4Net {
     uintptr_t serial_link_inbox;
     uintptr_t net_service_request;
     uintptr_t ipc_performance;
+    uintptr_t tcp_performance;
 } R4XStartR4Net;
 
 typedef int32_t (*R4AudioAudioOpenStreamFn)(uint32_t arg0, uint16_t arg1, uint16_t arg2);
@@ -9707,6 +9744,38 @@ _Static_assert(offsetof(R4GuiSharedRasterResource, viewport_y) == 64u, "GuiShare
 _Static_assert(offsetof(R4GuiSharedRasterResource, viewport_w) == 68u, "GuiSharedRasterResource.viewport_w offset mismatch");
 _Static_assert(offsetof(R4GuiSharedRasterResource, viewport_h) == 72u, "GuiSharedRasterResource.viewport_h offset mismatch");
 _Static_assert(offsetof(R4GuiSharedRasterResource, flags) == 76u, "GuiSharedRasterResource.flags offset mismatch");
+_Static_assert(sizeof(R4TcpPerformanceInfo) == 208u, "TcpPerformanceInfo size mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, version) == 0u, "TcpPerformanceInfo.version offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, size) == 4u, "TcpPerformanceInfo.size offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, local_mss) == 8u, "TcpPerformanceInfo.local_mss offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, catalog_capacity) == 12u, "TcpPerformanceInfo.catalog_capacity offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, delayed_ack_ms) == 16u, "TcpPerformanceInfo.delayed_ack_ms offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, local_window_scale) == 20u, "TcpPerformanceInfo.local_window_scale offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, outstanding_segments) == 24u, "TcpPerformanceInfo.outstanding_segments offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, outstanding_bytes) == 28u, "TcpPerformanceInfo.outstanding_bytes offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, outstanding_segments_peak) == 32u, "TcpPerformanceInfo.outstanding_segments_peak offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, outstanding_bytes_peak) == 36u, "TcpPerformanceInfo.outstanding_bytes_peak offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, write_calls) == 40u, "TcpPerformanceInfo.write_calls offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, write_requested_bytes) == 48u, "TcpPerformanceInfo.write_requested_bytes offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, write_completed_bytes) == 56u, "TcpPerformanceInfo.write_completed_bytes offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, write_segments) == 64u, "TcpPerformanceInfo.write_segments offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, write_partial) == 72u, "TcpPerformanceInfo.write_partial offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, remote_window_stalls) == 80u, "TcpPerformanceInfo.remote_window_stalls offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, catalog_stalls) == 88u, "TcpPerformanceInfo.catalog_stalls offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, backend_busy_stalls) == 96u, "TcpPerformanceInfo.backend_busy_stalls offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, pure_ack_tx) == 104u, "TcpPerformanceInfo.pure_ack_tx offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, delayed_ack_requests) == 112u, "TcpPerformanceInfo.delayed_ack_requests offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, delayed_ack_tx) == 120u, "TcpPerformanceInfo.delayed_ack_tx offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, immediate_ack_tx) == 128u, "TcpPerformanceInfo.immediate_ack_tx offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, ack_coalesced) == 136u, "TcpPerformanceInfo.ack_coalesced offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, ack_piggybacked) == 144u, "TcpPerformanceInfo.ack_piggybacked offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, window_update_tx) == 152u, "TcpPerformanceInfo.window_update_tx offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, adapter_poll_rounds) == 160u, "TcpPerformanceInfo.adapter_poll_rounds offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, service_poll_requests) == 168u, "TcpPerformanceInfo.service_poll_requests offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, service_poll_skips) == 176u, "TcpPerformanceInfo.service_poll_skips offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, retransmits) == 184u, "TcpPerformanceInfo.retransmits offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, mss_negotiated) == 192u, "TcpPerformanceInfo.mss_negotiated offset mismatch");
+_Static_assert(offsetof(R4TcpPerformanceInfo, window_scale_negotiated) == 200u, "TcpPerformanceInfo.window_scale_negotiated offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1024u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -10174,7 +10243,7 @@ _Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_acquire) == 392u, "R4X
 _Static_assert(sizeof(R4DrawGuiSharedRasterAcquireFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gui_shared_raster_release) == 400u, "R4XStartR4Draw.gui_shared_raster_release offset mismatch");
 _Static_assert(sizeof(R4DrawGuiSharedRasterReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Net) == 288u, "R4XStartR4Net size mismatch");
+_Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_write) == 24u, "R4XStartR4Net.tcp_write offset mismatch");
@@ -10243,6 +10312,8 @@ _Static_assert(offsetof(R4XStartR4Net, net_service_request) == 272u, "R4XStartR4
 _Static_assert(sizeof(R4NetNetServiceRequestFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, ipc_performance) == 280u, "R4XStartR4Net.ipc_performance offset mismatch");
 _Static_assert(sizeof(R4NetIpcPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Net, tcp_performance) == 288u, "R4XStartR4Net.tcp_performance offset mismatch");
+_Static_assert(sizeof(R4NetTcpPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Audio) == 184u, "R4XStartR4Audio size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_open_stream) == 16u, "R4XStartR4Audio.audio_open_stream offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOpenStreamFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
