@@ -1,6 +1,7 @@
 # Build-Artefakte
 /.zig-cache/
 /zig-out/
+/zig-pkg/
 
 # OS- und Editor-Muell
 Thumbs.db
