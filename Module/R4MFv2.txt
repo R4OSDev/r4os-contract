@@ -244,14 +244,13 @@ A subsystem R4X additionally carries, in declaration order:
 
 The semantic R4MF plan and the SDK R4M0 packager use the same derivation.
 
-For a compiled Runtime-R4L, at least one EXPORT line is the transition marker
-from the legacy comptime path to the normal compiler path. Each line binds a
+Every compiled Runtime-R4L declares its exports explicitly. Each EXPORT line binds a
 public case-insensitive R4M0 export name to one global or weak ELF symbol and
 an export revision from 1 through 65535. Public names and ELF symbols are
 unique. The packager resolves the symbol to the final R4M0 section and offset;
 the private ELF symbol name is not stored as the public ABI name.
 
-Once EXPORT is present, all eight project-local contract fields are required
+For every normal Runtime-R4L, all eight project-local contract fields are required
 together. Their paths may not escape the manifest directory and must use the
 declared extension. CONTRACT is the sole fachliche schema truth of that
 library, CONTRACT_BASELINE is its explicitly accepted comparison state, and
@@ -268,8 +267,10 @@ The R4L source is compiled as Zig or C with the normal freestanding R4OS
 userland target and packed from its ELF. Zig receives IMPLEMENTATION_ZIG as
 the `r4l_contract` module; C receives the directory of BINDING_C as an include
 root. IMPORT, TARGET, IMAGE_SCOPE, VERSION and META keep their ordinary R4MF
-meaning. R4Ls without EXPORT remain valid only as the temporary explicit
-legacy path during migration and are skipped by the compiled R4L catalog.
+meaning. Normal Runtime-R4Ls without EXPORT are rejected by the manifest
+parser; there is no implicit legacy fallback in the compiled R4L catalog.
+Only explicitly generated fixtures carrying META=fixture.artifact-owner=...
+are exempt from the normal Runtime-R4L export and contract requirements.
 
 4. Image scope
 --------------
