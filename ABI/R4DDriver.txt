@@ -21,8 +21,9 @@ Pinned buffers and DMA mappings
 `dma_pin_buffer` creates an owner-bound lease over an already resident and
 mapped driver buffer. It does not allocate or copy the buffer. The caller must
 not free it, replace its virtual mapping, or unpin it while a mapping exists.
-Pinning is limited to 16 MiB per buffer and to the fixed kernel capacity of 32
-simultaneous pins. Calls from IRQ context are rejected. Flags are zero in
+Pinning is limited to 16 MiB per buffer and to the fixed kernel capacity of 128
+simultaneous pins. The mapping and legacy contiguous-allocation tables also
+have 128 entries each. Calls from IRQ context are rejected. Flags are zero in
 version 1.
 
 `dma_map_pinned` resolves the pinned pages and returns at most 64 ordered
