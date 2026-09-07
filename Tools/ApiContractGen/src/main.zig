@@ -414,7 +414,8 @@ const phase_a_groups = [_]ExpectedGroup{
     // generation-bound service request path and its kernel-channel telemetry;
     // 0.75.18 appends the TCP burst/ACK/poll performance snapshot at slot 34.
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 35, .reserved = 0, .tombstones = 0 },
-    .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 19, .reserved = 2, .tombstones = 0 },
+    // 0.78.16 appends physical audio-output enumeration and selection.
+    .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 21, .reserved = 2, .tombstones = 0 },
     // R4DEV extends the passive diagnostic tail through slot 41 with the
     // canonical PCI and input snapshots; slot 27 remains frozen.
     .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 40, .reserved = 2, .tombstones = 0 },
@@ -853,14 +854,17 @@ fn renderCAbi(allocator: std.mem.Allocator, contract: *const Contract) ![]u8 {
     }
     try out.appendSlice(allocator, "\n");
 
-    const c_struct_states = try allocator.alloc(u8, contract.types.len);
-    defer allocator.free(c_struct_states);
-    @memset(c_struct_states, 0);
-    for (contract.types, 0..) |_, index| try appendCStructOrdered(&out, allocator, contract, index, c_struct_states);
+    // Callback typedefs may be fields of an extern struct. Their pointer
+    // parameters use the forward declarations above, so emit them before
+    // any containing struct definition.
     for (contract.types) |payload| {
         if (!std.mem.eql(u8, payload.source, contract_zig_type_source) or payload.representation != .c_callback) continue;
         try appendCCallback(&out, allocator, &payload);
     }
+    const c_struct_states = try allocator.alloc(u8, contract.types.len);
+    defer allocator.free(c_struct_states);
+    @memset(c_struct_states, 0);
+    for (contract.types, 0..) |_, index| try appendCStructOrdered(&out, allocator, contract, index, c_struct_states);
     try appendCStructContract(&out, allocator, &contract.r4x_start.context);
     try appendCStructContract(&out, allocator, &contract.r4x_start.import_contract);
     try appendCStructContract(&out, allocator, &contract.r4l_query.layout);

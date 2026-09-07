@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 339,
-    "group_slot_count": 339,
+    "function_count": 341,
+    "group_slot_count": 341,
     "sdk_only_count": 0,
-    "public_count": 247,
+    "public_count": 249,
     "advanced_count": 92
   },
   "functions": [
@@ -3593,6 +3593,30 @@
       "slot": 18,
       "exposure": "public",
       "description": "Stops OPL3 playback and silences active voices.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4AUDIO.audio_output_info",
+      "group": "R4AUDIO",
+      "kind": "group_slot",
+      "slot": 21,
+      "exposure": "public",
+      "description": "Enumerates a stable hardware output, including unavailable connectors. Returns 1 for a record, 0 for the end, negative on error.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4AUDIO.audio_select_output",
+      "group": "R4AUDIO",
+      "kind": "group_slot",
+      "slot": 22,
+      "exposure": "public",
+      "description": "Selects a NUL-terminated physical output identity in a 64-byte buffer. AUDSVC owns normal user selection; queued application streams and master volume survive the route switch.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

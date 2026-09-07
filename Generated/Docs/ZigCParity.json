@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 339,
+    "group_function_signatures": 341,
     "sdk_operation_contracts": 0,
-    "parity_entries": 339,
+    "parity_entries": 341,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2699,6 +2699,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4AudioFns.opl3_stop",
       "c_contract": "R4AudioOpl3StopFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4AUDIO.audio_output_info",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4AudioFns.audio_output_info",
+      "c_contract": "R4AudioAudioOutputInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4AUDIO.audio_select_output",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4AudioFns.audio_select_output",
+      "c_contract": "R4AudioAudioSelectOutputFn",
       "coverage": "generated_signature"
     },
     {

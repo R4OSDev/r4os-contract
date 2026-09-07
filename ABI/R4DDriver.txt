@@ -15,6 +15,27 @@ appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
 its offer. None of these extensions changes an older prefix.
 
+Audio output extension (0.78.16)
+-------------------------------
+An AudioBackend descriptor with version 3 has the unchanged 72-byte version-2
+prefix followed by the canonical 24-byte AudioOutputExtension. Its total size
+is at least 96 bytes. Version 2 remains accepted with its original 72 bytes;
+the kernel never reads the extension from an older descriptor. The extension
+is generated from API/ApiContract.json and provides query/select/active
+callbacks. The context is the original prefix context pointer represented as
+a 64-bit value. All callbacks and descriptor storage live until unregister.
+
+Query returns 1 for an AudioOutputInfo, 0 at the local catalog end, or a
+negative error. There are at most 32 records per controller backend. Records
+include unavailable connectors and use stable physical IDs instead of local
+indices for persistence. Select is task-context and serialized with PCM;
+zero reports activation, a negative result reports failure and attempts to
+retain or restore the previous route. Active returns a local index or -1.
+The kernel serializes global selection with its existing PCM stream owner,
+preserves queued application PCM and retains the R4D callback owner across
+waits and work-completion operations. R4AUDIO version 2 appends catalog and
+selection slots for AUDSVC and diagnostics. User preference belongs to AUDSVC.
+
 Pinned buffers and DMA mappings
 -------------------------------
 
