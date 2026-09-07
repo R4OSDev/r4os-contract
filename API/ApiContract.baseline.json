@@ -73754,6 +73754,371 @@
       ],
       "values": [],
       "description": "Mandatory callback tail after the unchanged 72-byte AudioBackend prefix when version is 3 and size is at least 96. Callback context is the prefix context pointer represented as u64. Version-2 descriptors have no tail and remain valid."
+    },
+    {
+      "name": "AudioServiceOutputRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4AO output-control marker.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1329673298"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Output-control payload version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Exact payload size.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "service_epoch",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "AUDSVC lifetime; zero in requests accepts the current instance.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Catalog/selection revision; zero in requests accepts the current snapshot.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "index",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Page offset for query; zero for selection.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "id",
+          "offset": 32,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "NUL-terminated stable output ID; empty selects automatic policy. Queries require all zero.",
+          "size": 64,
+          "alignment": 1,
+          "source_type": "[64]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "AUDSVC output query or selection request. Stable ID selection does not depend on page order."
+    },
+    {
+      "name": "AudioServiceOutputState",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1520,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "R4AO output-control marker.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1329673298"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Output-control payload version.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Exact payload size.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1520"
+        },
+        {
+          "name": "service_epoch",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "AUDSVC lifetime; zero in requests accepts the current instance.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Catalog/selection revision; zero in requests accepts the current snapshot.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "count",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of records in this page, at most eight.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete bounded catalog count, at most 256.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "index",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Offset of this page.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "audio_output_reason value explains actual versus preferred selection.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "audio_output_state_flag bits.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "desired_id",
+          "offset": 48,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Persisted user preference; empty means automatic.",
+          "size": 64,
+          "alignment": 1,
+          "source_type": "[64]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "active_id",
+          "offset": 112,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Actually usable active output, or empty.",
+          "size": 64,
+          "alignment": 1,
+          "source_type": "[64]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "active_name",
+          "offset": 176,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Current active output name, available even outside this page.",
+          "size": 64,
+          "alignment": 1,
+          "source_type": "[64]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "outputs",
+          "offset": 240,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "named",
+              "name": "AudioOutputInfo"
+            }
+          },
+          "description": "Physical output records; only the first count entries are valid.",
+          "size": 1280,
+          "alignment": 4,
+          "source_type": "[8]AudioOutputInfo",
+          "default_kind": "empty_array"
+        }
+      ],
+      "values": [],
+      "description": "AUDSVC-owned output selection and paged hardware catalog. An output can remain listed while disconnected; desired and actual identities are independent."
     }
   ],
   "operations": [],
@@ -90645,6 +91010,136 @@
       "scope": "audio_outputs",
       "stability": "fixed_contract",
       "description": "Audio output catalog contract: audio_output_flag_active."
+    },
+    {
+      "name": "audio_service_op_outputs",
+      "value": "9",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_service_op_outputs."
+    },
+    {
+      "name": "audio_service_op_select_output",
+      "value": "10",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_service_op_select_output."
+    },
+    {
+      "name": "audio_output_control_magic",
+      "value": "1329673298",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_control_magic."
+    },
+    {
+      "name": "audio_output_reason_preferred",
+      "value": "0",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_preferred."
+    },
+    {
+      "name": "audio_output_reason_auto_hdmi",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_auto_hdmi."
+    },
+    {
+      "name": "audio_output_reason_auto_analog",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_auto_analog."
+    },
+    {
+      "name": "audio_output_reason_preferred_unavailable",
+      "value": "3",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_preferred_unavailable."
+    },
+    {
+      "name": "audio_output_reason_none_available",
+      "value": "4",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_none_available."
+    },
+    {
+      "name": "audio_output_reason_activation_failed",
+      "value": "5",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_activation_failed."
+    },
+    {
+      "name": "audio_output_reason_api_unavailable",
+      "value": "6",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_api_unavailable."
+    },
+    {
+      "name": "audio_output_reason_catalog_busy",
+      "value": "7",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_reason_catalog_busy."
+    },
+    {
+      "name": "audio_output_state_flag_persist_pending",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_state_flag_persist_pending."
+    },
+    {
+      "name": "audio_output_state_flag_config_error",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC output-control contract: audio_output_state_flag_config_error."
     }
   ],
   "limits": [

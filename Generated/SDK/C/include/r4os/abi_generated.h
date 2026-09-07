@@ -1461,6 +1461,19 @@ extern "C" {
 #define R4OS_AUDIO_OUTPUT_UNSUPPORTED 4u
 #define R4OS_AUDIO_OUTPUT_FAILED 5u
 #define R4OS_AUDIO_OUTPUT_FLAG_ACTIVE 1u
+#define R4OS_AUDIO_SERVICE_OP_OUTPUTS 9u
+#define R4OS_AUDIO_SERVICE_OP_SELECT_OUTPUT 10u
+#define R4OS_AUDIO_OUTPUT_CONTROL_MAGIC 1329673298u
+#define R4OS_AUDIO_OUTPUT_REASON_PREFERRED 0u
+#define R4OS_AUDIO_OUTPUT_REASON_AUTO_HDMI 1u
+#define R4OS_AUDIO_OUTPUT_REASON_AUTO_ANALOG 2u
+#define R4OS_AUDIO_OUTPUT_REASON_PREFERRED_UNAVAILABLE 3u
+#define R4OS_AUDIO_OUTPUT_REASON_NONE_AVAILABLE 4u
+#define R4OS_AUDIO_OUTPUT_REASON_ACTIVATION_FAILED 5u
+#define R4OS_AUDIO_OUTPUT_REASON_API_UNAVAILABLE 6u
+#define R4OS_AUDIO_OUTPUT_REASON_CATALOG_BUSY 7u
+#define R4OS_AUDIO_OUTPUT_STATE_FLAG_PERSIST_PENDING 1u
+#define R4OS_AUDIO_OUTPUT_STATE_FLAG_CONFIG_ERROR 2u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2060,6 +2073,8 @@ typedef struct R4StoragePartitionInfo R4StoragePartitionInfo;
 typedef struct R4StorageVolumeInfo R4StorageVolumeInfo;
 typedef struct R4AudioOutputInfo R4AudioOutputInfo;
 typedef struct R4AudioOutputExtension R4AudioOutputExtension;
+typedef struct R4AudioServiceOutputRequest R4AudioServiceOutputRequest;
+typedef struct R4AudioServiceOutputState R4AudioServiceOutputState;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -5811,6 +5826,35 @@ typedef struct R4AudioOutputExtension {
     R4AudioOutputSelectFn select;
     R4AudioOutputActiveFn active;
 } R4AudioOutputExtension;
+
+typedef struct R4AudioServiceOutputRequest {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint64_t service_epoch;
+    uint64_t revision;
+    uint32_t index;
+    uint32_t reserved;
+    uint8_t id[64];
+} R4AudioServiceOutputRequest;
+
+typedef struct R4AudioServiceOutputState {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint64_t service_epoch;
+    uint64_t revision;
+    uint32_t count;
+    uint32_t total;
+    uint32_t index;
+    uint32_t reason;
+    uint32_t flags;
+    uint32_t reserved;
+    uint8_t desired_id[64];
+    uint8_t active_id[64];
+    uint8_t active_name[64];
+    R4AudioOutputInfo outputs[8];
+} R4AudioServiceOutputState;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -10070,6 +10114,31 @@ _Static_assert(sizeof(R4AudioOutputExtension) == 24u, "AudioOutputExtension size
 _Static_assert(offsetof(R4AudioOutputExtension, query) == 0u, "AudioOutputExtension.query offset mismatch");
 _Static_assert(offsetof(R4AudioOutputExtension, select) == 8u, "AudioOutputExtension.select offset mismatch");
 _Static_assert(offsetof(R4AudioOutputExtension, active) == 16u, "AudioOutputExtension.active offset mismatch");
+_Static_assert(sizeof(R4AudioServiceOutputRequest) == 96u, "AudioServiceOutputRequest size mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, magic) == 0u, "AudioServiceOutputRequest.magic offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, version) == 4u, "AudioServiceOutputRequest.version offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, size) == 6u, "AudioServiceOutputRequest.size offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, service_epoch) == 8u, "AudioServiceOutputRequest.service_epoch offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, revision) == 16u, "AudioServiceOutputRequest.revision offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, index) == 24u, "AudioServiceOutputRequest.index offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, reserved) == 28u, "AudioServiceOutputRequest.reserved offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputRequest, id) == 32u, "AudioServiceOutputRequest.id offset mismatch");
+_Static_assert(sizeof(R4AudioServiceOutputState) == 1520u, "AudioServiceOutputState size mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, magic) == 0u, "AudioServiceOutputState.magic offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, version) == 4u, "AudioServiceOutputState.version offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, size) == 6u, "AudioServiceOutputState.size offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, service_epoch) == 8u, "AudioServiceOutputState.service_epoch offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, revision) == 16u, "AudioServiceOutputState.revision offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, count) == 24u, "AudioServiceOutputState.count offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, total) == 28u, "AudioServiceOutputState.total offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, index) == 32u, "AudioServiceOutputState.index offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, reason) == 36u, "AudioServiceOutputState.reason offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, flags) == 40u, "AudioServiceOutputState.flags offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, reserved) == 44u, "AudioServiceOutputState.reserved offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, desired_id) == 48u, "AudioServiceOutputState.desired_id offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, active_id) == 112u, "AudioServiceOutputState.active_id offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, active_name) == 176u, "AudioServiceOutputState.active_name offset mismatch");
+_Static_assert(offsetof(R4AudioServiceOutputState, outputs) == 240u, "AudioServiceOutputState.outputs offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1144u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

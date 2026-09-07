@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 158 von 158 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 160 von 160 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1448; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1461; Limits: 109
 
 ## App-Profile
 
@@ -179,6 +179,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioOutputSelectFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 | `AudioOutputActiveFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 | `AudioOutputExtension` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `AudioServiceOutputRequest` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `AudioServiceOutputState` | fixed_layout | extern_struct | 1520/8 | 1520/8 | 1520/8 | 1520/8 |
 
 ## Typdetails
 
@@ -5031,6 +5033,49 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `select` | 8 | 8 | 8 | `AudioOutputSelectFn` | - |
 | `active` | 16 | 8 | 8 | `AudioOutputActiveFn` | - |
 
+### `AudioServiceOutputRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `magic` | 0 | 4 | 4 | `u32` | - |
+| `version` | 4 | 2 | 2 | `u16` | - |
+| `size` | 6 | 2 | 2 | `u16` | - |
+| `service_epoch` | 8 | 8 | 8 | `u64` | - |
+| `revision` | 16 | 8 | 8 | `u64` | - |
+| `index` | 24 | 4 | 4 | `u32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+| `id` | 32 | 64 | 1 | `[64]u8` | - |
+
+### `AudioServiceOutputState`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1520 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `magic` | 0 | 4 | 4 | `u32` | - |
+| `version` | 4 | 2 | 2 | `u16` | - |
+| `size` | 6 | 2 | 2 | `u16` | - |
+| `service_epoch` | 8 | 8 | 8 | `u64` | - |
+| `revision` | 16 | 8 | 8 | `u64` | - |
+| `count` | 24 | 4 | 4 | `u32` | - |
+| `total` | 28 | 4 | 4 | `u32` | - |
+| `index` | 32 | 4 | 4 | `u32` | - |
+| `reason` | 36 | 4 | 4 | `u32` | - |
+| `flags` | 40 | 4 | 4 | `u32` | - |
+| `reserved` | 44 | 4 | 4 | `u32` | - |
+| `desired_id` | 48 | 64 | 1 | `[64]u8` | - |
+| `active_id` | 112 | 64 | 1 | `[64]u8` | - |
+| `active_name` | 176 | 64 | 1 | `[64]u8` | - |
+| `outputs` | 240 | 1280 | 4 | `[8]AudioOutputInfo` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -7218,6 +7263,19 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `audio_output_unsupported` | `4` | `u32` | version | number | `audio_outputs` | fixed_contract |
 | `audio_output_failed` | `5` | `u32` | version | number | `audio_outputs` | fixed_contract |
 | `audio_output_flag_active` | `1` | `u32` | version | number | `audio_outputs` | fixed_contract |
+| `audio_service_op_outputs` | `9` | `u16` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_service_op_select_output` | `10` | `u16` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_control_magic` | `1329673298` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_preferred` | `0` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_auto_hdmi` | `1` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_auto_analog` | `2` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_preferred_unavailable` | `3` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_none_available` | `4` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_activation_failed` | `5` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_api_unavailable` | `6` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_reason_catalog_busy` | `7` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_state_flag_persist_pending` | `1` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `audio_output_state_flag_config_error` | `2` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
 
 ## Limits
 

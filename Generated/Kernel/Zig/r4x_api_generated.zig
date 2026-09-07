@@ -1449,6 +1449,19 @@ pub const audio_output_invalid_eld: u32 = 3;
 pub const audio_output_unsupported: u32 = 4;
 pub const audio_output_failed: u32 = 5;
 pub const audio_output_flag_active: u32 = 1;
+pub const audio_service_op_outputs: u16 = 9;
+pub const audio_service_op_select_output: u16 = 10;
+pub const audio_output_control_magic: u32 = 1329673298;
+pub const audio_output_reason_preferred: u32 = 0;
+pub const audio_output_reason_auto_hdmi: u32 = 1;
+pub const audio_output_reason_auto_analog: u32 = 2;
+pub const audio_output_reason_preferred_unavailable: u32 = 3;
+pub const audio_output_reason_none_available: u32 = 4;
+pub const audio_output_reason_activation_failed: u32 = 5;
+pub const audio_output_reason_api_unavailable: u32 = 6;
+pub const audio_output_reason_catalog_busy: u32 = 7;
+pub const audio_output_state_flag_persist_pending: u32 = 1;
+pub const audio_output_state_flag_config_error: u32 = 2;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -5708,6 +5721,35 @@ pub const AudioOutputExtension = extern struct {
     query: AudioOutputQueryFn,
     select: AudioOutputSelectFn,
     active: AudioOutputActiveFn,
+};
+
+pub const AudioServiceOutputRequest = extern struct {
+    magic: u32 = 1329673298,
+    version: u16 = 1,
+    size: u16 = 96,
+    service_epoch: u64 = 0,
+    revision: u64 = 0,
+    index: u32 = 0,
+    reserved: u32 = 0,
+    id: [64]u8 = .{0} ** 64,
+};
+
+pub const AudioServiceOutputState = extern struct {
+    magic: u32 = 1329673298,
+    version: u16 = 1,
+    size: u16 = 1520,
+    service_epoch: u64 = 0,
+    revision: u64 = 0,
+    count: u32 = 0,
+    total: u32 = 0,
+    index: u32 = 0,
+    reason: u32 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+    desired_id: [64]u8 = .{0} ** 64,
+    active_id: [64]u8 = .{0} ** 64,
+    active_name: [64]u8 = .{0} ** 64,
+    outputs: [8]AudioOutputInfo = .{AudioOutputInfo{}} ** 8,
 };
 
 pub const R4SysFns = struct {
@@ -10457,6 +10499,33 @@ comptime {
     if (@offsetOf(AudioOutputExtension, "query") != 0) @compileError("generated ABI offset drift: AudioOutputExtension.query");
     if (@offsetOf(AudioOutputExtension, "select") != 8) @compileError("generated ABI offset drift: AudioOutputExtension.select");
     if (@offsetOf(AudioOutputExtension, "active") != 16) @compileError("generated ABI offset drift: AudioOutputExtension.active");
+    if (@sizeOf(AudioServiceOutputRequest) != 96) @compileError("generated ABI size drift: AudioServiceOutputRequest");
+    if (@alignOf(AudioServiceOutputRequest) != 8) @compileError("generated ABI alignment drift: AudioServiceOutputRequest");
+    if (@offsetOf(AudioServiceOutputRequest, "magic") != 0) @compileError("generated ABI offset drift: AudioServiceOutputRequest.magic");
+    if (@offsetOf(AudioServiceOutputRequest, "version") != 4) @compileError("generated ABI offset drift: AudioServiceOutputRequest.version");
+    if (@offsetOf(AudioServiceOutputRequest, "size") != 6) @compileError("generated ABI offset drift: AudioServiceOutputRequest.size");
+    if (@offsetOf(AudioServiceOutputRequest, "service_epoch") != 8) @compileError("generated ABI offset drift: AudioServiceOutputRequest.service_epoch");
+    if (@offsetOf(AudioServiceOutputRequest, "revision") != 16) @compileError("generated ABI offset drift: AudioServiceOutputRequest.revision");
+    if (@offsetOf(AudioServiceOutputRequest, "index") != 24) @compileError("generated ABI offset drift: AudioServiceOutputRequest.index");
+    if (@offsetOf(AudioServiceOutputRequest, "reserved") != 28) @compileError("generated ABI offset drift: AudioServiceOutputRequest.reserved");
+    if (@offsetOf(AudioServiceOutputRequest, "id") != 32) @compileError("generated ABI offset drift: AudioServiceOutputRequest.id");
+    if (@sizeOf(AudioServiceOutputState) != 1520) @compileError("generated ABI size drift: AudioServiceOutputState");
+    if (@alignOf(AudioServiceOutputState) != 8) @compileError("generated ABI alignment drift: AudioServiceOutputState");
+    if (@offsetOf(AudioServiceOutputState, "magic") != 0) @compileError("generated ABI offset drift: AudioServiceOutputState.magic");
+    if (@offsetOf(AudioServiceOutputState, "version") != 4) @compileError("generated ABI offset drift: AudioServiceOutputState.version");
+    if (@offsetOf(AudioServiceOutputState, "size") != 6) @compileError("generated ABI offset drift: AudioServiceOutputState.size");
+    if (@offsetOf(AudioServiceOutputState, "service_epoch") != 8) @compileError("generated ABI offset drift: AudioServiceOutputState.service_epoch");
+    if (@offsetOf(AudioServiceOutputState, "revision") != 16) @compileError("generated ABI offset drift: AudioServiceOutputState.revision");
+    if (@offsetOf(AudioServiceOutputState, "count") != 24) @compileError("generated ABI offset drift: AudioServiceOutputState.count");
+    if (@offsetOf(AudioServiceOutputState, "total") != 28) @compileError("generated ABI offset drift: AudioServiceOutputState.total");
+    if (@offsetOf(AudioServiceOutputState, "index") != 32) @compileError("generated ABI offset drift: AudioServiceOutputState.index");
+    if (@offsetOf(AudioServiceOutputState, "reason") != 36) @compileError("generated ABI offset drift: AudioServiceOutputState.reason");
+    if (@offsetOf(AudioServiceOutputState, "flags") != 40) @compileError("generated ABI offset drift: AudioServiceOutputState.flags");
+    if (@offsetOf(AudioServiceOutputState, "reserved") != 44) @compileError("generated ABI offset drift: AudioServiceOutputState.reserved");
+    if (@offsetOf(AudioServiceOutputState, "desired_id") != 48) @compileError("generated ABI offset drift: AudioServiceOutputState.desired_id");
+    if (@offsetOf(AudioServiceOutputState, "active_id") != 112) @compileError("generated ABI offset drift: AudioServiceOutputState.active_id");
+    if (@offsetOf(AudioServiceOutputState, "active_name") != 176) @compileError("generated ABI offset drift: AudioServiceOutputState.active_name");
+    if (@offsetOf(AudioServiceOutputState, "outputs") != 240) @compileError("generated ABI offset drift: AudioServiceOutputState.outputs");
     if (@sizeOf(R4XStartR4Sys) != 1144) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
