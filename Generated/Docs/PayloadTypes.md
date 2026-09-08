@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 160 von 160 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 161 von 161 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1461; Limits: 109
 
@@ -181,6 +181,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioOutputExtension` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `AudioServiceOutputRequest` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `AudioServiceOutputState` | fixed_layout | extern_struct | 1520/8 | 1520/8 | 1520/8 | 1520/8 |
+| `DirectoryChangeCursor` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -5075,6 +5076,23 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `active_id` | 112 | 64 | 1 | `[64]u8` | - |
 | `active_name` | 176 | 64 | 1 | `[64]u8` | - |
 | `outputs` | 240 | 1280 | 4 | `[8]AudioOutputInfo` | - |
+
+### `DirectoryChangeCursor`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `sequence` | 8 | 8 | 8 | `u64` | - |
+| `node` | 16 | 8 | 8 | `u64` | - |
+| `mount_generation` | 24 | 8 | 8 | `u64` | - |
+| `mount_slot` | 32 | 4 | 4 | `u32` | - |
+| `reserved` | 36 | 4 | 4 | `u32` | - |
 
 ## Fehlerdomänen
 

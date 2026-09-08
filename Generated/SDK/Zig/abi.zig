@@ -2036,6 +2036,7 @@ pub const AudioOutputActiveFn = generated.AudioOutputActiveFn;
 pub const AudioOutputExtension = generated.AudioOutputExtension;
 pub const AudioServiceOutputRequest = generated.AudioServiceOutputRequest;
 pub const AudioServiceOutputState = generated.AudioServiceOutputState;
+pub const DirectoryChangeCursor = generated.DirectoryChangeCursor;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

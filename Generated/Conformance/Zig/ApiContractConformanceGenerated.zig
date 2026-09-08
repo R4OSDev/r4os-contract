@@ -3499,7 +3499,15 @@ comptime {
     if (@offsetOf(abi.AudioServiceOutputState, "active_id") != 112) @compileError("AudioServiceOutputState.active_id offset");
     if (@offsetOf(abi.AudioServiceOutputState, "active_name") != 176) @compileError("AudioServiceOutputState.active_name offset");
     if (@offsetOf(abi.AudioServiceOutputState, "outputs") != 240) @compileError("AudioServiceOutputState.outputs offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1144) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.DirectoryChangeCursor) != 40) @compileError("DirectoryChangeCursor size");
+    if (@offsetOf(abi.DirectoryChangeCursor, "version") != 0) @compileError("DirectoryChangeCursor.version offset");
+    if (@offsetOf(abi.DirectoryChangeCursor, "size") != 4) @compileError("DirectoryChangeCursor.size offset");
+    if (@offsetOf(abi.DirectoryChangeCursor, "sequence") != 8) @compileError("DirectoryChangeCursor.sequence offset");
+    if (@offsetOf(abi.DirectoryChangeCursor, "node") != 16) @compileError("DirectoryChangeCursor.node offset");
+    if (@offsetOf(abi.DirectoryChangeCursor, "mount_generation") != 24) @compileError("DirectoryChangeCursor.mount_generation offset");
+    if (@offsetOf(abi.DirectoryChangeCursor, "mount_slot") != 32) @compileError("DirectoryChangeCursor.mount_slot offset");
+    if (@offsetOf(abi.DirectoryChangeCursor, "reserved") != 36) @compileError("DirectoryChangeCursor.reserved offset");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1160) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -3779,6 +3787,10 @@ comptime {
     if (@sizeOf(abi.R4SysFns.storage_use_begin) != 8) @compileError("R4SysFns.storage_use_begin signature");
     if (@offsetOf(abi.R4XStartR4Sys, "storage_use_end") != 1136) @compileError("R4XStartR4Sys.storage_use_end offset");
     if (@sizeOf(abi.R4SysFns.storage_use_end) != 8) @compileError("R4SysFns.storage_use_end signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "directory_change_begin") != 1144) @compileError("R4XStartR4Sys.directory_change_begin offset");
+    if (@sizeOf(abi.R4SysFns.directory_change_begin) != 8) @compileError("R4SysFns.directory_change_begin signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "directory_change_poll") != 1152) @compileError("R4XStartR4Sys.directory_change_poll offset");
+    if (@sizeOf(abi.R4SysFns.directory_change_poll) != 8) @compileError("R4SysFns.directory_change_poll signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 488) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

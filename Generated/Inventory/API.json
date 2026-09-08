@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 341,
-    "group_slot_count": 341,
+    "function_count": 343,
+    "group_slot_count": 343,
     "sdk_only_count": 0,
-    "public_count": 249,
+    "public_count": 251,
     "advanced_count": 92
   },
   "functions": [
@@ -1661,6 +1661,30 @@
       "slot": 140,
       "exposure": "public",
       "description": "Release an exact caller-owned volume use lease; stale or foreign identifiers are rejected.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.directory_change_begin",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 141,
+      "exposure": "public",
+      "description": "Capture a directory identity and current change sequence under the filesystem request gate. Returns 0 on success, -1 for invalid cursor/path, -3 for missing mount/directory, -9 for an I/O failure. Register before the initial enumeration.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.directory_change_poll",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 142,
+      "exposure": "public",
+      "description": "Consume RAM-only changes for the captured directory. Returns 1 if a reload is needed (also on bounded history overflow), 0 if unchanged, -1 for invalid cursor, -3 for a retired mount. Mutations wake desktop_activity_wait. No persistent allocation and no close.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

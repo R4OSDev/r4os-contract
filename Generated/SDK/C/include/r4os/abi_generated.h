@@ -2075,6 +2075,7 @@ typedef struct R4AudioOutputInfo R4AudioOutputInfo;
 typedef struct R4AudioOutputExtension R4AudioOutputExtension;
 typedef struct R4AudioServiceOutputRequest R4AudioServiceOutputRequest;
 typedef struct R4AudioServiceOutputState R4AudioServiceOutputState;
+typedef struct R4DirectoryChangeCursor R4DirectoryChangeCursor;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -5856,6 +5857,16 @@ typedef struct R4AudioServiceOutputState {
     R4AudioOutputInfo outputs[8];
 } R4AudioServiceOutputState;
 
+typedef struct R4DirectoryChangeCursor {
+    uint32_t version;
+    uint32_t size;
+    uint64_t sequence;
+    uint64_t node;
+    uint64_t mount_generation;
+    uint32_t mount_slot;
+    uint32_t reserved;
+} R4DirectoryChangeCursor;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -6040,6 +6051,8 @@ typedef int32_t (*R4SysStorageMountFn)(const R4StorageTarget * target, uint32_t 
 typedef int32_t (*R4SysStorageUnmountFn)(const R4StorageVolumeRef * volume);
 typedef int32_t (*R4SysStorageUseBeginFn)(const uint8_t * path, uint64_t * out_use);
 typedef int32_t (*R4SysStorageUseEndFn)(uint64_t use);
+typedef int32_t (*R4SysDirectoryChangeBeginFn)(const uint8_t * arg0, R4DirectoryChangeCursor * cursor);
+typedef int32_t (*R4SysDirectoryChangePollFn)(R4DirectoryChangeCursor * cursor);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -6187,6 +6200,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t storage_unmount;
     uintptr_t storage_use_begin;
     uintptr_t storage_use_end;
+    uintptr_t directory_change_begin;
+    uintptr_t directory_change_poll;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -10139,7 +10154,15 @@ _Static_assert(offsetof(R4AudioServiceOutputState, desired_id) == 48u, "AudioSer
 _Static_assert(offsetof(R4AudioServiceOutputState, active_id) == 112u, "AudioServiceOutputState.active_id offset mismatch");
 _Static_assert(offsetof(R4AudioServiceOutputState, active_name) == 176u, "AudioServiceOutputState.active_name offset mismatch");
 _Static_assert(offsetof(R4AudioServiceOutputState, outputs) == 240u, "AudioServiceOutputState.outputs offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1144u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4DirectoryChangeCursor) == 40u, "DirectoryChangeCursor size mismatch");
+_Static_assert(offsetof(R4DirectoryChangeCursor, version) == 0u, "DirectoryChangeCursor.version offset mismatch");
+_Static_assert(offsetof(R4DirectoryChangeCursor, size) == 4u, "DirectoryChangeCursor.size offset mismatch");
+_Static_assert(offsetof(R4DirectoryChangeCursor, sequence) == 8u, "DirectoryChangeCursor.sequence offset mismatch");
+_Static_assert(offsetof(R4DirectoryChangeCursor, node) == 16u, "DirectoryChangeCursor.node offset mismatch");
+_Static_assert(offsetof(R4DirectoryChangeCursor, mount_generation) == 24u, "DirectoryChangeCursor.mount_generation offset mismatch");
+_Static_assert(offsetof(R4DirectoryChangeCursor, mount_slot) == 32u, "DirectoryChangeCursor.mount_slot offset mismatch");
+_Static_assert(offsetof(R4DirectoryChangeCursor, reserved) == 36u, "DirectoryChangeCursor.reserved offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1160u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -10419,6 +10442,10 @@ _Static_assert(offsetof(R4XStartR4Sys, storage_use_begin) == 1128u, "R4XStartR4S
 _Static_assert(sizeof(R4SysStorageUseBeginFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, storage_use_end) == 1136u, "R4XStartR4Sys.storage_use_end offset mismatch");
 _Static_assert(sizeof(R4SysStorageUseEndFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, directory_change_begin) == 1144u, "R4XStartR4Sys.directory_change_begin offset mismatch");
+_Static_assert(sizeof(R4SysDirectoryChangeBeginFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, directory_change_poll) == 1152u, "R4XStartR4Sys.directory_change_poll offset mismatch");
+_Static_assert(sizeof(R4SysDirectoryChangePollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 488u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

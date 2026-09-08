@@ -5752,6 +5752,16 @@ pub const AudioServiceOutputState = extern struct {
     outputs: [8]AudioOutputInfo = .{AudioOutputInfo{}} ** 8,
 };
 
+pub const DirectoryChangeCursor = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    sequence: u64 = 0,
+    node: u64 = 0,
+    mount_generation: u64 = 0,
+    mount_slot: u32 = 0,
+    reserved: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -5891,12 +5901,14 @@ pub const R4SysFns = struct {
     pub const storage_unmount = *const fn (*const StorageVolumeRef) callconv(.c) i32;
     pub const storage_use_begin = *const fn ([*:0]const u8, *u64) callconv(.c) i32;
     pub const storage_use_end = *const fn (u64) callconv(.c) i32;
+    pub const directory_change_begin = *const fn ([*:0]const u8, *DirectoryChangeCursor) callconv(.c) i32;
+    pub const directory_change_poll = *const fn (*DirectoryChangeCursor) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 16,
-    size: u32 = 1144,
+    abi_version: u32 = 17,
+    size: u32 = 1160,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -6039,6 +6051,8 @@ pub const R4XStartR4Sys = extern struct {
     storage_unmount: usize = 0,
     storage_use_begin: usize = 0,
     storage_use_end: usize = 0,
+    directory_change_begin: usize = 0,
+    directory_change_poll: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -6647,6 +6661,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 138, .offset = 1120, .name = "storage_unmount", .state = .function, .required = false },
     .{ .number = 139, .offset = 1128, .name = "storage_use_begin", .state = .function, .required = false },
     .{ .number = 140, .offset = 1136, .name = "storage_use_end", .state = .function, .required = false },
+    .{ .number = 141, .offset = 1144, .name = "directory_change_begin", .state = .function, .required = false },
+    .{ .number = 142, .offset = 1152, .name = "directory_change_poll", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -10526,7 +10542,16 @@ comptime {
     if (@offsetOf(AudioServiceOutputState, "active_id") != 112) @compileError("generated ABI offset drift: AudioServiceOutputState.active_id");
     if (@offsetOf(AudioServiceOutputState, "active_name") != 176) @compileError("generated ABI offset drift: AudioServiceOutputState.active_name");
     if (@offsetOf(AudioServiceOutputState, "outputs") != 240) @compileError("generated ABI offset drift: AudioServiceOutputState.outputs");
-    if (@sizeOf(R4XStartR4Sys) != 1144) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(DirectoryChangeCursor) != 40) @compileError("generated ABI size drift: DirectoryChangeCursor");
+    if (@alignOf(DirectoryChangeCursor) != 8) @compileError("generated ABI alignment drift: DirectoryChangeCursor");
+    if (@offsetOf(DirectoryChangeCursor, "version") != 0) @compileError("generated ABI offset drift: DirectoryChangeCursor.version");
+    if (@offsetOf(DirectoryChangeCursor, "size") != 4) @compileError("generated ABI offset drift: DirectoryChangeCursor.size");
+    if (@offsetOf(DirectoryChangeCursor, "sequence") != 8) @compileError("generated ABI offset drift: DirectoryChangeCursor.sequence");
+    if (@offsetOf(DirectoryChangeCursor, "node") != 16) @compileError("generated ABI offset drift: DirectoryChangeCursor.node");
+    if (@offsetOf(DirectoryChangeCursor, "mount_generation") != 24) @compileError("generated ABI offset drift: DirectoryChangeCursor.mount_generation");
+    if (@offsetOf(DirectoryChangeCursor, "mount_slot") != 32) @compileError("generated ABI offset drift: DirectoryChangeCursor.mount_slot");
+    if (@offsetOf(DirectoryChangeCursor, "reserved") != 36) @compileError("generated ABI offset drift: DirectoryChangeCursor.reserved");
+    if (@sizeOf(R4XStartR4Sys) != 1160) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -10668,6 +10693,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "storage_unmount") != 1120) @compileError("generated ABI offset drift: R4XStartR4Sys.storage_unmount");
     if (@offsetOf(R4XStartR4Sys, "storage_use_begin") != 1128) @compileError("generated ABI offset drift: R4XStartR4Sys.storage_use_begin");
     if (@offsetOf(R4XStartR4Sys, "storage_use_end") != 1136) @compileError("generated ABI offset drift: R4XStartR4Sys.storage_use_end");
+    if (@offsetOf(R4XStartR4Sys, "directory_change_begin") != 1144) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_begin");
+    if (@offsetOf(R4XStartR4Sys, "directory_change_poll") != 1152) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_poll");
     if (@sizeOf(R4XStartR4Desk) != 488) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
