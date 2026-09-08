@@ -759,14 +759,22 @@ fn renderKernelAbi(allocator: std.mem.Allocator, contract: *const Contract) ![]u
         try appendFmt(&out, allocator, "pub const {s}Provider = struct {{\n", .{base});
         for (group.slots) |slot| {
             if (slot.state != .function) continue;
-            try appendFmt(&out, allocator, "    {s}: {s}.{s},\n", .{ slot.name, group.fn_namespace, slot.name });
+            if (slot.required) {
+                try appendFmt(&out, allocator, "    {s}: {s}.{s},\n", .{ slot.name, group.fn_namespace, slot.name });
+            } else {
+                try appendFmt(&out, allocator, "    {s}: ?{s}.{s} = null,\n", .{ slot.name, group.fn_namespace, slot.name });
+            }
         }
         try out.appendSlice(allocator, "};\n\n");
         try appendFmt(&out, allocator, "pub fn build{s}Table(provider: {s}Provider) {s} {{\n    return .{{\n", .{ base, base, group.table_type });
         try appendFmt(&out, allocator, "        .magic = {d},\n        .abi_version = {d},\n        .size = {d},\n        .flags = 0,\n", .{ group.magic, group.abi_version, group.size });
         for (group.slots) |slot| {
             if (slot.state == .function) {
-                try appendFmt(&out, allocator, "        .{s} = @intFromPtr(provider.{s}),\n", .{ slot.name, slot.name });
+                if (slot.required) {
+                    try appendFmt(&out, allocator, "        .{s} = @intFromPtr(provider.{s}),\n", .{ slot.name, slot.name });
+                } else {
+                    try appendFmt(&out, allocator, "        .{s} = if (provider.{s}) |callback| @intFromPtr(callback) else 0,\n", .{ slot.name, slot.name });
+                }
             } else {
                 try appendFmt(&out, allocator, "        .{s} = 0,\n", .{slot.name});
             }

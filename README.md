@@ -30,3 +30,8 @@ checksums and rejects all other optional offloads explicitly.
 
 Original R4OS material is licensed under Apache License 2.0. See `LICENSE`,
 `NOTICE`, and `THIRD_PARTY_NOTICES.md`.
+
+Kernel provider builders follow the canonical `required` flag: required
+callbacks must be supplied, while optional callbacks default to null and
+produce a zero capability slot. The table layout and Query import stay
+unchanged when a provider omits a capability.
