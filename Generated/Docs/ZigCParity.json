@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 343,
+    "group_function_signatures": 344,
     "sdk_operation_contracts": 0,
-    "parity_entries": 343,
+    "parity_entries": 344,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1268,6 +1268,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.directory_change_poll",
       "c_contract": "R4SysDirectoryChangePollFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.file_copy_buffered",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.file_copy_buffered",
+      "c_contract": "R4SysFileCopyBufferedFn",
       "coverage": "generated_signature"
     },
     {

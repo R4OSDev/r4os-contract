@@ -2076,6 +2076,7 @@ typedef struct R4AudioOutputExtension R4AudioOutputExtension;
 typedef struct R4AudioServiceOutputRequest R4AudioServiceOutputRequest;
 typedef struct R4AudioServiceOutputState R4AudioServiceOutputState;
 typedef struct R4DirectoryChangeCursor R4DirectoryChangeCursor;
+typedef struct R4FileCopyProgress R4FileCopyProgress;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -5867,6 +5868,15 @@ typedef struct R4DirectoryChangeCursor {
     uint32_t reserved;
 } R4DirectoryChangeCursor;
 
+typedef struct R4FileCopyProgress {
+    uint32_t version;
+    uint32_t size;
+    uint64_t bytes;
+    uint64_t source_size;
+    uint32_t chunks;
+    uint32_t max_chunk;
+} R4FileCopyProgress;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -6053,6 +6063,7 @@ typedef int32_t (*R4SysStorageUseBeginFn)(const uint8_t * path, uint64_t * out_u
 typedef int32_t (*R4SysStorageUseEndFn)(uint64_t use);
 typedef int32_t (*R4SysDirectoryChangeBeginFn)(const uint8_t * arg0, R4DirectoryChangeCursor * cursor);
 typedef int32_t (*R4SysDirectoryChangePollFn)(R4DirectoryChangeCursor * cursor);
+typedef int32_t (*R4SysFileCopyBufferedFn)(const uint8_t * source, const uint8_t * target, uint8_t * buffer, uint32_t length, R4FileCopyProgress * progress);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -6202,6 +6213,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t storage_use_end;
     uintptr_t directory_change_begin;
     uintptr_t directory_change_poll;
+    uintptr_t file_copy_buffered;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -10162,7 +10174,14 @@ _Static_assert(offsetof(R4DirectoryChangeCursor, node) == 16u, "DirectoryChangeC
 _Static_assert(offsetof(R4DirectoryChangeCursor, mount_generation) == 24u, "DirectoryChangeCursor.mount_generation offset mismatch");
 _Static_assert(offsetof(R4DirectoryChangeCursor, mount_slot) == 32u, "DirectoryChangeCursor.mount_slot offset mismatch");
 _Static_assert(offsetof(R4DirectoryChangeCursor, reserved) == 36u, "DirectoryChangeCursor.reserved offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1160u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4FileCopyProgress) == 32u, "FileCopyProgress size mismatch");
+_Static_assert(offsetof(R4FileCopyProgress, version) == 0u, "FileCopyProgress.version offset mismatch");
+_Static_assert(offsetof(R4FileCopyProgress, size) == 4u, "FileCopyProgress.size offset mismatch");
+_Static_assert(offsetof(R4FileCopyProgress, bytes) == 8u, "FileCopyProgress.bytes offset mismatch");
+_Static_assert(offsetof(R4FileCopyProgress, source_size) == 16u, "FileCopyProgress.source_size offset mismatch");
+_Static_assert(offsetof(R4FileCopyProgress, chunks) == 24u, "FileCopyProgress.chunks offset mismatch");
+_Static_assert(offsetof(R4FileCopyProgress, max_chunk) == 28u, "FileCopyProgress.max_chunk offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -10446,6 +10465,8 @@ _Static_assert(offsetof(R4XStartR4Sys, directory_change_begin) == 1144u, "R4XSta
 _Static_assert(sizeof(R4SysDirectoryChangeBeginFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, directory_change_poll) == 1152u, "R4XStartR4Sys.directory_change_poll offset mismatch");
 _Static_assert(sizeof(R4SysDirectoryChangePollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, file_copy_buffered) == 1160u, "R4XStartR4Sys.file_copy_buffered offset mismatch");
+_Static_assert(sizeof(R4SysFileCopyBufferedFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 488u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -5762,6 +5762,15 @@ pub const DirectoryChangeCursor = extern struct {
     reserved: u32 = 0,
 };
 
+pub const FileCopyProgress = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    bytes: u64 = 0,
+    source_size: u64 = 0,
+    chunks: u32 = 0,
+    max_chunk: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -5903,12 +5912,13 @@ pub const R4SysFns = struct {
     pub const storage_use_end = *const fn (u64) callconv(.c) i32;
     pub const directory_change_begin = *const fn ([*:0]const u8, *DirectoryChangeCursor) callconv(.c) i32;
     pub const directory_change_poll = *const fn (*DirectoryChangeCursor) callconv(.c) i32;
+    pub const file_copy_buffered = *const fn ([*:0]const u8, [*:0]const u8, [*]u8, u32, *FileCopyProgress) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 17,
-    size: u32 = 1160,
+    abi_version: u32 = 18,
+    size: u32 = 1168,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -6053,6 +6063,7 @@ pub const R4XStartR4Sys = extern struct {
     storage_use_end: usize = 0,
     directory_change_begin: usize = 0,
     directory_change_poll: usize = 0,
+    file_copy_buffered: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -6663,6 +6674,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 140, .offset = 1136, .name = "storage_use_end", .state = .function, .required = false },
     .{ .number = 141, .offset = 1144, .name = "directory_change_begin", .state = .function, .required = false },
     .{ .number = 142, .offset = 1152, .name = "directory_change_poll", .state = .function, .required = false },
+    .{ .number = 143, .offset = 1160, .name = "file_copy_buffered", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -10551,7 +10563,15 @@ comptime {
     if (@offsetOf(DirectoryChangeCursor, "mount_generation") != 24) @compileError("generated ABI offset drift: DirectoryChangeCursor.mount_generation");
     if (@offsetOf(DirectoryChangeCursor, "mount_slot") != 32) @compileError("generated ABI offset drift: DirectoryChangeCursor.mount_slot");
     if (@offsetOf(DirectoryChangeCursor, "reserved") != 36) @compileError("generated ABI offset drift: DirectoryChangeCursor.reserved");
-    if (@sizeOf(R4XStartR4Sys) != 1160) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(FileCopyProgress) != 32) @compileError("generated ABI size drift: FileCopyProgress");
+    if (@alignOf(FileCopyProgress) != 8) @compileError("generated ABI alignment drift: FileCopyProgress");
+    if (@offsetOf(FileCopyProgress, "version") != 0) @compileError("generated ABI offset drift: FileCopyProgress.version");
+    if (@offsetOf(FileCopyProgress, "size") != 4) @compileError("generated ABI offset drift: FileCopyProgress.size");
+    if (@offsetOf(FileCopyProgress, "bytes") != 8) @compileError("generated ABI offset drift: FileCopyProgress.bytes");
+    if (@offsetOf(FileCopyProgress, "source_size") != 16) @compileError("generated ABI offset drift: FileCopyProgress.source_size");
+    if (@offsetOf(FileCopyProgress, "chunks") != 24) @compileError("generated ABI offset drift: FileCopyProgress.chunks");
+    if (@offsetOf(FileCopyProgress, "max_chunk") != 28) @compileError("generated ABI offset drift: FileCopyProgress.max_chunk");
+    if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -10695,6 +10715,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "storage_use_end") != 1136) @compileError("generated ABI offset drift: R4XStartR4Sys.storage_use_end");
     if (@offsetOf(R4XStartR4Sys, "directory_change_begin") != 1144) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_begin");
     if (@offsetOf(R4XStartR4Sys, "directory_change_poll") != 1152) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_poll");
+    if (@offsetOf(R4XStartR4Sys, "file_copy_buffered") != 1160) @compileError("generated ABI offset drift: R4XStartR4Sys.file_copy_buffered");
     if (@sizeOf(R4XStartR4Desk) != 488) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -11052,13 +11073,14 @@ pub const R4SysProvider = struct {
     storage_use_end: R4SysFns.storage_use_end,
     directory_change_begin: R4SysFns.directory_change_begin,
     directory_change_poll: R4SysFns.directory_change_poll,
+    file_copy_buffered: R4SysFns.file_copy_buffered,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 17,
-        .size = 1160,
+        .abi_version = 18,
+        .size = 1168,
         .flags = 0,
         .write = @intFromPtr(provider.write),
         .putc = @intFromPtr(provider.putc),
@@ -11203,6 +11225,7 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .storage_use_end = @intFromPtr(provider.storage_use_end),
         .directory_change_begin = @intFromPtr(provider.directory_change_begin),
         .directory_change_poll = @intFromPtr(provider.directory_change_poll),
+        .file_copy_buffered = @intFromPtr(provider.file_copy_buffered),
     };
 }
 

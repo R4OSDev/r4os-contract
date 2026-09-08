@@ -143,6 +143,7 @@ static R4SysStorageUseBeginFn r4os_probe_r4sys_storage_use_begin = (R4SysStorage
 static R4SysStorageUseEndFn r4os_probe_r4sys_storage_use_end = (R4SysStorageUseEndFn)0;
 static R4SysDirectoryChangeBeginFn r4os_probe_r4sys_directory_change_begin = (R4SysDirectoryChangeBeginFn)0;
 static R4SysDirectoryChangePollFn r4os_probe_r4sys_directory_change_poll = (R4SysDirectoryChangePollFn)0;
+static R4SysFileCopyBufferedFn r4os_probe_r4sys_file_copy_buffered = (R4SysFileCopyBufferedFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;

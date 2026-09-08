@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4SYS (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4SYS (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Sys` v17, 1160 Bytes, 140 Funktionsfelder und 143 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Sys` v18, 1168 Bytes, 141 Funktionsfelder und 144 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4SysFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -152,4 +152,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 140 | 1136 | function | `storage_use_end` | `*const fn (u64) callconv(.c) i32` |
 | 141 | 1144 | function | `directory_change_begin` | `*const fn ([*:0]const u8, *DirectoryChangeCursor) callconv(.c) i32` |
 | 142 | 1152 | function | `directory_change_poll` | `*const fn (*DirectoryChangeCursor) callconv(.c) i32` |
+| 143 | 1160 | function | `file_copy_buffered` | `*const fn ([*:0]const u8, [*:0]const u8, [*]u8, u32, *FileCopyProgress) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4SYS -->
