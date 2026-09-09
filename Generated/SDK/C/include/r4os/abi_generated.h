@@ -1474,6 +1474,32 @@ extern "C" {
 #define R4OS_AUDIO_OUTPUT_REASON_CATALOG_BUSY 7u
 #define R4OS_AUDIO_OUTPUT_STATE_FLAG_PERSIST_PENDING 1u
 #define R4OS_AUDIO_OUTPUT_STATE_FLAG_CONFIG_ERROR 2u
+#define R4OS_DISPLAY_STATE_UNAVAILABLE 0u
+#define R4OS_DISPLAY_STATE_BOOTFB 1u
+#define R4OS_DISPLAY_STATE_PREPARING 2u
+#define R4OS_DISPLAY_STATE_NATIVE 3u
+#define R4OS_DISPLAY_STATE_SOFTWARE_NATIVE 4u
+#define R4OS_DISPLAY_STATE_RECOVERING 5u
+#define R4OS_DISPLAY_POLICY_AUTOMATIC 0u
+#define R4OS_DISPLAY_POLICY_SOFTWARE 1u
+#define R4OS_DISPLAY_POLICY_SOFTWARE_ONCE 2u
+#define R4OS_DISPLAY_FALLBACK_NONE 0u
+#define R4OS_DISPLAY_FALLBACK_NO_NATIVE_BACKEND 1u
+#define R4OS_DISPLAY_FALLBACK_POLICY_DISABLED 2u
+#define R4OS_DISPLAY_FALLBACK_BACKEND_REJECTED 3u
+#define R4OS_DISPLAY_FALLBACK_PREPARE_FAILED 4u
+#define R4OS_DISPLAY_FALLBACK_COMMIT_FAILED 5u
+#define R4OS_DISPLAY_FALLBACK_DEVICE_LOST 6u
+#define R4OS_DISPLAY_FALLBACK_RESTORE_FAILED 7u
+#define R4OS_DISPLAY_STATE_CAP_CPU_PRESENT 1u
+#define R4OS_DISPLAY_STATE_CAP_NATIVE_SCANOUT 2u
+#define R4OS_DISPLAY_STATE_CAP_FIRMWARE_WRITABLE 4u
+#define R4OS_DISPLAY_STATE_CAP_SOFTWARE_FALLBACK 8u
+#define R4OS_DISPLAY_STATE_CAP_GPU_RENDER 16u
+#define R4OS_DISPLAY_STATE_CAP_ASYNC_PRESENT 32u
+#define R4OS_DISPLAY_SUMMARY_BACKEND_NATIVE 2u
+#define R4OS_DISPLAY_MAPPING_NATIVE_SCANOUT 2u
+#define R4OS_DISPLAY_PRESENT_BACKEND_NATIVE_CPU 3u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2077,6 +2103,7 @@ typedef struct R4AudioServiceOutputRequest R4AudioServiceOutputRequest;
 typedef struct R4AudioServiceOutputState R4AudioServiceOutputState;
 typedef struct R4DirectoryChangeCursor R4DirectoryChangeCursor;
 typedef struct R4FileCopyProgress R4FileCopyProgress;
+typedef struct R4DisplayStateInfo R4DisplayStateInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -5877,6 +5904,39 @@ typedef struct R4FileCopyProgress {
     uint32_t max_chunk;
 } R4FileCopyProgress;
 
+typedef struct R4DisplayStateInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t state;
+    uint32_t policy;
+    uint32_t reason;
+    uint64_t revision;
+    uint64_t device_generation;
+    uint64_t reset_generation;
+    uint64_t pending_generation;
+    uint32_t adapter_id;
+    uint32_t pending_adapter_id;
+    uint32_t driver_owner;
+    uint32_t pending_driver_owner;
+    uint32_t backend_kind;
+    uint32_t capabilities;
+    uint32_t width;
+    uint32_t height;
+    uint32_t pitch;
+    uint16_t bpp;
+    uint8_t cache_policy;
+    uint8_t mapping_kind;
+    uint32_t boot_width;
+    uint32_t boot_height;
+    uint32_t boot_pitch;
+    uint16_t boot_bpp;
+    uint16_t reserved0;
+    uint64_t boot_byte_length;
+    uint64_t byte_length;
+    uint8_t backend_name[24];
+    uint8_t fallback_name[24];
+} R4DisplayStateInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -6617,6 +6677,7 @@ typedef int32_t (*R4DevPerformanceBootSummaryFn)(R4ProgramBootPerformanceInfo * 
 typedef int32_t (*R4DevPerformanceDriverWorkFn)(uint32_t owner, R4ProgramDriverWorkPerformanceInfo * out);
 typedef int32_t (*R4DevPerformancePciInventoryFn)(R4ProgramPciInventoryPerformanceInfo * out);
 typedef int32_t (*R4DevPerformanceInputFn)(R4ProgramInputPerformanceInfo * out);
+typedef int32_t (*R4DevDisplayStateFn)(R4DisplayStateInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -6665,6 +6726,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_driver_work;
     uintptr_t performance_pci_inventory;
     uintptr_t performance_input;
+    uintptr_t display_state;
 } R4XStartR4Dev;
 
 
@@ -10181,6 +10243,37 @@ _Static_assert(offsetof(R4FileCopyProgress, bytes) == 8u, "FileCopyProgress.byte
 _Static_assert(offsetof(R4FileCopyProgress, source_size) == 16u, "FileCopyProgress.source_size offset mismatch");
 _Static_assert(offsetof(R4FileCopyProgress, chunks) == 24u, "FileCopyProgress.chunks offset mismatch");
 _Static_assert(offsetof(R4FileCopyProgress, max_chunk) == 28u, "FileCopyProgress.max_chunk offset mismatch");
+_Static_assert(sizeof(R4DisplayStateInfo) == 176u, "DisplayStateInfo size mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, version) == 0u, "DisplayStateInfo.version offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, size) == 4u, "DisplayStateInfo.size offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, state) == 8u, "DisplayStateInfo.state offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, policy) == 12u, "DisplayStateInfo.policy offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, reason) == 16u, "DisplayStateInfo.reason offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, revision) == 24u, "DisplayStateInfo.revision offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, device_generation) == 32u, "DisplayStateInfo.device_generation offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, reset_generation) == 40u, "DisplayStateInfo.reset_generation offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, pending_generation) == 48u, "DisplayStateInfo.pending_generation offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, adapter_id) == 56u, "DisplayStateInfo.adapter_id offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, pending_adapter_id) == 60u, "DisplayStateInfo.pending_adapter_id offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, driver_owner) == 64u, "DisplayStateInfo.driver_owner offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, pending_driver_owner) == 68u, "DisplayStateInfo.pending_driver_owner offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, backend_kind) == 72u, "DisplayStateInfo.backend_kind offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, capabilities) == 76u, "DisplayStateInfo.capabilities offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, width) == 80u, "DisplayStateInfo.width offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, height) == 84u, "DisplayStateInfo.height offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, pitch) == 88u, "DisplayStateInfo.pitch offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, bpp) == 92u, "DisplayStateInfo.bpp offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, cache_policy) == 94u, "DisplayStateInfo.cache_policy offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, mapping_kind) == 95u, "DisplayStateInfo.mapping_kind offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, boot_width) == 96u, "DisplayStateInfo.boot_width offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, boot_height) == 100u, "DisplayStateInfo.boot_height offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, boot_pitch) == 104u, "DisplayStateInfo.boot_pitch offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, boot_bpp) == 108u, "DisplayStateInfo.boot_bpp offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, reserved0) == 110u, "DisplayStateInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, boot_byte_length) == 112u, "DisplayStateInfo.boot_byte_length offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, byte_length) == 120u, "DisplayStateInfo.byte_length offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, backend_name) == 128u, "DisplayStateInfo.backend_name offset mismatch");
+_Static_assert(offsetof(R4DisplayStateInfo, fallback_name) == 152u, "DisplayStateInfo.fallback_name offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -10800,7 +10893,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 352u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 360u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -10883,6 +10976,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_pci_inventory) == 336u, "R4XS
 _Static_assert(sizeof(R4DevPerformancePciInventoryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, performance_input) == 344u, "R4XStartR4Dev.performance_input offset mismatch");
 _Static_assert(sizeof(R4DevPerformanceInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, display_state) == 352u, "R4XStartR4Dev.display_state offset mismatch");
+_Static_assert(sizeof(R4DevDisplayStateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

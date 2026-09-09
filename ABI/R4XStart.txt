@@ -92,8 +92,13 @@ Gruppentabellen
     R4XSTART_R4NET_SIZE    = 296
     R4XSTART_R4AUDIO_VERSION = 2
     R4XSTART_R4AUDIO_SIZE    = 200
-    R4XSTART_R4DEV_VERSION = 10
-    R4XSTART_R4DEV_SIZE    = 352
+    R4XSTART_R4DEV_VERSION = 11
+    R4XSTART_R4DEV_SIZE    = 360
+
+Diese Zahlen beschreiben die aktuellen Provider-Tabellen. Die gleichnamigen
+generierten SDK-Importkonstanten bezeichnen den unterstuetzten Mindestprefix
+und koennen kleiner/aelter bleiben. Optionale angehaengte Felder werden nach
+der tatsaechlich gelieferten Tabellengroesse mit hasFn geprueft.
 
 Die sechs eingebauten Platform APIs beginnen jeweils mit magic, abi_version, size und flags;
 danach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls

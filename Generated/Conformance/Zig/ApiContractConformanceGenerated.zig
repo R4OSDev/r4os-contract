@@ -3514,6 +3514,37 @@ comptime {
     if (@offsetOf(abi.FileCopyProgress, "source_size") != 16) @compileError("FileCopyProgress.source_size offset");
     if (@offsetOf(abi.FileCopyProgress, "chunks") != 24) @compileError("FileCopyProgress.chunks offset");
     if (@offsetOf(abi.FileCopyProgress, "max_chunk") != 28) @compileError("FileCopyProgress.max_chunk offset");
+    if (@sizeOf(abi.DisplayStateInfo) != 176) @compileError("DisplayStateInfo size");
+    if (@offsetOf(abi.DisplayStateInfo, "version") != 0) @compileError("DisplayStateInfo.version offset");
+    if (@offsetOf(abi.DisplayStateInfo, "size") != 4) @compileError("DisplayStateInfo.size offset");
+    if (@offsetOf(abi.DisplayStateInfo, "state") != 8) @compileError("DisplayStateInfo.state offset");
+    if (@offsetOf(abi.DisplayStateInfo, "policy") != 12) @compileError("DisplayStateInfo.policy offset");
+    if (@offsetOf(abi.DisplayStateInfo, "reason") != 16) @compileError("DisplayStateInfo.reason offset");
+    if (@offsetOf(abi.DisplayStateInfo, "revision") != 24) @compileError("DisplayStateInfo.revision offset");
+    if (@offsetOf(abi.DisplayStateInfo, "device_generation") != 32) @compileError("DisplayStateInfo.device_generation offset");
+    if (@offsetOf(abi.DisplayStateInfo, "reset_generation") != 40) @compileError("DisplayStateInfo.reset_generation offset");
+    if (@offsetOf(abi.DisplayStateInfo, "pending_generation") != 48) @compileError("DisplayStateInfo.pending_generation offset");
+    if (@offsetOf(abi.DisplayStateInfo, "adapter_id") != 56) @compileError("DisplayStateInfo.adapter_id offset");
+    if (@offsetOf(abi.DisplayStateInfo, "pending_adapter_id") != 60) @compileError("DisplayStateInfo.pending_adapter_id offset");
+    if (@offsetOf(abi.DisplayStateInfo, "driver_owner") != 64) @compileError("DisplayStateInfo.driver_owner offset");
+    if (@offsetOf(abi.DisplayStateInfo, "pending_driver_owner") != 68) @compileError("DisplayStateInfo.pending_driver_owner offset");
+    if (@offsetOf(abi.DisplayStateInfo, "backend_kind") != 72) @compileError("DisplayStateInfo.backend_kind offset");
+    if (@offsetOf(abi.DisplayStateInfo, "capabilities") != 76) @compileError("DisplayStateInfo.capabilities offset");
+    if (@offsetOf(abi.DisplayStateInfo, "width") != 80) @compileError("DisplayStateInfo.width offset");
+    if (@offsetOf(abi.DisplayStateInfo, "height") != 84) @compileError("DisplayStateInfo.height offset");
+    if (@offsetOf(abi.DisplayStateInfo, "pitch") != 88) @compileError("DisplayStateInfo.pitch offset");
+    if (@offsetOf(abi.DisplayStateInfo, "bpp") != 92) @compileError("DisplayStateInfo.bpp offset");
+    if (@offsetOf(abi.DisplayStateInfo, "cache_policy") != 94) @compileError("DisplayStateInfo.cache_policy offset");
+    if (@offsetOf(abi.DisplayStateInfo, "mapping_kind") != 95) @compileError("DisplayStateInfo.mapping_kind offset");
+    if (@offsetOf(abi.DisplayStateInfo, "boot_width") != 96) @compileError("DisplayStateInfo.boot_width offset");
+    if (@offsetOf(abi.DisplayStateInfo, "boot_height") != 100) @compileError("DisplayStateInfo.boot_height offset");
+    if (@offsetOf(abi.DisplayStateInfo, "boot_pitch") != 104) @compileError("DisplayStateInfo.boot_pitch offset");
+    if (@offsetOf(abi.DisplayStateInfo, "boot_bpp") != 108) @compileError("DisplayStateInfo.boot_bpp offset");
+    if (@offsetOf(abi.DisplayStateInfo, "reserved0") != 110) @compileError("DisplayStateInfo.reserved0 offset");
+    if (@offsetOf(abi.DisplayStateInfo, "boot_byte_length") != 112) @compileError("DisplayStateInfo.boot_byte_length offset");
+    if (@offsetOf(abi.DisplayStateInfo, "byte_length") != 120) @compileError("DisplayStateInfo.byte_length offset");
+    if (@offsetOf(abi.DisplayStateInfo, "backend_name") != 128) @compileError("DisplayStateInfo.backend_name offset");
+    if (@offsetOf(abi.DisplayStateInfo, "fallback_name") != 152) @compileError("DisplayStateInfo.fallback_name offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1168) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -4133,7 +4164,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 352) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 360) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -4216,6 +4247,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.performance_pci_inventory) != 8) @compileError("R4DevFns.performance_pci_inventory signature");
     if (@offsetOf(abi.R4XStartR4Dev, "performance_input") != 344) @compileError("R4XStartR4Dev.performance_input offset");
     if (@sizeOf(abi.R4DevFns.performance_input) != 8) @compileError("R4DevFns.performance_input signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "display_state") != 352) @compileError("R4XStartR4Dev.display_state offset");
+    if (@sizeOf(abi.R4DevFns.display_state) != 8) @compileError("R4DevFns.display_state signature");
 }
 
 test "generated API contract compiles" {}

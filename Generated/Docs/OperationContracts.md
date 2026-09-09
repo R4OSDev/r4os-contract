@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 352; Funktionen: 344; reserviert/Tombstone: 8
-- Sichtbarkeit: public=252, advanced=92, internal=8
+- Physische Gruppenslots: 353; Funktionen: 345; reserviert/Tombstone: 8
+- Sichtbarkeit: public=252, advanced=93, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 17
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -386,3 +386,4 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DEV | 39 | `performance_driver_work` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 40 | `performance_pci_inventory` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 41 | `performance_input` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DEV | 42 | `display_state` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |

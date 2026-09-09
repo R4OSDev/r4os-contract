@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 344,
+    "group_function_signatures": 345,
     "sdk_operation_contracts": 0,
-    "parity_entries": 344,
+    "parity_entries": 345,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -3104,6 +3104,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.performance_input",
       "c_contract": "R4DevPerformanceInputFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.display_state",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.display_state",
+      "c_contract": "R4DevDisplayStateFn",
       "coverage": "generated_signature"
     }
   ],

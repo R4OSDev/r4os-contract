@@ -1462,6 +1462,32 @@ pub const audio_output_reason_api_unavailable: u32 = 6;
 pub const audio_output_reason_catalog_busy: u32 = 7;
 pub const audio_output_state_flag_persist_pending: u32 = 1;
 pub const audio_output_state_flag_config_error: u32 = 2;
+pub const display_state_unavailable: u32 = 0;
+pub const display_state_bootfb: u32 = 1;
+pub const display_state_preparing: u32 = 2;
+pub const display_state_native: u32 = 3;
+pub const display_state_software_native: u32 = 4;
+pub const display_state_recovering: u32 = 5;
+pub const display_policy_automatic: u32 = 0;
+pub const display_policy_software: u32 = 1;
+pub const display_policy_software_once: u32 = 2;
+pub const display_fallback_none: u32 = 0;
+pub const display_fallback_no_native_backend: u32 = 1;
+pub const display_fallback_policy_disabled: u32 = 2;
+pub const display_fallback_backend_rejected: u32 = 3;
+pub const display_fallback_prepare_failed: u32 = 4;
+pub const display_fallback_commit_failed: u32 = 5;
+pub const display_fallback_device_lost: u32 = 6;
+pub const display_fallback_restore_failed: u32 = 7;
+pub const display_state_cap_cpu_present: u32 = 1;
+pub const display_state_cap_native_scanout: u32 = 2;
+pub const display_state_cap_firmware_writable: u32 = 4;
+pub const display_state_cap_software_fallback: u32 = 8;
+pub const display_state_cap_gpu_render: u32 = 16;
+pub const display_state_cap_async_present: u32 = 32;
+pub const display_summary_backend_native: u8 = 2;
+pub const display_mapping_native_scanout: u8 = 2;
+pub const display_present_backend_native_cpu: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -5771,6 +5797,39 @@ pub const FileCopyProgress = extern struct {
     max_chunk: u32 = 0,
 };
 
+pub const DisplayStateInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 176,
+    state: u32 = 0,
+    policy: u32 = 0,
+    reason: u32 = 0,
+    revision: u64 = 0,
+    device_generation: u64 = 0,
+    reset_generation: u64 = 0,
+    pending_generation: u64 = 0,
+    adapter_id: u32 = 0,
+    pending_adapter_id: u32 = 0,
+    driver_owner: u32 = 0,
+    pending_driver_owner: u32 = 0,
+    backend_kind: u32 = 0,
+    capabilities: u32 = 0,
+    width: u32 = 0,
+    height: u32 = 0,
+    pitch: u32 = 0,
+    bpp: u16 = 0,
+    cache_policy: u8 = 0,
+    mapping_kind: u8 = 0,
+    boot_width: u32 = 0,
+    boot_height: u32 = 0,
+    boot_pitch: u32 = 0,
+    boot_bpp: u16 = 0,
+    reserved0: u16 = 0,
+    boot_byte_length: u64 = 0,
+    byte_length: u64 = 0,
+    backend_name: [24]u8 = .{0} ** 24,
+    fallback_name: [24]u8 = .{0} ** 24,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -6476,12 +6535,13 @@ pub const R4DevFns = struct {
     pub const performance_driver_work = *const fn (u32, *ProgramDriverWorkPerformanceInfo) callconv(.c) i32;
     pub const performance_pci_inventory = *const fn (*ProgramPciInventoryPerformanceInfo) callconv(.c) i32;
     pub const performance_input = *const fn (*ProgramInputPerformanceInfo) callconv(.c) i32;
+    pub const display_state = *const fn (*DisplayStateInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 10,
-    size: u32 = 352,
+    abi_version: u32 = 11,
+    size: u32 = 360,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -6525,6 +6585,7 @@ pub const R4XStartR4Dev = extern struct {
     performance_driver_work: usize = 0,
     performance_pci_inventory: usize = 0,
     performance_input: usize = 0,
+    display_state: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -6898,6 +6959,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 39, .offset = 328, .name = "performance_driver_work", .state = .function, .required = false },
     .{ .number = 40, .offset = 336, .name = "performance_pci_inventory", .state = .function, .required = false },
     .{ .number = 41, .offset = 344, .name = "performance_input", .state = .function, .required = false },
+    .{ .number = 42, .offset = 352, .name = "display_state", .state = .function, .required = false },
 };
 
 comptime {
@@ -10571,6 +10633,38 @@ comptime {
     if (@offsetOf(FileCopyProgress, "source_size") != 16) @compileError("generated ABI offset drift: FileCopyProgress.source_size");
     if (@offsetOf(FileCopyProgress, "chunks") != 24) @compileError("generated ABI offset drift: FileCopyProgress.chunks");
     if (@offsetOf(FileCopyProgress, "max_chunk") != 28) @compileError("generated ABI offset drift: FileCopyProgress.max_chunk");
+    if (@sizeOf(DisplayStateInfo) != 176) @compileError("generated ABI size drift: DisplayStateInfo");
+    if (@alignOf(DisplayStateInfo) != 8) @compileError("generated ABI alignment drift: DisplayStateInfo");
+    if (@offsetOf(DisplayStateInfo, "version") != 0) @compileError("generated ABI offset drift: DisplayStateInfo.version");
+    if (@offsetOf(DisplayStateInfo, "size") != 4) @compileError("generated ABI offset drift: DisplayStateInfo.size");
+    if (@offsetOf(DisplayStateInfo, "state") != 8) @compileError("generated ABI offset drift: DisplayStateInfo.state");
+    if (@offsetOf(DisplayStateInfo, "policy") != 12) @compileError("generated ABI offset drift: DisplayStateInfo.policy");
+    if (@offsetOf(DisplayStateInfo, "reason") != 16) @compileError("generated ABI offset drift: DisplayStateInfo.reason");
+    if (@offsetOf(DisplayStateInfo, "revision") != 24) @compileError("generated ABI offset drift: DisplayStateInfo.revision");
+    if (@offsetOf(DisplayStateInfo, "device_generation") != 32) @compileError("generated ABI offset drift: DisplayStateInfo.device_generation");
+    if (@offsetOf(DisplayStateInfo, "reset_generation") != 40) @compileError("generated ABI offset drift: DisplayStateInfo.reset_generation");
+    if (@offsetOf(DisplayStateInfo, "pending_generation") != 48) @compileError("generated ABI offset drift: DisplayStateInfo.pending_generation");
+    if (@offsetOf(DisplayStateInfo, "adapter_id") != 56) @compileError("generated ABI offset drift: DisplayStateInfo.adapter_id");
+    if (@offsetOf(DisplayStateInfo, "pending_adapter_id") != 60) @compileError("generated ABI offset drift: DisplayStateInfo.pending_adapter_id");
+    if (@offsetOf(DisplayStateInfo, "driver_owner") != 64) @compileError("generated ABI offset drift: DisplayStateInfo.driver_owner");
+    if (@offsetOf(DisplayStateInfo, "pending_driver_owner") != 68) @compileError("generated ABI offset drift: DisplayStateInfo.pending_driver_owner");
+    if (@offsetOf(DisplayStateInfo, "backend_kind") != 72) @compileError("generated ABI offset drift: DisplayStateInfo.backend_kind");
+    if (@offsetOf(DisplayStateInfo, "capabilities") != 76) @compileError("generated ABI offset drift: DisplayStateInfo.capabilities");
+    if (@offsetOf(DisplayStateInfo, "width") != 80) @compileError("generated ABI offset drift: DisplayStateInfo.width");
+    if (@offsetOf(DisplayStateInfo, "height") != 84) @compileError("generated ABI offset drift: DisplayStateInfo.height");
+    if (@offsetOf(DisplayStateInfo, "pitch") != 88) @compileError("generated ABI offset drift: DisplayStateInfo.pitch");
+    if (@offsetOf(DisplayStateInfo, "bpp") != 92) @compileError("generated ABI offset drift: DisplayStateInfo.bpp");
+    if (@offsetOf(DisplayStateInfo, "cache_policy") != 94) @compileError("generated ABI offset drift: DisplayStateInfo.cache_policy");
+    if (@offsetOf(DisplayStateInfo, "mapping_kind") != 95) @compileError("generated ABI offset drift: DisplayStateInfo.mapping_kind");
+    if (@offsetOf(DisplayStateInfo, "boot_width") != 96) @compileError("generated ABI offset drift: DisplayStateInfo.boot_width");
+    if (@offsetOf(DisplayStateInfo, "boot_height") != 100) @compileError("generated ABI offset drift: DisplayStateInfo.boot_height");
+    if (@offsetOf(DisplayStateInfo, "boot_pitch") != 104) @compileError("generated ABI offset drift: DisplayStateInfo.boot_pitch");
+    if (@offsetOf(DisplayStateInfo, "boot_bpp") != 108) @compileError("generated ABI offset drift: DisplayStateInfo.boot_bpp");
+    if (@offsetOf(DisplayStateInfo, "reserved0") != 110) @compileError("generated ABI offset drift: DisplayStateInfo.reserved0");
+    if (@offsetOf(DisplayStateInfo, "boot_byte_length") != 112) @compileError("generated ABI offset drift: DisplayStateInfo.boot_byte_length");
+    if (@offsetOf(DisplayStateInfo, "byte_length") != 120) @compileError("generated ABI offset drift: DisplayStateInfo.byte_length");
+    if (@offsetOf(DisplayStateInfo, "backend_name") != 128) @compileError("generated ABI offset drift: DisplayStateInfo.backend_name");
+    if (@offsetOf(DisplayStateInfo, "fallback_name") != 152) @compileError("generated ABI offset drift: DisplayStateInfo.fallback_name");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -10886,7 +10980,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 352) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 360) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -10929,6 +11023,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_driver_work") != 328) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_driver_work");
     if (@offsetOf(R4XStartR4Dev, "performance_pci_inventory") != 336) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_pci_inventory");
     if (@offsetOf(R4XStartR4Dev, "performance_input") != 344) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_input");
+    if (@offsetOf(R4XStartR4Dev, "display_state") != 352) @compileError("generated ABI offset drift: R4XStartR4Dev.display_state");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -11647,13 +11742,14 @@ pub const R4DevProvider = struct {
     performance_driver_work: ?R4DevFns.performance_driver_work = null,
     performance_pci_inventory: ?R4DevFns.performance_pci_inventory = null,
     performance_input: ?R4DevFns.performance_input = null,
+    display_state: ?R4DevFns.display_state = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 10,
-        .size = 352,
+        .abi_version = 11,
+        .size = 360,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -11697,5 +11793,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .performance_driver_work = if (provider.performance_driver_work) |callback| @intFromPtr(callback) else 0,
         .performance_pci_inventory = if (provider.performance_pci_inventory) |callback| @intFromPtr(callback) else 0,
         .performance_input = if (provider.performance_input) |callback| @intFromPtr(callback) else 0,
+        .display_state = if (provider.display_state) |callback| @intFromPtr(callback) else 0,
     };
 }

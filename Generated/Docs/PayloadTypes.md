@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 162 von 162 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 163 von 163 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1461; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1487; Limits: 109
 
 ## App-Profile
 
@@ -183,6 +183,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioServiceOutputState` | fixed_layout | extern_struct | 1520/8 | 1520/8 | 1520/8 | 1520/8 |
 | `DirectoryChangeCursor` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `FileCopyProgress` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `DisplayStateInfo` | extensible | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
 
 ## Typdetails
 
@@ -5111,6 +5112,46 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `chunks` | 24 | 4 | 4 | `u32` | - |
 | `max_chunk` | 28 | 4 | 4 | `u32` | - |
 
+### `DisplayStateInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 176 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `state` | 8 | 4 | 4 | `u32` | - |
+| `policy` | 12 | 4 | 4 | `u32` | - |
+| `reason` | 16 | 4 | 4 | `u32` | - |
+| `revision` | 24 | 8 | 8 | `u64` | - |
+| `device_generation` | 32 | 8 | 8 | `u64` | - |
+| `reset_generation` | 40 | 8 | 8 | `u64` | - |
+| `pending_generation` | 48 | 8 | 8 | `u64` | - |
+| `adapter_id` | 56 | 4 | 4 | `u32` | - |
+| `pending_adapter_id` | 60 | 4 | 4 | `u32` | - |
+| `driver_owner` | 64 | 4 | 4 | `u32` | - |
+| `pending_driver_owner` | 68 | 4 | 4 | `u32` | - |
+| `backend_kind` | 72 | 4 | 4 | `u32` | - |
+| `capabilities` | 76 | 4 | 4 | `u32` | - |
+| `width` | 80 | 4 | 4 | `u32` | - |
+| `height` | 84 | 4 | 4 | `u32` | - |
+| `pitch` | 88 | 4 | 4 | `u32` | - |
+| `bpp` | 92 | 2 | 2 | `u16` | - |
+| `cache_policy` | 94 | 1 | 1 | `u8` | - |
+| `mapping_kind` | 95 | 1 | 1 | `u8` | - |
+| `boot_width` | 96 | 4 | 4 | `u32` | - |
+| `boot_height` | 100 | 4 | 4 | `u32` | - |
+| `boot_pitch` | 104 | 4 | 4 | `u32` | - |
+| `boot_bpp` | 108 | 2 | 2 | `u16` | - |
+| `reserved0` | 110 | 2 | 2 | `u16` | - |
+| `boot_byte_length` | 112 | 8 | 8 | `u64` | - |
+| `byte_length` | 120 | 8 | 8 | `u64` | - |
+| `backend_name` | 128 | 24 | 1 | `[24]u8` | - |
+| `fallback_name` | 152 | 24 | 1 | `[24]u8` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -7311,6 +7352,32 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `audio_output_reason_catalog_busy` | `7` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
 | `audio_output_state_flag_persist_pending` | `1` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
 | `audio_output_state_flag_config_error` | `2` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
+| `display_state_unavailable` | `0` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_bootfb` | `1` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_preparing` | `2` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_native` | `3` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_software_native` | `4` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_recovering` | `5` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_policy_automatic` | `0` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_policy_software` | `1` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_policy_software_once` | `2` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_none` | `0` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_no_native_backend` | `1` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_policy_disabled` | `2` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_backend_rejected` | `3` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_prepare_failed` | `4` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_commit_failed` | `5` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_device_lost` | `6` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_fallback_restore_failed` | `7` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_cap_cpu_present` | `1` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_cap_native_scanout` | `2` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_cap_firmware_writable` | `4` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_cap_software_fallback` | `8` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_cap_gpu_render` | `16` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_state_cap_async_present` | `32` | `u32` | value | number | `display_state` | fixed_contract |
+| `display_summary_backend_native` | `2` | `u8` | value | number | `display_state` | fixed_contract |
+| `display_mapping_native_scanout` | `2` | `u8` | value | number | `display_state` | fixed_contract |
+| `display_present_backend_native_cpu` | `3` | `u32` | value | number | `display_state` | fixed_contract |
 
 ## Limits
 

@@ -389,7 +389,8 @@ const phase_a_groups = [_]ExpectedGroup{
     // atomic registry batches at slots 120..122. 0.70.8 appends asynchronous
     // offset writes, file-size queries and advisory range locks at 123..125.
     // 0.76.8 appends fifteen storage inventory/claim/I/O/mount/use slots.
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 138, .reserved = 2, .tombstones = 1 },
+    // Baseline refresh 0.79.4 includes the existing slots through 143.
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 141, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47
@@ -416,9 +417,9 @@ const phase_a_groups = [_]ExpectedGroup{
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 35, .reserved = 0, .tombstones = 0 },
     // 0.78.16 appends physical audio-output enumeration and selection.
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 21, .reserved = 2, .tombstones = 0 },
-    // R4DEV extends the passive diagnostic tail through slot 41 with the
-    // canonical PCI and input snapshots; slot 27 remains frozen.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 40, .reserved = 2, .tombstones = 0 },
+    // R4DEV extends the passive diagnostic tail through slot 42 with the
+    // coherent display owner/fallback snapshot; slot 27 remains frozen.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 41, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {
@@ -1223,7 +1224,11 @@ fn renderStartDoc(allocator: std.mem.Allocator, contract: *const Contract) ![]u8
     for (contract.app_profiles) |profile| try appendFmt(&out, allocator, "    {s} -> app.class={s}, required-mask=0x{X}, optional-mask=0x{X}\n", .{ profile.name, profile.app_class, groupMask(contract, profile.required_groups), groupMask(contract, profile.optional_groups) });
     try out.appendSlice(allocator, "\nGruppentabellen\n---------------\n\n");
     for (contract.groups) |group| if (group.kind == .kernel_table) try appendFmt(&out, allocator, "    R4XSTART_{s}_VERSION = {d}\n    R4XSTART_{s}_SIZE    = {d}\n", .{ group.name, group.abi_version, group.name, group.size });
-    try out.appendSlice(allocator, "\nDie sechs eingebauten Platform APIs beginnen jeweils mit magic, abi_version, size und flags;\ndanach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls\nbesitzen libraryeigene Vertraege und werden hier nicht zentral registriert.\n\n" ++ start_doc_end);
+    try out.appendSlice(allocator, "\nDiese Zahlen beschreiben die aktuellen Provider-Tabellen. Die gleichnamigen\n" ++
+        "generierten SDK-Importkonstanten bezeichnen den unterstuetzten Mindestprefix\n" ++
+        "und koennen kleiner/aelter bleiben. Optionale angehaengte Felder werden nach\n" ++
+        "der tatsaechlich gelieferten Tabellengroesse mit hasFn geprueft.\n" ++
+        "\nDie sechs eingebauten Platform APIs beginnen jeweils mit magic, abi_version, size und flags;\ndanach folgen die im Schema definierten 8-Byte-Slots. Externe Runtime-R4Ls\nbesitzen libraryeigene Vertraege und werden hier nicht zentral registriert.\n\n" ++ start_doc_end);
     return out.toOwnedSlice(allocator);
 }
 

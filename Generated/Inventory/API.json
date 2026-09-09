@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 344,
-    "group_slot_count": 344,
+    "function_count": 345,
+    "group_slot_count": 345,
     "sdk_only_count": 0,
     "public_count": 252,
-    "advanced_count": 92
+    "advanced_count": 93
   },
   "functions": [
     {
@@ -4133,6 +4133,18 @@
       "slot": 41,
       "exposure": "advanced",
       "description": "Returns compact i8042, keyboard, GUI-event, console-input and program-entry queue counters.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.display_state",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 42,
+      "exposure": "advanced",
+      "description": "Returns one coherent display owner, candidate, generation, capability and fallback snapshot without PCI or MMIO reads.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

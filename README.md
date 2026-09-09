@@ -10,9 +10,12 @@ library owns its own contract and bindings.
 
 ## Build and validation
 
-With the configured Zig toolchain on every supported host:
+Use the repository starter with the workspace toolchain:
 
-    zig build test
+    ./Build.sh test      # Linux
+    Build.bat test       # Windows
+
+Both delegate to Build.ps1; it falls back to Zig on PATH outside the workspace.
 
 Generated files are checked during normal builds. Intentional contract changes
 must use the repository's explicit generator write workflow and update the
