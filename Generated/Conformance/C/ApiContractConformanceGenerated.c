@@ -251,6 +251,14 @@ static R4DrawGuiSharedRasterMapWriteFn r4os_probe_r4draw_gui_shared_raster_map_w
 static R4DrawGuiSharedRasterPublishFn r4os_probe_r4draw_gui_shared_raster_publish = (R4DrawGuiSharedRasterPublishFn)0;
 static R4DrawGuiSharedRasterAcquireFn r4os_probe_r4draw_gui_shared_raster_acquire = (R4DrawGuiSharedRasterAcquireFn)0;
 static R4DrawGuiSharedRasterReleaseFn r4os_probe_r4draw_gui_shared_raster_release = (R4DrawGuiSharedRasterReleaseFn)0;
+static R4DrawGfxBufferCreateFn r4os_probe_r4draw_gfx_buffer_create = (R4DrawGfxBufferCreateFn)0;
+static R4DrawGfxBufferDescribeFn r4os_probe_r4draw_gfx_buffer_describe = (R4DrawGfxBufferDescribeFn)0;
+static R4DrawGfxBufferImportFn r4os_probe_r4draw_gfx_buffer_import = (R4DrawGfxBufferImportFn)0;
+static R4DrawGfxBufferReleaseFn r4os_probe_r4draw_gfx_buffer_release = (R4DrawGfxBufferReleaseFn)0;
+static R4DrawGfxBufferMapFn r4os_probe_r4draw_gfx_buffer_map = (R4DrawGfxBufferMapFn)0;
+static R4DrawGfxBufferUnmapFn r4os_probe_r4draw_gfx_buffer_unmap = (R4DrawGfxBufferUnmapFn)0;
+static R4DrawGfxBufferExportRasterFn r4os_probe_r4draw_gfx_buffer_export_raster = (R4DrawGfxBufferExportRasterFn)0;
+static R4DrawGfxBufferStatsFn r4os_probe_r4draw_gfx_buffer_stats = (R4DrawGfxBufferStatsFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

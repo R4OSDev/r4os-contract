@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 345,
-    "group_slot_count": 345,
+    "function_count": 353,
+    "group_slot_count": 353,
     "sdk_only_count": 0,
-    "public_count": 252,
+    "public_count": 260,
     "advanced_count": 93
   },
   "functions": [
@@ -2981,6 +2981,102 @@
       "slot": 48,
       "exposure": "public",
       "description": "Releases one exact consumer lease. A stale, foreign or duplicate lease is rejected without changing shared-raster ownership.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_create",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 49,
+      "exposure": "public",
+      "description": "Creates zeroed resident system RAM with checked descriptor and finite budget. Success is 1; failure leaves outputs untouched and retains any failed VM rollback internally.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_describe",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 50,
+      "exposure": "public",
+      "description": "Copies the descriptor for one reference owned by the current caller.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_import",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 51,
+      "exposure": "public",
+      "description": "Imports a live shareable reference into the current caller, preserving immutable mode. Producer exit closes new imports; existing references survive.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_release",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 52,
+      "exposure": "public",
+      "description": "Drops one caller reference; maps, device jobs and scanout retain their own leases. Stale or duplicate release has no effect.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_map",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 53,
+      "exposure": "public",
+      "description": "Retains a CPU read (0) or write (1) map with an explicit 64-bit range. Conflicting consumers return Busy; WC reads and unavailable CPU mappings are unsupported.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_unmap",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 54,
+      "exposure": "public",
+      "description": "Ends one caller CPU map after the caller has stopped accessing it, orders CPU visibility, and permits deferred release. Device completion is not exposed through this function.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_export_raster",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 55,
+      "exposure": "public",
+      "description": "Exports an exact held shared-raster consumer lease as an immutable BO reference without a pixel copy. The producer may not overwrite the buffer while that reference survives.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_stats",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 56,
+      "exposure": "public",
+      "description": "Copies one coherent budget, object, reference and lease snapshot.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
