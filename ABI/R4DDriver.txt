@@ -12,7 +12,9 @@ appends canonical USB-host activation; version 22 appends the display-blit
 backend; version 23 appends network RX-work publication; version 24 appends
 network capability selection and metadata intake. Versions 25 through 28
 append the optional graphics memory, queue, output and display queries;
-version 29 appends the loaded-container resource query. StorageBackend version 2
+version 29 appends the loaded-container resource query; version 30 appends
+resident CPU heap access; version 31 appends the common monotonic snapshot.
+StorageBackend version 2
 appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
 its offer. None of these extensions changes an older prefix.
@@ -417,3 +419,26 @@ The finite pass stops on a failed free; pending operations or failed release
 retain the closed binding and veto module unload. Only an empty owner retires
 its epoch. Kernel-heap VM tail capacity retained internally after a successful
 logical free remains kernel ownership and does not retain an R4D image.
+
+Common monotonic clock (0.79.10)
+--------------------------------
+DriverApi31 appends monotonic_clock at offset 608, total 616 bytes. All prior
+fields, the minimum accepted driver version and the heap slot are unchanged.
+The optional SDK field is checked by version, size and nullability. Its ABI is
+int32_t monotonic_clock(MonotonicClockInfo*): exactly the existing fixed 80-byte
+payload and the R4SYS result convention, 1 available or 0 unavailable. A caller
+supplies a nonnull writable full payload; this entry has no variable output
+capacity negotiation. The SDK resets output before an unavailable-slot error.
+
+This read-only entry and R4SYS share kernel/monotonic_api.zig. instant_ns has
+the canonical nanosecond origin, frequency_hz is 1000000000, resolution_ns is
+the ceiling of the active source quantum. Source/quality/generation fields
+must be inspected; a periodic fallback is degraded, not high resolution or
+IRQ-independent. These are neither calendar time nor CPU frequency. Existing
+tick_count/timer_frequency/wait_ticks semantics remain unchanged. The resource
+table's cached now_ns callback reads the same source efficiently for deadlines.
+
+No driver lifecycle guard, allocation, scheduling or GPU operation occurs.
+Init, driver work and shutdown can read the snapshot independently of resource
+admission. This adds no delay function, cancellation guarantee or permission
+to spin until a degraded clock advances with interrupts disabled.

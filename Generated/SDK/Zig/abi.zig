@@ -3613,6 +3613,7 @@ pub const DriverApi = extern struct {
     gfx_display_query: ?*const fn (*GfxDriverDisplayApi) callconv(.c) i32 = null,
     resource_query: ?*const fn (*DriverResourceApi) callconv(.c) i32 = null,
     heap_query: ?*const fn (*DriverHeapApi) callconv(.c) i32 = null,
+    monotonic_clock: ?*const fn (*MonotonicClockInfo) callconv(.c) i32 = null,
 };
 
 pub const ProtocolApi = extern struct {
