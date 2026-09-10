@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 32u
+#define R4OS_DRIVER_API_VERSION 33u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
 #define R4OS_DRIVER_WORK_FLAG_NONE 0u
@@ -1656,6 +1656,21 @@ extern "C" {
 #define R4OS_DRIVER_THREAD_STATE_RUNNABLE 1u
 #define R4OS_DRIVER_THREAD_STATE_RUNNING 2u
 #define R4OS_DRIVER_THREAD_STATE_COMPLETED 3u
+#define R4OS_DRIVER_SEMAPHORE_OK ((int32_t)0)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_INVALID ((int32_t)-1)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_OWNER ((int32_t)-2)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_STALE ((int32_t)-3)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_CLOSED ((int32_t)-4)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_MEMORY ((int32_t)-5)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_BUSY ((int32_t)-6)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_TIMEOUT ((int32_t)-7)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_CONTEXT ((int32_t)-8)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_OVERFLOW ((int32_t)-9)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_EXHAUSTED ((int32_t)-10)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_RELEASE ((int32_t)-11)
+#define R4OS_DRIVER_SEMAPHORE_ERROR_CANCELLED ((int32_t)-12)
+#define R4OS_DRIVER_SEMAPHORE_CONTEXT_IRQ 1u
+#define R4OS_DRIVER_SEMAPHORE_CONTEXT_SLEEPABLE 2u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2304,6 +2319,9 @@ typedef struct R4DriverThreadRequest R4DriverThreadRequest;
 typedef struct R4DriverThreadStatus R4DriverThreadStatus;
 typedef struct R4DriverThreadStats R4DriverThreadStats;
 typedef struct R4DriverThreadApi R4DriverThreadApi;
+typedef struct R4DriverSemaphoreStatus R4DriverSemaphoreStatus;
+typedef struct R4DriverSemaphoreStats R4DriverSemaphoreStats;
+typedef struct R4DriverSemaphoreApi R4DriverSemaphoreApi;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6659,6 +6677,45 @@ typedef struct R4DriverThreadApi {
     uint64_t sleep_ticks;
     uint64_t stats;
 } R4DriverThreadApi;
+
+typedef struct R4DriverSemaphoreStatus {
+    uint32_t version;
+    uint32_t size;
+    uint64_t handle;
+    uint64_t owner_epoch;
+    uint32_t available;
+    uint32_t maximum;
+    uint32_t queued_waiters;
+    uint32_t active_acquires;
+} R4DriverSemaphoreStatus;
+
+typedef struct R4DriverSemaphoreStats {
+    uint32_t version;
+    uint32_t size;
+    uint64_t owner_epoch;
+    uint64_t records;
+    uint64_t private_records;
+    uint64_t creates;
+    uint64_t create_failures;
+    uint64_t destroys;
+    uint64_t destroy_failures;
+    uint32_t pending_creates;
+    uint32_t pending_destroys;
+    uint32_t active_acquires;
+    uint32_t closing;
+} R4DriverSemaphoreStats;
+
+typedef struct R4DriverSemaphoreApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t create;
+    uint64_t acquire;
+    uint64_t release;
+    uint64_t destroy;
+    uint64_t status;
+    uint64_t stats;
+    uint64_t context_flags;
+} R4DriverSemaphoreApi;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -11476,6 +11533,39 @@ _Static_assert(offsetof(R4DriverThreadApi, status) == 40u, "DriverThreadApi.stat
 _Static_assert(offsetof(R4DriverThreadApi, current) == 48u, "DriverThreadApi.current offset mismatch");
 _Static_assert(offsetof(R4DriverThreadApi, sleep_ticks) == 56u, "DriverThreadApi.sleep_ticks offset mismatch");
 _Static_assert(offsetof(R4DriverThreadApi, stats) == 64u, "DriverThreadApi.stats offset mismatch");
+_Static_assert(sizeof(R4DriverSemaphoreStatus) == 40u, "DriverSemaphoreStatus size mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, version) == 0u, "DriverSemaphoreStatus.version offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, size) == 4u, "DriverSemaphoreStatus.size offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, handle) == 8u, "DriverSemaphoreStatus.handle offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, owner_epoch) == 16u, "DriverSemaphoreStatus.owner_epoch offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, available) == 24u, "DriverSemaphoreStatus.available offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, maximum) == 28u, "DriverSemaphoreStatus.maximum offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, queued_waiters) == 32u, "DriverSemaphoreStatus.queued_waiters offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStatus, active_acquires) == 36u, "DriverSemaphoreStatus.active_acquires offset mismatch");
+_Static_assert(sizeof(R4DriverSemaphoreStats) == 80u, "DriverSemaphoreStats size mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, version) == 0u, "DriverSemaphoreStats.version offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, size) == 4u, "DriverSemaphoreStats.size offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, owner_epoch) == 8u, "DriverSemaphoreStats.owner_epoch offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, records) == 16u, "DriverSemaphoreStats.records offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, private_records) == 24u, "DriverSemaphoreStats.private_records offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, creates) == 32u, "DriverSemaphoreStats.creates offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, create_failures) == 40u, "DriverSemaphoreStats.create_failures offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, destroys) == 48u, "DriverSemaphoreStats.destroys offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, destroy_failures) == 56u, "DriverSemaphoreStats.destroy_failures offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, pending_creates) == 64u, "DriverSemaphoreStats.pending_creates offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, pending_destroys) == 68u, "DriverSemaphoreStats.pending_destroys offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, active_acquires) == 72u, "DriverSemaphoreStats.active_acquires offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreStats, closing) == 76u, "DriverSemaphoreStats.closing offset mismatch");
+_Static_assert(sizeof(R4DriverSemaphoreApi) == 64u, "DriverSemaphoreApi size mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, version) == 0u, "DriverSemaphoreApi.version offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, size) == 4u, "DriverSemaphoreApi.size offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, create) == 8u, "DriverSemaphoreApi.create offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, acquire) == 16u, "DriverSemaphoreApi.acquire offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, release) == 24u, "DriverSemaphoreApi.release offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, destroy) == 32u, "DriverSemaphoreApi.destroy offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, status) == 40u, "DriverSemaphoreApi.status offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, stats) == 48u, "DriverSemaphoreApi.stats offset mismatch");
+_Static_assert(offsetof(R4DriverSemaphoreApi, context_flags) == 56u, "DriverSemaphoreApi.context_flags offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

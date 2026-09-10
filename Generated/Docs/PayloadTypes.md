@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 207 von 207 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 210 von 210 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1643; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1658; Limits: 109
 
 ## App-Profile
 
@@ -228,6 +228,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DriverThreadStatus` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `DriverThreadStats` | extensible | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `DriverThreadApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
+| `DriverSemaphoreStatus` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `DriverSemaphoreStats` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `DriverSemaphoreApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -6027,6 +6030,66 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `sleep_ticks` | 56 | 8 | 8 | `u64` | - |
 | `stats` | 64 | 8 | 8 | `u64` | - |
 
+### `DriverSemaphoreStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `handle` | 8 | 8 | 8 | `u64` | - |
+| `owner_epoch` | 16 | 8 | 8 | `u64` | - |
+| `available` | 24 | 4 | 4 | `u32` | - |
+| `maximum` | 28 | 4 | 4 | `u32` | - |
+| `queued_waiters` | 32 | 4 | 4 | `u32` | - |
+| `active_acquires` | 36 | 4 | 4 | `u32` | - |
+
+### `DriverSemaphoreStats`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `owner_epoch` | 8 | 8 | 8 | `u64` | - |
+| `records` | 16 | 8 | 8 | `u64` | - |
+| `private_records` | 24 | 8 | 8 | `u64` | - |
+| `creates` | 32 | 8 | 8 | `u64` | - |
+| `create_failures` | 40 | 8 | 8 | `u64` | - |
+| `destroys` | 48 | 8 | 8 | `u64` | - |
+| `destroy_failures` | 56 | 8 | 8 | `u64` | - |
+| `pending_creates` | 64 | 4 | 4 | `u32` | - |
+| `pending_destroys` | 68 | 4 | 4 | `u32` | - |
+| `active_acquires` | 72 | 4 | 4 | `u32` | - |
+| `closing` | 76 | 4 | 4 | `u32` | - |
+
+### `DriverSemaphoreApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `create` | 8 | 8 | 8 | `u64` | - |
+| `acquire` | 16 | 8 | 8 | `u64` | - |
+| `release` | 24 | 8 | 8 | `u64` | - |
+| `destroy` | 32 | 8 | 8 | `u64` | - |
+| `status` | 40 | 8 | 8 | `u64` | - |
+| `stats` | 48 | 8 | 8 | `u64` | - |
+| `context_flags` | 56 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -6920,7 +6983,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `32` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `33` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -8409,6 +8472,21 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `driver_thread_state_runnable` | `1` | `u32` | value | number | `driver_thread` | fixed_contract |
 | `driver_thread_state_running` | `2` | `u32` | value | number | `driver_thread` | fixed_contract |
 | `driver_thread_state_completed` | `3` | `u32` | value | number | `driver_thread` | fixed_contract |
+| `driver_semaphore_ok` | `0` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_invalid` | `-1` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_owner` | `-2` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_stale` | `-3` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_closed` | `-4` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_memory` | `-5` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_busy` | `-6` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_timeout` | `-7` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_context` | `-8` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_overflow` | `-9` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_exhausted` | `-10` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_release` | `-11` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_error_cancelled` | `-12` | `i32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_context_irq` | `1` | `u32` | value | number | `driver_semaphore` | fixed_contract |
+| `driver_semaphore_context_sleepable` | `2` | `u32` | value | number | `driver_semaphore` | fixed_contract |
 
 ## Limits
 
