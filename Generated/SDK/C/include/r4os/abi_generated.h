@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 28u
+#define R4OS_DRIVER_API_VERSION 29u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
 #define R4OS_DRIVER_WORK_FLAG_NONE 0u
@@ -1619,6 +1619,16 @@ extern "C" {
 #define R4OS_GFX_OUTPUT_RETAIN_NEW 2u
 #define R4OS_GFX_QUEUE_OPERATION_UPLOAD 2u
 #define R4OS_GFX_DEVICE_ACCESS_BACKING 4u
+#define R4OS_DRIVER_RESOURCE_OK ((int32_t)0)
+#define R4OS_DRIVER_RESOURCE_ERROR_INVALID ((int32_t)-1)
+#define R4OS_DRIVER_RESOURCE_ERROR_OWNER ((int32_t)-2)
+#define R4OS_DRIVER_RESOURCE_ERROR_STALE ((int32_t)-3)
+#define R4OS_DRIVER_RESOURCE_ERROR_SOURCE ((int32_t)-4)
+#define R4OS_DRIVER_RESOURCE_ERROR_NOT_FOUND ((int32_t)-5)
+#define R4OS_DRIVER_RESOURCE_ERROR_IO ((int32_t)-6)
+#define R4OS_DRIVER_RESOURCE_ERROR_DEADLINE ((int32_t)-7)
+#define R4OS_DRIVER_RESOURCE_ERROR_BUSY ((int32_t)-8)
+#define R4OS_DRIVER_RESOURCE_MAX_READ_BYTES 65536u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2258,6 +2268,8 @@ typedef struct R4GfxNativeBootInfo R4GfxNativeBootInfo;
 typedef struct R4GfxNativeRegistration R4GfxNativeRegistration;
 typedef struct R4GfxNativeState R4GfxNativeState;
 typedef struct R4GfxDriverDisplayApi R4GfxDriverDisplayApi;
+typedef struct R4DriverResourceInfo R4DriverResourceInfo;
+typedef struct R4DriverResourceApi R4DriverResourceApi;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6504,6 +6516,22 @@ typedef struct R4GfxDriverDisplayApi {
     uint64_t transition;
     uint64_t schedule;
 } R4GfxDriverDisplayApi;
+
+typedef struct R4DriverResourceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t handle;
+    uint64_t byte_length;
+    uint64_t module_generation;
+} R4DriverResourceInfo;
+
+typedef struct R4DriverResourceApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t stat;
+    uint64_t read_at;
+    uint64_t now_ns;
+} R4DriverResourceApi;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -11230,6 +11258,18 @@ _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_info) == 8u, "GfxDriverDispl
 _Static_assert(offsetof(R4GfxDriverDisplayApi, prepare) == 16u, "GfxDriverDisplayApi.prepare offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, transition) == 24u, "GfxDriverDisplayApi.transition offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, schedule) == 32u, "GfxDriverDisplayApi.schedule offset mismatch");
+_Static_assert(sizeof(R4DriverResourceInfo) == 32u, "DriverResourceInfo size mismatch");
+_Static_assert(offsetof(R4DriverResourceInfo, version) == 0u, "DriverResourceInfo.version offset mismatch");
+_Static_assert(offsetof(R4DriverResourceInfo, size) == 4u, "DriverResourceInfo.size offset mismatch");
+_Static_assert(offsetof(R4DriverResourceInfo, handle) == 8u, "DriverResourceInfo.handle offset mismatch");
+_Static_assert(offsetof(R4DriverResourceInfo, byte_length) == 16u, "DriverResourceInfo.byte_length offset mismatch");
+_Static_assert(offsetof(R4DriverResourceInfo, module_generation) == 24u, "DriverResourceInfo.module_generation offset mismatch");
+_Static_assert(sizeof(R4DriverResourceApi) == 32u, "DriverResourceApi size mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, version) == 0u, "DriverResourceApi.version offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, size) == 4u, "DriverResourceApi.size offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, stat) == 8u, "DriverResourceApi.stat offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, read_at) == 16u, "DriverResourceApi.read_at offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, now_ns) == 24u, "DriverResourceApi.now_ns offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

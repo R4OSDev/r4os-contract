@@ -10,7 +10,9 @@ trusted little-endian x86_64. DriverApi version 19 appends segment-DMA
 operations; version 20 appends deadline-isolated audio work; version 21
 appends canonical USB-host activation; version 22 appends the display-blit
 backend; version 23 appends network RX-work publication; version 24 appends
-network capability selection and metadata intake. StorageBackend version 2
+network capability selection and metadata intake. Versions 25 through 28
+append the optional graphics memory, queue, output and display queries;
+version 29 appends the loaded-container resource query. StorageBackend version 2
 appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
 its offer. None of these extensions changes an older prefix.
@@ -324,3 +326,48 @@ module memory release.
 
 This contract provides the shared foundation only. It does not make an AHCI,
 NVMe, USB, audio, or network driver asynchronous by itself.
+
+Loaded R4D resources (DriverApi 29, roadmap 0.79.10)
+--------------------------------------------------
+The unchanged 592-byte DriverApi28 prefix is followed by resource_query;
+DriverApi29 is 600 bytes. Query negotiates DriverResourceApi version 1,
+32 bytes. Its stat/read_at/now_ns signatures, DriverResourceInfo (32 bytes),
+result codes and maximum read size are generated from ApiContract.json.
+Zig uses DriverContext.resources(); C uses r4os/driver_resources.h.
+
+Before DriverInit the R4D owner is bound to its published module slot and
+generation, with a distinct monotonic start epoch. Stat returns a non-owning
+opaque catalog reference; it is neither a file handle nor a mount lease.
+No open/close operation or caller-supplied path/owner exists. Named file
+resources use the bounded case-insensitive R4M0 component syntax. Catalog
+metadata and blob offsets are captured before module publication. Parsing
+validates ordering, unique names, lengths, alignment and zero padding while
+skipping blob contents. Resources remain outside the executable image.
+
+Stat and read authenticate init/task or actual driver-work ownership. IRQ
+and storage callbacks cannot enter. Work calls try the lifecycle guard
+without waiting; BUSY can be handled by bounded rescheduling. The guard
+spans the complete synchronous read, so shutdown cannot free its backing
+while a read is active. beginOwnerShutdown invalidates every resource
+reference; successful cleanup retires the binding only after work quiesces.
+Failed cleanup retains the closed binding. Restart uses a new epoch even
+when the same resident module is reused; exhaustion never wraps handles.
+
+The retained FileSource carries the original Volume/MountRef and node
+snapshot. Every read acquires a real filesystem request use, rejects stale
+mount generations and never reopens a pathname. NTFS additionally validates
+the captured MFT sequence. FAT has no equivalent generation for cluster
+reuse; neither filesystem contract promises immutable file contents. A
+firmware consumer must verify its exact pinned size/hash/ABI after reading.
+No permanent lease prevents unmount between calls. Byte/preload module
+loads do not retain caller memory and return source-unavailable; NVIDIA's
+current supported resource route is the ordinary disk R4D loader.
+
+read_at transfers an exact 1..65536-byte range into caller-owned resident
+memory. An invalid range or already expired deadline performs no file I/O.
+now_ns reads the canonical monotonic clock (UINT64_MAX if unavailable).
+Clock availability/backward movement and the absolute deadline are checked
+before and after synchronous I/O. These checks do not forcibly interrupt
+storage hardware; safe I/O completion and cleanup can exceed the deadline.
+Negative results may leave partial bytes in output, which must be discarded.
+No firmware parsing, package selection, download or GPU command belongs here.

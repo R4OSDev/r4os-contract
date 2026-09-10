@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 198 von 198 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 200 von 200 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1606; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1616; Limits: 109
 
 ## App-Profile
 
@@ -219,6 +219,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxDriverDisplayApi` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `DriverResourceApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 
 ## Typdetails
 
@@ -5846,6 +5848,36 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `transition` | 24 | 8 | 8 | `u64` | - |
 | `schedule` | 32 | 8 | 8 | `u64` | - |
 
+### `DriverResourceInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `handle` | 8 | 8 | 8 | `u64` | - |
+| `byte_length` | 16 | 8 | 8 | `u64` | - |
+| `module_generation` | 24 | 8 | 8 | `u64` | - |
+
+### `DriverResourceApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `stat` | 8 | 8 | 8 | `u64` | - |
+| `read_at` | 16 | 8 | 8 | `u64` | - |
+| `now_ns` | 24 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -6739,7 +6771,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `28` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `29` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -8191,6 +8223,16 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_output_retain_new` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_queue_operation_upload` | `2` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_device_access_backing` | `4` | `u32` | value | number | `gfx_buffer` | fixed_contract |
+| `driver_resource_ok` | `0` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_invalid` | `-1` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_owner` | `-2` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_stale` | `-3` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_source` | `-4` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_not_found` | `-5` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_io` | `-6` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_deadline` | `-7` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_error_busy` | `-8` | `i32` | value | number | `driver_resource` | fixed_contract |
+| `driver_resource_max_read_bytes` | `65536` | `u32` | value | bytes | `driver_resource` | fixed_contract |
 
 ## Limits
 

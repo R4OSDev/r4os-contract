@@ -155,7 +155,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 28;
+pub const driver_api_version: u32 = 29;
 pub const driver_magic: u32 = 826888260;
 pub const driver_work_flag_from_irq: u32 = 1;
 pub const driver_work_flag_none: u32 = 0;
@@ -1607,6 +1607,16 @@ pub const gfx_output_retain_old: u32 = 1;
 pub const gfx_output_retain_new: u32 = 2;
 pub const gfx_queue_operation_upload: u32 = 2;
 pub const gfx_device_access_backing: u32 = 4;
+pub const driver_resource_ok: i32 = 0;
+pub const driver_resource_error_invalid: i32 = -1;
+pub const driver_resource_error_owner: i32 = -2;
+pub const driver_resource_error_stale: i32 = -3;
+pub const driver_resource_error_source: i32 = -4;
+pub const driver_resource_error_not_found: i32 = -5;
+pub const driver_resource_error_io: i32 = -6;
+pub const driver_resource_error_deadline: i32 = -7;
+pub const driver_resource_error_busy: i32 = -8;
+pub const driver_resource_max_read_bytes: u32 = 65536;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6361,6 +6371,22 @@ pub const GfxDriverDisplayApi = extern struct {
     prepare: u64 = 0,
     transition: u64 = 0,
     schedule: u64 = 0,
+};
+
+pub const DriverResourceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    handle: u64 = 0,
+    byte_length: u64 = 0,
+    module_generation: u64 = 0,
+};
+
+pub const DriverResourceApi = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    stat: u64 = 0,
+    read_at: u64 = 0,
+    now_ns: u64 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -11643,6 +11669,20 @@ comptime {
     if (@offsetOf(GfxDriverDisplayApi, "prepare") != 16) @compileError("generated ABI offset drift: GfxDriverDisplayApi.prepare");
     if (@offsetOf(GfxDriverDisplayApi, "transition") != 24) @compileError("generated ABI offset drift: GfxDriverDisplayApi.transition");
     if (@offsetOf(GfxDriverDisplayApi, "schedule") != 32) @compileError("generated ABI offset drift: GfxDriverDisplayApi.schedule");
+    if (@sizeOf(DriverResourceInfo) != 32) @compileError("generated ABI size drift: DriverResourceInfo");
+    if (@alignOf(DriverResourceInfo) != 8) @compileError("generated ABI alignment drift: DriverResourceInfo");
+    if (@offsetOf(DriverResourceInfo, "version") != 0) @compileError("generated ABI offset drift: DriverResourceInfo.version");
+    if (@offsetOf(DriverResourceInfo, "size") != 4) @compileError("generated ABI offset drift: DriverResourceInfo.size");
+    if (@offsetOf(DriverResourceInfo, "handle") != 8) @compileError("generated ABI offset drift: DriverResourceInfo.handle");
+    if (@offsetOf(DriverResourceInfo, "byte_length") != 16) @compileError("generated ABI offset drift: DriverResourceInfo.byte_length");
+    if (@offsetOf(DriverResourceInfo, "module_generation") != 24) @compileError("generated ABI offset drift: DriverResourceInfo.module_generation");
+    if (@sizeOf(DriverResourceApi) != 32) @compileError("generated ABI size drift: DriverResourceApi");
+    if (@alignOf(DriverResourceApi) != 8) @compileError("generated ABI alignment drift: DriverResourceApi");
+    if (@offsetOf(DriverResourceApi, "version") != 0) @compileError("generated ABI offset drift: DriverResourceApi.version");
+    if (@offsetOf(DriverResourceApi, "size") != 4) @compileError("generated ABI offset drift: DriverResourceApi.size");
+    if (@offsetOf(DriverResourceApi, "stat") != 8) @compileError("generated ABI offset drift: DriverResourceApi.stat");
+    if (@offsetOf(DriverResourceApi, "read_at") != 16) @compileError("generated ABI offset drift: DriverResourceApi.read_at");
+    if (@offsetOf(DriverResourceApi, "now_ns") != 24) @compileError("generated ABI offset drift: DriverResourceApi.now_ns");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
