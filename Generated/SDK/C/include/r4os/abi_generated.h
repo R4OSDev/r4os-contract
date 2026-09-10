@@ -1671,6 +1671,9 @@ extern "C" {
 #define R4OS_DRIVER_SEMAPHORE_ERROR_CANCELLED ((int32_t)-12)
 #define R4OS_DRIVER_SEMAPHORE_CONTEXT_IRQ 1u
 #define R4OS_DRIVER_SEMAPHORE_CONTEXT_SLEEPABLE 2u
+#define R4OS_DRIVER_THREAD_API_MIN_BYTES 72u
+#define R4OS_DRIVER_THREAD_FLAG_ABORTABLE 2u
+#define R4OS_DRIVER_THREAD_FLAG_ABORTED 4u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -6676,6 +6679,7 @@ typedef struct R4DriverThreadApi {
     uint64_t current;
     uint64_t sleep_ticks;
     uint64_t stats;
+    uint64_t abort_current;
 } R4DriverThreadApi;
 
 typedef struct R4DriverSemaphoreStatus {
@@ -11522,7 +11526,7 @@ _Static_assert(offsetof(R4DriverThreadStats, pending_creates) == 80u, "DriverThr
 _Static_assert(offsetof(R4DriverThreadStats, pending_releases) == 84u, "DriverThreadStats.pending_releases offset mismatch");
 _Static_assert(offsetof(R4DriverThreadStats, waiters) == 88u, "DriverThreadStats.waiters offset mismatch");
 _Static_assert(offsetof(R4DriverThreadStats, closing) == 92u, "DriverThreadStats.closing offset mismatch");
-_Static_assert(sizeof(R4DriverThreadApi) == 72u, "DriverThreadApi size mismatch");
+_Static_assert(sizeof(R4DriverThreadApi) == 80u, "DriverThreadApi size mismatch");
 _Static_assert(offsetof(R4DriverThreadApi, version) == 0u, "DriverThreadApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverThreadApi, size) == 4u, "DriverThreadApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverThreadApi, start) == 8u, "DriverThreadApi.start offset mismatch");
@@ -11533,6 +11537,7 @@ _Static_assert(offsetof(R4DriverThreadApi, status) == 40u, "DriverThreadApi.stat
 _Static_assert(offsetof(R4DriverThreadApi, current) == 48u, "DriverThreadApi.current offset mismatch");
 _Static_assert(offsetof(R4DriverThreadApi, sleep_ticks) == 56u, "DriverThreadApi.sleep_ticks offset mismatch");
 _Static_assert(offsetof(R4DriverThreadApi, stats) == 64u, "DriverThreadApi.stats offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, abort_current) == 72u, "DriverThreadApi.abort_current offset mismatch");
 _Static_assert(sizeof(R4DriverSemaphoreStatus) == 40u, "DriverSemaphoreStatus size mismatch");
 _Static_assert(offsetof(R4DriverSemaphoreStatus, version) == 0u, "DriverSemaphoreStatus.version offset mismatch");
 _Static_assert(offsetof(R4DriverSemaphoreStatus, size) == 4u, "DriverSemaphoreStatus.size offset mismatch");

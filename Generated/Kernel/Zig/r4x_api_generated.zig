@@ -1659,6 +1659,9 @@ pub const driver_semaphore_error_release: i32 = -11;
 pub const driver_semaphore_error_cancelled: i32 = -12;
 pub const driver_semaphore_context_irq: u32 = 1;
 pub const driver_semaphore_context_sleepable: u32 = 2;
+pub const driver_thread_api_min_bytes: u32 = 72;
+pub const driver_thread_flag_abortable: u32 = 2;
+pub const driver_thread_flag_aborted: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6513,7 +6516,7 @@ pub const DriverThreadStats = extern struct {
 
 pub const DriverThreadApi = extern struct {
     version: u32 = 1,
-    size: u32 = 72,
+    size: u32 = 80,
     start: u64 = 0,
     stop: u64 = 0,
     join: u64 = 0,
@@ -6522,6 +6525,7 @@ pub const DriverThreadApi = extern struct {
     current: u64 = 0,
     sleep_ticks: u64 = 0,
     stats: u64 = 0,
+    abort_current: u64 = 0,
 };
 
 pub const DriverSemaphoreStatus = extern struct {
@@ -11931,7 +11935,7 @@ comptime {
     if (@offsetOf(DriverThreadStats, "pending_releases") != 84) @compileError("generated ABI offset drift: DriverThreadStats.pending_releases");
     if (@offsetOf(DriverThreadStats, "waiters") != 88) @compileError("generated ABI offset drift: DriverThreadStats.waiters");
     if (@offsetOf(DriverThreadStats, "closing") != 92) @compileError("generated ABI offset drift: DriverThreadStats.closing");
-    if (@sizeOf(DriverThreadApi) != 72) @compileError("generated ABI size drift: DriverThreadApi");
+    if (@sizeOf(DriverThreadApi) != 80) @compileError("generated ABI size drift: DriverThreadApi");
     if (@alignOf(DriverThreadApi) != 8) @compileError("generated ABI alignment drift: DriverThreadApi");
     if (@offsetOf(DriverThreadApi, "version") != 0) @compileError("generated ABI offset drift: DriverThreadApi.version");
     if (@offsetOf(DriverThreadApi, "size") != 4) @compileError("generated ABI offset drift: DriverThreadApi.size");
@@ -11943,6 +11947,7 @@ comptime {
     if (@offsetOf(DriverThreadApi, "current") != 48) @compileError("generated ABI offset drift: DriverThreadApi.current");
     if (@offsetOf(DriverThreadApi, "sleep_ticks") != 56) @compileError("generated ABI offset drift: DriverThreadApi.sleep_ticks");
     if (@offsetOf(DriverThreadApi, "stats") != 64) @compileError("generated ABI offset drift: DriverThreadApi.stats");
+    if (@offsetOf(DriverThreadApi, "abort_current") != 72) @compileError("generated ABI offset drift: DriverThreadApi.abort_current");
     if (@sizeOf(DriverSemaphoreStatus) != 40) @compileError("generated ABI size drift: DriverSemaphoreStatus");
     if (@alignOf(DriverSemaphoreStatus) != 8) @compileError("generated ABI alignment drift: DriverSemaphoreStatus");
     if (@offsetOf(DriverSemaphoreStatus, "version") != 0) @compileError("generated ABI offset drift: DriverSemaphoreStatus.version");

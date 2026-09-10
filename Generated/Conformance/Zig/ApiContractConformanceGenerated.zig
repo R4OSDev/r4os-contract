@@ -3969,7 +3969,7 @@ comptime {
     if (@offsetOf(abi.DriverThreadStats, "pending_releases") != 84) @compileError("DriverThreadStats.pending_releases offset");
     if (@offsetOf(abi.DriverThreadStats, "waiters") != 88) @compileError("DriverThreadStats.waiters offset");
     if (@offsetOf(abi.DriverThreadStats, "closing") != 92) @compileError("DriverThreadStats.closing offset");
-    if (@sizeOf(abi.DriverThreadApi) != 72) @compileError("DriverThreadApi size");
+    if (@sizeOf(abi.DriverThreadApi) != 80) @compileError("DriverThreadApi size");
     if (@offsetOf(abi.DriverThreadApi, "version") != 0) @compileError("DriverThreadApi.version offset");
     if (@offsetOf(abi.DriverThreadApi, "size") != 4) @compileError("DriverThreadApi.size offset");
     if (@offsetOf(abi.DriverThreadApi, "start") != 8) @compileError("DriverThreadApi.start offset");
@@ -3980,6 +3980,7 @@ comptime {
     if (@offsetOf(abi.DriverThreadApi, "current") != 48) @compileError("DriverThreadApi.current offset");
     if (@offsetOf(abi.DriverThreadApi, "sleep_ticks") != 56) @compileError("DriverThreadApi.sleep_ticks offset");
     if (@offsetOf(abi.DriverThreadApi, "stats") != 64) @compileError("DriverThreadApi.stats offset");
+    if (@offsetOf(abi.DriverThreadApi, "abort_current") != 72) @compileError("DriverThreadApi.abort_current offset");
     if (@sizeOf(abi.DriverSemaphoreStatus) != 40) @compileError("DriverSemaphoreStatus size");
     if (@offsetOf(abi.DriverSemaphoreStatus, "version") != 0) @compileError("DriverSemaphoreStatus.version offset");
     if (@offsetOf(abi.DriverSemaphoreStatus, "size") != 4) @compileError("DriverSemaphoreStatus.size offset");

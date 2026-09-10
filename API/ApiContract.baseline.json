@@ -82217,7 +82217,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Zero for a dedicated BSP thread, or driver_thread_flag_parallel for explicit SMP-capable module code. The kernel chooses scheduler placement and policy.",
+          "description": "Zero for a dedicated BSP thread; driver_thread_flag_parallel permits SMP placement. Optional driver_thread_flag_abortable installs a synchronous self-abort boundary and requires the abort_current service slot. The kernel chooses scheduler placement; other bits are rejected.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -82400,7 +82400,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Accepted creation flags.",
+          "description": "Accepted creation flags, plus driver_thread_flag_aborted after a successful synchronous self-abort.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -82437,7 +82437,7 @@
         }
       ],
       "values": [],
-      "description": "One coherent thread record snapshot. Completed means the module callback has returned; release additionally retires the exact backing Task and stack before record free. Stop never claims a running callback has been interrupted or that hardware is quiesced."
+      "description": "One coherent thread record snapshot. Completed means execution has returned to the kernel callback boundary, normally or by an explicit self-abort; release additionally retires the exact backing Task and stack before record free. Stop never claims a running callback has been interrupted or that hardware is quiesced."
     },
     {
       "name": "DriverThreadStats",
@@ -82670,7 +82670,7 @@
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 1,
-      "size": 72,
+      "size": 80,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82696,12 +82696,12 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Caller capacity, at least the complete version-1 payload.",
+          "description": "Caller capacity. The original 72-byte prefix remains accepted; returned size identifies complete available slots, at most 80 bytes.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "72"
+          "default_value": "80"
         },
         {
           "name": "start",
@@ -82809,6 +82809,20 @@
             "name": "u64"
           },
           "description": "int32_t stats(DriverThreadStats*). Current driver-start accounting, including closed admission.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "abort_current",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t abort_current(int32_t result). With a negative result, the current explicitly abortable dedicated Task returns to its kernel callback boundary and this call does not return. Refusals return a driver_thread error. Never aborts another Task, an IRQ, a tracked kernel owner or extra unwind lifetime. Bypasses module stack defers; retained resources and device recovery remain the driver owner responsibility.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -102274,6 +102288,36 @@
       "scope": "driver_semaphore",
       "stability": "fixed_contract",
       "description": "Current driver task has interrupts enabled and holds no runtime critical section, preemption disable or no-sleep owner lock; excludes IRQ/storage callbacks."
+    },
+    {
+      "name": "driver_thread_api_min_bytes",
+      "value": "72",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "bytes",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Original complete version-1 thread service prefix; later optional slots may follow."
+    },
+    {
+      "name": "driver_thread_flag_abortable",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Opt-in dedicated callback boundary for synchronous self-abort after all kernel calls have returned. Requires the optional abort_current service slot."
+    },
+    {
+      "name": "driver_thread_flag_aborted",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Returned status flag only: callback ended through its explicit abort boundary. Rejected as a start flag."
     }
   ],
   "limits": [
