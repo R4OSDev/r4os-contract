@@ -371,3 +371,49 @@ before and after synchronous I/O. These checks do not forcibly interrupt
 storage hardware; safe I/O completion and cleanup can exceed the deadline.
 Negative results may leave partial bytes in output, which must be discarded.
 No firmware parsing, package selection, download or GPU command belongs here.
+
+Resident R4D CPU heap (DriverApi 30, roadmap 0.79.10)
+---------------------------------------------------
+The unchanged 600-byte DriverApi29 prefix is followed by heap_query;
+DriverApi30 is 608 bytes. DriverHeapApi v1/32 bytes exposes allocate,
+release and stats. DriverHeapAllocation is 40 bytes, DriverHeapStats 104.
+All payloads, result codes and C/Zig bindings come from ApiContract.json.
+The baseline change preserves every existing field, type and constant except
+the explicit DriverApi version increment. DriverContext keeps its v24 minimum
+and negotiates heap() independently; C uses the table in r4os/driver_heap.h.
+
+The loader binds one CPU owner to the exact monotonic R4D start epoch before
+DriverInit. Query and calls authenticate init/shutdown and actual Driver Work
+callbacks. IRQ and storage callbacks are rejected. Worker calls take no global
+R4D lifecycle guard, so an initializer or finalizer can wait for their result.
+The cached function table does not transfer ownership to an unrelated caller.
+
+allocate takes a nonzero u64 byte length and power-of-two u32 alignment;
+alignment is normalized to at least 16 bytes. Checked overhead/padding addition
+rejects overflow. Success publishes a stable resident WB CPU virtual address,
+an exact payload length and an opaque nonzero handle. Contents are uninitialized.
+The kernel heap's real capacity controls admission; there is no separate fixed
+allocation-slot limit and no R4X VM/program owner. CPU addresses are neither DMA
+nor GPU addresses. A separate pin/map contract still requires the caller to
+retain backing until every hardware borrower has physically stopped.
+
+One intrusive record shares the actual allocation with its payload. Per-owner
+treaps provide expected logarithmic handle lookup without recursive traversal
+or a second allocated index. A narrow runtime-owner section protects metadata;
+real heap allocation/free and payload access happen outside it. Split operations
+hold an enrolled task unwind token so hard kill cannot lose unpublished backing
+or a detached release. A close racing with allocation retains the result under
+the owner without publishing it. A release in progress remains fully charged.
+
+Successful release invalidates the handle; failed heap release retains the
+whole record, payload and accounting for retry. A duplicate/foreign/stale
+handle fails before dereferencing payload. Opaque IDs never wrap, including
+after owner restart. stats is a bounded coherent snapshot and remains available
+through shutdown; new queries and allocations reject after close admission.
+
+After successful DriverShutdown, backend finalizers and IRQ/work/DMA teardown,
+generic cleanup frees remaining CPU allocations outside metadata ownership.
+The finite pass stops on a failed free; pending operations or failed release
+retain the closed binding and veto module unload. Only an empty owner retires
+its epoch. Kernel-heap VM tail capacity retained internally after a successful
+logical free remains kernel ownership and does not retain an R4D image.

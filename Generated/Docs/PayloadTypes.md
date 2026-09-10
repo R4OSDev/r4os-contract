@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 200 von 200 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 203 von 203 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1616; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1626; Limits: 109
 
 ## App-Profile
 
@@ -221,6 +221,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxDriverDisplayApi` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverResourceApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `DriverHeapStats` | extensible | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
+| `DriverHeapApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 
 ## Typdetails
 
@@ -5878,6 +5881,64 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `read_at` | 16 | 8 | 8 | `u64` | - |
 | `now_ns` | 24 | 8 | 8 | `u64` | - |
 
+### `DriverHeapAllocation`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `handle` | 8 | 8 | 8 | `u64` | - |
+| `cpu_address` | 16 | 8 | 8 | `u64` | - |
+| `byte_length` | 24 | 8 | 8 | `u64` | - |
+| `alignment` | 32 | 4 | 4 | `u32` | - |
+| `reserved` | 36 | 4 | 4 | `u32` | - |
+
+### `DriverHeapStats`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 104 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `owner_epoch` | 8 | 8 | 8 | `u64` | - |
+| `allocations` | 16 | 8 | 8 | `u64` | - |
+| `bytes` | 24 | 8 | 8 | `u64` | - |
+| `backing_bytes` | 32 | 8 | 8 | `u64` | - |
+| `peak_bytes` | 40 | 8 | 8 | `u64` | - |
+| `private_allocations` | 48 | 8 | 8 | `u64` | - |
+| `allocation_calls` | 56 | 8 | 8 | `u64` | - |
+| `allocation_failures` | 64 | 8 | 8 | `u64` | - |
+| `releases` | 72 | 8 | 8 | `u64` | - |
+| `release_failures` | 80 | 8 | 8 | `u64` | - |
+| `pending_creates` | 88 | 4 | 4 | `u32` | - |
+| `pending_releases` | 92 | 4 | 4 | `u32` | - |
+| `closing` | 96 | 4 | 4 | `u32` | - |
+| `reserved` | 100 | 4 | 4 | `u32` | - |
+
+### `DriverHeapApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `allocate` | 8 | 8 | 8 | `u64` | - |
+| `release` | 16 | 8 | 8 | `u64` | - |
+| `stats` | 24 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -6771,7 +6832,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `29` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `30` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -8233,6 +8294,16 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `driver_resource_error_deadline` | `-7` | `i32` | value | number | `driver_resource` | fixed_contract |
 | `driver_resource_error_busy` | `-8` | `i32` | value | number | `driver_resource` | fixed_contract |
 | `driver_resource_max_read_bytes` | `65536` | `u32` | value | bytes | `driver_resource` | fixed_contract |
+| `driver_heap_ok` | `0` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_invalid` | `-1` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_owner` | `-2` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_stale` | `-3` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_closed` | `-4` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_memory` | `-5` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_busy` | `-6` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_exhausted` | `-7` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_release` | `-8` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_heap_error_overflow` | `-9` | `i32` | value | number | `driver_heap` | fixed_contract |
 
 ## Limits
 

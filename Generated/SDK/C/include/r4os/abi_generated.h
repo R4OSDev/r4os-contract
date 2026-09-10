@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 29u
+#define R4OS_DRIVER_API_VERSION 30u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
 #define R4OS_DRIVER_WORK_FLAG_NONE 0u
@@ -1629,6 +1629,16 @@ extern "C" {
 #define R4OS_DRIVER_RESOURCE_ERROR_DEADLINE ((int32_t)-7)
 #define R4OS_DRIVER_RESOURCE_ERROR_BUSY ((int32_t)-8)
 #define R4OS_DRIVER_RESOURCE_MAX_READ_BYTES 65536u
+#define R4OS_DRIVER_HEAP_OK ((int32_t)0)
+#define R4OS_DRIVER_HEAP_ERROR_INVALID ((int32_t)-1)
+#define R4OS_DRIVER_HEAP_ERROR_OWNER ((int32_t)-2)
+#define R4OS_DRIVER_HEAP_ERROR_STALE ((int32_t)-3)
+#define R4OS_DRIVER_HEAP_ERROR_CLOSED ((int32_t)-4)
+#define R4OS_DRIVER_HEAP_ERROR_MEMORY ((int32_t)-5)
+#define R4OS_DRIVER_HEAP_ERROR_BUSY ((int32_t)-6)
+#define R4OS_DRIVER_HEAP_ERROR_EXHAUSTED ((int32_t)-7)
+#define R4OS_DRIVER_HEAP_ERROR_RELEASE ((int32_t)-8)
+#define R4OS_DRIVER_HEAP_ERROR_OVERFLOW ((int32_t)-9)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2270,6 +2280,9 @@ typedef struct R4GfxNativeState R4GfxNativeState;
 typedef struct R4GfxDriverDisplayApi R4GfxDriverDisplayApi;
 typedef struct R4DriverResourceInfo R4DriverResourceInfo;
 typedef struct R4DriverResourceApi R4DriverResourceApi;
+typedef struct R4DriverHeapAllocation R4DriverHeapAllocation;
+typedef struct R4DriverHeapStats R4DriverHeapStats;
+typedef struct R4DriverHeapApi R4DriverHeapApi;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6532,6 +6545,43 @@ typedef struct R4DriverResourceApi {
     uint64_t read_at;
     uint64_t now_ns;
 } R4DriverResourceApi;
+
+typedef struct R4DriverHeapAllocation {
+    uint32_t version;
+    uint32_t size;
+    uint64_t handle;
+    uint64_t cpu_address;
+    uint64_t byte_length;
+    uint32_t alignment;
+    uint32_t reserved;
+} R4DriverHeapAllocation;
+
+typedef struct R4DriverHeapStats {
+    uint32_t version;
+    uint32_t size;
+    uint64_t owner_epoch;
+    uint64_t allocations;
+    uint64_t bytes;
+    uint64_t backing_bytes;
+    uint64_t peak_bytes;
+    uint64_t private_allocations;
+    uint64_t allocation_calls;
+    uint64_t allocation_failures;
+    uint64_t releases;
+    uint64_t release_failures;
+    uint32_t pending_creates;
+    uint32_t pending_releases;
+    uint32_t closing;
+    uint32_t reserved;
+} R4DriverHeapStats;
+
+typedef struct R4DriverHeapApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t allocate;
+    uint64_t release;
+    uint64_t stats;
+} R4DriverHeapApi;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -11270,6 +11320,37 @@ _Static_assert(offsetof(R4DriverResourceApi, size) == 4u, "DriverResourceApi.siz
 _Static_assert(offsetof(R4DriverResourceApi, stat) == 8u, "DriverResourceApi.stat offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, read_at) == 16u, "DriverResourceApi.read_at offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, now_ns) == 24u, "DriverResourceApi.now_ns offset mismatch");
+_Static_assert(sizeof(R4DriverHeapAllocation) == 40u, "DriverHeapAllocation size mismatch");
+_Static_assert(offsetof(R4DriverHeapAllocation, version) == 0u, "DriverHeapAllocation.version offset mismatch");
+_Static_assert(offsetof(R4DriverHeapAllocation, size) == 4u, "DriverHeapAllocation.size offset mismatch");
+_Static_assert(offsetof(R4DriverHeapAllocation, handle) == 8u, "DriverHeapAllocation.handle offset mismatch");
+_Static_assert(offsetof(R4DriverHeapAllocation, cpu_address) == 16u, "DriverHeapAllocation.cpu_address offset mismatch");
+_Static_assert(offsetof(R4DriverHeapAllocation, byte_length) == 24u, "DriverHeapAllocation.byte_length offset mismatch");
+_Static_assert(offsetof(R4DriverHeapAllocation, alignment) == 32u, "DriverHeapAllocation.alignment offset mismatch");
+_Static_assert(offsetof(R4DriverHeapAllocation, reserved) == 36u, "DriverHeapAllocation.reserved offset mismatch");
+_Static_assert(sizeof(R4DriverHeapStats) == 104u, "DriverHeapStats size mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, version) == 0u, "DriverHeapStats.version offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, size) == 4u, "DriverHeapStats.size offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, owner_epoch) == 8u, "DriverHeapStats.owner_epoch offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, allocations) == 16u, "DriverHeapStats.allocations offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, bytes) == 24u, "DriverHeapStats.bytes offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, backing_bytes) == 32u, "DriverHeapStats.backing_bytes offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, peak_bytes) == 40u, "DriverHeapStats.peak_bytes offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, private_allocations) == 48u, "DriverHeapStats.private_allocations offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, allocation_calls) == 56u, "DriverHeapStats.allocation_calls offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, allocation_failures) == 64u, "DriverHeapStats.allocation_failures offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, releases) == 72u, "DriverHeapStats.releases offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, release_failures) == 80u, "DriverHeapStats.release_failures offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, pending_creates) == 88u, "DriverHeapStats.pending_creates offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, pending_releases) == 92u, "DriverHeapStats.pending_releases offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, closing) == 96u, "DriverHeapStats.closing offset mismatch");
+_Static_assert(offsetof(R4DriverHeapStats, reserved) == 100u, "DriverHeapStats.reserved offset mismatch");
+_Static_assert(sizeof(R4DriverHeapApi) == 32u, "DriverHeapApi size mismatch");
+_Static_assert(offsetof(R4DriverHeapApi, version) == 0u, "DriverHeapApi.version offset mismatch");
+_Static_assert(offsetof(R4DriverHeapApi, size) == 4u, "DriverHeapApi.size offset mismatch");
+_Static_assert(offsetof(R4DriverHeapApi, allocate) == 8u, "DriverHeapApi.allocate offset mismatch");
+_Static_assert(offsetof(R4DriverHeapApi, release) == 16u, "DriverHeapApi.release offset mismatch");
+_Static_assert(offsetof(R4DriverHeapApi, stats) == 24u, "DriverHeapApi.stats offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
