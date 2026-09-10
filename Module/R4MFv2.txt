@@ -21,7 +21,7 @@ Fields in canonical order:
   NAME=<FAT-safe ASCII module name, maximum 31 bytes>
   VERSION=<MAJOR.MINOR.PATCH>          module version, required for all kinds
   LANGUAGE=Zig|C
-  SOURCE=<project-relative canonical path, repeated for C>
+  SOURCE=<project-relative canonical path, ordered; see language rules below>
   ENTRY_MODE=app|lowlevel              required for R4X, forbidden otherwise
   APP_CLASS=console|gui|service        required for R4X, forbidden otherwise
   MODULE_ROLE=subsystem                optional R4X role, forbidden otherwise
@@ -53,18 +53,28 @@ Fields in canonical order:
   HELP=<project-relative text path>  optional, at most once
   RESOURCE=<NAME>:<project-relative path>  optional, repeatable
 
-Zig has exactly one SOURCE. C may have multiple SOURCE fields. Sources are
-relative to the manifest directory, use forward slashes, may not escape with
-".." and must match the declared language. TARGET uses forward slashes,
+Zig has exactly one .zig root SOURCE. R4L and R4D may follow that root with
+ordered .c companion SOURCE fields linked into the same owning artifact.
+R4X and R4P with LANGUAGE=Zig still require exactly one SOURCE. LANGUAGE=C
+may have multiple .c SOURCE fields. Sources are relative to the manifest
+directory, use forward slashes and may not escape with "..". Their extensions
+must match these language rules. TARGET uses forward slashes,
 contains no dot segments and respects the current R4OS path/component limits.
 
 C_INCLUDE, C_DEFINE and C_FLAG are available only when the project contains
-C sources, including a mixed Zig/C compiled R4L. Include roots are relative
+C sources, including mixed Zig/C R4L and R4D artifacts. Include roots are relative
 build dependencies and may deliberately use ".." to reach a package sibling;
 absolute paths, backslashes and explicit "." components are forbidden.
 C_DEFINE splits at the first "=" and requires a C identifier plus a
 whitespace-free value. C_FLAG is one whitespace-free token beginning with
 "-". Duplicate include roots, define names and flags are errors.
+
+R4D companions preserve the driver's existing entry, imports, exports and
+metadata contract. They introduce neither an APP_CLASS nor ENTRY_MODE, a
+second module, or a runtime dependency. The SDK forwards ordered C sources,
+include roots, defines and flags to the same ELF producer and R4M0 packager.
+R4MF_PLAN=1 remains an R4X contract view; accepting mixed R4D manifests does
+not add an inside-R4OS Zig/C driver compiler capability to R4BUILD.
 
 IMAGE_SCOPE decides which image a module reaches and is required for all
 four kinds. The selected sets are exact: slim images contain slim, full images
