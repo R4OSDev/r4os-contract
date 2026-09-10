@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 203 von 203 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 207 von 207 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1626; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1643; Limits: 109
 
 ## App-Profile
 
@@ -224,6 +224,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `DriverHeapStats` | extensible | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
 | `DriverHeapApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `DriverThreadRequest` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `DriverThreadStatus` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `DriverThreadStats` | extensible | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `DriverThreadApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 
 ## Typdetails
 
@@ -5939,6 +5943,90 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `release` | 16 | 8 | 8 | `u64` | - |
 | `stats` | 24 | 8 | 8 | `u64` | - |
 
+### `DriverThreadRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `handler` | 8 | 8 | 8 | `u64` | - |
+| `context` | 16 | 8 | 8 | `u64` | - |
+| `flags` | 24 | 4 | 4 | `u32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+
+### `DriverThreadStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `handle` | 8 | 8 | 8 | `u64` | - |
+| `owner_epoch` | 16 | 8 | 8 | `u64` | - |
+| `task_generation` | 24 | 8 | 8 | `u64` | - |
+| `task_id` | 32 | 4 | 4 | `u32` | - |
+| `cpu_index` | 36 | 4 | 4 | `u32` | - |
+| `state` | 40 | 4 | 4 | `u32` | - |
+| `stop_requested` | 44 | 4 | 4 | `u32` | - |
+| `result` | 48 | 4 | 4 | `i32` | - |
+| `flags` | 52 | 4 | 4 | `u32` | - |
+| `waiters` | 56 | 4 | 4 | `u32` | - |
+| `reserved` | 60 | 4 | 4 | `u32` | - |
+
+### `DriverThreadStats`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `owner_epoch` | 8 | 8 | 8 | `u64` | - |
+| `records` | 16 | 8 | 8 | `u64` | - |
+| `active` | 24 | 8 | 8 | `u64` | - |
+| `completed` | 32 | 8 | 8 | `u64` | - |
+| `private_records` | 40 | 8 | 8 | `u64` | - |
+| `starts` | 48 | 8 | 8 | `u64` | - |
+| `start_failures` | 56 | 8 | 8 | `u64` | - |
+| `releases` | 64 | 8 | 8 | `u64` | - |
+| `release_retries` | 72 | 8 | 8 | `u64` | - |
+| `pending_creates` | 80 | 4 | 4 | `u32` | - |
+| `pending_releases` | 84 | 4 | 4 | `u32` | - |
+| `waiters` | 88 | 4 | 4 | `u32` | - |
+| `closing` | 92 | 4 | 4 | `u32` | - |
+
+### `DriverThreadApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 72 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `start` | 8 | 8 | 8 | `u64` | - |
+| `stop` | 16 | 8 | 8 | `u64` | - |
+| `join` | 24 | 8 | 8 | `u64` | - |
+| `release` | 32 | 8 | 8 | `u64` | - |
+| `status` | 40 | 8 | 8 | `u64` | - |
+| `current` | 48 | 8 | 8 | `u64` | - |
+| `sleep_ticks` | 56 | 8 | 8 | `u64` | - |
+| `stats` | 64 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -6832,7 +6920,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `31` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `32` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -8304,6 +8392,23 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `driver_heap_error_exhausted` | `-7` | `i32` | value | number | `driver_heap` | fixed_contract |
 | `driver_heap_error_release` | `-8` | `i32` | value | number | `driver_heap` | fixed_contract |
 | `driver_heap_error_overflow` | `-9` | `i32` | value | number | `driver_heap` | fixed_contract |
+| `driver_thread_ok` | `0` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_invalid` | `-1` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_owner` | `-2` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_stale` | `-3` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_closed` | `-4` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_memory` | `-5` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_busy` | `-6` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_cancelled` | `-7` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_timeout` | `-8` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_self_join` | `-9` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_context` | `-10` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_exhausted` | `-11` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_error_release` | `-12` | `i32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_flag_parallel` | `1` | `u32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_state_runnable` | `1` | `u32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_state_running` | `2` | `u32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_state_completed` | `3` | `u32` | value | number | `driver_thread` | fixed_contract |
 
 ## Limits
 

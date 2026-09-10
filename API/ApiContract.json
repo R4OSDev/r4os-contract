@@ -82142,6 +82142,682 @@
       ],
       "values": [],
       "description": "Optional DriverApi v30 resident CPU heap service. Query and calls authenticate actual bound R4D init/shutdown or driver-work context; IRQ and storage callbacks are rejected. No global lifecycle-guard acquisition in worker calls. Metadata is serialized separately from real heap allocation/release, and unwind enrollment covers split operations. Closing rejects new allocations. Owner cleanup reclaims remaining CPU allocations only after callbacks, IRQ, work and DMA have quiesced; in-flight work or release failure retains the closed owner and module. Allocation records scale with resident backing instead of a separate fixed slot pool. This API supplies no DMA or GPU address and no device synchronization; callers keep CPU backing alive through all borrowed device uses."
+    },
+    {
+      "name": "DriverThreadRequest",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "handler",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t handler(uint64_t context). Trusted resident R4D callback, retained with its argument until completion and thread release. Nonzero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "context",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque callback argument, never copied or dereferenced by the thread service.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero for a dedicated BSP thread, or driver_thread_flag_parallel for explicit SMP-capable module code. The kernel chooses scheduler placement and policy.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Create a dedicated R4D-owned scheduler Task with a guarded kernel stack and full module FPU state. This is independent of the shared serial Driver Work lanes. Allocation and publication bind to the exact driver-start epoch; failure publishes no handle and retains failed cleanup privately."
+    },
+    {
+      "name": "DriverThreadStatus",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "handle",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque non-reused thread identity, owned by the authenticated R4D start.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact R4D start epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact backing scheduler Task generation. Diagnostic identity, not a Task-control grant.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_id",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Backing scheduler Task ID.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last recorded executing CPU; UINT32_MAX before entry.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "driver_thread_state_runnable, running or completed.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stop_requested",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "One after cooperative stop or parent owner close.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "result",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Callback result once completed; cancellation before callback entry reports driver_thread_error_cancelled.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Accepted creation flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiters",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current retained API join leases.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One coherent thread record snapshot. Completed means the module callback has returned; release additionally retires the exact backing Task and stack before record free. Stop never claims a running callback has been interrupted or that hardware is quiesced."
+    },
+    {
+      "name": "DriverThreadStats",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "owner_epoch",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact R4D start epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "records",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "All live owned thread records, including private construction failures and pending release.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "active",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Published runnable or running callbacks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Completed or privately failed records whose backing is retained.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "private_records",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unpublished records retained after failed construction, close race or publication.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "starts",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Admitted start attempts, saturating.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "start_failures",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Admitted starts that failed allocation, publication or close admission, saturating.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "releases",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful record releases after exact Task retirement, saturating.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "release_retries",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Release attempts retaining Task or record backing for retry, saturating.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pending_creates",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Admitted starts not yet published or failed.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pending_releases",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Records detached for Task/backing release.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "waiters",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Retained join leases across this owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "closing",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "One after the parent closes new thread admission.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "R4D-owned dedicated thread accounting. No fixed thread slot pool: real resident metadata, stack and FPU resources limit admission. Generic cleanup is allowed only after callback quiescence, exact Task retirement and release of every wait lease; failure retains the closed driver and module."
+    },
+    {
+      "name": "DriverThreadApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 72,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "72"
+        },
+        {
+          "name": "start",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t start(const DriverThreadRequest*, uint64_t* handle). Zero success, negative driver_thread error. Output reset before admission; callback may run before successful return.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stop",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t stop(uint64_t handle). Idempotent cooperative stop; wakes only waits enrolled through this thread service, never arbitrary kernel I/O or lock waits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "join",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t join(uint64_t handle, uint64_t timeout_ticks, int32_t* result). Finite logical scheduler ticks; zero polls, UINT64_MAX is invalid. Self join fails. A stopped dedicated caller can cancel its own exact join wait. Target ownership survives timeout/cancellation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "release",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t release(uint64_t handle). Completed callback and zero wait leases required; retires exact Task/stack before freeing record. Busy or failed release retains the same handle for retry.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t status(uint64_t handle, DriverThreadStatus*). Coherent current-owner snapshot, including during close.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "current",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "uint64_t current(void). Current dedicated R4D thread handle, or zero outside such a callback. Not a general process or scheduler Task ID.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sleep_ticks",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t sleep_ticks(uint64_t ticks). Current dedicated thread only. Zero yields, finite values wait in logical scheduler ticks, UINT64_MAX waits until cooperative stop. Stop cancels only this service-owned wait. No nanosecond/minimum-delay claim.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stats",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t stats(DriverThreadStats*). Current driver-start accounting, including closed admission.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Optional DriverApi32 dedicated thread service. Authenticates real R4D init/shutdown, Driver Work or dedicated thread execution. Rejects IRQ/storage callbacks; allocating, joining, releasing and sleeping require a sleep-capable task context. The service does not acquire the global R4D lifecycle guard; callbacks progress independently while init/shutdown callers may retain their own lifecycle guard. Task execution-owner binding and hard-kill protection precede publication; cooperative cancellation and bounded join never force a driver callback to return. Closing rejects start, wakes service-owned waits and retains resources until genuine quiescence. Default threads preserve BSP-only code; parallel is explicit and requires the driver to make its shared state SMP-safe."
     }
   ],
   "operations": [],
@@ -86096,7 +86772,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "31",
+      "value": "32",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -100813,6 +101489,176 @@
       "scope": "driver_heap",
       "stability": "fixed_contract",
       "description": "CPU payload and ownership/alignment overhead cannot be represented."
+    },
+    {
+      "name": "driver_thread_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Successful thread operation."
+    },
+    {
+      "name": "driver_thread_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Invalid descriptor, flags, handle, output, or infinite join timeout."
+    },
+    {
+      "name": "driver_thread_error_owner",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "No authenticated R4D context, or IRQ/storage callback context."
+    },
+    {
+      "name": "driver_thread_error_stale",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Handle does not belong to this current driver start."
+    },
+    {
+      "name": "driver_thread_error_closed",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "New thread admission is closed."
+    },
+    {
+      "name": "driver_thread_error_memory",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Resident thread, Task, stack or FPU backing unavailable."
+    },
+    {
+      "name": "driver_thread_error_busy",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Operation cannot proceed, callback is active, a join lease exists, or Task retirement is pending."
+    },
+    {
+      "name": "driver_thread_error_cancelled",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Cooperative stop cancelled service-owned wait or prevented callback entry."
+    },
+    {
+      "name": "driver_thread_error_timeout",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Finite join wait expired; target and handle remain owned."
+    },
+    {
+      "name": "driver_thread_error_self_join",
+      "value": "-9",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "A thread cannot join or release its own execution."
+    },
+    {
+      "name": "driver_thread_error_context",
+      "value": "-10",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Operation requires a sleep-capable task context or the current dedicated thread."
+    },
+    {
+      "name": "driver_thread_error_exhausted",
+      "value": "-11",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Opaque thread handle space exhausted; identities never wrap."
+    },
+    {
+      "name": "driver_thread_error_release",
+      "value": "-12",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Backing release failed and ownership is retained."
+    },
+    {
+      "name": "driver_thread_flag_parallel",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Explicitly SMP-capable dedicated driver thread."
+    },
+    {
+      "name": "driver_thread_state_runnable",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Task published, callback has not entered."
+    },
+    {
+      "name": "driver_thread_state_running",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Module callback is running or blocked."
+    },
+    {
+      "name": "driver_thread_state_completed",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Module callback returned or entry was cancelled."
     }
   ],
   "limits": [

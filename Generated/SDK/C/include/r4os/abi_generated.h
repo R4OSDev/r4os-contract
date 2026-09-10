@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 31u
+#define R4OS_DRIVER_API_VERSION 32u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
 #define R4OS_DRIVER_WORK_FLAG_NONE 0u
@@ -1639,6 +1639,23 @@ extern "C" {
 #define R4OS_DRIVER_HEAP_ERROR_EXHAUSTED ((int32_t)-7)
 #define R4OS_DRIVER_HEAP_ERROR_RELEASE ((int32_t)-8)
 #define R4OS_DRIVER_HEAP_ERROR_OVERFLOW ((int32_t)-9)
+#define R4OS_DRIVER_THREAD_OK ((int32_t)0)
+#define R4OS_DRIVER_THREAD_ERROR_INVALID ((int32_t)-1)
+#define R4OS_DRIVER_THREAD_ERROR_OWNER ((int32_t)-2)
+#define R4OS_DRIVER_THREAD_ERROR_STALE ((int32_t)-3)
+#define R4OS_DRIVER_THREAD_ERROR_CLOSED ((int32_t)-4)
+#define R4OS_DRIVER_THREAD_ERROR_MEMORY ((int32_t)-5)
+#define R4OS_DRIVER_THREAD_ERROR_BUSY ((int32_t)-6)
+#define R4OS_DRIVER_THREAD_ERROR_CANCELLED ((int32_t)-7)
+#define R4OS_DRIVER_THREAD_ERROR_TIMEOUT ((int32_t)-8)
+#define R4OS_DRIVER_THREAD_ERROR_SELF_JOIN ((int32_t)-9)
+#define R4OS_DRIVER_THREAD_ERROR_CONTEXT ((int32_t)-10)
+#define R4OS_DRIVER_THREAD_ERROR_EXHAUSTED ((int32_t)-11)
+#define R4OS_DRIVER_THREAD_ERROR_RELEASE ((int32_t)-12)
+#define R4OS_DRIVER_THREAD_FLAG_PARALLEL 1u
+#define R4OS_DRIVER_THREAD_STATE_RUNNABLE 1u
+#define R4OS_DRIVER_THREAD_STATE_RUNNING 2u
+#define R4OS_DRIVER_THREAD_STATE_COMPLETED 3u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2283,6 +2300,10 @@ typedef struct R4DriverResourceApi R4DriverResourceApi;
 typedef struct R4DriverHeapAllocation R4DriverHeapAllocation;
 typedef struct R4DriverHeapStats R4DriverHeapStats;
 typedef struct R4DriverHeapApi R4DriverHeapApi;
+typedef struct R4DriverThreadRequest R4DriverThreadRequest;
+typedef struct R4DriverThreadStatus R4DriverThreadStatus;
+typedef struct R4DriverThreadStats R4DriverThreadStats;
+typedef struct R4DriverThreadApi R4DriverThreadApi;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6582,6 +6603,62 @@ typedef struct R4DriverHeapApi {
     uint64_t release;
     uint64_t stats;
 } R4DriverHeapApi;
+
+typedef struct R4DriverThreadRequest {
+    uint32_t version;
+    uint32_t size;
+    uint64_t handler;
+    uint64_t context;
+    uint32_t flags;
+    uint32_t reserved;
+} R4DriverThreadRequest;
+
+typedef struct R4DriverThreadStatus {
+    uint32_t version;
+    uint32_t size;
+    uint64_t handle;
+    uint64_t owner_epoch;
+    uint64_t task_generation;
+    uint32_t task_id;
+    uint32_t cpu_index;
+    uint32_t state;
+    uint32_t stop_requested;
+    int32_t result;
+    uint32_t flags;
+    uint32_t waiters;
+    uint32_t reserved;
+} R4DriverThreadStatus;
+
+typedef struct R4DriverThreadStats {
+    uint32_t version;
+    uint32_t size;
+    uint64_t owner_epoch;
+    uint64_t records;
+    uint64_t active;
+    uint64_t completed;
+    uint64_t private_records;
+    uint64_t starts;
+    uint64_t start_failures;
+    uint64_t releases;
+    uint64_t release_retries;
+    uint32_t pending_creates;
+    uint32_t pending_releases;
+    uint32_t waiters;
+    uint32_t closing;
+} R4DriverThreadStats;
+
+typedef struct R4DriverThreadApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t start;
+    uint64_t stop;
+    uint64_t join;
+    uint64_t release;
+    uint64_t status;
+    uint64_t current;
+    uint64_t sleep_ticks;
+    uint64_t stats;
+} R4DriverThreadApi;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -11351,6 +11428,54 @@ _Static_assert(offsetof(R4DriverHeapApi, size) == 4u, "DriverHeapApi.size offset
 _Static_assert(offsetof(R4DriverHeapApi, allocate) == 8u, "DriverHeapApi.allocate offset mismatch");
 _Static_assert(offsetof(R4DriverHeapApi, release) == 16u, "DriverHeapApi.release offset mismatch");
 _Static_assert(offsetof(R4DriverHeapApi, stats) == 24u, "DriverHeapApi.stats offset mismatch");
+_Static_assert(sizeof(R4DriverThreadRequest) == 32u, "DriverThreadRequest size mismatch");
+_Static_assert(offsetof(R4DriverThreadRequest, version) == 0u, "DriverThreadRequest.version offset mismatch");
+_Static_assert(offsetof(R4DriverThreadRequest, size) == 4u, "DriverThreadRequest.size offset mismatch");
+_Static_assert(offsetof(R4DriverThreadRequest, handler) == 8u, "DriverThreadRequest.handler offset mismatch");
+_Static_assert(offsetof(R4DriverThreadRequest, context) == 16u, "DriverThreadRequest.context offset mismatch");
+_Static_assert(offsetof(R4DriverThreadRequest, flags) == 24u, "DriverThreadRequest.flags offset mismatch");
+_Static_assert(offsetof(R4DriverThreadRequest, reserved) == 28u, "DriverThreadRequest.reserved offset mismatch");
+_Static_assert(sizeof(R4DriverThreadStatus) == 64u, "DriverThreadStatus size mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, version) == 0u, "DriverThreadStatus.version offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, size) == 4u, "DriverThreadStatus.size offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, handle) == 8u, "DriverThreadStatus.handle offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, owner_epoch) == 16u, "DriverThreadStatus.owner_epoch offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, task_generation) == 24u, "DriverThreadStatus.task_generation offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, task_id) == 32u, "DriverThreadStatus.task_id offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, cpu_index) == 36u, "DriverThreadStatus.cpu_index offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, state) == 40u, "DriverThreadStatus.state offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, stop_requested) == 44u, "DriverThreadStatus.stop_requested offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, result) == 48u, "DriverThreadStatus.result offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, flags) == 52u, "DriverThreadStatus.flags offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, waiters) == 56u, "DriverThreadStatus.waiters offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStatus, reserved) == 60u, "DriverThreadStatus.reserved offset mismatch");
+_Static_assert(sizeof(R4DriverThreadStats) == 96u, "DriverThreadStats size mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, version) == 0u, "DriverThreadStats.version offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, size) == 4u, "DriverThreadStats.size offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, owner_epoch) == 8u, "DriverThreadStats.owner_epoch offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, records) == 16u, "DriverThreadStats.records offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, active) == 24u, "DriverThreadStats.active offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, completed) == 32u, "DriverThreadStats.completed offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, private_records) == 40u, "DriverThreadStats.private_records offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, starts) == 48u, "DriverThreadStats.starts offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, start_failures) == 56u, "DriverThreadStats.start_failures offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, releases) == 64u, "DriverThreadStats.releases offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, release_retries) == 72u, "DriverThreadStats.release_retries offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, pending_creates) == 80u, "DriverThreadStats.pending_creates offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, pending_releases) == 84u, "DriverThreadStats.pending_releases offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, waiters) == 88u, "DriverThreadStats.waiters offset mismatch");
+_Static_assert(offsetof(R4DriverThreadStats, closing) == 92u, "DriverThreadStats.closing offset mismatch");
+_Static_assert(sizeof(R4DriverThreadApi) == 72u, "DriverThreadApi size mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, version) == 0u, "DriverThreadApi.version offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, size) == 4u, "DriverThreadApi.size offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, start) == 8u, "DriverThreadApi.start offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, stop) == 16u, "DriverThreadApi.stop offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, join) == 24u, "DriverThreadApi.join offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, release) == 32u, "DriverThreadApi.release offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, status) == 40u, "DriverThreadApi.status offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, current) == 48u, "DriverThreadApi.current offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, sleep_ticks) == 56u, "DriverThreadApi.sleep_ticks offset mismatch");
+_Static_assert(offsetof(R4DriverThreadApi, stats) == 64u, "DriverThreadApi.stats offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

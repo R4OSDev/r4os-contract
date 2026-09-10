@@ -13,7 +13,8 @@ backend; version 23 appends network RX-work publication; version 24 appends
 network capability selection and metadata intake. Versions 25 through 28
 append the optional graphics memory, queue, output and display queries;
 version 29 appends the loaded-container resource query; version 30 appends
-resident CPU heap access; version 31 appends the common monotonic snapshot.
+resident CPU heap access; version 31 appends the common monotonic snapshot;
+version 32 appends dedicated driver tasks.
 StorageBackend version 2
 appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
@@ -442,3 +443,54 @@ No driver lifecycle guard, allocation, scheduling or GPU operation occurs.
 Init, driver work and shutdown can read the snapshot independently of resource
 admission. This adds no delay function, cancellation guarantee or permission
 to spin until a degraded clock advances with interrupts disabled.
+
+Dedicated driver Task ownership (0.79.10)
+-----------------------------------------
+DriverApi32 adds thread_query at 616, total 624 bytes. Earlier offsets and
+the accepted minimum version remain unchanged. The optional version-1 query
+returns DriverThreadApi72. New request/status/stats payloads are 32/64/96 bytes;
+canonical fields, result codes and slot signatures are in the generated ABI.
+
+Start binds real R4D owner/start epoch to dynamically allocated resident
+metadata, a guarded 64-KB kernel stack and the normal full module FPU state.
+There is no fixed thread slot pool. The callback and argument remain owned
+until completion/release; the callback may execute before start returns.
+Default tasks stay on the BSP. Parallel is an explicit request for SMP-safe
+module code, subject to internal scheduler placement and qualified CPUs.
+
+The execution context and initial hard-kill protection exist before Task
+registry publication. A close racing construction keeps failed backing
+private. A returned callback publishes completion while its kernel epilogue
+still owns the Task; release must retire that exact ID/generation and stack
+before freeing the record. Busy or failed free retains the same identity.
+
+Join uses finite logical ticks: zero polls, UINT64_MAX is rejected. It retains
+the target across wait and returns the callback result only after completion.
+Stopping a dedicated caller cancels only that caller's service-owned join;
+it never cancels the target. Self join/release returns self_join. sleep_ticks
+is dedicated-task-only: zero yields, finite ticks wait, UINT64_MAX waits for
+cooperative stop. These are not minimum nanosecond delays. Stop cannot abort
+arbitrary module code, kernel I/O, lock ownership or physical hardware work.
+
+New queries/starts close with parent shutdown; cached status/stop/join/release
+remain usable by the real owner. IRQ and storage callbacks are excluded.
+Allocate/join/release/sleep require a current task with interrupts enabled,
+no runtime/preemption critical section and no tracked held lock. Task unwind
+tokens are lifetime guards, not locks, and may span waits. The thread service
+never acquires the global R4D lifecycle guard; a waiting init/shutdown caller
+may retain its existing guard while dedicated callbacks progress independently.
+
+All module callbacks and pending creation must quiesce before backend/IRQ/work
+destruction. After shared work quiesces, generic thread cleanup retires exact
+Task generations before DMA and CPU-heap cleanup. One 1000-logical-tick budget
+bounds retries of returned Task retirement; actual backing-free failure stops
+cleanup immediately. A retained callback, wait lease, Task or record vetoes
+unload and preserves the closed owner/module. Normal kernel exit invariants
+still reject callbacks that return with synchronization or unwind state leaked.
+
+Only CPU heap/thread/log ownership has this new execution path; legacy PCI,
+DMA, graphics/backend and resource-file APIs require separate audits before
+dedicated callers may use them. Storage identity tracking uses a short runtime
+section to preserve exclusion. The existing cached monotonic read is usable
+without acquiring a driver lifecycle guard. No RM semaphore or IRQ contract
+is implied by introducing a generic scheduler service.
