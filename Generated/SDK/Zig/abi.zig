@@ -1661,6 +1661,7 @@ pub const driver_semaphore_context_sleepable = generated.driver_semaphore_contex
 pub const driver_thread_api_min_bytes = generated.driver_thread_api_min_bytes;
 pub const driver_thread_flag_abortable = generated.driver_thread_flag_abortable;
 pub const driver_thread_flag_aborted = generated.driver_thread_flag_aborted;
+pub const driver_thread_flag_sleeping = generated.driver_thread_flag_sleeping;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;

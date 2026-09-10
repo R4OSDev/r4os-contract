@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 210 von 210 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1661; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1662; Limits: 109
 
 ## App-Profile
 
@@ -227,7 +227,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DriverThreadRequest` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverThreadStatus` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `DriverThreadStats` | extensible | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
-| `DriverThreadApi` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `DriverThreadApi` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `DriverSemaphoreStatus` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `DriverSemaphoreStats` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `DriverSemaphoreApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
@@ -6015,7 +6015,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 80 / 8
+- Version/Größe/Alignment: 1 / 88 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6030,6 +6030,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `sleep_ticks` | 56 | 8 | 8 | `u64` | - |
 | `stats` | 64 | 8 | 8 | `u64` | - |
 | `abort_current` | 72 | 8 | 8 | `u64` | - |
+| `current_request` | 80 | 8 | 8 | `u64` | - |
 
 ### `DriverSemaphoreStatus`
 
@@ -8491,6 +8492,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `driver_thread_api_min_bytes` | `72` | `u32` | value | bytes | `driver_thread` | fixed_contract |
 | `driver_thread_flag_abortable` | `2` | `u32` | value | number | `driver_thread` | fixed_contract |
 | `driver_thread_flag_aborted` | `4` | `u32` | value | number | `driver_thread` | fixed_contract |
+| `driver_thread_flag_sleeping` | `8` | `u32` | value | number | `driver_thread` | fixed_contract |
 
 ## Limits
 

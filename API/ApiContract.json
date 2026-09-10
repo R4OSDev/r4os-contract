@@ -82400,7 +82400,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Accepted creation flags, plus driver_thread_flag_aborted after a successful synchronous self-abort.",
+          "description": "Accepted creation flags, plus driver_thread_flag_aborted after a successful synchronous self-abort. driver_thread_flag_sleeping additionally identifies an actual scheduler-blocked service sleep at snapshot time.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -82670,7 +82670,7 @@
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 1,
-      "size": 80,
+      "size": 88,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82696,12 +82696,12 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Caller capacity. The original 72-byte prefix remains accepted; returned size identifies complete available slots, at most 80 bytes.",
+          "description": "Caller capacity. Original 72-byte and abort-capable 80-byte prefixes remain accepted; returned size identifies complete available slots, at most 88 bytes.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "80"
+          "default_value": "88"
         },
         {
           "name": "start",
@@ -82823,6 +82823,20 @@
             "name": "u64"
           },
           "description": "int32_t abort_current(int32_t result). With a negative result, the current explicitly abortable dedicated Task returns to its kernel callback boundary and this call does not return. Refusals return a driver_thread error. Never aborts another Task, an IRQ, a tracked kernel owner or extra unwind lifetime. Bypasses module stack defers; retained resources and device recovery remain the driver owner responsibility.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "current_request",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t current_request(DriverThreadRequest*). Coherent original handler, caller-owned context and creation flags of the actual current dedicated R4D Task, never a selected foreign Task. Invalid output prefix is rejected unchanged; valid output reset before identity check. No allocation or wait. Context lifetime remains with the caller through Task retirement. IRQ/storage and non-dedicated execution have no such binding.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -102318,6 +102332,16 @@
       "scope": "driver_thread",
       "stability": "fixed_contract",
       "description": "Returned status flag only: callback ended through its explicit abort boundary. Rejected as a start flag."
+    },
+    {
+      "name": "driver_thread_flag_sleeping",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "driver_thread",
+      "stability": "fixed_contract",
+      "description": "Status-only snapshot flag: actual backing Task is blocked in this service sleep queue. Never an accepted creation flag; clears when the Task becomes runnable."
     }
   ],
   "limits": [
