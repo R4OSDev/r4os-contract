@@ -155,7 +155,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 25;
+pub const driver_api_version: u32 = 26;
 pub const driver_magic: u32 = 826888260;
 pub const driver_work_flag_from_irq: u32 = 1;
 pub const driver_work_flag_none: u32 = 0;
@@ -1520,6 +1520,49 @@ pub const gfx_buffer_cache_write_back: u32 = 1;
 pub const gfx_buffer_cache_write_combining: u32 = 2;
 pub const gfx_buffer_cache_uncached: u32 = 3;
 pub const gfx_buffer_reference_immutable: u32 = 1;
+pub const gfx_queue_ok: i32 = 1;
+pub const gfx_queue_error_invalid: i32 = -1;
+pub const gfx_queue_error_unavailable: i32 = -2;
+pub const gfx_queue_error_stale: i32 = -3;
+pub const gfx_queue_error_busy: i32 = -4;
+pub const gfx_queue_error_overflow: i32 = -5;
+pub const gfx_queue_error_unsupported: i32 = -6;
+pub const gfx_queue_error_oom: i32 = -7;
+pub const gfx_queue_error_budget: i32 = -8;
+pub const gfx_queue_error_capacity: i32 = -9;
+pub const gfx_queue_error_closed: i32 = -10;
+pub const gfx_queue_error_wait_timeout: i32 = -11;
+pub const gfx_queue_error_wait_cancelled: i32 = -12;
+pub const gfx_queue_error_already_completed: i32 = -13;
+pub const gfx_queue_error_device_lost: i32 = -14;
+pub const gfx_queue_policy_fifo: u32 = 0;
+pub const gfx_queue_policy_latest_frame: u32 = 1;
+pub const gfx_queue_milestone_cpu_stores: u32 = 0;
+pub const gfx_queue_milestone_device_execution: u32 = 1;
+pub const gfx_queue_milestone_scanout: u32 = 2;
+pub const gfx_queue_operation_copy: u32 = 0;
+pub const gfx_queue_operation_barrier: u32 = 1;
+pub const gfx_queue_phase_queued: u32 = 0;
+pub const gfx_queue_phase_running: u32 = 1;
+pub const gfx_queue_phase_terminal: u32 = 2;
+pub const gfx_queue_result_pending: u32 = 0;
+pub const gfx_queue_result_complete: u32 = 1;
+pub const gfx_queue_result_cancelled: u32 = 2;
+pub const gfx_queue_result_dropped: u32 = 3;
+pub const gfx_queue_result_device_lost: u32 = 4;
+pub const gfx_queue_result_timeout: u32 = 5;
+pub const gfx_queue_result_failed: u32 = 6;
+pub const gfx_queue_result_dependency_failed: u32 = 7;
+pub const gfx_queue_flag_device_active: u32 = 1;
+pub const gfx_queue_flag_resources_held: u32 = 2;
+pub const gfx_queue_max_dependencies: u32 = 8;
+pub const gfx_queue_capacity: u32 = 32;
+pub const gfx_queue_fence_capacity: u32 = 128;
+pub const display_present_cap_cpu_store_completion: u32 = 32;
+pub const display_present_completion_cpu_stores: u32 = 2;
+pub const gfx_queue_wait_completion: u32 = 0;
+pub const gfx_queue_wait_resources_released: u32 = 1;
+pub const gfx_queue_backend_capacity: u32 = 17;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -5997,6 +6040,101 @@ pub const GfxDriverMemoryApi = extern struct {
     buffer_stats: u64 = 0,
 };
 
+pub const GfxFence = extern struct {
+    slot: u32 = 0,
+    adapter_id: u32 = 0,
+    timeline: u64 = 0,
+    point: u64 = 0,
+    device_generation: u64 = 0,
+    reset_generation: u64 = 0,
+};
+
+pub const GfxQueueConfig = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    adapter_id: u32 = 0,
+    policy: u32 = 0,
+    capacity: u32 = 2,
+    milestone: u32 = 0,
+    device_generation: u64 = 1,
+    reset_generation: u64 = 1,
+};
+
+pub const GfxQueueHandle = extern struct {
+    version: u32 = 1,
+    size: u32 = 16,
+    timeline: u64 = 0,
+};
+
+pub const GfxSubmission = extern struct {
+    version: u32 = 1,
+    size: u32 = 408,
+    operation: u32 = 0,
+    dependency_count: u32 = 0,
+    deadline_ns: u64 = 0,
+    frame_key: u64 = 0,
+    source: GfxBufferHandle = .{},
+    target: GfxBufferHandle = .{},
+    source_offset: u64 = 0,
+    target_offset: u64 = 0,
+    byte_length: u64 = 0,
+    dependencies: [8]GfxFence = .{GfxFence{}} ** 8,
+};
+
+pub const GfxFenceStatus = extern struct {
+    version: u32 = 1,
+    size: u32 = 80,
+    fence: GfxFence = .{},
+    phase: u32 = 0,
+    result: u32 = 0,
+    milestone: u32 = 0,
+    flags: u32 = 0,
+    deadline_ns: u64 = 0,
+    completed_ns: u64 = 0,
+};
+
+pub const GfxBackendBinding = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    adapter_id: u32 = 0,
+    milestone: u32 = 0,
+    device_generation: u64 = 0,
+    reset_generation: u64 = 0,
+};
+
+pub const GfxBackendRegistration = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    adapter_id: u32 = 0,
+    milestone: u32 = 0,
+    notify_callback: u64 = 0,
+    context: u64 = 0,
+};
+
+pub const GfxDriverJob = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    fence: GfxFence = .{},
+    operation: u32 = 0,
+    reserved0: u32 = 0,
+    source_buffer: GfxBufferHandle = .{},
+    target_buffer: GfxBufferHandle = .{},
+    byte_length: u64 = 0,
+    source_offset: u64 = 0,
+    target_offset: u64 = 0,
+};
+
+pub const GfxDriverQueueApi = extern struct {
+    version: u32 = 1,
+    size: u32 = 56,
+    register_backend: u64 = 0,
+    unregister_backend: u64 = 0,
+    take: u64 = 0,
+    complete: u64 = 0,
+    reset: u64 = 0,
+    segment: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -6477,12 +6615,20 @@ pub const R4DrawFns = struct {
     pub const gfx_buffer_unmap = *const fn (*const GfxBufferHandle) callconv(.c) i32;
     pub const gfx_buffer_export_raster = *const fn (*const GuiSharedRasterLease, *GfxBufferReference) callconv(.c) i32;
     pub const gfx_buffer_stats = *const fn (*GfxBufferStats) callconv(.c) i32;
+    pub const gfx_queue_open = *const fn (*const GfxQueueConfig, *GfxQueueHandle) callconv(.c) i32;
+    pub const gfx_queue_close = *const fn (*const GfxQueueHandle) callconv(.c) i32;
+    pub const gfx_queue_submit = *const fn (*const GfxQueueHandle, *const GfxSubmission, *GfxFenceStatus) callconv(.c) i32;
+    pub const gfx_fence_query = *const fn (*const GfxFence, *GfxFenceStatus) callconv(.c) i32;
+    pub const gfx_fence_wait = *const fn (*const GfxFence, u64, u32, *GfxFenceStatus) callconv(.c) i32;
+    pub const gfx_fence_cancel = *const fn (*const GfxFence) callconv(.c) i32;
+    pub const gfx_fence_release = *const fn (*const GfxFence) callconv(.c) i32;
+    pub const gfx_queue_backend = *const fn (u32, *GfxBackendBinding) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 10,
-    size: u32 = 472,
+    abi_version: u32 = 11,
+    size: u32 = 536,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -6541,6 +6687,14 @@ pub const R4XStartR4Draw = extern struct {
     gfx_buffer_unmap: usize = 0,
     gfx_buffer_export_raster: usize = 0,
     gfx_buffer_stats: usize = 0,
+    gfx_queue_open: usize = 0,
+    gfx_queue_close: usize = 0,
+    gfx_queue_submit: usize = 0,
+    gfx_fence_query: usize = 0,
+    gfx_fence_wait: usize = 0,
+    gfx_fence_cancel: usize = 0,
+    gfx_fence_release: usize = 0,
+    gfx_queue_backend: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -7041,6 +7195,14 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 54, .offset = 448, .name = "gfx_buffer_unmap", .state = .function, .required = false },
     .{ .number = 55, .offset = 456, .name = "gfx_buffer_export_raster", .state = .function, .required = false },
     .{ .number = 56, .offset = 464, .name = "gfx_buffer_stats", .state = .function, .required = false },
+    .{ .number = 57, .offset = 472, .name = "gfx_queue_open", .state = .function, .required = false },
+    .{ .number = 58, .offset = 480, .name = "gfx_queue_close", .state = .function, .required = false },
+    .{ .number = 59, .offset = 488, .name = "gfx_queue_submit", .state = .function, .required = false },
+    .{ .number = 60, .offset = 496, .name = "gfx_fence_query", .state = .function, .required = false },
+    .{ .number = 61, .offset = 504, .name = "gfx_fence_wait", .state = .function, .required = false },
+    .{ .number = 62, .offset = 512, .name = "gfx_fence_cancel", .state = .function, .required = false },
+    .{ .number = 63, .offset = 520, .name = "gfx_fence_release", .state = .function, .required = false },
+    .{ .number = 64, .offset = 528, .name = "gfx_queue_backend", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -10980,6 +11142,92 @@ comptime {
     if (@offsetOf(GfxDriverMemoryApi, "mmio_unmap") != 88) @compileError("generated ABI offset drift: GfxDriverMemoryApi.mmio_unmap");
     if (@offsetOf(GfxDriverMemoryApi, "collect") != 96) @compileError("generated ABI offset drift: GfxDriverMemoryApi.collect");
     if (@offsetOf(GfxDriverMemoryApi, "buffer_stats") != 104) @compileError("generated ABI offset drift: GfxDriverMemoryApi.buffer_stats");
+    if (@sizeOf(GfxFence) != 40) @compileError("generated ABI size drift: GfxFence");
+    if (@alignOf(GfxFence) != 8) @compileError("generated ABI alignment drift: GfxFence");
+    if (@offsetOf(GfxFence, "slot") != 0) @compileError("generated ABI offset drift: GfxFence.slot");
+    if (@offsetOf(GfxFence, "adapter_id") != 4) @compileError("generated ABI offset drift: GfxFence.adapter_id");
+    if (@offsetOf(GfxFence, "timeline") != 8) @compileError("generated ABI offset drift: GfxFence.timeline");
+    if (@offsetOf(GfxFence, "point") != 16) @compileError("generated ABI offset drift: GfxFence.point");
+    if (@offsetOf(GfxFence, "device_generation") != 24) @compileError("generated ABI offset drift: GfxFence.device_generation");
+    if (@offsetOf(GfxFence, "reset_generation") != 32) @compileError("generated ABI offset drift: GfxFence.reset_generation");
+    if (@sizeOf(GfxQueueConfig) != 40) @compileError("generated ABI size drift: GfxQueueConfig");
+    if (@alignOf(GfxQueueConfig) != 8) @compileError("generated ABI alignment drift: GfxQueueConfig");
+    if (@offsetOf(GfxQueueConfig, "version") != 0) @compileError("generated ABI offset drift: GfxQueueConfig.version");
+    if (@offsetOf(GfxQueueConfig, "size") != 4) @compileError("generated ABI offset drift: GfxQueueConfig.size");
+    if (@offsetOf(GfxQueueConfig, "adapter_id") != 8) @compileError("generated ABI offset drift: GfxQueueConfig.adapter_id");
+    if (@offsetOf(GfxQueueConfig, "policy") != 12) @compileError("generated ABI offset drift: GfxQueueConfig.policy");
+    if (@offsetOf(GfxQueueConfig, "capacity") != 16) @compileError("generated ABI offset drift: GfxQueueConfig.capacity");
+    if (@offsetOf(GfxQueueConfig, "milestone") != 20) @compileError("generated ABI offset drift: GfxQueueConfig.milestone");
+    if (@offsetOf(GfxQueueConfig, "device_generation") != 24) @compileError("generated ABI offset drift: GfxQueueConfig.device_generation");
+    if (@offsetOf(GfxQueueConfig, "reset_generation") != 32) @compileError("generated ABI offset drift: GfxQueueConfig.reset_generation");
+    if (@sizeOf(GfxQueueHandle) != 16) @compileError("generated ABI size drift: GfxQueueHandle");
+    if (@alignOf(GfxQueueHandle) != 8) @compileError("generated ABI alignment drift: GfxQueueHandle");
+    if (@offsetOf(GfxQueueHandle, "version") != 0) @compileError("generated ABI offset drift: GfxQueueHandle.version");
+    if (@offsetOf(GfxQueueHandle, "size") != 4) @compileError("generated ABI offset drift: GfxQueueHandle.size");
+    if (@offsetOf(GfxQueueHandle, "timeline") != 8) @compileError("generated ABI offset drift: GfxQueueHandle.timeline");
+    if (@sizeOf(GfxSubmission) != 408) @compileError("generated ABI size drift: GfxSubmission");
+    if (@alignOf(GfxSubmission) != 8) @compileError("generated ABI alignment drift: GfxSubmission");
+    if (@offsetOf(GfxSubmission, "version") != 0) @compileError("generated ABI offset drift: GfxSubmission.version");
+    if (@offsetOf(GfxSubmission, "size") != 4) @compileError("generated ABI offset drift: GfxSubmission.size");
+    if (@offsetOf(GfxSubmission, "operation") != 8) @compileError("generated ABI offset drift: GfxSubmission.operation");
+    if (@offsetOf(GfxSubmission, "dependency_count") != 12) @compileError("generated ABI offset drift: GfxSubmission.dependency_count");
+    if (@offsetOf(GfxSubmission, "deadline_ns") != 16) @compileError("generated ABI offset drift: GfxSubmission.deadline_ns");
+    if (@offsetOf(GfxSubmission, "frame_key") != 24) @compileError("generated ABI offset drift: GfxSubmission.frame_key");
+    if (@offsetOf(GfxSubmission, "source") != 32) @compileError("generated ABI offset drift: GfxSubmission.source");
+    if (@offsetOf(GfxSubmission, "target") != 48) @compileError("generated ABI offset drift: GfxSubmission.target");
+    if (@offsetOf(GfxSubmission, "source_offset") != 64) @compileError("generated ABI offset drift: GfxSubmission.source_offset");
+    if (@offsetOf(GfxSubmission, "target_offset") != 72) @compileError("generated ABI offset drift: GfxSubmission.target_offset");
+    if (@offsetOf(GfxSubmission, "byte_length") != 80) @compileError("generated ABI offset drift: GfxSubmission.byte_length");
+    if (@offsetOf(GfxSubmission, "dependencies") != 88) @compileError("generated ABI offset drift: GfxSubmission.dependencies");
+    if (@sizeOf(GfxFenceStatus) != 80) @compileError("generated ABI size drift: GfxFenceStatus");
+    if (@alignOf(GfxFenceStatus) != 8) @compileError("generated ABI alignment drift: GfxFenceStatus");
+    if (@offsetOf(GfxFenceStatus, "version") != 0) @compileError("generated ABI offset drift: GfxFenceStatus.version");
+    if (@offsetOf(GfxFenceStatus, "size") != 4) @compileError("generated ABI offset drift: GfxFenceStatus.size");
+    if (@offsetOf(GfxFenceStatus, "fence") != 8) @compileError("generated ABI offset drift: GfxFenceStatus.fence");
+    if (@offsetOf(GfxFenceStatus, "phase") != 48) @compileError("generated ABI offset drift: GfxFenceStatus.phase");
+    if (@offsetOf(GfxFenceStatus, "result") != 52) @compileError("generated ABI offset drift: GfxFenceStatus.result");
+    if (@offsetOf(GfxFenceStatus, "milestone") != 56) @compileError("generated ABI offset drift: GfxFenceStatus.milestone");
+    if (@offsetOf(GfxFenceStatus, "flags") != 60) @compileError("generated ABI offset drift: GfxFenceStatus.flags");
+    if (@offsetOf(GfxFenceStatus, "deadline_ns") != 64) @compileError("generated ABI offset drift: GfxFenceStatus.deadline_ns");
+    if (@offsetOf(GfxFenceStatus, "completed_ns") != 72) @compileError("generated ABI offset drift: GfxFenceStatus.completed_ns");
+    if (@sizeOf(GfxBackendBinding) != 32) @compileError("generated ABI size drift: GfxBackendBinding");
+    if (@alignOf(GfxBackendBinding) != 8) @compileError("generated ABI alignment drift: GfxBackendBinding");
+    if (@offsetOf(GfxBackendBinding, "version") != 0) @compileError("generated ABI offset drift: GfxBackendBinding.version");
+    if (@offsetOf(GfxBackendBinding, "size") != 4) @compileError("generated ABI offset drift: GfxBackendBinding.size");
+    if (@offsetOf(GfxBackendBinding, "adapter_id") != 8) @compileError("generated ABI offset drift: GfxBackendBinding.adapter_id");
+    if (@offsetOf(GfxBackendBinding, "milestone") != 12) @compileError("generated ABI offset drift: GfxBackendBinding.milestone");
+    if (@offsetOf(GfxBackendBinding, "device_generation") != 16) @compileError("generated ABI offset drift: GfxBackendBinding.device_generation");
+    if (@offsetOf(GfxBackendBinding, "reset_generation") != 24) @compileError("generated ABI offset drift: GfxBackendBinding.reset_generation");
+    if (@sizeOf(GfxBackendRegistration) != 32) @compileError("generated ABI size drift: GfxBackendRegistration");
+    if (@alignOf(GfxBackendRegistration) != 8) @compileError("generated ABI alignment drift: GfxBackendRegistration");
+    if (@offsetOf(GfxBackendRegistration, "version") != 0) @compileError("generated ABI offset drift: GfxBackendRegistration.version");
+    if (@offsetOf(GfxBackendRegistration, "size") != 4) @compileError("generated ABI offset drift: GfxBackendRegistration.size");
+    if (@offsetOf(GfxBackendRegistration, "adapter_id") != 8) @compileError("generated ABI offset drift: GfxBackendRegistration.adapter_id");
+    if (@offsetOf(GfxBackendRegistration, "milestone") != 12) @compileError("generated ABI offset drift: GfxBackendRegistration.milestone");
+    if (@offsetOf(GfxBackendRegistration, "notify_callback") != 16) @compileError("generated ABI offset drift: GfxBackendRegistration.notify_callback");
+    if (@offsetOf(GfxBackendRegistration, "context") != 24) @compileError("generated ABI offset drift: GfxBackendRegistration.context");
+    if (@sizeOf(GfxDriverJob) != 112) @compileError("generated ABI size drift: GfxDriverJob");
+    if (@alignOf(GfxDriverJob) != 8) @compileError("generated ABI alignment drift: GfxDriverJob");
+    if (@offsetOf(GfxDriverJob, "version") != 0) @compileError("generated ABI offset drift: GfxDriverJob.version");
+    if (@offsetOf(GfxDriverJob, "size") != 4) @compileError("generated ABI offset drift: GfxDriverJob.size");
+    if (@offsetOf(GfxDriverJob, "fence") != 8) @compileError("generated ABI offset drift: GfxDriverJob.fence");
+    if (@offsetOf(GfxDriverJob, "operation") != 48) @compileError("generated ABI offset drift: GfxDriverJob.operation");
+    if (@offsetOf(GfxDriverJob, "reserved0") != 52) @compileError("generated ABI offset drift: GfxDriverJob.reserved0");
+    if (@offsetOf(GfxDriverJob, "source_buffer") != 56) @compileError("generated ABI offset drift: GfxDriverJob.source_buffer");
+    if (@offsetOf(GfxDriverJob, "target_buffer") != 72) @compileError("generated ABI offset drift: GfxDriverJob.target_buffer");
+    if (@offsetOf(GfxDriverJob, "byte_length") != 88) @compileError("generated ABI offset drift: GfxDriverJob.byte_length");
+    if (@offsetOf(GfxDriverJob, "source_offset") != 96) @compileError("generated ABI offset drift: GfxDriverJob.source_offset");
+    if (@offsetOf(GfxDriverJob, "target_offset") != 104) @compileError("generated ABI offset drift: GfxDriverJob.target_offset");
+    if (@sizeOf(GfxDriverQueueApi) != 56) @compileError("generated ABI size drift: GfxDriverQueueApi");
+    if (@alignOf(GfxDriverQueueApi) != 8) @compileError("generated ABI alignment drift: GfxDriverQueueApi");
+    if (@offsetOf(GfxDriverQueueApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverQueueApi.version");
+    if (@offsetOf(GfxDriverQueueApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverQueueApi.size");
+    if (@offsetOf(GfxDriverQueueApi, "register_backend") != 8) @compileError("generated ABI offset drift: GfxDriverQueueApi.register_backend");
+    if (@offsetOf(GfxDriverQueueApi, "unregister_backend") != 16) @compileError("generated ABI offset drift: GfxDriverQueueApi.unregister_backend");
+    if (@offsetOf(GfxDriverQueueApi, "take") != 24) @compileError("generated ABI offset drift: GfxDriverQueueApi.take");
+    if (@offsetOf(GfxDriverQueueApi, "complete") != 32) @compileError("generated ABI offset drift: GfxDriverQueueApi.complete");
+    if (@offsetOf(GfxDriverQueueApi, "reset") != 40) @compileError("generated ABI offset drift: GfxDriverQueueApi.reset");
+    if (@offsetOf(GfxDriverQueueApi, "segment") != 48) @compileError("generated ABI offset drift: GfxDriverQueueApi.segment");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -11185,7 +11433,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
-    if (@sizeOf(R4XStartR4Draw) != 472) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 536) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -11243,6 +11491,14 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_buffer_unmap") != 448) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_buffer_unmap");
     if (@offsetOf(R4XStartR4Draw, "gfx_buffer_export_raster") != 456) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_buffer_export_raster");
     if (@offsetOf(R4XStartR4Draw, "gfx_buffer_stats") != 464) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_buffer_stats");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_open") != 472) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_open");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_close") != 480) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_close");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit") != 488) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit");
+    if (@offsetOf(R4XStartR4Draw, "gfx_fence_query") != 496) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_fence_query");
+    if (@offsetOf(R4XStartR4Draw, "gfx_fence_wait") != 504) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_fence_wait");
+    if (@offsetOf(R4XStartR4Draw, "gfx_fence_cancel") != 512) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_fence_cancel");
+    if (@offsetOf(R4XStartR4Draw, "gfx_fence_release") != 520) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_fence_release");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_backend") != 528) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_backend");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -11834,13 +12090,21 @@ pub const R4DrawProvider = struct {
     gfx_buffer_unmap: ?R4DrawFns.gfx_buffer_unmap = null,
     gfx_buffer_export_raster: ?R4DrawFns.gfx_buffer_export_raster = null,
     gfx_buffer_stats: ?R4DrawFns.gfx_buffer_stats = null,
+    gfx_queue_open: ?R4DrawFns.gfx_queue_open = null,
+    gfx_queue_close: ?R4DrawFns.gfx_queue_close = null,
+    gfx_queue_submit: ?R4DrawFns.gfx_queue_submit = null,
+    gfx_fence_query: ?R4DrawFns.gfx_fence_query = null,
+    gfx_fence_wait: ?R4DrawFns.gfx_fence_wait = null,
+    gfx_fence_cancel: ?R4DrawFns.gfx_fence_cancel = null,
+    gfx_fence_release: ?R4DrawFns.gfx_fence_release = null,
+    gfx_queue_backend: ?R4DrawFns.gfx_queue_backend = null,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 10,
-        .size = 472,
+        .abi_version = 11,
+        .size = 536,
         .flags = 0,
         .screen_width = if (provider.screen_width) |callback| @intFromPtr(callback) else 0,
         .screen_height = if (provider.screen_height) |callback| @intFromPtr(callback) else 0,
@@ -11899,6 +12163,14 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gfx_buffer_unmap = if (provider.gfx_buffer_unmap) |callback| @intFromPtr(callback) else 0,
         .gfx_buffer_export_raster = if (provider.gfx_buffer_export_raster) |callback| @intFromPtr(callback) else 0,
         .gfx_buffer_stats = if (provider.gfx_buffer_stats) |callback| @intFromPtr(callback) else 0,
+        .gfx_queue_open = if (provider.gfx_queue_open) |callback| @intFromPtr(callback) else 0,
+        .gfx_queue_close = if (provider.gfx_queue_close) |callback| @intFromPtr(callback) else 0,
+        .gfx_queue_submit = if (provider.gfx_queue_submit) |callback| @intFromPtr(callback) else 0,
+        .gfx_fence_query = if (provider.gfx_fence_query) |callback| @intFromPtr(callback) else 0,
+        .gfx_fence_wait = if (provider.gfx_fence_wait) |callback| @intFromPtr(callback) else 0,
+        .gfx_fence_cancel = if (provider.gfx_fence_cancel) |callback| @intFromPtr(callback) else 0,
+        .gfx_fence_release = if (provider.gfx_fence_release) |callback| @intFromPtr(callback) else 0,
+        .gfx_queue_backend = if (provider.gfx_queue_backend) |callback| @intFromPtr(callback) else 0,
     };
 }
 

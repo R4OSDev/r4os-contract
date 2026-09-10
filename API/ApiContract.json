@@ -15281,10 +15281,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 10,
+      "abi_version": 11,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 472,
+      "size": 536,
       "slots": [
         {
           "number": 0,
@@ -19376,6 +19376,584 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 57,
+          "offset": 472,
+          "name": "gfx_queue_open",
+          "state": "function",
+          "required": false,
+          "description": "Opens one bounded asynchronous queue for the current program. Unknown adapters or milestones return unsupported; no silent fallback.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "config",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxQueueConfig"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxQueueHandle"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 58,
+          "offset": 480,
+          "name": "gfx_queue_close",
+          "state": "function",
+          "required": false,
+          "description": "Closes the caller queue, cancels every pending fence, and drops caller fence references. Physical device uses survive until acknowledged quiescent.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "queue",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxQueueHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "consumes_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "invalidates_on_success",
+            "outputs": "none",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 59,
+          "offset": 488,
+          "name": "gfx_queue_submit",
+          "state": "function",
+          "required": false,
+          "description": "Returns after acceptance without executing commands or copying pixels. All descriptors and up to eight dependencies are copied; source/target leases retain backing and prevent premature CPU reuse. Failure leaves output and existing latest-frame work untouched.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "queue",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxQueueHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "submission",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxSubmission"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFenceStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "operation_deadline",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 60,
+          "offset": 496,
+          "name": "gfx_fence_query",
+          "state": "function",
+          "required": false,
+          "description": "Snapshots one exact fence without waiting. A terminal cancellation may still report device-active; resources are reusable only after physical quiescence.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "fence",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFence"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFenceStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 61,
+          "offset": 504,
+          "name": "gfx_fence_wait",
+          "state": "function",
+          "required": false,
+          "description": "Waits without spinning or holding a metadata owner. timeout_ticks is a scheduler-tick duration, with UINT64_MAX meaning indefinite; the submission deadline remains independently finite in monotonic nanoseconds. Wait timeout leaves output unchanged and does not cancel the job. wait_for=0 waits for logical completion; wait_for=1 waits until the operation is physically quiescent and every queue BO lease has been released. Both events are sticky and generation-retained.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "fence",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFence"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "wait_for",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFenceStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "blocking_wait",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "shutdown_wakeup",
+            "timeout_outcome": "completion_wins",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 62,
+          "offset": 512,
+          "name": "gfx_fence_cancel",
+          "state": "function",
+          "required": false,
+          "description": "Requests the sole logical cancelled completion for a caller-owned fence. Already terminal returns already-completed. Never asserts native DMA quiescence.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "fence",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFence"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 63,
+          "offset": 520,
+          "name": "gfx_fence_release",
+          "state": "function",
+          "required": false,
+          "description": "Drops the caller fence reference. Active backing, dependency edges, wake publication and task-generation waiter records prohibit premature slot reuse.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "fence",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFence"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "consumes_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "invalidates_on_success",
+            "outputs": "none",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 64,
+          "offset": 528,
+          "name": "gfx_queue_backend",
+          "state": "function",
+          "required": false,
+          "description": "Queries one fixed backend inventory slot, from zero through gfx_queue_backend_capacity minus one. Zero is software; other slots may be vacant. Returns 1 with an exact binding, 0 for vacant, negative for error; output changes only on 1. Revalidate by opening with the returned generations. No hidden fallback or successful partial enumeration.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxBackendBinding"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
@@ -77257,6 +77835,1089 @@
       ],
       "values": [],
       "description": "DriverApi v25 optional owner-bound memory extension. Every function requires the current R4D context. Table addresses use the accompanying C/Zig function signatures."
+    },
+    {
+      "name": "GfxFence",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "slot",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "One-based retained fence slot; zero is invalid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero denotes the CPU transport adapter.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timeline",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonwrapping queue incarnation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "point",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonwrapping point within that queue.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact device incarnation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reset_generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact engine reset incarnation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact fence identity. A timeline point is scoped to its adapter, device incarnation and reset generation; no global numeric fence comparison is valid."
+    },
+    {
+      "name": "GfxQueueConfig",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero is the software transport adapter.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "policy",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "FIFO zero or latest-frame one.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum admitted nonquiescent jobs, between 1 and the advertised fence capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "2"
+        },
+        {
+          "name": "milestone",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPU stores zero, device execution one, or visible scanout two; unsupported milestones are rejected.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact device incarnation; one for software.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "reset_generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact reset incarnation; one for software.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "1"
+        }
+      ],
+      "values": [],
+      "description": "Bounded serial queue. FIFO preserves accepted order; latest-frame replaces only queued jobs with the same nonzero frame key. Running jobs retain capacity until physically quiescent."
+    },
+    {
+      "name": "GfxQueueHandle",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 16,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "timeline",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonzero queue incarnation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One caller-owned queue. Close cancels work and drops the caller fence references; active resources and foreign waiters remain retained."
+    },
+    {
+      "name": "GfxSubmission",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 408,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "408"
+        },
+        {
+          "name": "operation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Copy zero or dependency barrier one.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dependency_count",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of exact existing fences, at most eight; unused entries must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Required absolute finite monotonic nanosecond deadline, strictly after now.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frame_key",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonzero replacement key for latest-frame policy; zero is allowed for FIFO.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Caller source reference, zero for a barrier.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "target",
+          "offset": 48,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Caller target reference, zero for a barrier. Same-backing copies are unsupported.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "source_offset",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Checked source byte offset.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target_offset",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Checked target byte offset.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "byte_length",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Checked nonzero copy byte length; zero for a barrier.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dependencies",
+          "offset": 88,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "named",
+              "name": "GfxFence"
+            }
+          },
+          "description": "Immutable edges to already accepted fences; future, self and duplicate edges are rejected. Conflicting cross-queue BO uses require an ordering dependency.",
+          "size": 320,
+          "alignment": 8,
+          "source_type": "[8]GfxFence",
+          "default_kind": "empty_array"
+        }
+      ],
+      "values": [],
+      "description": "Copied bounded submission; no borrowed caller pointer survives Submit. Copy transports raw byte ranges and barrier orders dependencies. Later rendering/scanout payloads require negotiated backend support."
+    },
+    {
+      "name": "GfxFenceStatus",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "fence",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxFence"
+          },
+          "description": "Exact retained identity.",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GfxFence",
+          "default_kind": "empty"
+        },
+        {
+          "name": "phase",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Queued zero, running one or terminal two.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "result",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Pending, complete, cancelled, dropped, device-lost, timeout, failed or dependency-failed.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "milestone",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Meaning of a successful completion: CPU stores, device execution or visible scanout.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bit zero: device still active. Bit one: resource leases still held.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Accepted absolute monotonic deadline.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed_ns",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Time of the one logical terminal transition; a late physical acknowledgement never rewrites it.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Logical terminal result and physical ownership are distinct. Cancel, timeout and device-lost wake waiters but do not prove DMA stopped or pixels visible."
+    },
+    {
+      "name": "GfxBackendBinding",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Driver adapter inventory identity, nonzero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "milestone",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Device execution one or proven visible scanout two.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Assigned by the queue owner, never caller chosen.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reset_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Starts at one and advances only after proven quiescence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact registered transport binding; slot zero is software. Kernel assigns the nonwrapping native device generation; successful quiescent reset advances reset_generation. Old fences never name the new incarnation."
+    },
+    {
+      "name": "GfxBackendRegistration",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Nonzero driver adapter inventory identity; at most one registered transport per adapter.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "milestone",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Device execution one or visible scanout two. Report only the actual hardware event.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "notify_callback",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "R4D work callback address: int32_t notify(uint64_t context). Code remains pinned until unregister succeeds and driver-work has quiesced.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "context",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque driver-owned callback context, retained until successful unregister.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Bounded native queue callback registration. Notifications execute through driver_work in task context and consume jobs through take. The callback must return promptly; no command executes in the submitter or queue metadata lock."
+    },
+    {
+      "name": "GfxDriverJob",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "fence",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxFence"
+          },
+          "description": "Exact completion identity including adapter and generations.",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GfxFence",
+          "default_kind": "empty"
+        },
+        {
+          "name": "operation",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Copy zero or dependency barrier one.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_buffer",
+          "offset": 56,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Diagnostic source object identity, not an importable reference.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "target_buffer",
+          "offset": 72,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Diagnostic target object identity, not an importable reference.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "byte_length",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Copied extent; zero for a barrier.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_offset",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Offset within source object; segment enumeration is already relative to this extent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target_offset",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Offset within target object; segment enumeration is already relative to this extent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration."
+    },
+    {
+      "name": "GfxDriverQueueApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "56"
+        },
+        {
+          "name": "register_backend",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Typed callback address for register_backend; accompanying SDK C/Zig wrappers define the signature.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "unregister_backend",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Typed callback address for unregister_backend; accompanying SDK C/Zig wrappers define the signature.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "take",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Typed callback address for take; accompanying SDK C/Zig wrappers define the signature.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "complete",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Typed callback address for complete; accompanying SDK C/Zig wrappers define the signature.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reset",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Typed callback address for reset; accompanying SDK C/Zig wrappers define the signature.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "segment",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Typed callback address for segment; accompanying SDK C/Zig wrappers define the signature.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "DriverApi v26 optional native queue table. Register requires the bound init context. Take/segment/reset/unregister require authenticated task context; complete also accepts the actual IRQ owner and only changes bounded metadata plus one worker wake."
     }
   ],
   "operations": [],
@@ -81211,7 +82872,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "25",
+      "value": "26",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -94858,6 +96519,436 @@
       "scope": "gfx_buffer",
       "stability": "fixed_contract",
       "description": "Graphics buffer contract: reference_immutable."
+    },
+    {
+      "name": "gfx_queue_ok",
+      "value": "1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: ok."
+    },
+    {
+      "name": "gfx_queue_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_invalid."
+    },
+    {
+      "name": "gfx_queue_error_unavailable",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_unavailable."
+    },
+    {
+      "name": "gfx_queue_error_stale",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_stale."
+    },
+    {
+      "name": "gfx_queue_error_busy",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_busy."
+    },
+    {
+      "name": "gfx_queue_error_overflow",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_overflow."
+    },
+    {
+      "name": "gfx_queue_error_unsupported",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_unsupported."
+    },
+    {
+      "name": "gfx_queue_error_oom",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_oom."
+    },
+    {
+      "name": "gfx_queue_error_budget",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_budget."
+    },
+    {
+      "name": "gfx_queue_error_capacity",
+      "value": "-9",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_capacity."
+    },
+    {
+      "name": "gfx_queue_error_closed",
+      "value": "-10",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_closed."
+    },
+    {
+      "name": "gfx_queue_error_wait_timeout",
+      "value": "-11",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_wait_timeout."
+    },
+    {
+      "name": "gfx_queue_error_wait_cancelled",
+      "value": "-12",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_wait_cancelled."
+    },
+    {
+      "name": "gfx_queue_error_already_completed",
+      "value": "-13",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_already_completed."
+    },
+    {
+      "name": "gfx_queue_error_device_lost",
+      "value": "-14",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: error_device_lost."
+    },
+    {
+      "name": "gfx_queue_policy_fifo",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: policy_fifo."
+    },
+    {
+      "name": "gfx_queue_policy_latest_frame",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: policy_latest_frame."
+    },
+    {
+      "name": "gfx_queue_milestone_cpu_stores",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: milestone_cpu_stores."
+    },
+    {
+      "name": "gfx_queue_milestone_device_execution",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: milestone_device_execution."
+    },
+    {
+      "name": "gfx_queue_milestone_scanout",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: milestone_scanout."
+    },
+    {
+      "name": "gfx_queue_operation_copy",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: operation_copy."
+    },
+    {
+      "name": "gfx_queue_operation_barrier",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: operation_barrier."
+    },
+    {
+      "name": "gfx_queue_phase_queued",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: phase_queued."
+    },
+    {
+      "name": "gfx_queue_phase_running",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: phase_running."
+    },
+    {
+      "name": "gfx_queue_phase_terminal",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: phase_terminal."
+    },
+    {
+      "name": "gfx_queue_result_pending",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_pending."
+    },
+    {
+      "name": "gfx_queue_result_complete",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_complete."
+    },
+    {
+      "name": "gfx_queue_result_cancelled",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_cancelled."
+    },
+    {
+      "name": "gfx_queue_result_dropped",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_dropped."
+    },
+    {
+      "name": "gfx_queue_result_device_lost",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_device_lost."
+    },
+    {
+      "name": "gfx_queue_result_timeout",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_timeout."
+    },
+    {
+      "name": "gfx_queue_result_failed",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_failed."
+    },
+    {
+      "name": "gfx_queue_result_dependency_failed",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: result_dependency_failed."
+    },
+    {
+      "name": "gfx_queue_flag_device_active",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: flag_device_active."
+    },
+    {
+      "name": "gfx_queue_flag_resources_held",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: flag_resources_held."
+    },
+    {
+      "name": "gfx_queue_max_dependencies",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: max_dependencies."
+    },
+    {
+      "name": "gfx_queue_capacity",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: capacity."
+    },
+    {
+      "name": "gfx_queue_fence_capacity",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Graphics queue contract: fence_capacity."
+    },
+    {
+      "name": "display_present_cap_cpu_store_completion",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "display_present",
+      "stability": "fixed_contract",
+      "description": "The legacy fence proves CPU/backend stores completed; it does not prove VBlank, scanout or visible presentation."
+    },
+    {
+      "name": "display_present_completion_cpu_stores",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "display_present_completion",
+      "stability": "fixed_contract",
+      "description": "This completed legacy present fence acknowledges stores, not a hardware presentation timestamp."
+    },
+    {
+      "name": "gfx_queue_wait_completion",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Fence wait event: gfx_queue_wait_completion."
+    },
+    {
+      "name": "gfx_queue_wait_resources_released",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Fence wait event: gfx_queue_wait_resources_released."
+    },
+    {
+      "name": "gfx_queue_backend_capacity",
+      "value": "17",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "count",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Number of fixed backend inventory slots including software slot zero; enumerate every index even after a vacant slot."
     }
   ],
   "limits": [

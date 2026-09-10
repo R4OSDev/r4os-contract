@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v10, 472 Bytes, 57 Funktionsfelder und 57 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v11, 536 Bytes, 65 Funktionsfelder und 65 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -66,4 +66,12 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 54 | 448 | function | `gfx_buffer_unmap` | `*const fn (*const GfxBufferHandle) callconv(.c) i32` |
 | 55 | 456 | function | `gfx_buffer_export_raster` | `*const fn (*const GuiSharedRasterLease, *GfxBufferReference) callconv(.c) i32` |
 | 56 | 464 | function | `gfx_buffer_stats` | `*const fn (*GfxBufferStats) callconv(.c) i32` |
+| 57 | 472 | function | `gfx_queue_open` | `*const fn (*const GfxQueueConfig, *GfxQueueHandle) callconv(.c) i32` |
+| 58 | 480 | function | `gfx_queue_close` | `*const fn (*const GfxQueueHandle) callconv(.c) i32` |
+| 59 | 488 | function | `gfx_queue_submit` | `*const fn (*const GfxQueueHandle, *const GfxSubmission, *GfxFenceStatus) callconv(.c) i32` |
+| 60 | 496 | function | `gfx_fence_query` | `*const fn (*const GfxFence, *GfxFenceStatus) callconv(.c) i32` |
+| 61 | 504 | function | `gfx_fence_wait` | `*const fn (*const GfxFence, u64, u32, *GfxFenceStatus) callconv(.c) i32` |
+| 62 | 512 | function | `gfx_fence_cancel` | `*const fn (*const GfxFence) callconv(.c) i32` |
+| 63 | 520 | function | `gfx_fence_release` | `*const fn (*const GfxFence) callconv(.c) i32` |
+| 64 | 528 | function | `gfx_queue_backend` | `*const fn (u32, *GfxBackendBinding) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

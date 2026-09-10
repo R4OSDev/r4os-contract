@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 174 von 174 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 183 von 183 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1519; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1562; Limits: 109
 
 ## App-Profile
 
@@ -195,6 +195,15 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxMmioRequest` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GfxMmioWindow` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxDriverMemoryApi` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
+| `GfxSubmission` | extensible | extern_struct | 408/8 | 408/8 | 408/8 | 408/8 |
+| `GfxFenceStatus` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `GfxBackendRegistration` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `GfxDriverJob` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `GfxDriverQueueApi` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 
 ## Typdetails
 
@@ -5375,6 +5384,164 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `collect` | 96 | 8 | 8 | `u64` | - |
 | `buffer_stats` | 104 | 8 | 8 | `u64` | - |
 
+### `GfxFence`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `slot` | 0 | 4 | 4 | `u32` | - |
+| `adapter_id` | 4 | 4 | 4 | `u32` | - |
+| `timeline` | 8 | 8 | 8 | `u64` | - |
+| `point` | 16 | 8 | 8 | `u64` | - |
+| `device_generation` | 24 | 8 | 8 | `u64` | - |
+| `reset_generation` | 32 | 8 | 8 | `u64` | - |
+
+### `GfxQueueConfig`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `adapter_id` | 8 | 4 | 4 | `u32` | - |
+| `policy` | 12 | 4 | 4 | `u32` | - |
+| `capacity` | 16 | 4 | 4 | `u32` | - |
+| `milestone` | 20 | 4 | 4 | `u32` | - |
+| `device_generation` | 24 | 8 | 8 | `u64` | - |
+| `reset_generation` | 32 | 8 | 8 | `u64` | - |
+
+### `GfxQueueHandle`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 16 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `timeline` | 8 | 8 | 8 | `u64` | - |
+
+### `GfxSubmission`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 408 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `operation` | 8 | 4 | 4 | `u32` | - |
+| `dependency_count` | 12 | 4 | 4 | `u32` | - |
+| `deadline_ns` | 16 | 8 | 8 | `u64` | - |
+| `frame_key` | 24 | 8 | 8 | `u64` | - |
+| `source` | 32 | 16 | 8 | `GfxBufferHandle` | - |
+| `target` | 48 | 16 | 8 | `GfxBufferHandle` | - |
+| `source_offset` | 64 | 8 | 8 | `u64` | - |
+| `target_offset` | 72 | 8 | 8 | `u64` | - |
+| `byte_length` | 80 | 8 | 8 | `u64` | - |
+| `dependencies` | 88 | 320 | 8 | `[8]GfxFence` | - |
+
+### `GfxFenceStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `fence` | 8 | 40 | 8 | `GfxFence` | - |
+| `phase` | 48 | 4 | 4 | `u32` | - |
+| `result` | 52 | 4 | 4 | `u32` | - |
+| `milestone` | 56 | 4 | 4 | `u32` | - |
+| `flags` | 60 | 4 | 4 | `u32` | - |
+| `deadline_ns` | 64 | 8 | 8 | `u64` | - |
+| `completed_ns` | 72 | 8 | 8 | `u64` | - |
+
+### `GfxBackendBinding`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `adapter_id` | 8 | 4 | 4 | `u32` | - |
+| `milestone` | 12 | 4 | 4 | `u32` | - |
+| `device_generation` | 16 | 8 | 8 | `u64` | - |
+| `reset_generation` | 24 | 8 | 8 | `u64` | - |
+
+### `GfxBackendRegistration`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `adapter_id` | 8 | 4 | 4 | `u32` | - |
+| `milestone` | 12 | 4 | 4 | `u32` | - |
+| `notify_callback` | 16 | 8 | 8 | `u64` | - |
+| `context` | 24 | 8 | 8 | `u64` | - |
+
+### `GfxDriverJob`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `fence` | 8 | 40 | 8 | `GfxFence` | - |
+| `operation` | 48 | 4 | 4 | `u32` | - |
+| `reserved0` | 52 | 4 | 4 | `u32` | - |
+| `source_buffer` | 56 | 16 | 8 | `GfxBufferHandle` | - |
+| `target_buffer` | 72 | 16 | 8 | `GfxBufferHandle` | - |
+| `byte_length` | 88 | 8 | 8 | `u64` | - |
+| `source_offset` | 96 | 8 | 8 | `u64` | - |
+| `target_offset` | 104 | 8 | 8 | `u64` | - |
+
+### `GfxDriverQueueApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `register_backend` | 8 | 8 | 8 | `u64` | - |
+| `unregister_backend` | 16 | 8 | 8 | `u64` | - |
+| `take` | 24 | 8 | 8 | `u64` | - |
+| `complete` | 32 | 8 | 8 | `u64` | - |
+| `reset` | 40 | 8 | 8 | `u64` | - |
+| `segment` | 48 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -6268,7 +6435,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `25` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `26` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -7633,6 +7800,49 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_buffer_cache_write_combining` | `2` | `u32` | value | number | `gfx_buffer` | fixed_contract |
 | `gfx_buffer_cache_uncached` | `3` | `u32` | value | number | `gfx_buffer` | fixed_contract |
 | `gfx_buffer_reference_immutable` | `1` | `u32` | value | number | `gfx_buffer` | fixed_contract |
+| `gfx_queue_ok` | `1` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_invalid` | `-1` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_unavailable` | `-2` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_stale` | `-3` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_busy` | `-4` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_overflow` | `-5` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_unsupported` | `-6` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_oom` | `-7` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_budget` | `-8` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_capacity` | `-9` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_closed` | `-10` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_wait_timeout` | `-11` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_wait_cancelled` | `-12` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_already_completed` | `-13` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_error_device_lost` | `-14` | `i32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_policy_fifo` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_policy_latest_frame` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_milestone_cpu_stores` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_milestone_device_execution` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_milestone_scanout` | `2` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_operation_copy` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_operation_barrier` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_phase_queued` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_phase_running` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_phase_terminal` | `2` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_pending` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_complete` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_cancelled` | `2` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_dropped` | `3` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_device_lost` | `4` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_timeout` | `5` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_failed` | `6` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_result_dependency_failed` | `7` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_flag_device_active` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_flag_resources_held` | `2` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_max_dependencies` | `8` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_capacity` | `32` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_fence_capacity` | `128` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `display_present_cap_cpu_store_completion` | `32` | `u32` | flag | bitmask | `display_present` | fixed_contract |
+| `display_present_completion_cpu_stores` | `2` | `u32` | flag | bitmask | `display_present_completion` | fixed_contract |
+| `gfx_queue_wait_completion` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_wait_resources_released` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_backend_capacity` | `17` | `u32` | value | count | `gfx_queue` | fixed_contract |
 
 ## Limits
 

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 353,
+    "group_function_signatures": 361,
     "sdk_operation_contracts": 0,
-    "parity_entries": 353,
+    "parity_entries": 361,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2312,6 +2312,78 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gfx_buffer_stats",
       "c_contract": "R4DrawGfxBufferStatsFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_queue_open",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_queue_open",
+      "c_contract": "R4DrawGfxQueueOpenFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_queue_close",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_queue_close",
+      "c_contract": "R4DrawGfxQueueCloseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_queue_submit",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_queue_submit",
+      "c_contract": "R4DrawGfxQueueSubmitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_fence_query",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_fence_query",
+      "c_contract": "R4DrawGfxFenceQueryFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_fence_wait",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_fence_wait",
+      "c_contract": "R4DrawGfxFenceWaitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_fence_cancel",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_fence_cancel",
+      "c_contract": "R4DrawGfxFenceCancelFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_fence_release",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_fence_release",
+      "c_contract": "R4DrawGfxFenceReleaseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_queue_backend",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_queue_backend",
+      "c_contract": "R4DrawGfxQueueBackendFn",
       "coverage": "generated_signature"
     },
     {

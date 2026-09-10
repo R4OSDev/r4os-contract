@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 353,
-    "group_slot_count": 353,
+    "function_count": 361,
+    "group_slot_count": 361,
     "sdk_only_count": 0,
-    "public_count": 260,
+    "public_count": 268,
     "advanced_count": 93
   },
   "functions": [
@@ -3077,6 +3077,102 @@
       "slot": 56,
       "exposure": "public",
       "description": "Copies one coherent budget, object, reference and lease snapshot.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_open",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 57,
+      "exposure": "public",
+      "description": "Opens one bounded asynchronous queue for the current program. Unknown adapters or milestones return unsupported; no silent fallback.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_close",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 58,
+      "exposure": "public",
+      "description": "Closes the caller queue, cancels every pending fence, and drops caller fence references. Physical device uses survive until acknowledged quiescent.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_submit",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 59,
+      "exposure": "public",
+      "description": "Returns after acceptance without executing commands or copying pixels. All descriptors and up to eight dependencies are copied; source/target leases retain backing and prevent premature CPU reuse. Failure leaves output and existing latest-frame work untouched.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_fence_query",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 60,
+      "exposure": "public",
+      "description": "Snapshots one exact fence without waiting. A terminal cancellation may still report device-active; resources are reusable only after physical quiescence.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_fence_wait",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 61,
+      "exposure": "public",
+      "description": "Waits without spinning or holding a metadata owner. timeout_ticks is a scheduler-tick duration, with UINT64_MAX meaning indefinite; the submission deadline remains independently finite in monotonic nanoseconds. Wait timeout leaves output unchanged and does not cancel the job. wait_for=0 waits for logical completion; wait_for=1 waits until the operation is physically quiescent and every queue BO lease has been released. Both events are sticky and generation-retained.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_fence_cancel",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 62,
+      "exposure": "public",
+      "description": "Requests the sole logical cancelled completion for a caller-owned fence. Already terminal returns already-completed. Never asserts native DMA quiescence.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_fence_release",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 63,
+      "exposure": "public",
+      "description": "Drops the caller fence reference. Active backing, dependency edges, wake publication and task-generation waiter records prohibit premature slot reuse.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_backend",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 64,
+      "exposure": "public",
+      "description": "Queries one fixed backend inventory slot, from zero through gfx_queue_backend_capacity minus one. Zero is software; other slots may be vacant. Returns 1 with an exact binding, 0 for vacant, negative for error; output changes only on 1. Revalidate by opening with the returned generations. No hidden fallback or successful partial enumeration.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
