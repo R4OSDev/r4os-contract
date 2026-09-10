@@ -34,7 +34,7 @@ Fields in canonical order:
   IMAGE_SCOPE=slim|full|test|none      required for every kind
   OPTIMIZE=size|speed                  optional for every kind, default size
   PACKAGE=<group name>                 optional for R4X, no build semantics
-  ZIG_MODULE=<alias>:<relative .zig>   optional for R4X, repeatable, Zig only
+  ZIG_MODULE=<alias>:<relative .zig>   optional for R4X/R4D, repeatable, Zig only
   C_INCLUDE=<relative include root>    optional, repeatable, C inputs only
   C_DEFINE=<NAME>=<VALUE>              optional, repeatable, C inputs only
   C_FLAG=<single compiler flag>        optional, repeatable, C inputs only
@@ -106,6 +106,9 @@ Zig identifier and unique inside the manifest. Its forward-slash path is
 resolved relative to the manifest, may deliberately reach a package sibling
 with "..", must end in .zig and must exist. The field is a build input and is
 therefore included in the machine plan. C manifests reject ZIG_MODULE.
+R4D supports the same compiled modules as R4X; this does not add runtime
+imports, an app class or an R4X entry point. R4L/R4P keep their existing
+explicit build contracts.
 
 ICON, HELP and RESOURCE (since 0.61.12) declare the R4M0 resource area of
 the built module; the binary layout lives in `ABI/R4M0.txt`. Their

@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v11, 536 Bytes, 65 Funktionsfelder und 65 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v12, 584 Bytes, 71 Funktionsfelder und 71 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -74,4 +74,10 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 62 | 512 | function | `gfx_fence_cancel` | `*const fn (*const GfxFence) callconv(.c) i32` |
 | 63 | 520 | function | `gfx_fence_release` | `*const fn (*const GfxFence) callconv(.c) i32` |
 | 64 | 528 | function | `gfx_queue_backend` | `*const fn (u32, *GfxBackendBinding) callconv(.c) i32` |
+| 65 | 536 | function | `gfx_output_revision` | `*const fn (*GfxDisplayRevision) callconv(.c) i32` |
+| 66 | 544 | function | `gfx_output_info` | `*const fn (u32, *GfxOutputInfo) callconv(.c) i32` |
+| 67 | 552 | function | `gfx_output_mode` | `*const fn (*const GfxOutputId, u32, *GfxOutputMode) callconv(.c) i32` |
+| 68 | 560 | function | `gfx_output_edid` | `*const fn (*const GfxOutputId, u32, *GfxEdidBlock) callconv(.c) i32` |
+| 69 | 568 | function | `gfx_atomic_test` | `*const fn (*const GfxAtomicState, *GfxAtomicResult) callconv(.c) i32` |
+| 70 | 576 | function | `gfx_atomic_commit` | `*const fn (*const GfxAtomicState, *GfxAtomicResult) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

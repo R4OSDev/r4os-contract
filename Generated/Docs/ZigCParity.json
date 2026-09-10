@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 361,
+    "group_function_signatures": 367,
     "sdk_operation_contracts": 0,
-    "parity_entries": 361,
+    "parity_entries": 367,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2384,6 +2384,60 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gfx_queue_backend",
       "c_contract": "R4DrawGfxQueueBackendFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_output_revision",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_output_revision",
+      "c_contract": "R4DrawGfxOutputRevisionFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_output_info",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_output_info",
+      "c_contract": "R4DrawGfxOutputInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_output_mode",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_output_mode",
+      "c_contract": "R4DrawGfxOutputModeFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_output_edid",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_output_edid",
+      "c_contract": "R4DrawGfxOutputEdidFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_atomic_test",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_atomic_test",
+      "c_contract": "R4DrawGfxAtomicTestFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_atomic_commit",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_atomic_commit",
+      "c_contract": "R4DrawGfxAtomicCommitFn",
       "coverage": "generated_signature"
     },
     {

@@ -411,7 +411,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.75.16 adds replacement streams at 41..42 and 0.75.17 appends the
     // bounded shared-raster lifecycle at 43..48. 0.79.5 adds BO memory at
     // 49..56; 0.79.6 adds asynchronous queues/fences/backends at 57..64.
-    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 65, .reserved = 0, .tombstones = 0 },
+    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 71, .reserved = 0, .tombstones = 0 },
     // 0.69.12 activates the two preallocated R4NET extension slots for the
     // generation-bound service request path and its kernel-channel telemetry;
     // 0.75.18 appends the TCP burst/ACK/poll performance snapshot at slot 34.

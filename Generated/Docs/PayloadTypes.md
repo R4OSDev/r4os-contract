@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 183 von 183 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 194 von 194 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1562; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1604; Limits: 109
 
 ## App-Profile
 
@@ -204,6 +204,17 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxBackendRegistration` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxDriverJob` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `GfxDriverQueueApi` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `GfxDisplayLimits` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `GfxOutputInfo` | extensible | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
+| `GfxDisplayRevision` | extensible | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `GfxEdidBlock` | extensible | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
+| `GfxScanoutState` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
+| `GfxAtomicState` | extensible | extern_struct | 1240/8 | 1240/8 | 1240/8 | 1240/8 |
+| `GfxAtomicResult` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `GfxOutputPublication` | extensible | extern_struct | 8400/8 | 8400/8 | 8400/8 | 8400/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 
 ## Typdetails
 
@@ -5542,6 +5553,222 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reset` | 40 | 8 | 8 | `u64` | - |
 | `segment` | 48 | 8 | 8 | `u64` | - |
 
+### `GfxOutputId`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `adapter_id` | 0 | 4 | 4 | `u32` | - |
+| `connector_id` | 4 | 4 | 4 | `u32` | - |
+| `device_generation` | 8 | 8 | 8 | `u64` | - |
+| `connection_generation` | 16 | 8 | 8 | `u64` | - |
+
+### `GfxOutputMode`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `mode_id` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `width` | 16 | 4 | 4 | `u32` | - |
+| `height` | 20 | 4 | 4 | `u32` | - |
+| `pixel_clock_hz` | 24 | 8 | 8 | `u64` | - |
+| `h_total` | 32 | 4 | 4 | `u32` | - |
+| `h_sync_start` | 36 | 4 | 4 | `u32` | - |
+| `h_sync_end` | 40 | 4 | 4 | `u32` | - |
+| `v_total` | 44 | 4 | 4 | `u32` | - |
+| `v_sync_start` | 48 | 4 | 4 | `u32` | - |
+| `v_sync_end` | 52 | 4 | 4 | `u32` | - |
+| `refresh_millihz` | 56 | 4 | 4 | `u32` | - |
+| `reserved0` | 60 | 4 | 4 | `u32` | - |
+
+### `GfxDisplayLimits`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `head_mask` | 12 | 4 | 4 | `u32` | - |
+| `plane_mask` | 16 | 4 | 4 | `u32` | - |
+| `pll_mask` | 20 | 4 | 4 | `u32` | - |
+| `rotations` | 24 | 4 | 4 | `u32` | - |
+| `colors` | 28 | 4 | 4 | `u32` | - |
+| `bpc_mask` | 32 | 4 | 4 | `u32` | - |
+| `pitch_alignment` | 36 | 4 | 4 | `u32` | - |
+| `max_width` | 40 | 4 | 4 | `u32` | - |
+| `max_height` | 44 | 4 | 4 | `u32` | - |
+| `formats` | 48 | 4 | 4 | `u32` | - |
+| `reserved0` | 52 | 4 | 4 | `u32` | - |
+| `modifiers` | 56 | 8 | 8 | `u64` | - |
+| `bandwidth_bytes_per_second` | 64 | 8 | 8 | `u64` | - |
+| `max_pixel_clock_hz` | 72 | 8 | 8 | `u64` | - |
+| `total_pixel_clock_hz` | 80 | 8 | 8 | `u64` | - |
+
+### `GfxOutputInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 168 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 24 | 8 | `GfxOutputId` | - |
+| `topology_revision` | 32 | 8 | 8 | `u64` | - |
+| `flags` | 40 | 4 | 4 | `u32` | - |
+| `connector_kind` | 44 | 4 | 4 | `u32` | - |
+| `mode_count` | 48 | 4 | 4 | `u32` | - |
+| `preferred_mode_id` | 52 | 4 | 4 | `u32` | - |
+| `edid_bytes` | 56 | 4 | 4 | `u32` | - |
+| `reserved0` | 60 | 4 | 4 | `u32` | - |
+| `possible_heads` | 64 | 4 | 4 | `u32` | - |
+| `possible_planes` | 68 | 4 | 4 | `u32` | - |
+| `possible_plls` | 72 | 4 | 4 | `u32` | - |
+| `reserved1` | 76 | 4 | 4 | `u32` | - |
+| `limits` | 80 | 88 | 8 | `GfxDisplayLimits` | - |
+
+### `GfxDisplayRevision`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `revision` | 8 | 8 | 8 | `u64` | - |
+| `capacity` | 16 | 4 | 4 | `u32` | - |
+| `present` | 20 | 4 | 4 | `u32` | - |
+
+### `GfxEdidBlock`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 168 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 24 | 8 | `GfxOutputId` | - |
+| `block_index` | 32 | 4 | 4 | `u32` | - |
+| `byte_count` | 36 | 4 | 4 | `u32` | - |
+| `data` | 40 | 128 | 1 | `[128]u8` | - |
+
+### `GfxScanoutState`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 152 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `output` | 8 | 24 | 8 | `GfxOutputId` | - |
+| `mode_id` | 32 | 4 | 4 | `u32` | - |
+| `head_id` | 36 | 4 | 4 | `u32` | - |
+| `plane_id` | 40 | 4 | 4 | `u32` | - |
+| `pll_id` | 44 | 4 | 4 | `u32` | - |
+| `source_x` | 48 | 4 | 4 | `u32` | - |
+| `source_y` | 52 | 4 | 4 | `u32` | - |
+| `source_width` | 56 | 4 | 4 | `u32` | - |
+| `source_height` | 60 | 4 | 4 | `u32` | - |
+| `destination_x` | 64 | 4 | 4 | `u32` | - |
+| `destination_y` | 68 | 4 | 4 | `u32` | - |
+| `destination_width` | 72 | 4 | 4 | `u32` | - |
+| `destination_height` | 76 | 4 | 4 | `u32` | - |
+| `rotation` | 80 | 4 | 4 | `u32` | - |
+| `color` | 84 | 4 | 4 | `u32` | - |
+| `bits_per_color` | 88 | 4 | 4 | `u32` | - |
+| `reserved0` | 92 | 4 | 4 | `u32` | - |
+| `buffer` | 96 | 16 | 8 | `GfxBufferHandle` | - |
+| `ready_fence` | 112 | 40 | 8 | `GfxFence` | - |
+
+### `GfxAtomicState`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1240 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `topology_revision` | 8 | 8 | 8 | `u64` | - |
+| `count` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `assignments` | 24 | 1216 | 8 | `[8]GfxScanoutState` | - |
+
+### `GfxAtomicResult`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `topology_revision` | 8 | 8 | 8 | `u64` | - |
+| `commit_sequence` | 16 | 8 | 8 | `u64` | - |
+| `outcome` | 24 | 4 | 4 | `u32` | - |
+| `retained` | 28 | 4 | 4 | `u32` | - |
+
+### `GfxOutputPublication`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 8400 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `backend` | 8 | 32 | 8 | `GfxBackendBinding` | - |
+| `info` | 40 | 168 | 8 | `GfxOutputInfo` | - |
+| `modes` | 208 | 4096 | 8 | `[64]GfxOutputMode` | - |
+| `edid` | 4304 | 4096 | 1 | `[4096]u8` | - |
+
+### `GfxDriverOutputApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `publish` | 8 | 8 | 8 | `u64` | - |
+| `withdraw` | 16 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -6435,7 +6662,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `26` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `27` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -7843,6 +8070,48 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_queue_wait_completion` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_queue_wait_resources_released` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_queue_backend_capacity` | `17` | `u32` | value | count | `gfx_queue` | fixed_contract |
+| `gfx_output_ok` | `1` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_invalid` | `-1` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_unavailable` | `-2` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_stale` | `-3` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_busy` | `-4` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_overflow` | `-5` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_unsupported` | `-6` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_capacity` | `-9` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_dependency` | `-15` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_bandwidth` | `-16` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_routing` | `-17` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_output_lost` | `-18` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_capacity` | `32` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_max_modes` | `64` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_max_edid_bytes` | `4096` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_max_assignments` | `8` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_connected` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_firmware_snapshot` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_active` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_fixed_geometry` | `8` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_connection_unknown` | `16` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_kind_hdmi` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_kind_displayport` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_kind_edp` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_kind_virtual` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_kind_firmware` | `5` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_limit_modeset` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_limit_scaling` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_limit_interlace` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_mode_interlaced` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_mode_h_positive` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_mode_v_positive` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_mode_preferred` | `8` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_mode_420_only` | `16` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_mode_geometry_only` | `32` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_mode_420_allowed` | `64` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_outcome_validated` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_outcome_applied` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_outcome_old_preserved` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_outcome_lost` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_retain_old` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_retain_new` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
 
 ## Limits
 

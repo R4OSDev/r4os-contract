@@ -15281,10 +15281,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 11,
+      "abi_version": 12,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 536,
+      "size": 584,
       "slots": [
         {
           "number": 0,
@@ -19919,6 +19919,449 @@
                   "child": {
                     "kind": "named",
                     "name": "GfxBackendBinding"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 65,
+          "offset": 536,
+          "name": "gfx_output_revision",
+          "state": "function",
+          "required": false,
+          "description": "Reads the output revision used with existing desktop activity waits. No second event queue and no busy polling are required.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxDisplayRevision"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 66,
+          "offset": 544,
+          "name": "gfx_output_info",
+          "state": "function",
+          "required": false,
+          "description": "Reads one of the advertised fixed catalog slots; holes return zero without modifying output. Stable ports survive disconnects, receiver generations do not.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 67,
+          "offset": 552,
+          "name": "gfx_output_mode",
+          "state": "function",
+          "required": false,
+          "description": "Reads one source-filtered mode for an exact receiver incarnation. Stale never returns data belonging to a different receiver.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "identity",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputId"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputMode"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 68,
+          "offset": 560,
+          "name": "gfx_output_edid",
+          "state": "function",
+          "required": false,
+          "description": "Copies one complete raw EDID block for an exact receiver incarnation. Missing blocks return zero; invalid/stale leaves output unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "identity",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputId"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxEdidBlock"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 69,
+          "offset": 568,
+          "name": "gfx_atomic_test",
+          "state": "function",
+          "required": false,
+          "description": "Checks the complete output/geometry/format/pitch/PLL/plane/bandwidth/fence state without reservations or device writes. Native commits remain unsupported until hardware and all desktop consumers negotiate the full pipeline.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "state",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxAtomicState"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxAtomicResult"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 70,
+          "offset": 576,
+          "name": "gfx_atomic_commit",
+          "state": "function",
+          "required": false,
+          "description": "Revalidates the complete state before committing. Currently the firmware backend only supports retaining its actual fixed scanout. Unnegotiated native mode/puffer changes return unsupported before any hardware write. Commit outcomes never imply VBlank.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "state",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxAtomicState"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxAtomicResult"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -78918,6 +79361,1658 @@
       ],
       "values": [],
       "description": "DriverApi v26 optional native queue table. Register requires the bound init context. Take/segment/reset/unregister require authenticated task context; complete also accepts the actual IRQ owner and only changes bounded metadata plus one worker wake."
+    },
+    {
+      "name": "GfxOutputId",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "adapter_id",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero identifies the firmware output, not an inferred physical GPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "connector_id",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Stable driver port number, nonzero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact native queue device incarnation; one for firmware.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "connection_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonwrapping receiver publication generation assigned by the output owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Stable adapter/local connector numbers plus exact device and receiver incarnations. Every receiver publication invalidates all preceding mode/EDID identities, including unplug/replug with identical bytes."
+    },
+    {
+      "name": "GfxOutputMode",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "mode_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Nonzero mode ID scoped to a receiver incarnation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Interlaced=1, positive H sync=2, positive V sync=4, preferred=8, 420-only=16, geometry-only=32, 420-allowed=64.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active pixels.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Full-frame active lines.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pixel_clock_hz",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact nominal pixel clock; zero only for immutable firmware geometry.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "h_total",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated timing geometry; totals include blanking.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "h_sync_start",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated timing geometry; totals include blanking.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "h_sync_end",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated timing geometry; totals include blanking.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "v_total",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated timing geometry; totals include blanking.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "v_sync_start",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated timing geometry; totals include blanking.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "v_sync_end",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated timing geometry; totals include blanking.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "refresh_millihz",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Full field refresh derived from clock/totals, zero when unknown; no measured VBlank claim.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One exact advertised mode; local mode IDs are meaningful only with a matching GfxOutputId. Refresh zero means unknown. Firmware geometry is not an invented EDID mode."
+    },
+    {
+      "name": "GfxDisplayLimits",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 88,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "88"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Modeset=1, scaling=2, interlace=4. Unset modeset only admits retention of existing immutable geometry.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "head_mask",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Available zero-based head indices, at most 32.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "plane_mask",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Available zero-based primary plane indices, at most 32.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pll_mask",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Available zero-based PLL indices, at most 32; no implicit sharing.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rotations",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bits for rotation 0, 90, 180, 270 degrees.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "colors",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "RGB, YCbCr444, YCbCr422, YCbCr420 source support bits.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "bpc_mask",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bit N means N bits per color component are supported.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "256"
+        },
+        {
+          "name": "pitch_alignment",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Power of two byte alignment for each scanout row.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4"
+        },
+        {
+          "name": "max_width",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum source and destination extent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_height",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum source and destination extent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "formats",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Format mask: XRGB8888=1, ARGB8888=2, NV12=4, P010=8; only formats actually validated by this implementation are admitted.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "reserved0",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "modifiers",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bit zero denotes linear layout; other modifiers need future explicit contracts.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "bandwidth_bytes_per_second",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Whole-adapter conservative scanout budget including padded rows.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_pixel_clock_hz",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Per-output maximum pixel clock.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_pixel_clock_hz",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Sum of simultaneously active head clocks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Source-side capabilities, never inferred from receiver EDID. Masks and limits describe a whole adapter and must agree for all its connectors. Zero unknown bandwidth/clock is usable only for immutable firmware retention."
+    },
+    {
+      "name": "GfxOutputInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 168,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "168"
+        },
+        {
+          "name": "identity",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "Exact receiver identity.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "topology_revision",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Global nonwrapping publication revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Connected=1, firmware snapshot=2, active=4, fixed geometry=8, connection unknown=16.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "connector_kind",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Unknown=0, HDMI=1, DisplayPort=2, eDP=3, virtual=4, firmware=5.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode_count",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "At most 64 advertised source-filtered modes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "preferred_mode_id",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero if no advertised preferred mode.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "edid_bytes",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Copied byte count, at most 4096. A short base is not proof that extensions are absent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "possible_heads",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Connector routing subset of adapter heads.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "possible_planes",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Connector routing subset of adapter primary planes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "possible_plls",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Connector routing subset of adapter PLLs.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "limits",
+          "offset": 80,
+          "type": {
+            "kind": "named",
+            "name": "GfxDisplayLimits"
+          },
+          "description": "Actual source-side limits.",
+          "size": 88,
+          "alignment": 8,
+          "source_type": "GfxDisplayLimits",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Bounded immutable connector snapshot. Read modes and EDID using identity; stale requires restarting the complete receiver read. Boot snapshots are not live HPD evidence."
+    },
+    {
+      "name": "GfxDisplayRevision",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "24"
+        },
+        {
+          "name": "revision",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Global nonwrapping output revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of stable catalog slots to enumerate, including holes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "present",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of occupied connector slots, including disconnected ports.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Cheap output change cursor; publishers store complete topology before signaling the existing R4DESK desktop activity event. Consumers rescan on changed revision; coalescing is intentional."
+    },
+    {
+      "name": "GfxEdidBlock",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 168,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "168"
+        },
+        {
+          "name": "identity",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "Exact receiver identity.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "block_index",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero-based 128-byte block.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "byte_count",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of actual copied bytes, 128 on success.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "data",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 128,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Unmodified receiver bytes, checksum validation belongs to the shared R4GFX parser.",
+          "size": 128,
+          "alignment": 1,
+          "source_type": "[128]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "One generation-checked raw EDID block. Unknown/missing data is not padded into a valid EDID; index outside copied blocks returns zero and leaves output unchanged."
+    },
+    {
+      "name": "GfxScanoutState",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 152,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "152"
+        },
+        {
+          "name": "output",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "Exact connector and receiver incarnation.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "mode_id",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "head_id",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "plane_id",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pll_id",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_x",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_y",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_width",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_height",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "destination_x",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "destination_y",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "destination_width",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "destination_height",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated assignment field.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rotation",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero, one, two, three quarter turns.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "color",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "RGB=0, 444=1, 422=2, 420=3.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bits_per_color",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual source component depth; normally 8.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "8"
+        },
+        {
+          "name": "reserved0",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "buffer",
+          "offset": 96,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Caller-owned scanout BO reference; all-zero only retains the fixed firmware scanout.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "ready_fence",
+          "offset": 112,
+          "type": {
+            "kind": "named",
+            "name": "GfxFence"
+          },
+          "description": "All-zero or a successful physically quiescent producer fence. Pending returns busy; test never waits.",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GfxFence",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "One primary-plane assignment. A full atomic state replaces all assignments for one adapter. No implicit clone/PLL/plane sharing; source and destination rectangles use integral pixels."
+    },
+    {
+      "name": "GfxAtomicState",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1240,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1240"
+        },
+        {
+          "name": "topology_revision",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact revision captured with output snapshots; any publication/commit invalidates an earlier test.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "count",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "One to eight active primary-plane assignments.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "assignments",
+          "offset": 24,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "named",
+              "name": "GfxScanoutState"
+            }
+          },
+          "description": "Complete requested assignments.",
+          "size": 1216,
+          "alignment": 8,
+          "source_type": "[8]GfxScanoutState",
+          "default_kind": "empty_array"
+        }
+      ],
+      "values": [],
+      "description": "Bounded complete assignment set for one adapter, checked against a topology revision. Unused assignments are default-zero. Test does not reserve resources or access hardware; commit must revalidate and pin before the first device write."
+    },
+    {
+      "name": "GfxAtomicResult",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "topology_revision",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Revision against which validation or commit completed.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "commit_sequence",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last confirmed commit, zero before any commit. Not a VBlank fence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "outcome",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated=0, applied=1, old-preserved=2, output-lost=3.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Old resources=1, new resources=2. Output-lost retains both until proven quiescence.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Test/commit outcome and resource retention contract. Failed test leaves output and existing scanout unchanged. A successful test is not a reservation. Native commits require separately negotiated hardware/pipeline support."
+    },
+    {
+      "name": "GfxOutputPublication",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 8400,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "8400"
+        },
+        {
+          "name": "backend",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxBackendBinding"
+          },
+          "description": "Exact existing native queue registration, including reset generation.",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GfxBackendBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "info",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputInfo"
+          },
+          "description": "Stable adapter/connector numbers, routing and actual source limits. Generation/counts are checked; receiver generation is supplied by kernel.",
+          "size": 168,
+          "alignment": 8,
+          "source_type": "GfxOutputInfo",
+          "default_kind": "empty"
+        },
+        {
+          "name": "modes",
+          "offset": 208,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "named",
+              "name": "GfxOutputMode"
+            }
+          },
+          "description": "At most info.mode_count modes; unused entries use their defaults.",
+          "size": 4096,
+          "alignment": 8,
+          "source_type": "[64]GfxOutputMode",
+          "default_kind": "empty_array"
+        },
+        {
+          "name": "edid",
+          "offset": 4304,
+          "type": {
+            "kind": "array",
+            "length": 4096,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "At most info.edid_bytes bytes; unused bytes must be zero. Whole EDID blocks only.",
+          "size": 4096,
+          "alignment": 1,
+          "source_type": "[4096]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Driver task-context connector publication. Caller bytes/modes are copied before publication; no pointer is retained. Exact queue binding authenticates device incarnation. Kernel assigns connection generation; driver numbers the stable physical port. A monitor mode is not automatically a source capability."
+    },
+    {
+      "name": "GfxDriverOutputApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "24"
+        },
+        {
+          "name": "publish",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t publish(const GfxOutputPublication*, GfxOutputId*). Output identity is fixed-layout and success-only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "withdraw",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t withdraw(const GfxOutputId*). Retains stable port slot, advances receiver generation and removes all EDID/modes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "DriverApi v27 optional output catalog bridge. Both callbacks require the actual bound R4D task/init owner and copied payloads; IRQ handlers defer HPD/I2C/EDID work to driver_work. This version publishes topology; native hardware commit callbacks arrive with the corresponding backend."
     }
   ],
   "operations": [],
@@ -82872,7 +84967,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "26",
+      "value": "27",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -96949,6 +99044,426 @@
       "scope": "gfx_queue",
       "stability": "fixed_contract",
       "description": "Number of fixed backend inventory slots including software slot zero; enumerate every index even after a vacant slot."
+    },
+    {
+      "name": "gfx_output_ok",
+      "value": "1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: ok."
+    },
+    {
+      "name": "gfx_output_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_invalid."
+    },
+    {
+      "name": "gfx_output_error_unavailable",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_unavailable."
+    },
+    {
+      "name": "gfx_output_error_stale",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_stale."
+    },
+    {
+      "name": "gfx_output_error_busy",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_busy."
+    },
+    {
+      "name": "gfx_output_error_overflow",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_overflow."
+    },
+    {
+      "name": "gfx_output_error_unsupported",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_unsupported."
+    },
+    {
+      "name": "gfx_output_error_capacity",
+      "value": "-9",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_capacity."
+    },
+    {
+      "name": "gfx_output_error_dependency",
+      "value": "-15",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_dependency."
+    },
+    {
+      "name": "gfx_output_error_bandwidth",
+      "value": "-16",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_bandwidth."
+    },
+    {
+      "name": "gfx_output_error_routing",
+      "value": "-17",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_routing."
+    },
+    {
+      "name": "gfx_output_error_output_lost",
+      "value": "-18",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: error_output_lost."
+    },
+    {
+      "name": "gfx_output_capacity",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: capacity."
+    },
+    {
+      "name": "gfx_output_max_modes",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: max_modes."
+    },
+    {
+      "name": "gfx_output_max_edid_bytes",
+      "value": "4096",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: max_edid_bytes."
+    },
+    {
+      "name": "gfx_output_max_assignments",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: max_assignments."
+    },
+    {
+      "name": "gfx_output_flag_connected",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: flag_connected."
+    },
+    {
+      "name": "gfx_output_flag_firmware_snapshot",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: flag_firmware_snapshot."
+    },
+    {
+      "name": "gfx_output_flag_active",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: flag_active."
+    },
+    {
+      "name": "gfx_output_flag_fixed_geometry",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: flag_fixed_geometry."
+    },
+    {
+      "name": "gfx_output_flag_connection_unknown",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: flag_connection_unknown."
+    },
+    {
+      "name": "gfx_output_kind_hdmi",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: kind_hdmi."
+    },
+    {
+      "name": "gfx_output_kind_displayport",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: kind_displayport."
+    },
+    {
+      "name": "gfx_output_kind_edp",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: kind_edp."
+    },
+    {
+      "name": "gfx_output_kind_virtual",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: kind_virtual."
+    },
+    {
+      "name": "gfx_output_kind_firmware",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: kind_firmware."
+    },
+    {
+      "name": "gfx_output_limit_modeset",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: limit_modeset."
+    },
+    {
+      "name": "gfx_output_limit_scaling",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: limit_scaling."
+    },
+    {
+      "name": "gfx_output_limit_interlace",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: limit_interlace."
+    },
+    {
+      "name": "gfx_output_mode_interlaced",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: mode_interlaced."
+    },
+    {
+      "name": "gfx_output_mode_h_positive",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: mode_h_positive."
+    },
+    {
+      "name": "gfx_output_mode_v_positive",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: mode_v_positive."
+    },
+    {
+      "name": "gfx_output_mode_preferred",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: mode_preferred."
+    },
+    {
+      "name": "gfx_output_mode_420_only",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: mode_420_only."
+    },
+    {
+      "name": "gfx_output_mode_geometry_only",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: mode_geometry_only."
+    },
+    {
+      "name": "gfx_output_mode_420_allowed",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: mode_420_allowed."
+    },
+    {
+      "name": "gfx_output_outcome_validated",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: outcome_validated."
+    },
+    {
+      "name": "gfx_output_outcome_applied",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: outcome_applied."
+    },
+    {
+      "name": "gfx_output_outcome_old_preserved",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: outcome_old_preserved."
+    },
+    {
+      "name": "gfx_output_outcome_lost",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: outcome_lost."
+    },
+    {
+      "name": "gfx_output_retain_old",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: retain_old."
+    },
+    {
+      "name": "gfx_output_retain_new",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Output and atomic display contract: retain_new."
     }
   ],
   "limits": [

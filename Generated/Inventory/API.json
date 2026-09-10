@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 361,
-    "group_slot_count": 361,
+    "function_count": 367,
+    "group_slot_count": 367,
     "sdk_only_count": 0,
-    "public_count": 268,
+    "public_count": 274,
     "advanced_count": 93
   },
   "functions": [
@@ -3173,6 +3173,78 @@
       "slot": 64,
       "exposure": "public",
       "description": "Queries one fixed backend inventory slot, from zero through gfx_queue_backend_capacity minus one. Zero is software; other slots may be vacant. Returns 1 with an exact binding, 0 for vacant, negative for error; output changes only on 1. Revalidate by opening with the returned generations. No hidden fallback or successful partial enumeration.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_revision",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 65,
+      "exposure": "public",
+      "description": "Reads the output revision used with existing desktop activity waits. No second event queue and no busy polling are required.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_info",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 66,
+      "exposure": "public",
+      "description": "Reads one of the advertised fixed catalog slots; holes return zero without modifying output. Stable ports survive disconnects, receiver generations do not.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_mode",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 67,
+      "exposure": "public",
+      "description": "Reads one source-filtered mode for an exact receiver incarnation. Stale never returns data belonging to a different receiver.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_edid",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 68,
+      "exposure": "public",
+      "description": "Copies one complete raw EDID block for an exact receiver incarnation. Missing blocks return zero; invalid/stale leaves output unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_atomic_test",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 69,
+      "exposure": "public",
+      "description": "Checks the complete output/geometry/format/pitch/PLL/plane/bandwidth/fence state without reservations or device writes. Native commits remain unsupported until hardware and all desktop consumers negotiate the full pipeline.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_atomic_commit",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 70,
+      "exposure": "public",
+      "description": "Revalidates the complete state before committing. Currently the firmware backend only supports retaining its actual fixed scanout. Unnegotiated native mode/puffer changes return unsupported before any hardware write. Commit outcomes never imply VBlank.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

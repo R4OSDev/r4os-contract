@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 369; Funktionen: 361; reserviert/Tombstone: 8
-- Sichtbarkeit: public=268, advanced=93, internal=8
+- Physische Gruppenslots: 375; Funktionen: 367; reserviert/Tombstone: 8
+- Sichtbarkeit: public=274, advanced=93, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 17
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -302,6 +302,12 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DRAW | 62 | `gfx_fence_cancel` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | none | atomic_on_success | never_automatic | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DRAW | 63 | `gfx_fence_release` | function | public | R4DRAW | ja | `draw` | consumes_owned_handle | call | nonblocking | thread_safe | invalidates_on_success | none | atomic_on_success | never_automatic | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DRAW | 64 | `gfx_queue_backend` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 65 | `gfx_output_revision` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 66 | `gfx_output_info` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 67 | `gfx_output_mode` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 68 | `gfx_output_edid` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 69 | `gfx_atomic_test` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 70 | `gfx_atomic_commit` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4NET | 0 | `tcp_connect` | function | public | R4NET | ja | `network` | returns_owned_handle | none | may_block | thread_safe | explicit_close_required | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
 | R4NET | 1 | `tcp_write` | function | public | R4NET | ja | `network` | borrowed | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4NET | 2 | `tcp_read` | function | public | R4NET | ja | `network` | caller_buffer | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
