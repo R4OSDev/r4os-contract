@@ -81013,6 +81013,528 @@
       ],
       "values": [],
       "description": "DriverApi v27 optional output catalog bridge. Both callbacks require the actual bound R4D task/init owner and copied payloads; IRQ handlers defer HPD/I2C/EDID work to driver_work. This version publishes topology; native hardware commit callbacks arrive with the corresponding backend."
+    },
+    {
+      "name": "GfxNativeBootInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "56"
+        },
+        {
+          "name": "generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current DisplayManager transition generation; distinct from queue device/reset generations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "physical_address",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Verified contiguous saved firmware framebuffer physical base, zero if unknown.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "byte_length",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Saved framebuffer extent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Immutable initial width.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Immutable initial height.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pitch",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initial bytes per row.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "GfxBufferFormat; only native XRGB8888 currently supports this bridge.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "policy",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing DisplayManager policy; nonzero prohibits native admission.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing DisplayManager state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Saved boot scanout for an owner-authenticated R4D takeover. Physical extent is evidence for identifying the original device, never permission for CPU writes after takeover. Format zero means unsupported. No live monitor or VBlank claim."
+    },
+    {
+      "name": "GfxNativeRegistration",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "backend",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxBackendBinding"
+          },
+          "description": "Exact native queue identity with device-execution milestone.",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GfxBackendBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "output",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "Exact connected output published by this driver.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "reference",
+          "offset": 64,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Writable caller-owned linear XRGB8888 system BO; descriptor must match boot geometry.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "name",
+          "offset": 80,
+          "type": {
+            "kind": "array",
+            "length": 24,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Nonempty zero-terminated backend name; remaining bytes zero.",
+          "size": 24,
+          "alignment": 1,
+          "source_type": "[24]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "context",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque driver callback context.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "commit_callback",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t callback(uint64_t context, uint64_t display_generation, const GfxNativeBootInfo*). Called only after firmware writers are revoked; 1 applied, 2 old-preserved, all other values output-lost. Runs under actual DriverApi owner and wait-spanning display execution.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "restore_callback",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t callback(uint64_t context, uint64_t recovery_generation, const GfxNativeBootInfo*). Exactly 1 confirms BOTH DMA quiescence and original boot scanout restoration; otherwise all ownership is retained.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Owner-bound fixed-geometry CPU shadow backend. Kernel retains the BO reference and arbitrates CPU maps versus source upload queue reservations. Driver owns command encoding, device attachment and physical restoration. PCI adapter identity uses 0x01000000 | bus<<8 | device<<3 | function from the existing inventory, not the PCI product ID."
+    },
+    {
+      "name": "GfxNativeState",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current exact DisplayManager generation, or pending generation for a prepared candidate.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "DisplayManager state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "outcome",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing output outcome: validated=0, applied=1, old-preserved=2, lost=3.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "One while the display manager still retains this driver.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Result of a handled display transition. Generation always names the resulting state, including failed recovery. Successful API handling does not imply successful hardware application; check outcome and retained."
+    },
+    {
+      "name": "GfxDriverDisplayApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "boot_info",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t boot_info(GfxNativeBootInfo*). Read-only saved geometry and display policy.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "prepare",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t prepare(const GfxNativeRegistration*, GfxNativeState*). Retains candidate, no hardware writes; unchanged geometry only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transition",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t transition(uint64_t generation, uint32_t operation, GfxNativeState*). Operations commit=0, abort=1, restore=2. Negative errors precede a transition; handled failure returns output-lost with retained ownership.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "schedule",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t schedule(const GfxBackendBinding*). IRQ-safe, exact owner/device/reset binding. Coalesces one pending notification on the existing retained graphics worker callback, including idle connector events. No device commands, BO locks or allocation run in this call.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged."
     }
   ],
   "operations": [],
@@ -84967,7 +85489,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "27",
+      "value": "28",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -99464,6 +99986,26 @@
       "scope": "gfx_output",
       "stability": "fixed_contract",
       "description": "Output and atomic display contract: retain_new."
+    },
+    {
+      "name": "gfx_queue_operation_upload",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Native fixed-geometry display upload. One source BO range, no target; accepted only from the kernel-owned bound display queue. Completion means device execution, not visible VBlank."
+    },
+    {
+      "name": "gfx_device_access_backing",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_buffer",
+      "stability": "fixed_contract",
+      "description": "DriverApi v28 physical resource attachment residency. Bus DMA address space only, GPU VA zero. Keeps backing resident but authorizes no CPU or device data access; active transfers need separate queue/device use. Release requires acknowledged detach or reset."
     }
   ],
   "limits": [

@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 27u
+#define R4OS_DRIVER_API_VERSION 28u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
 #define R4OS_DRIVER_WORK_FLAG_NONE 0u
@@ -1617,6 +1617,8 @@ extern "C" {
 #define R4OS_GFX_OUTPUT_OUTCOME_LOST 3u
 #define R4OS_GFX_OUTPUT_RETAIN_OLD 1u
 #define R4OS_GFX_OUTPUT_RETAIN_NEW 2u
+#define R4OS_GFX_QUEUE_OPERATION_UPLOAD 2u
+#define R4OS_GFX_DEVICE_ACCESS_BACKING 4u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2252,6 +2254,10 @@ typedef struct R4GfxAtomicState R4GfxAtomicState;
 typedef struct R4GfxAtomicResult R4GfxAtomicResult;
 typedef struct R4GfxOutputPublication R4GfxOutputPublication;
 typedef struct R4GfxDriverOutputApi R4GfxDriverOutputApi;
+typedef struct R4GfxNativeBootInfo R4GfxNativeBootInfo;
+typedef struct R4GfxNativeRegistration R4GfxNativeRegistration;
+typedef struct R4GfxNativeState R4GfxNativeState;
+typedef struct R4GfxDriverDisplayApi R4GfxDriverDisplayApi;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6453,6 +6459,51 @@ typedef struct R4GfxDriverOutputApi {
     uint64_t publish;
     uint64_t withdraw;
 } R4GfxDriverOutputApi;
+
+typedef struct R4GfxNativeBootInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t generation;
+    uint64_t physical_address;
+    uint64_t byte_length;
+    uint32_t width;
+    uint32_t height;
+    uint32_t pitch;
+    uint32_t format;
+    uint32_t policy;
+    uint32_t state;
+} R4GfxNativeBootInfo;
+
+typedef struct R4GfxNativeRegistration {
+    uint32_t version;
+    uint32_t size;
+    R4GfxBackendBinding backend;
+    R4GfxOutputId output;
+    R4GfxBufferHandle reference;
+    uint8_t name[24];
+    uint64_t context;
+    uint64_t commit_callback;
+    uint64_t restore_callback;
+} R4GfxNativeRegistration;
+
+typedef struct R4GfxNativeState {
+    uint32_t version;
+    uint32_t size;
+    uint64_t generation;
+    uint32_t state;
+    uint32_t outcome;
+    uint32_t retained;
+    uint32_t reserved0;
+} R4GfxNativeState;
+
+typedef struct R4GfxDriverDisplayApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t boot_info;
+    uint64_t prepare;
+    uint64_t transition;
+    uint64_t schedule;
+} R4GfxDriverDisplayApi;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -11142,6 +11193,43 @@ _Static_assert(offsetof(R4GfxDriverOutputApi, version) == 0u, "GfxDriverOutputAp
 _Static_assert(offsetof(R4GfxDriverOutputApi, size) == 4u, "GfxDriverOutputApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, publish) == 8u, "GfxDriverOutputApi.publish offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, withdraw) == 16u, "GfxDriverOutputApi.withdraw offset mismatch");
+_Static_assert(sizeof(R4GfxNativeBootInfo) == 56u, "GfxNativeBootInfo size mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, version) == 0u, "GfxNativeBootInfo.version offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, size) == 4u, "GfxNativeBootInfo.size offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, generation) == 8u, "GfxNativeBootInfo.generation offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, physical_address) == 16u, "GfxNativeBootInfo.physical_address offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, byte_length) == 24u, "GfxNativeBootInfo.byte_length offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, width) == 32u, "GfxNativeBootInfo.width offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, height) == 36u, "GfxNativeBootInfo.height offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, pitch) == 40u, "GfxNativeBootInfo.pitch offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, format) == 44u, "GfxNativeBootInfo.format offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, policy) == 48u, "GfxNativeBootInfo.policy offset mismatch");
+_Static_assert(offsetof(R4GfxNativeBootInfo, state) == 52u, "GfxNativeBootInfo.state offset mismatch");
+_Static_assert(sizeof(R4GfxNativeRegistration) == 128u, "GfxNativeRegistration size mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, version) == 0u, "GfxNativeRegistration.version offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, size) == 4u, "GfxNativeRegistration.size offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, backend) == 8u, "GfxNativeRegistration.backend offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, output) == 40u, "GfxNativeRegistration.output offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, reference) == 64u, "GfxNativeRegistration.reference offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, name) == 80u, "GfxNativeRegistration.name offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, context) == 104u, "GfxNativeRegistration.context offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, commit_callback) == 112u, "GfxNativeRegistration.commit_callback offset mismatch");
+_Static_assert(offsetof(R4GfxNativeRegistration, restore_callback) == 120u, "GfxNativeRegistration.restore_callback offset mismatch");
+_Static_assert(sizeof(R4GfxNativeState) == 32u, "GfxNativeState size mismatch");
+_Static_assert(offsetof(R4GfxNativeState, version) == 0u, "GfxNativeState.version offset mismatch");
+_Static_assert(offsetof(R4GfxNativeState, size) == 4u, "GfxNativeState.size offset mismatch");
+_Static_assert(offsetof(R4GfxNativeState, generation) == 8u, "GfxNativeState.generation offset mismatch");
+_Static_assert(offsetof(R4GfxNativeState, state) == 16u, "GfxNativeState.state offset mismatch");
+_Static_assert(offsetof(R4GfxNativeState, outcome) == 20u, "GfxNativeState.outcome offset mismatch");
+_Static_assert(offsetof(R4GfxNativeState, retained) == 24u, "GfxNativeState.retained offset mismatch");
+_Static_assert(offsetof(R4GfxNativeState, reserved0) == 28u, "GfxNativeState.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GfxDriverDisplayApi) == 40u, "GfxDriverDisplayApi size mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, version) == 0u, "GfxDriverDisplayApi.version offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, size) == 4u, "GfxDriverDisplayApi.size offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, boot_info) == 8u, "GfxDriverDisplayApi.boot_info offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, prepare) == 16u, "GfxDriverDisplayApi.prepare offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, transition) == 24u, "GfxDriverDisplayApi.transition offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, schedule) == 32u, "GfxDriverDisplayApi.schedule offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

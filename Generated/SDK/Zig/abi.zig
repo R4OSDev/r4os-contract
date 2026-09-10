@@ -1604,6 +1604,8 @@ pub const gfx_output_outcome_old_preserved = generated.gfx_output_outcome_old_pr
 pub const gfx_output_outcome_lost = generated.gfx_output_outcome_lost;
 pub const gfx_output_retain_old = generated.gfx_output_retain_old;
 pub const gfx_output_retain_new = generated.gfx_output_retain_new;
+pub const gfx_queue_operation_upload = generated.gfx_queue_operation_upload;
+pub const gfx_device_access_backing = generated.gfx_device_access_backing;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;
@@ -2213,6 +2215,10 @@ pub const GfxAtomicState = generated.GfxAtomicState;
 pub const GfxAtomicResult = generated.GfxAtomicResult;
 pub const GfxOutputPublication = generated.GfxOutputPublication;
 pub const GfxDriverOutputApi = generated.GfxDriverOutputApi;
+pub const GfxNativeBootInfo = generated.GfxNativeBootInfo;
+pub const GfxNativeRegistration = generated.GfxNativeRegistration;
+pub const GfxNativeState = generated.GfxNativeState;
+pub const GfxDriverDisplayApi = generated.GfxDriverDisplayApi;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;
@@ -3579,6 +3585,7 @@ pub const DriverApi = extern struct {
     // v26 optional native submission/IRQ completion and reset bridge.
     gfx_queue_query: ?*const fn (*GfxDriverQueueApi) callconv(.c) i32 = null,
     gfx_output_query: ?*const fn (*GfxDriverOutputApi) callconv(.c) i32 = null,
+    gfx_display_query: ?*const fn (*GfxDriverDisplayApi) callconv(.c) i32 = null,
 };
 
 pub const ProtocolApi = extern struct {

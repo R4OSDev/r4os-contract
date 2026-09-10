@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 194 von 194 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 198 von 198 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1604; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1606; Limits: 109
 
 ## App-Profile
 
@@ -215,6 +215,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxAtomicResult` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxOutputPublication` | extensible | extern_struct | 8400/8 | 8400/8 | 8400/8 | 8400/8 |
 | `GfxDriverOutputApi` | extensible | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `GfxDriverDisplayApi` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -5769,6 +5773,79 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `publish` | 8 | 8 | 8 | `u64` | - |
 | `withdraw` | 16 | 8 | 8 | `u64` | - |
 
+### `GfxNativeBootInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+| `physical_address` | 16 | 8 | 8 | `u64` | - |
+| `byte_length` | 24 | 8 | 8 | `u64` | - |
+| `width` | 32 | 4 | 4 | `u32` | - |
+| `height` | 36 | 4 | 4 | `u32` | - |
+| `pitch` | 40 | 4 | 4 | `u32` | - |
+| `format` | 44 | 4 | 4 | `u32` | - |
+| `policy` | 48 | 4 | 4 | `u32` | - |
+| `state` | 52 | 4 | 4 | `u32` | - |
+
+### `GfxNativeRegistration`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `backend` | 8 | 32 | 8 | `GfxBackendBinding` | - |
+| `output` | 40 | 24 | 8 | `GfxOutputId` | - |
+| `reference` | 64 | 16 | 8 | `GfxBufferHandle` | - |
+| `name` | 80 | 24 | 1 | `[24]u8` | - |
+| `context` | 104 | 8 | 8 | `u64` | - |
+| `commit_callback` | 112 | 8 | 8 | `u64` | - |
+| `restore_callback` | 120 | 8 | 8 | `u64` | - |
+
+### `GfxNativeState`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+| `state` | 16 | 4 | 4 | `u32` | - |
+| `outcome` | 20 | 4 | 4 | `u32` | - |
+| `retained` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+
+### `GfxDriverDisplayApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `boot_info` | 8 | 8 | 8 | `u64` | - |
+| `prepare` | 16 | 8 | 8 | `u64` | - |
+| `transition` | 24 | 8 | 8 | `u64` | - |
+| `schedule` | 32 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -6662,7 +6739,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `27` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `28` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -8112,6 +8189,8 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_output_outcome_lost` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_output_retain_old` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_output_retain_new` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_queue_operation_upload` | `2` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_device_access_backing` | `4` | `u32` | value | number | `gfx_buffer` | fixed_contract |
 
 ## Limits
 

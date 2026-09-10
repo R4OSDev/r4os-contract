@@ -155,7 +155,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 27;
+pub const driver_api_version: u32 = 28;
 pub const driver_magic: u32 = 826888260;
 pub const driver_work_flag_from_irq: u32 = 1;
 pub const driver_work_flag_none: u32 = 0;
@@ -1605,6 +1605,8 @@ pub const gfx_output_outcome_old_preserved: u32 = 2;
 pub const gfx_output_outcome_lost: u32 = 3;
 pub const gfx_output_retain_old: u32 = 1;
 pub const gfx_output_retain_new: u32 = 2;
+pub const gfx_queue_operation_upload: u32 = 2;
+pub const gfx_device_access_backing: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6314,6 +6316,51 @@ pub const GfxDriverOutputApi = extern struct {
     size: u32 = 24,
     publish: u64 = 0,
     withdraw: u64 = 0,
+};
+
+pub const GfxNativeBootInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 56,
+    generation: u64 = 0,
+    physical_address: u64 = 0,
+    byte_length: u64 = 0,
+    width: u32 = 0,
+    height: u32 = 0,
+    pitch: u32 = 0,
+    format: u32 = 0,
+    policy: u32 = 0,
+    state: u32 = 0,
+};
+
+pub const GfxNativeRegistration = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    backend: GfxBackendBinding = .{},
+    output: GfxOutputId = .{},
+    reference: GfxBufferHandle = .{},
+    name: [24]u8 = .{0} ** 24,
+    context: u64 = 0,
+    commit_callback: u64 = 0,
+    restore_callback: u64 = 0,
+};
+
+pub const GfxNativeState = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    generation: u64 = 0,
+    state: u32 = 0,
+    outcome: u32 = 0,
+    retained: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const GfxDriverDisplayApi = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    boot_info: u64 = 0,
+    prepare: u64 = 0,
+    transition: u64 = 0,
+    schedule: u64 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -11555,6 +11602,47 @@ comptime {
     if (@offsetOf(GfxDriverOutputApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverOutputApi.size");
     if (@offsetOf(GfxDriverOutputApi, "publish") != 8) @compileError("generated ABI offset drift: GfxDriverOutputApi.publish");
     if (@offsetOf(GfxDriverOutputApi, "withdraw") != 16) @compileError("generated ABI offset drift: GfxDriverOutputApi.withdraw");
+    if (@sizeOf(GfxNativeBootInfo) != 56) @compileError("generated ABI size drift: GfxNativeBootInfo");
+    if (@alignOf(GfxNativeBootInfo) != 8) @compileError("generated ABI alignment drift: GfxNativeBootInfo");
+    if (@offsetOf(GfxNativeBootInfo, "version") != 0) @compileError("generated ABI offset drift: GfxNativeBootInfo.version");
+    if (@offsetOf(GfxNativeBootInfo, "size") != 4) @compileError("generated ABI offset drift: GfxNativeBootInfo.size");
+    if (@offsetOf(GfxNativeBootInfo, "generation") != 8) @compileError("generated ABI offset drift: GfxNativeBootInfo.generation");
+    if (@offsetOf(GfxNativeBootInfo, "physical_address") != 16) @compileError("generated ABI offset drift: GfxNativeBootInfo.physical_address");
+    if (@offsetOf(GfxNativeBootInfo, "byte_length") != 24) @compileError("generated ABI offset drift: GfxNativeBootInfo.byte_length");
+    if (@offsetOf(GfxNativeBootInfo, "width") != 32) @compileError("generated ABI offset drift: GfxNativeBootInfo.width");
+    if (@offsetOf(GfxNativeBootInfo, "height") != 36) @compileError("generated ABI offset drift: GfxNativeBootInfo.height");
+    if (@offsetOf(GfxNativeBootInfo, "pitch") != 40) @compileError("generated ABI offset drift: GfxNativeBootInfo.pitch");
+    if (@offsetOf(GfxNativeBootInfo, "format") != 44) @compileError("generated ABI offset drift: GfxNativeBootInfo.format");
+    if (@offsetOf(GfxNativeBootInfo, "policy") != 48) @compileError("generated ABI offset drift: GfxNativeBootInfo.policy");
+    if (@offsetOf(GfxNativeBootInfo, "state") != 52) @compileError("generated ABI offset drift: GfxNativeBootInfo.state");
+    if (@sizeOf(GfxNativeRegistration) != 128) @compileError("generated ABI size drift: GfxNativeRegistration");
+    if (@alignOf(GfxNativeRegistration) != 8) @compileError("generated ABI alignment drift: GfxNativeRegistration");
+    if (@offsetOf(GfxNativeRegistration, "version") != 0) @compileError("generated ABI offset drift: GfxNativeRegistration.version");
+    if (@offsetOf(GfxNativeRegistration, "size") != 4) @compileError("generated ABI offset drift: GfxNativeRegistration.size");
+    if (@offsetOf(GfxNativeRegistration, "backend") != 8) @compileError("generated ABI offset drift: GfxNativeRegistration.backend");
+    if (@offsetOf(GfxNativeRegistration, "output") != 40) @compileError("generated ABI offset drift: GfxNativeRegistration.output");
+    if (@offsetOf(GfxNativeRegistration, "reference") != 64) @compileError("generated ABI offset drift: GfxNativeRegistration.reference");
+    if (@offsetOf(GfxNativeRegistration, "name") != 80) @compileError("generated ABI offset drift: GfxNativeRegistration.name");
+    if (@offsetOf(GfxNativeRegistration, "context") != 104) @compileError("generated ABI offset drift: GfxNativeRegistration.context");
+    if (@offsetOf(GfxNativeRegistration, "commit_callback") != 112) @compileError("generated ABI offset drift: GfxNativeRegistration.commit_callback");
+    if (@offsetOf(GfxNativeRegistration, "restore_callback") != 120) @compileError("generated ABI offset drift: GfxNativeRegistration.restore_callback");
+    if (@sizeOf(GfxNativeState) != 32) @compileError("generated ABI size drift: GfxNativeState");
+    if (@alignOf(GfxNativeState) != 8) @compileError("generated ABI alignment drift: GfxNativeState");
+    if (@offsetOf(GfxNativeState, "version") != 0) @compileError("generated ABI offset drift: GfxNativeState.version");
+    if (@offsetOf(GfxNativeState, "size") != 4) @compileError("generated ABI offset drift: GfxNativeState.size");
+    if (@offsetOf(GfxNativeState, "generation") != 8) @compileError("generated ABI offset drift: GfxNativeState.generation");
+    if (@offsetOf(GfxNativeState, "state") != 16) @compileError("generated ABI offset drift: GfxNativeState.state");
+    if (@offsetOf(GfxNativeState, "outcome") != 20) @compileError("generated ABI offset drift: GfxNativeState.outcome");
+    if (@offsetOf(GfxNativeState, "retained") != 24) @compileError("generated ABI offset drift: GfxNativeState.retained");
+    if (@offsetOf(GfxNativeState, "reserved0") != 28) @compileError("generated ABI offset drift: GfxNativeState.reserved0");
+    if (@sizeOf(GfxDriverDisplayApi) != 40) @compileError("generated ABI size drift: GfxDriverDisplayApi");
+    if (@alignOf(GfxDriverDisplayApi) != 8) @compileError("generated ABI alignment drift: GfxDriverDisplayApi");
+    if (@offsetOf(GfxDriverDisplayApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverDisplayApi.version");
+    if (@offsetOf(GfxDriverDisplayApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverDisplayApi.size");
+    if (@offsetOf(GfxDriverDisplayApi, "boot_info") != 8) @compileError("generated ABI offset drift: GfxDriverDisplayApi.boot_info");
+    if (@offsetOf(GfxDriverDisplayApi, "prepare") != 16) @compileError("generated ABI offset drift: GfxDriverDisplayApi.prepare");
+    if (@offsetOf(GfxDriverDisplayApi, "transition") != 24) @compileError("generated ABI offset drift: GfxDriverDisplayApi.transition");
+    if (@offsetOf(GfxDriverDisplayApi, "schedule") != 32) @compileError("generated ABI offset drift: GfxDriverDisplayApi.schedule");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
