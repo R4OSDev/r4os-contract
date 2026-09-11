@@ -2313,6 +2313,7 @@ typedef struct R4GfxDriverOutputApi R4GfxDriverOutputApi;
 typedef struct R4GfxNativeBootInfo R4GfxNativeBootInfo;
 typedef struct R4GfxNativeRegistration R4GfxNativeRegistration;
 typedef struct R4GfxNativeState R4GfxNativeState;
+typedef struct R4GfxBootHoldRequest R4GfxBootHoldRequest;
 typedef struct R4GfxDriverDisplayApi R4GfxDriverDisplayApi;
 typedef struct R4DriverResourceInfo R4DriverResourceInfo;
 typedef struct R4DriverResourceApi R4DriverResourceApi;
@@ -6564,6 +6565,17 @@ typedef struct R4GfxNativeState {
     uint32_t reserved0;
 } R4GfxNativeState;
 
+typedef struct R4GfxBootHoldRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t adapter_id;
+    uint32_t reserved0;
+    uint64_t generation;
+    R4GfxBufferHandle reference;
+    uint64_t context;
+    uint64_t restore_callback;
+} R4GfxBootHoldRequest;
+
 typedef struct R4GfxDriverDisplayApi {
     uint32_t version;
     uint32_t size;
@@ -6571,6 +6583,8 @@ typedef struct R4GfxDriverDisplayApi {
     uint64_t prepare;
     uint64_t transition;
     uint64_t schedule;
+    uint64_t boot_hold;
+    uint64_t boot_finish;
 } R4GfxDriverDisplayApi;
 
 typedef struct R4DriverResourceInfo {
@@ -11441,13 +11455,24 @@ _Static_assert(offsetof(R4GfxNativeState, state) == 16u, "GfxNativeState.state o
 _Static_assert(offsetof(R4GfxNativeState, outcome) == 20u, "GfxNativeState.outcome offset mismatch");
 _Static_assert(offsetof(R4GfxNativeState, retained) == 24u, "GfxNativeState.retained offset mismatch");
 _Static_assert(offsetof(R4GfxNativeState, reserved0) == 28u, "GfxNativeState.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GfxDriverDisplayApi) == 40u, "GfxDriverDisplayApi size mismatch");
+_Static_assert(sizeof(R4GfxBootHoldRequest) == 56u, "GfxBootHoldRequest size mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, version) == 0u, "GfxBootHoldRequest.version offset mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, size) == 4u, "GfxBootHoldRequest.size offset mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, adapter_id) == 8u, "GfxBootHoldRequest.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, reserved0) == 12u, "GfxBootHoldRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, generation) == 16u, "GfxBootHoldRequest.generation offset mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, reference) == 24u, "GfxBootHoldRequest.reference offset mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, context) == 40u, "GfxBootHoldRequest.context offset mismatch");
+_Static_assert(offsetof(R4GfxBootHoldRequest, restore_callback) == 48u, "GfxBootHoldRequest.restore_callback offset mismatch");
+_Static_assert(sizeof(R4GfxDriverDisplayApi) == 56u, "GfxDriverDisplayApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, version) == 0u, "GfxDriverDisplayApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, size) == 4u, "GfxDriverDisplayApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_info) == 8u, "GfxDriverDisplayApi.boot_info offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, prepare) == 16u, "GfxDriverDisplayApi.prepare offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, transition) == 24u, "GfxDriverDisplayApi.transition offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, schedule) == 32u, "GfxDriverDisplayApi.schedule offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, boot_hold) == 40u, "GfxDriverDisplayApi.boot_hold offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, boot_finish) == 48u, "GfxDriverDisplayApi.boot_finish offset mismatch");
 _Static_assert(sizeof(R4DriverResourceInfo) == 32u, "DriverResourceInfo size mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, version) == 0u, "DriverResourceInfo.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, size) == 4u, "DriverResourceInfo.size offset mismatch");

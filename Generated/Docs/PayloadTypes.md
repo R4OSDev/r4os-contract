@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 210 von 210 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 211 von 211 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1662; Limits: 109
 
@@ -218,7 +218,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
-| `GfxDriverDisplayApi` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `GfxBootHoldRequest` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `GfxDriverDisplayApi` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverResourceApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
@@ -5842,12 +5843,30 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `retained` | 24 | 4 | 4 | `u32` | - |
 | `reserved0` | 28 | 4 | 4 | `u32` | - |
 
+### `GfxBootHoldRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `adapter_id` | 8 | 4 | 4 | `u32` | - |
+| `reserved0` | 12 | 4 | 4 | `u32` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `reference` | 24 | 16 | 8 | `GfxBufferHandle` | - |
+| `context` | 40 | 8 | 8 | `u64` | - |
+| `restore_callback` | 48 | 8 | 8 | `u64` | - |
+
 ### `GfxDriverDisplayApi`
 
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 40 / 8
+- Version/Größe/Alignment: 1 / 56 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5857,6 +5876,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `prepare` | 16 | 8 | 8 | `u64` | - |
 | `transition` | 24 | 8 | 8 | `u64` | - |
 | `schedule` | 32 | 8 | 8 | `u64` | - |
+| `boot_hold` | 40 | 8 | 8 | `u64` | - |
+| `boot_finish` | 48 | 8 | 8 | `u64` | - |
 
 ### `DriverResourceInfo`
 

@@ -81438,12 +81438,12 @@
       "description": "Result of a handled display transition. Generation always names the resulting state, including failed recovery. Successful API handling does not imply successful hardware application; check outcome and retained."
     },
     {
-      "name": "GfxDriverDisplayApi",
+      "name": "GfxBootHoldRequest",
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 1,
-      "size": 40,
+      "size": 56,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -81469,12 +81469,138 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Caller capacity, at least the complete version-1 payload.",
+          "description": "Caller capacity, at least 56 bytes.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "40"
+          "default_value": "56"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing PCI display inventory identity, 0x01000000 | bus<<8 | device<<3 | function.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact generation returned by boot_info, before writer revocation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reference",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Caller reference to the exact-sized snapshot BO.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "context",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque recovery callback context.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "restore_callback",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t callback(uint64_t context, uint64_t hold_generation, const GfxNativeBootInfo*). Exactly 1 proves whole-device DMA quiescence and that the saved CPU mapping again targets the original boot scanout. The kernel then restores pixels. Every other return retains all ownership. Runs under real driver ownership and wait-spanning display execution, outside metadata locks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Early, owner-bound boot-display preservation before firmware initialization. reference is a caller-owned portable system byte BO of exactly pitch*height bytes with CPU read/write usage. The kernel retains its own reference and a read lease after capture; imported writes and device writes are excluded. generation binds the saved boot geometry. The driver must latch effects before any possible GPU state change and must not use a successful capture as proof of VRAM ownership or recoverability."
+    },
+    {
+      "name": "GfxDriverDisplayApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; original version-1 prefix is 40 bytes. Query publishes only complete slots within capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "56"
         },
         {
           "name": "boot_info",
@@ -81531,10 +81657,38 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "boot_hold",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t boot_hold(const GfxBootHoldRequest*, GfxNativeState*). Revokes normal and firmware CPU writers and copies the complete boot framebuffer including pitch padding into a resident BO before any device effect. No output or queue registration is required. Success outcome validated plus retained=1 is the only admission to the held snapshot.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "boot_finish",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t boot_finish(uint64_t generation, uint32_t operation, GfxNativeState*). Operation 0 abandons before device effects, 1 latches retention BEFORE the first possible effect, 2 calls the real driver recovery callback and restores pixels only after quiescence and original scanout mapping are proven. Failed recovery/cleanup retains owner, immutable BO and writer revocation. No hardware callback replay after confirmed recovery followed by cleanup failure. Negative errors do not release the hold.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged."
+      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen."
     },
     {
       "name": "DriverResourceInfo",

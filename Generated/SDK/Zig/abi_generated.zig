@@ -6410,13 +6410,26 @@ pub const GfxNativeState = extern struct {
     reserved0: u32 = 0,
 };
 
+pub const GfxBootHoldRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 56,
+    adapter_id: u32 = 0,
+    reserved0: u32 = 0,
+    generation: u64 = 0,
+    reference: GfxBufferHandle = .{},
+    context: u64 = 0,
+    restore_callback: u64 = 0,
+};
+
 pub const GfxDriverDisplayApi = extern struct {
     version: u32 = 1,
-    size: u32 = 40,
+    size: u32 = 56,
     boot_info: u64 = 0,
     prepare: u64 = 0,
     transition: u64 = 0,
     schedule: u64 = 0,
+    boot_hold: u64 = 0,
+    boot_finish: u64 = 0,
 };
 
 pub const DriverResourceInfo = extern struct {
@@ -11841,7 +11854,17 @@ comptime {
     if (@offsetOf(GfxNativeState, "outcome") != 20) @compileError("generated ABI offset drift: GfxNativeState.outcome");
     if (@offsetOf(GfxNativeState, "retained") != 24) @compileError("generated ABI offset drift: GfxNativeState.retained");
     if (@offsetOf(GfxNativeState, "reserved0") != 28) @compileError("generated ABI offset drift: GfxNativeState.reserved0");
-    if (@sizeOf(GfxDriverDisplayApi) != 40) @compileError("generated ABI size drift: GfxDriverDisplayApi");
+    if (@sizeOf(GfxBootHoldRequest) != 56) @compileError("generated ABI size drift: GfxBootHoldRequest");
+    if (@alignOf(GfxBootHoldRequest) != 8) @compileError("generated ABI alignment drift: GfxBootHoldRequest");
+    if (@offsetOf(GfxBootHoldRequest, "version") != 0) @compileError("generated ABI offset drift: GfxBootHoldRequest.version");
+    if (@offsetOf(GfxBootHoldRequest, "size") != 4) @compileError("generated ABI offset drift: GfxBootHoldRequest.size");
+    if (@offsetOf(GfxBootHoldRequest, "adapter_id") != 8) @compileError("generated ABI offset drift: GfxBootHoldRequest.adapter_id");
+    if (@offsetOf(GfxBootHoldRequest, "reserved0") != 12) @compileError("generated ABI offset drift: GfxBootHoldRequest.reserved0");
+    if (@offsetOf(GfxBootHoldRequest, "generation") != 16) @compileError("generated ABI offset drift: GfxBootHoldRequest.generation");
+    if (@offsetOf(GfxBootHoldRequest, "reference") != 24) @compileError("generated ABI offset drift: GfxBootHoldRequest.reference");
+    if (@offsetOf(GfxBootHoldRequest, "context") != 40) @compileError("generated ABI offset drift: GfxBootHoldRequest.context");
+    if (@offsetOf(GfxBootHoldRequest, "restore_callback") != 48) @compileError("generated ABI offset drift: GfxBootHoldRequest.restore_callback");
+    if (@sizeOf(GfxDriverDisplayApi) != 56) @compileError("generated ABI size drift: GfxDriverDisplayApi");
     if (@alignOf(GfxDriverDisplayApi) != 8) @compileError("generated ABI alignment drift: GfxDriverDisplayApi");
     if (@offsetOf(GfxDriverDisplayApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverDisplayApi.version");
     if (@offsetOf(GfxDriverDisplayApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverDisplayApi.size");
@@ -11849,6 +11872,8 @@ comptime {
     if (@offsetOf(GfxDriverDisplayApi, "prepare") != 16) @compileError("generated ABI offset drift: GfxDriverDisplayApi.prepare");
     if (@offsetOf(GfxDriverDisplayApi, "transition") != 24) @compileError("generated ABI offset drift: GfxDriverDisplayApi.transition");
     if (@offsetOf(GfxDriverDisplayApi, "schedule") != 32) @compileError("generated ABI offset drift: GfxDriverDisplayApi.schedule");
+    if (@offsetOf(GfxDriverDisplayApi, "boot_hold") != 40) @compileError("generated ABI offset drift: GfxDriverDisplayApi.boot_hold");
+    if (@offsetOf(GfxDriverDisplayApi, "boot_finish") != 48) @compileError("generated ABI offset drift: GfxDriverDisplayApi.boot_finish");
     if (@sizeOf(DriverResourceInfo) != 32) @compileError("generated ABI size drift: DriverResourceInfo");
     if (@alignOf(DriverResourceInfo) != 8) @compileError("generated ABI alignment drift: DriverResourceInfo");
     if (@offsetOf(DriverResourceInfo, "version") != 0) @compileError("generated ABI offset drift: DriverResourceInfo.version");

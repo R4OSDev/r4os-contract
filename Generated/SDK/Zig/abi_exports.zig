@@ -2274,6 +2274,7 @@ pub const GfxDriverOutputApi = generated.GfxDriverOutputApi;
 pub const GfxNativeBootInfo = generated.GfxNativeBootInfo;
 pub const GfxNativeRegistration = generated.GfxNativeRegistration;
 pub const GfxNativeState = generated.GfxNativeState;
+pub const GfxBootHoldRequest = generated.GfxBootHoldRequest;
 pub const GfxDriverDisplayApi = generated.GfxDriverDisplayApi;
 pub const DriverResourceInfo = generated.DriverResourceInfo;
 pub const DriverResourceApi = generated.DriverResourceApi;
