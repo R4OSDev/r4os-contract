@@ -21,6 +21,12 @@ Generated files are checked during normal builds. Intentional contract changes
 must use the repository's explicit generator write workflow and update the
 matching baseline.
 
+The technical `DriverApi` facade lives outside the marked generated exports
+block in `Generated/SDK/Zig/abi.zig`; the generator preserves that area.
+DriverApi34 appends two optional DMA range-sync callbacks after the unchanged
+632-byte v33 prefix (total 648). `ABI/R4DDriver.txt` defines their ownership,
+bounds and ordering; SDK conformance and the kernel enforce the layout.
+
 Detailed German migration notes are preserved in
 `DOCUMENTATION.de.txt`.
 

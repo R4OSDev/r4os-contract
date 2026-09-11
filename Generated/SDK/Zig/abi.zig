@@ -3659,6 +3659,9 @@ pub const DriverApi = extern struct {
     monotonic_clock: ?*const fn (*MonotonicClockInfo) callconv(.c) i32 = null,
     thread_query: ?*const fn (*DriverThreadApi) callconv(.c) i32 = null,
     semaphore_query: ?*const fn (*DriverSemaphoreApi) callconv(.c) i32 = null,
+    // Technical facade outside the generated exports block: v34 range sync.
+    dma_sync_range_for_device: ?*const fn (*const DmaMapping, u32, u32) callconv(.c) i32 = null,
+    dma_sync_range_for_cpu: ?*const fn (*const DmaMapping, u32, u32) callconv(.c) i32 = null,
 };
 
 pub const ProtocolApi = extern struct {

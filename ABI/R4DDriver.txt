@@ -549,3 +549,39 @@ Cross-CPU finite waits also notify the BSP when they become the earliest
 scheduler deadline. The shared timed queue is published before notification;
 the BSP rechecks its idle one-shot via the existing IPI/HLT path. This is an
 internal scheduler correction, not a new API or a minimum-delay promise.
+
+Byte-range DMA synchronization (DriverApi34, 0.79.10)
+----------------------------------------------------
+The unchanged v33 prefix is 632 bytes. Two optional C-call slots follow:
+dma_sync_range_for_device at 632 and dma_sync_range_for_cpu at 640; total 648.
+Both take (*const DmaMapping, u32 offset, u32 bytes) and return i32. Existing
+whole-mapping slots, DMA payloads, Query import and minimum version stay fixed.
+The SDK checks version, size and each callback; unavailable returns -9002.
+
+Offset and nonzero length select bytes within the retained mapping's actual
+requested_bytes. Byte alignment is sufficient on this x86_64 provider. The
+caller descriptor must have version 1, a full size and a nonzero handle;
+its other fields cannot replace backing, direction or bounds. Return codes
+are 0 success, -1 inadmissible context, -2 invalid header/range, -3 stale or
+foreign mapping. Validation completes before any copy or ordering boundary.
+
+Real init/shutdown and Driver Work ownership is required. IRQ and storage
+callbacks are rejected; dedicated driver threads do not gain access to the
+legacy DMA tables. Range synchronization allocates, waits and releases
+nothing. Existing pin/map/unmap lifetime and owner serialization still apply.
+
+For bounced mappings, only the requested range is copied outward for
+to-device/bidirectional or inward for from-device/bidirectional. The device
+phase fences after the copy, the CPU phase before it; the opposite direction
+only fences. Direct coherent mappings validate the range and fence without
+copying. Bytes outside the range are untouched. Partial transfers do not
+change the whole-mapping ownership flag. The legacy sync slots use the same
+implementation over the full request, preserving their previous semantics.
+
+Drivers must exclusively own the selected bytes and order payload before
+publishing a producer cursor, then synchronize a completed payload before
+consuming and acknowledging it. This API is not an atomic queue transaction
+or evidence of firmware completion. Whole-mapping synchronization can still
+overwrite independently updated peer fields in a bidirectional bounce buffer.
+Initial map and final unmap still synchronize the whole mapping; the device
+must be quiescent before teardown. Live GSP dispatch is a separate owner.
