@@ -155,6 +155,7 @@ pub const dns_flag_a_record = generated.dns_flag_a_record;
 pub const dns_op_build_a_query = generated.dns_op_build_a_query;
 pub const dns_op_handle_response = generated.dns_op_handle_response;
 pub const driver_api_version = generated.driver_api_version;
+pub const driver_api_thread_work_version = generated.driver_api_thread_work_version;
 pub const driver_magic = generated.driver_magic;
 pub const driver_work_flag_from_irq = generated.driver_work_flag_from_irq;
 pub const driver_work_flag_none = generated.driver_work_flag_none;

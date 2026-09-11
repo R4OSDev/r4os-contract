@@ -15,7 +15,9 @@ append the optional graphics memory, queue, output and display queries;
 version 29 appends the loaded-container resource query; version 30 appends
 resident CPU heap access; version 31 appends the common monotonic snapshot;
 version 32 appends dedicated driver tasks; version 33 appends resident
-counting semaphores.
+counting semaphores. Version 34 appends byte-range DMA synchronization;
+version 35 preserves the complete 648-byte layout and adds owned normal-work
+submission from dedicated tasks plus terminal display shutdown semantics.
 StorageBackend version 2
 appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
@@ -489,12 +491,38 @@ cleanup immediately. A retained callback, wait lease, Task or record vetoes
 unload and preserves the closed owner/module. Normal kernel exit invariants
 still reject callbacks that return with synchronization or unwind state leaked.
 
-Only CPU heap/thread/log ownership has this new execution path; legacy PCI,
+Initially only CPU heap/thread/log ownership has this execution path; legacy PCI,
 DMA, graphics/backend and resource-file APIs require separate audits before
 dedicated callers may use them. Storage identity tracking uses a short runtime
 section to preserve exclusion. The existing cached monotonic read is usable
 without acquiring a driver lifecycle guard. No RM semaphore or IRQ contract
 is implied by introducing a generic scheduler service.
+
+Dedicated Task to normal Work (DriverApi35, 0.79.10)
+--------------------------------------------------
+The unchanged driver_work_submit slot accepts a live dedicated driver Task
+with flags=0. Admission derives the owner from its exact Task identity and
+requires the current owner epoch, open parent and no cooperative stop request.
+Stopped/closing tasks return driver_thread_error_closed and a zero handle;
+nonzero flags return -3 and a zero handle. A dedicated task is never an IRQ
+producer. The existing deadline/audio submit slot is not extended.
+Actual IRQ and storage callbacks retain precedence over an interrupted
+dedicated Task's identity and continue through their existing Work admission.
+
+The normal FIFO executes the callback on its single serialized worker with
+the original R4D owner. This admits the worker's existing MMIO/DMA services;
+the dedicated caller itself gains no direct device or resource-file access.
+The callback and all arguments remain resident until completion, cancellation
+and release. A task admitted immediately before parent close retains its
+in-flight enqueue; shutdown must stop/join it, then drain its queued work
+before cleanup. A callback completion still requires exact Task retirement.
+
+driver_api_thread_work_version=35 also requires the terminal display handoff:
+warm reset closes/drains display execution before driver shutdown, preserves
+held recovery resources and refuses unproven display/device quiescence.
+Failure enters poweroff or halt. Firmware teardown alone grants no DMA reuse
+or boot framebuffer access. These are semantic requirements; all version-34
+fields, offsets and the 648-byte table remain unchanged.
 
 Resident driver semaphores (0.79.10)
 -----------------------------------

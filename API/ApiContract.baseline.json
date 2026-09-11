@@ -87419,13 +87419,23 @@
     },
     {
       "name": "driver_api_version",
-      "value": "34",
+      "value": "35",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
       "scope": "driver_api",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "driver_api_thread_work_version",
+      "value": "35",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "driver_api",
+      "stability": "fixed_contract",
+      "description": "Minimum DriverApi for owner-bound normal Work submission by dedicated driver tasks and terminal display shutdown before warm reset."
     },
     {
       "name": "driver_magic",
