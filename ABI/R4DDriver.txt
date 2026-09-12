@@ -36,6 +36,13 @@ hold. It reuses the exact pending generation with firmware writers closed.
 Ordinary prepare cannot bypass that hold. Initial shadow rows come from the
 RAM snapshot, never a potentially repurposed post-firmware VRAM mapping.
 
+Kernel 0.1.160 permits a native publication to replace the same driver's
+receiver-only entry for that connector. Receiver refresh/close cannot
+overwrite the native binding; other receiver ports remain visible. An
+UNKNOWN connection may publish one geometry-only mode. Only prepare_held
+admits it against the captured boot geometry; ordinary prepare rejects it
+before display ownership changes. Active scanout does not imply CONNECTED.
+
 Abort/old-preserved removes only the native candidate; the original boot
 hold remains preparing/retained. Old-preserved is returned only after native
 cleanup; output-lost retains cleanup and requires another abort with the
