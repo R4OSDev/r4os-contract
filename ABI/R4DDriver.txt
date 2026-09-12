@@ -23,6 +23,33 @@ appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
 its offer. None of these extensions changes an older prefix.
 
+Common graphics BOs in Driver Work (Kernel 0.1.154)
+---------------------------------------------------
+DriverApi 35/648 and GfxDriverMemoryApi 1/112 keep their byte layouts.
+The optional memory query now admits ordinary Driver Work as well as
+Init/Shutdown task contexts. Every BO operation authenticates the current
+R4D start; cached tables do not capture an identity. IRQ, storage callbacks,
+dedicated tasks and pre-Task boot callbacks receive no BO admission.
+Early preloaded drivers bind their lifecycle metadata before Task/SMP start.
+
+Create, import, CPU map and device acquire close before DriverShutdown.
+Describe, segment, unmap, release, collect and stats remain usable from an
+already obtained table until owner retirement. A new query is closed too.
+Work queries return zero MMIO slots. Cached MMIO callbacks still require
+Init/Shutdown. Work collect never enters the legacy MMIO manager: it returns
+Busy for in-progress or failed MMIO retirement, but accepts healthy live
+windows. Only Init/Shutdown retries those MMIO releases.
+
+Device reservations hold both a busy record and the actual BO lease across
+DMA page validation. Close does not discard an admitted operation; cleanup
+rechecks retention after Work quiescence before freeing DMA/heap/module
+resources. No GPU quiescence is inferred from callback return or timeout.
+CPU WB map/unmap and device lease transitions provide the existing visibility
+boundary. Residency access 4 (DMA) and access 3 (GPU VA) retain backing without
+claiming execution. Drivers separately confirm their hardware mapping and
+cache/TLB completion. BO success is 1; ordinary Work callback success is 0.
+Evidence: Docs/Drivers/GrafikSpeicher07911.json / bo_work_checkpoint.
+
 Audio output extension (0.78.16)
 -------------------------------
 An AudioBackend descriptor with version 3 has the unchanged 72-byte version-2
