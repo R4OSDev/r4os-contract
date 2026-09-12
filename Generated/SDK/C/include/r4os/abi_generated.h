@@ -1676,6 +1676,13 @@ extern "C" {
 #define R4OS_DRIVER_THREAD_FLAG_ABORTABLE 2u
 #define R4OS_DRIVER_THREAD_FLAG_ABORTED 4u
 #define R4OS_DRIVER_THREAD_FLAG_SLEEPING 8u
+#define R4OS_GFX_OUTPUT_CATALOG_CAPACITY 64u
+#define R4OS_GFX_RECEIVER_MAX_OUTPUTS 32u
+#define R4OS_GFX_OUTPUT_FLAG_RECEIVER_ONLY 32u
+#define R4OS_GFX_OUTPUT_FLAG_EDID_MISSING 64u
+#define R4OS_GFX_OUTPUT_FLAG_EDID_INVALID 128u
+#define R4OS_GFX_OUTPUT_FLAG_RECEIVER_INCOMPLETE 256u
+#define R4OS_GFX_OUTPUT_FLAG_QUERY_FAILED 512u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2310,6 +2317,9 @@ typedef struct R4GfxScanoutState R4GfxScanoutState;
 typedef struct R4GfxAtomicState R4GfxAtomicState;
 typedef struct R4GfxAtomicResult R4GfxAtomicResult;
 typedef struct R4GfxOutputPublication R4GfxOutputPublication;
+typedef struct R4GfxReceiverSource R4GfxReceiverSource;
+typedef struct R4GfxReceiverInfo R4GfxReceiverInfo;
+typedef struct R4GfxReceiverUpdate R4GfxReceiverUpdate;
 typedef struct R4GfxDriverOutputApi R4GfxDriverOutputApi;
 typedef struct R4GfxNativeBootInfo R4GfxNativeBootInfo;
 typedef struct R4GfxNativeRegistration R4GfxNativeRegistration;
@@ -6523,11 +6533,42 @@ typedef struct R4GfxOutputPublication {
     uint8_t edid[4096];
 } R4GfxOutputPublication;
 
+typedef struct R4GfxReceiverSource {
+    uint32_t adapter_id;
+    uint32_t reserved0;
+    uint64_t generation;
+} R4GfxReceiverSource;
+
+typedef struct R4GfxReceiverInfo {
+    uint32_t connector_id;
+    uint32_t connector_kind;
+    uint32_t flags;
+    uint32_t mode_count;
+    uint32_t preferred_mode_id;
+    uint32_t edid_bytes;
+    uint64_t reserved0;
+    R4GfxOutputMode modes[64];
+    uint8_t edid[4096];
+} R4GfxReceiverInfo;
+
+typedef struct R4GfxReceiverUpdate {
+    uint32_t version;
+    uint32_t size;
+    R4GfxReceiverSource source;
+    uint64_t sequence;
+    uint32_t count;
+    uint32_t reserved0;
+    uint64_t receivers;
+} R4GfxReceiverUpdate;
+
 typedef struct R4GfxDriverOutputApi {
     uint32_t version;
     uint32_t size;
     uint64_t publish;
     uint64_t withdraw;
+    uint64_t register_source;
+    uint64_t replace_receivers;
+    uint64_t close_source;
 } R4GfxDriverOutputApi;
 
 typedef struct R4GfxNativeBootInfo {
@@ -11421,11 +11462,36 @@ _Static_assert(offsetof(R4GfxOutputPublication, backend) == 8u, "GfxOutputPublic
 _Static_assert(offsetof(R4GfxOutputPublication, info) == 40u, "GfxOutputPublication.info offset mismatch");
 _Static_assert(offsetof(R4GfxOutputPublication, modes) == 208u, "GfxOutputPublication.modes offset mismatch");
 _Static_assert(offsetof(R4GfxOutputPublication, edid) == 4304u, "GfxOutputPublication.edid offset mismatch");
-_Static_assert(sizeof(R4GfxDriverOutputApi) == 24u, "GfxDriverOutputApi size mismatch");
+_Static_assert(sizeof(R4GfxReceiverSource) == 16u, "GfxReceiverSource size mismatch");
+_Static_assert(offsetof(R4GfxReceiverSource, adapter_id) == 0u, "GfxReceiverSource.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverSource, reserved0) == 4u, "GfxReceiverSource.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverSource, generation) == 8u, "GfxReceiverSource.generation offset mismatch");
+_Static_assert(sizeof(R4GfxReceiverInfo) == 8224u, "GfxReceiverInfo size mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, connector_id) == 0u, "GfxReceiverInfo.connector_id offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, connector_kind) == 4u, "GfxReceiverInfo.connector_kind offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, flags) == 8u, "GfxReceiverInfo.flags offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, mode_count) == 12u, "GfxReceiverInfo.mode_count offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, preferred_mode_id) == 16u, "GfxReceiverInfo.preferred_mode_id offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, edid_bytes) == 20u, "GfxReceiverInfo.edid_bytes offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, reserved0) == 24u, "GfxReceiverInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, modes) == 32u, "GfxReceiverInfo.modes offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverInfo, edid) == 4128u, "GfxReceiverInfo.edid offset mismatch");
+_Static_assert(sizeof(R4GfxReceiverUpdate) == 48u, "GfxReceiverUpdate size mismatch");
+_Static_assert(offsetof(R4GfxReceiverUpdate, version) == 0u, "GfxReceiverUpdate.version offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverUpdate, size) == 4u, "GfxReceiverUpdate.size offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverUpdate, source) == 8u, "GfxReceiverUpdate.source offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverUpdate, sequence) == 24u, "GfxReceiverUpdate.sequence offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverUpdate, count) == 32u, "GfxReceiverUpdate.count offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverUpdate, reserved0) == 36u, "GfxReceiverUpdate.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxReceiverUpdate, receivers) == 40u, "GfxReceiverUpdate.receivers offset mismatch");
+_Static_assert(sizeof(R4GfxDriverOutputApi) == 48u, "GfxDriverOutputApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, version) == 0u, "GfxDriverOutputApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, size) == 4u, "GfxDriverOutputApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, publish) == 8u, "GfxDriverOutputApi.publish offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, withdraw) == 16u, "GfxDriverOutputApi.withdraw offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, register_source) == 24u, "GfxDriverOutputApi.register_source offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, replace_receivers) == 32u, "GfxDriverOutputApi.replace_receivers offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, close_source) == 40u, "GfxDriverOutputApi.close_source offset mismatch");
 _Static_assert(sizeof(R4GfxNativeBootInfo) == 56u, "GfxNativeBootInfo size mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, version) == 0u, "GfxNativeBootInfo.version offset mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, size) == 4u, "GfxNativeBootInfo.size offset mismatch");

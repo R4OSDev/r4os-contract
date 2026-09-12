@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 211 von 211 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 214 von 214 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1663; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1670; Limits: 109
 
 ## App-Profile
 
@@ -214,7 +214,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxAtomicState` | extensible | extern_struct | 1240/8 | 1240/8 | 1240/8 | 1240/8 |
 | `GfxAtomicResult` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxOutputPublication` | extensible | extern_struct | 8400/8 | 8400/8 | 8400/8 | 8400/8 |
-| `GfxDriverOutputApi` | extensible | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `GfxReceiverSource` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
+| `GfxReceiverInfo` | fixed_layout | extern_struct | 8224/8 | 8224/8 | 8224/8 | 8224/8 |
+| `GfxReceiverUpdate` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -5772,12 +5775,61 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `modes` | 208 | 4096 | 8 | `[64]GfxOutputMode` | - |
 | `edid` | 4304 | 4096 | 1 | `[4096]u8` | - |
 
+### `GfxReceiverSource`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 16 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `adapter_id` | 0 | 4 | 4 | `u32` | - |
+| `reserved0` | 4 | 4 | 4 | `u32` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+
+### `GfxReceiverInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 8224 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `connector_id` | 0 | 4 | 4 | `u32` | - |
+| `connector_kind` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `mode_count` | 12 | 4 | 4 | `u32` | - |
+| `preferred_mode_id` | 16 | 4 | 4 | `u32` | - |
+| `edid_bytes` | 20 | 4 | 4 | `u32` | - |
+| `reserved0` | 24 | 8 | 8 | `u64` | - |
+| `modes` | 32 | 4096 | 8 | `[64]GfxOutputMode` | - |
+| `edid` | 4128 | 4096 | 1 | `[4096]u8` | - |
+
+### `GfxReceiverUpdate`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `source` | 8 | 16 | 8 | `GfxReceiverSource` | - |
+| `sequence` | 24 | 8 | 8 | `u64` | - |
+| `count` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `receivers` | 40 | 8 | 8 | `u64` | - |
+
 ### `GfxDriverOutputApi`
 
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 24 / 8
+- Version/Größe/Alignment: 2 / 48 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5785,6 +5837,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `size` | 4 | 4 | 4 | `u32` | - |
 | `publish` | 8 | 8 | 8 | `u64` | - |
 | `withdraw` | 16 | 8 | 8 | `u64` | - |
+| `register_source` | 24 | 8 | 8 | `u64` | - |
+| `replace_receivers` | 32 | 8 | 8 | `u64` | - |
+| `close_source` | 40 | 8 | 8 | `u64` | - |
 
 ### `GfxNativeBootInfo`
 
@@ -8515,6 +8570,13 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `driver_thread_flag_abortable` | `2` | `u32` | value | number | `driver_thread` | fixed_contract |
 | `driver_thread_flag_aborted` | `4` | `u32` | value | number | `driver_thread` | fixed_contract |
 | `driver_thread_flag_sleeping` | `8` | `u32` | value | number | `driver_thread` | fixed_contract |
+| `gfx_output_catalog_capacity` | `64` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_receiver_max_outputs` | `32` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_receiver_only` | `32` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_edid_missing` | `64` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_edid_invalid` | `128` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_receiver_incomplete` | `256` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_flag_query_failed` | `512` | `u32` | value | number | `gfx_output` | fixed_contract |
 
 ## Limits
 
