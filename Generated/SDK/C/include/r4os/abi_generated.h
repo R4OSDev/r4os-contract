@@ -6664,6 +6664,7 @@ typedef struct R4GfxDriverDisplayApi {
     uint64_t schedule;
     uint64_t boot_hold;
     uint64_t boot_finish;
+    uint64_t prepare_held;
 } R4GfxDriverDisplayApi;
 
 typedef struct R4DriverResourceInfo {
@@ -11598,7 +11599,7 @@ _Static_assert(offsetof(R4GfxBootHoldRequest, generation) == 16u, "GfxBootHoldRe
 _Static_assert(offsetof(R4GfxBootHoldRequest, reference) == 24u, "GfxBootHoldRequest.reference offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, context) == 40u, "GfxBootHoldRequest.context offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, restore_callback) == 48u, "GfxBootHoldRequest.restore_callback offset mismatch");
-_Static_assert(sizeof(R4GfxDriverDisplayApi) == 56u, "GfxDriverDisplayApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverDisplayApi) == 64u, "GfxDriverDisplayApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, version) == 0u, "GfxDriverDisplayApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, size) == 4u, "GfxDriverDisplayApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_info) == 8u, "GfxDriverDisplayApi.boot_info offset mismatch");
@@ -11607,6 +11608,7 @@ _Static_assert(offsetof(R4GfxDriverDisplayApi, transition) == 24u, "GfxDriverDis
 _Static_assert(offsetof(R4GfxDriverDisplayApi, schedule) == 32u, "GfxDriverDisplayApi.schedule offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_hold) == 40u, "GfxDriverDisplayApi.boot_hold offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_finish) == 48u, "GfxDriverDisplayApi.boot_finish offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, prepare_held) == 56u, "GfxDriverDisplayApi.prepare_held offset mismatch");
 _Static_assert(sizeof(R4DriverResourceInfo) == 32u, "DriverResourceInfo size mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, version) == 0u, "DriverResourceInfo.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, size) == 4u, "DriverResourceInfo.size offset mismatch");

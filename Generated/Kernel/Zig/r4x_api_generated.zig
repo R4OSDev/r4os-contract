@@ -6497,13 +6497,14 @@ pub const GfxBootHoldRequest = extern struct {
 
 pub const GfxDriverDisplayApi = extern struct {
     version: u32 = 1,
-    size: u32 = 56,
+    size: u32 = 64,
     boot_info: u64 = 0,
     prepare: u64 = 0,
     transition: u64 = 0,
     schedule: u64 = 0,
     boot_hold: u64 = 0,
     boot_finish: u64 = 0,
+    prepare_held: u64 = 0,
 };
 
 pub const DriverResourceInfo = extern struct {
@@ -11998,7 +11999,7 @@ comptime {
     if (@offsetOf(GfxBootHoldRequest, "reference") != 24) @compileError("generated ABI offset drift: GfxBootHoldRequest.reference");
     if (@offsetOf(GfxBootHoldRequest, "context") != 40) @compileError("generated ABI offset drift: GfxBootHoldRequest.context");
     if (@offsetOf(GfxBootHoldRequest, "restore_callback") != 48) @compileError("generated ABI offset drift: GfxBootHoldRequest.restore_callback");
-    if (@sizeOf(GfxDriverDisplayApi) != 56) @compileError("generated ABI size drift: GfxDriverDisplayApi");
+    if (@sizeOf(GfxDriverDisplayApi) != 64) @compileError("generated ABI size drift: GfxDriverDisplayApi");
     if (@alignOf(GfxDriverDisplayApi) != 8) @compileError("generated ABI alignment drift: GfxDriverDisplayApi");
     if (@offsetOf(GfxDriverDisplayApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverDisplayApi.version");
     if (@offsetOf(GfxDriverDisplayApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverDisplayApi.size");
@@ -12008,6 +12009,7 @@ comptime {
     if (@offsetOf(GfxDriverDisplayApi, "schedule") != 32) @compileError("generated ABI offset drift: GfxDriverDisplayApi.schedule");
     if (@offsetOf(GfxDriverDisplayApi, "boot_hold") != 40) @compileError("generated ABI offset drift: GfxDriverDisplayApi.boot_hold");
     if (@offsetOf(GfxDriverDisplayApi, "boot_finish") != 48) @compileError("generated ABI offset drift: GfxDriverDisplayApi.boot_finish");
+    if (@offsetOf(GfxDriverDisplayApi, "prepare_held") != 56) @compileError("generated ABI offset drift: GfxDriverDisplayApi.prepare_held");
     if (@sizeOf(DriverResourceInfo) != 32) @compileError("generated ABI size drift: DriverResourceInfo");
     if (@alignOf(DriverResourceInfo) != 8) @compileError("generated ABI alignment drift: DriverResourceInfo");
     if (@offsetOf(DriverResourceInfo, "version") != 0) @compileError("generated ABI offset drift: DriverResourceInfo.version");

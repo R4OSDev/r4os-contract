@@ -82343,7 +82343,7 @@
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 1,
-      "size": 56,
+      "size": 64,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82374,7 +82374,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "56"
+          "default_value": "64"
         },
         {
           "name": "boot_info",
@@ -82459,10 +82459,24 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "prepare_held",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t prepare_held(const GfxNativeRegistration*, uint64_t held_generation, GfxNativeState*). Optional same-owner and same-adapter transfer from a captured, effects-latched boot hold. Retains that pending generation, immutable boot RAM image and closed firmware writer gate. Initial shadow pixels come from the captured RAM image. Commit success transfers display ownership; abort or old-preserved removes only the native candidate and retains the original boot hold. Lost output retains both owners. Native restore must prove GPU quiescence and original scanout mapping before captured pixels and retained boot resources can be released. Negative admission errors preserve the hold.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen."
+      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery."
     },
     {
       "name": "DriverResourceInfo",

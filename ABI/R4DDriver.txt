@@ -23,6 +23,35 @@ appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
 its offer. None of these extensions changes an older prefix.
 
+Held boot display to native ownership (Kernel 0.1.159)
+------------------------------------------------------
+GfxDriverDisplayApi v1 appends prepare_held at offset 56, total 64 bytes.
+Its existing 40/56-byte prefixes, DriverApi 35/648 and v28 query slot stay
+binary-compatible. Query writes only complete slots within caller capacity;
+Zig/C helpers require size >= 64 and a nonzero callback.
+
+prepare_held(registration*, held_generation:u64, state*) authenticates the
+same live R4D owner/adapter, captured immutable boot RAM and effects-latched
+hold. It reuses the exact pending generation with firmware writers closed.
+Ordinary prepare cannot bypass that hold. Initial shadow rows come from the
+RAM snapshot, never a potentially repurposed post-firmware VRAM mapping.
+
+Abort/old-preserved removes only the native candidate; the original boot
+hold remains preparing/retained. Old-preserved is returned only after native
+cleanup; output-lost retains cleanup and requires another abort with the
+returned generation. A failed preparation may return retained cleanup state
+alongside its error; token zero means display admission was never reached.
+After old-preserved the caller may prepare again or recover the original
+hold through boot_finish. Retained=1 alone does not distinguish these phases.
+
+Confirmed/lost commits retain the boot snapshot until native recovery proves
+device quiescence AND original scanout mapping. The kernel then restores
+pixels including pitch padding and releases queue, shadow and boot handles.
+The old boot recovery callback is not replayed. Native hardware confirmation
+is latched across subsequent cleanup failures, including failure after the
+native bridge itself was released. Retry restore with the current display
+generation. Terminal system transitions never reopen framebuffer writers.
+
 Common graphics BOs in Driver Work (Kernel 0.1.154)
 ---------------------------------------------------
 DriverApi 35/648 and the original GfxDriverMemoryApi 1/112 prefix keep their layouts.

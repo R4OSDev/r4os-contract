@@ -3946,7 +3946,7 @@ comptime {
     if (@offsetOf(abi.GfxBootHoldRequest, "reference") != 24) @compileError("GfxBootHoldRequest.reference offset");
     if (@offsetOf(abi.GfxBootHoldRequest, "context") != 40) @compileError("GfxBootHoldRequest.context offset");
     if (@offsetOf(abi.GfxBootHoldRequest, "restore_callback") != 48) @compileError("GfxBootHoldRequest.restore_callback offset");
-    if (@sizeOf(abi.GfxDriverDisplayApi) != 56) @compileError("GfxDriverDisplayApi size");
+    if (@sizeOf(abi.GfxDriverDisplayApi) != 64) @compileError("GfxDriverDisplayApi size");
     if (@offsetOf(abi.GfxDriverDisplayApi, "version") != 0) @compileError("GfxDriverDisplayApi.version offset");
     if (@offsetOf(abi.GfxDriverDisplayApi, "size") != 4) @compileError("GfxDriverDisplayApi.size offset");
     if (@offsetOf(abi.GfxDriverDisplayApi, "boot_info") != 8) @compileError("GfxDriverDisplayApi.boot_info offset");
@@ -3955,6 +3955,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverDisplayApi, "schedule") != 32) @compileError("GfxDriverDisplayApi.schedule offset");
     if (@offsetOf(abi.GfxDriverDisplayApi, "boot_hold") != 40) @compileError("GfxDriverDisplayApi.boot_hold offset");
     if (@offsetOf(abi.GfxDriverDisplayApi, "boot_finish") != 48) @compileError("GfxDriverDisplayApi.boot_finish offset");
+    if (@offsetOf(abi.GfxDriverDisplayApi, "prepare_held") != 56) @compileError("GfxDriverDisplayApi.prepare_held offset");
     if (@sizeOf(abi.DriverResourceInfo) != 32) @compileError("DriverResourceInfo size");
     if (@offsetOf(abi.DriverResourceInfo, "version") != 0) @compileError("DriverResourceInfo.version offset");
     if (@offsetOf(abi.DriverResourceInfo, "size") != 4) @compileError("DriverResourceInfo.size offset");
