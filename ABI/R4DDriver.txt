@@ -65,8 +65,10 @@ producer; bare diagnostic BO IDs never become importable references.
 
 Reference flag 2 grants mapping retention only: describe, residency access
 3/4 and release. CPU maps, sharing, queue submission and execution acquire
-through it are rejected. Residency may cover the whole BO; validated job
-extents and execution leases remain mandatory for every hardware command.
+through it are rejected. Since Kernel 0.1.156, residency may also retain
+the allocated backing padding (including alignment) of the BO. CPU/execution/queue ranges
+remain bounded by the logical descriptor length; validated job extents
+and execution leases remain mandatory for every hardware command.
 This reference does not freeze mutable sources against later ordered writes.
 Queue completion, reference lifetime and actual mapping/TLB retirement are
 separate; only confirmed quiescence permits device release. Pageable output
