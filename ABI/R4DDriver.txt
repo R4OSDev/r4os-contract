@@ -69,6 +69,16 @@ driver confirms backing and mappings. Neither pointer is accessed under the
 metadata lock. Reserve/commit recheck admission under that lock. Unpublished
 references cannot be shared; allocating backing also retains the driver.
 
++Kernel 0.1.158: this authenticated reserve path also accepts opaque nonzero
+storage modifiers for shaped formats. Ordinary buffer_create remains linear.
+The driver validates vendor layout, pitch, tiling and physical padding.
+The common owner checks format/dimensions, logical row spans, alignment,
+strictly ordered non-overlapping plane offsets and total backing bounds.
+For opaque layouts a plane owns storage through the next plane offset, or
+the declared byte_length. Padding is part of that extent. Native backing
+has no CPU map; describe/import preserves the exact descriptor and identity.
+Modifier support alone never grants engine or scanout capability.
+
 buffer_abort(reservation*, quiesced:u32) ends a failed allocation only after
 confirmed unwind. Unknown hardware effects keep the reservation charged.
 buffer_take_release(adapter:u32, device_generation:u64, GfxOwnedBufferRelease*)
