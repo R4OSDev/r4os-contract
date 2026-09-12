@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 214 von 214 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1670; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1671; Limits: 109
 
 ## App-Profile
 
@@ -203,7 +203,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBackendRegistration` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxDriverJob` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
-| `GfxDriverQueueApi` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `GfxDriverQueueApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxDisplayLimits` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
@@ -5560,7 +5560,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 56 / 8
+- Version/Größe/Alignment: 1 / 64 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5572,6 +5572,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `complete` | 32 | 8 | 8 | `u64` | - |
 | `reset` | 40 | 8 | 8 | `u64` | - |
 | `segment` | 48 | 8 | 8 | `u64` | - |
+| `retain_resource` | 56 | 8 | 8 | `u64` | - |
 
 ### `GfxOutputId`
 
@@ -8427,6 +8428,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_buffer_cache_write_combining` | `2` | `u32` | value | number | `gfx_buffer` | fixed_contract |
 | `gfx_buffer_cache_uncached` | `3` | `u32` | value | number | `gfx_buffer` | fixed_contract |
 | `gfx_buffer_reference_immutable` | `1` | `u32` | value | number | `gfx_buffer` | fixed_contract |
+| `gfx_buffer_reference_mapping_only` | `2` | `u32` | value | number | `gfx_buffer` | fixed_contract |
 | `gfx_queue_ok` | `1` | `i32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_queue_error_invalid` | `-1` | `i32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_queue_error_unavailable` | `-2` | `i32` | value | number | `gfx_queue` | fixed_contract |

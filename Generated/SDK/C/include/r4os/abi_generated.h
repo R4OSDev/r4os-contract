@@ -1533,6 +1533,7 @@ extern "C" {
 #define R4OS_GFX_BUFFER_CACHE_WRITE_COMBINING 2u
 #define R4OS_GFX_BUFFER_CACHE_UNCACHED 3u
 #define R4OS_GFX_BUFFER_REFERENCE_IMMUTABLE 1u
+#define R4OS_GFX_BUFFER_REFERENCE_MAPPING_ONLY 2u
 #define R4OS_GFX_QUEUE_OK ((int32_t)1)
 #define R4OS_GFX_QUEUE_ERROR_INVALID ((int32_t)-1)
 #define R4OS_GFX_QUEUE_ERROR_UNAVAILABLE ((int32_t)-2)
@@ -6399,6 +6400,7 @@ typedef struct R4GfxDriverQueueApi {
     uint64_t complete;
     uint64_t reset;
     uint64_t segment;
+    uint64_t retain_resource;
 } R4GfxDriverQueueApi;
 
 typedef struct R4GfxOutputId {
@@ -11341,7 +11343,7 @@ _Static_assert(offsetof(R4GfxDriverJob, target_buffer) == 72u, "GfxDriverJob.tar
 _Static_assert(offsetof(R4GfxDriverJob, byte_length) == 88u, "GfxDriverJob.byte_length offset mismatch");
 _Static_assert(offsetof(R4GfxDriverJob, source_offset) == 96u, "GfxDriverJob.source_offset offset mismatch");
 _Static_assert(offsetof(R4GfxDriverJob, target_offset) == 104u, "GfxDriverJob.target_offset offset mismatch");
-_Static_assert(sizeof(R4GfxDriverQueueApi) == 56u, "GfxDriverQueueApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverQueueApi) == 64u, "GfxDriverQueueApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, version) == 0u, "GfxDriverQueueApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, size) == 4u, "GfxDriverQueueApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, register_backend) == 8u, "GfxDriverQueueApi.register_backend offset mismatch");
@@ -11350,6 +11352,7 @@ _Static_assert(offsetof(R4GfxDriverQueueApi, take) == 24u, "GfxDriverQueueApi.ta
 _Static_assert(offsetof(R4GfxDriverQueueApi, complete) == 32u, "GfxDriverQueueApi.complete offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, reset) == 40u, "GfxDriverQueueApi.reset offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, segment) == 48u, "GfxDriverQueueApi.segment offset mismatch");
+_Static_assert(offsetof(R4GfxDriverQueueApi, retain_resource) == 56u, "GfxDriverQueueApi.retain_resource offset mismatch");
 _Static_assert(sizeof(R4GfxOutputId) == 24u, "GfxOutputId size mismatch");
 _Static_assert(offsetof(R4GfxOutputId, adapter_id) == 0u, "GfxOutputId.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOutputId, connector_id) == 4u, "GfxOutputId.connector_id offset mismatch");

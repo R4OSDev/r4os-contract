@@ -1521,6 +1521,7 @@ pub const gfx_buffer_cache_write_back: u32 = 1;
 pub const gfx_buffer_cache_write_combining: u32 = 2;
 pub const gfx_buffer_cache_uncached: u32 = 3;
 pub const gfx_buffer_reference_immutable: u32 = 1;
+pub const gfx_buffer_reference_mapping_only: u32 = 2;
 pub const gfx_queue_ok: i32 = 1;
 pub const gfx_queue_error_invalid: i32 = -1;
 pub const gfx_queue_error_unavailable: i32 = -2;
@@ -6234,13 +6235,14 @@ pub const GfxDriverJob = extern struct {
 
 pub const GfxDriverQueueApi = extern struct {
     version: u32 = 1,
-    size: u32 = 56,
+    size: u32 = 64,
     register_backend: u64 = 0,
     unregister_backend: u64 = 0,
     take: u64 = 0,
     complete: u64 = 0,
     reset: u64 = 0,
     segment: u64 = 0,
+    retain_resource: u64 = 0,
 };
 
 pub const GfxOutputId = extern struct {
@@ -11722,7 +11724,7 @@ comptime {
     if (@offsetOf(GfxDriverJob, "byte_length") != 88) @compileError("generated ABI offset drift: GfxDriverJob.byte_length");
     if (@offsetOf(GfxDriverJob, "source_offset") != 96) @compileError("generated ABI offset drift: GfxDriverJob.source_offset");
     if (@offsetOf(GfxDriverJob, "target_offset") != 104) @compileError("generated ABI offset drift: GfxDriverJob.target_offset");
-    if (@sizeOf(GfxDriverQueueApi) != 56) @compileError("generated ABI size drift: GfxDriverQueueApi");
+    if (@sizeOf(GfxDriverQueueApi) != 64) @compileError("generated ABI size drift: GfxDriverQueueApi");
     if (@alignOf(GfxDriverQueueApi) != 8) @compileError("generated ABI alignment drift: GfxDriverQueueApi");
     if (@offsetOf(GfxDriverQueueApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverQueueApi.version");
     if (@offsetOf(GfxDriverQueueApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverQueueApi.size");
@@ -11732,6 +11734,7 @@ comptime {
     if (@offsetOf(GfxDriverQueueApi, "complete") != 32) @compileError("generated ABI offset drift: GfxDriverQueueApi.complete");
     if (@offsetOf(GfxDriverQueueApi, "reset") != 40) @compileError("generated ABI offset drift: GfxDriverQueueApi.reset");
     if (@offsetOf(GfxDriverQueueApi, "segment") != 48) @compileError("generated ABI offset drift: GfxDriverQueueApi.segment");
+    if (@offsetOf(GfxDriverQueueApi, "retain_resource") != 56) @compileError("generated ABI offset drift: GfxDriverQueueApi.retain_resource");
     if (@sizeOf(GfxOutputId) != 24) @compileError("generated ABI size drift: GfxOutputId");
     if (@alignOf(GfxOutputId) != 8) @compileError("generated ABI alignment drift: GfxOutputId");
     if (@offsetOf(GfxOutputId, "adapter_id") != 0) @compileError("generated ABI offset drift: GfxOutputId.adapter_id");

@@ -1520,6 +1520,7 @@ pub const gfx_buffer_cache_write_back = generated.gfx_buffer_cache_write_back;
 pub const gfx_buffer_cache_write_combining = generated.gfx_buffer_cache_write_combining;
 pub const gfx_buffer_cache_uncached = generated.gfx_buffer_cache_uncached;
 pub const gfx_buffer_reference_immutable = generated.gfx_buffer_reference_immutable;
+pub const gfx_buffer_reference_mapping_only = generated.gfx_buffer_reference_mapping_only;
 pub const gfx_queue_ok = generated.gfx_queue_ok;
 pub const gfx_queue_error_invalid = generated.gfx_queue_error_invalid;
 pub const gfx_queue_error_unavailable = generated.gfx_queue_error_unavailable;

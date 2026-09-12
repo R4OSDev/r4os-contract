@@ -3726,7 +3726,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverJob, "byte_length") != 88) @compileError("GfxDriverJob.byte_length offset");
     if (@offsetOf(abi.GfxDriverJob, "source_offset") != 96) @compileError("GfxDriverJob.source_offset offset");
     if (@offsetOf(abi.GfxDriverJob, "target_offset") != 104) @compileError("GfxDriverJob.target_offset offset");
-    if (@sizeOf(abi.GfxDriverQueueApi) != 56) @compileError("GfxDriverQueueApi size");
+    if (@sizeOf(abi.GfxDriverQueueApi) != 64) @compileError("GfxDriverQueueApi size");
     if (@offsetOf(abi.GfxDriverQueueApi, "version") != 0) @compileError("GfxDriverQueueApi.version offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "size") != 4) @compileError("GfxDriverQueueApi.size offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "register_backend") != 8) @compileError("GfxDriverQueueApi.register_backend offset");
@@ -3735,6 +3735,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverQueueApi, "complete") != 32) @compileError("GfxDriverQueueApi.complete offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "reset") != 40) @compileError("GfxDriverQueueApi.reset offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "segment") != 48) @compileError("GfxDriverQueueApi.segment offset");
+    if (@offsetOf(abi.GfxDriverQueueApi, "retain_resource") != 56) @compileError("GfxDriverQueueApi.retain_resource offset");
     if (@sizeOf(abi.GfxOutputId) != 24) @compileError("GfxOutputId size");
     if (@offsetOf(abi.GfxOutputId, "adapter_id") != 0) @compileError("GfxOutputId.adapter_id offset");
     if (@offsetOf(abi.GfxOutputId, "connector_id") != 4) @compileError("GfxOutputId.connector_id offset");

@@ -50,6 +50,29 @@ claiming execution. Drivers separately confirm their hardware mapping and
 cache/TLB completion. BO success is 1; ordinary Work callback success is 0.
 Evidence: Docs/Drivers/GrafikSpeicher07911.json / bo_work_checkpoint.
 
+Native queue backing references (Kernel 0.1.155)
+------------------------------------------------
+GfxDriverQueueApi v1 accepts its original 56-byte prefix and appends the
+optional retain_resource slot at 56 (total 64). Query publishes only complete
+slots within caller capacity. DriverApi remains 35/648. Query and retention
+accept actual ordinary Work; backend registration still requires Init.
+
+retain_resource(fence, which, GfxBufferReference*) uses source=0/target=1.
+The exact active job and backend/start/reset generation must still exist;
+closed admission is rechecked under the shared BO metadata owner. IRQ and
+dedicated/storage contexts are rejected. The queued backing may outlive its
+producer; bare diagnostic BO IDs never become importable references.
+
+Reference flag 2 grants mapping retention only: describe, residency access
+3/4 and release. CPU maps, sharing, queue submission and execution acquire
+through it are rejected. Residency may cover the whole BO; validated job
+extents and execution leases remain mandatory for every hardware command.
+This reference does not freeze mutable sources against later ordered writes.
+Queue completion, reference lifetime and actual mapping/TLB retirement are
+separate; only confirmed quiescence permits device release. Pageable output
+is written outside the metadata owner. See queue_resource_checkpoint in
+Docs/Drivers/GrafikSpeicher07911.json for compatibility and actual SMP4 proof.
+
 Audio output extension (0.78.16)
 -------------------------------
 An AudioBackend descriptor with version 3 has the unchanged 72-byte version-2
