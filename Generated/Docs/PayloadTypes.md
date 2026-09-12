@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 214 von 214 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 216 von 216 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1671; Limits: 109
 
@@ -194,7 +194,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxDmaSegment` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxMmioRequest` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GfxMmioWindow` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
-| `GfxDriverMemoryApi` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `GfxOwnedBufferReservation` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `GfxOwnedBufferRelease` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `GfxDriverMemoryApi` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
 | `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
@@ -5390,12 +5392,54 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `cache_policy` | 48 | 4 | 4 | `u32` | - |
 | `flags` | 52 | 4 | 4 | `u32` | - |
 
+### `GfxOwnedBufferReservation`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `buffer` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `reference` | 24 | 16 | 8 | `GfxBufferHandle` | - |
+| `allocation_bytes` | 40 | 8 | 8 | `u64` | - |
+| `cookie` | 48 | 8 | 8 | `u64` | - |
+| `device_generation` | 56 | 8 | 8 | `u64` | - |
+| `driver_generation` | 64 | 8 | 8 | `u64` | - |
+| `adapter_id` | 72 | 4 | 4 | `u32` | - |
+| `driver_owner` | 76 | 4 | 4 | `u32` | - |
+| `reserved0` | 80 | 8 | 8 | `u64` | - |
+
+### `GfxOwnedBufferRelease`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `buffer` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `cookie` | 24 | 8 | 8 | `u64` | - |
+| `byte_length` | 32 | 8 | 8 | `u64` | - |
+| `attempt` | 40 | 8 | 8 | `u64` | - |
+| `device_generation` | 48 | 8 | 8 | `u64` | - |
+| `driver_generation` | 56 | 8 | 8 | `u64` | - |
+| `adapter_id` | 64 | 4 | 4 | `u32` | - |
+| `driver_owner` | 68 | 4 | 4 | `u32` | - |
+| `reserved0` | 72 | 8 | 8 | `u64` | - |
+
 ### `GfxDriverMemoryApi`
 
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 112 / 8
+- Version/Größe/Alignment: 1 / 152 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5414,6 +5458,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `mmio_unmap` | 88 | 8 | 8 | `u64` | - |
 | `collect` | 96 | 8 | 8 | `u64` | - |
 | `buffer_stats` | 104 | 8 | 8 | `u64` | - |
+| `buffer_reserve` | 112 | 8 | 8 | `u64` | - |
+| `buffer_commit` | 120 | 8 | 8 | `u64` | - |
+| `buffer_abort` | 128 | 8 | 8 | `u64` | - |
+| `buffer_take_release` | 136 | 8 | 8 | `u64` | - |
+| `buffer_finish_release` | 144 | 8 | 8 | `u64` | - |
 
 ### `GfxFence`
 

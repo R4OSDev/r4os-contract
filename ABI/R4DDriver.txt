@@ -25,7 +25,7 @@ its offer. None of these extensions changes an older prefix.
 
 Common graphics BOs in Driver Work (Kernel 0.1.154)
 ---------------------------------------------------
-DriverApi 35/648 and GfxDriverMemoryApi 1/112 keep their byte layouts.
+DriverApi 35/648 and the original GfxDriverMemoryApi 1/112 prefix keep their layouts.
 The optional memory query now admits ordinary Driver Work as well as
 Init/Shutdown task contexts. Every BO operation authenticates the current
 R4D start; cached tables do not capture an identity. IRQ, storage callbacks,
@@ -49,6 +49,43 @@ boundary. Residency access 4 (DMA) and access 3 (GPU VA) retain backing without
 claiming execution. Drivers separately confirm their hardware mapping and
 cache/TLB completion. BO success is 1; ordinary Work callback success is 0.
 Evidence: Docs/Drivers/GrafikSpeicher07911.json / bo_work_checkpoint.
+
+Driver-owned graphics backing (Kernel 0.1.157)
+---------------------------------------------
+GfxDriverMemoryApi v1 appends five optional slots after byte 112: reserve,
+commit, abort, take_release and finish_release, for a total of 152 bytes.
+Query returns complete supported slots within caller capacity; SDKs accept
+the original 112-byte table. DriverApi itself remains 35/648.
+
+buffer_reserve(descriptor*, cookie:u64, GfxOwnedBufferReservation*) reserves
+budget, object and reference before hardware I/O. Device-local backing must
+have an adapter and device generation, no CPU usage, and a nonzero opaque
+cookie unique within that driver's start/adapter/device incarnation. Input
+driver_owner may be zero or the actual owner; the kernel supplies identity.
+The 88-byte reservation includes exact object/reference, allocated bytes,
+cookie, adapter, device generation and actual driver-start generation.
+buffer_commit(reservation*, GfxBufferReference*) publishes only after the
+driver confirms backing and mappings. Neither pointer is accessed under the
+metadata lock. Reserve/commit recheck admission under that lock. Unpublished
+references cannot be shared; allocating backing also retains the driver.
+
+buffer_abort(reservation*, quiesced:u32) ends a failed allocation only after
+confirmed unwind. Unknown hardware effects keep the reservation charged.
+buffer_take_release(adapter:u32, device_generation:u64, GfxOwnedBufferRelease*)
+claims one matching resource only after every reference and device/queue
+lease ends; Busy means none is ready. The 80-byte ticket binds object,
+cookie, byte extent, attempt and both generations to the actual caller.
+buffer_finish_release(ticket*, quiesced:u32) releases common ownership only
+after native mappings and physical backing are unreachable. Zero returns
+Busy and keeps the same claimed ticket; modified/stale/foreign tickets fail.
+Abort/take/finish remain available through cached tables during closing.
+
+The system collector skips driver backing and continues releasing VM-owned
+buffers. Driver I/O, callbacks, placement and GPU page tables stay outside
+the common metadata owner. Opaque cookies are never VM IDs or CPU/GPU
+addresses. A backing's own native mapping must not hold a permanent common
+lease that prevents its last-reference release. Evidence: owned_vram_checkpoint
+in Docs/Drivers/GrafikSpeicher07911.json.
 
 Native queue backing references (Kernel 0.1.155)
 ------------------------------------------------
