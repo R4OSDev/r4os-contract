@@ -1693,6 +1693,29 @@ pub const display_presentation_pending_copy: u32 = 1;
 pub const display_presentation_pending_ready: u32 = 2;
 pub const display_presentation_pending_flip: u32 = 4;
 pub const display_presentation_pending_setup: u32 = 8;
+pub const display_cursor_cap_hardware: u32 = 1;
+pub const display_cursor_cap_straight_alpha: u32 = 2;
+pub const display_cursor_cap_hotspot: u32 = 4;
+pub const display_cursor_cap_offscreen: u32 = 8;
+pub const display_cursor_operation_prepare: u32 = 0;
+pub const display_cursor_operation_show: u32 = 1;
+pub const display_cursor_operation_move: u32 = 2;
+pub const display_cursor_operation_hide: u32 = 3;
+pub const display_cursor_operation_release: u32 = 4;
+pub const display_cursor_phase_idle: u32 = 0;
+pub const display_cursor_phase_queued: u32 = 1;
+pub const display_cursor_phase_active: u32 = 2;
+pub const display_cursor_phase_complete: u32 = 3;
+pub const display_cursor_phase_failed: u32 = 4;
+pub const display_cursor_phase_lost: u32 = 5;
+pub const display_cursor_state_image_ready: u32 = 1;
+pub const display_cursor_state_visible: u32 = 2;
+pub const display_cursor_state_suspended: u32 = 16;
+pub const display_cursor_state_unknown: u32 = 4;
+pub const display_cursor_state_claimed: u32 = 8;
+pub const display_cursor_visibility_hidden: u32 = 0;
+pub const display_cursor_visibility_visible: u32 = 1;
+pub const display_cursor_visibility_unknown: u32 = 2;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6521,7 +6544,7 @@ pub const GfxBootHoldRequest = extern struct {
 
 pub const GfxDriverDisplayApi = extern struct {
     version: u32 = 1,
-    size: u32 = 72,
+    size: u32 = 96,
     boot_info: u64 = 0,
     prepare: u64 = 0,
     transition: u64 = 0,
@@ -6530,6 +6553,9 @@ pub const GfxDriverDisplayApi = extern struct {
     boot_finish: u64 = 0,
     prepare_held: u64 = 0,
     presentation_stats: u64 = 0,
+    cursor_configure: u64 = 0,
+    cursor_take: u64 = 0,
+    cursor_complete: u64 = 0,
 };
 
 pub const DriverResourceInfo = extern struct {
@@ -6749,6 +6775,77 @@ pub const DisplayPresentationStats = extern struct {
     irq_sequence: u64 = 0,
     irq_observed_ns: u64 = 0,
     released_ns: u64 = 0,
+};
+
+pub const DisplayCursorInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 80,
+    head_id: u32 = 0,
+    flags: u32 = 0,
+    backend: GfxBackendBinding = .{},
+    display_generation: u64 = 0,
+    max_width: u32 = 0,
+    max_height: u32 = 0,
+    min_x: i32 = 0,
+    min_y: i32 = 0,
+    max_x: i32 = 0,
+    max_y: i32 = 0,
+};
+
+pub const DisplayCursorRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 88,
+    display_generation: u64 = 0,
+    operation: u32 = 0,
+    head_id: u32 = 0,
+    reference: GfxBufferHandle = .{},
+    image_sequence: u64 = 0,
+    x: i32 = 0,
+    y: i32 = 0,
+    hotspot_x: u32 = 0,
+    hotspot_y: u32 = 0,
+    width: u32 = 0,
+    height: u32 = 0,
+    pitch: u64 = 0,
+    byte_length: u64 = 0,
+};
+
+pub const DisplayCursorStatus = extern struct {
+    version: u32 = 1,
+    size: u32 = 72,
+    display_generation: u64 = 0,
+    sequence: u64 = 0,
+    completed: u64 = 0,
+    image_sequence: u64 = 0,
+    phase: u32 = 0,
+    flags: u32 = 0,
+    x: i32 = 0,
+    y: i32 = 0,
+    head_id: u32 = 0,
+    error_code: i32 = 0,
+    deadline_ns: u64 = 0,
+};
+
+pub const GfxDriverCursorJob = extern struct {
+    version: u32 = 1,
+    size: u32 = 160,
+    backend: GfxBackendBinding = .{},
+    sequence: u64 = 0,
+    deadline_ns: u64 = 0,
+    barrier_timeline: u64 = 0,
+    barrier_point: u64 = 0,
+    request: DisplayCursorRequest = .{},
+};
+
+pub const GfxDriverCursorCompletion = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    sequence: u64 = 0,
+    display_generation: u64 = 0,
+    error_code: i32 = 0,
+    outcome: u32 = 0,
+    visibility: u32 = 0,
+    reserved0: u32 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -7249,12 +7346,15 @@ pub const R4DrawFns = struct {
     pub const gfx_atomic_status = *const fn (u64, *GfxModeStatus) callconv(.c) i32;
     pub const gfx_atomic_resolve = *const fn (u64, u32, *GfxModeStatus) callconv(.c) i32;
     pub const display_presentation_stats = *const fn (u32, *DisplayPresentationStats) callconv(.c) i32;
+    pub const display_cursor_info = *const fn (*DisplayCursorInfo) callconv(.c) i32;
+    pub const display_cursor_submit = *const fn (*const DisplayCursorRequest, *DisplayCursorStatus) callconv(.c) i32;
+    pub const display_cursor_status = *const fn (*DisplayCursorStatus) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 14,
-    size: u32 = 616,
+    abi_version: u32 = 15,
+    size: u32 = 640,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -7331,6 +7431,9 @@ pub const R4XStartR4Draw = extern struct {
     gfx_atomic_status: usize = 0,
     gfx_atomic_resolve: usize = 0,
     display_presentation_stats: usize = 0,
+    display_cursor_info: usize = 0,
+    display_cursor_submit: usize = 0,
+    display_cursor_status: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -7849,6 +7952,9 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 72, .offset = 592, .name = "gfx_atomic_status", .state = .function, .required = false },
     .{ .number = 73, .offset = 600, .name = "gfx_atomic_resolve", .state = .function, .required = false },
     .{ .number = 74, .offset = 608, .name = "display_presentation_stats", .state = .function, .required = false },
+    .{ .number = 75, .offset = 616, .name = "display_cursor_info", .state = .function, .required = false },
+    .{ .number = 76, .offset = 624, .name = "display_cursor_submit", .state = .function, .required = false },
+    .{ .number = 77, .offset = 632, .name = "display_cursor_status", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -12108,7 +12214,7 @@ comptime {
     if (@offsetOf(GfxBootHoldRequest, "reference") != 24) @compileError("generated ABI offset drift: GfxBootHoldRequest.reference");
     if (@offsetOf(GfxBootHoldRequest, "context") != 40) @compileError("generated ABI offset drift: GfxBootHoldRequest.context");
     if (@offsetOf(GfxBootHoldRequest, "restore_callback") != 48) @compileError("generated ABI offset drift: GfxBootHoldRequest.restore_callback");
-    if (@sizeOf(GfxDriverDisplayApi) != 72) @compileError("generated ABI size drift: GfxDriverDisplayApi");
+    if (@sizeOf(GfxDriverDisplayApi) != 96) @compileError("generated ABI size drift: GfxDriverDisplayApi");
     if (@alignOf(GfxDriverDisplayApi) != 8) @compileError("generated ABI alignment drift: GfxDriverDisplayApi");
     if (@offsetOf(GfxDriverDisplayApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverDisplayApi.version");
     if (@offsetOf(GfxDriverDisplayApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverDisplayApi.size");
@@ -12120,6 +12226,9 @@ comptime {
     if (@offsetOf(GfxDriverDisplayApi, "boot_finish") != 48) @compileError("generated ABI offset drift: GfxDriverDisplayApi.boot_finish");
     if (@offsetOf(GfxDriverDisplayApi, "prepare_held") != 56) @compileError("generated ABI offset drift: GfxDriverDisplayApi.prepare_held");
     if (@offsetOf(GfxDriverDisplayApi, "presentation_stats") != 64) @compileError("generated ABI offset drift: GfxDriverDisplayApi.presentation_stats");
+    if (@offsetOf(GfxDriverDisplayApi, "cursor_configure") != 72) @compileError("generated ABI offset drift: GfxDriverDisplayApi.cursor_configure");
+    if (@offsetOf(GfxDriverDisplayApi, "cursor_take") != 80) @compileError("generated ABI offset drift: GfxDriverDisplayApi.cursor_take");
+    if (@offsetOf(GfxDriverDisplayApi, "cursor_complete") != 88) @compileError("generated ABI offset drift: GfxDriverDisplayApi.cursor_complete");
     if (@sizeOf(DriverResourceInfo) != 32) @compileError("generated ABI size drift: DriverResourceInfo");
     if (@alignOf(DriverResourceInfo) != 8) @compileError("generated ABI alignment drift: DriverResourceInfo");
     if (@offsetOf(DriverResourceInfo, "version") != 0) @compileError("generated ABI offset drift: DriverResourceInfo.version");
@@ -12323,6 +12432,72 @@ comptime {
     if (@offsetOf(DisplayPresentationStats, "irq_sequence") != 184) @compileError("generated ABI offset drift: DisplayPresentationStats.irq_sequence");
     if (@offsetOf(DisplayPresentationStats, "irq_observed_ns") != 192) @compileError("generated ABI offset drift: DisplayPresentationStats.irq_observed_ns");
     if (@offsetOf(DisplayPresentationStats, "released_ns") != 200) @compileError("generated ABI offset drift: DisplayPresentationStats.released_ns");
+    if (@sizeOf(DisplayCursorInfo) != 80) @compileError("generated ABI size drift: DisplayCursorInfo");
+    if (@alignOf(DisplayCursorInfo) != 8) @compileError("generated ABI alignment drift: DisplayCursorInfo");
+    if (@offsetOf(DisplayCursorInfo, "version") != 0) @compileError("generated ABI offset drift: DisplayCursorInfo.version");
+    if (@offsetOf(DisplayCursorInfo, "size") != 4) @compileError("generated ABI offset drift: DisplayCursorInfo.size");
+    if (@offsetOf(DisplayCursorInfo, "head_id") != 8) @compileError("generated ABI offset drift: DisplayCursorInfo.head_id");
+    if (@offsetOf(DisplayCursorInfo, "flags") != 12) @compileError("generated ABI offset drift: DisplayCursorInfo.flags");
+    if (@offsetOf(DisplayCursorInfo, "backend") != 16) @compileError("generated ABI offset drift: DisplayCursorInfo.backend");
+    if (@offsetOf(DisplayCursorInfo, "display_generation") != 48) @compileError("generated ABI offset drift: DisplayCursorInfo.display_generation");
+    if (@offsetOf(DisplayCursorInfo, "max_width") != 56) @compileError("generated ABI offset drift: DisplayCursorInfo.max_width");
+    if (@offsetOf(DisplayCursorInfo, "max_height") != 60) @compileError("generated ABI offset drift: DisplayCursorInfo.max_height");
+    if (@offsetOf(DisplayCursorInfo, "min_x") != 64) @compileError("generated ABI offset drift: DisplayCursorInfo.min_x");
+    if (@offsetOf(DisplayCursorInfo, "min_y") != 68) @compileError("generated ABI offset drift: DisplayCursorInfo.min_y");
+    if (@offsetOf(DisplayCursorInfo, "max_x") != 72) @compileError("generated ABI offset drift: DisplayCursorInfo.max_x");
+    if (@offsetOf(DisplayCursorInfo, "max_y") != 76) @compileError("generated ABI offset drift: DisplayCursorInfo.max_y");
+    if (@sizeOf(DisplayCursorRequest) != 88) @compileError("generated ABI size drift: DisplayCursorRequest");
+    if (@alignOf(DisplayCursorRequest) != 8) @compileError("generated ABI alignment drift: DisplayCursorRequest");
+    if (@offsetOf(DisplayCursorRequest, "version") != 0) @compileError("generated ABI offset drift: DisplayCursorRequest.version");
+    if (@offsetOf(DisplayCursorRequest, "size") != 4) @compileError("generated ABI offset drift: DisplayCursorRequest.size");
+    if (@offsetOf(DisplayCursorRequest, "display_generation") != 8) @compileError("generated ABI offset drift: DisplayCursorRequest.display_generation");
+    if (@offsetOf(DisplayCursorRequest, "operation") != 16) @compileError("generated ABI offset drift: DisplayCursorRequest.operation");
+    if (@offsetOf(DisplayCursorRequest, "head_id") != 20) @compileError("generated ABI offset drift: DisplayCursorRequest.head_id");
+    if (@offsetOf(DisplayCursorRequest, "reference") != 24) @compileError("generated ABI offset drift: DisplayCursorRequest.reference");
+    if (@offsetOf(DisplayCursorRequest, "image_sequence") != 40) @compileError("generated ABI offset drift: DisplayCursorRequest.image_sequence");
+    if (@offsetOf(DisplayCursorRequest, "x") != 48) @compileError("generated ABI offset drift: DisplayCursorRequest.x");
+    if (@offsetOf(DisplayCursorRequest, "y") != 52) @compileError("generated ABI offset drift: DisplayCursorRequest.y");
+    if (@offsetOf(DisplayCursorRequest, "hotspot_x") != 56) @compileError("generated ABI offset drift: DisplayCursorRequest.hotspot_x");
+    if (@offsetOf(DisplayCursorRequest, "hotspot_y") != 60) @compileError("generated ABI offset drift: DisplayCursorRequest.hotspot_y");
+    if (@offsetOf(DisplayCursorRequest, "width") != 64) @compileError("generated ABI offset drift: DisplayCursorRequest.width");
+    if (@offsetOf(DisplayCursorRequest, "height") != 68) @compileError("generated ABI offset drift: DisplayCursorRequest.height");
+    if (@offsetOf(DisplayCursorRequest, "pitch") != 72) @compileError("generated ABI offset drift: DisplayCursorRequest.pitch");
+    if (@offsetOf(DisplayCursorRequest, "byte_length") != 80) @compileError("generated ABI offset drift: DisplayCursorRequest.byte_length");
+    if (@sizeOf(DisplayCursorStatus) != 72) @compileError("generated ABI size drift: DisplayCursorStatus");
+    if (@alignOf(DisplayCursorStatus) != 8) @compileError("generated ABI alignment drift: DisplayCursorStatus");
+    if (@offsetOf(DisplayCursorStatus, "version") != 0) @compileError("generated ABI offset drift: DisplayCursorStatus.version");
+    if (@offsetOf(DisplayCursorStatus, "size") != 4) @compileError("generated ABI offset drift: DisplayCursorStatus.size");
+    if (@offsetOf(DisplayCursorStatus, "display_generation") != 8) @compileError("generated ABI offset drift: DisplayCursorStatus.display_generation");
+    if (@offsetOf(DisplayCursorStatus, "sequence") != 16) @compileError("generated ABI offset drift: DisplayCursorStatus.sequence");
+    if (@offsetOf(DisplayCursorStatus, "completed") != 24) @compileError("generated ABI offset drift: DisplayCursorStatus.completed");
+    if (@offsetOf(DisplayCursorStatus, "image_sequence") != 32) @compileError("generated ABI offset drift: DisplayCursorStatus.image_sequence");
+    if (@offsetOf(DisplayCursorStatus, "phase") != 40) @compileError("generated ABI offset drift: DisplayCursorStatus.phase");
+    if (@offsetOf(DisplayCursorStatus, "flags") != 44) @compileError("generated ABI offset drift: DisplayCursorStatus.flags");
+    if (@offsetOf(DisplayCursorStatus, "x") != 48) @compileError("generated ABI offset drift: DisplayCursorStatus.x");
+    if (@offsetOf(DisplayCursorStatus, "y") != 52) @compileError("generated ABI offset drift: DisplayCursorStatus.y");
+    if (@offsetOf(DisplayCursorStatus, "head_id") != 56) @compileError("generated ABI offset drift: DisplayCursorStatus.head_id");
+    if (@offsetOf(DisplayCursorStatus, "error_code") != 60) @compileError("generated ABI offset drift: DisplayCursorStatus.error_code");
+    if (@offsetOf(DisplayCursorStatus, "deadline_ns") != 64) @compileError("generated ABI offset drift: DisplayCursorStatus.deadline_ns");
+    if (@sizeOf(GfxDriverCursorJob) != 160) @compileError("generated ABI size drift: GfxDriverCursorJob");
+    if (@alignOf(GfxDriverCursorJob) != 8) @compileError("generated ABI alignment drift: GfxDriverCursorJob");
+    if (@offsetOf(GfxDriverCursorJob, "version") != 0) @compileError("generated ABI offset drift: GfxDriverCursorJob.version");
+    if (@offsetOf(GfxDriverCursorJob, "size") != 4) @compileError("generated ABI offset drift: GfxDriverCursorJob.size");
+    if (@offsetOf(GfxDriverCursorJob, "backend") != 8) @compileError("generated ABI offset drift: GfxDriverCursorJob.backend");
+    if (@offsetOf(GfxDriverCursorJob, "sequence") != 40) @compileError("generated ABI offset drift: GfxDriverCursorJob.sequence");
+    if (@offsetOf(GfxDriverCursorJob, "deadline_ns") != 48) @compileError("generated ABI offset drift: GfxDriverCursorJob.deadline_ns");
+    if (@offsetOf(GfxDriverCursorJob, "barrier_timeline") != 56) @compileError("generated ABI offset drift: GfxDriverCursorJob.barrier_timeline");
+    if (@offsetOf(GfxDriverCursorJob, "barrier_point") != 64) @compileError("generated ABI offset drift: GfxDriverCursorJob.barrier_point");
+    if (@offsetOf(GfxDriverCursorJob, "request") != 72) @compileError("generated ABI offset drift: GfxDriverCursorJob.request");
+    if (@sizeOf(GfxDriverCursorCompletion) != 40) @compileError("generated ABI size drift: GfxDriverCursorCompletion");
+    if (@alignOf(GfxDriverCursorCompletion) != 8) @compileError("generated ABI alignment drift: GfxDriverCursorCompletion");
+    if (@offsetOf(GfxDriverCursorCompletion, "version") != 0) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.version");
+    if (@offsetOf(GfxDriverCursorCompletion, "size") != 4) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.size");
+    if (@offsetOf(GfxDriverCursorCompletion, "sequence") != 8) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.sequence");
+    if (@offsetOf(GfxDriverCursorCompletion, "display_generation") != 16) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.display_generation");
+    if (@offsetOf(GfxDriverCursorCompletion, "error_code") != 24) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.error_code");
+    if (@offsetOf(GfxDriverCursorCompletion, "outcome") != 28) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.outcome");
+    if (@offsetOf(GfxDriverCursorCompletion, "visibility") != 32) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.visibility");
+    if (@offsetOf(GfxDriverCursorCompletion, "reserved0") != 36) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.reserved0");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -12528,7 +12703,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
-    if (@sizeOf(R4XStartR4Draw) != 616) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 640) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -12604,6 +12779,9 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_atomic_status") != 592) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_atomic_status");
     if (@offsetOf(R4XStartR4Draw, "gfx_atomic_resolve") != 600) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_atomic_resolve");
     if (@offsetOf(R4XStartR4Draw, "display_presentation_stats") != 608) @compileError("generated ABI offset drift: R4XStartR4Draw.display_presentation_stats");
+    if (@offsetOf(R4XStartR4Draw, "display_cursor_info") != 616) @compileError("generated ABI offset drift: R4XStartR4Draw.display_cursor_info");
+    if (@offsetOf(R4XStartR4Draw, "display_cursor_submit") != 624) @compileError("generated ABI offset drift: R4XStartR4Draw.display_cursor_submit");
+    if (@offsetOf(R4XStartR4Draw, "display_cursor_status") != 632) @compileError("generated ABI offset drift: R4XStartR4Draw.display_cursor_status");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");

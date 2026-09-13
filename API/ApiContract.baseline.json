@@ -15281,10 +15281,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 14,
+      "abi_version": 15,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 616,
+      "size": 640,
       "slots": [
         {
           "number": 0,
@@ -20650,6 +20650,200 @@
                   "child": {
                     "kind": "named",
                     "name": "DisplayPresentationStats"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 75,
+          "offset": 616,
+          "name": "display_cursor_info",
+          "state": "function",
+          "required": false,
+          "description": "Read optional native primary hardware-cursor capabilities. Unsupported leaves caller output unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayCursorInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 76,
+          "offset": 624,
+          "name": "display_cursor_submit",
+          "state": "function",
+          "required": false,
+          "description": "Submit one finite asynchronous cursor operation for the calling program. Busy keeps prior state. Prepare borrows the source until terminal completion; only successful show/hide confirmation changes visible ownership.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayCursorRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayCursorStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 77,
+          "offset": 632,
+          "name": "display_cursor_status",
+          "state": "function",
+          "required": false,
+          "description": "Read coherent primary cursor status without rendering or waits. A caller must not draw software while hardware visibility is confirmed or unknown.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayCursorStatus"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -82672,8 +82866,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 72,
+      "version": 3,
+      "size": 96,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82704,7 +82898,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "72"
+          "default_value": "96"
         },
         {
           "name": "boot_info",
@@ -82817,10 +83011,52 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "cursor_configure",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t cursor_configure(const DisplayCursorInfo*). Optional native-primary cursor capability publication by the bound driver; zero flags withdraw only while hidden and idle. Wire version 1.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor_take",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t cursor_take(const GfxBackendBinding*, GfxDriverCursorJob*). Returns 1 for one job, 0 when idle, negative gfx_output error. Task context only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor_complete",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t cursor_complete(const GfxDriverCursorCompletion*). Exact taken job receipt; copied metadata and source-lifetime retirement outside the state owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership."
+      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership. Optional cursor tail preserves the prior 72-byte prefix; layout revision 3/96, wire version 1."
     },
     {
       "name": "DriverResourceInfo",
@@ -85449,6 +85685,861 @@
       ],
       "values": [],
       "description": "Read-only native presentation statistics, separate from the fixed-layout DisplaySummary and existing CPU/common-copy fences. Counters and the latest visible receipt share one coherent bounded snapshot. No IRQ, timer tick, GET or copy completion alone is a visible flip. Samples from stale owner/device/display lifetimes are rejected. Boot framebuffer and unsupported providers return unavailable without inventing hardware data."
+    },
+    {
+      "name": "DisplayCursorInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete version-1 capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "head_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Native primary head identifier.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "display_cursor_cap_*; zero withdraws an already hidden cursor provider.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "backend",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "GfxBackendBinding"
+          },
+          "description": "Exact native backend and device/reset generations.",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GfxBackendBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "display_generation",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Common native display lifetime, independent of mode geometry.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_width",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum source image width in pixels.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_height",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum source image height in pixels.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_x",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Inclusive minimum pointer X including offscreen positions.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_y",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Inclusive minimum pointer Y including offscreen positions.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_x",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Inclusive maximum pointer X.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_y",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Inclusive maximum pointer Y.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Optional hardware cursor on the native primary head. Straight-alpha ARGB8888, bounded dimensions and hotspot describe the same image used by the caller software cursor. Boot framebuffer and unsupported drivers return unsupported. No inference from GPU brand or a CPU clock."
+    },
+    {
+      "name": "DisplayCursorRequest",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 88,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete version-1 capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "88"
+        },
+        {
+          "name": "display_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact generation from DisplayCursorInfo.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "operation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "display_cursor_operation_*.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "head_id",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact supported head identifier.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reference",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "Prepare only: caller-owned SYSTEM ARGB8888 source reference; imported and read-held during the asynchronous request.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "image_sequence",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Show/move: exact successful prepare sequence. Zero for prepare/hide/release.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "x",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Show/move pointer X; hotspot is subtracted by the hardware image plane.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "y",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Show/move pointer Y.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hotspot_x",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Prepare only: hotspot within source width.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hotspot_y",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Prepare only: hotspot within source height.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Prepare only: source width.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Prepare only: source height.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pitch",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Prepare only: exact first-plane byte pitch, four-byte aligned.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "byte_length",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Prepare only: exact source extent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One finite asynchronous cursor request. Prepare claims the cursor for the program and uploads while hidden. Show waits for the latest successful ordinary Present to become visibly scanned, then activates the prepared image. Move performs cursor-only work. Hide confirms the plane is disabled; release additionally drops the program claim. Unused fields must be zero. Busy preserves the previous request and visible state. Caller death requests confirmed hide/release; unknown hardware completion never licenses software-cursor overlap or unsafe memory release."
+    },
+    {
+      "name": "DisplayCursorStatus",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 72,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete version-1 capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "72"
+        },
+        {
+          "name": "display_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bound native display lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Latest accepted request; monotonic for the display lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Latest terminal request with a confirmed outcome; a lost request is not confirmed.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_sequence",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Successful prepared image identity; zero if absent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "display_cursor_phase_*.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "display_cursor_state_*; visible is a confirmed hardware state, unknown requires keeping software hidden.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "x",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Last confirmed pointer X.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "y",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Last confirmed pointer Y.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "head_id",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bound primary head.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "error_code",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "gfx_output error for a failed or lost operation, otherwise zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Finite monotonic request deadline; zero with no pending request.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Coherent bounded cursor request status. Image-copy, cursor activation and pointer-position receipts remain distinct from desktop frame and copy-fence statistics. No waits or rendering on status reads."
+    },
+    {
+      "name": "GfxDriverCursorJob",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 160,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete version-1 capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "160"
+        },
+        {
+          "name": "backend",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxBackendBinding"
+          },
+          "description": "Exact registered provider binding.",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GfxBackendBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "sequence",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Common request sequence, independent of CE/Core/PIO points.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Finite common request deadline.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "barrier_timeline",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Show only: latest successful primary Present source timeline.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "barrier_point",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Show only: wait for this source point or newer on the same visible scanout timeline; zero pair needs no barrier.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request",
+          "offset": 72,
+          "type": {
+            "kind": "named",
+            "name": "DisplayCursorRequest"
+          },
+          "description": "Canonical request; prepare reference belongs to the driver for this borrowed job lifetime.",
+          "size": 88,
+          "alignment": 8,
+          "source_type": "DisplayCursorRequest",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Optional serialized R4D cursor job. Only the bound driver may take it once. Imported source access and real GPU/IRQ completion belong to the driver; the common owner retains the source and validates replies. A copy fence alone cannot satisfy the show barrier."
+    },
+    {
+      "name": "GfxDriverCursorCompletion",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete version-1 capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "sequence",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact taken job sequence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "display_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact job display lifetime.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "error_code",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Zero for applied; negative gfx_output error otherwise.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "outcome",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_output_outcome_applied, old_preserved or lost.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "visibility",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "display_cursor_visibility_*; only real plane confirmation may change this state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Driver terminal cursor receipt. Applied and old_preserved require finished CPU source use and all job-specific GPU uses; common borrowed source ownership ends then. Lost retains uncertain ownership. Repeated identical receipts are idempotent, conflicting/stale replies are rejected."
     }
   ],
   "operations": [],
@@ -104780,6 +105871,236 @@
       "scope": "display",
       "stability": "fixed_contract",
       "description": "Native presentation statistics: setup."
+    },
+    {
+      "name": "display_cursor_cap_hardware",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: hardware."
+    },
+    {
+      "name": "display_cursor_cap_straight_alpha",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: straight_alpha."
+    },
+    {
+      "name": "display_cursor_cap_hotspot",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: hotspot."
+    },
+    {
+      "name": "display_cursor_cap_offscreen",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: offscreen."
+    },
+    {
+      "name": "display_cursor_operation_prepare",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: prepare."
+    },
+    {
+      "name": "display_cursor_operation_show",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: show."
+    },
+    {
+      "name": "display_cursor_operation_move",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: move."
+    },
+    {
+      "name": "display_cursor_operation_hide",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: hide."
+    },
+    {
+      "name": "display_cursor_operation_release",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: release."
+    },
+    {
+      "name": "display_cursor_phase_idle",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: idle."
+    },
+    {
+      "name": "display_cursor_phase_queued",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: queued."
+    },
+    {
+      "name": "display_cursor_phase_active",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: active."
+    },
+    {
+      "name": "display_cursor_phase_complete",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: complete."
+    },
+    {
+      "name": "display_cursor_phase_failed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: failed."
+    },
+    {
+      "name": "display_cursor_phase_lost",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: lost."
+    },
+    {
+      "name": "display_cursor_state_image_ready",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: image_ready."
+    },
+    {
+      "name": "display_cursor_state_visible",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: visible."
+    },
+    {
+      "name": "display_cursor_state_suspended",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Mode transaction suspends new cursor jobs; software may resume only after confirmed hidden visibility."
+    },
+    {
+      "name": "display_cursor_state_unknown",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: unknown."
+    },
+    {
+      "name": "display_cursor_state_claimed",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: claimed."
+    },
+    {
+      "name": "display_cursor_visibility_hidden",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: hidden."
+    },
+    {
+      "name": "display_cursor_visibility_visible",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: visible."
+    },
+    {
+      "name": "display_cursor_visibility_unknown",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Native cursor: unknown."
     }
   ],
   "limits": [

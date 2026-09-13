@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v14, 616 Bytes, 75 Funktionsfelder und 75 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v15, 640 Bytes, 78 Funktionsfelder und 78 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -84,4 +84,7 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 72 | 592 | function | `gfx_atomic_status` | `*const fn (u64, *GfxModeStatus) callconv(.c) i32` |
 | 73 | 600 | function | `gfx_atomic_resolve` | `*const fn (u64, u32, *GfxModeStatus) callconv(.c) i32` |
 | 74 | 608 | function | `display_presentation_stats` | `*const fn (u32, *DisplayPresentationStats) callconv(.c) i32` |
+| 75 | 616 | function | `display_cursor_info` | `*const fn (*DisplayCursorInfo) callconv(.c) i32` |
+| 76 | 624 | function | `display_cursor_submit` | `*const fn (*const DisplayCursorRequest, *DisplayCursorStatus) callconv(.c) i32` |
+| 77 | 632 | function | `display_cursor_status` | `*const fn (*DisplayCursorStatus) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

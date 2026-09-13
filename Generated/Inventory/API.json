@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 371,
-    "group_slot_count": 371,
+    "function_count": 374,
+    "group_slot_count": 374,
     "sdk_only_count": 0,
-    "public_count": 278,
+    "public_count": 281,
     "advanced_count": 93
   },
   "functions": [
@@ -3293,6 +3293,42 @@
       "slot": 74,
       "exposure": "public",
       "description": "Read coherent per-head statistics from the current native primary backend. Returns gfx_output_ok or a negative gfx_output error, with no output mutation on failure. No waits, device calls or CPU-copy fence reinterpretation. Unsupported/boot framebuffer backends have no visible hardware completion sample.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_cursor_info",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 75,
+      "exposure": "public",
+      "description": "Read optional native primary hardware-cursor capabilities. Unsupported leaves caller output unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_cursor_submit",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 76,
+      "exposure": "public",
+      "description": "Submit one finite asynchronous cursor operation for the calling program. Busy keeps prior state. Prepare borrows the source until terminal completion; only successful show/hide confirmation changes visible ownership.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_cursor_status",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 77,
+      "exposure": "public",
+      "description": "Read coherent primary cursor status without rendering or waits. A caller must not draw software while hardware visibility is confirmed or unknown.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
