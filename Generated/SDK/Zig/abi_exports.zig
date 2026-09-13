@@ -1720,6 +1720,7 @@ pub const gfx_audio_route_pending = generated.gfx_audio_route_pending;
 pub const gfx_audio_route_ready = generated.gfx_audio_route_ready;
 pub const gfx_audio_route_unsupported = generated.gfx_audio_route_unsupported;
 pub const gfx_audio_route_failed = generated.gfx_audio_route_failed;
+pub const gfx_queue_operation_copy_rows = generated.gfx_queue_operation_copy_rows;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;

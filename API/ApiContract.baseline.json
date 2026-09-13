@@ -15281,7 +15281,7 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 16,
+      "abi_version": 17,
       "header_size": 16,
       "pointer_size": 8,
       "size": 648,
@@ -79519,8 +79519,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 408,
+      "version": 2,
+      "size": 432,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -79551,7 +79551,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "408"
+          "default_value": "432"
         },
         {
           "name": "operation",
@@ -79693,10 +79693,66 @@
           "alignment": 8,
           "source_type": "[8]GfxFence",
           "default_kind": "empty_array"
+        },
+        {
+          "name": "row_count",
+          "offset": 408,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Copy-rows operation 3 only: nonzero row count. Other operations require the entire tail to be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 412,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_pitch",
+          "offset": 416,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Copy-rows source byte pitch, at least byte_length. For opaque image planes it must equal the canonical plane pitch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target_pitch",
+          "offset": 424,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Copy-rows target byte pitch, at least byte_length. Layout conversion derives only from the retained BO descriptor.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Copied bounded submission; no borrowed caller pointer survives Submit. Copy transports raw byte ranges and barrier orders dependencies. Later rendering/scanout payloads require negotiated backend support."
+      "description": "Copied bounded submission; no borrowed caller pointer survives Submit. Copy transports raw byte ranges and barrier orders dependencies. Later rendering/scanout payloads require negotiated backend support. Wire version remains 1. Old 408-byte callers remain supported; a 432-byte tail enables copy_rows, interpreting byte_length as bytes per row and offsets as logical plane offsets. Reserves complete checked source/target extents; opaque layouts reserve their whole backing. No CPU/GPU address or vendor command is accepted."
     },
     {
       "name": "GfxFenceStatus",
@@ -79942,8 +79998,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 32,
+      "version": 2,
+      "size": 48,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -79974,7 +80030,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "32"
+          "default_value": "48"
         },
         {
           "name": "adapter_id",
@@ -80031,18 +80087,46 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "operations",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Supported queue operations, bit N for operation N. Legacy 32-byte registrations retain copy/barrier/upload (7). Unknown bits are rejected.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "7"
+        },
+        {
+          "name": "memory_generation",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-owned memory epoch, independent of the kernel-assigned queue device_generation. Registration zero retains the legacy queue epoch; backend info returns the effective epoch. The kernel also authenticates the registered driver owner when admitting nonportable BOs.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Bounded native queue callback registration. Notifications execute through driver_work in task context and consume jobs through take. The callback must return promptly; no command executes in the submitter or queue metadata lock."
+      "description": "Bounded native queue callback registration. Notifications execute through driver_work in task context and consume jobs through take. The callback must return promptly; no command executes in the submitter or queue metadata lock. Wire version remains 1. Optional 40-byte capacity advertises common operations independently of opaque vendor profile data; new copy_rows work is never admitted to a legacy backend. The optional final memory_generation separates a driver memory epoch from the common queue instance. Prior complete field prefixes remain bounded and supported."
     },
     {
       "name": "GfxDriverJob",
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 112,
+      "version": 2,
+      "size": 136,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -80073,7 +80157,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "112"
+          "default_value": "136"
         },
         {
           "name": "fence",
@@ -80183,10 +80267,66 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "row_count",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Copy-rows row count, otherwise zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 116,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_pitch",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated source byte pitch for copy_rows, otherwise zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target_pitch",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated target byte pitch for copy_rows, otherwise zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration."
+      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration. Wire version remains 1; the 112-byte prefix stays supported for legacy backends. Copy-rows backends require the complete 136-byte output. byte_length denotes bytes per row for operation 3; offsets are logical BO offsets, independently of conservative pinned extents."
     },
     {
       "name": "GfxDriverQueueApi",
@@ -87042,8 +87182,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 136,
+      "version": 2,
+      "size": 152,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -87074,7 +87214,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "136"
+          "default_value": "152"
         },
         {
           "name": "binding",
@@ -87101,10 +87241,38 @@
           "alignment": 8,
           "source_type": "GfxBackendProfile",
           "default_kind": "empty"
+        },
+        {
+          "name": "operations",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Common supported operations, bit N for operation N. A 136-byte legacy result has no operation advertisement.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "memory_generation",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Driver-owned memory epoch, independent of the kernel-assigned queue device_generation. Registration zero retains the legacy queue epoch; backend info returns the effective epoch. The kernel also authenticates the registered driver owner when admitting nonportable BOs.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Read-only common backend snapshot; preserves the existing backend inventory slots and capacity. Software and legacy registrations have an empty profile. The consumer negotiates the backend library and opens the exact returned binding before work."
+      "description": "Read-only common backend snapshot; preserves the existing backend inventory slots and capacity. Software and legacy registrations have an empty profile. The consumer negotiates the backend library and opens the exact returned binding before work. Wire version remains 1. Only the supported 136- or 144-byte prefix is written; software advertises copy/barrier/copy_rows. Vendor protocol identity and data remain unchanged. The optional final memory_generation separates a driver memory epoch from the common queue instance. Prior complete field prefixes remain bounded and supported."
     }
   ],
   "operations": [],
@@ -106716,6 +106884,16 @@
       "scope": "display",
       "stability": "fixed_contract",
       "description": "Display-to-HDA route state: failed."
+    },
+    {
+      "name": "gfx_queue_operation_copy_rows",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Pitched or descriptor-derived layout copy. Requires the complete GfxSubmission tail and a backend advertising operation bit 3."
     }
   ],
   "limits": [

@@ -1721,6 +1721,7 @@ pub const gfx_audio_route_pending: u32 = 1;
 pub const gfx_audio_route_ready: u32 = 2;
 pub const gfx_audio_route_unsupported: u32 = 3;
 pub const gfx_audio_route_failed: u32 = 4;
+pub const gfx_queue_operation_copy_rows: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6259,7 +6260,7 @@ pub const GfxQueueHandle = extern struct {
 
 pub const GfxSubmission = extern struct {
     version: u32 = 1,
-    size: u32 = 408,
+    size: u32 = 432,
     operation: u32 = 0,
     dependency_count: u32 = 0,
     deadline_ns: u64 = 0,
@@ -6270,6 +6271,10 @@ pub const GfxSubmission = extern struct {
     target_offset: u64 = 0,
     byte_length: u64 = 0,
     dependencies: [8]GfxFence = .{GfxFence{}} ** 8,
+    row_count: u32 = 0,
+    reserved0: u32 = 0,
+    source_pitch: u64 = 0,
+    target_pitch: u64 = 0,
 };
 
 pub const GfxFenceStatus = extern struct {
@@ -6295,16 +6300,18 @@ pub const GfxBackendBinding = extern struct {
 
 pub const GfxBackendRegistration = extern struct {
     version: u32 = 1,
-    size: u32 = 32,
+    size: u32 = 48,
     adapter_id: u32 = 0,
     milestone: u32 = 0,
     notify_callback: u64 = 0,
     context: u64 = 0,
+    operations: u64 = 7,
+    memory_generation: u64 = 0,
 };
 
 pub const GfxDriverJob = extern struct {
     version: u32 = 1,
-    size: u32 = 112,
+    size: u32 = 136,
     fence: GfxFence = .{},
     operation: u32 = 0,
     reserved0: u32 = 0,
@@ -6313,6 +6320,10 @@ pub const GfxDriverJob = extern struct {
     byte_length: u64 = 0,
     source_offset: u64 = 0,
     target_offset: u64 = 0,
+    row_count: u32 = 0,
+    reserved1: u32 = 0,
+    source_pitch: u64 = 0,
+    target_pitch: u64 = 0,
 };
 
 pub const GfxDriverQueueApi = extern struct {
@@ -6889,9 +6900,11 @@ pub const GfxBackendProfile = extern struct {
 
 pub const GfxBackendInfo = extern struct {
     version: u32 = 1,
-    size: u32 = 136,
+    size: u32 = 152,
     binding: GfxBackendBinding = .{},
     profile: GfxBackendProfile = .{},
+    operations: u64 = 0,
+    memory_generation: u64 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -7400,7 +7413,7 @@ pub const R4DrawFns = struct {
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 16,
+    abi_version: u32 = 17,
     size: u32 = 648,
     flags: u32 = 0,
     screen_width: usize = 0,
@@ -11997,7 +12010,7 @@ comptime {
     if (@offsetOf(GfxQueueHandle, "version") != 0) @compileError("generated ABI offset drift: GfxQueueHandle.version");
     if (@offsetOf(GfxQueueHandle, "size") != 4) @compileError("generated ABI offset drift: GfxQueueHandle.size");
     if (@offsetOf(GfxQueueHandle, "timeline") != 8) @compileError("generated ABI offset drift: GfxQueueHandle.timeline");
-    if (@sizeOf(GfxSubmission) != 408) @compileError("generated ABI size drift: GfxSubmission");
+    if (@sizeOf(GfxSubmission) != 432) @compileError("generated ABI size drift: GfxSubmission");
     if (@alignOf(GfxSubmission) != 8) @compileError("generated ABI alignment drift: GfxSubmission");
     if (@offsetOf(GfxSubmission, "version") != 0) @compileError("generated ABI offset drift: GfxSubmission.version");
     if (@offsetOf(GfxSubmission, "size") != 4) @compileError("generated ABI offset drift: GfxSubmission.size");
@@ -12011,6 +12024,10 @@ comptime {
     if (@offsetOf(GfxSubmission, "target_offset") != 72) @compileError("generated ABI offset drift: GfxSubmission.target_offset");
     if (@offsetOf(GfxSubmission, "byte_length") != 80) @compileError("generated ABI offset drift: GfxSubmission.byte_length");
     if (@offsetOf(GfxSubmission, "dependencies") != 88) @compileError("generated ABI offset drift: GfxSubmission.dependencies");
+    if (@offsetOf(GfxSubmission, "row_count") != 408) @compileError("generated ABI offset drift: GfxSubmission.row_count");
+    if (@offsetOf(GfxSubmission, "reserved0") != 412) @compileError("generated ABI offset drift: GfxSubmission.reserved0");
+    if (@offsetOf(GfxSubmission, "source_pitch") != 416) @compileError("generated ABI offset drift: GfxSubmission.source_pitch");
+    if (@offsetOf(GfxSubmission, "target_pitch") != 424) @compileError("generated ABI offset drift: GfxSubmission.target_pitch");
     if (@sizeOf(GfxFenceStatus) != 80) @compileError("generated ABI size drift: GfxFenceStatus");
     if (@alignOf(GfxFenceStatus) != 8) @compileError("generated ABI alignment drift: GfxFenceStatus");
     if (@offsetOf(GfxFenceStatus, "version") != 0) @compileError("generated ABI offset drift: GfxFenceStatus.version");
@@ -12030,7 +12047,7 @@ comptime {
     if (@offsetOf(GfxBackendBinding, "milestone") != 12) @compileError("generated ABI offset drift: GfxBackendBinding.milestone");
     if (@offsetOf(GfxBackendBinding, "device_generation") != 16) @compileError("generated ABI offset drift: GfxBackendBinding.device_generation");
     if (@offsetOf(GfxBackendBinding, "reset_generation") != 24) @compileError("generated ABI offset drift: GfxBackendBinding.reset_generation");
-    if (@sizeOf(GfxBackendRegistration) != 32) @compileError("generated ABI size drift: GfxBackendRegistration");
+    if (@sizeOf(GfxBackendRegistration) != 48) @compileError("generated ABI size drift: GfxBackendRegistration");
     if (@alignOf(GfxBackendRegistration) != 8) @compileError("generated ABI alignment drift: GfxBackendRegistration");
     if (@offsetOf(GfxBackendRegistration, "version") != 0) @compileError("generated ABI offset drift: GfxBackendRegistration.version");
     if (@offsetOf(GfxBackendRegistration, "size") != 4) @compileError("generated ABI offset drift: GfxBackendRegistration.size");
@@ -12038,7 +12055,9 @@ comptime {
     if (@offsetOf(GfxBackendRegistration, "milestone") != 12) @compileError("generated ABI offset drift: GfxBackendRegistration.milestone");
     if (@offsetOf(GfxBackendRegistration, "notify_callback") != 16) @compileError("generated ABI offset drift: GfxBackendRegistration.notify_callback");
     if (@offsetOf(GfxBackendRegistration, "context") != 24) @compileError("generated ABI offset drift: GfxBackendRegistration.context");
-    if (@sizeOf(GfxDriverJob) != 112) @compileError("generated ABI size drift: GfxDriverJob");
+    if (@offsetOf(GfxBackendRegistration, "operations") != 32) @compileError("generated ABI offset drift: GfxBackendRegistration.operations");
+    if (@offsetOf(GfxBackendRegistration, "memory_generation") != 40) @compileError("generated ABI offset drift: GfxBackendRegistration.memory_generation");
+    if (@sizeOf(GfxDriverJob) != 136) @compileError("generated ABI size drift: GfxDriverJob");
     if (@alignOf(GfxDriverJob) != 8) @compileError("generated ABI alignment drift: GfxDriverJob");
     if (@offsetOf(GfxDriverJob, "version") != 0) @compileError("generated ABI offset drift: GfxDriverJob.version");
     if (@offsetOf(GfxDriverJob, "size") != 4) @compileError("generated ABI offset drift: GfxDriverJob.size");
@@ -12050,6 +12069,10 @@ comptime {
     if (@offsetOf(GfxDriverJob, "byte_length") != 88) @compileError("generated ABI offset drift: GfxDriverJob.byte_length");
     if (@offsetOf(GfxDriverJob, "source_offset") != 96) @compileError("generated ABI offset drift: GfxDriverJob.source_offset");
     if (@offsetOf(GfxDriverJob, "target_offset") != 104) @compileError("generated ABI offset drift: GfxDriverJob.target_offset");
+    if (@offsetOf(GfxDriverJob, "row_count") != 112) @compileError("generated ABI offset drift: GfxDriverJob.row_count");
+    if (@offsetOf(GfxDriverJob, "reserved1") != 116) @compileError("generated ABI offset drift: GfxDriverJob.reserved1");
+    if (@offsetOf(GfxDriverJob, "source_pitch") != 120) @compileError("generated ABI offset drift: GfxDriverJob.source_pitch");
+    if (@offsetOf(GfxDriverJob, "target_pitch") != 128) @compileError("generated ABI offset drift: GfxDriverJob.target_pitch");
     if (@sizeOf(GfxDriverQueueApi) != 72) @compileError("generated ABI size drift: GfxDriverQueueApi");
     if (@alignOf(GfxDriverQueueApi) != 8) @compileError("generated ABI alignment drift: GfxDriverQueueApi");
     if (@offsetOf(GfxDriverQueueApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverQueueApi.version");
@@ -12579,12 +12602,14 @@ comptime {
     if (@offsetOf(GfxBackendProfile, "revision") != 24) @compileError("generated ABI offset drift: GfxBackendProfile.revision");
     if (@offsetOf(GfxBackendProfile, "data_bytes") != 28) @compileError("generated ABI offset drift: GfxBackendProfile.data_bytes");
     if (@offsetOf(GfxBackendProfile, "data") != 32) @compileError("generated ABI offset drift: GfxBackendProfile.data");
-    if (@sizeOf(GfxBackendInfo) != 136) @compileError("generated ABI size drift: GfxBackendInfo");
+    if (@sizeOf(GfxBackendInfo) != 152) @compileError("generated ABI size drift: GfxBackendInfo");
     if (@alignOf(GfxBackendInfo) != 8) @compileError("generated ABI alignment drift: GfxBackendInfo");
     if (@offsetOf(GfxBackendInfo, "version") != 0) @compileError("generated ABI offset drift: GfxBackendInfo.version");
     if (@offsetOf(GfxBackendInfo, "size") != 4) @compileError("generated ABI offset drift: GfxBackendInfo.size");
     if (@offsetOf(GfxBackendInfo, "binding") != 8) @compileError("generated ABI offset drift: GfxBackendInfo.binding");
     if (@offsetOf(GfxBackendInfo, "profile") != 40) @compileError("generated ABI offset drift: GfxBackendInfo.profile");
+    if (@offsetOf(GfxBackendInfo, "operations") != 136) @compileError("generated ABI offset drift: GfxBackendInfo.operations");
+    if (@offsetOf(GfxBackendInfo, "memory_generation") != 144) @compileError("generated ABI offset drift: GfxBackendInfo.memory_generation");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");

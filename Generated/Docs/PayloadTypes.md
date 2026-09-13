@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 228 von 228 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1720; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1721; Limits: 109
 
 ## App-Profile
 
@@ -200,11 +200,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
-| `GfxSubmission` | extensible | extern_struct | 408/8 | 408/8 | 408/8 | 408/8 |
+| `GfxSubmission` | extensible | extern_struct | 432/8 | 432/8 | 432/8 | 432/8 |
 | `GfxFenceStatus` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
-| `GfxBackendRegistration` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
-| `GfxDriverJob` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `GfxBackendRegistration` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `GfxDriverJob` | extensible | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
 | `GfxDriverQueueApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
@@ -248,7 +248,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxDriverCursorCompletion` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxAudioRoute` | extensible | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
 | `GfxBackendProfile` | extensible | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
-| `GfxBackendInfo` | extensible | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
+| `GfxBackendInfo` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
 
 ## Typdetails
 
@@ -5528,7 +5528,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 408 / 8
+- Version/Größe/Alignment: 2 / 432 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5544,6 +5544,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `target_offset` | 72 | 8 | 8 | `u64` | - |
 | `byte_length` | 80 | 8 | 8 | `u64` | - |
 | `dependencies` | 88 | 320 | 8 | `[8]GfxFence` | - |
+| `row_count` | 408 | 4 | 4 | `u32` | - |
+| `reserved0` | 412 | 4 | 4 | `u32` | - |
+| `source_pitch` | 416 | 8 | 8 | `u64` | - |
+| `target_pitch` | 424 | 8 | 8 | `u64` | - |
 
 ### `GfxFenceStatus`
 
@@ -5585,7 +5589,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 32 / 8
+- Version/Größe/Alignment: 2 / 48 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5595,13 +5599,15 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `milestone` | 12 | 4 | 4 | `u32` | - |
 | `notify_callback` | 16 | 8 | 8 | `u64` | - |
 | `context` | 24 | 8 | 8 | `u64` | - |
+| `operations` | 32 | 8 | 8 | `u64` | - |
+| `memory_generation` | 40 | 8 | 8 | `u64` | - |
 
 ### `GfxDriverJob`
 
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 112 / 8
+- Version/Größe/Alignment: 2 / 136 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5615,6 +5621,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `byte_length` | 88 | 8 | 8 | `u64` | - |
 | `source_offset` | 96 | 8 | 8 | `u64` | - |
 | `target_offset` | 104 | 8 | 8 | `u64` | - |
+| `row_count` | 112 | 4 | 4 | `u32` | - |
+| `reserved1` | 116 | 4 | 4 | `u32` | - |
+| `source_pitch` | 120 | 8 | 8 | `u64` | - |
+| `target_pitch` | 128 | 8 | 8 | `u64` | - |
 
 ### `GfxDriverQueueApi`
 
@@ -6494,7 +6504,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 136 / 8
+- Version/Größe/Alignment: 2 / 152 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6502,6 +6512,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `size` | 4 | 4 | 4 | `u32` | - |
 | `binding` | 8 | 32 | 8 | `GfxBackendBinding` | - |
 | `profile` | 40 | 96 | 8 | `GfxBackendProfile` | - |
+| `operations` | 136 | 8 | 8 | `u64` | - |
+| `memory_generation` | 144 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 
@@ -8962,6 +8974,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_audio_route_ready` | `2` | `u32` | value | number | `display` | fixed_contract |
 | `gfx_audio_route_unsupported` | `3` | `u32` | value | number | `display` | fixed_contract |
 | `gfx_audio_route_failed` | `4` | `u32` | value | number | `display` | fixed_contract |
+| `gfx_queue_operation_copy_rows` | `3` | `u32` | value | number | `gfx_queue` | fixed_contract |
 
 ## Limits
 
