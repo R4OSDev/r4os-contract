@@ -2403,6 +2403,10 @@ typedef struct R4GfxDriverCursorCompletion R4GfxDriverCursorCompletion;
 typedef struct R4GfxAudioRoute R4GfxAudioRoute;
 typedef struct R4GfxBackendProfile R4GfxBackendProfile;
 typedef struct R4GfxBackendInfo R4GfxBackendInfo;
+typedef struct R4GfxNativeAllocation R4GfxNativeAllocation;
+typedef struct R4GfxNativeStatus R4GfxNativeStatus;
+typedef struct R4GfxNativeProvider R4GfxNativeProvider;
+typedef struct R4GfxNativeJob R4GfxNativeJob;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6402,6 +6406,10 @@ typedef struct R4GfxDriverMemoryApi {
     uint64_t buffer_abort;
     uint64_t buffer_take_release;
     uint64_t buffer_finish_release;
+    uint64_t native_register;
+    uint64_t native_unregister;
+    uint64_t native_take;
+    uint64_t native_complete;
 } R4GfxDriverMemoryApi;
 
 typedef struct R4GfxFence {
@@ -7079,6 +7087,51 @@ typedef struct R4GfxBackendInfo {
     uint64_t memory_generation;
 } R4GfxBackendInfo;
 
+typedef struct R4GfxNativeAllocation {
+    uint32_t version;
+    uint32_t size;
+    uint32_t adapter_id;
+    uint32_t kind;
+    uint64_t memory_generation;
+    uint64_t deadline_ns;
+    uint64_t byte_length;
+    uint32_t width;
+    uint32_t height;
+    uint32_t format;
+    uint32_t usage;
+    uint32_t layout;
+    uint32_t reserved0;
+} R4GfxNativeAllocation;
+
+typedef struct R4GfxNativeStatus {
+    uint32_t version;
+    uint32_t size;
+    R4GfxBufferHandle request;
+    uint32_t phase;
+    int32_t result;
+    uint32_t flags;
+    uint32_t reserved0;
+    uint64_t deadline_ns;
+    uint64_t completed_ns;
+} R4GfxNativeStatus;
+
+typedef struct R4GfxNativeProvider {
+    uint32_t version;
+    uint32_t size;
+    uint32_t adapter_id;
+    uint32_t reserved0;
+    uint64_t memory_generation;
+    uint64_t notify;
+    uint64_t context;
+} R4GfxNativeProvider;
+
+typedef struct R4GfxNativeJob {
+    uint32_t version;
+    uint32_t size;
+    R4GfxBufferHandle request;
+    R4GfxNativeAllocation allocation;
+} R4GfxNativeJob;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -7622,6 +7675,11 @@ typedef int32_t (*R4DrawDisplayCursorInfoFn)(R4DisplayCursorInfo * output);
 typedef int32_t (*R4DrawDisplayCursorSubmitFn)(const R4DisplayCursorRequest * input, R4DisplayCursorStatus * output);
 typedef int32_t (*R4DrawDisplayCursorStatusFn)(R4DisplayCursorStatus * output);
 typedef int32_t (*R4DrawGfxQueueBackendInfoFn)(uint32_t index, R4GfxBackendInfo * output);
+typedef int32_t (*R4DrawGfxNativeStartFn)(const R4GfxNativeAllocation * input, R4GfxNativeStatus * output);
+typedef int32_t (*R4DrawGfxNativeQueryFn)(const R4GfxBufferHandle * request, R4GfxNativeStatus * output);
+typedef int32_t (*R4DrawGfxNativeReceiveFn)(const R4GfxBufferHandle * request, R4GfxBufferReference * output);
+typedef int32_t (*R4DrawGfxNativeCloseFn)(const R4GfxBufferHandle * request);
+typedef int32_t (*R4DrawGfxNativeWaitFn)(const R4GfxBufferHandle * request, uint64_t timeout_ticks, R4GfxNativeStatus * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -7707,6 +7765,11 @@ typedef struct R4XStartR4Draw {
     uintptr_t display_cursor_submit;
     uintptr_t display_cursor_status;
     uintptr_t gfx_queue_backend_info;
+    uintptr_t gfx_native_start;
+    uintptr_t gfx_native_query;
+    uintptr_t gfx_native_receive;
+    uintptr_t gfx_native_close;
+    uintptr_t gfx_native_wait;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -11597,7 +11660,7 @@ _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_generation) == 56u, "Gfx
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, adapter_id) == 64u, "GfxOwnedBufferRelease.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_owner) == 68u, "GfxOwnedBufferRelease.driver_owner offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, reserved0) == 72u, "GfxOwnedBufferRelease.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GfxDriverMemoryApi) == 152u, "GfxDriverMemoryApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverMemoryApi) == 184u, "GfxDriverMemoryApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, version) == 0u, "GfxDriverMemoryApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, size) == 4u, "GfxDriverMemoryApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_create) == 8u, "GfxDriverMemoryApi.buffer_create offset mismatch");
@@ -11618,6 +11681,10 @@ _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_commit) == 120u, "GfxDriver
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_abort) == 128u, "GfxDriverMemoryApi.buffer_abort offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_take_release) == 136u, "GfxDriverMemoryApi.buffer_take_release offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_finish_release) == 144u, "GfxDriverMemoryApi.buffer_finish_release offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, native_register) == 152u, "GfxDriverMemoryApi.native_register offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, native_unregister) == 160u, "GfxDriverMemoryApi.native_unregister offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, native_take) == 168u, "GfxDriverMemoryApi.native_take offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, native_complete) == 176u, "GfxDriverMemoryApi.native_complete offset mismatch");
 _Static_assert(sizeof(R4GfxFence) == 40u, "GfxFence size mismatch");
 _Static_assert(offsetof(R4GfxFence, slot) == 0u, "GfxFence.slot offset mismatch");
 _Static_assert(offsetof(R4GfxFence, adapter_id) == 4u, "GfxFence.adapter_id offset mismatch");
@@ -12189,6 +12256,43 @@ _Static_assert(offsetof(R4GfxBackendInfo, binding) == 8u, "GfxBackendInfo.bindin
 _Static_assert(offsetof(R4GfxBackendInfo, profile) == 40u, "GfxBackendInfo.profile offset mismatch");
 _Static_assert(offsetof(R4GfxBackendInfo, operations) == 136u, "GfxBackendInfo.operations offset mismatch");
 _Static_assert(offsetof(R4GfxBackendInfo, memory_generation) == 144u, "GfxBackendInfo.memory_generation offset mismatch");
+_Static_assert(sizeof(R4GfxNativeAllocation) == 64u, "GfxNativeAllocation size mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, version) == 0u, "GfxNativeAllocation.version offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, size) == 4u, "GfxNativeAllocation.size offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, adapter_id) == 8u, "GfxNativeAllocation.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, kind) == 12u, "GfxNativeAllocation.kind offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, memory_generation) == 16u, "GfxNativeAllocation.memory_generation offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, deadline_ns) == 24u, "GfxNativeAllocation.deadline_ns offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, byte_length) == 32u, "GfxNativeAllocation.byte_length offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, width) == 40u, "GfxNativeAllocation.width offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, height) == 44u, "GfxNativeAllocation.height offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, format) == 48u, "GfxNativeAllocation.format offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, usage) == 52u, "GfxNativeAllocation.usage offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, layout) == 56u, "GfxNativeAllocation.layout offset mismatch");
+_Static_assert(offsetof(R4GfxNativeAllocation, reserved0) == 60u, "GfxNativeAllocation.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GfxNativeStatus) == 56u, "GfxNativeStatus size mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, version) == 0u, "GfxNativeStatus.version offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, size) == 4u, "GfxNativeStatus.size offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, request) == 8u, "GfxNativeStatus.request offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, phase) == 24u, "GfxNativeStatus.phase offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, result) == 28u, "GfxNativeStatus.result offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, flags) == 32u, "GfxNativeStatus.flags offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, reserved0) == 36u, "GfxNativeStatus.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, deadline_ns) == 40u, "GfxNativeStatus.deadline_ns offset mismatch");
+_Static_assert(offsetof(R4GfxNativeStatus, completed_ns) == 48u, "GfxNativeStatus.completed_ns offset mismatch");
+_Static_assert(sizeof(R4GfxNativeProvider) == 40u, "GfxNativeProvider size mismatch");
+_Static_assert(offsetof(R4GfxNativeProvider, version) == 0u, "GfxNativeProvider.version offset mismatch");
+_Static_assert(offsetof(R4GfxNativeProvider, size) == 4u, "GfxNativeProvider.size offset mismatch");
+_Static_assert(offsetof(R4GfxNativeProvider, adapter_id) == 8u, "GfxNativeProvider.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxNativeProvider, reserved0) == 12u, "GfxNativeProvider.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxNativeProvider, memory_generation) == 16u, "GfxNativeProvider.memory_generation offset mismatch");
+_Static_assert(offsetof(R4GfxNativeProvider, notify) == 24u, "GfxNativeProvider.notify offset mismatch");
+_Static_assert(offsetof(R4GfxNativeProvider, context) == 32u, "GfxNativeProvider.context offset mismatch");
+_Static_assert(sizeof(R4GfxNativeJob) == 88u, "GfxNativeJob size mismatch");
+_Static_assert(offsetof(R4GfxNativeJob, version) == 0u, "GfxNativeJob.version offset mismatch");
+_Static_assert(offsetof(R4GfxNativeJob, size) == 4u, "GfxNativeJob.size offset mismatch");
+_Static_assert(offsetof(R4GfxNativeJob, request) == 8u, "GfxNativeJob.request offset mismatch");
+_Static_assert(offsetof(R4GfxNativeJob, allocation) == 24u, "GfxNativeJob.allocation offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -12593,7 +12697,7 @@ _Static_assert(offsetof(R4XStartR4Desk, console_input_wait) == 472u, "R4XStartR4
 _Static_assert(sizeof(R4DeskConsoleInputWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4Desk.physical_key_poll offset mismatch");
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 648u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 688u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -12752,6 +12856,16 @@ _Static_assert(offsetof(R4XStartR4Draw, display_cursor_status) == 632u, "R4XStar
 _Static_assert(sizeof(R4DrawDisplayCursorStatusFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_queue_backend_info) == 640u, "R4XStartR4Draw.gfx_queue_backend_info offset mismatch");
 _Static_assert(sizeof(R4DrawGfxQueueBackendInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_native_start) == 648u, "R4XStartR4Draw.gfx_native_start offset mismatch");
+_Static_assert(sizeof(R4DrawGfxNativeStartFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_native_query) == 656u, "R4XStartR4Draw.gfx_native_query offset mismatch");
+_Static_assert(sizeof(R4DrawGfxNativeQueryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_native_receive) == 664u, "R4XStartR4Draw.gfx_native_receive offset mismatch");
+_Static_assert(sizeof(R4DrawGfxNativeReceiveFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_native_close) == 672u, "R4XStartR4Draw.gfx_native_close offset mismatch");
+_Static_assert(sizeof(R4DrawGfxNativeCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_native_wait) == 680u, "R4XStartR4Draw.gfx_native_wait offset mismatch");
+_Static_assert(sizeof(R4DrawGfxNativeWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

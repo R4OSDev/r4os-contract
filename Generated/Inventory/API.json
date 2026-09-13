@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 375,
-    "group_slot_count": 375,
+    "function_count": 380,
+    "group_slot_count": 380,
     "sdk_only_count": 0,
-    "public_count": 282,
+    "public_count": 287,
     "advanced_count": 93
   },
   "functions": [
@@ -3341,6 +3341,66 @@
       "slot": 78,
       "exposure": "public",
       "description": "Queries one existing backend inventory slot with its coherent optional protocol profile. Same 1/0/negative result and capacity as gfx_queue_backend; output changes only on 1. Profile bytes belong to the driver and are interpreted by the matching userland library, never by the kernel. Opening the exact returned binding detects reset or replacement.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_native_start",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 79,
+      "exposure": "public",
+      "description": "Start a caller-owned native BO allocation. Copies input and returns a pending request. Exact provider memory generation and finite deadline required; at most 16 requests per program. No R4D callback executes on the application task. Receive or close each successful request; error leaves output unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_native_query",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 80,
+      "exposure": "public",
+      "description": "Inspect a request owned by the current program. Logical terminal status does not prove physical driver cleanup. Output changes only on success.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_native_receive",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 81,
+      "exposure": "public",
+      "description": "Atomically transfer a successful request-held BO reference to the current program and consume the request. Pending reports busy, failed returns its recorded error. Capacity failure leaves request available for retry. Output changes only on success.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_native_close",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 82,
+      "exposure": "public",
+      "description": "Close a caller-owned allocation request; discard unreceived result and cancel queued work. Claimed work, provider callback and enrolled waiters remain retained until their exact completion. Cannot imply GPU or firmware quiescence.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_native_wait",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 83,
+      "exposure": "public",
+      "description": "Wait on sticky request completion outside owner locks. Exact task-generation wait record survives hard task termination until reaper detach. Relative wait timeout leaves the request and output unchanged; allocation deadline separately closes logical work. Returns terminal status on 1, including failed/cancelled result.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

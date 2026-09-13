@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 228 von 228 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 232 von 232 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1721; Limits: 109
 
@@ -196,7 +196,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxMmioWindow` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxOwnedBufferReservation` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `GfxOwnedBufferRelease` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
-| `GfxDriverMemoryApi` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
+| `GfxDriverMemoryApi` | extensible | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
 | `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
@@ -249,6 +249,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxAudioRoute` | extensible | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
 | `GfxBackendProfile` | extensible | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `GfxBackendInfo` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
+| `GfxNativeAllocation` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `GfxNativeStatus` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `GfxNativeProvider` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `GfxNativeJob` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 
 ## Typdetails
 
@@ -5451,7 +5455,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 152 / 8
+- Version/Größe/Alignment: 2 / 184 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5475,6 +5479,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `buffer_abort` | 128 | 8 | 8 | `u64` | - |
 | `buffer_take_release` | 136 | 8 | 8 | `u64` | - |
 | `buffer_finish_release` | 144 | 8 | 8 | `u64` | - |
+| `native_register` | 152 | 8 | 8 | `u64` | - |
+| `native_unregister` | 160 | 8 | 8 | `u64` | - |
+| `native_take` | 168 | 8 | 8 | `u64` | - |
+| `native_complete` | 176 | 8 | 8 | `u64` | - |
 
 ### `GfxFence`
 
@@ -6514,6 +6522,79 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `profile` | 40 | 96 | 8 | `GfxBackendProfile` | - |
 | `operations` | 136 | 8 | 8 | `u64` | - |
 | `memory_generation` | 144 | 8 | 8 | `u64` | - |
+
+### `GfxNativeAllocation`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `adapter_id` | 8 | 4 | 4 | `u32` | - |
+| `kind` | 12 | 4 | 4 | `u32` | - |
+| `memory_generation` | 16 | 8 | 8 | `u64` | - |
+| `deadline_ns` | 24 | 8 | 8 | `u64` | - |
+| `byte_length` | 32 | 8 | 8 | `u64` | - |
+| `width` | 40 | 4 | 4 | `u32` | - |
+| `height` | 44 | 4 | 4 | `u32` | - |
+| `format` | 48 | 4 | 4 | `u32` | - |
+| `usage` | 52 | 4 | 4 | `u32` | - |
+| `layout` | 56 | 4 | 4 | `u32` | - |
+| `reserved0` | 60 | 4 | 4 | `u32` | - |
+
+### `GfxNativeStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `request` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `phase` | 24 | 4 | 4 | `u32` | - |
+| `result` | 28 | 4 | 4 | `i32` | - |
+| `flags` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `deadline_ns` | 40 | 8 | 8 | `u64` | - |
+| `completed_ns` | 48 | 8 | 8 | `u64` | - |
+
+### `GfxNativeProvider`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `adapter_id` | 8 | 4 | 4 | `u32` | - |
+| `reserved0` | 12 | 4 | 4 | `u32` | - |
+| `memory_generation` | 16 | 8 | 8 | `u64` | - |
+| `notify` | 24 | 8 | 8 | `u64` | - |
+| `context` | 32 | 8 | 8 | `u64` | - |
+
+### `GfxNativeJob`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `request` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `allocation` | 24 | 64 | 8 | `GfxNativeAllocation` | - |
 
 ## Fehlerdomänen
 

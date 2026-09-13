@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v17, 648 Bytes, 79 Funktionsfelder und 79 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v18, 688 Bytes, 84 Funktionsfelder und 84 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -88,4 +88,9 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 76 | 624 | function | `display_cursor_submit` | `*const fn (*const DisplayCursorRequest, *DisplayCursorStatus) callconv(.c) i32` |
 | 77 | 632 | function | `display_cursor_status` | `*const fn (*DisplayCursorStatus) callconv(.c) i32` |
 | 78 | 640 | function | `gfx_queue_backend_info` | `*const fn (u32, *GfxBackendInfo) callconv(.c) i32` |
+| 79 | 648 | function | `gfx_native_start` | `*const fn (*const GfxNativeAllocation, *GfxNativeStatus) callconv(.c) i32` |
+| 80 | 656 | function | `gfx_native_query` | `*const fn (*const GfxBufferHandle, *GfxNativeStatus) callconv(.c) i32` |
+| 81 | 664 | function | `gfx_native_receive` | `*const fn (*const GfxBufferHandle, *GfxBufferReference) callconv(.c) i32` |
+| 82 | 672 | function | `gfx_native_close` | `*const fn (*const GfxBufferHandle) callconv(.c) i32` |
+| 83 | 680 | function | `gfx_native_wait` | `*const fn (*const GfxBufferHandle, u64, *GfxNativeStatus) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 383; Funktionen: 375; reserviert/Tombstone: 8
-- Sichtbarkeit: public=282, advanced=93, internal=8
+- Physische Gruppenslots: 388; Funktionen: 380; reserviert/Tombstone: 8
+- Sichtbarkeit: public=287, advanced=93, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 17
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -316,6 +316,11 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DRAW | 76 | `display_cursor_submit` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | cancel_wake_join_cleanup |
 | R4DRAW | 77 | `display_cursor_status` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DRAW | 78 | `gfx_queue_backend_info` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 79 | `gfx_native_start` | function | public | R4DRAW | ja | `draw` | returns_owned_handle | call | nonblocking | thread_safe | explicit_close_required | success_only | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | operation_deadline | request_cancel_on_deadline | request_cancelled | reentrant | none | call | none |
+| R4DRAW | 80 | `gfx_native_query` | function | public | R4DRAW | ja | `draw` | borrowed | call | nonblocking | thread_safe | none | success_only | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 81 | `gfx_native_receive` | function | public | R4DRAW | ja | `draw` | returns_owned_handle | call | nonblocking | thread_safe | explicit_close_required | success_only | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 82 | `gfx_native_close` | function | public | R4DRAW | ja | `draw` | consumes_owned_handle | call | nonblocking | thread_safe | invalidates_on_success | none | atomic_on_success | never_automatic | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DRAW | 83 | `gfx_native_wait` | function | public | R4DRAW | ja | `draw` | borrowed | call | blocking_wait | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | wait_budget | shutdown_wakeup | completion_wins | reentrant | none | call | none |
 | R4NET | 0 | `tcp_connect` | function | public | R4NET | ja | `network` | returns_owned_handle | none | may_block | thread_safe | explicit_close_required | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
 | R4NET | 1 | `tcp_write` | function | public | R4NET | ja | `network` | borrowed | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4NET | 2 | `tcp_read` | function | public | R4NET | ja | `network` | caller_buffer | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
