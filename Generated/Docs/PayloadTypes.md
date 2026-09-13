@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 225 von 225 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 226 von 226 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1715; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1720; Limits: 109
 
 ## App-Profile
 
@@ -219,7 +219,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxReceiverSource` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
 | `GfxReceiverInfo` | fixed_layout | extern_struct | 8224/8 | 8224/8 | 8224/8 | 8224/8 |
 | `GfxReceiverUpdate` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `GfxDriverOutputApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -246,6 +246,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DisplayCursorStatus` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `GfxDriverCursorJob` | extensible | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 | `GfxDriverCursorCompletion` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `GfxAudioRoute` | extensible | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
 
 ## Typdetails
 
@@ -5888,7 +5889,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 3 / 72 / 8
+- Version/Größe/Alignment: 4 / 88 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5902,6 +5903,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `mode_enable` | 48 | 8 | 8 | `u64` | - |
 | `mode_take` | 56 | 8 | 8 | `u64` | - |
 | `mode_complete` | 64 | 8 | 8 | `u64` | - |
+| `audio_publish` | 72 | 8 | 8 | `u64` | - |
+| `audio_query` | 80 | 8 | 8 | `u64` | - |
 
 ### `GfxNativeBootInfo`
 
@@ -6437,6 +6440,31 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `outcome` | 28 | 4 | 4 | `u32` | - |
 | `visibility` | 32 | 4 | 4 | `u32` | - |
 | `reserved0` | 36 | 4 | 4 | `u32` | - |
+
+### `GfxAudioRoute`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 176 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `source` | 8 | 16 | 8 | `GfxReceiverSource` | - |
+| `receiver_sequence` | 24 | 8 | 8 | `u64` | - |
+| `revision` | 32 | 8 | 8 | `u64` | - |
+| `connector_id` | 40 | 4 | 4 | `u32` | - |
+| `hda_location` | 44 | 4 | 4 | `u32` | - |
+| `hda_device` | 48 | 4 | 4 | `u32` | - |
+| `head_id` | 52 | 4 | 4 | `u32` | - |
+| `device_entry` | 56 | 4 | 4 | `u32` | - |
+| `state` | 60 | 4 | 4 | `u32` | - |
+| `eld_bytes` | 64 | 4 | 4 | `u32` | - |
+| `reserved0` | 68 | 4 | 4 | `u32` | - |
+| `port_id` | 72 | 8 | 1 | `[8]u8` | - |
+| `eld` | 80 | 96 | 1 | `[96]u8` | - |
 
 ## Fehlerdomänen
 
@@ -8892,6 +8920,11 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `display_cursor_visibility_hidden` | `0` | `u32` | value | number | `display` | fixed_contract |
 | `display_cursor_visibility_visible` | `1` | `u32` | value | number | `display` | fixed_contract |
 | `display_cursor_visibility_unknown` | `2` | `u32` | value | number | `display` | fixed_contract |
+| `gfx_audio_route_absent` | `0` | `u32` | value | number | `display` | fixed_contract |
+| `gfx_audio_route_pending` | `1` | `u32` | value | number | `display` | fixed_contract |
+| `gfx_audio_route_ready` | `2` | `u32` | value | number | `display` | fixed_contract |
+| `gfx_audio_route_unsupported` | `3` | `u32` | value | number | `display` | fixed_contract |
+| `gfx_audio_route_failed` | `4` | `u32` | value | number | `display` | fixed_contract |
 
 ## Limits
 

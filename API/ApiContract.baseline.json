@@ -82162,8 +82162,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 3,
-      "size": 72,
+      "version": 4,
+      "size": 88,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82194,7 +82194,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "72"
+          "default_value": "88"
         },
         {
           "name": "publish",
@@ -82307,10 +82307,38 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "audio_publish",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t audio_publish(const GfxAudioRoute*). Existing display source owner, monotonic publication, task context, bounded copy only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "audio_query",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t audio_query(uint32_t hda_location, uint32_t hda_device, uint32_t index, GfxAudioRoute*). Any bound R4D owner; 1=record, 0=end, negative=error. Output unchanged unless a record was returned.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "DriverApi v27 optional output catalog bridge. The original publish/withdraw prefix requires a real queue. Optional 48-byte tail supports independent receiver metadata sources. Calls require the actual bound R4D init/work/shutdown owner; IRQ handlers defer. Query preserves old caller buffers and reports only the returned prefix size. Optional 72-byte tail provides asynchronous native mode jobs. Original 24/48-byte consumers remain valid; wire version remains 1."
+      "description": "DriverApi v27 optional output catalog bridge. The original publish/withdraw prefix requires a real queue. Optional 48-byte tail supports independent receiver metadata sources. Calls require the actual bound R4D init/work/shutdown owner; IRQ handlers defer. Query preserves old caller buffers and reports only the returned prefix size. Optional 72-byte tail provides asynchronous native mode jobs. Original 24/48-byte consumers remain valid; wire version remains 1. Optional 88-byte audio metadata tail preserves the prior 72-byte prefix; wire version remains 1."
     },
     {
       "name": "GfxNativeBootInfo",
@@ -86540,6 +86568,236 @@
       ],
       "values": [],
       "description": "Driver terminal cursor receipt. Applied and old_preserved require finished CPU source use and all job-specific GPU uses; common borrowed source ownership ends then. Lost retains uncertain ownership. Repeated identical receipts are idempotent, conflicting/stale replies are rejected."
+    },
+    {
+      "name": "GfxAudioRoute",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 176,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete caller capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "176"
+        },
+        {
+          "name": "source",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxReceiverSource"
+          },
+          "description": "Registered display owner and device lifetime.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxReceiverSource",
+          "default_kind": "empty"
+        },
+        {
+          "name": "receiver_sequence",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact current receiver batch; zero only before its first capture.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Strictly increasing publication sequence per connector and source lifetime; exact duplicates are idempotent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "connector_id",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Stable display-owner connector ID, independent of monitor name and enumeration.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hda_location",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Canonical PCI location: bus_kind<<24 | bus<<8 | device<<3 | function. Reserved bits must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hda_device",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "PCI vendor_id in low 16 bits and device_id in high 16 bits, discovered during driver initialization.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "head_id",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Display head associated with this confirmed or pending route; zero is valid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_entry",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "HDA multi-stream device entry (0..3); chosen by display transport, independent of head index.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_audio_route_*; ready requires physical ELD and audio-enable acknowledgements for the active mode.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "eld_bytes",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "20..96 bytes, DWORD aligned, only while ready; zero otherwise.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "port_id",
+          "offset": 72,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Opaque ELD port identity. HDA combines this with its PCI controller and actual codec/pin to identify the route.",
+          "size": 8,
+          "alignment": 1,
+          "source_type": "[8]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "eld",
+          "offset": 80,
+          "type": {
+            "kind": "array",
+            "length": 96,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Exact ELD written by the display owner; unused bytes are zero. HDA additionally requires current physical PD/ELDV, coherent readback and supported PCM.",
+          "size": 96,
+          "alignment": 1,
+          "source_type": "[96]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Bounded display-to-HDA metadata under an existing receiver source. The display R4D owns physical ELD/audio programming; HDA verifies the actual pin ELD against this exact current publication before PCM. The identity tuple is source generation, receiver sequence, publication revision and connector. A head is never an HDA pin or device entry. Source close/reset removes routes; a newer receiver batch invalidates prior ready data immediately. No hardware access, parsing, callbacks or waits in the common registry."
     }
   ],
   "operations": [],
@@ -106101,6 +106359,56 @@
       "scope": "display",
       "stability": "fixed_contract",
       "description": "Native cursor: unknown."
+    },
+    {
+      "name": "gfx_audio_route_absent",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Display-to-HDA route state: absent."
+    },
+    {
+      "name": "gfx_audio_route_pending",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Display-to-HDA route state: pending."
+    },
+    {
+      "name": "gfx_audio_route_ready",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Display-to-HDA route state: ready."
+    },
+    {
+      "name": "gfx_audio_route_unsupported",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Display-to-HDA route state: unsupported."
+    },
+    {
+      "name": "gfx_audio_route_failed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Display-to-HDA route state: failed."
     }
   ],
   "limits": [

@@ -1716,6 +1716,11 @@ pub const display_cursor_state_claimed: u32 = 8;
 pub const display_cursor_visibility_hidden: u32 = 0;
 pub const display_cursor_visibility_visible: u32 = 1;
 pub const display_cursor_visibility_unknown: u32 = 2;
+pub const gfx_audio_route_absent: u32 = 0;
+pub const gfx_audio_route_pending: u32 = 1;
+pub const gfx_audio_route_ready: u32 = 2;
+pub const gfx_audio_route_unsupported: u32 = 3;
+pub const gfx_audio_route_failed: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6484,7 +6489,7 @@ pub const GfxReceiverUpdate = extern struct {
 
 pub const GfxDriverOutputApi = extern struct {
     version: u32 = 1,
-    size: u32 = 72,
+    size: u32 = 88,
     publish: u64 = 0,
     withdraw: u64 = 0,
     register_source: u64 = 0,
@@ -6493,6 +6498,8 @@ pub const GfxDriverOutputApi = extern struct {
     mode_enable: u64 = 0,
     mode_take: u64 = 0,
     mode_complete: u64 = 0,
+    audio_publish: u64 = 0,
+    audio_query: u64 = 0,
 };
 
 pub const GfxNativeBootInfo = extern struct {
@@ -6846,6 +6853,24 @@ pub const GfxDriverCursorCompletion = extern struct {
     outcome: u32 = 0,
     visibility: u32 = 0,
     reserved0: u32 = 0,
+};
+
+pub const GfxAudioRoute = extern struct {
+    version: u32 = 1,
+    size: u32 = 176,
+    source: GfxReceiverSource = .{},
+    receiver_sequence: u64 = 0,
+    revision: u64 = 0,
+    connector_id: u32 = 0,
+    hda_location: u32 = 0,
+    hda_device: u32 = 0,
+    head_id: u32 = 0,
+    device_entry: u32 = 0,
+    state: u32 = 0,
+    eld_bytes: u32 = 0,
+    reserved0: u32 = 0,
+    port_id: [8]u8 = .{0} ** 8,
+    eld: [96]u8 = .{0} ** 96,
 };
 
 pub const R4SysFns = struct {
@@ -12159,7 +12184,7 @@ comptime {
     if (@offsetOf(GfxReceiverUpdate, "count") != 32) @compileError("generated ABI offset drift: GfxReceiverUpdate.count");
     if (@offsetOf(GfxReceiverUpdate, "reserved0") != 36) @compileError("generated ABI offset drift: GfxReceiverUpdate.reserved0");
     if (@offsetOf(GfxReceiverUpdate, "receivers") != 40) @compileError("generated ABI offset drift: GfxReceiverUpdate.receivers");
-    if (@sizeOf(GfxDriverOutputApi) != 72) @compileError("generated ABI size drift: GfxDriverOutputApi");
+    if (@sizeOf(GfxDriverOutputApi) != 88) @compileError("generated ABI size drift: GfxDriverOutputApi");
     if (@alignOf(GfxDriverOutputApi) != 8) @compileError("generated ABI alignment drift: GfxDriverOutputApi");
     if (@offsetOf(GfxDriverOutputApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverOutputApi.version");
     if (@offsetOf(GfxDriverOutputApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverOutputApi.size");
@@ -12171,6 +12196,8 @@ comptime {
     if (@offsetOf(GfxDriverOutputApi, "mode_enable") != 48) @compileError("generated ABI offset drift: GfxDriverOutputApi.mode_enable");
     if (@offsetOf(GfxDriverOutputApi, "mode_take") != 56) @compileError("generated ABI offset drift: GfxDriverOutputApi.mode_take");
     if (@offsetOf(GfxDriverOutputApi, "mode_complete") != 64) @compileError("generated ABI offset drift: GfxDriverOutputApi.mode_complete");
+    if (@offsetOf(GfxDriverOutputApi, "audio_publish") != 72) @compileError("generated ABI offset drift: GfxDriverOutputApi.audio_publish");
+    if (@offsetOf(GfxDriverOutputApi, "audio_query") != 80) @compileError("generated ABI offset drift: GfxDriverOutputApi.audio_query");
     if (@sizeOf(GfxNativeBootInfo) != 56) @compileError("generated ABI size drift: GfxNativeBootInfo");
     if (@alignOf(GfxNativeBootInfo) != 8) @compileError("generated ABI alignment drift: GfxNativeBootInfo");
     if (@offsetOf(GfxNativeBootInfo, "version") != 0) @compileError("generated ABI offset drift: GfxNativeBootInfo.version");
@@ -12498,6 +12525,23 @@ comptime {
     if (@offsetOf(GfxDriverCursorCompletion, "outcome") != 28) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.outcome");
     if (@offsetOf(GfxDriverCursorCompletion, "visibility") != 32) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.visibility");
     if (@offsetOf(GfxDriverCursorCompletion, "reserved0") != 36) @compileError("generated ABI offset drift: GfxDriverCursorCompletion.reserved0");
+    if (@sizeOf(GfxAudioRoute) != 176) @compileError("generated ABI size drift: GfxAudioRoute");
+    if (@alignOf(GfxAudioRoute) != 8) @compileError("generated ABI alignment drift: GfxAudioRoute");
+    if (@offsetOf(GfxAudioRoute, "version") != 0) @compileError("generated ABI offset drift: GfxAudioRoute.version");
+    if (@offsetOf(GfxAudioRoute, "size") != 4) @compileError("generated ABI offset drift: GfxAudioRoute.size");
+    if (@offsetOf(GfxAudioRoute, "source") != 8) @compileError("generated ABI offset drift: GfxAudioRoute.source");
+    if (@offsetOf(GfxAudioRoute, "receiver_sequence") != 24) @compileError("generated ABI offset drift: GfxAudioRoute.receiver_sequence");
+    if (@offsetOf(GfxAudioRoute, "revision") != 32) @compileError("generated ABI offset drift: GfxAudioRoute.revision");
+    if (@offsetOf(GfxAudioRoute, "connector_id") != 40) @compileError("generated ABI offset drift: GfxAudioRoute.connector_id");
+    if (@offsetOf(GfxAudioRoute, "hda_location") != 44) @compileError("generated ABI offset drift: GfxAudioRoute.hda_location");
+    if (@offsetOf(GfxAudioRoute, "hda_device") != 48) @compileError("generated ABI offset drift: GfxAudioRoute.hda_device");
+    if (@offsetOf(GfxAudioRoute, "head_id") != 52) @compileError("generated ABI offset drift: GfxAudioRoute.head_id");
+    if (@offsetOf(GfxAudioRoute, "device_entry") != 56) @compileError("generated ABI offset drift: GfxAudioRoute.device_entry");
+    if (@offsetOf(GfxAudioRoute, "state") != 60) @compileError("generated ABI offset drift: GfxAudioRoute.state");
+    if (@offsetOf(GfxAudioRoute, "eld_bytes") != 64) @compileError("generated ABI offset drift: GfxAudioRoute.eld_bytes");
+    if (@offsetOf(GfxAudioRoute, "reserved0") != 68) @compileError("generated ABI offset drift: GfxAudioRoute.reserved0");
+    if (@offsetOf(GfxAudioRoute, "port_id") != 72) @compileError("generated ABI offset drift: GfxAudioRoute.port_id");
+    if (@offsetOf(GfxAudioRoute, "eld") != 80) @compileError("generated ABI offset drift: GfxAudioRoute.eld");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");

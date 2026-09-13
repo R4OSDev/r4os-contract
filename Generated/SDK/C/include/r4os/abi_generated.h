@@ -1728,6 +1728,11 @@ extern "C" {
 #define R4OS_DISPLAY_CURSOR_VISIBILITY_HIDDEN 0u
 #define R4OS_DISPLAY_CURSOR_VISIBILITY_VISIBLE 1u
 #define R4OS_DISPLAY_CURSOR_VISIBILITY_UNKNOWN 2u
+#define R4OS_GFX_AUDIO_ROUTE_ABSENT 0u
+#define R4OS_GFX_AUDIO_ROUTE_PENDING 1u
+#define R4OS_GFX_AUDIO_ROUTE_READY 2u
+#define R4OS_GFX_AUDIO_ROUTE_UNSUPPORTED 3u
+#define R4OS_GFX_AUDIO_ROUTE_FAILED 4u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2394,6 +2399,7 @@ typedef struct R4DisplayCursorRequest R4DisplayCursorRequest;
 typedef struct R4DisplayCursorStatus R4DisplayCursorStatus;
 typedef struct R4GfxDriverCursorJob R4GfxDriverCursorJob;
 typedef struct R4GfxDriverCursorCompletion R4GfxDriverCursorCompletion;
+typedef struct R4GfxAudioRoute R4GfxAudioRoute;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6662,6 +6668,8 @@ typedef struct R4GfxDriverOutputApi {
     uint64_t mode_enable;
     uint64_t mode_take;
     uint64_t mode_complete;
+    uint64_t audio_publish;
+    uint64_t audio_query;
 } R4GfxDriverOutputApi;
 
 typedef struct R4GfxNativeBootInfo {
@@ -7016,6 +7024,24 @@ typedef struct R4GfxDriverCursorCompletion {
     uint32_t visibility;
     uint32_t reserved0;
 } R4GfxDriverCursorCompletion;
+
+typedef struct R4GfxAudioRoute {
+    uint32_t version;
+    uint32_t size;
+    R4GfxReceiverSource source;
+    uint64_t receiver_sequence;
+    uint64_t revision;
+    uint32_t connector_id;
+    uint32_t hda_location;
+    uint32_t hda_device;
+    uint32_t head_id;
+    uint32_t device_entry;
+    uint32_t state;
+    uint32_t eld_bytes;
+    uint32_t reserved0;
+    uint8_t port_id[8];
+    uint8_t eld[96];
+} R4GfxAudioRoute;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -11766,7 +11792,7 @@ _Static_assert(offsetof(R4GfxReceiverUpdate, sequence) == 24u, "GfxReceiverUpdat
 _Static_assert(offsetof(R4GfxReceiverUpdate, count) == 32u, "GfxReceiverUpdate.count offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, reserved0) == 36u, "GfxReceiverUpdate.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, receivers) == 40u, "GfxReceiverUpdate.receivers offset mismatch");
-_Static_assert(sizeof(R4GfxDriverOutputApi) == 72u, "GfxDriverOutputApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverOutputApi) == 88u, "GfxDriverOutputApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, version) == 0u, "GfxDriverOutputApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, size) == 4u, "GfxDriverOutputApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, publish) == 8u, "GfxDriverOutputApi.publish offset mismatch");
@@ -11777,6 +11803,8 @@ _Static_assert(offsetof(R4GfxDriverOutputApi, close_source) == 40u, "GfxDriverOu
 _Static_assert(offsetof(R4GfxDriverOutputApi, mode_enable) == 48u, "GfxDriverOutputApi.mode_enable offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, mode_take) == 56u, "GfxDriverOutputApi.mode_take offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, mode_complete) == 64u, "GfxDriverOutputApi.mode_complete offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, audio_publish) == 72u, "GfxDriverOutputApi.audio_publish offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, audio_query) == 80u, "GfxDriverOutputApi.audio_query offset mismatch");
 _Static_assert(sizeof(R4GfxNativeBootInfo) == 56u, "GfxNativeBootInfo size mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, version) == 0u, "GfxNativeBootInfo.version offset mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, size) == 4u, "GfxNativeBootInfo.size offset mismatch");
@@ -12078,6 +12106,22 @@ _Static_assert(offsetof(R4GfxDriverCursorCompletion, error_code) == 24u, "GfxDri
 _Static_assert(offsetof(R4GfxDriverCursorCompletion, outcome) == 28u, "GfxDriverCursorCompletion.outcome offset mismatch");
 _Static_assert(offsetof(R4GfxDriverCursorCompletion, visibility) == 32u, "GfxDriverCursorCompletion.visibility offset mismatch");
 _Static_assert(offsetof(R4GfxDriverCursorCompletion, reserved0) == 36u, "GfxDriverCursorCompletion.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GfxAudioRoute) == 176u, "GfxAudioRoute size mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, version) == 0u, "GfxAudioRoute.version offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, size) == 4u, "GfxAudioRoute.size offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, source) == 8u, "GfxAudioRoute.source offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, receiver_sequence) == 24u, "GfxAudioRoute.receiver_sequence offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, revision) == 32u, "GfxAudioRoute.revision offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, connector_id) == 40u, "GfxAudioRoute.connector_id offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, hda_location) == 44u, "GfxAudioRoute.hda_location offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, hda_device) == 48u, "GfxAudioRoute.hda_device offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, head_id) == 52u, "GfxAudioRoute.head_id offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, device_entry) == 56u, "GfxAudioRoute.device_entry offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, state) == 60u, "GfxAudioRoute.state offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, eld_bytes) == 64u, "GfxAudioRoute.eld_bytes offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, reserved0) == 68u, "GfxAudioRoute.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, port_id) == 72u, "GfxAudioRoute.port_id offset mismatch");
+_Static_assert(offsetof(R4GfxAudioRoute, eld) == 80u, "GfxAudioRoute.eld offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
