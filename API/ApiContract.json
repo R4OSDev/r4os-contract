@@ -82162,8 +82162,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 4,
-      "size": 88,
+      "version": 5,
+      "size": 112,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82194,7 +82194,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "88"
+          "default_value": "112"
         },
         {
           "name": "publish",
@@ -82335,10 +82335,52 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "output_pause",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t output_pause(const GfxOutputId*, uint32_t paused). Bound native R4D task; paused is 0 or 1. Preserve common CPU backing and the identity of any outstanding mode job. Pausing requests cancellation and allows quiesced cancelled upload receipts; CPU painting remains valid without claiming visibility. Resuming is allowed only after the driver has completed the current receiver mode and image. No callback, hardware access, wait or resource release under the catalog owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode_restore",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional int32_t(const GfxAtomicState*, GfxModeStatus*): submit a single owned native output with a driver-owned SYSTEM source while output_pause is active. topology_revision=0 snapshots the current revision; exact output generation is still required. Uses the common mode worker and automatically confirms a successful apply, with normal cancellation and physical retirement. Poll the returned ticket through mode_status before resuming output. The producer reference may be released after successful admission.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode_status",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional int32_t(uint64_t ticket, GfxModeStatus*): query the exact nonzero ticket owned by this driver, including final common apply/confirm/rollback settlement. Same result codes as mode_restore; no mutation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "DriverApi v27 optional output catalog bridge. The original publish/withdraw prefix requires a real queue. Optional 48-byte tail supports independent receiver metadata sources. Calls require the actual bound R4D init/work/shutdown owner; IRQ handlers defer. Query preserves old caller buffers and reports only the returned prefix size. Optional 72-byte tail provides asynchronous native mode jobs. Original 24/48-byte consumers remain valid; wire version remains 1. Optional 88-byte audio metadata tail preserves the prior 72-byte prefix; wire version remains 1."
+      "description": "DriverApi v27 optional output catalog bridge. The original publish/withdraw prefix requires a real queue. Optional 48-byte tail supports independent receiver metadata sources. Calls require the actual bound R4D init/work/shutdown owner; IRQ handlers defer. Query preserves old caller buffers and reports only the returned prefix size. Optional 72-byte tail provides asynchronous native mode jobs. Original 24/48-byte consumers remain valid; wire version remains 1. Optional 88-byte audio metadata tail preserves the prior 72-byte prefix; wire version remains 1. Optional 112-byte connector-lifecycle tail preserves the 88-byte prefix; wire version remains 1. A driver must negotiate all three callbacks before relying on driver-originated cancelled upload completion or automatic reconnect modes."
     },
     {
       "name": "GfxNativeBootInfo",

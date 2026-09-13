@@ -6670,6 +6670,9 @@ typedef struct R4GfxDriverOutputApi {
     uint64_t mode_complete;
     uint64_t audio_publish;
     uint64_t audio_query;
+    uint64_t output_pause;
+    uint64_t mode_restore;
+    uint64_t mode_status;
 } R4GfxDriverOutputApi;
 
 typedef struct R4GfxNativeBootInfo {
@@ -11792,7 +11795,7 @@ _Static_assert(offsetof(R4GfxReceiverUpdate, sequence) == 24u, "GfxReceiverUpdat
 _Static_assert(offsetof(R4GfxReceiverUpdate, count) == 32u, "GfxReceiverUpdate.count offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, reserved0) == 36u, "GfxReceiverUpdate.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, receivers) == 40u, "GfxReceiverUpdate.receivers offset mismatch");
-_Static_assert(sizeof(R4GfxDriverOutputApi) == 88u, "GfxDriverOutputApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverOutputApi) == 112u, "GfxDriverOutputApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, version) == 0u, "GfxDriverOutputApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, size) == 4u, "GfxDriverOutputApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, publish) == 8u, "GfxDriverOutputApi.publish offset mismatch");
@@ -11805,6 +11808,9 @@ _Static_assert(offsetof(R4GfxDriverOutputApi, mode_take) == 56u, "GfxDriverOutpu
 _Static_assert(offsetof(R4GfxDriverOutputApi, mode_complete) == 64u, "GfxDriverOutputApi.mode_complete offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, audio_publish) == 72u, "GfxDriverOutputApi.audio_publish offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, audio_query) == 80u, "GfxDriverOutputApi.audio_query offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, output_pause) == 88u, "GfxDriverOutputApi.output_pause offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, mode_restore) == 96u, "GfxDriverOutputApi.mode_restore offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, mode_status) == 104u, "GfxDriverOutputApi.mode_status offset mismatch");
 _Static_assert(sizeof(R4GfxNativeBootInfo) == 56u, "GfxNativeBootInfo size mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, version) == 0u, "GfxNativeBootInfo.version offset mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, size) == 4u, "GfxNativeBootInfo.size offset mismatch");

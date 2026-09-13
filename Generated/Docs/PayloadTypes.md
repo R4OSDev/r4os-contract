@@ -219,7 +219,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxReceiverSource` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
 | `GfxReceiverInfo` | fixed_layout | extern_struct | 8224/8 | 8224/8 | 8224/8 | 8224/8 |
 | `GfxReceiverUpdate` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `GfxDriverOutputApi` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -5889,7 +5889,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 4 / 88 / 8
+- Version/Größe/Alignment: 5 / 112 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5905,6 +5905,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `mode_complete` | 64 | 8 | 8 | `u64` | - |
 | `audio_publish` | 72 | 8 | 8 | `u64` | - |
 | `audio_query` | 80 | 8 | 8 | `u64` | - |
+| `output_pause` | 88 | 8 | 8 | `u64` | - |
+| `mode_restore` | 96 | 8 | 8 | `u64` | - |
+| `mode_status` | 104 | 8 | 8 | `u64` | - |
 
 ### `GfxNativeBootInfo`
 

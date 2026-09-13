@@ -3899,7 +3899,7 @@ comptime {
     if (@offsetOf(abi.GfxReceiverUpdate, "count") != 32) @compileError("GfxReceiverUpdate.count offset");
     if (@offsetOf(abi.GfxReceiverUpdate, "reserved0") != 36) @compileError("GfxReceiverUpdate.reserved0 offset");
     if (@offsetOf(abi.GfxReceiverUpdate, "receivers") != 40) @compileError("GfxReceiverUpdate.receivers offset");
-    if (@sizeOf(abi.GfxDriverOutputApi) != 88) @compileError("GfxDriverOutputApi size");
+    if (@sizeOf(abi.GfxDriverOutputApi) != 112) @compileError("GfxDriverOutputApi size");
     if (@offsetOf(abi.GfxDriverOutputApi, "version") != 0) @compileError("GfxDriverOutputApi.version offset");
     if (@offsetOf(abi.GfxDriverOutputApi, "size") != 4) @compileError("GfxDriverOutputApi.size offset");
     if (@offsetOf(abi.GfxDriverOutputApi, "publish") != 8) @compileError("GfxDriverOutputApi.publish offset");
@@ -3912,6 +3912,9 @@ comptime {
     if (@offsetOf(abi.GfxDriverOutputApi, "mode_complete") != 64) @compileError("GfxDriverOutputApi.mode_complete offset");
     if (@offsetOf(abi.GfxDriverOutputApi, "audio_publish") != 72) @compileError("GfxDriverOutputApi.audio_publish offset");
     if (@offsetOf(abi.GfxDriverOutputApi, "audio_query") != 80) @compileError("GfxDriverOutputApi.audio_query offset");
+    if (@offsetOf(abi.GfxDriverOutputApi, "output_pause") != 88) @compileError("GfxDriverOutputApi.output_pause offset");
+    if (@offsetOf(abi.GfxDriverOutputApi, "mode_restore") != 96) @compileError("GfxDriverOutputApi.mode_restore offset");
+    if (@offsetOf(abi.GfxDriverOutputApi, "mode_status") != 104) @compileError("GfxDriverOutputApi.mode_status offset");
     if (@sizeOf(abi.GfxNativeBootInfo) != 56) @compileError("GfxNativeBootInfo size");
     if (@offsetOf(abi.GfxNativeBootInfo, "version") != 0) @compileError("GfxNativeBootInfo.version offset");
     if (@offsetOf(abi.GfxNativeBootInfo, "size") != 4) @compileError("GfxNativeBootInfo.size offset");
