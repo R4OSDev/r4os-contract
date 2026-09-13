@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 374,
-    "group_slot_count": 374,
+    "function_count": 375,
+    "group_slot_count": 375,
     "sdk_only_count": 0,
-    "public_count": 281,
+    "public_count": 282,
     "advanced_count": 93
   },
   "functions": [
@@ -3329,6 +3329,18 @@
       "slot": 77,
       "exposure": "public",
       "description": "Read coherent primary cursor status without rendering or waits. A caller must not draw software while hardware visibility is confirmed or unknown.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_backend_info",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 78,
+      "exposure": "public",
+      "description": "Queries one existing backend inventory slot with its coherent optional protocol profile. Same 1/0/negative result and capacity as gfx_queue_backend; output changes only on 1. Profile bytes belong to the driver and are interpreted by the matching userland library, never by the kernel. Opening the exact returned binding detects reset or replacement.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

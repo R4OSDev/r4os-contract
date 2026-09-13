@@ -280,6 +280,7 @@ static R4DrawDisplayPresentationStatsFn r4os_probe_r4draw_display_presentation_s
 static R4DrawDisplayCursorInfoFn r4os_probe_r4draw_display_cursor_info = (R4DrawDisplayCursorInfoFn)0;
 static R4DrawDisplayCursorSubmitFn r4os_probe_r4draw_display_cursor_submit = (R4DrawDisplayCursorSubmitFn)0;
 static R4DrawDisplayCursorStatusFn r4os_probe_r4draw_display_cursor_status = (R4DrawDisplayCursorStatusFn)0;
+static R4DrawGfxQueueBackendInfoFn r4os_probe_r4draw_gfx_queue_backend_info = (R4DrawGfxQueueBackendInfoFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

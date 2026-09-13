@@ -6317,7 +6317,7 @@ pub const GfxDriverJob = extern struct {
 
 pub const GfxDriverQueueApi = extern struct {
     version: u32 = 1,
-    size: u32 = 64,
+    size: u32 = 72,
     register_backend: u64 = 0,
     unregister_backend: u64 = 0,
     take: u64 = 0,
@@ -6325,6 +6325,7 @@ pub const GfxDriverQueueApi = extern struct {
     reset: u64 = 0,
     segment: u64 = 0,
     retain_resource: u64 = 0,
+    register_profile: u64 = 0,
 };
 
 pub const GfxOutputId = extern struct {
@@ -6876,6 +6877,23 @@ pub const GfxAudioRoute = extern struct {
     eld: [96]u8 = .{0} ** 96,
 };
 
+pub const GfxBackendProfile = extern struct {
+    version: u32 = 1,
+    size: u32 = 96,
+    interface_id_lo: u64 = 0,
+    interface_id_hi: u64 = 0,
+    revision: u32 = 0,
+    data_bytes: u32 = 0,
+    data: [64]u8 = .{0} ** 64,
+};
+
+pub const GfxBackendInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 136,
+    binding: GfxBackendBinding = .{},
+    profile: GfxBackendProfile = .{},
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -7377,12 +7395,13 @@ pub const R4DrawFns = struct {
     pub const display_cursor_info = *const fn (*DisplayCursorInfo) callconv(.c) i32;
     pub const display_cursor_submit = *const fn (*const DisplayCursorRequest, *DisplayCursorStatus) callconv(.c) i32;
     pub const display_cursor_status = *const fn (*DisplayCursorStatus) callconv(.c) i32;
+    pub const gfx_queue_backend_info = *const fn (u32, *GfxBackendInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 15,
-    size: u32 = 640,
+    abi_version: u32 = 16,
+    size: u32 = 648,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -7462,6 +7481,7 @@ pub const R4XStartR4Draw = extern struct {
     display_cursor_info: usize = 0,
     display_cursor_submit: usize = 0,
     display_cursor_status: usize = 0,
+    gfx_queue_backend_info: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -7983,6 +8003,7 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 75, .offset = 616, .name = "display_cursor_info", .state = .function, .required = false },
     .{ .number = 76, .offset = 624, .name = "display_cursor_submit", .state = .function, .required = false },
     .{ .number = 77, .offset = 632, .name = "display_cursor_status", .state = .function, .required = false },
+    .{ .number = 78, .offset = 640, .name = "gfx_queue_backend_info", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -12029,7 +12050,7 @@ comptime {
     if (@offsetOf(GfxDriverJob, "byte_length") != 88) @compileError("generated ABI offset drift: GfxDriverJob.byte_length");
     if (@offsetOf(GfxDriverJob, "source_offset") != 96) @compileError("generated ABI offset drift: GfxDriverJob.source_offset");
     if (@offsetOf(GfxDriverJob, "target_offset") != 104) @compileError("generated ABI offset drift: GfxDriverJob.target_offset");
-    if (@sizeOf(GfxDriverQueueApi) != 64) @compileError("generated ABI size drift: GfxDriverQueueApi");
+    if (@sizeOf(GfxDriverQueueApi) != 72) @compileError("generated ABI size drift: GfxDriverQueueApi");
     if (@alignOf(GfxDriverQueueApi) != 8) @compileError("generated ABI alignment drift: GfxDriverQueueApi");
     if (@offsetOf(GfxDriverQueueApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverQueueApi.version");
     if (@offsetOf(GfxDriverQueueApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverQueueApi.size");
@@ -12040,6 +12061,7 @@ comptime {
     if (@offsetOf(GfxDriverQueueApi, "reset") != 40) @compileError("generated ABI offset drift: GfxDriverQueueApi.reset");
     if (@offsetOf(GfxDriverQueueApi, "segment") != 48) @compileError("generated ABI offset drift: GfxDriverQueueApi.segment");
     if (@offsetOf(GfxDriverQueueApi, "retain_resource") != 56) @compileError("generated ABI offset drift: GfxDriverQueueApi.retain_resource");
+    if (@offsetOf(GfxDriverQueueApi, "register_profile") != 64) @compileError("generated ABI offset drift: GfxDriverQueueApi.register_profile");
     if (@sizeOf(GfxOutputId) != 24) @compileError("generated ABI size drift: GfxOutputId");
     if (@alignOf(GfxOutputId) != 8) @compileError("generated ABI alignment drift: GfxOutputId");
     if (@offsetOf(GfxOutputId, "adapter_id") != 0) @compileError("generated ABI offset drift: GfxOutputId.adapter_id");
@@ -12548,6 +12570,21 @@ comptime {
     if (@offsetOf(GfxAudioRoute, "reserved0") != 68) @compileError("generated ABI offset drift: GfxAudioRoute.reserved0");
     if (@offsetOf(GfxAudioRoute, "port_id") != 72) @compileError("generated ABI offset drift: GfxAudioRoute.port_id");
     if (@offsetOf(GfxAudioRoute, "eld") != 80) @compileError("generated ABI offset drift: GfxAudioRoute.eld");
+    if (@sizeOf(GfxBackendProfile) != 96) @compileError("generated ABI size drift: GfxBackendProfile");
+    if (@alignOf(GfxBackendProfile) != 8) @compileError("generated ABI alignment drift: GfxBackendProfile");
+    if (@offsetOf(GfxBackendProfile, "version") != 0) @compileError("generated ABI offset drift: GfxBackendProfile.version");
+    if (@offsetOf(GfxBackendProfile, "size") != 4) @compileError("generated ABI offset drift: GfxBackendProfile.size");
+    if (@offsetOf(GfxBackendProfile, "interface_id_lo") != 8) @compileError("generated ABI offset drift: GfxBackendProfile.interface_id_lo");
+    if (@offsetOf(GfxBackendProfile, "interface_id_hi") != 16) @compileError("generated ABI offset drift: GfxBackendProfile.interface_id_hi");
+    if (@offsetOf(GfxBackendProfile, "revision") != 24) @compileError("generated ABI offset drift: GfxBackendProfile.revision");
+    if (@offsetOf(GfxBackendProfile, "data_bytes") != 28) @compileError("generated ABI offset drift: GfxBackendProfile.data_bytes");
+    if (@offsetOf(GfxBackendProfile, "data") != 32) @compileError("generated ABI offset drift: GfxBackendProfile.data");
+    if (@sizeOf(GfxBackendInfo) != 136) @compileError("generated ABI size drift: GfxBackendInfo");
+    if (@alignOf(GfxBackendInfo) != 8) @compileError("generated ABI alignment drift: GfxBackendInfo");
+    if (@offsetOf(GfxBackendInfo, "version") != 0) @compileError("generated ABI offset drift: GfxBackendInfo.version");
+    if (@offsetOf(GfxBackendInfo, "size") != 4) @compileError("generated ABI offset drift: GfxBackendInfo.size");
+    if (@offsetOf(GfxBackendInfo, "binding") != 8) @compileError("generated ABI offset drift: GfxBackendInfo.binding");
+    if (@offsetOf(GfxBackendInfo, "profile") != 40) @compileError("generated ABI offset drift: GfxBackendInfo.profile");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -12753,7 +12790,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
-    if (@sizeOf(R4XStartR4Draw) != 640) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 648) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -12832,6 +12869,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "display_cursor_info") != 616) @compileError("generated ABI offset drift: R4XStartR4Draw.display_cursor_info");
     if (@offsetOf(R4XStartR4Draw, "display_cursor_submit") != 624) @compileError("generated ABI offset drift: R4XStartR4Draw.display_cursor_submit");
     if (@offsetOf(R4XStartR4Draw, "display_cursor_status") != 632) @compileError("generated ABI offset drift: R4XStartR4Draw.display_cursor_status");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_backend_info") != 640) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_backend_info");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -13444,13 +13482,14 @@ pub const R4DrawProvider = struct {
     display_cursor_info: ?R4DrawFns.display_cursor_info = null,
     display_cursor_submit: ?R4DrawFns.display_cursor_submit = null,
     display_cursor_status: ?R4DrawFns.display_cursor_status = null,
+    gfx_queue_backend_info: ?R4DrawFns.gfx_queue_backend_info = null,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 15,
-        .size = 640,
+        .abi_version = 16,
+        .size = 648,
         .flags = 0,
         .screen_width = if (provider.screen_width) |callback| @intFromPtr(callback) else 0,
         .screen_height = if (provider.screen_height) |callback| @intFromPtr(callback) else 0,
@@ -13530,6 +13569,7 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .display_cursor_info = if (provider.display_cursor_info) |callback| @intFromPtr(callback) else 0,
         .display_cursor_submit = if (provider.display_cursor_submit) |callback| @intFromPtr(callback) else 0,
         .display_cursor_status = if (provider.display_cursor_status) |callback| @intFromPtr(callback) else 0,
+        .gfx_queue_backend_info = if (provider.gfx_queue_backend_info) |callback| @intFromPtr(callback) else 0,
     };
 }
 

@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v15, 640 Bytes, 78 Funktionsfelder und 78 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v16, 648 Bytes, 79 Funktionsfelder und 79 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -87,4 +87,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 75 | 616 | function | `display_cursor_info` | `*const fn (*DisplayCursorInfo) callconv(.c) i32` |
 | 76 | 624 | function | `display_cursor_submit` | `*const fn (*const DisplayCursorRequest, *DisplayCursorStatus) callconv(.c) i32` |
 | 77 | 632 | function | `display_cursor_status` | `*const fn (*DisplayCursorStatus) callconv(.c) i32` |
+| 78 | 640 | function | `gfx_queue_backend_info` | `*const fn (u32, *GfxBackendInfo) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->
