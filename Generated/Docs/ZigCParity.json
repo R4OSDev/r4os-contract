@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 367,
+    "group_function_signatures": 370,
     "sdk_operation_contracts": 0,
-    "parity_entries": 367,
+    "parity_entries": 370,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2438,6 +2438,33 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gfx_atomic_commit",
       "c_contract": "R4DrawGfxAtomicCommitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_atomic_submit",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_atomic_submit",
+      "c_contract": "R4DrawGfxAtomicSubmitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_atomic_status",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_atomic_status",
+      "c_contract": "R4DrawGfxAtomicStatusFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_atomic_resolve",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_atomic_resolve",
+      "c_contract": "R4DrawGfxAtomicResolveFn",
       "coverage": "generated_signature"
     },
     {

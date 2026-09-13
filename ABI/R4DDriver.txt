@@ -23,6 +23,38 @@ appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
 its offer. None of these extensions changes an older prefix.
 
+Asynchronous primary mode ownership (Kernel 0.1.161)
+--------------------------------------------------
+GfxDriverOutputApi v1 keeps its 24/48-byte prefixes and appends mode_enable,
+mode_take and mode_complete at 48/56/64 (72 bytes). DriverApi35/648 is
+unchanged. R4DRAW ABI13 separately appends atomic submit/status/resolve;
+the older nonblocking atomic test/commit slots retain their behavior.
+
+Only the actual ready native backend may enable jobs and publish modeset
+capability. Jobs bind the full driver-start identity, backend/reset epoch,
+transaction ticket and distinct operation sequence. A borrowed full BO
+reference belongs to the driver for this transaction; the kernel retains
+it before caller release and retires it after physical ownership permits.
+Drivers must not release that reference themselves. Their own mappings and
+device resources must be quiesced before the corresponding completion.
+
+The separate gfx-mode worker holds DisplayExecution across each operation,
+never a no-sleep owner. Normal graphics work notifies the driver without
+waiting on that same worker. apply/confirm require applied with quiesced=1
+(old inactive); rollback or rejected apply require old_preserved with
+quiesced=2 (new inactive). lost permits 0..3 and conservatively retains both
+surfaces. Invalid/duplicate/stale completions never release resources.
+An operation deadline is 30 seconds. Confirmation is caller-selected
+1..60 seconds; expiry or explicit rollback requests the retained old mode.
+An in-flight timeout preserves receipt identity and sends no competing
+rollback. A late apply receipt schedules rollback through a fresh sequence.
+
+The common bridge supports one unscaled linear SYSTEM XRGB8888 primary
+shadow with RGB8 timings. Hardware allocations, commands and actual
+quiescence belong to the R4D. Geometry changes only after its receipt;
+the original boot capture stays immutable. Confirmation UI is app policy.
+See Docs/Drivers/GrafikScanout07913.txt for integration status and limits.
+
 Held boot display to native ownership (Kernel 0.1.159)
 ------------------------------------------------------
 GfxDriverDisplayApi v1 appends prepare_held at offset 56, total 64 bytes.

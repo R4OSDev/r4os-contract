@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 367,
-    "group_slot_count": 367,
+    "function_count": 370,
+    "group_slot_count": 370,
     "sdk_only_count": 0,
-    "public_count": 274,
+    "public_count": 277,
     "advanced_count": 93
   },
   "functions": [
@@ -3245,6 +3245,42 @@
       "slot": 70,
       "exposure": "public",
       "description": "Revalidates the complete state before committing. Currently the firmware backend only supports retaining its actual fixed scanout. Unnegotiated native mode/puffer changes return unsupported before any hardware write. Commit outcomes never imply VBlank.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_atomic_submit",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 71,
+      "exposure": "public",
+      "description": "Submit an asynchronous single-primary native atomic change. Copies the complete state and retains full source references before returning. Requires an opted-in native backend and a 1000..60000 ms confirmation interval. Returns queued status, never a hardware success. Unsupported geometry or unavailable capability has no device effects.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_atomic_status",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 72,
+      "exposure": "public",
+      "description": "Read the retained mode transaction without waiting. Ticket zero reads the latest transaction for diagnostics; an explicit obsolete ticket returns stale. Reading is allowed across caller exit and hardware loss.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_atomic_resolve",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 73,
+      "exposure": "public",
+      "description": "The submitting program confirms the visible candidate or requests rollback. Confirmation is accepted only before its deadline. Cancellation and timeout are requests for actual driver rollback; backing remains retained until real completion. Status is nonblocking; caller exit does not stop the deadline worker.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

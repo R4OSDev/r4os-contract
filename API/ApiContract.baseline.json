@@ -15281,10 +15281,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 12,
+      "abi_version": 13,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 584,
+      "size": 608,
       "slots": [
         {
           "number": 0,
@@ -20397,6 +20397,228 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 71,
+          "offset": 584,
+          "name": "gfx_atomic_submit",
+          "state": "function",
+          "required": false,
+          "description": "Submit an asynchronous single-primary native atomic change. Copies the complete state and retains full source references before returning. Requires an opted-in native backend and a 1000..60000 ms confirmation interval. Returns queued status, never a hardware success. Unsupported geometry or unavailable capability has no device effects.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "state",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxAtomicState"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "confirmation_ms",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxModeStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 72,
+          "offset": 592,
+          "name": "gfx_atomic_status",
+          "state": "function",
+          "required": false,
+          "description": "Read the retained mode transaction without waiting. Ticket zero reads the latest transaction for diagnostics; an explicit obsolete ticket returns stale. Reading is allowed across caller exit and hardware loss.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "ticket",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxModeStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 73,
+          "offset": 600,
+          "name": "gfx_atomic_resolve",
+          "state": "function",
+          "required": false,
+          "description": "The submitting program confirms the visible candidate or requests rollback. Confirmation is accepted only before its deadline. Cancellation and timeout are requests for actual driver rollback; backing remains retained until real completion. Status is nonblocking; caller exit does not stop the deadline worker.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "ticket",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "action",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxModeStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
@@ -81680,8 +81902,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 48,
+      "version": 3,
+      "size": 72,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -81712,7 +81934,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "48"
+          "default_value": "72"
         },
         {
           "name": "publish",
@@ -81783,10 +82005,52 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "mode_enable",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t mode_enable(const GfxBackendBinding*). Opt in only after full asynchronous apply/confirm/rollback support and common native takeover. No implicit modeset capability.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode_take",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t mode_take(const GfxBackendBinding*, GfxDriverModeJob*). 1=job, 0=none, negative=error. Exact current driver owner; task context, nonblocking and success-only output.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode_complete",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t mode_complete(const GfxDriverModeCompletion*). Nonblocking actual receipt; no waiting, display callbacks or buffer release under the driver owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "DriverApi v27 optional output catalog bridge. The original publish/withdraw prefix requires a real queue. Optional 48-byte tail supports independent receiver metadata sources. Calls require the actual bound R4D init/work/shutdown owner; IRQ handlers defer. Query preserves old caller buffers and reports only the returned prefix size."
+      "description": "DriverApi v27 optional output catalog bridge. The original publish/withdraw prefix requires a real queue. Optional 48-byte tail supports independent receiver metadata sources. Calls require the actual bound R4D init/work/shutdown owner; IRQ handlers defer. Query preserves old caller buffers and reports only the returned prefix size. Optional 72-byte tail provides asynchronous native mode jobs. Original 24/48-byte consumers remain valid; wire version remains 1."
     },
     {
       "name": "GfxNativeBootInfo",
@@ -84253,6 +84517,480 @@
       ],
       "values": [],
       "description": "Optional DriverApi33 semaphore service using real scheduler wait queues and direct FIFO permit handoff. Authenticates init/shutdown, work, dedicated R4D tasks and actual driver IRQ/storage callback ownership. IRQ/storage callbacks may only use resident nonblocking operations. Creation closes with the parent; existing acquire/release/destruction remain usable for ordered shutdown. Uninterruptible waits require driver-level bounded outer completion and quarantine on failed quiescence, never forced success or unsafe resource release."
+    },
+    {
+      "name": "GfxModeStatus",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 88,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "88"
+        },
+        {
+          "name": "ticket",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic transaction ID; zero means no transaction.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "topology_revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Catalog revision at the last completed transition.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "commit_sequence",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last completed hardware change; not a VBlank fence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "confirmation_deadline_ns",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic deadline after the candidate became visible; zero outside confirmation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "operation_deadline_ns",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current driver operation deadline. Expiry alone never proves quiescence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_mode_phase_*; terminal lost may still retain both states.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "outcome",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_output_outcome_*; applied requires actual device completion.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Old=1, new=2. Includes resources retained for confirmation, even after hardware quiescence.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "error_code",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Zero or a negative output error describing the failed operation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "output",
+          "offset": 64,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "Receiver identity selected by the submitted atomic state.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Asynchronous native mode transaction. One transaction owns the common primary output; status survives caller exit. Confirmation timeout requests physical rollback. Neither timeout, cancellation nor logical driver removal authorizes freeing live backing."
+    },
+    {
+      "name": "GfxDriverModeJob",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 336,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "336"
+        },
+        {
+          "name": "ticket",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Transaction identity assigned by the common owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fresh operation identity within this transaction; completion must echo it.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "operation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_mode_operation_apply/confirm/rollback.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "backend",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "GfxBackendBinding"
+          },
+          "description": "Exact registered device/reset generation and execution milestone.",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GfxBackendBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "assignment",
+          "offset": 64,
+          "type": {
+            "kind": "named",
+            "name": "GfxScanoutState"
+          },
+          "description": "Copied complete single-output assignment. No pointer to application memory survives submission.",
+          "size": 152,
+          "alignment": 8,
+          "source_type": "GfxScanoutState",
+          "default_kind": "empty"
+        },
+        {
+          "name": "mode",
+          "offset": 216,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputMode"
+          },
+          "description": "Exact published mode; driver must revalidate current receiver and source limits before effects.",
+          "size": 64,
+          "alignment": 8,
+          "source_type": "GfxOutputMode",
+          "default_kind": "empty"
+        },
+        {
+          "name": "reference",
+          "offset": 280,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferReference"
+          },
+          "description": "Full reference bound to this driver, held by the common owner. Borrowed until inactive-state retirement completes; driver must not release it.",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "GfxBufferReference",
+          "default_kind": "empty"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 328,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic operation deadline. A late completion must still report actual quiescence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Short nonblocking take/complete protocol serviced through the registered graphics worker notification. Apply retains the complete previous driver state, validates timing, prepares replacement storage and commits it. Confirm retires the previous state; rollback restores it and retires the candidate. Callbacks must never wait for their own worker. No vendor commands belong in the kernel."
+    },
+    {
+      "name": "GfxDriverModeCompletion",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity, at least the complete version-1 payload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "ticket",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact taken transaction.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact taken operation; stale and duplicate completions are rejected.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "operation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact taken operation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "outcome",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Apply: applied or old-preserved; confirm: applied; rollback: old-preserved. Any operation may report output-lost.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "quiesced",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Old=1, new=2. Applied requires old quiescence; old-preserved requires new quiescence. Confirm/rollback also require inactive driver resource retirement before acknowledgment.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "error_code",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Zero or a negative output error. Logical failures must not invent physical quiescence.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Actual device-worker receipt, authenticated against the bound R4D owner, backend, transaction and operation sequence. The common owner alone releases its borrowed buffer references after this receipt."
     }
   ],
   "operations": [],
@@ -103374,6 +104112,156 @@
       "scope": "gfx_output",
       "stability": "fixed_contract",
       "description": "A required connection/receiver query was rejected; connection_unknown when connection was not established."
+    },
+    {
+      "name": "gfx_mode_phase_idle",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: idle."
+    },
+    {
+      "name": "gfx_mode_phase_queued",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: queued."
+    },
+    {
+      "name": "gfx_mode_phase_executing",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: executing."
+    },
+    {
+      "name": "gfx_mode_phase_awaiting_confirmation",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: awaiting_confirmation."
+    },
+    {
+      "name": "gfx_mode_phase_confirming",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: confirming."
+    },
+    {
+      "name": "gfx_mode_phase_reverting",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: reverting."
+    },
+    {
+      "name": "gfx_mode_phase_confirmed",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: confirmed."
+    },
+    {
+      "name": "gfx_mode_phase_reverted",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: reverted."
+    },
+    {
+      "name": "gfx_mode_phase_lost",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: lost."
+    },
+    {
+      "name": "gfx_mode_operation_apply",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: apply."
+    },
+    {
+      "name": "gfx_mode_operation_confirm",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: confirm."
+    },
+    {
+      "name": "gfx_mode_operation_rollback",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: rollback."
+    },
+    {
+      "name": "gfx_mode_resolve_confirm",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: confirm."
+    },
+    {
+      "name": "gfx_mode_resolve_rollback",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Asynchronous common mode transaction: rollback."
+    },
+    {
+      "name": "gfx_output_error_timeout",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Operation or confirmation deadline expired; this does not prove device quiescence."
     }
   ],
   "limits": [

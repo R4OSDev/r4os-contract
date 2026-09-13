@@ -31,7 +31,9 @@ R4DRAW
 ------
 
 Zeichen- und Rasterfunktionen fuer Pixel, Linien, Rechtecke, Text, Fonts,
-Oberflaechen und Present.
+Oberflaechen und Present. Der Ausgangskatalog und die optionalen atomaren
+Modusauftraege teilen denselben Displaybesitzer; ABI13 ergaenzt
+asynchrones Einreichen, Status sowie Bestaetigung/Rueckkehr.
 
 R4NET
 -----

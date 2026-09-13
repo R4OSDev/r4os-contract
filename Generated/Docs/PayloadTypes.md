@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 216 von 216 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 219 von 219 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1671; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1686; Limits: 109
 
 ## App-Profile
 
@@ -219,7 +219,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxReceiverSource` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
 | `GfxReceiverInfo` | fixed_layout | extern_struct | 8224/8 | 8224/8 | 8224/8 | 8224/8 |
 | `GfxReceiverUpdate` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `GfxDriverOutputApi` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -237,6 +237,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DriverSemaphoreStatus` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `DriverSemaphoreStats` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `DriverSemaphoreApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `GfxModeStatus` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `GfxDriverModeJob` | extensible | extern_struct | 336/8 | 336/8 | 336/8 | 336/8 |
+| `GfxDriverModeCompletion` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -5879,7 +5882,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 2 / 48 / 8
+- Version/Größe/Alignment: 3 / 72 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5890,6 +5893,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `register_source` | 24 | 8 | 8 | `u64` | - |
 | `replace_receivers` | 32 | 8 | 8 | `u64` | - |
 | `close_source` | 40 | 8 | 8 | `u64` | - |
+| `mode_enable` | 48 | 8 | 8 | `u64` | - |
+| `mode_take` | 56 | 8 | 8 | `u64` | - |
+| `mode_complete` | 64 | 8 | 8 | `u64` | - |
 
 ### `GfxNativeBootInfo`
 
@@ -6218,6 +6224,67 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `status` | 40 | 8 | 8 | `u64` | - |
 | `stats` | 48 | 8 | 8 | `u64` | - |
 | `context_flags` | 56 | 8 | 8 | `u64` | - |
+
+### `GfxModeStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `ticket` | 8 | 8 | 8 | `u64` | - |
+| `topology_revision` | 16 | 8 | 8 | `u64` | - |
+| `commit_sequence` | 24 | 8 | 8 | `u64` | - |
+| `confirmation_deadline_ns` | 32 | 8 | 8 | `u64` | - |
+| `operation_deadline_ns` | 40 | 8 | 8 | `u64` | - |
+| `phase` | 48 | 4 | 4 | `u32` | - |
+| `outcome` | 52 | 4 | 4 | `u32` | - |
+| `retained` | 56 | 4 | 4 | `u32` | - |
+| `error_code` | 60 | 4 | 4 | `i32` | - |
+| `output` | 64 | 24 | 8 | `GfxOutputId` | - |
+
+### `GfxDriverModeJob`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 336 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `ticket` | 8 | 8 | 8 | `u64` | - |
+| `sequence` | 16 | 8 | 8 | `u64` | - |
+| `operation` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+| `backend` | 32 | 32 | 8 | `GfxBackendBinding` | - |
+| `assignment` | 64 | 152 | 8 | `GfxScanoutState` | - |
+| `mode` | 216 | 64 | 8 | `GfxOutputMode` | - |
+| `reference` | 280 | 48 | 8 | `GfxBufferReference` | - |
+| `deadline_ns` | 328 | 8 | 8 | `u64` | - |
+
+### `GfxDriverModeCompletion`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `ticket` | 8 | 8 | 8 | `u64` | - |
+| `sequence` | 16 | 8 | 8 | `u64` | - |
+| `operation` | 24 | 4 | 4 | `u32` | - |
+| `outcome` | 28 | 4 | 4 | `u32` | - |
+| `quiesced` | 32 | 4 | 4 | `u32` | - |
+| `error_code` | 36 | 4 | 4 | `i32` | - |
 
 ## Fehlerdomänen
 
@@ -8629,6 +8696,21 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_output_flag_edid_invalid` | `128` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_output_flag_receiver_incomplete` | `256` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_output_flag_query_failed` | `512` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_idle` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_queued` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_executing` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_awaiting_confirmation` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_confirming` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_reverting` | `5` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_confirmed` | `6` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_reverted` | `7` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_phase_lost` | `8` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_operation_apply` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_operation_confirm` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_operation_rollback` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_resolve_confirm` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_mode_resolve_rollback` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_output_error_timeout` | `-8` | `i32` | value | number | `gfx_output` | fixed_contract |
 
 ## Limits
 
