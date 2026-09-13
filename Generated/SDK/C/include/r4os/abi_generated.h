@@ -1699,6 +1699,12 @@ extern "C" {
 #define R4OS_GFX_MODE_RESOLVE_CONFIRM 1u
 #define R4OS_GFX_MODE_RESOLVE_ROLLBACK 2u
 #define R4OS_GFX_OUTPUT_ERROR_TIMEOUT ((int32_t)-8)
+#define R4OS_DISPLAY_PRESENTATION_FLAG_AVAILABLE 1u
+#define R4OS_DISPLAY_PRESENTATION_FLAG_LOST 2u
+#define R4OS_DISPLAY_PRESENTATION_PENDING_COPY 1u
+#define R4OS_DISPLAY_PRESENTATION_PENDING_READY 2u
+#define R4OS_DISPLAY_PRESENTATION_PENDING_FLIP 4u
+#define R4OS_DISPLAY_PRESENTATION_PENDING_SETUP 8u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2359,6 +2365,7 @@ typedef struct R4DriverSemaphoreApi R4DriverSemaphoreApi;
 typedef struct R4GfxModeStatus R4GfxModeStatus;
 typedef struct R4GfxDriverModeJob R4GfxDriverModeJob;
 typedef struct R4GfxDriverModeCompletion R4GfxDriverModeCompletion;
+typedef struct R4DisplayPresentationStats R4DisplayPresentationStats;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6686,6 +6693,7 @@ typedef struct R4GfxDriverDisplayApi {
     uint64_t boot_hold;
     uint64_t boot_finish;
     uint64_t prepare_held;
+    uint64_t presentation_stats;
 } R4GfxDriverDisplayApi;
 
 typedef struct R4DriverResourceInfo {
@@ -6877,6 +6885,35 @@ typedef struct R4GfxDriverModeCompletion {
     uint32_t quiesced;
     int32_t error_code;
 } R4GfxDriverModeCompletion;
+
+typedef struct R4DisplayPresentationStats {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t head_id;
+    R4GfxBackendBinding backend;
+    uint64_t display_generation;
+    uint64_t sequence;
+    uint64_t visible_sequence;
+    uint32_t pending;
+    uint32_t buffer_count;
+    uint64_t acquired_count;
+    uint64_t rendered_count;
+    uint64_t submitted_count;
+    uint64_t visible_count;
+    uint64_t released_count;
+    uint64_t rejected_count;
+    uint64_t source_timeline;
+    uint64_t source_point;
+    uint64_t render_point;
+    uint64_t window_point;
+    uint64_t submitted_ns;
+    uint64_t visible_ns;
+    uint64_t gpu_timestamp;
+    uint64_t irq_sequence;
+    uint64_t irq_observed_ns;
+    uint64_t released_ns;
+} R4DisplayPresentationStats;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -7416,6 +7453,7 @@ typedef int32_t (*R4DrawGfxAtomicCommitFn)(const R4GfxAtomicState * state, R4Gfx
 typedef int32_t (*R4DrawGfxAtomicSubmitFn)(const R4GfxAtomicState * state, uint32_t confirmation_ms, R4GfxModeStatus * output);
 typedef int32_t (*R4DrawGfxAtomicStatusFn)(uint64_t ticket, R4GfxModeStatus * output);
 typedef int32_t (*R4DrawGfxAtomicResolveFn)(uint64_t ticket, uint32_t action, R4GfxModeStatus * output);
+typedef int32_t (*R4DrawDisplayPresentationStatsFn)(uint32_t head_id, R4DisplayPresentationStats * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -7496,6 +7534,7 @@ typedef struct R4XStartR4Draw {
     uintptr_t gfx_atomic_submit;
     uintptr_t gfx_atomic_status;
     uintptr_t gfx_atomic_resolve;
+    uintptr_t display_presentation_stats;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -11669,7 +11708,7 @@ _Static_assert(offsetof(R4GfxBootHoldRequest, generation) == 16u, "GfxBootHoldRe
 _Static_assert(offsetof(R4GfxBootHoldRequest, reference) == 24u, "GfxBootHoldRequest.reference offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, context) == 40u, "GfxBootHoldRequest.context offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, restore_callback) == 48u, "GfxBootHoldRequest.restore_callback offset mismatch");
-_Static_assert(sizeof(R4GfxDriverDisplayApi) == 64u, "GfxDriverDisplayApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverDisplayApi) == 72u, "GfxDriverDisplayApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, version) == 0u, "GfxDriverDisplayApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, size) == 4u, "GfxDriverDisplayApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_info) == 8u, "GfxDriverDisplayApi.boot_info offset mismatch");
@@ -11679,6 +11718,7 @@ _Static_assert(offsetof(R4GfxDriverDisplayApi, schedule) == 32u, "GfxDriverDispl
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_hold) == 40u, "GfxDriverDisplayApi.boot_hold offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_finish) == 48u, "GfxDriverDisplayApi.boot_finish offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, prepare_held) == 56u, "GfxDriverDisplayApi.prepare_held offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, presentation_stats) == 64u, "GfxDriverDisplayApi.presentation_stats offset mismatch");
 _Static_assert(sizeof(R4DriverResourceInfo) == 32u, "DriverResourceInfo size mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, version) == 0u, "DriverResourceInfo.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, size) == 4u, "DriverResourceInfo.size offset mismatch");
@@ -11839,6 +11879,33 @@ _Static_assert(offsetof(R4GfxDriverModeCompletion, operation) == 24u, "GfxDriver
 _Static_assert(offsetof(R4GfxDriverModeCompletion, outcome) == 28u, "GfxDriverModeCompletion.outcome offset mismatch");
 _Static_assert(offsetof(R4GfxDriverModeCompletion, quiesced) == 32u, "GfxDriverModeCompletion.quiesced offset mismatch");
 _Static_assert(offsetof(R4GfxDriverModeCompletion, error_code) == 36u, "GfxDriverModeCompletion.error_code offset mismatch");
+_Static_assert(sizeof(R4DisplayPresentationStats) == 208u, "DisplayPresentationStats size mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, version) == 0u, "DisplayPresentationStats.version offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, size) == 4u, "DisplayPresentationStats.size offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, flags) == 8u, "DisplayPresentationStats.flags offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, head_id) == 12u, "DisplayPresentationStats.head_id offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, backend) == 16u, "DisplayPresentationStats.backend offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, display_generation) == 48u, "DisplayPresentationStats.display_generation offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, sequence) == 56u, "DisplayPresentationStats.sequence offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, visible_sequence) == 64u, "DisplayPresentationStats.visible_sequence offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, pending) == 72u, "DisplayPresentationStats.pending offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, buffer_count) == 76u, "DisplayPresentationStats.buffer_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, acquired_count) == 80u, "DisplayPresentationStats.acquired_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, rendered_count) == 88u, "DisplayPresentationStats.rendered_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, submitted_count) == 96u, "DisplayPresentationStats.submitted_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, visible_count) == 104u, "DisplayPresentationStats.visible_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, released_count) == 112u, "DisplayPresentationStats.released_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, rejected_count) == 120u, "DisplayPresentationStats.rejected_count offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, source_timeline) == 128u, "DisplayPresentationStats.source_timeline offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, source_point) == 136u, "DisplayPresentationStats.source_point offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, render_point) == 144u, "DisplayPresentationStats.render_point offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, window_point) == 152u, "DisplayPresentationStats.window_point offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, submitted_ns) == 160u, "DisplayPresentationStats.submitted_ns offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, visible_ns) == 168u, "DisplayPresentationStats.visible_ns offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, gpu_timestamp) == 176u, "DisplayPresentationStats.gpu_timestamp offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, irq_sequence) == 184u, "DisplayPresentationStats.irq_sequence offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, irq_observed_ns) == 192u, "DisplayPresentationStats.irq_observed_ns offset mismatch");
+_Static_assert(offsetof(R4DisplayPresentationStats, released_ns) == 200u, "DisplayPresentationStats.released_ns offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -12243,7 +12310,7 @@ _Static_assert(offsetof(R4XStartR4Desk, console_input_wait) == 472u, "R4XStartR4
 _Static_assert(sizeof(R4DeskConsoleInputWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4Desk.physical_key_poll offset mismatch");
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 608u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 616u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -12392,6 +12459,8 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_atomic_status) == 592u, "R4XStartR4D
 _Static_assert(sizeof(R4DrawGfxAtomicStatusFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_atomic_resolve) == 600u, "R4XStartR4Draw.gfx_atomic_resolve offset mismatch");
 _Static_assert(sizeof(R4DrawGfxAtomicResolveFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, display_presentation_stats) == 608u, "R4XStartR4Draw.display_presentation_stats offset mismatch");
+_Static_assert(sizeof(R4DrawDisplayPresentationStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

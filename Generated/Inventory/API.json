@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 370,
-    "group_slot_count": 370,
+    "function_count": 371,
+    "group_slot_count": 371,
     "sdk_only_count": 0,
-    "public_count": 277,
+    "public_count": 278,
     "advanced_count": 93
   },
   "functions": [
@@ -3281,6 +3281,18 @@
       "slot": 73,
       "exposure": "public",
       "description": "The submitting program confirms the visible candidate or requests rollback. Confirmation is accepted only before its deadline. Cancellation and timeout are requests for actual driver rollback; backing remains retained until real completion. Status is nonblocking; caller exit does not stop the deadline worker.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_presentation_stats",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 74,
+      "exposure": "public",
+      "description": "Read coherent per-head statistics from the current native primary backend. Returns gfx_output_ok or a negative gfx_output error, with no output mutation on failure. No waits, device calls or CPU-copy fence reinterpretation. Unsupported/boot framebuffer backends have no visible hardware completion sample.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

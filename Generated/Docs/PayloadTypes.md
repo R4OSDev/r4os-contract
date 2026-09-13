@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 219 von 219 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 220 von 220 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1686; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1692; Limits: 109
 
 ## App-Profile
 
@@ -224,7 +224,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBootHoldRequest` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
-| `GfxDriverDisplayApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `GfxDriverDisplayApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverResourceApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
@@ -240,6 +240,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxModeStatus` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `GfxDriverModeJob` | extensible | extern_struct | 336/8 | 336/8 | 336/8 | 336/8 |
 | `GfxDriverModeCompletion` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `DisplayPresentationStats` | extensible | extern_struct | 208/8 | 208/8 | 208/8 | 208/8 |
 
 ## Typdetails
 
@@ -5977,7 +5978,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 64 / 8
+- Version/Größe/Alignment: 2 / 72 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5990,6 +5991,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `boot_hold` | 40 | 8 | 8 | `u64` | - |
 | `boot_finish` | 48 | 8 | 8 | `u64` | - |
 | `prepare_held` | 56 | 8 | 8 | `u64` | - |
+| `presentation_stats` | 64 | 8 | 8 | `u64` | - |
 
 ### `DriverResourceInfo`
 
@@ -6285,6 +6287,42 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `outcome` | 28 | 4 | 4 | `u32` | - |
 | `quiesced` | 32 | 4 | 4 | `u32` | - |
 | `error_code` | 36 | 4 | 4 | `i32` | - |
+
+### `DisplayPresentationStats`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 208 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `head_id` | 12 | 4 | 4 | `u32` | - |
+| `backend` | 16 | 32 | 8 | `GfxBackendBinding` | - |
+| `display_generation` | 48 | 8 | 8 | `u64` | - |
+| `sequence` | 56 | 8 | 8 | `u64` | - |
+| `visible_sequence` | 64 | 8 | 8 | `u64` | - |
+| `pending` | 72 | 4 | 4 | `u32` | - |
+| `buffer_count` | 76 | 4 | 4 | `u32` | - |
+| `acquired_count` | 80 | 8 | 8 | `u64` | - |
+| `rendered_count` | 88 | 8 | 8 | `u64` | - |
+| `submitted_count` | 96 | 8 | 8 | `u64` | - |
+| `visible_count` | 104 | 8 | 8 | `u64` | - |
+| `released_count` | 112 | 8 | 8 | `u64` | - |
+| `rejected_count` | 120 | 8 | 8 | `u64` | - |
+| `source_timeline` | 128 | 8 | 8 | `u64` | - |
+| `source_point` | 136 | 8 | 8 | `u64` | - |
+| `render_point` | 144 | 8 | 8 | `u64` | - |
+| `window_point` | 152 | 8 | 8 | `u64` | - |
+| `submitted_ns` | 160 | 8 | 8 | `u64` | - |
+| `visible_ns` | 168 | 8 | 8 | `u64` | - |
+| `gpu_timestamp` | 176 | 8 | 8 | `u64` | - |
+| `irq_sequence` | 184 | 8 | 8 | `u64` | - |
+| `irq_observed_ns` | 192 | 8 | 8 | `u64` | - |
+| `released_ns` | 200 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 
@@ -8711,6 +8749,12 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_mode_resolve_confirm` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_mode_resolve_rollback` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_output_error_timeout` | `-8` | `i32` | value | number | `gfx_output` | fixed_contract |
+| `display_presentation_flag_available` | `1` | `u32` | value | number | `display` | fixed_contract |
+| `display_presentation_flag_lost` | `2` | `u32` | value | number | `display` | fixed_contract |
+| `display_presentation_pending_copy` | `1` | `u32` | value | number | `display` | fixed_contract |
+| `display_presentation_pending_ready` | `2` | `u32` | value | number | `display` | fixed_contract |
+| `display_presentation_pending_flip` | `4` | `u32` | value | number | `display` | fixed_contract |
+| `display_presentation_pending_setup` | `8` | `u32` | value | number | `display` | fixed_contract |
 
 ## Limits
 
