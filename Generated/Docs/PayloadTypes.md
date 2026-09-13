@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 234 von 234 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1731; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1732; Limits: 109
 
 ## App-Profile
 
@@ -9106,6 +9106,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_render_transfer_identity` | `0` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_render_transfer_srgb_decode` | `1` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_render_transfer_srgb_encode` | `2` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `gfx_queue_operation_present` | `5` | `u32` | value | number | `gfx_queue` | fixed_contract |
 
 ## Limits
 

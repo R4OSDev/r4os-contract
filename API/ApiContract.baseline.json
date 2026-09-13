@@ -15281,7 +15281,7 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 19,
+      "abi_version": 20,
       "header_size": 16,
       "pointer_size": 8,
       "size": 688,
@@ -108214,6 +108214,16 @@
       "scope": "gfx_queue",
       "stability": "fixed_contract",
       "description": "Explicit linear-to-sRGB conversion of sampled premultiplied color."
+    },
+    {
+      "name": "gfx_queue_operation_present",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Full XRGB image to the active native output through its retained display owner. Requires backend bit5 and the432-byte submission prefix. Source is a canonical image reference; byte_length=width*4, row_count=height, source_pitch=its plane pitch. Target, both offsets, target_pitch and render state are zero. Common display validates active adapter, geometry and writer/mode exclusion before retaining the whole source with its dependencies. The driver copies into a private inactive scanout. The queue receipt confirms device execution and source retirement, never visible scanout. Visibility remains DisplayPresentationStats. Ordinary queue cancellation/release and producer-death rules apply."
     }
   ],
   "limits": [

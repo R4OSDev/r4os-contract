@@ -1731,6 +1731,7 @@ pub const gfx_render_kind_sample = generated.gfx_render_kind_sample;
 pub const gfx_render_transfer_identity = generated.gfx_render_transfer_identity;
 pub const gfx_render_transfer_srgb_decode = generated.gfx_render_transfer_srgb_decode;
 pub const gfx_render_transfer_srgb_encode = generated.gfx_render_transfer_srgb_encode;
+pub const gfx_queue_operation_present = generated.gfx_queue_operation_present;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;

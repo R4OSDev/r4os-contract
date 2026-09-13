@@ -1732,6 +1732,7 @@ pub const gfx_render_kind_sample: u32 = 1;
 pub const gfx_render_transfer_identity: u32 = 0;
 pub const gfx_render_transfer_srgb_decode: u32 = 1;
 pub const gfx_render_transfer_srgb_encode: u32 = 2;
+pub const gfx_queue_operation_present: u32 = 5;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -7501,7 +7502,7 @@ pub const R4DrawFns = struct {
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 19,
+    abi_version: u32 = 20,
     size: u32 = 688,
     flags: u32 = 0,
     screen_width: usize = 0,
