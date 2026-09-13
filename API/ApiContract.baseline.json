@@ -15281,7 +15281,7 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 18,
+      "abi_version": 19,
       "header_size": 16,
       "pointer_size": 8,
       "size": 688,
@@ -79945,8 +79945,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 432,
+      "version": 3,
+      "size": 512,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -79977,7 +79977,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "432"
+          "default_value": "512"
         },
         {
           "name": "operation",
@@ -80175,10 +80175,23 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "render",
+          "offset": 432,
+          "type": {
+            "kind": "named",
+            "name": "GfxRenderCommand"
+          },
+          "description": "Operation4 only. Entire command is zero for other operations.",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "GfxRenderCommand",
+          "default_kind": "empty"
         }
       ],
       "values": [],
-      "description": "Copied bounded submission; no borrowed caller pointer survives Submit. Copy transports raw byte ranges and barrier orders dependencies. Later rendering/scanout payloads require negotiated backend support. Wire version remains 1. Old 408-byte callers remain supported; a 432-byte tail enables copy_rows, interpreting byte_length as bytes per row and offsets as logical plane offsets. Reserves complete checked source/target extents; opaque layouts reserve their whole backing. No CPU/GPU address or vendor command is accepted."
+      "description": "Copied bounded submission; no borrowed caller pointer survives Submit. Copy transports raw byte ranges and barrier orders dependencies. Later rendering/scanout payloads require negotiated backend support. Wire version remains 1. Old 408-byte callers remain supported; a 432-byte tail enables copy_rows, interpreting byte_length as bytes per row and offsets as logical plane offsets. Reserves complete checked source/target extents; opaque layouts reserve their whole backing. No CPU/GPU address or vendor command is accepted. The512-byte prefix adds render operation4, requiring backend operation bit4. Copy offsets/length/pitches remain zero. Source is optional only for fill; target is required. The queue reserves each whole canonical BO and copies all state; no caller or GPU pointer survives."
     },
     {
       "name": "GfxFenceStatus",
@@ -80551,8 +80564,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 136,
+      "version": 3,
+      "size": 224,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -80583,7 +80596,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "136"
+          "default_value": "224"
         },
         {
           "name": "fence",
@@ -80749,18 +80762,45 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "render",
+          "offset": 136,
+          "type": {
+            "kind": "named",
+            "name": "GfxRenderCommand"
+          },
+          "description": "Immutable operation4 draw state, otherwise zero.",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "GfxRenderCommand",
+          "default_kind": "empty"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 216,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original accepted finite absolute deadline, for all operations when this complete prefix is supported.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration. Wire version remains 1; the 112-byte prefix stays supported for legacy backends. Copy-rows backends require the complete 136-byte output. byte_length denotes bytes per row for operation 3; offsets are logical BO offsets, independently of conservative pinned extents."
+      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration. Wire version remains 1; the 112-byte prefix stays supported for legacy backends. Copy-rows backends require the complete 136-byte output. byte_length denotes bytes per row for operation 3; offsets are logical BO offsets, independently of conservative pinned extents. The224-byte prefix exposes immutable render state and the original job deadline. Backends advertising render must provide224 bytes; row-copy-only backends still need136, legacy backends112. Renderer leases remain owned by the canonical queue until physical completion."
     },
     {
       "name": "GfxDriverQueueApi",
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 72,
+      "version": 3,
+      "size": 80,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -80791,7 +80831,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "72"
+          "default_value": "80"
         },
         {
           "name": "register_backend",
@@ -80904,10 +80944,24 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "update_operations",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional driver-bound function(binding*, u64 operations)->i32. Changes future admission after engine readiness; accepted jobs remain retained and must finish or fail through normal completion.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "DriverApi v26 optional native queue table; outer ABI unchanged. Register requires bound Init; query and retain_resource accept actual Init/Work. Task callbacks authenticate the backend; complete also accepts actual IRQ owner and only updates bounded metadata plus one worker wake. Mapping-only retention is optional after the 56-byte prefix. The optional 72-byte tail registers a coherent backend profile for userland negotiation; legacy registration advertises no profile."
+      "description": "DriverApi v26 optional native queue table; outer ABI unchanged. Register requires bound Init; query and retain_resource accept actual Init/Work. Task callbacks authenticate the backend; complete also accepts actual IRQ owner and only updates bounded metadata plus one worker wake. Mapping-only retention is optional after the 56-byte prefix. The optional 72-byte tail registers a coherent backend profile for userland negotiation; legacy registration advertises no profile. Append-only operation advertisement update keeps queue/device identities stable while engines become ready. Unknown bits and unauthenticated/stale bindings are rejected. Removing a capability never silently releases accepted jobs."
     },
     {
       "name": "GfxOutputId",
@@ -88218,6 +88272,227 @@
       ],
       "values": [],
       "description": "One request claimed by the registered driver. Complete exactly once even after requester close or deadline. Completion borrows the driver reference; it never closes it. A valid received reference keeps backing alive after the driver closes its initial reference."
+    },
+    {
+      "name": "GfxRenderRect",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 16,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Signed pixel origin.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Signed pixel origin.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Pixel extent; zero is empty.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Pixel extent; zero is empty.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Integer image rectangle. Layout, allocation and GPU addresses derive only from the retained image BO."
+    },
+    {
+      "name": "GfxRenderCommand",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "kind",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fill0 (no source) or sampled rectangle1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "filter",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Nearest0 or bilinear1. Unused for fill; then zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "blend",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Replace0 or premultiplied source-over1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transfer",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Identity0, sRGB decode1 or sRGB encode2. Fill requires identity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_rect",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "GfxRenderRect"
+          },
+          "description": "Source pixel rectangle, zero for fill.",
+          "size": 16,
+          "alignment": 4,
+          "source_type": "GfxRenderRect",
+          "default_kind": "empty"
+        },
+        {
+          "name": "target_rect",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "GfxRenderRect"
+          },
+          "description": "Destination rectangle before clipping.",
+          "size": 16,
+          "alignment": 4,
+          "source_type": "GfxRenderRect",
+          "default_kind": "empty"
+        },
+        {
+          "name": "scissor",
+          "offset": 48,
+          "type": {
+            "kind": "named",
+            "name": "GfxRenderRect"
+          },
+          "description": "Destination clip, intersected with the target image.",
+          "size": 16,
+          "alignment": 4,
+          "source_type": "GfxRenderRect",
+          "default_kind": "empty"
+        },
+        {
+          "name": "color",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fill BGRA/R8 color; ARGB is premultiplied. Zero for sampling.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "opacity",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Opacity0..255 applied before premultiplied blending.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reserved and zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Immutable vendor-neutral single 2D draw. Native backend interprets the complete state and validates supported image formats/modifiers; the kernel retains resources and transports state without constructing graphics commands. Source/target alias needs explicit conversion before submission."
     }
   ],
   "operations": [],
@@ -107839,6 +108114,106 @@
       "scope": "gfx_queue",
       "stability": "fixed_contract",
       "description": "Pitched or descriptor-derived layout copy. Requires the complete GfxSubmission tail and a backend advertising operation bit 3."
+    },
+    {
+      "name": "gfx_queue_operation_render",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Vendor-neutral rectangle rendering; requires512-byte submission and backend operation bit4."
+    },
+    {
+      "name": "gfx_render_blend_over",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Premultiplied source-over."
+    },
+    {
+      "name": "gfx_render_blend_replace",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Replace destination."
+    },
+    {
+      "name": "gfx_render_filter_bilinear",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Bilinear sampling, clamped to the source rectangle."
+    },
+    {
+      "name": "gfx_render_filter_nearest",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Nearest sampling."
+    },
+    {
+      "name": "gfx_render_kind_fill",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Solid fill with no source BO."
+    },
+    {
+      "name": "gfx_render_kind_sample",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Sample a retained source image."
+    },
+    {
+      "name": "gfx_render_transfer_identity",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "No transfer conversion."
+    },
+    {
+      "name": "gfx_render_transfer_srgb_decode",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Explicit sRGB-to-linear conversion of sampled premultiplied color."
+    },
+    {
+      "name": "gfx_render_transfer_srgb_encode",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Explicit linear-to-sRGB conversion of sampled premultiplied color."
     }
   ],
   "limits": [

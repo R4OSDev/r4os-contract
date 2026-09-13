@@ -3711,7 +3711,7 @@ comptime {
     if (@offsetOf(abi.GfxQueueHandle, "version") != 0) @compileError("GfxQueueHandle.version offset");
     if (@offsetOf(abi.GfxQueueHandle, "size") != 4) @compileError("GfxQueueHandle.size offset");
     if (@offsetOf(abi.GfxQueueHandle, "timeline") != 8) @compileError("GfxQueueHandle.timeline offset");
-    if (@sizeOf(abi.GfxSubmission) != 432) @compileError("GfxSubmission size");
+    if (@sizeOf(abi.GfxSubmission) != 512) @compileError("GfxSubmission size");
     if (@offsetOf(abi.GfxSubmission, "version") != 0) @compileError("GfxSubmission.version offset");
     if (@offsetOf(abi.GfxSubmission, "size") != 4) @compileError("GfxSubmission.size offset");
     if (@offsetOf(abi.GfxSubmission, "operation") != 8) @compileError("GfxSubmission.operation offset");
@@ -3728,6 +3728,7 @@ comptime {
     if (@offsetOf(abi.GfxSubmission, "reserved0") != 412) @compileError("GfxSubmission.reserved0 offset");
     if (@offsetOf(abi.GfxSubmission, "source_pitch") != 416) @compileError("GfxSubmission.source_pitch offset");
     if (@offsetOf(abi.GfxSubmission, "target_pitch") != 424) @compileError("GfxSubmission.target_pitch offset");
+    if (@offsetOf(abi.GfxSubmission, "render") != 432) @compileError("GfxSubmission.render offset");
     if (@sizeOf(abi.GfxFenceStatus) != 80) @compileError("GfxFenceStatus size");
     if (@offsetOf(abi.GfxFenceStatus, "version") != 0) @compileError("GfxFenceStatus.version offset");
     if (@offsetOf(abi.GfxFenceStatus, "size") != 4) @compileError("GfxFenceStatus.size offset");
@@ -3754,7 +3755,7 @@ comptime {
     if (@offsetOf(abi.GfxBackendRegistration, "context") != 24) @compileError("GfxBackendRegistration.context offset");
     if (@offsetOf(abi.GfxBackendRegistration, "operations") != 32) @compileError("GfxBackendRegistration.operations offset");
     if (@offsetOf(abi.GfxBackendRegistration, "memory_generation") != 40) @compileError("GfxBackendRegistration.memory_generation offset");
-    if (@sizeOf(abi.GfxDriverJob) != 136) @compileError("GfxDriverJob size");
+    if (@sizeOf(abi.GfxDriverJob) != 224) @compileError("GfxDriverJob size");
     if (@offsetOf(abi.GfxDriverJob, "version") != 0) @compileError("GfxDriverJob.version offset");
     if (@offsetOf(abi.GfxDriverJob, "size") != 4) @compileError("GfxDriverJob.size offset");
     if (@offsetOf(abi.GfxDriverJob, "fence") != 8) @compileError("GfxDriverJob.fence offset");
@@ -3769,7 +3770,9 @@ comptime {
     if (@offsetOf(abi.GfxDriverJob, "reserved1") != 116) @compileError("GfxDriverJob.reserved1 offset");
     if (@offsetOf(abi.GfxDriverJob, "source_pitch") != 120) @compileError("GfxDriverJob.source_pitch offset");
     if (@offsetOf(abi.GfxDriverJob, "target_pitch") != 128) @compileError("GfxDriverJob.target_pitch offset");
-    if (@sizeOf(abi.GfxDriverQueueApi) != 72) @compileError("GfxDriverQueueApi size");
+    if (@offsetOf(abi.GfxDriverJob, "render") != 136) @compileError("GfxDriverJob.render offset");
+    if (@offsetOf(abi.GfxDriverJob, "deadline_ns") != 216) @compileError("GfxDriverJob.deadline_ns offset");
+    if (@sizeOf(abi.GfxDriverQueueApi) != 80) @compileError("GfxDriverQueueApi size");
     if (@offsetOf(abi.GfxDriverQueueApi, "version") != 0) @compileError("GfxDriverQueueApi.version offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "size") != 4) @compileError("GfxDriverQueueApi.size offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "register_backend") != 8) @compileError("GfxDriverQueueApi.register_backend offset");
@@ -3780,6 +3783,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverQueueApi, "segment") != 48) @compileError("GfxDriverQueueApi.segment offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "retain_resource") != 56) @compileError("GfxDriverQueueApi.retain_resource offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "register_profile") != 64) @compileError("GfxDriverQueueApi.register_profile offset");
+    if (@offsetOf(abi.GfxDriverQueueApi, "update_operations") != 72) @compileError("GfxDriverQueueApi.update_operations offset");
     if (@sizeOf(abi.GfxOutputId) != 24) @compileError("GfxOutputId size");
     if (@offsetOf(abi.GfxOutputId, "adapter_id") != 0) @compileError("GfxOutputId.adapter_id offset");
     if (@offsetOf(abi.GfxOutputId, "connector_id") != 4) @compileError("GfxOutputId.connector_id offset");
@@ -4299,6 +4303,22 @@ comptime {
     if (@offsetOf(abi.GfxNativeJob, "size") != 4) @compileError("GfxNativeJob.size offset");
     if (@offsetOf(abi.GfxNativeJob, "request") != 8) @compileError("GfxNativeJob.request offset");
     if (@offsetOf(abi.GfxNativeJob, "allocation") != 24) @compileError("GfxNativeJob.allocation offset");
+    if (@sizeOf(abi.GfxRenderRect) != 16) @compileError("GfxRenderRect size");
+    if (@offsetOf(abi.GfxRenderRect, "x") != 0) @compileError("GfxRenderRect.x offset");
+    if (@offsetOf(abi.GfxRenderRect, "y") != 4) @compileError("GfxRenderRect.y offset");
+    if (@offsetOf(abi.GfxRenderRect, "width") != 8) @compileError("GfxRenderRect.width offset");
+    if (@offsetOf(abi.GfxRenderRect, "height") != 12) @compileError("GfxRenderRect.height offset");
+    if (@sizeOf(abi.GfxRenderCommand) != 80) @compileError("GfxRenderCommand size");
+    if (@offsetOf(abi.GfxRenderCommand, "kind") != 0) @compileError("GfxRenderCommand.kind offset");
+    if (@offsetOf(abi.GfxRenderCommand, "filter") != 4) @compileError("GfxRenderCommand.filter offset");
+    if (@offsetOf(abi.GfxRenderCommand, "blend") != 8) @compileError("GfxRenderCommand.blend offset");
+    if (@offsetOf(abi.GfxRenderCommand, "transfer") != 12) @compileError("GfxRenderCommand.transfer offset");
+    if (@offsetOf(abi.GfxRenderCommand, "source_rect") != 16) @compileError("GfxRenderCommand.source_rect offset");
+    if (@offsetOf(abi.GfxRenderCommand, "target_rect") != 32) @compileError("GfxRenderCommand.target_rect offset");
+    if (@offsetOf(abi.GfxRenderCommand, "scissor") != 48) @compileError("GfxRenderCommand.scissor offset");
+    if (@offsetOf(abi.GfxRenderCommand, "color") != 64) @compileError("GfxRenderCommand.color offset");
+    if (@offsetOf(abi.GfxRenderCommand, "opacity") != 68) @compileError("GfxRenderCommand.opacity offset");
+    if (@offsetOf(abi.GfxRenderCommand, "reserved0") != 72) @compileError("GfxRenderCommand.reserved0 offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1168) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
