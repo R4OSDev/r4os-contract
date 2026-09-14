@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 381,
-    "group_slot_count": 381,
+    "function_count": 383,
+    "group_slot_count": 383,
     "sdk_only_count": 0,
-    "public_count": 288,
+    "public_count": 290,
     "advanced_count": 93
   },
   "functions": [
@@ -3413,6 +3413,30 @@
       "slot": 84,
       "exposure": "public",
       "description": "Atomically admit 1..16 ordered draws with one retained source/target pair and one fence. Requires render_list operation6 and backend bit6; the ordinary submit entry rejects this operation. All list contents are copied before admission. No pixels or device command words are accepted.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_presentation_info",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 85,
+      "exposure": "public",
+      "description": "Reports per-head presentation policy, real capabilities and scanout observations. Software copy reports no VSync or visibility guarantee. Caller initializes version1/size; output changes only on success.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_presentation_feedback",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 86,
+      "exposure": "public",
+      "description": "Read one actual visible receipt by exact head and source queue fence from the bounded32-frame display history. Independent of current frame and queue-client release. No match returns unavailable; reset/takeover invalidates old history. A retained history record is metadata only, not a BO reference. released_ns retains its existing meaning: retirement of that flip previous image, not the submitted source.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

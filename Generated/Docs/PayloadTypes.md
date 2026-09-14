@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 235 von 235 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 236 von 236 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1734; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1744; Limits: 109
 
 ## App-Profile
 
@@ -205,7 +205,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBackendRegistration` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GfxDriverJob` | extensible | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
-| `GfxDriverQueueApi` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `GfxDriverQueueApi` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxDisplayLimits` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
@@ -224,7 +224,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBootHoldRequest` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
-| `GfxDriverDisplayApi` | extensible | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `GfxDriverDisplayApi` | extensible | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverResourceApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
@@ -256,6 +256,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxRenderRect` | fixed_layout | extern_struct | 16/4 | 16/4 | 16/4 | 16/4 |
 | `GfxRenderCommand` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `GfxRenderList` | fixed_layout | extern_struct | 1296/8 | 1296/8 | 1296/8 | 1296/8 |
+| `DisplayPresentationInfo` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
 
 ## Typdetails
 
@@ -5645,7 +5646,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 4 / 88 / 8
+- Version/Größe/Alignment: 5 / 112 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5661,6 +5662,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `register_profile` | 64 | 8 | 8 | `u64` | - |
 | `update_operations` | 72 | 8 | 8 | `u64` | - |
 | `read_render_list` | 80 | 8 | 8 | `u64` | - |
+| `retain_scanout` | 88 | 8 | 8 | `u64` | - |
+| `begin_scanout` | 96 | 8 | 8 | `u64` | - |
+| `scanout_retire_requested` | 104 | 8 | 8 | `u64` | - |
 
 ### `GfxOutputId`
 
@@ -6018,7 +6022,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 3 / 96 / 8
+- Version/Größe/Alignment: 4 / 104 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6035,6 +6039,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `cursor_configure` | 72 | 8 | 8 | `u64` | - |
 | `cursor_take` | 80 | 8 | 8 | `u64` | - |
 | `cursor_complete` | 88 | 8 | 8 | `u64` | - |
+| `presentation_info` | 96 | 8 | 8 | `u64` | - |
 
 ### `DriverResourceInfo`
 
@@ -6652,6 +6657,34 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `count` | 8 | 4 | 4 | `u32` | - |
 | `reserved0` | 12 | 4 | 4 | `u32` | - |
 | `commands` | 16 | 1280 | 8 | `[16]GfxRenderCommand` | - |
+
+### `DisplayPresentationInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 120 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `head_id` | 12 | 4 | 4 | `u32` | - |
+| `backend` | 16 | 32 | 8 | `GfxBackendBinding` | - |
+| `display_generation` | 48 | 8 | 8 | `u64` | - |
+| `sequence` | 56 | 8 | 8 | `u64` | - |
+| `width` | 64 | 4 | 4 | `u32` | - |
+| `height` | 68 | 4 | 4 | `u32` | - |
+| `format` | 72 | 4 | 4 | `u32` | - |
+| `policies` | 76 | 4 | 4 | `u32` | - |
+| `buffer_count` | 80 | 4 | 4 | `u32` | - |
+| `plane_count` | 84 | 4 | 4 | `u32` | - |
+| `interval_ns` | 88 | 8 | 8 | `u64` | - |
+| `observed_sequence` | 96 | 8 | 8 | `u64` | - |
+| `observed_ns` | 104 | 8 | 8 | `u64` | - |
+| `path` | 112 | 4 | 4 | `u32` | - |
+| `reserved0` | 116 | 4 | 4 | `u32` | - |
 
 ## Fehlerdomänen
 
@@ -9126,6 +9159,16 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_queue_operation_present` | `5` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_queue_operation_render_list` | `6` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `gfx_render_list_capacity` | `16` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `display_presentation_info_active` | `1` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_presentation_info_lost` | `2` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_presentation_info_occluded` | `4` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_presentation_info_synchronized` | `8` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_presentation_info_visibility` | `16` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_presentation_info_native` | `32` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_presentation_info_direct` | `64` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_presentation_info_overlay` | `128` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `gfx_queue_operation_direct_present` | `7` | `u32` | value | number | `gfx_queue` | fixed_contract |
+| `display_presentation_flag_direct` | `4` | `u32` | value | number | `display` | fixed_contract |
 
 ## Limits
 
