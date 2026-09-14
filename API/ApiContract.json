@@ -109026,6 +109026,26 @@
       "scope": "display",
       "stability": "fixed_contract",
       "description": "The latest visible receipt scans the submitted source directly. render_point may be zero because no CE copy occurred; source_timeline/point and actual Window/head receipts remain mandatory. released_ns still describes the previous image, never this source."
+    },
+    {
+      "name": "audio_output_reason_auto_display_port",
+      "value": "8",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "audio_service_outputs",
+      "stability": "fixed_contract",
+      "description": "AUDSVC selected an available DisplayPort audio output automatically. Shares the digital output priority with HDMI; an explicit available preference wins."
+    },
+    {
+      "name": "gfx_output_kind_dvi",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_outputs",
+      "stability": "fixed_contract",
+      "description": "A physically identified DVI connector. Neither HDMI audio nor DisplayPort AUX capabilities are inferred from digital video or EDID alone."
     }
   ],
   "limits": [
