@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 380,
+    "group_function_signatures": 381,
     "sdk_operation_contracts": 0,
-    "parity_entries": 380,
+    "parity_entries": 381,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2555,6 +2555,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gfx_native_wait",
       "c_contract": "R4DrawGfxNativeWaitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_queue_submit_render_list",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_queue_submit_render_list",
+      "c_contract": "R4DrawGfxQueueSubmitRenderListFn",
       "coverage": "generated_signature"
     },
     {

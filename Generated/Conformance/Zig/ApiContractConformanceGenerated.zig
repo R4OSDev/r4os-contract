@@ -3772,7 +3772,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverJob, "target_pitch") != 128) @compileError("GfxDriverJob.target_pitch offset");
     if (@offsetOf(abi.GfxDriverJob, "render") != 136) @compileError("GfxDriverJob.render offset");
     if (@offsetOf(abi.GfxDriverJob, "deadline_ns") != 216) @compileError("GfxDriverJob.deadline_ns offset");
-    if (@sizeOf(abi.GfxDriverQueueApi) != 80) @compileError("GfxDriverQueueApi size");
+    if (@sizeOf(abi.GfxDriverQueueApi) != 88) @compileError("GfxDriverQueueApi size");
     if (@offsetOf(abi.GfxDriverQueueApi, "version") != 0) @compileError("GfxDriverQueueApi.version offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "size") != 4) @compileError("GfxDriverQueueApi.size offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "register_backend") != 8) @compileError("GfxDriverQueueApi.register_backend offset");
@@ -3784,6 +3784,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverQueueApi, "retain_resource") != 56) @compileError("GfxDriverQueueApi.retain_resource offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "register_profile") != 64) @compileError("GfxDriverQueueApi.register_profile offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "update_operations") != 72) @compileError("GfxDriverQueueApi.update_operations offset");
+    if (@offsetOf(abi.GfxDriverQueueApi, "read_render_list") != 80) @compileError("GfxDriverQueueApi.read_render_list offset");
     if (@sizeOf(abi.GfxOutputId) != 24) @compileError("GfxOutputId size");
     if (@offsetOf(abi.GfxOutputId, "adapter_id") != 0) @compileError("GfxOutputId.adapter_id offset");
     if (@offsetOf(abi.GfxOutputId, "connector_id") != 4) @compileError("GfxOutputId.connector_id offset");
@@ -4319,6 +4320,12 @@ comptime {
     if (@offsetOf(abi.GfxRenderCommand, "color") != 64) @compileError("GfxRenderCommand.color offset");
     if (@offsetOf(abi.GfxRenderCommand, "opacity") != 68) @compileError("GfxRenderCommand.opacity offset");
     if (@offsetOf(abi.GfxRenderCommand, "reserved0") != 72) @compileError("GfxRenderCommand.reserved0 offset");
+    if (@sizeOf(abi.GfxRenderList) != 1296) @compileError("GfxRenderList size");
+    if (@offsetOf(abi.GfxRenderList, "version") != 0) @compileError("GfxRenderList.version offset");
+    if (@offsetOf(abi.GfxRenderList, "size") != 4) @compileError("GfxRenderList.size offset");
+    if (@offsetOf(abi.GfxRenderList, "count") != 8) @compileError("GfxRenderList.count offset");
+    if (@offsetOf(abi.GfxRenderList, "reserved0") != 12) @compileError("GfxRenderList.reserved0 offset");
+    if (@offsetOf(abi.GfxRenderList, "commands") != 16) @compileError("GfxRenderList.commands offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1168) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -4723,7 +4730,7 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.console_input_wait) != 8) @compileError("R4DeskFns.console_input_wait signature");
     if (@offsetOf(abi.R4XStartR4Desk, "physical_key_poll") != 480) @compileError("R4XStartR4Desk.physical_key_poll offset");
     if (@sizeOf(abi.R4DeskFns.physical_key_poll) != 8) @compileError("R4DeskFns.physical_key_poll signature");
-    if (@sizeOf(abi.R4XStartR4Draw) != 688) @compileError("R4XStartR4Draw size");
+    if (@sizeOf(abi.R4XStartR4Draw) != 696) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_height") != 24) @compileError("R4XStartR4Draw.screen_height offset");
@@ -4892,6 +4899,8 @@ comptime {
     if (@sizeOf(abi.R4DrawFns.gfx_native_close) != 8) @compileError("R4DrawFns.gfx_native_close signature");
     if (@offsetOf(abi.R4XStartR4Draw, "gfx_native_wait") != 680) @compileError("R4XStartR4Draw.gfx_native_wait offset");
     if (@sizeOf(abi.R4DrawFns.gfx_native_wait) != 8) @compileError("R4DrawFns.gfx_native_wait signature");
+    if (@offsetOf(abi.R4XStartR4Draw, "gfx_queue_submit_render_list") != 688) @compileError("R4XStartR4Draw.gfx_queue_submit_render_list offset");
+    if (@sizeOf(abi.R4DrawFns.gfx_queue_submit_render_list) != 8) @compileError("R4DrawFns.gfx_queue_submit_render_list signature");
     if (@sizeOf(abi.R4XStartR4Net) != 296) @compileError("R4XStartR4Net size");
     if (@offsetOf(abi.R4XStartR4Net, "tcp_connect") != 16) @compileError("R4XStartR4Net.tcp_connect offset");
     if (@sizeOf(abi.R4NetFns.tcp_connect) != 8) @compileError("R4NetFns.tcp_connect signature");

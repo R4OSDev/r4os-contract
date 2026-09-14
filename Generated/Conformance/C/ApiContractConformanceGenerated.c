@@ -286,6 +286,7 @@ static R4DrawGfxNativeQueryFn r4os_probe_r4draw_gfx_native_query = (R4DrawGfxNat
 static R4DrawGfxNativeReceiveFn r4os_probe_r4draw_gfx_native_receive = (R4DrawGfxNativeReceiveFn)0;
 static R4DrawGfxNativeCloseFn r4os_probe_r4draw_gfx_native_close = (R4DrawGfxNativeCloseFn)0;
 static R4DrawGfxNativeWaitFn r4os_probe_r4draw_gfx_native_wait = (R4DrawGfxNativeWaitFn)0;
+static R4DrawGfxQueueSubmitRenderListFn r4os_probe_r4draw_gfx_queue_submit_render_list = (R4DrawGfxQueueSubmitRenderListFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

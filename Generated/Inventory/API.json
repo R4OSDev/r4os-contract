@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 380,
-    "group_slot_count": 380,
+    "function_count": 381,
+    "group_slot_count": 381,
     "sdk_only_count": 0,
-    "public_count": 287,
+    "public_count": 288,
     "advanced_count": 93
   },
   "functions": [
@@ -3401,6 +3401,18 @@
       "slot": 83,
       "exposure": "public",
       "description": "Wait on sticky request completion outside owner locks. Exact task-generation wait record survives hard task termination until reaper detach. Relative wait timeout leaves the request and output unchanged; allocation deadline separately closes logical work. Returns terminal status on 1, including failed/cancelled result.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_submit_render_list",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 84,
+      "exposure": "public",
+      "description": "Atomically admit 1..16 ordered draws with one retained source/target pair and one fence. Requires render_list operation6 and backend bit6; the ordinary submit entry rejects this operation. All list contents are copied before admission. No pixels or device command words are accepted.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
