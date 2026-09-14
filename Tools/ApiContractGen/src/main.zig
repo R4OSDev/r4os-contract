@@ -398,7 +398,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.69.48 adds one-generation multi-region publication at slot 56;
     // 0.69.67 appends the generation-bound console-input wait at slot 57;
     // 0.72.1 adds ordered layout-independent physical keys at slot 58.
-    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 58, .reserved = 1, .tombstones = 0 },
+    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 59, .reserved = 1, .tombstones = 0 },
     // 0.62.3 used the first public R4DRAW extension slot for font_reload;
     // 0.62.4 added the transient glyph-row query, 0.62.41 appends the
     // font-neutral hosted Alpha8 coverage-mask transport, and 0.62.43 adds
@@ -412,7 +412,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // bounded shared-raster lifecycle at 43..48. 0.79.5 adds BO memory at
     // 49..56; 0.79.6 adds asynchronous queues/fences/backends at 57..64.
     // 0.79.17 appends a coherent, opaque backend protocol profile at 78.
-    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 87, .reserved = 0, .tombstones = 0 },
+    .{ .id = 3, .name = "R4DRAW", .kind = .kernel_table, .functions = 92, .reserved = 0, .tombstones = 0 },
     // 0.69.12 activates the two preallocated R4NET extension slots for the
     // generation-bound service request path and its kernel-channel telemetry;
     // 0.75.18 appends the TCP burst/ACK/poll performance snapshot at slot 34.

@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 236 von 236 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 246 von 246 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1746; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1754; Limits: 109
 
 ## App-Profile
 
@@ -204,8 +204,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxFenceStatus` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBackendRegistration` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `GfxDriverJob` | extensible | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
-| `GfxDriverQueueApi` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `GfxDriverJob` | extensible | extern_struct | 272/8 | 272/8 | 272/8 | 272/8 |
+| `GfxDriverQueueApi` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
 | `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxDisplayLimits` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
@@ -224,7 +224,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBootHoldRequest` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
-| `GfxDriverDisplayApi` | extensible | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
+| `GfxDriverDisplayApi` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverResourceApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
@@ -257,6 +257,16 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxRenderCommand` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `GfxRenderList` | fixed_layout | extern_struct | 1296/8 | 1296/8 | 1296/8 | 1296/8 |
 | `DisplayPresentationInfo` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `GfxOutputTarget` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `GfxAdditionalOutput` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `MouseMotion` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `DisplaySetting` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `DisplayLayout` | fixed_layout | extern_struct | 536/8 | 536/8 | 536/8 | 536/8 |
+| `DisplayControlRequest` | fixed_layout | extern_struct | 600/8 | 600/8 | 600/8 | 600/8 |
+| `DisplayControlStatus` | fixed_layout | extern_struct | 616/8 | 616/8 | 616/8 | 616/8 |
+| `DisplayControlExchange` | fixed_layout | extern_struct | 1248/8 | 1248/8 | 1248/8 | 1248/8 |
+| `GfxSampleGrid` | fixed_layout | extern_struct | 64/4 | 64/4 | 64/4 | 64/4 |
+| `GfxRenderGridList` | fixed_layout | extern_struct | 2320/8 | 2320/8 | 2320/8 | 2320/8 |
 
 ## Typdetails
 
@@ -5620,7 +5630,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 3 / 224 / 8
+- Version/Größe/Alignment: 4 / 272 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5640,13 +5650,14 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `target_pitch` | 128 | 8 | 8 | `u64` | - |
 | `render` | 136 | 80 | 8 | `GfxRenderCommand` | - |
 | `deadline_ns` | 216 | 8 | 8 | `u64` | - |
+| `display_target` | 224 | 48 | 8 | `GfxOutputTarget` | - |
 
 ### `GfxDriverQueueApi`
 
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 5 / 112 / 8
+- Version/Größe/Alignment: 6 / 120 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5665,6 +5676,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `retain_scanout` | 88 | 8 | 8 | `u64` | - |
 | `begin_scanout` | 96 | 8 | 8 | `u64` | - |
 | `scanout_retire_requested` | 104 | 8 | 8 | `u64` | - |
+| `read_render_grid_list` | 112 | 8 | 8 | `u64` | - |
 
 ### `GfxOutputId`
 
@@ -6022,7 +6034,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 4 / 104 / 8
+- Version/Größe/Alignment: 5 / 120 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6040,6 +6052,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `cursor_take` | 80 | 8 | 8 | `u64` | - |
 | `cursor_complete` | 88 | 8 | 8 | `u64` | - |
 | `presentation_info` | 96 | 8 | 8 | `u64` | - |
+| `output_register` | 104 | 8 | 8 | `u64` | - |
+| `output_transition` | 112 | 8 | 8 | `u64` | - |
 
 ### `DriverResourceInfo`
 
@@ -6685,6 +6699,204 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `observed_ns` | 104 | 8 | 8 | `u64` | - |
 | `path` | 112 | 4 | 4 | `u32` | - |
 | `reserved0` | 116 | 4 | 4 | `u32` | - |
+
+### `GfxOutputTarget`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `adapter_id` | 8 | 4 | 4 | `u32` | - |
+| `connector_id` | 12 | 4 | 4 | `u32` | - |
+| `device_generation` | 16 | 8 | 8 | `u64` | - |
+| `connection_generation` | 24 | 8 | 8 | `u64` | - |
+| `display_generation` | 32 | 8 | 8 | `u64` | - |
+| `head_id` | 40 | 4 | 4 | `u32` | - |
+| `reserved0` | 44 | 4 | 4 | `u32` | - |
+
+### `GfxAdditionalOutput`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `backend` | 8 | 32 | 8 | `GfxBackendBinding` | - |
+| `output` | 40 | 24 | 8 | `GfxOutputId` | - |
+| `head_id` | 64 | 4 | 4 | `u32` | - |
+| `width` | 68 | 4 | 4 | `u32` | - |
+| `height` | 72 | 4 | 4 | `u32` | - |
+| `format` | 76 | 4 | 4 | `u32` | - |
+| `job_size` | 80 | 4 | 4 | `u32` | - |
+| `flags` | 84 | 4 | 4 | `u32` | - |
+| `reserved0` | 88 | 8 | 8 | `u64` | - |
+
+### `MouseMotion`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `mouse` | 8 | 32 | 8 | `Mouse` | - |
+| `motion_x` | 40 | 4 | 4 | `u32` | - |
+| `motion_y` | 44 | 4 | 4 | `u32` | - |
+
+### `DisplaySetting`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `adapter_id` | 0 | 8 | 8 | `u64` | - |
+| `connector_id` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `receiver` | 16 | 16 | 1 | `[16]u8` | - |
+| `x` | 32 | 4 | 4 | `i32` | - |
+| `y` | 36 | 4 | 4 | `i32` | - |
+| `width` | 40 | 4 | 4 | `u32` | - |
+| `height` | 44 | 4 | 4 | `u32` | - |
+| `scale` | 48 | 4 | 4 | `u32` | - |
+| `rotation` | 52 | 4 | 4 | `u32` | - |
+| `refresh_millihz` | 56 | 4 | 4 | `u32` | - |
+| `clone_group` | 60 | 4 | 4 | `u32` | - |
+
+### `DisplayLayout`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 536 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `topology_revision` | 8 | 8 | 8 | `u64` | - |
+| `count` | 16 | 4 | 4 | `u32` | - |
+| `reserved` | 20 | 4 | 4 | `u32` | - |
+| `outputs` | 24 | 512 | 8 | `[8]DisplaySetting` | - |
+
+### `DisplayControlRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 600 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `magic` | 0 | 4 | 4 | `u32` | - |
+| `version` | 4 | 2 | 2 | `u16` | - |
+| `size` | 6 | 2 | 2 | `u16` | - |
+| `owner` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `desktop_epoch` | 24 | 8 | 8 | `u64` | - |
+| `request_id` | 32 | 8 | 8 | `u64` | - |
+| `base_revision` | 40 | 8 | 8 | `u64` | - |
+| `transaction_id` | 48 | 8 | 8 | `u64` | - |
+| `action` | 56 | 4 | 4 | `u32` | - |
+| `reserved` | 60 | 4 | 4 | `u32` | - |
+| `layout` | 64 | 536 | 8 | `DisplayLayout` | - |
+
+### `DisplayControlStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 616 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `magic` | 0 | 4 | 4 | `u32` | - |
+| `version` | 4 | 2 | 2 | `u16` | - |
+| `size` | 6 | 2 | 2 | `u16` | - |
+| `desktop_epoch` | 8 | 8 | 8 | `u64` | - |
+| `revision` | 16 | 8 | 8 | `u64` | - |
+| `transaction_id` | 24 | 8 | 8 | `u64` | - |
+| `request_id` | 32 | 8 | 8 | `u64` | - |
+| `owner` | 40 | 16 | 8 | `ProgramProcessHandle` | - |
+| `deadline_ns` | 56 | 8 | 8 | `u64` | - |
+| `phase` | 64 | 4 | 4 | `u32` | - |
+| `result` | 68 | 4 | 4 | `i32` | - |
+| `flags` | 72 | 4 | 4 | `u32` | - |
+| `reserved` | 76 | 4 | 4 | `u32` | - |
+| `layout` | 80 | 536 | 8 | `DisplayLayout` | - |
+
+### `DisplayControlExchange`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1248 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `magic` | 0 | 4 | 4 | `u32` | - |
+| `version` | 4 | 2 | 2 | `u16` | - |
+| `size` | 6 | 2 | 2 | `u16` | - |
+| `desktop_owner` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `flags` | 24 | 4 | 4 | `u32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+| `status` | 32 | 616 | 8 | `DisplayControlStatus` | - |
+| `request` | 648 | 600 | 8 | `DisplayControlRequest` | - |
+
+### `GfxSampleGrid`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `enabled` | 0 | 4 | 4 | `u32` | - |
+| `rotation` | 4 | 4 | 4 | `u32` | - |
+| `scale` | 8 | 4 | 4 | `u32` | - |
+| `pixel_width` | 12 | 4 | 4 | `u32` | - |
+| `pixel_height` | 16 | 4 | 4 | `u32` | - |
+| `target_x` | 20 | 4 | 4 | `i32` | - |
+| `target_y` | 24 | 4 | 4 | `i32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+| `viewport_x` | 32 | 4 | 4 | `i32` | - |
+| `viewport_y` | 36 | 4 | 4 | `i32` | - |
+| `viewport_width` | 40 | 4 | 4 | `u32` | - |
+| `viewport_height` | 44 | 4 | 4 | `u32` | - |
+| `guest_width` | 48 | 4 | 4 | `u32` | - |
+| `guest_height` | 52 | 4 | 4 | `u32` | - |
+| `source_x` | 56 | 4 | 4 | `u32` | - |
+| `source_y` | 60 | 4 | 4 | `u32` | - |
+
+### `GfxRenderGridList`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 2320 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `count` | 8 | 4 | 4 | `u32` | - |
+| `reserved0` | 12 | 4 | 4 | `u32` | - |
+| `commands` | 16 | 1280 | 8 | `[16]GfxRenderCommand` | - |
+| `grids` | 1296 | 1024 | 4 | `[16]GfxSampleGrid` | - |
 
 ## Fehlerdomänen
 
@@ -9171,6 +9383,14 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `display_presentation_flag_direct` | `4` | `u32` | value | number | `display` | fixed_contract |
 | `audio_output_reason_auto_display_port` | `8` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
 | `gfx_output_kind_dvi` | `6` | `u32` | value | number | `gfx_outputs` | fixed_contract |
+| `display_presentation_info_system_source` | `256` | `u32` | value | number | `display_presentation` | fixed_contract |
+| `display_control_op_query` | `1808` | `u16` | identity | number | `display_control` | fixed_contract |
+| `display_control_op_request` | `1809` | `u16` | identity | number | `display_control` | fixed_contract |
+| `display_control_op_exchange` | `1810` | `u16` | identity | number | `display_control` | fixed_contract |
+| `display_control_request_magic` | `1363424338` | `u32` | identity | number | `display_control` | fixed_contract |
+| `display_control_status_magic` | `1396978770` | `u32` | identity | number | `display_control` | fixed_contract |
+| `display_control_exchange_magic` | `1480864850` | `u32` | identity | number | `display_control` | fixed_contract |
+| `gfx_queue_operation_render_grid_list` | `8` | `u32` | identity | number | `gfx_queue` | fixed_contract |
 
 ## Limits
 

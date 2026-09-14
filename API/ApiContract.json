@@ -11642,10 +11642,10 @@
       "fn_namespace": "R4DeskFns",
       "required": false,
       "magic": 826623058,
-      "abi_version": 12,
+      "abi_version": 13,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 488,
+      "size": 496,
       "slots": [
         {
           "number": 0,
@@ -15269,6 +15269,65 @@
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
           }
+        },
+        {
+          "number": 59,
+          "offset": 488,
+          "name": "mouse_motion",
+          "state": "function",
+          "required": false,
+          "description": "Returns a MouseMotion snapshot and unclamped accumulated relative input. Version1/size48 required; return0 on success. Does not constrain Desktop coordinates to the boot display. Optional append-only table entry; legacy mouse_state remains unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "MouseMotion"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
         }
       ]
     },
@@ -15281,10 +15340,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 22,
+      "abi_version": 24,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 712,
+      "size": 752,
       "slots": [
         {
           "number": 0,
@@ -21574,6 +21633,468 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 87,
+          "offset": 712,
+          "name": "display_output_target",
+          "state": "function",
+          "required": false,
+          "description": "Read the current exact presentation identity for one adapter/head. No match is unavailable; receiver-only catalog entries are not active presentation targets. Caller initializes version1/size48; changes output only on success. Adapter0 names the firmware/software adapter, never an implicit wildcard.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "adapter_id",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "head_id",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputTarget"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 88,
+          "offset": 720,
+          "name": "gfx_queue_submit_output",
+          "state": "function",
+          "required": false,
+          "description": "Present a complete image to an exact copied output target. Accepts only present/direct_present; validates all output generations and holds the same queue/BO lifetime as ordinary submission. Target selection is never silently reduced to the primary on older kernels: the separate optional slot is mandatory. Other outputs remain independent.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "queue",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxQueueHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "submission",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxSubmission"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "target",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputTarget"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFenceStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "operation_deadline",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 89,
+          "offset": 728,
+          "name": "display_output_presentation_info",
+          "state": "function",
+          "required": false,
+          "description": "Read presentation capabilities for an exact copied GfxOutputTarget. Adapter/head and every generation must match. Success-only output; no primary fallback for stale or unknown targets.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "target",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputTarget"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayPresentationInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 90,
+          "offset": 736,
+          "name": "display_output_presentation_feedback",
+          "state": "function",
+          "required": false,
+          "description": "Read one source fence visibility receipt from the exact output. No other adapter or head can satisfy the query; feedback retains the existing independently retired source lifetime.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "target",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputTarget"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "source_fence",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFence"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DisplayPresentationStats"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 91,
+          "offset": 744,
+          "name": "gfx_queue_submit_render_grid_list",
+          "state": "function",
+          "required": false,
+          "description": "Copy one bounded draw/grid list to an admitted native queue. Operation render_grid_list is explicitly negotiated. Exact grid sampling stays in the R4D/GPU; common code retains source, target and immutable descriptors until the actual receipt.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "queue",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxQueueHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "submission",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxSubmission"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "list",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxRenderGridList"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFenceStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "operation_deadline",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
@@ -80823,8 +81344,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 3,
-      "size": 224,
+      "version": 4,
+      "size": 272,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -80855,7 +81376,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "224"
+          "default_value": "272"
         },
         {
           "name": "fence",
@@ -81048,18 +81569,31 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "display_target",
+          "offset": 224,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputTarget"
+          },
+          "description": "Exact target retained with output work. A backend explicitly registering additional outputs must offer the full272-byte job; existing112/136/224-byte backends remain usable for their legacy primary work.",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "GfxOutputTarget",
+          "default_kind": "empty"
         }
       ],
       "values": [],
-      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration. Wire version remains 1; the 112-byte prefix stays supported for legacy backends. Copy-rows backends require the complete 136-byte output. byte_length denotes bytes per row for operation 3; offsets are logical BO offsets, independently of conservative pinned extents. The224-byte prefix exposes immutable render state and the original job deadline. Backends advertising render must provide224 bytes; row-copy-only backends still need136, legacy backends112. Renderer leases remain owned by the canonical queue until physical completion."
+      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration. Wire version remains 1; the 112-byte prefix stays supported for legacy backends. Copy-rows backends require the complete 136-byte output. byte_length denotes bytes per row for operation 3; offsets are logical BO offsets, independently of conservative pinned extents. The224-byte prefix exposes immutable render state and the original job deadline. Backends advertising render must provide224 bytes; row-copy-only backends still need136, legacy backends112. Renderer leases remain owned by the canonical queue until physical completion. The272-byte tail copies an exact output target. Extra-output registration negotiates this tail; old primary-only backends retain their old required prefixes."
     },
     {
       "name": "GfxDriverQueueApi",
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 5,
-      "size": 112,
+      "version": 6,
+      "size": 120,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -81090,7 +81624,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "112"
+          "default_value": "120"
         },
         {
           "name": "register_backend",
@@ -81268,6 +81802,20 @@
             "name": "u64"
           },
           "description": "Optional i32(const GfxFence*): 0 keep, 1 retire, negative error. Actual driver Work queries cancellation, producer close or device-loss of an active direct_present source. Cancel on an already activated job requests retirement without changing its completed receipt. No CPU/GPU time limit retires a still displayed image.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "read_render_grid_list",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "read_render_grid_list",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -83951,8 +84499,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 4,
-      "size": 104,
+      "version": 5,
+      "size": 120,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -83983,7 +84531,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "104"
+          "default_value": "120"
         },
         {
           "name": "boot_info",
@@ -84152,10 +84700,38 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "output_register",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxAdditionalOutput*, GfxOutputTarget*). Register inactive additional output from the actual R4D owner. Copies metadata; success-only target. No hardware callback or framebuffer access.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "output_transition",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxOutputTarget*,u32 operation,u32 quiesced). Operation0 activates after actual setup; operation1 pauses admission without releasing buffers; operation2 removes only when quiesced=1 and pending queue work is retired. Operations0/1 require quiesced=0. Exact registered target and actual owner required. Never changes the firmware primary.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership. Optional cursor tail preserves the prior 72-byte prefix; layout revision 3/96, wire version 1."
+      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership. Optional cursor tail preserves the prior 72-byte prefix; layout revision 3/96, wire version 1. Optional0.79.24 output_register/output_transition tail preserves104bytes and wire version1; independent native outputs retain their own state and queue jobs."
     },
     {
       "name": "DriverResourceInfo",
@@ -89175,6 +89751,1520 @@
       ],
       "values": [],
       "description": "Per-head presentation capabilities and bounded timing metadata. Policy bits select FIFO order, latest-ready replacement, or immediate. FIFO order alone does not imply VSync; only the synchronized flag does. GPU-completion, actual visibility and scanout release remain distinct. interval_ns is the current mode period; observed_sequence/ns identify a real CPU-observed scanout phase, never a synthetic VBlank or converted GPU clock. Zero means unavailable. path0 CPU copy,1 native copy+flip,2 direct,3 overlay. Driver publication is authenticated and monotonic; no frame pointers or pixel access."
+    },
+    {
+      "name": "GfxOutputTarget",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "adapter_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "connector_id",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "connector_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "device_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "connection_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "connection_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "display_generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "display_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "head_id",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "head_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact output selection for presentation: physical adapter/connector and current device, receiver and display generations plus hardware head. Never a monitor index or a naked head shared across adapters. All fields are copied before admission. The default value with connector0 denotes the legacy implicit primary only inside untargeted driver jobs; explicit calls require a complete nonzero connector and generations."
+    },
+    {
+      "name": "GfxAdditionalOutput",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "backend",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxBackendBinding"
+          },
+          "description": "backend",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GfxBackendBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "output",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "output",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "head_id",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "head_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "width",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "height",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "job_size",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "job_size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "272"
+        },
+        {
+          "name": "flags",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "reserved0",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Additional independently presented native output. Exact current published connector, head, geometry and backend; flags/reserved0 are zero. Driver retains its actual scanout resources. Registration admits no hardware effect and leaves output inactive. job_size must equal272 and permanently negotiates the complete target-bearing GfxDriverJob for this backend lifetime. Activation follows real driver modeset completion; pause closes admission; removal requires drained queue work and actual hardware quiescence."
+    },
+    {
+      "name": "MouseMotion",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "mouse",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "Mouse"
+          },
+          "description": "Existing mouse buttons, wheel, packet counter and legacy position",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "Mouse",
+          "default_kind": "none"
+        },
+        {
+          "name": "motion_x",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "motion_x",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "motion_y",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "motion_y",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Coalesced mouse snapshot plus unclamped cumulative relative movement. motion_x/y are modulo2^32 totals in right/down coordinates. Signed wrapping differences between successive samples preserve every packet, including motion beyond the firmware framebuffer. Callers own virtual desktop position and project it onto their layout. No destructive read or global pointer bounds."
+    },
+    {
+      "name": "DisplaySetting",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "adapter_id",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "adapter_id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "connector_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "connector_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "receiver",
+          "offset": 16,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "receiver",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "x",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "x",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "y",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "y",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "width",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "height",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scale",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "scale",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "120"
+        },
+        {
+          "name": "rotation",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "rotation",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "refresh_millihz",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "refresh_millihz",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clone_group",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "clone_group",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied per-output preference. Stable adapter/connector/receiver identity; signed logical origin; native pixels; scale in 120ths, clockwise rotation0..3; refresh0 means unknown. flags bit0 enabled, bit1 primary. No pointers or transient device generations."
+    },
+    {
+      "name": "DisplayLayout",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 536,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "536"
+        },
+        {
+          "name": "topology_revision",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "topology_revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "count",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "outputs",
+          "offset": 24,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "named",
+              "name": "DisplaySetting"
+            }
+          },
+          "description": "outputs",
+          "size": 512,
+          "alignment": 8,
+          "source_type": "[8]DisplaySetting",
+          "default_kind": "empty_array"
+        }
+      ],
+      "values": [],
+      "description": "Complete bounded desired/current desktop layout. Up to eight connected outputs, including disabled entries. The Desktop owns validation, native commits and confirmation. Unused entries retain their defaults; reserved fields are zero."
+    },
+    {
+      "name": "DisplayControlRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 600,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "magic",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1363424338"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "version",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "size",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "600"
+        },
+        {
+          "name": "owner",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "owner",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "desktop_epoch",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "desktop_epoch",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request_id",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "request_id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "base_revision",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "base_revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transaction_id",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "transaction_id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "action",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "action",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "layout",
+          "offset": 64,
+          "type": {
+            "kind": "named",
+            "name": "DisplayLayout"
+          },
+          "description": "layout",
+          "size": 536,
+          "alignment": 8,
+          "source_type": "DisplayLayout",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "WINSVC display request. Exact live caller generation, Desktop epoch, monotonically increasing owner-local request ID and current configuration revision. Actions1 test,2 keep,3 revert. Keep/revert name the exact transaction; query uses action0. Identical retries are idempotent."
+    },
+    {
+      "name": "DisplayControlStatus",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 616,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "magic",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1396978770"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "version",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "size",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "616"
+        },
+        {
+          "name": "desktop_epoch",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "desktop_epoch",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transaction_id",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "transaction_id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request_id",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "request_id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "owner",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "deadline_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "phase",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "result",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "result",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "layout",
+          "offset": 80,
+          "type": {
+            "kind": "named",
+            "name": "DisplayLayout"
+          },
+          "description": "layout",
+          "size": 536,
+          "alignment": 8,
+          "source_type": "DisplayLayout",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Desktop-published applied layout and confirmation state. Phase0 ready,1 applying,2 awaiting confirmation,3 reverting,4 kept,5 reverted,6 failed. Deadline is monotonic. Result0 success; negative results never imply persisted or visible output. Flag1 enables settings, flag2 says all active receivers have persistent identities."
+    },
+    {
+      "name": "DisplayControlExchange",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1248,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "magic",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "magic",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1480864850"
+        },
+        {
+          "name": "version",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "version",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "size",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1248"
+        },
+        {
+          "name": "desktop_owner",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "desktop_owner",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "flags",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "DisplayControlStatus"
+          },
+          "description": "status",
+          "size": 616,
+          "alignment": 8,
+          "source_type": "DisplayControlStatus",
+          "default_kind": "empty"
+        },
+        {
+          "name": "request",
+          "offset": 648,
+          "type": {
+            "kind": "named",
+            "name": "DisplayControlRequest"
+          },
+          "description": "request",
+          "size": 600,
+          "alignment": 8,
+          "source_type": "DisplayControlRequest",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "WINSVC mailbox exchange restricted to the exact live GUI shell. Desktop publishes status/request acknowledgement and receives at most one copied pending UI request. Response flag1 marks a newly bound broker, requiring rollback of any old active transaction. WINSVC owns transport only, never display policy or hardware."
+    },
+    {
+      "name": "GfxSampleGrid",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "enabled",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "enabled",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rotation",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "rotation",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scale",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "scale",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pixel_width",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "pixel_width",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pixel_height",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "pixel_height",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target_x",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "target_x",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target_y",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "target_y",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_x",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "viewport_x",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_y",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "viewport_y",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_width",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "viewport_width",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "viewport_height",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "viewport_height",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "guest_width",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "guest_width",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "guest_height",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "guest_height",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_x",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "source_x",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_y",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "source_y",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact nearest sampling on a logical pixel grid. enabled0 requires an all-zero record and preserves ordinary sampling. enabled1: target_x/y locate target storage in one native output, rotation0..3 reverses output rotation, scale is in120ths. Native pixel centers select logical cells; viewport coordinates are relative to the output logical origin. Guest-edge sampling selects source_x/y subimages; source_rect supplies the atlas location and extent. Reserved0; integer arithmetic defines ties. No pointers or hardware register values."
+    },
+    {
+      "name": "GfxRenderGridList",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 2320,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "2320"
+        },
+        {
+          "name": "count",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "commands",
+          "offset": 16,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "named",
+              "name": "GfxRenderCommand"
+            }
+          },
+          "description": "Copied ordered draws; count is 1..16. Unused elements are zero.",
+          "size": 1280,
+          "alignment": 8,
+          "source_type": "[16]GfxRenderCommand",
+          "default_kind": "empty_array"
+        },
+        {
+          "name": "grids",
+          "offset": 1296,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "named",
+              "name": "GfxSampleGrid"
+            }
+          },
+          "description": "One copied grid per draw; unused records are zero.",
+          "size": 1024,
+          "alignment": 4,
+          "source_type": "[16]GfxSampleGrid",
+          "default_kind": "empty_array"
+        }
+      ],
+      "values": [],
+      "description": "Independent fixed list of1..16 copied draws and exact sampling grids. Old GfxRenderCommand/GfxRenderList layouts remain unchanged. Requires render_grid_list capability; one retained queue job and no accepted prefix on error."
     }
   ],
   "operations": [],
@@ -109046,6 +111136,86 @@
       "scope": "gfx_outputs",
       "stability": "fixed_contract",
       "description": "A physically identified DVI connector. Neither HDMI audio nor DisplayPort AUX capabilities are inferred from digital video or EDID alone."
+    },
+    {
+      "name": "display_presentation_info_system_source",
+      "value": "256",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display_presentation",
+      "stability": "fixed_contract",
+      "description": "DisplayPresentationInfo bit8: the exact output accepts common linear system-memory RGBX BOs as queued present sources. Does not imply acceleration, timing or visibility. Without this flag callers must use the GPU image path or legacy primary CPU fallback."
+    },
+    {
+      "name": "display_control_op_query",
+      "value": "1808",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "Read the last Desktop-published status."
+    },
+    {
+      "name": "display_control_op_request",
+      "value": "1809",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "Queue one bounded display settings request without replacing another."
+    },
+    {
+      "name": "display_control_op_exchange",
+      "value": "1810",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "Desktop publishes state and receives one pending request."
+    },
+    {
+      "name": "display_control_request_magic",
+      "value": "1363424338",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "R4DQ request marker."
+    },
+    {
+      "name": "display_control_status_magic",
+      "value": "1396978770",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "R4DS status marker."
+    },
+    {
+      "name": "display_control_exchange_magic",
+      "value": "1480864850",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "R4DX exchange marker."
+    },
+    {
+      "name": "gfx_queue_operation_render_grid_list",
+      "value": "8",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Bounded native render list with copied exact logical-pixel sampling grids; backend operation bit256."
     }
   ],
   "limits": [

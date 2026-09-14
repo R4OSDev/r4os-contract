@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 383,
-    "group_slot_count": 383,
+    "function_count": 389,
+    "group_slot_count": 389,
     "sdk_only_count": 0,
-    "public_count": 290,
-    "advanced_count": 93
+    "public_count": 295,
+    "advanced_count": 94
   },
   "functions": [
     {
@@ -2399,6 +2399,18 @@
       }
     },
     {
+      "name": "R4DESK.mouse_motion",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 59,
+      "exposure": "advanced",
+      "description": "Returns a MouseMotion snapshot and unclamped accumulated relative input. Version1/size48 required; return0 on success. Does not constrain Desktop coordinates to the boot display. Optional append-only table entry; legacy mouse_state remains unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
       "name": "R4DRAW.screen_width",
       "group": "R4DRAW",
       "kind": "group_slot",
@@ -3437,6 +3449,66 @@
       "slot": 86,
       "exposure": "public",
       "description": "Read one actual visible receipt by exact head and source queue fence from the bounded32-frame display history. Independent of current frame and queue-client release. No match returns unavailable; reset/takeover invalidates old history. A retained history record is metadata only, not a BO reference. released_ns retains its existing meaning: retirement of that flip previous image, not the submitted source.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_output_target",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 87,
+      "exposure": "public",
+      "description": "Read the current exact presentation identity for one adapter/head. No match is unavailable; receiver-only catalog entries are not active presentation targets. Caller initializes version1/size48; changes output only on success. Adapter0 names the firmware/software adapter, never an implicit wildcard.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_submit_output",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 88,
+      "exposure": "public",
+      "description": "Present a complete image to an exact copied output target. Accepts only present/direct_present; validates all output generations and holds the same queue/BO lifetime as ordinary submission. Target selection is never silently reduced to the primary on older kernels: the separate optional slot is mandatory. Other outputs remain independent.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_output_presentation_info",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 89,
+      "exposure": "public",
+      "description": "Read presentation capabilities for an exact copied GfxOutputTarget. Adapter/head and every generation must match. Success-only output; no primary fallback for stale or unknown targets.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.display_output_presentation_feedback",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 90,
+      "exposure": "public",
+      "description": "Read one source fence visibility receipt from the exact output. No other adapter or head can satisfy the query; feedback retains the existing independently retired source lifetime.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_submit_render_grid_list",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 91,
+      "exposure": "public",
+      "description": "Copy one bounded draw/grid list to an admitted native queue. Operation render_grid_list is explicitly negotiated. Exact grid sampling stays in the R4D/GPU; common code retains source, target and immutable descriptors until the actual receipt.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

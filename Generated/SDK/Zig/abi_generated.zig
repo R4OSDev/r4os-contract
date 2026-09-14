@@ -1747,6 +1747,14 @@ pub const gfx_queue_operation_direct_present: u32 = 7;
 pub const display_presentation_flag_direct: u32 = 4;
 pub const audio_output_reason_auto_display_port: u32 = 8;
 pub const gfx_output_kind_dvi: u32 = 6;
+pub const display_presentation_info_system_source: u32 = 256;
+pub const display_control_op_query: u16 = 1808;
+pub const display_control_op_request: u16 = 1809;
+pub const display_control_op_exchange: u16 = 1810;
+pub const display_control_request_magic: u32 = 1363424338;
+pub const display_control_status_magic: u32 = 1396978770;
+pub const display_control_exchange_magic: u32 = 1480864850;
+pub const gfx_queue_operation_render_grid_list: u32 = 8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6341,7 +6349,7 @@ pub const GfxBackendRegistration = extern struct {
 
 pub const GfxDriverJob = extern struct {
     version: u32 = 1,
-    size: u32 = 224,
+    size: u32 = 272,
     fence: GfxFence = .{},
     operation: u32 = 0,
     reserved0: u32 = 0,
@@ -6356,11 +6364,12 @@ pub const GfxDriverJob = extern struct {
     target_pitch: u64 = 0,
     render: GfxRenderCommand = .{},
     deadline_ns: u64 = 0,
+    display_target: GfxOutputTarget = .{},
 };
 
 pub const GfxDriverQueueApi = extern struct {
     version: u32 = 1,
-    size: u32 = 112,
+    size: u32 = 120,
     register_backend: u64 = 0,
     unregister_backend: u64 = 0,
     take: u64 = 0,
@@ -6374,6 +6383,7 @@ pub const GfxDriverQueueApi = extern struct {
     retain_scanout: u64 = 0,
     begin_scanout: u64 = 0,
     scanout_retire_requested: u64 = 0,
+    read_render_grid_list: u64 = 0,
 };
 
 pub const GfxOutputId = extern struct {
@@ -6603,7 +6613,7 @@ pub const GfxBootHoldRequest = extern struct {
 
 pub const GfxDriverDisplayApi = extern struct {
     version: u32 = 1,
-    size: u32 = 104,
+    size: u32 = 120,
     boot_info: u64 = 0,
     prepare: u64 = 0,
     transition: u64 = 0,
@@ -6616,6 +6626,8 @@ pub const GfxDriverDisplayApi = extern struct {
     cursor_take: u64 = 0,
     cursor_complete: u64 = 0,
     presentation_info: u64 = 0,
+    output_register: u64 = 0,
+    output_transition: u64 = 0,
 };
 
 pub const DriverResourceInfo = extern struct {
@@ -7039,6 +7051,134 @@ pub const DisplayPresentationInfo = extern struct {
     reserved0: u32 = 0,
 };
 
+pub const GfxOutputTarget = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    adapter_id: u32 = 0,
+    connector_id: u32 = 0,
+    device_generation: u64 = 0,
+    connection_generation: u64 = 0,
+    display_generation: u64 = 0,
+    head_id: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const GfxAdditionalOutput = extern struct {
+    version: u32 = 1,
+    size: u32 = 96,
+    backend: GfxBackendBinding = .{},
+    output: GfxOutputId = .{},
+    head_id: u32 = 0,
+    width: u32 = 0,
+    height: u32 = 0,
+    format: u32 = 0,
+    job_size: u32 = 272,
+    flags: u32 = 0,
+    reserved0: u64 = 0,
+};
+
+pub const MouseMotion = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    mouse: Mouse,
+    motion_x: u32 = 0,
+    motion_y: u32 = 0,
+};
+
+pub const DisplaySetting = extern struct {
+    adapter_id: u64 = 0,
+    connector_id: u32 = 0,
+    flags: u32 = 0,
+    receiver: [16]u8 = .{0} ** 16,
+    x: i32 = 0,
+    y: i32 = 0,
+    width: u32 = 0,
+    height: u32 = 0,
+    scale: u32 = 120,
+    rotation: u32 = 0,
+    refresh_millihz: u32 = 0,
+    clone_group: u32 = 0,
+};
+
+pub const DisplayLayout = extern struct {
+    version: u32 = 1,
+    size: u32 = 536,
+    topology_revision: u64 = 0,
+    count: u32 = 0,
+    reserved: u32 = 0,
+    outputs: [8]DisplaySetting = .{DisplaySetting{}} ** 8,
+};
+
+pub const DisplayControlRequest = extern struct {
+    magic: u32 = 1363424338,
+    version: u16 = 1,
+    size: u16 = 600,
+    owner: ProgramProcessHandle = .{},
+    desktop_epoch: u64 = 0,
+    request_id: u64 = 0,
+    base_revision: u64 = 0,
+    transaction_id: u64 = 0,
+    action: u32 = 0,
+    reserved: u32 = 0,
+    layout: DisplayLayout = .{},
+};
+
+pub const DisplayControlStatus = extern struct {
+    magic: u32 = 1396978770,
+    version: u16 = 1,
+    size: u16 = 616,
+    desktop_epoch: u64 = 0,
+    revision: u64 = 0,
+    transaction_id: u64 = 0,
+    request_id: u64 = 0,
+    owner: ProgramProcessHandle = .{},
+    deadline_ns: u64 = 0,
+    phase: u32 = 0,
+    result: i32 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+    layout: DisplayLayout = .{},
+};
+
+pub const DisplayControlExchange = extern struct {
+    magic: u32 = 1480864850,
+    version: u16 = 1,
+    size: u16 = 1248,
+    desktop_owner: ProgramProcessHandle = .{},
+    flags: u32 = 0,
+    reserved: u32 = 0,
+    status: DisplayControlStatus = .{},
+    request: DisplayControlRequest = .{},
+};
+
+pub const GfxSampleGrid = extern struct {
+    enabled: u32 = 0,
+    rotation: u32 = 0,
+    scale: u32 = 0,
+    pixel_width: u32 = 0,
+    pixel_height: u32 = 0,
+    target_x: i32 = 0,
+    target_y: i32 = 0,
+    reserved: u32 = 0,
+    viewport_x: i32 = 0,
+    viewport_y: i32 = 0,
+    viewport_width: u32 = 0,
+    viewport_height: u32 = 0,
+    guest_width: u32 = 0,
+    guest_height: u32 = 0,
+    source_x: u32 = 0,
+    source_y: u32 = 0,
+};
+
+pub const GfxRenderGridList = extern struct {
+    version: u32 = 1,
+    size: u32 = 2320,
+    count: u32 = 0,
+    reserved0: u32 = 0,
+    commands: [16]GfxRenderCommand = .{GfxRenderCommand{}} ** 16,
+    grids: [16]GfxSampleGrid = .{GfxSampleGrid{}} ** 16,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -7393,12 +7533,13 @@ pub const R4DeskFns = struct {
     pub const remote_frame_publish_regions = *const fn (*const RemoteFrameInfo, [*]const u32, u32, [*]const DisplayDamageRect, u32) callconv(.c) i32;
     pub const console_input_wait = *const fn (u64, u64, *u64) callconv(.c) i32;
     pub const physical_key_poll = *const fn (*PhysicalKeyEvent) callconv(.c) i32;
+    pub const mouse_motion = *const fn (*MouseMotion) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 12,
-    size: u32 = 488,
+    abi_version: u32 = 13,
+    size: u32 = 496,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -7459,6 +7600,7 @@ pub const R4XStartR4Desk = extern struct {
     remote_frame_publish_regions: usize = 0,
     console_input_wait: usize = 0,
     physical_key_poll: usize = 0,
+    mouse_motion: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -7549,12 +7691,17 @@ pub const R4DrawFns = struct {
     pub const gfx_queue_submit_render_list = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderList, *GfxFenceStatus) callconv(.c) i32;
     pub const display_presentation_info = *const fn (u32, *DisplayPresentationInfo) callconv(.c) i32;
     pub const display_presentation_feedback = *const fn (u32, *const GfxFence, *DisplayPresentationStats) callconv(.c) i32;
+    pub const display_output_target = *const fn (u32, u32, *GfxOutputTarget) callconv(.c) i32;
+    pub const gfx_queue_submit_output = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxOutputTarget, *GfxFenceStatus) callconv(.c) i32;
+    pub const display_output_presentation_info = *const fn (*const GfxOutputTarget, *DisplayPresentationInfo) callconv(.c) i32;
+    pub const display_output_presentation_feedback = *const fn (*const GfxOutputTarget, *const GfxFence, *DisplayPresentationStats) callconv(.c) i32;
+    pub const gfx_queue_submit_render_grid_list = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderGridList, *GfxFenceStatus) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 22,
-    size: u32 = 712,
+    abi_version: u32 = 24,
+    size: u32 = 752,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -7643,6 +7790,11 @@ pub const R4XStartR4Draw = extern struct {
     gfx_queue_submit_render_list: usize = 0,
     display_presentation_info: usize = 0,
     display_presentation_feedback: usize = 0,
+    display_output_target: usize = 0,
+    gfx_queue_submit_output: usize = 0,
+    display_output_presentation_info: usize = 0,
+    display_output_presentation_feedback: usize = 0,
+    gfx_queue_submit_render_grid_list: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -8083,6 +8235,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 56, .offset = 464, .name = "remote_frame_publish_regions", .state = .function, .required = false },
     .{ .number = 57, .offset = 472, .name = "console_input_wait", .state = .function, .required = false },
     .{ .number = 58, .offset = 480, .name = "physical_key_poll", .state = .function, .required = false },
+    .{ .number = 59, .offset = 488, .name = "mouse_motion", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -8173,6 +8326,11 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 84, .offset = 688, .name = "gfx_queue_submit_render_list", .state = .function, .required = false },
     .{ .number = 85, .offset = 696, .name = "display_presentation_info", .state = .function, .required = false },
     .{ .number = 86, .offset = 704, .name = "display_presentation_feedback", .state = .function, .required = false },
+    .{ .number = 87, .offset = 712, .name = "display_output_target", .state = .function, .required = false },
+    .{ .number = 88, .offset = 720, .name = "gfx_queue_submit_output", .state = .function, .required = false },
+    .{ .number = 89, .offset = 728, .name = "display_output_presentation_info", .state = .function, .required = false },
+    .{ .number = 90, .offset = 736, .name = "display_output_presentation_feedback", .state = .function, .required = false },
+    .{ .number = 91, .offset = 744, .name = "gfx_queue_submit_render_grid_list", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -12218,7 +12376,7 @@ comptime {
     if (@offsetOf(GfxBackendRegistration, "context") != 24) @compileError("generated ABI offset drift: GfxBackendRegistration.context");
     if (@offsetOf(GfxBackendRegistration, "operations") != 32) @compileError("generated ABI offset drift: GfxBackendRegistration.operations");
     if (@offsetOf(GfxBackendRegistration, "memory_generation") != 40) @compileError("generated ABI offset drift: GfxBackendRegistration.memory_generation");
-    if (@sizeOf(GfxDriverJob) != 224) @compileError("generated ABI size drift: GfxDriverJob");
+    if (@sizeOf(GfxDriverJob) != 272) @compileError("generated ABI size drift: GfxDriverJob");
     if (@alignOf(GfxDriverJob) != 8) @compileError("generated ABI alignment drift: GfxDriverJob");
     if (@offsetOf(GfxDriverJob, "version") != 0) @compileError("generated ABI offset drift: GfxDriverJob.version");
     if (@offsetOf(GfxDriverJob, "size") != 4) @compileError("generated ABI offset drift: GfxDriverJob.size");
@@ -12236,7 +12394,8 @@ comptime {
     if (@offsetOf(GfxDriverJob, "target_pitch") != 128) @compileError("generated ABI offset drift: GfxDriverJob.target_pitch");
     if (@offsetOf(GfxDriverJob, "render") != 136) @compileError("generated ABI offset drift: GfxDriverJob.render");
     if (@offsetOf(GfxDriverJob, "deadline_ns") != 216) @compileError("generated ABI offset drift: GfxDriverJob.deadline_ns");
-    if (@sizeOf(GfxDriverQueueApi) != 112) @compileError("generated ABI size drift: GfxDriverQueueApi");
+    if (@offsetOf(GfxDriverJob, "display_target") != 224) @compileError("generated ABI offset drift: GfxDriverJob.display_target");
+    if (@sizeOf(GfxDriverQueueApi) != 120) @compileError("generated ABI size drift: GfxDriverQueueApi");
     if (@alignOf(GfxDriverQueueApi) != 8) @compileError("generated ABI alignment drift: GfxDriverQueueApi");
     if (@offsetOf(GfxDriverQueueApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverQueueApi.version");
     if (@offsetOf(GfxDriverQueueApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverQueueApi.size");
@@ -12253,6 +12412,7 @@ comptime {
     if (@offsetOf(GfxDriverQueueApi, "retain_scanout") != 88) @compileError("generated ABI offset drift: GfxDriverQueueApi.retain_scanout");
     if (@offsetOf(GfxDriverQueueApi, "begin_scanout") != 96) @compileError("generated ABI offset drift: GfxDriverQueueApi.begin_scanout");
     if (@offsetOf(GfxDriverQueueApi, "scanout_retire_requested") != 104) @compileError("generated ABI offset drift: GfxDriverQueueApi.scanout_retire_requested");
+    if (@offsetOf(GfxDriverQueueApi, "read_render_grid_list") != 112) @compileError("generated ABI offset drift: GfxDriverQueueApi.read_render_grid_list");
     if (@sizeOf(GfxOutputId) != 24) @compileError("generated ABI size drift: GfxOutputId");
     if (@alignOf(GfxOutputId) != 8) @compileError("generated ABI alignment drift: GfxOutputId");
     if (@offsetOf(GfxOutputId, "adapter_id") != 0) @compileError("generated ABI offset drift: GfxOutputId.adapter_id");
@@ -12460,7 +12620,7 @@ comptime {
     if (@offsetOf(GfxBootHoldRequest, "reference") != 24) @compileError("generated ABI offset drift: GfxBootHoldRequest.reference");
     if (@offsetOf(GfxBootHoldRequest, "context") != 40) @compileError("generated ABI offset drift: GfxBootHoldRequest.context");
     if (@offsetOf(GfxBootHoldRequest, "restore_callback") != 48) @compileError("generated ABI offset drift: GfxBootHoldRequest.restore_callback");
-    if (@sizeOf(GfxDriverDisplayApi) != 104) @compileError("generated ABI size drift: GfxDriverDisplayApi");
+    if (@sizeOf(GfxDriverDisplayApi) != 120) @compileError("generated ABI size drift: GfxDriverDisplayApi");
     if (@alignOf(GfxDriverDisplayApi) != 8) @compileError("generated ABI alignment drift: GfxDriverDisplayApi");
     if (@offsetOf(GfxDriverDisplayApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverDisplayApi.version");
     if (@offsetOf(GfxDriverDisplayApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverDisplayApi.size");
@@ -12476,6 +12636,8 @@ comptime {
     if (@offsetOf(GfxDriverDisplayApi, "cursor_take") != 80) @compileError("generated ABI offset drift: GfxDriverDisplayApi.cursor_take");
     if (@offsetOf(GfxDriverDisplayApi, "cursor_complete") != 88) @compileError("generated ABI offset drift: GfxDriverDisplayApi.cursor_complete");
     if (@offsetOf(GfxDriverDisplayApi, "presentation_info") != 96) @compileError("generated ABI offset drift: GfxDriverDisplayApi.presentation_info");
+    if (@offsetOf(GfxDriverDisplayApi, "output_register") != 104) @compileError("generated ABI offset drift: GfxDriverDisplayApi.output_register");
+    if (@offsetOf(GfxDriverDisplayApi, "output_transition") != 112) @compileError("generated ABI offset drift: GfxDriverDisplayApi.output_transition");
     if (@sizeOf(DriverResourceInfo) != 32) @compileError("generated ABI size drift: DriverResourceInfo");
     if (@alignOf(DriverResourceInfo) != 8) @compileError("generated ABI alignment drift: DriverResourceInfo");
     if (@offsetOf(DriverResourceInfo, "version") != 0) @compileError("generated ABI offset drift: DriverResourceInfo.version");
@@ -12865,6 +13027,124 @@ comptime {
     if (@offsetOf(DisplayPresentationInfo, "observed_ns") != 104) @compileError("generated ABI offset drift: DisplayPresentationInfo.observed_ns");
     if (@offsetOf(DisplayPresentationInfo, "path") != 112) @compileError("generated ABI offset drift: DisplayPresentationInfo.path");
     if (@offsetOf(DisplayPresentationInfo, "reserved0") != 116) @compileError("generated ABI offset drift: DisplayPresentationInfo.reserved0");
+    if (@sizeOf(GfxOutputTarget) != 48) @compileError("generated ABI size drift: GfxOutputTarget");
+    if (@alignOf(GfxOutputTarget) != 8) @compileError("generated ABI alignment drift: GfxOutputTarget");
+    if (@offsetOf(GfxOutputTarget, "version") != 0) @compileError("generated ABI offset drift: GfxOutputTarget.version");
+    if (@offsetOf(GfxOutputTarget, "size") != 4) @compileError("generated ABI offset drift: GfxOutputTarget.size");
+    if (@offsetOf(GfxOutputTarget, "adapter_id") != 8) @compileError("generated ABI offset drift: GfxOutputTarget.adapter_id");
+    if (@offsetOf(GfxOutputTarget, "connector_id") != 12) @compileError("generated ABI offset drift: GfxOutputTarget.connector_id");
+    if (@offsetOf(GfxOutputTarget, "device_generation") != 16) @compileError("generated ABI offset drift: GfxOutputTarget.device_generation");
+    if (@offsetOf(GfxOutputTarget, "connection_generation") != 24) @compileError("generated ABI offset drift: GfxOutputTarget.connection_generation");
+    if (@offsetOf(GfxOutputTarget, "display_generation") != 32) @compileError("generated ABI offset drift: GfxOutputTarget.display_generation");
+    if (@offsetOf(GfxOutputTarget, "head_id") != 40) @compileError("generated ABI offset drift: GfxOutputTarget.head_id");
+    if (@offsetOf(GfxOutputTarget, "reserved0") != 44) @compileError("generated ABI offset drift: GfxOutputTarget.reserved0");
+    if (@sizeOf(GfxAdditionalOutput) != 96) @compileError("generated ABI size drift: GfxAdditionalOutput");
+    if (@alignOf(GfxAdditionalOutput) != 8) @compileError("generated ABI alignment drift: GfxAdditionalOutput");
+    if (@offsetOf(GfxAdditionalOutput, "version") != 0) @compileError("generated ABI offset drift: GfxAdditionalOutput.version");
+    if (@offsetOf(GfxAdditionalOutput, "size") != 4) @compileError("generated ABI offset drift: GfxAdditionalOutput.size");
+    if (@offsetOf(GfxAdditionalOutput, "backend") != 8) @compileError("generated ABI offset drift: GfxAdditionalOutput.backend");
+    if (@offsetOf(GfxAdditionalOutput, "output") != 40) @compileError("generated ABI offset drift: GfxAdditionalOutput.output");
+    if (@offsetOf(GfxAdditionalOutput, "head_id") != 64) @compileError("generated ABI offset drift: GfxAdditionalOutput.head_id");
+    if (@offsetOf(GfxAdditionalOutput, "width") != 68) @compileError("generated ABI offset drift: GfxAdditionalOutput.width");
+    if (@offsetOf(GfxAdditionalOutput, "height") != 72) @compileError("generated ABI offset drift: GfxAdditionalOutput.height");
+    if (@offsetOf(GfxAdditionalOutput, "format") != 76) @compileError("generated ABI offset drift: GfxAdditionalOutput.format");
+    if (@offsetOf(GfxAdditionalOutput, "job_size") != 80) @compileError("generated ABI offset drift: GfxAdditionalOutput.job_size");
+    if (@offsetOf(GfxAdditionalOutput, "flags") != 84) @compileError("generated ABI offset drift: GfxAdditionalOutput.flags");
+    if (@offsetOf(GfxAdditionalOutput, "reserved0") != 88) @compileError("generated ABI offset drift: GfxAdditionalOutput.reserved0");
+    if (@sizeOf(MouseMotion) != 48) @compileError("generated ABI size drift: MouseMotion");
+    if (@alignOf(MouseMotion) != 8) @compileError("generated ABI alignment drift: MouseMotion");
+    if (@offsetOf(MouseMotion, "version") != 0) @compileError("generated ABI offset drift: MouseMotion.version");
+    if (@offsetOf(MouseMotion, "size") != 4) @compileError("generated ABI offset drift: MouseMotion.size");
+    if (@offsetOf(MouseMotion, "mouse") != 8) @compileError("generated ABI offset drift: MouseMotion.mouse");
+    if (@offsetOf(MouseMotion, "motion_x") != 40) @compileError("generated ABI offset drift: MouseMotion.motion_x");
+    if (@offsetOf(MouseMotion, "motion_y") != 44) @compileError("generated ABI offset drift: MouseMotion.motion_y");
+    if (@sizeOf(DisplaySetting) != 64) @compileError("generated ABI size drift: DisplaySetting");
+    if (@alignOf(DisplaySetting) != 8) @compileError("generated ABI alignment drift: DisplaySetting");
+    if (@offsetOf(DisplaySetting, "adapter_id") != 0) @compileError("generated ABI offset drift: DisplaySetting.adapter_id");
+    if (@offsetOf(DisplaySetting, "connector_id") != 8) @compileError("generated ABI offset drift: DisplaySetting.connector_id");
+    if (@offsetOf(DisplaySetting, "flags") != 12) @compileError("generated ABI offset drift: DisplaySetting.flags");
+    if (@offsetOf(DisplaySetting, "receiver") != 16) @compileError("generated ABI offset drift: DisplaySetting.receiver");
+    if (@offsetOf(DisplaySetting, "x") != 32) @compileError("generated ABI offset drift: DisplaySetting.x");
+    if (@offsetOf(DisplaySetting, "y") != 36) @compileError("generated ABI offset drift: DisplaySetting.y");
+    if (@offsetOf(DisplaySetting, "width") != 40) @compileError("generated ABI offset drift: DisplaySetting.width");
+    if (@offsetOf(DisplaySetting, "height") != 44) @compileError("generated ABI offset drift: DisplaySetting.height");
+    if (@offsetOf(DisplaySetting, "scale") != 48) @compileError("generated ABI offset drift: DisplaySetting.scale");
+    if (@offsetOf(DisplaySetting, "rotation") != 52) @compileError("generated ABI offset drift: DisplaySetting.rotation");
+    if (@offsetOf(DisplaySetting, "refresh_millihz") != 56) @compileError("generated ABI offset drift: DisplaySetting.refresh_millihz");
+    if (@offsetOf(DisplaySetting, "clone_group") != 60) @compileError("generated ABI offset drift: DisplaySetting.clone_group");
+    if (@sizeOf(DisplayLayout) != 536) @compileError("generated ABI size drift: DisplayLayout");
+    if (@alignOf(DisplayLayout) != 8) @compileError("generated ABI alignment drift: DisplayLayout");
+    if (@offsetOf(DisplayLayout, "version") != 0) @compileError("generated ABI offset drift: DisplayLayout.version");
+    if (@offsetOf(DisplayLayout, "size") != 4) @compileError("generated ABI offset drift: DisplayLayout.size");
+    if (@offsetOf(DisplayLayout, "topology_revision") != 8) @compileError("generated ABI offset drift: DisplayLayout.topology_revision");
+    if (@offsetOf(DisplayLayout, "count") != 16) @compileError("generated ABI offset drift: DisplayLayout.count");
+    if (@offsetOf(DisplayLayout, "reserved") != 20) @compileError("generated ABI offset drift: DisplayLayout.reserved");
+    if (@offsetOf(DisplayLayout, "outputs") != 24) @compileError("generated ABI offset drift: DisplayLayout.outputs");
+    if (@sizeOf(DisplayControlRequest) != 600) @compileError("generated ABI size drift: DisplayControlRequest");
+    if (@alignOf(DisplayControlRequest) != 8) @compileError("generated ABI alignment drift: DisplayControlRequest");
+    if (@offsetOf(DisplayControlRequest, "magic") != 0) @compileError("generated ABI offset drift: DisplayControlRequest.magic");
+    if (@offsetOf(DisplayControlRequest, "version") != 4) @compileError("generated ABI offset drift: DisplayControlRequest.version");
+    if (@offsetOf(DisplayControlRequest, "size") != 6) @compileError("generated ABI offset drift: DisplayControlRequest.size");
+    if (@offsetOf(DisplayControlRequest, "owner") != 8) @compileError("generated ABI offset drift: DisplayControlRequest.owner");
+    if (@offsetOf(DisplayControlRequest, "desktop_epoch") != 24) @compileError("generated ABI offset drift: DisplayControlRequest.desktop_epoch");
+    if (@offsetOf(DisplayControlRequest, "request_id") != 32) @compileError("generated ABI offset drift: DisplayControlRequest.request_id");
+    if (@offsetOf(DisplayControlRequest, "base_revision") != 40) @compileError("generated ABI offset drift: DisplayControlRequest.base_revision");
+    if (@offsetOf(DisplayControlRequest, "transaction_id") != 48) @compileError("generated ABI offset drift: DisplayControlRequest.transaction_id");
+    if (@offsetOf(DisplayControlRequest, "action") != 56) @compileError("generated ABI offset drift: DisplayControlRequest.action");
+    if (@offsetOf(DisplayControlRequest, "reserved") != 60) @compileError("generated ABI offset drift: DisplayControlRequest.reserved");
+    if (@offsetOf(DisplayControlRequest, "layout") != 64) @compileError("generated ABI offset drift: DisplayControlRequest.layout");
+    if (@sizeOf(DisplayControlStatus) != 616) @compileError("generated ABI size drift: DisplayControlStatus");
+    if (@alignOf(DisplayControlStatus) != 8) @compileError("generated ABI alignment drift: DisplayControlStatus");
+    if (@offsetOf(DisplayControlStatus, "magic") != 0) @compileError("generated ABI offset drift: DisplayControlStatus.magic");
+    if (@offsetOf(DisplayControlStatus, "version") != 4) @compileError("generated ABI offset drift: DisplayControlStatus.version");
+    if (@offsetOf(DisplayControlStatus, "size") != 6) @compileError("generated ABI offset drift: DisplayControlStatus.size");
+    if (@offsetOf(DisplayControlStatus, "desktop_epoch") != 8) @compileError("generated ABI offset drift: DisplayControlStatus.desktop_epoch");
+    if (@offsetOf(DisplayControlStatus, "revision") != 16) @compileError("generated ABI offset drift: DisplayControlStatus.revision");
+    if (@offsetOf(DisplayControlStatus, "transaction_id") != 24) @compileError("generated ABI offset drift: DisplayControlStatus.transaction_id");
+    if (@offsetOf(DisplayControlStatus, "request_id") != 32) @compileError("generated ABI offset drift: DisplayControlStatus.request_id");
+    if (@offsetOf(DisplayControlStatus, "owner") != 40) @compileError("generated ABI offset drift: DisplayControlStatus.owner");
+    if (@offsetOf(DisplayControlStatus, "deadline_ns") != 56) @compileError("generated ABI offset drift: DisplayControlStatus.deadline_ns");
+    if (@offsetOf(DisplayControlStatus, "phase") != 64) @compileError("generated ABI offset drift: DisplayControlStatus.phase");
+    if (@offsetOf(DisplayControlStatus, "result") != 68) @compileError("generated ABI offset drift: DisplayControlStatus.result");
+    if (@offsetOf(DisplayControlStatus, "flags") != 72) @compileError("generated ABI offset drift: DisplayControlStatus.flags");
+    if (@offsetOf(DisplayControlStatus, "reserved") != 76) @compileError("generated ABI offset drift: DisplayControlStatus.reserved");
+    if (@offsetOf(DisplayControlStatus, "layout") != 80) @compileError("generated ABI offset drift: DisplayControlStatus.layout");
+    if (@sizeOf(DisplayControlExchange) != 1248) @compileError("generated ABI size drift: DisplayControlExchange");
+    if (@alignOf(DisplayControlExchange) != 8) @compileError("generated ABI alignment drift: DisplayControlExchange");
+    if (@offsetOf(DisplayControlExchange, "magic") != 0) @compileError("generated ABI offset drift: DisplayControlExchange.magic");
+    if (@offsetOf(DisplayControlExchange, "version") != 4) @compileError("generated ABI offset drift: DisplayControlExchange.version");
+    if (@offsetOf(DisplayControlExchange, "size") != 6) @compileError("generated ABI offset drift: DisplayControlExchange.size");
+    if (@offsetOf(DisplayControlExchange, "desktop_owner") != 8) @compileError("generated ABI offset drift: DisplayControlExchange.desktop_owner");
+    if (@offsetOf(DisplayControlExchange, "flags") != 24) @compileError("generated ABI offset drift: DisplayControlExchange.flags");
+    if (@offsetOf(DisplayControlExchange, "reserved") != 28) @compileError("generated ABI offset drift: DisplayControlExchange.reserved");
+    if (@offsetOf(DisplayControlExchange, "status") != 32) @compileError("generated ABI offset drift: DisplayControlExchange.status");
+    if (@offsetOf(DisplayControlExchange, "request") != 648) @compileError("generated ABI offset drift: DisplayControlExchange.request");
+    if (@sizeOf(GfxSampleGrid) != 64) @compileError("generated ABI size drift: GfxSampleGrid");
+    if (@alignOf(GfxSampleGrid) != 4) @compileError("generated ABI alignment drift: GfxSampleGrid");
+    if (@offsetOf(GfxSampleGrid, "enabled") != 0) @compileError("generated ABI offset drift: GfxSampleGrid.enabled");
+    if (@offsetOf(GfxSampleGrid, "rotation") != 4) @compileError("generated ABI offset drift: GfxSampleGrid.rotation");
+    if (@offsetOf(GfxSampleGrid, "scale") != 8) @compileError("generated ABI offset drift: GfxSampleGrid.scale");
+    if (@offsetOf(GfxSampleGrid, "pixel_width") != 12) @compileError("generated ABI offset drift: GfxSampleGrid.pixel_width");
+    if (@offsetOf(GfxSampleGrid, "pixel_height") != 16) @compileError("generated ABI offset drift: GfxSampleGrid.pixel_height");
+    if (@offsetOf(GfxSampleGrid, "target_x") != 20) @compileError("generated ABI offset drift: GfxSampleGrid.target_x");
+    if (@offsetOf(GfxSampleGrid, "target_y") != 24) @compileError("generated ABI offset drift: GfxSampleGrid.target_y");
+    if (@offsetOf(GfxSampleGrid, "reserved") != 28) @compileError("generated ABI offset drift: GfxSampleGrid.reserved");
+    if (@offsetOf(GfxSampleGrid, "viewport_x") != 32) @compileError("generated ABI offset drift: GfxSampleGrid.viewport_x");
+    if (@offsetOf(GfxSampleGrid, "viewport_y") != 36) @compileError("generated ABI offset drift: GfxSampleGrid.viewport_y");
+    if (@offsetOf(GfxSampleGrid, "viewport_width") != 40) @compileError("generated ABI offset drift: GfxSampleGrid.viewport_width");
+    if (@offsetOf(GfxSampleGrid, "viewport_height") != 44) @compileError("generated ABI offset drift: GfxSampleGrid.viewport_height");
+    if (@offsetOf(GfxSampleGrid, "guest_width") != 48) @compileError("generated ABI offset drift: GfxSampleGrid.guest_width");
+    if (@offsetOf(GfxSampleGrid, "guest_height") != 52) @compileError("generated ABI offset drift: GfxSampleGrid.guest_height");
+    if (@offsetOf(GfxSampleGrid, "source_x") != 56) @compileError("generated ABI offset drift: GfxSampleGrid.source_x");
+    if (@offsetOf(GfxSampleGrid, "source_y") != 60) @compileError("generated ABI offset drift: GfxSampleGrid.source_y");
+    if (@sizeOf(GfxRenderGridList) != 2320) @compileError("generated ABI size drift: GfxRenderGridList");
+    if (@alignOf(GfxRenderGridList) != 8) @compileError("generated ABI alignment drift: GfxRenderGridList");
+    if (@offsetOf(GfxRenderGridList, "version") != 0) @compileError("generated ABI offset drift: GfxRenderGridList.version");
+    if (@offsetOf(GfxRenderGridList, "size") != 4) @compileError("generated ABI offset drift: GfxRenderGridList.size");
+    if (@offsetOf(GfxRenderGridList, "count") != 8) @compileError("generated ABI offset drift: GfxRenderGridList.count");
+    if (@offsetOf(GfxRenderGridList, "reserved0") != 12) @compileError("generated ABI offset drift: GfxRenderGridList.reserved0");
+    if (@offsetOf(GfxRenderGridList, "commands") != 16) @compileError("generated ABI offset drift: GfxRenderGridList.commands");
+    if (@offsetOf(GfxRenderGridList, "grids") != 1296) @compileError("generated ABI offset drift: GfxRenderGridList.grids");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -13010,7 +13290,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "directory_change_begin") != 1144) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_begin");
     if (@offsetOf(R4XStartR4Sys, "directory_change_poll") != 1152) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_poll");
     if (@offsetOf(R4XStartR4Sys, "file_copy_buffered") != 1160) @compileError("generated ABI offset drift: R4XStartR4Sys.file_copy_buffered");
-    if (@sizeOf(R4XStartR4Desk) != 488) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 496) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -13070,7 +13350,8 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_publish_regions") != 464) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_publish_regions");
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
-    if (@sizeOf(R4XStartR4Draw) != 712) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@offsetOf(R4XStartR4Desk, "mouse_motion") != 488) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_motion");
+    if (@sizeOf(R4XStartR4Draw) != 752) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -13158,6 +13439,11 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_render_list") != 688) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_render_list");
     if (@offsetOf(R4XStartR4Draw, "display_presentation_info") != 696) @compileError("generated ABI offset drift: R4XStartR4Draw.display_presentation_info");
     if (@offsetOf(R4XStartR4Draw, "display_presentation_feedback") != 704) @compileError("generated ABI offset drift: R4XStartR4Draw.display_presentation_feedback");
+    if (@offsetOf(R4XStartR4Draw, "display_output_target") != 712) @compileError("generated ABI offset drift: R4XStartR4Draw.display_output_target");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_output") != 720) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_output");
+    if (@offsetOf(R4XStartR4Draw, "display_output_presentation_info") != 728) @compileError("generated ABI offset drift: R4XStartR4Draw.display_output_presentation_info");
+    if (@offsetOf(R4XStartR4Draw, "display_output_presentation_feedback") != 736) @compileError("generated ABI offset drift: R4XStartR4Draw.display_output_presentation_feedback");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_render_grid_list") != 744) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_render_grid_list");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
