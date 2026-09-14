@@ -1769,6 +1769,41 @@ pub const gfx_queue_operation_render_color_list: u32 = 9;
 pub const gfx_render_transfer_color: u32 = 3;
 pub const display_control_op_color_request: u16 = 1811;
 pub const display_control_op_color_exchange: u16 = 1812;
+pub const gfx_refresh_cap_known: u32 = 1;
+pub const gfx_refresh_cap_capable: u32 = 2;
+pub const gfx_refresh_cap_independent_heads: u32 = 4;
+pub const gfx_refresh_cap_hdr: u32 = 8;
+pub const gfx_refresh_cap_lfc: u32 = 16;
+pub const gfx_refresh_policy_off: u32 = 0;
+pub const gfx_refresh_policy_fullscreen: u32 = 1;
+pub const gfx_refresh_policy_windows: u32 = 2;
+pub const gfx_refresh_operation_configure: u32 = 0;
+pub const gfx_refresh_operation_release: u32 = 1;
+pub const gfx_refresh_operation_flicker: u32 = 2;
+pub const gfx_refresh_operation_clear_fault: u32 = 3;
+pub const gfx_refresh_scene_fullscreen: u32 = 1;
+pub const gfx_refresh_scene_animated: u32 = 2;
+pub const gfx_refresh_scene_capture: u32 = 4;
+pub const gfx_refresh_phase_fixed: u32 = 0;
+pub const gfx_refresh_phase_enabling: u32 = 1;
+pub const gfx_refresh_phase_active: u32 = 2;
+pub const gfx_refresh_phase_disabling: u32 = 3;
+pub const gfx_refresh_phase_faulted: u32 = 4;
+pub const gfx_refresh_phase_lost: u32 = 5;
+pub const gfx_refresh_reason_none: u32 = 0;
+pub const gfx_refresh_reason_policy_off: u32 = 1;
+pub const gfx_refresh_reason_idle: u32 = 2;
+pub const gfx_refresh_reason_windowed: u32 = 3;
+pub const gfx_refresh_reason_unavailable: u32 = 4;
+pub const gfx_refresh_reason_transition: u32 = 5;
+pub const gfx_refresh_reason_hdr: u32 = 6;
+pub const gfx_refresh_reason_topology: u32 = 7;
+pub const gfx_refresh_reason_capture: u32 = 8;
+pub const gfx_refresh_reason_audio_clock: u32 = 9;
+pub const gfx_refresh_reason_link_lost: u32 = 10;
+pub const gfx_refresh_reason_timing_fault: u32 = 11;
+pub const gfx_refresh_reason_user_flicker: u32 = 12;
+pub const gfx_refresh_reason_stale_clock: u32 = 13;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6563,7 +6598,7 @@ pub const GfxReceiverUpdate = extern struct {
 
 pub const GfxDriverOutputApi = extern struct {
     version: u32 = 1,
-    size: u32 = 128,
+    size: u32 = 144,
     publish: u64 = 0,
     withdraw: u64 = 0,
     register_source: u64 = 0,
@@ -6579,6 +6614,8 @@ pub const GfxDriverOutputApi = extern struct {
     mode_status: u64 = 0,
     color_publish: u64 = 0,
     mode_read_color: u64 = 0,
+    refresh_publish: u64 = 0,
+    refresh_read: u64 = 0,
 };
 
 pub const GfxNativeBootInfo = extern struct {
@@ -7299,6 +7336,74 @@ pub const DisplayColorExchange = extern struct {
     color: DisplayColorSelection = .{},
 };
 
+pub const GfxRefreshCapabilities = extern struct {
+    version: u32 = 1,
+    size: u32 = 72,
+    flags: u32 = 0,
+    origin: u32 = 0,
+    min_millihz: u32 = 0,
+    max_millihz: u32 = 0,
+    nominal_millihz: u32 = 0,
+    reserved0: u32 = 0,
+    min_period_ns: u64 = 0,
+    max_period_ns: u64 = 0,
+    max_increase_ns: u64 = 0,
+    max_decrease_ns: u64 = 0,
+    max_vtotal: u32 = 0,
+    reserved1: u32 = 0,
+};
+
+pub const GfxRefreshStatus = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    sequence: u64 = 0,
+    request_sequence: u64 = 0,
+    phase: u32 = 0,
+    reason: u32 = 0,
+    policy: u32 = 0,
+    scene: u32 = 0,
+    core_point: u64 = 0,
+    receipt: u64 = 0,
+    since_ns: u64 = 0,
+};
+
+pub const GfxRefreshMeasure = extern struct {
+    version: u32 = 1,
+    size: u32 = 80,
+    sequence: u64 = 0,
+    samples: u32 = 0,
+    reserved0: u32 = 0,
+    observed_ns: u64 = 0,
+    last_period_ns: u64 = 0,
+    min_period_ns: u64 = 0,
+    max_period_ns: u64 = 0,
+    mean_period_ns: u64 = 0,
+    millihz: u32 = 0,
+    gaps: u32 = 0,
+    reserved1: u64 = 0,
+};
+
+pub const GfxOutputRefresh = extern struct {
+    version: u32 = 1,
+    size: u32 = 272,
+    target: GfxOutputTarget = .{},
+    capabilities: GfxRefreshCapabilities = .{},
+    status: GfxRefreshStatus = .{},
+    measured: GfxRefreshMeasure = .{},
+};
+
+pub const GfxRefreshRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 88,
+    target: GfxOutputTarget = .{},
+    operation: u32 = 0,
+    policy: u32 = 0,
+    scene: u32 = 0,
+    reserved0: u32 = 0,
+    sequence: u64 = 0,
+    deadline_ns: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -7820,12 +7925,14 @@ pub const R4DrawFns = struct {
     pub const gfx_queue_submit_render_color_list = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorList, *GfxFenceStatus) callconv(.c) i32;
     pub const gfx_atomic_test_color = *const fn (*const GfxModeColorRequest, *GfxAtomicResult) callconv(.c) i32;
     pub const gfx_atomic_submit_color = *const fn (*const GfxModeColorRequest, u32, *GfxModeStatus) callconv(.c) i32;
+    pub const gfx_output_refresh = *const fn (*const GfxOutputTarget, *GfxOutputRefresh) callconv(.c) i32;
+    pub const gfx_refresh_request = *const fn (*const GfxRefreshRequest, *GfxRefreshRequest) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 27,
-    size: u32 = 784,
+    abi_version: u32 = 28,
+    size: u32 = 800,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -7923,6 +8030,8 @@ pub const R4XStartR4Draw = extern struct {
     gfx_queue_submit_render_color_list: usize = 0,
     gfx_atomic_test_color: usize = 0,
     gfx_atomic_submit_color: usize = 0,
+    gfx_output_refresh: usize = 0,
+    gfx_refresh_request: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -8463,6 +8572,8 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 93, .offset = 760, .name = "gfx_queue_submit_render_color_list", .state = .function, .required = false },
     .{ .number = 94, .offset = 768, .name = "gfx_atomic_test_color", .state = .function, .required = false },
     .{ .number = 95, .offset = 776, .name = "gfx_atomic_submit_color", .state = .function, .required = false },
+    .{ .number = 96, .offset = 784, .name = "gfx_output_refresh", .state = .function, .required = false },
+    .{ .number = 97, .offset = 792, .name = "gfx_refresh_request", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -12693,7 +12804,7 @@ comptime {
     if (@offsetOf(GfxReceiverUpdate, "count") != 32) @compileError("generated ABI offset drift: GfxReceiverUpdate.count");
     if (@offsetOf(GfxReceiverUpdate, "reserved0") != 36) @compileError("generated ABI offset drift: GfxReceiverUpdate.reserved0");
     if (@offsetOf(GfxReceiverUpdate, "receivers") != 40) @compileError("generated ABI offset drift: GfxReceiverUpdate.receivers");
-    if (@sizeOf(GfxDriverOutputApi) != 128) @compileError("generated ABI size drift: GfxDriverOutputApi");
+    if (@sizeOf(GfxDriverOutputApi) != 144) @compileError("generated ABI size drift: GfxDriverOutputApi");
     if (@alignOf(GfxDriverOutputApi) != 8) @compileError("generated ABI alignment drift: GfxDriverOutputApi");
     if (@offsetOf(GfxDriverOutputApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverOutputApi.version");
     if (@offsetOf(GfxDriverOutputApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverOutputApi.size");
@@ -12712,6 +12823,8 @@ comptime {
     if (@offsetOf(GfxDriverOutputApi, "mode_status") != 104) @compileError("generated ABI offset drift: GfxDriverOutputApi.mode_status");
     if (@offsetOf(GfxDriverOutputApi, "color_publish") != 112) @compileError("generated ABI offset drift: GfxDriverOutputApi.color_publish");
     if (@offsetOf(GfxDriverOutputApi, "mode_read_color") != 120) @compileError("generated ABI offset drift: GfxDriverOutputApi.mode_read_color");
+    if (@offsetOf(GfxDriverOutputApi, "refresh_publish") != 128) @compileError("generated ABI offset drift: GfxDriverOutputApi.refresh_publish");
+    if (@offsetOf(GfxDriverOutputApi, "refresh_read") != 136) @compileError("generated ABI offset drift: GfxDriverOutputApi.refresh_read");
     if (@sizeOf(GfxNativeBootInfo) != 56) @compileError("generated ABI size drift: GfxNativeBootInfo");
     if (@alignOf(GfxNativeBootInfo) != 8) @compileError("generated ABI alignment drift: GfxNativeBootInfo");
     if (@offsetOf(GfxNativeBootInfo, "version") != 0) @compileError("generated ABI offset drift: GfxNativeBootInfo.version");
@@ -13373,6 +13486,69 @@ comptime {
     if (@alignOf(DisplayColorExchange) != 8) @compileError("generated ABI alignment drift: DisplayColorExchange");
     if (@offsetOf(DisplayColorExchange, "base") != 0) @compileError("generated ABI offset drift: DisplayColorExchange.base");
     if (@offsetOf(DisplayColorExchange, "color") != 1248) @compileError("generated ABI offset drift: DisplayColorExchange.color");
+    if (@sizeOf(GfxRefreshCapabilities) != 72) @compileError("generated ABI size drift: GfxRefreshCapabilities");
+    if (@alignOf(GfxRefreshCapabilities) != 8) @compileError("generated ABI alignment drift: GfxRefreshCapabilities");
+    if (@offsetOf(GfxRefreshCapabilities, "version") != 0) @compileError("generated ABI offset drift: GfxRefreshCapabilities.version");
+    if (@offsetOf(GfxRefreshCapabilities, "size") != 4) @compileError("generated ABI offset drift: GfxRefreshCapabilities.size");
+    if (@offsetOf(GfxRefreshCapabilities, "flags") != 8) @compileError("generated ABI offset drift: GfxRefreshCapabilities.flags");
+    if (@offsetOf(GfxRefreshCapabilities, "origin") != 12) @compileError("generated ABI offset drift: GfxRefreshCapabilities.origin");
+    if (@offsetOf(GfxRefreshCapabilities, "min_millihz") != 16) @compileError("generated ABI offset drift: GfxRefreshCapabilities.min_millihz");
+    if (@offsetOf(GfxRefreshCapabilities, "max_millihz") != 20) @compileError("generated ABI offset drift: GfxRefreshCapabilities.max_millihz");
+    if (@offsetOf(GfxRefreshCapabilities, "nominal_millihz") != 24) @compileError("generated ABI offset drift: GfxRefreshCapabilities.nominal_millihz");
+    if (@offsetOf(GfxRefreshCapabilities, "reserved0") != 28) @compileError("generated ABI offset drift: GfxRefreshCapabilities.reserved0");
+    if (@offsetOf(GfxRefreshCapabilities, "min_period_ns") != 32) @compileError("generated ABI offset drift: GfxRefreshCapabilities.min_period_ns");
+    if (@offsetOf(GfxRefreshCapabilities, "max_period_ns") != 40) @compileError("generated ABI offset drift: GfxRefreshCapabilities.max_period_ns");
+    if (@offsetOf(GfxRefreshCapabilities, "max_increase_ns") != 48) @compileError("generated ABI offset drift: GfxRefreshCapabilities.max_increase_ns");
+    if (@offsetOf(GfxRefreshCapabilities, "max_decrease_ns") != 56) @compileError("generated ABI offset drift: GfxRefreshCapabilities.max_decrease_ns");
+    if (@offsetOf(GfxRefreshCapabilities, "max_vtotal") != 64) @compileError("generated ABI offset drift: GfxRefreshCapabilities.max_vtotal");
+    if (@offsetOf(GfxRefreshCapabilities, "reserved1") != 68) @compileError("generated ABI offset drift: GfxRefreshCapabilities.reserved1");
+    if (@sizeOf(GfxRefreshStatus) != 64) @compileError("generated ABI size drift: GfxRefreshStatus");
+    if (@alignOf(GfxRefreshStatus) != 8) @compileError("generated ABI alignment drift: GfxRefreshStatus");
+    if (@offsetOf(GfxRefreshStatus, "version") != 0) @compileError("generated ABI offset drift: GfxRefreshStatus.version");
+    if (@offsetOf(GfxRefreshStatus, "size") != 4) @compileError("generated ABI offset drift: GfxRefreshStatus.size");
+    if (@offsetOf(GfxRefreshStatus, "sequence") != 8) @compileError("generated ABI offset drift: GfxRefreshStatus.sequence");
+    if (@offsetOf(GfxRefreshStatus, "request_sequence") != 16) @compileError("generated ABI offset drift: GfxRefreshStatus.request_sequence");
+    if (@offsetOf(GfxRefreshStatus, "phase") != 24) @compileError("generated ABI offset drift: GfxRefreshStatus.phase");
+    if (@offsetOf(GfxRefreshStatus, "reason") != 28) @compileError("generated ABI offset drift: GfxRefreshStatus.reason");
+    if (@offsetOf(GfxRefreshStatus, "policy") != 32) @compileError("generated ABI offset drift: GfxRefreshStatus.policy");
+    if (@offsetOf(GfxRefreshStatus, "scene") != 36) @compileError("generated ABI offset drift: GfxRefreshStatus.scene");
+    if (@offsetOf(GfxRefreshStatus, "core_point") != 40) @compileError("generated ABI offset drift: GfxRefreshStatus.core_point");
+    if (@offsetOf(GfxRefreshStatus, "receipt") != 48) @compileError("generated ABI offset drift: GfxRefreshStatus.receipt");
+    if (@offsetOf(GfxRefreshStatus, "since_ns") != 56) @compileError("generated ABI offset drift: GfxRefreshStatus.since_ns");
+    if (@sizeOf(GfxRefreshMeasure) != 80) @compileError("generated ABI size drift: GfxRefreshMeasure");
+    if (@alignOf(GfxRefreshMeasure) != 8) @compileError("generated ABI alignment drift: GfxRefreshMeasure");
+    if (@offsetOf(GfxRefreshMeasure, "version") != 0) @compileError("generated ABI offset drift: GfxRefreshMeasure.version");
+    if (@offsetOf(GfxRefreshMeasure, "size") != 4) @compileError("generated ABI offset drift: GfxRefreshMeasure.size");
+    if (@offsetOf(GfxRefreshMeasure, "sequence") != 8) @compileError("generated ABI offset drift: GfxRefreshMeasure.sequence");
+    if (@offsetOf(GfxRefreshMeasure, "samples") != 16) @compileError("generated ABI offset drift: GfxRefreshMeasure.samples");
+    if (@offsetOf(GfxRefreshMeasure, "reserved0") != 20) @compileError("generated ABI offset drift: GfxRefreshMeasure.reserved0");
+    if (@offsetOf(GfxRefreshMeasure, "observed_ns") != 24) @compileError("generated ABI offset drift: GfxRefreshMeasure.observed_ns");
+    if (@offsetOf(GfxRefreshMeasure, "last_period_ns") != 32) @compileError("generated ABI offset drift: GfxRefreshMeasure.last_period_ns");
+    if (@offsetOf(GfxRefreshMeasure, "min_period_ns") != 40) @compileError("generated ABI offset drift: GfxRefreshMeasure.min_period_ns");
+    if (@offsetOf(GfxRefreshMeasure, "max_period_ns") != 48) @compileError("generated ABI offset drift: GfxRefreshMeasure.max_period_ns");
+    if (@offsetOf(GfxRefreshMeasure, "mean_period_ns") != 56) @compileError("generated ABI offset drift: GfxRefreshMeasure.mean_period_ns");
+    if (@offsetOf(GfxRefreshMeasure, "millihz") != 64) @compileError("generated ABI offset drift: GfxRefreshMeasure.millihz");
+    if (@offsetOf(GfxRefreshMeasure, "gaps") != 68) @compileError("generated ABI offset drift: GfxRefreshMeasure.gaps");
+    if (@offsetOf(GfxRefreshMeasure, "reserved1") != 72) @compileError("generated ABI offset drift: GfxRefreshMeasure.reserved1");
+    if (@sizeOf(GfxOutputRefresh) != 272) @compileError("generated ABI size drift: GfxOutputRefresh");
+    if (@alignOf(GfxOutputRefresh) != 8) @compileError("generated ABI alignment drift: GfxOutputRefresh");
+    if (@offsetOf(GfxOutputRefresh, "version") != 0) @compileError("generated ABI offset drift: GfxOutputRefresh.version");
+    if (@offsetOf(GfxOutputRefresh, "size") != 4) @compileError("generated ABI offset drift: GfxOutputRefresh.size");
+    if (@offsetOf(GfxOutputRefresh, "target") != 8) @compileError("generated ABI offset drift: GfxOutputRefresh.target");
+    if (@offsetOf(GfxOutputRefresh, "capabilities") != 56) @compileError("generated ABI offset drift: GfxOutputRefresh.capabilities");
+    if (@offsetOf(GfxOutputRefresh, "status") != 128) @compileError("generated ABI offset drift: GfxOutputRefresh.status");
+    if (@offsetOf(GfxOutputRefresh, "measured") != 192) @compileError("generated ABI offset drift: GfxOutputRefresh.measured");
+    if (@sizeOf(GfxRefreshRequest) != 88) @compileError("generated ABI size drift: GfxRefreshRequest");
+    if (@alignOf(GfxRefreshRequest) != 8) @compileError("generated ABI alignment drift: GfxRefreshRequest");
+    if (@offsetOf(GfxRefreshRequest, "version") != 0) @compileError("generated ABI offset drift: GfxRefreshRequest.version");
+    if (@offsetOf(GfxRefreshRequest, "size") != 4) @compileError("generated ABI offset drift: GfxRefreshRequest.size");
+    if (@offsetOf(GfxRefreshRequest, "target") != 8) @compileError("generated ABI offset drift: GfxRefreshRequest.target");
+    if (@offsetOf(GfxRefreshRequest, "operation") != 56) @compileError("generated ABI offset drift: GfxRefreshRequest.operation");
+    if (@offsetOf(GfxRefreshRequest, "policy") != 60) @compileError("generated ABI offset drift: GfxRefreshRequest.policy");
+    if (@offsetOf(GfxRefreshRequest, "scene") != 64) @compileError("generated ABI offset drift: GfxRefreshRequest.scene");
+    if (@offsetOf(GfxRefreshRequest, "reserved0") != 68) @compileError("generated ABI offset drift: GfxRefreshRequest.reserved0");
+    if (@offsetOf(GfxRefreshRequest, "sequence") != 72) @compileError("generated ABI offset drift: GfxRefreshRequest.sequence");
+    if (@offsetOf(GfxRefreshRequest, "deadline_ns") != 80) @compileError("generated ABI offset drift: GfxRefreshRequest.deadline_ns");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -13579,7 +13755,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
     if (@offsetOf(R4XStartR4Desk, "mouse_motion") != 488) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_motion");
-    if (@sizeOf(R4XStartR4Draw) != 784) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 800) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -13676,6 +13852,8 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_render_color_list") != 760) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_render_color_list");
     if (@offsetOf(R4XStartR4Draw, "gfx_atomic_test_color") != 768) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_atomic_test_color");
     if (@offsetOf(R4XStartR4Draw, "gfx_atomic_submit_color") != 776) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_atomic_submit_color");
+    if (@offsetOf(R4XStartR4Draw, "gfx_output_refresh") != 784) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_output_refresh");
+    if (@offsetOf(R4XStartR4Draw, "gfx_refresh_request") != 792) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_refresh_request");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -14308,13 +14486,15 @@ pub const R4DrawProvider = struct {
     gfx_queue_submit_render_color_list: ?R4DrawFns.gfx_queue_submit_render_color_list = null,
     gfx_atomic_test_color: ?R4DrawFns.gfx_atomic_test_color = null,
     gfx_atomic_submit_color: ?R4DrawFns.gfx_atomic_submit_color = null,
+    gfx_output_refresh: ?R4DrawFns.gfx_output_refresh = null,
+    gfx_refresh_request: ?R4DrawFns.gfx_refresh_request = null,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 27,
-        .size = 784,
+        .abi_version = 28,
+        .size = 800,
         .flags = 0,
         .screen_width = if (provider.screen_width) |callback| @intFromPtr(callback) else 0,
         .screen_height = if (provider.screen_height) |callback| @intFromPtr(callback) else 0,
@@ -14412,6 +14592,8 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gfx_queue_submit_render_color_list = if (provider.gfx_queue_submit_render_color_list) |callback| @intFromPtr(callback) else 0,
         .gfx_atomic_test_color = if (provider.gfx_atomic_test_color) |callback| @intFromPtr(callback) else 0,
         .gfx_atomic_submit_color = if (provider.gfx_atomic_submit_color) |callback| @intFromPtr(callback) else 0,
+        .gfx_output_refresh = if (provider.gfx_output_refresh) |callback| @intFromPtr(callback) else 0,
+        .gfx_refresh_request = if (provider.gfx_refresh_request) |callback| @intFromPtr(callback) else 0,
     };
 }
 

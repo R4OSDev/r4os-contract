@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 256 von 256 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 261 von 261 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1768; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1803; Limits: 109
 
 ## App-Profile
 
@@ -219,7 +219,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxReceiverSource` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
 | `GfxReceiverInfo` | fixed_layout | extern_struct | 8224/8 | 8224/8 | 8224/8 | 8224/8 |
 | `GfxReceiverUpdate` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `GfxDriverOutputApi` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -277,6 +277,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DisplayColorSelection` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `DisplayColorRequest` | fixed_layout | extern_struct | 712/8 | 712/8 | 712/8 | 712/8 |
 | `DisplayColorExchange` | fixed_layout | extern_struct | 1360/8 | 1360/8 | 1360/8 | 1360/8 |
+| `GfxRefreshCapabilities` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
+| `GfxRefreshStatus` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `GfxRefreshMeasure` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `GfxOutputRefresh` | fixed_layout | extern_struct | 272/8 | 272/8 | 272/8 | 272/8 |
+| `GfxRefreshRequest` | fixed_layout | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 
 ## Typdetails
 
@@ -5945,7 +5950,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 7 / 128 / 8
+- Version/Größe/Alignment: 8 / 144 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5966,6 +5971,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `mode_status` | 104 | 8 | 8 | `u64` | - |
 | `color_publish` | 112 | 8 | 8 | `u64` | - |
 | `mode_read_color` | 120 | 8 | 8 | `u64` | - |
+| `refresh_publish` | 128 | 8 | 8 | `u64` | - |
+| `refresh_read` | 136 | 8 | 8 | `u64` | - |
 
 ### `GfxNativeBootInfo`
 
@@ -7083,6 +7090,109 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 |---|---:|---:|---:|---|---|
 | `base` | 0 | 1248 | 8 | `DisplayControlExchange` | - |
 | `color` | 1248 | 112 | 8 | `DisplayColorSelection` | - |
+
+### `GfxRefreshCapabilities`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 72 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `origin` | 12 | 4 | 4 | `u32` | - |
+| `min_millihz` | 16 | 4 | 4 | `u32` | - |
+| `max_millihz` | 20 | 4 | 4 | `u32` | - |
+| `nominal_millihz` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+| `min_period_ns` | 32 | 8 | 8 | `u64` | - |
+| `max_period_ns` | 40 | 8 | 8 | `u64` | - |
+| `max_increase_ns` | 48 | 8 | 8 | `u64` | - |
+| `max_decrease_ns` | 56 | 8 | 8 | `u64` | - |
+| `max_vtotal` | 64 | 4 | 4 | `u32` | - |
+| `reserved1` | 68 | 4 | 4 | `u32` | - |
+
+### `GfxRefreshStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `sequence` | 8 | 8 | 8 | `u64` | - |
+| `request_sequence` | 16 | 8 | 8 | `u64` | - |
+| `phase` | 24 | 4 | 4 | `u32` | - |
+| `reason` | 28 | 4 | 4 | `u32` | - |
+| `policy` | 32 | 4 | 4 | `u32` | - |
+| `scene` | 36 | 4 | 4 | `u32` | - |
+| `core_point` | 40 | 8 | 8 | `u64` | - |
+| `receipt` | 48 | 8 | 8 | `u64` | - |
+| `since_ns` | 56 | 8 | 8 | `u64` | - |
+
+### `GfxRefreshMeasure`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `sequence` | 8 | 8 | 8 | `u64` | - |
+| `samples` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `observed_ns` | 24 | 8 | 8 | `u64` | - |
+| `last_period_ns` | 32 | 8 | 8 | `u64` | - |
+| `min_period_ns` | 40 | 8 | 8 | `u64` | - |
+| `max_period_ns` | 48 | 8 | 8 | `u64` | - |
+| `mean_period_ns` | 56 | 8 | 8 | `u64` | - |
+| `millihz` | 64 | 4 | 4 | `u32` | - |
+| `gaps` | 68 | 4 | 4 | `u32` | - |
+| `reserved1` | 72 | 8 | 8 | `u64` | - |
+
+### `GfxOutputRefresh`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 272 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `target` | 8 | 48 | 8 | `GfxOutputTarget` | - |
+| `capabilities` | 56 | 72 | 8 | `GfxRefreshCapabilities` | - |
+| `status` | 128 | 64 | 8 | `GfxRefreshStatus` | - |
+| `measured` | 192 | 80 | 8 | `GfxRefreshMeasure` | - |
+
+### `GfxRefreshRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `target` | 8 | 48 | 8 | `GfxOutputTarget` | - |
+| `operation` | 56 | 4 | 4 | `u32` | - |
+| `policy` | 60 | 4 | 4 | `u32` | - |
+| `scene` | 64 | 4 | 4 | `u32` | - |
+| `reserved0` | 68 | 4 | 4 | `u32` | - |
+| `sequence` | 72 | 8 | 8 | `u64` | - |
+| `deadline_ns` | 80 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 
@@ -9591,6 +9701,41 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_render_transfer_color` | `3` | `u32` | identity | number | `gfx_queue` | fixed_contract |
 | `display_control_op_color_request` | `1811` | `u16` | identity | number | `display_control` | fixed_contract |
 | `display_control_op_color_exchange` | `1812` | `u16` | identity | number | `display_control` | fixed_contract |
+| `gfx_refresh_cap_known` | `1` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_cap_capable` | `2` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_cap_independent_heads` | `4` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_cap_hdr` | `8` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_cap_lfc` | `16` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_policy_off` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_policy_fullscreen` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_policy_windows` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_operation_configure` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_operation_release` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_operation_flicker` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_operation_clear_fault` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_scene_fullscreen` | `1` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_scene_animated` | `2` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_scene_capture` | `4` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_refresh_phase_fixed` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_phase_enabling` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_phase_active` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_phase_disabling` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_phase_faulted` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_phase_lost` | `5` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_none` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_policy_off` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_idle` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_windowed` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_unavailable` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_transition` | `5` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_hdr` | `6` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_topology` | `7` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_capture` | `8` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_audio_clock` | `9` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_link_lost` | `10` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_timing_fault` | `11` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_user_flicker` | `12` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_refresh_reason_stale_clock` | `13` | `u32` | value | number | `gfx_output` | fixed_contract |
 
 ## Limits
 

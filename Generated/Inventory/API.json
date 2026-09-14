@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 393,
-    "group_slot_count": 393,
+    "function_count": 395,
+    "group_slot_count": 395,
     "sdk_only_count": 0,
-    "public_count": 299,
+    "public_count": 301,
     "advanced_count": 94
   },
   "functions": [
@@ -3557,6 +3557,30 @@
       "slot": 95,
       "exposure": "public",
       "description": "Submit a color mode request through the existing confirmation/rollback owner. Retains canonical SDR shadow plus separate encoded image and immutable signal; current active output color changes only after actual driver acknowledgement.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_refresh",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 96,
+      "exposure": "public",
+      "description": "Read independent VRR capability, acknowledged state and actual hardware interval history for this exact output/mode. Missing implementation returns unsupported; output is untouched on error.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_refresh_request",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 97,
+      "exposure": "public",
+      "description": "Set or renew bounded presenter VRR intent. Caller owns the intent until release, close or lease expiry. Returns assigned sequence/deadline without asserting that hardware has switched. Exact target required; operation is atomic on success.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

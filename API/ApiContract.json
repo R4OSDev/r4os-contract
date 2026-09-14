@@ -15340,10 +15340,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 27,
+      "abi_version": 28,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 784,
+      "size": 800,
       "slots": [
         {
           "number": 0,
@@ -22440,6 +22440,158 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 96,
+          "offset": 784,
+          "name": "gfx_output_refresh",
+          "state": "function",
+          "required": false,
+          "description": "Read independent VRR capability, acknowledged state and actual hardware interval history for this exact output/mode. Missing implementation returns unsupported; output is untouched on error.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "target",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputTarget"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputRefresh"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 97,
+          "offset": 792,
+          "name": "gfx_refresh_request",
+          "state": "function",
+          "required": false,
+          "description": "Set or renew bounded presenter VRR intent. Caller owns the intent until release, close or lease expiry. Returns assigned sequence/deadline without asserting that hardware has switched. Exact target required; operation is atomic on success.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxRefreshRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxRefreshRequest"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
@@ -84084,8 +84236,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 7,
-      "size": 128,
+      "version": 8,
+      "size": 144,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -84116,7 +84268,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "128"
+          "default_value": "144"
         },
         {
           "name": "publish",
@@ -84322,6 +84474,34 @@
             "name": "u64"
           },
           "description": "Optional int32_t callback(uint64_t ticket, uint64_t sequence, GfxDriverModeColor*). Exact128-byte tail required. Only the owning driver can copy metadata for its currently taken job. Returns1 for color,0 for legacy, negative on error; absent/error leaves output untouched.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "refresh_publish",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional int32_t callback(const GfxOutputRefresh*). Exact136-byte tail; copies current owned output capability, completed state and hardware measurements. No per-frame topology revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "refresh_read",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional int32_t callback(const GfxOutputTarget*, GfxRefreshRequest*). Exact144-byte tail. Copies current intent for an owned output; expired/closed intents are off. Returns1success, negative on error. Driver retains hardware ownership and must disable safely on missing/stale intent.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -92813,6 +92993,813 @@
       ],
       "values": [],
       "description": "New Desktop service exchange with a copied optional color extension for base.request. Input color must be empty. The old exchange remains supported for old Desktops and only carries legacy layout requests. Service performs ownership, prefix, capacity and duplicate checks; all color policy stays in Desktop/R4GFX."
+    },
+    {
+      "name": "GfxRefreshCapabilities",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 72,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "72"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "origin",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "origin",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_millihz",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "min_millihz",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_millihz",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_millihz",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "nominal_millihz",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "nominal_millihz",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_period_ns",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "min_period_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_period_ns",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "max_period_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_increase_ns",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "max_increase_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_decrease_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "max_decrease_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_vtotal",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_vtotal",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved1",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Source and receiver admission for the exact current output/mode. Flags:1known,2capable,4independent heads,8HDR compatible,16LFC implemented. Origin:0none,1EDID continuous range plus DP ignore-MSA,2DisplayID dynamic,3DisplayID Adaptive-Sync,4HDMI Forum. Zero range means unavailable; a frequency range alone is not VRR support. Nominal timing is not measured refresh."
+    },
+    {
+      "name": "GfxRefreshStatus",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "sequence",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request_sequence",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "request_sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "phase",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reason",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "policy",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "policy",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scene",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "scene",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "core_point",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "core_point",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "receipt",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "receipt",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "since_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "since_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Confirmed driver state separate from capability and measurement. Phase0fixed,1enabling,2active,3disabling,4faulted,5lost. Active requires actual link/RM/Core completion. Fixed after disable requires completion too. Lost never claims fixed. Reason matches gfx_refresh_reason values. Core point/receipt prove control completion, not visible refresh."
+    },
+    {
+      "name": "GfxRefreshMeasure",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "sequence",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "samples",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "samples",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_ns",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "observed_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_period_ns",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "last_period_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_period_ns",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "min_period_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_period_ns",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "max_period_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mean_period_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "mean_period_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "millihz",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "millihz",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "gaps",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gaps",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "reserved1",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Rolling hardware-frame observation, at most32 consecutive intervals. Zero samples means no measured frequency. Sequence and observed_ns identify the last real hardware event; no requested/nominal timing synthesis. Missed counters, clock errors and generation changes invalidate intervals. IRQ observation latency applies; this is not a panel optical measurement. Publication does not advance topology revision or wake all desktop clients per frame."
+    },
+    {
+      "name": "GfxOutputRefresh",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 272,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "272"
+        },
+        {
+          "name": "target",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputTarget"
+          },
+          "description": "target",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "GfxOutputTarget",
+          "default_kind": "empty"
+        },
+        {
+          "name": "capabilities",
+          "offset": 56,
+          "type": {
+            "kind": "named",
+            "name": "GfxRefreshCapabilities"
+          },
+          "description": "capabilities",
+          "size": 72,
+          "alignment": 8,
+          "source_type": "GfxRefreshCapabilities",
+          "default_kind": "empty"
+        },
+        {
+          "name": "status",
+          "offset": 128,
+          "type": {
+            "kind": "named",
+            "name": "GfxRefreshStatus"
+          },
+          "description": "status",
+          "size": 64,
+          "alignment": 8,
+          "source_type": "GfxRefreshStatus",
+          "default_kind": "empty"
+        },
+        {
+          "name": "measured",
+          "offset": 192,
+          "type": {
+            "kind": "named",
+            "name": "GfxRefreshMeasure"
+          },
+          "description": "measured",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "GfxRefreshMeasure",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Copied VRR source capability, acknowledged state and measured cadence for one exact output target. Driver publication owns all three components. Public reads never infer active VRR from capability, user policy or a wide EDID range. Unsupported backend returns unsupported and keeps fixed presentation."
+    },
+    {
+      "name": "GfxRefreshRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 88,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "88"
+        },
+        {
+          "name": "target",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputTarget"
+          },
+          "description": "target",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "GfxOutputTarget",
+          "default_kind": "empty"
+        },
+        {
+          "name": "operation",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "operation",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "policy",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "policy",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scene",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "scene",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "deadline_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Bounded per-output presenter intent. Operations0configure/renew,1release,2report flicker,3explicit clear fault. Policy0off,1animated fullscreen,2animated windows/fullscreen. Scene bits1fullscreen,2animated,4capture. Driver revalidates actual route, image, transitions, HDR and audio; scene never proves hardware capability. Input sequence/deadline must be zero. Kernel returns a monotonically assigned sequence and a1.5s intent lease; unchanged renewals preserve sequence. Presenter renews within500ms. Close, expired lease and release request fixed refresh. One program owner per current output; no callbacks or GPU operations while copying intent. Driver reads return latest copied intent, including synthesized off after expiry; absent API implies fixed."
     }
   ],
   "operations": [],
@@ -112904,6 +113891,356 @@
       "scope": "display_control",
       "stability": "fixed_contract",
       "description": "Desktop exchanges DisplayColorExchange; supports legacy layout requests plus one color selection."
+    },
+    {
+      "name": "gfx_refresh_cap_known",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR capability bit: known."
+    },
+    {
+      "name": "gfx_refresh_cap_capable",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR capability bit: capable."
+    },
+    {
+      "name": "gfx_refresh_cap_independent_heads",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR capability bit: independent_heads."
+    },
+    {
+      "name": "gfx_refresh_cap_hdr",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR capability bit: hdr."
+    },
+    {
+      "name": "gfx_refresh_cap_lfc",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR capability bit: lfc."
+    },
+    {
+      "name": "gfx_refresh_policy_off",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR presenter policy: off."
+    },
+    {
+      "name": "gfx_refresh_policy_fullscreen",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR presenter policy: fullscreen."
+    },
+    {
+      "name": "gfx_refresh_policy_windows",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR presenter policy: windows."
+    },
+    {
+      "name": "gfx_refresh_operation_configure",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR request operation: configure."
+    },
+    {
+      "name": "gfx_refresh_operation_release",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR request operation: release."
+    },
+    {
+      "name": "gfx_refresh_operation_flicker",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR request operation: flicker."
+    },
+    {
+      "name": "gfx_refresh_operation_clear_fault",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR request operation: clear_fault."
+    },
+    {
+      "name": "gfx_refresh_scene_fullscreen",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR presenter scene bit: fullscreen."
+    },
+    {
+      "name": "gfx_refresh_scene_animated",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR presenter scene bit: animated."
+    },
+    {
+      "name": "gfx_refresh_scene_capture",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR presenter scene bit: capture."
+    },
+    {
+      "name": "gfx_refresh_phase_fixed",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Acknowledged VRR phase: fixed."
+    },
+    {
+      "name": "gfx_refresh_phase_enabling",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Acknowledged VRR phase: enabling."
+    },
+    {
+      "name": "gfx_refresh_phase_active",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Acknowledged VRR phase: active."
+    },
+    {
+      "name": "gfx_refresh_phase_disabling",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Acknowledged VRR phase: disabling."
+    },
+    {
+      "name": "gfx_refresh_phase_faulted",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Acknowledged VRR phase: faulted."
+    },
+    {
+      "name": "gfx_refresh_phase_lost",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Acknowledged VRR phase: lost."
+    },
+    {
+      "name": "gfx_refresh_reason_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: none."
+    },
+    {
+      "name": "gfx_refresh_reason_policy_off",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: policy_off."
+    },
+    {
+      "name": "gfx_refresh_reason_idle",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: idle."
+    },
+    {
+      "name": "gfx_refresh_reason_windowed",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: windowed."
+    },
+    {
+      "name": "gfx_refresh_reason_unavailable",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: unavailable."
+    },
+    {
+      "name": "gfx_refresh_reason_transition",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: transition."
+    },
+    {
+      "name": "gfx_refresh_reason_hdr",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: hdr."
+    },
+    {
+      "name": "gfx_refresh_reason_topology",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: topology."
+    },
+    {
+      "name": "gfx_refresh_reason_capture",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: capture."
+    },
+    {
+      "name": "gfx_refresh_reason_audio_clock",
+      "value": "9",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: audio_clock."
+    },
+    {
+      "name": "gfx_refresh_reason_link_lost",
+      "value": "10",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: link_lost."
+    },
+    {
+      "name": "gfx_refresh_reason_timing_fault",
+      "value": "11",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: timing_fault."
+    },
+    {
+      "name": "gfx_refresh_reason_user_flicker",
+      "value": "12",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: user_flicker."
+    },
+    {
+      "name": "gfx_refresh_reason_stale_clock",
+      "value": "13",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "VRR admission or fallback reason: stale_clock."
     }
   ],
   "limits": [
