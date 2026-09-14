@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v24, 752 Bytes, 92 Funktionsfelder und 92 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v27, 784 Bytes, 96 Funktionsfelder und 96 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -101,4 +101,8 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 89 | 728 | function | `display_output_presentation_info` | `*const fn (*const GfxOutputTarget, *DisplayPresentationInfo) callconv(.c) i32` |
 | 90 | 736 | function | `display_output_presentation_feedback` | `*const fn (*const GfxOutputTarget, *const GfxFence, *DisplayPresentationStats) callconv(.c) i32` |
 | 91 | 744 | function | `gfx_queue_submit_render_grid_list` | `*const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderGridList, *GfxFenceStatus) callconv(.c) i32` |
+| 92 | 752 | function | `gfx_output_color` | `*const fn (*const GfxOutputId, *GfxOutputColorState) callconv(.c) i32` |
+| 93 | 760 | function | `gfx_queue_submit_render_color_list` | `*const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorList, *GfxFenceStatus) callconv(.c) i32` |
+| 94 | 768 | function | `gfx_atomic_test_color` | `*const fn (*const GfxModeColorRequest, *GfxAtomicResult) callconv(.c) i32` |
+| 95 | 776 | function | `gfx_atomic_submit_color` | `*const fn (*const GfxModeColorRequest, u32, *GfxModeStatus) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

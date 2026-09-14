@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 389,
+    "group_function_signatures": 393,
     "sdk_operation_contracts": 0,
-    "parity_entries": 389,
+    "parity_entries": 393,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2636,6 +2636,42 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gfx_queue_submit_render_grid_list",
       "c_contract": "R4DrawGfxQueueSubmitRenderGridListFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_output_color",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_output_color",
+      "c_contract": "R4DrawGfxOutputColorFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_queue_submit_render_color_list",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_queue_submit_render_color_list",
+      "c_contract": "R4DrawGfxQueueSubmitRenderColorListFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_atomic_test_color",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_atomic_test_color",
+      "c_contract": "R4DrawGfxAtomicTestColorFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_atomic_submit_color",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_atomic_submit_color",
+      "c_contract": "R4DrawGfxAtomicSubmitColorFn",
       "coverage": "generated_signature"
     },
     {

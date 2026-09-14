@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 246 von 246 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 256 von 256 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1754; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1768; Limits: 109
 
 ## App-Profile
 
@@ -205,7 +205,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBackendRegistration` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GfxDriverJob` | extensible | extern_struct | 272/8 | 272/8 | 272/8 | 272/8 |
-| `GfxDriverQueueApi` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `GfxDriverQueueApi` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxDisplayLimits` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
@@ -219,7 +219,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxReceiverSource` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
 | `GfxReceiverInfo` | fixed_layout | extern_struct | 8224/8 | 8224/8 | 8224/8 | 8224/8 |
 | `GfxReceiverUpdate` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `GfxDriverOutputApi` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -267,6 +267,16 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DisplayControlExchange` | fixed_layout | extern_struct | 1248/8 | 1248/8 | 1248/8 | 1248/8 |
 | `GfxSampleGrid` | fixed_layout | extern_struct | 64/4 | 64/4 | 64/4 | 64/4 |
 | `GfxRenderGridList` | fixed_layout | extern_struct | 2320/8 | 2320/8 | 2320/8 | 2320/8 |
+| `GfxOutputColorState` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `GfxRenderColorProgram` | fixed_layout | extern_struct | 272/8 | 272/8 | 272/8 | 272/8 |
+| `GfxRenderColorList` | fixed_layout | extern_struct | 1568/8 | 1568/8 | 1568/8 | 1568/8 |
+| `GfxHdrMetadata` | fixed_layout | extern_struct | 24/2 | 24/2 | 24/2 | 24/2 |
+| `GfxColorSignal` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `GfxModeColorRequest` | fixed_layout | extern_struct | 1344/8 | 1344/8 | 1344/8 | 1344/8 |
+| `GfxDriverModeColor` | fixed_layout | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
+| `DisplayColorSelection` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `DisplayColorRequest` | fixed_layout | extern_struct | 712/8 | 712/8 | 712/8 | 712/8 |
+| `DisplayColorExchange` | fixed_layout | extern_struct | 1360/8 | 1360/8 | 1360/8 | 1360/8 |
 
 ## Typdetails
 
@@ -5657,7 +5667,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 6 / 120 / 8
+- Version/Größe/Alignment: 7 / 128 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5677,6 +5687,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `begin_scanout` | 96 | 8 | 8 | `u64` | - |
 | `scanout_retire_requested` | 104 | 8 | 8 | `u64` | - |
 | `read_render_grid_list` | 112 | 8 | 8 | `u64` | - |
+| `read_render_color_list` | 120 | 8 | 8 | `u64` | - |
 
 ### `GfxOutputId`
 
@@ -5934,7 +5945,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 5 / 112 / 8
+- Version/Größe/Alignment: 7 / 128 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5953,6 +5964,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `output_pause` | 88 | 8 | 8 | `u64` | - |
 | `mode_restore` | 96 | 8 | 8 | `u64` | - |
 | `mode_status` | 104 | 8 | 8 | `u64` | - |
+| `color_publish` | 112 | 8 | 8 | `u64` | - |
+| `mode_read_color` | 120 | 8 | 8 | `u64` | - |
 
 ### `GfxNativeBootInfo`
 
@@ -6897,6 +6910,179 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved0` | 12 | 4 | 4 | `u32` | - |
 | `commands` | 16 | 1280 | 8 | `[16]GfxRenderCommand` | - |
 | `grids` | 1296 | 1024 | 4 | `[16]GfxSampleGrid` | - |
+
+### `GfxOutputColorState`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 24 | 8 | `GfxOutputId` | - |
+| `revision` | 32 | 8 | 8 | `u64` | - |
+| `flags` | 40 | 4 | 4 | `u32` | - |
+| `format` | 44 | 4 | 4 | `u32` | - |
+| `bpc` | 48 | 4 | 4 | `u32` | - |
+| `primaries` | 52 | 4 | 4 | `u32` | - |
+| `transfer` | 56 | 4 | 4 | `u32` | - |
+| `range` | 60 | 4 | 4 | `u32` | - |
+| `reference_white` | 64 | 4 | 4 | `u32` | - |
+| `peak` | 68 | 4 | 4 | `u32` | - |
+| `black` | 72 | 4 | 4 | `u32` | - |
+| `formats` | 76 | 4 | 4 | `u32` | - |
+| `depths` | 80 | 4 | 4 | `u32` | - |
+| `color_spaces` | 84 | 4 | 4 | `u32` | - |
+| `transfers` | 88 | 4 | 4 | `u32` | - |
+| `ranges` | 92 | 4 | 4 | `u32` | - |
+| `gamma_entries` | 96 | 4 | 4 | `u32` | - |
+| `degamma_entries` | 100 | 4 | 4 | `u32` | - |
+| `ctm_fraction_bits` | 104 | 4 | 4 | `u32` | - |
+| `reserved0` | 108 | 4 | 4 | `u32` | - |
+| `max_tmds_clock_hz` | 112 | 8 | 8 | `u64` | - |
+| `dp_payload_bits_per_second` | 120 | 8 | 8 | `u64` | - |
+
+### `GfxRenderColorProgram`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 272 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `reserved0` | 8 | 8 | 8 | `u64` | - |
+| `words` | 16 | 256 | 4 | `[64]u32` | - |
+
+### `GfxRenderColorList`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1568 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `count` | 8 | 4 | 4 | `u32` | - |
+| `reserved0` | 12 | 4 | 4 | `u32` | - |
+| `commands` | 16 | 1280 | 8 | `[16]GfxRenderCommand` | - |
+| `program` | 1296 | 272 | 8 | `GfxRenderColorProgram` | - |
+
+### `GfxHdrMetadata`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 2
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `primaries` | 0 | 12 | 2 | `[6]u16` | - |
+| `white` | 12 | 4 | 2 | `[2]u16` | - |
+| `max_mastering` | 16 | 2 | 2 | `u16` | - |
+| `min_mastering` | 18 | 2 | 2 | `u16` | - |
+| `max_cll` | 20 | 2 | 2 | `u16` | - |
+| `max_fall` | 22 | 2 | 2 | `u16` | - |
+
+### `GfxColorSignal`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `format` | 8 | 4 | 4 | `u32` | - |
+| `bpc` | 12 | 4 | 4 | `u32` | - |
+| `primaries` | 16 | 4 | 4 | `u32` | - |
+| `transfer` | 20 | 4 | 4 | `u32` | - |
+| `range` | 24 | 4 | 4 | `u32` | - |
+| `pipeline` | 28 | 4 | 4 | `u32` | - |
+| `reference_white` | 32 | 4 | 4 | `u32` | - |
+| `peak` | 36 | 4 | 4 | `u32` | - |
+| `black` | 40 | 4 | 4 | `u32` | - |
+| `metadata_valid` | 44 | 4 | 4 | `u32` | - |
+| `metadata` | 48 | 24 | 2 | `GfxHdrMetadata` | - |
+| `reserved0` | 72 | 8 | 8 | `u64` | - |
+
+### `GfxModeColorRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1344 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `state` | 8 | 1240 | 8 | `GfxAtomicState` | - |
+| `signal` | 1248 | 80 | 8 | `GfxColorSignal` | - |
+| `image` | 1328 | 16 | 8 | `GfxBufferHandle` | - |
+
+### `GfxDriverModeColor`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 152 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `ticket` | 8 | 8 | 8 | `u64` | - |
+| `sequence` | 16 | 8 | 8 | `u64` | - |
+| `signal` | 24 | 80 | 8 | `GfxColorSignal` | - |
+| `reference` | 104 | 48 | 8 | `GfxBufferReference` | - |
+
+### `DisplayColorSelection`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `output` | 8 | 24 | 8 | `GfxOutputId` | - |
+| `signal` | 32 | 80 | 8 | `GfxColorSignal` | - |
+
+### `DisplayColorRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 712 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `base` | 0 | 600 | 8 | `DisplayControlRequest` | - |
+| `color` | 600 | 112 | 8 | `DisplayColorSelection` | - |
+
+### `DisplayColorExchange`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1360 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `base` | 0 | 1248 | 8 | `DisplayControlExchange` | - |
+| `color` | 1248 | 112 | 8 | `DisplayColorSelection` | - |
 
 ## Fehlerdomänen
 
@@ -9391,6 +9577,20 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `display_control_status_magic` | `1396978770` | `u32` | identity | number | `display_control` | fixed_contract |
 | `display_control_exchange_magic` | `1480864850` | `u32` | identity | number | `display_control` | fixed_contract |
 | `gfx_queue_operation_render_grid_list` | `8` | `u32` | identity | number | `gfx_queue` | fixed_contract |
+| `gfx_buffer_format_xrgb2101010` | `808669784` | `u32` | value | number | `gfx_buffer` | fixed_contract |
+| `gfx_buffer_format_argb2101010` | `808669761` | `u32` | value | number | `gfx_buffer` | fixed_contract |
+| `gfx_buffer_format_abgr16161616f` | `1211384385` | `u32` | value | number | `gfx_buffer` | fixed_contract |
+| `gfx_output_color_known` | `1` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_output_color_active` | `2` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_output_color_identity` | `4` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_output_color_hdmi_metadata` | `8` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_output_color_dp_metadata` | `16` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_output_color_dp_vsc` | `32` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_output_color_scdc` | `64` | `u32` | flag | bitmask | `gfx_output` | fixed_contract |
+| `gfx_queue_operation_render_color_list` | `9` | `u32` | identity | number | `gfx_queue` | fixed_contract |
+| `gfx_render_transfer_color` | `3` | `u32` | identity | number | `gfx_queue` | fixed_contract |
+| `display_control_op_color_request` | `1811` | `u16` | identity | number | `display_control` | fixed_contract |
+| `display_control_op_color_exchange` | `1812` | `u16` | identity | number | `display_control` | fixed_contract |
 
 ## Limits
 

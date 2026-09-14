@@ -1767,6 +1767,20 @@ extern "C" {
 #define R4OS_DISPLAY_CONTROL_STATUS_MAGIC 1396978770u
 #define R4OS_DISPLAY_CONTROL_EXCHANGE_MAGIC 1480864850u
 #define R4OS_GFX_QUEUE_OPERATION_RENDER_GRID_LIST 8u
+#define R4OS_GFX_BUFFER_FORMAT_XRGB2101010 808669784u
+#define R4OS_GFX_BUFFER_FORMAT_ARGB2101010 808669761u
+#define R4OS_GFX_BUFFER_FORMAT_ABGR16161616F 1211384385u
+#define R4OS_GFX_OUTPUT_COLOR_KNOWN 1u
+#define R4OS_GFX_OUTPUT_COLOR_ACTIVE 2u
+#define R4OS_GFX_OUTPUT_COLOR_IDENTITY 4u
+#define R4OS_GFX_OUTPUT_COLOR_HDMI_METADATA 8u
+#define R4OS_GFX_OUTPUT_COLOR_DP_METADATA 16u
+#define R4OS_GFX_OUTPUT_COLOR_DP_VSC 32u
+#define R4OS_GFX_OUTPUT_COLOR_SCDC 64u
+#define R4OS_GFX_QUEUE_OPERATION_RENDER_COLOR_LIST 9u
+#define R4OS_GFX_RENDER_TRANSFER_COLOR 3u
+#define R4OS_DISPLAY_CONTROL_OP_COLOR_REQUEST 1811u
+#define R4OS_DISPLAY_CONTROL_OP_COLOR_EXCHANGE 1812u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2454,6 +2468,16 @@ typedef struct R4DisplayControlStatus R4DisplayControlStatus;
 typedef struct R4DisplayControlExchange R4DisplayControlExchange;
 typedef struct R4GfxSampleGrid R4GfxSampleGrid;
 typedef struct R4GfxRenderGridList R4GfxRenderGridList;
+typedef struct R4GfxOutputColorState R4GfxOutputColorState;
+typedef struct R4GfxRenderColorProgram R4GfxRenderColorProgram;
+typedef struct R4GfxRenderColorList R4GfxRenderColorList;
+typedef struct R4GfxHdrMetadata R4GfxHdrMetadata;
+typedef struct R4GfxColorSignal R4GfxColorSignal;
+typedef struct R4GfxModeColorRequest R4GfxModeColorRequest;
+typedef struct R4GfxDriverModeColor R4GfxDriverModeColor;
+typedef struct R4DisplayColorSelection R4DisplayColorSelection;
+typedef struct R4DisplayColorRequest R4DisplayColorRequest;
+typedef struct R4DisplayColorExchange R4DisplayColorExchange;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6606,6 +6630,7 @@ typedef struct R4GfxDriverQueueApi {
     uint64_t begin_scanout;
     uint64_t scanout_retire_requested;
     uint64_t read_render_grid_list;
+    uint64_t read_render_color_list;
 } R4GfxDriverQueueApi;
 
 typedef struct R4GfxOutputId {
@@ -6784,6 +6809,8 @@ typedef struct R4GfxDriverOutputApi {
     uint64_t output_pause;
     uint64_t mode_restore;
     uint64_t mode_status;
+    uint64_t color_publish;
+    uint64_t mode_read_color;
 } R4GfxDriverOutputApi;
 
 typedef struct R4GfxNativeBootInfo {
@@ -7369,6 +7396,109 @@ typedef struct R4GfxRenderGridList {
     R4GfxSampleGrid grids[16];
 } R4GfxRenderGridList;
 
+typedef struct R4GfxOutputColorState {
+    uint32_t version;
+    uint32_t size;
+    R4GfxOutputId identity;
+    uint64_t revision;
+    uint32_t flags;
+    uint32_t format;
+    uint32_t bpc;
+    uint32_t primaries;
+    uint32_t transfer;
+    uint32_t range;
+    uint32_t reference_white;
+    uint32_t peak;
+    uint32_t black;
+    uint32_t formats;
+    uint32_t depths;
+    uint32_t color_spaces;
+    uint32_t transfers;
+    uint32_t ranges;
+    uint32_t gamma_entries;
+    uint32_t degamma_entries;
+    uint32_t ctm_fraction_bits;
+    uint32_t reserved0;
+    uint64_t max_tmds_clock_hz;
+    uint64_t dp_payload_bits_per_second;
+} R4GfxOutputColorState;
+
+typedef struct R4GfxRenderColorProgram {
+    uint32_t version;
+    uint32_t size;
+    uint64_t reserved0;
+    uint32_t words[64];
+} R4GfxRenderColorProgram;
+
+typedef struct R4GfxRenderColorList {
+    uint32_t version;
+    uint32_t size;
+    uint32_t count;
+    uint32_t reserved0;
+    R4GfxRenderCommand commands[16];
+    R4GfxRenderColorProgram program;
+} R4GfxRenderColorList;
+
+typedef struct R4GfxHdrMetadata {
+    uint16_t primaries[6];
+    uint16_t white[2];
+    uint16_t max_mastering;
+    uint16_t min_mastering;
+    uint16_t max_cll;
+    uint16_t max_fall;
+} R4GfxHdrMetadata;
+
+typedef struct R4GfxColorSignal {
+    uint32_t version;
+    uint32_t size;
+    uint32_t format;
+    uint32_t bpc;
+    uint32_t primaries;
+    uint32_t transfer;
+    uint32_t range;
+    uint32_t pipeline;
+    uint32_t reference_white;
+    uint32_t peak;
+    uint32_t black;
+    uint32_t metadata_valid;
+    R4GfxHdrMetadata metadata;
+    uint64_t reserved0;
+} R4GfxColorSignal;
+
+typedef struct R4GfxModeColorRequest {
+    uint32_t version;
+    uint32_t size;
+    R4GfxAtomicState state;
+    R4GfxColorSignal signal;
+    R4GfxBufferHandle image;
+} R4GfxModeColorRequest;
+
+typedef struct R4GfxDriverModeColor {
+    uint32_t version;
+    uint32_t size;
+    uint64_t ticket;
+    uint64_t sequence;
+    R4GfxColorSignal signal;
+    R4GfxBufferReference reference;
+} R4GfxDriverModeColor;
+
+typedef struct R4DisplayColorSelection {
+    uint32_t version;
+    uint32_t size;
+    R4GfxOutputId output;
+    R4GfxColorSignal signal;
+} R4DisplayColorSelection;
+
+typedef struct R4DisplayColorRequest {
+    R4DisplayControlRequest base;
+    R4DisplayColorSelection color;
+} R4DisplayColorRequest;
+
+typedef struct R4DisplayColorExchange {
+    R4DisplayControlExchange base;
+    R4DisplayColorSelection color;
+} R4DisplayColorExchange;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -7927,6 +8057,10 @@ typedef int32_t (*R4DrawGfxQueueSubmitOutputFn)(const R4GfxQueueHandle * queue, 
 typedef int32_t (*R4DrawDisplayOutputPresentationInfoFn)(const R4GfxOutputTarget * target, R4DisplayPresentationInfo * output);
 typedef int32_t (*R4DrawDisplayOutputPresentationFeedbackFn)(const R4GfxOutputTarget * target, const R4GfxFence * source_fence, R4DisplayPresentationStats * output);
 typedef int32_t (*R4DrawGfxQueueSubmitRenderGridListFn)(const R4GfxQueueHandle * queue, const R4GfxSubmission * submission, const R4GfxRenderGridList * list, R4GfxFenceStatus * output);
+typedef int32_t (*R4DrawGfxOutputColorFn)(const R4GfxOutputId * identity, R4GfxOutputColorState * output);
+typedef int32_t (*R4DrawGfxQueueSubmitRenderColorListFn)(const R4GfxQueueHandle * queue, const R4GfxSubmission * submission, const R4GfxRenderColorList * list, R4GfxFenceStatus * output);
+typedef int32_t (*R4DrawGfxAtomicTestColorFn)(const R4GfxModeColorRequest * state, R4GfxAtomicResult * output);
+typedef int32_t (*R4DrawGfxAtomicSubmitColorFn)(const R4GfxModeColorRequest * state, uint32_t confirmation_ms, R4GfxModeStatus * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -8025,6 +8159,10 @@ typedef struct R4XStartR4Draw {
     uintptr_t display_output_presentation_info;
     uintptr_t display_output_presentation_feedback;
     uintptr_t gfx_queue_submit_render_grid_list;
+    uintptr_t gfx_output_color;
+    uintptr_t gfx_queue_submit_render_color_list;
+    uintptr_t gfx_atomic_test_color;
+    uintptr_t gfx_atomic_submit_color;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -12022,7 +12160,7 @@ _Static_assert(offsetof(R4GfxDriverJob, target_pitch) == 128u, "GfxDriverJob.tar
 _Static_assert(offsetof(R4GfxDriverJob, render) == 136u, "GfxDriverJob.render offset mismatch");
 _Static_assert(offsetof(R4GfxDriverJob, deadline_ns) == 216u, "GfxDriverJob.deadline_ns offset mismatch");
 _Static_assert(offsetof(R4GfxDriverJob, display_target) == 224u, "GfxDriverJob.display_target offset mismatch");
-_Static_assert(sizeof(R4GfxDriverQueueApi) == 120u, "GfxDriverQueueApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverQueueApi) == 128u, "GfxDriverQueueApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, version) == 0u, "GfxDriverQueueApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, size) == 4u, "GfxDriverQueueApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, register_backend) == 8u, "GfxDriverQueueApi.register_backend offset mismatch");
@@ -12039,6 +12177,7 @@ _Static_assert(offsetof(R4GfxDriverQueueApi, retain_scanout) == 88u, "GfxDriverQ
 _Static_assert(offsetof(R4GfxDriverQueueApi, begin_scanout) == 96u, "GfxDriverQueueApi.begin_scanout offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, scanout_retire_requested) == 104u, "GfxDriverQueueApi.scanout_retire_requested offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, read_render_grid_list) == 112u, "GfxDriverQueueApi.read_render_grid_list offset mismatch");
+_Static_assert(offsetof(R4GfxDriverQueueApi, read_render_color_list) == 120u, "GfxDriverQueueApi.read_render_color_list offset mismatch");
 _Static_assert(sizeof(R4GfxOutputId) == 24u, "GfxOutputId size mismatch");
 _Static_assert(offsetof(R4GfxOutputId, adapter_id) == 0u, "GfxOutputId.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOutputId, connector_id) == 4u, "GfxOutputId.connector_id offset mismatch");
@@ -12173,7 +12312,7 @@ _Static_assert(offsetof(R4GfxReceiverUpdate, sequence) == 24u, "GfxReceiverUpdat
 _Static_assert(offsetof(R4GfxReceiverUpdate, count) == 32u, "GfxReceiverUpdate.count offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, reserved0) == 36u, "GfxReceiverUpdate.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, receivers) == 40u, "GfxReceiverUpdate.receivers offset mismatch");
-_Static_assert(sizeof(R4GfxDriverOutputApi) == 112u, "GfxDriverOutputApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverOutputApi) == 128u, "GfxDriverOutputApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, version) == 0u, "GfxDriverOutputApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, size) == 4u, "GfxDriverOutputApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, publish) == 8u, "GfxDriverOutputApi.publish offset mismatch");
@@ -12189,6 +12328,8 @@ _Static_assert(offsetof(R4GfxDriverOutputApi, audio_query) == 80u, "GfxDriverOut
 _Static_assert(offsetof(R4GfxDriverOutputApi, output_pause) == 88u, "GfxDriverOutputApi.output_pause offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, mode_restore) == 96u, "GfxDriverOutputApi.mode_restore offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, mode_status) == 104u, "GfxDriverOutputApi.mode_status offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, color_publish) == 112u, "GfxDriverOutputApi.color_publish offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, mode_read_color) == 120u, "GfxDriverOutputApi.mode_read_color offset mismatch");
 _Static_assert(sizeof(R4GfxNativeBootInfo) == 56u, "GfxNativeBootInfo size mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, version) == 0u, "GfxNativeBootInfo.version offset mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, size) == 4u, "GfxNativeBootInfo.size offset mismatch");
@@ -12710,6 +12851,89 @@ _Static_assert(offsetof(R4GfxRenderGridList, count) == 8u, "GfxRenderGridList.co
 _Static_assert(offsetof(R4GfxRenderGridList, reserved0) == 12u, "GfxRenderGridList.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxRenderGridList, commands) == 16u, "GfxRenderGridList.commands offset mismatch");
 _Static_assert(offsetof(R4GfxRenderGridList, grids) == 1296u, "GfxRenderGridList.grids offset mismatch");
+_Static_assert(sizeof(R4GfxOutputColorState) == 128u, "GfxOutputColorState size mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, version) == 0u, "GfxOutputColorState.version offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, size) == 4u, "GfxOutputColorState.size offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, identity) == 8u, "GfxOutputColorState.identity offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, revision) == 32u, "GfxOutputColorState.revision offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, flags) == 40u, "GfxOutputColorState.flags offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, format) == 44u, "GfxOutputColorState.format offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, bpc) == 48u, "GfxOutputColorState.bpc offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, primaries) == 52u, "GfxOutputColorState.primaries offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, transfer) == 56u, "GfxOutputColorState.transfer offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, range) == 60u, "GfxOutputColorState.range offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, reference_white) == 64u, "GfxOutputColorState.reference_white offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, peak) == 68u, "GfxOutputColorState.peak offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, black) == 72u, "GfxOutputColorState.black offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, formats) == 76u, "GfxOutputColorState.formats offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, depths) == 80u, "GfxOutputColorState.depths offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, color_spaces) == 84u, "GfxOutputColorState.color_spaces offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, transfers) == 88u, "GfxOutputColorState.transfers offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, ranges) == 92u, "GfxOutputColorState.ranges offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, gamma_entries) == 96u, "GfxOutputColorState.gamma_entries offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, degamma_entries) == 100u, "GfxOutputColorState.degamma_entries offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, ctm_fraction_bits) == 104u, "GfxOutputColorState.ctm_fraction_bits offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, reserved0) == 108u, "GfxOutputColorState.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, max_tmds_clock_hz) == 112u, "GfxOutputColorState.max_tmds_clock_hz offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, dp_payload_bits_per_second) == 120u, "GfxOutputColorState.dp_payload_bits_per_second offset mismatch");
+_Static_assert(sizeof(R4GfxRenderColorProgram) == 272u, "GfxRenderColorProgram size mismatch");
+_Static_assert(offsetof(R4GfxRenderColorProgram, version) == 0u, "GfxRenderColorProgram.version offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorProgram, size) == 4u, "GfxRenderColorProgram.size offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorProgram, reserved0) == 8u, "GfxRenderColorProgram.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorProgram, words) == 16u, "GfxRenderColorProgram.words offset mismatch");
+_Static_assert(sizeof(R4GfxRenderColorList) == 1568u, "GfxRenderColorList size mismatch");
+_Static_assert(offsetof(R4GfxRenderColorList, version) == 0u, "GfxRenderColorList.version offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorList, size) == 4u, "GfxRenderColorList.size offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorList, count) == 8u, "GfxRenderColorList.count offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorList, reserved0) == 12u, "GfxRenderColorList.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorList, commands) == 16u, "GfxRenderColorList.commands offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorList, program) == 1296u, "GfxRenderColorList.program offset mismatch");
+_Static_assert(sizeof(R4GfxHdrMetadata) == 24u, "GfxHdrMetadata size mismatch");
+_Static_assert(offsetof(R4GfxHdrMetadata, primaries) == 0u, "GfxHdrMetadata.primaries offset mismatch");
+_Static_assert(offsetof(R4GfxHdrMetadata, white) == 12u, "GfxHdrMetadata.white offset mismatch");
+_Static_assert(offsetof(R4GfxHdrMetadata, max_mastering) == 16u, "GfxHdrMetadata.max_mastering offset mismatch");
+_Static_assert(offsetof(R4GfxHdrMetadata, min_mastering) == 18u, "GfxHdrMetadata.min_mastering offset mismatch");
+_Static_assert(offsetof(R4GfxHdrMetadata, max_cll) == 20u, "GfxHdrMetadata.max_cll offset mismatch");
+_Static_assert(offsetof(R4GfxHdrMetadata, max_fall) == 22u, "GfxHdrMetadata.max_fall offset mismatch");
+_Static_assert(sizeof(R4GfxColorSignal) == 80u, "GfxColorSignal size mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, version) == 0u, "GfxColorSignal.version offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, size) == 4u, "GfxColorSignal.size offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, format) == 8u, "GfxColorSignal.format offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, bpc) == 12u, "GfxColorSignal.bpc offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, primaries) == 16u, "GfxColorSignal.primaries offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, transfer) == 20u, "GfxColorSignal.transfer offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, range) == 24u, "GfxColorSignal.range offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, pipeline) == 28u, "GfxColorSignal.pipeline offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, reference_white) == 32u, "GfxColorSignal.reference_white offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, peak) == 36u, "GfxColorSignal.peak offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, black) == 40u, "GfxColorSignal.black offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, metadata_valid) == 44u, "GfxColorSignal.metadata_valid offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, metadata) == 48u, "GfxColorSignal.metadata offset mismatch");
+_Static_assert(offsetof(R4GfxColorSignal, reserved0) == 72u, "GfxColorSignal.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GfxModeColorRequest) == 1344u, "GfxModeColorRequest size mismatch");
+_Static_assert(offsetof(R4GfxModeColorRequest, version) == 0u, "GfxModeColorRequest.version offset mismatch");
+_Static_assert(offsetof(R4GfxModeColorRequest, size) == 4u, "GfxModeColorRequest.size offset mismatch");
+_Static_assert(offsetof(R4GfxModeColorRequest, state) == 8u, "GfxModeColorRequest.state offset mismatch");
+_Static_assert(offsetof(R4GfxModeColorRequest, signal) == 1248u, "GfxModeColorRequest.signal offset mismatch");
+_Static_assert(offsetof(R4GfxModeColorRequest, image) == 1328u, "GfxModeColorRequest.image offset mismatch");
+_Static_assert(sizeof(R4GfxDriverModeColor) == 152u, "GfxDriverModeColor size mismatch");
+_Static_assert(offsetof(R4GfxDriverModeColor, version) == 0u, "GfxDriverModeColor.version offset mismatch");
+_Static_assert(offsetof(R4GfxDriverModeColor, size) == 4u, "GfxDriverModeColor.size offset mismatch");
+_Static_assert(offsetof(R4GfxDriverModeColor, ticket) == 8u, "GfxDriverModeColor.ticket offset mismatch");
+_Static_assert(offsetof(R4GfxDriverModeColor, sequence) == 16u, "GfxDriverModeColor.sequence offset mismatch");
+_Static_assert(offsetof(R4GfxDriverModeColor, signal) == 24u, "GfxDriverModeColor.signal offset mismatch");
+_Static_assert(offsetof(R4GfxDriverModeColor, reference) == 104u, "GfxDriverModeColor.reference offset mismatch");
+_Static_assert(sizeof(R4DisplayColorSelection) == 112u, "DisplayColorSelection size mismatch");
+_Static_assert(offsetof(R4DisplayColorSelection, version) == 0u, "DisplayColorSelection.version offset mismatch");
+_Static_assert(offsetof(R4DisplayColorSelection, size) == 4u, "DisplayColorSelection.size offset mismatch");
+_Static_assert(offsetof(R4DisplayColorSelection, output) == 8u, "DisplayColorSelection.output offset mismatch");
+_Static_assert(offsetof(R4DisplayColorSelection, signal) == 32u, "DisplayColorSelection.signal offset mismatch");
+_Static_assert(sizeof(R4DisplayColorRequest) == 712u, "DisplayColorRequest size mismatch");
+_Static_assert(offsetof(R4DisplayColorRequest, base) == 0u, "DisplayColorRequest.base offset mismatch");
+_Static_assert(offsetof(R4DisplayColorRequest, color) == 600u, "DisplayColorRequest.color offset mismatch");
+_Static_assert(sizeof(R4DisplayColorExchange) == 1360u, "DisplayColorExchange size mismatch");
+_Static_assert(offsetof(R4DisplayColorExchange, base) == 0u, "DisplayColorExchange.base offset mismatch");
+_Static_assert(offsetof(R4DisplayColorExchange, color) == 1248u, "DisplayColorExchange.color offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -13116,7 +13340,7 @@ _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4D
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_motion) == 488u, "R4XStartR4Desk.mouse_motion offset mismatch");
 _Static_assert(sizeof(R4DeskMouseMotionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 752u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 784u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -13301,6 +13525,14 @@ _Static_assert(offsetof(R4XStartR4Draw, display_output_presentation_feedback) ==
 _Static_assert(sizeof(R4DrawDisplayOutputPresentationFeedbackFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_queue_submit_render_grid_list) == 744u, "R4XStartR4Draw.gfx_queue_submit_render_grid_list offset mismatch");
 _Static_assert(sizeof(R4DrawGfxQueueSubmitRenderGridListFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_output_color) == 752u, "R4XStartR4Draw.gfx_output_color offset mismatch");
+_Static_assert(sizeof(R4DrawGfxOutputColorFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_queue_submit_render_color_list) == 760u, "R4XStartR4Draw.gfx_queue_submit_render_color_list offset mismatch");
+_Static_assert(sizeof(R4DrawGfxQueueSubmitRenderColorListFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_atomic_test_color) == 768u, "R4XStartR4Draw.gfx_atomic_test_color offset mismatch");
+_Static_assert(sizeof(R4DrawGfxAtomicTestColorFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_atomic_submit_color) == 776u, "R4XStartR4Draw.gfx_atomic_submit_color offset mismatch");
+_Static_assert(sizeof(R4DrawGfxAtomicSubmitColorFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

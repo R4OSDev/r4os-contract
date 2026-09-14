@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 389,
-    "group_slot_count": 389,
+    "function_count": 393,
+    "group_slot_count": 393,
     "sdk_only_count": 0,
-    "public_count": 295,
+    "public_count": 299,
     "advanced_count": 94
   },
   "functions": [
@@ -3509,6 +3509,54 @@
       "slot": 91,
       "exposure": "public",
       "description": "Copy one bounded draw/grid list to an admitted native queue. Operation render_grid_list is explicitly negotiated. Exact grid sampling stays in the R4D/GPU; common code retains source, target and immutable descriptors until the actual receipt.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_color",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 92,
+      "exposure": "public",
+      "description": "Reads driver-published color capabilities and confirmed output encoding for the exact output identity. Missing source metadata returns unsupported; stale output never returns another receiver state. No hardware access or color conversion.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_submit_render_color_list",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 93,
+      "exposure": "public",
+      "description": "Submit1..16 compatible sampled draws and a copied bounded userland color program. Requires operation render_color_list. Coefficients, source and target remain retained until native completion; no partial list is admitted.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_atomic_test_color",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 94,
+      "exposure": "public",
+      "description": "Validate one color mode request and its two distinct BOs against copied source facts without starting device work. Actual receiver/link/source revalidation still occurs in the native driver before commit.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_atomic_submit_color",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 95,
+      "exposure": "public",
+      "description": "Submit a color mode request through the existing confirmation/rollback owner. Retains canonical SDR shadow plus separate encoded image and immutable signal; current active output color changes only after actual driver acknowledgement.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

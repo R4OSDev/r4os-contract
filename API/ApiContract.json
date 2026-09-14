@@ -15340,10 +15340,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 24,
+      "abi_version": 27,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 752,
+      "size": 784,
       "slots": [
         {
           "number": 0,
@@ -22093,6 +22093,351 @@
             "buffer_completion": "call",
             "shutdown": "none",
             "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 92,
+          "offset": 752,
+          "name": "gfx_output_color",
+          "state": "function",
+          "required": false,
+          "description": "Reads driver-published color capabilities and confirmed output encoding for the exact output identity. Missing source metadata returns unsupported; stale output never returns another receiver state. No hardware access or color conversion.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "identity",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputId"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputColorState"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 93,
+          "offset": 760,
+          "name": "gfx_queue_submit_render_color_list",
+          "state": "function",
+          "required": false,
+          "description": "Submit1..16 compatible sampled draws and a copied bounded userland color program. Requires operation render_color_list. Coefficients, source and target remain retained until native completion; no partial list is admitted.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "queue",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxQueueHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "submission",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxSubmission"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "list",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxRenderColorList"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxFenceStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "operation_deadline",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 94,
+          "offset": 768,
+          "name": "gfx_atomic_test_color",
+          "state": "function",
+          "required": false,
+          "description": "Validate one color mode request and its two distinct BOs against copied source facts without starting device work. Actual receiver/link/source revalidation still occurs in the native driver before commit.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "state",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxModeColorRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxAtomicResult"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 95,
+          "offset": 776,
+          "name": "gfx_atomic_submit_color",
+          "state": "function",
+          "required": false,
+          "description": "Submit a color mode request through the existing confirmation/rollback owner. Retains canonical SDR shadow plus separate encoded image and immutable signal; current active output color changes only after actual driver acknowledgement.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "state",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxModeColorRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "confirmation_ms",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxModeStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "atomic_on_success",
             "retry": "never_automatic",
@@ -81592,8 +81937,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 6,
-      "size": 120,
+      "version": 7,
+      "size": 128,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -81624,7 +81969,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "120"
+          "default_value": "128"
         },
         {
           "name": "register_backend",
@@ -81816,6 +82161,20 @@
             "name": "u64"
           },
           "description": "read_render_grid_list",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "read_render_color_list",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional int32_t callback(const GfxFence*, GfxRenderColorList*). Copies one immutable color list only for an active job taken by the owning driver. Complete128-byte table tail required.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -83725,8 +84084,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 5,
-      "size": 112,
+      "version": 7,
+      "size": 128,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -83757,7 +84116,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "112"
+          "default_value": "128"
         },
         {
           "name": "publish",
@@ -83935,6 +84294,34 @@
             "name": "u64"
           },
           "description": "Optional int32_t(uint64_t ticket, GfxModeStatus*): query the exact nonzero ticket owned by this driver, including final common apply/confirm/rollback settlement. Same result codes as mode_restore; no mutation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "color_publish",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t color_publish(const GfxOutputColorState*). Publishes source color facts for an owned current native output. Invalid/stale or busy retains previous metadata. Optional complete120-byte tail.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode_read_color",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional int32_t callback(uint64_t ticket, uint64_t sequence, GfxDriverModeColor*). Exact128-byte tail required. Only the owning driver can copy metadata for its currently taken job. Returns1 for color,0 for legacy, negative on error; absent/error leaves output untouched.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -91265,6 +91652,1167 @@
       ],
       "values": [],
       "description": "Independent fixed list of1..16 copied draws and exact sampling grids. Old GfxRenderCommand/GfxRenderList layouts remain unchanged. Requires render_grid_list capability; one retained queue job and no accepted prefix on error."
+    },
+    {
+      "name": "GfxOutputColorState",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; complete version1 is128bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "identity",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "Exact current output incarnation; publication never migrates across a hotplug or reset.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "revision",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Publication submits zero; query returns the current topology revision. A color change advances the same output activity sequence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_output_color_* bits describe implemented source capabilities and the confirmed active state. Never inferred from EDID.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed scanout FourCC, zero while inactive.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bpc",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed wire bits per RGB component,8or10; zero while inactive.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "primaries",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Opaque COLOR_V1 primaries tag:1sRGB/BT.709,3BT.2020. Zero while inactive. No kernel color conversion.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transfer",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Opaque COLOR_V1 transfer tag:1sRGB,3PQ,4HLG. Zero while inactive.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "range",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Opaque COLOR_V1 range tag:1full,2limited at the active wire precision. Zero while inactive.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reference_white",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed reference white in0.0001cd/m2, matching COLOR_V1; zero while inactive.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "peak",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed target peak in0.0001cd/m2; zero while inactive.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "black",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed target black in0.0001cd/m2.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "formats",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Implemented scanout formats mask:1XR24,2XR30. Offscreen-only formats are excluded.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "depths",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Implemented output depths mask:1eight-bit,2ten-bit.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "color_spaces",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Implemented output primaries mask:1BT.709,2BT.2020.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transfers",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Implemented output transfer mask uses CTA EOTF bits:1SDR,4PQ,8HLG. Offscreen shader support alone cannot enable HDR.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ranges",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Implemented output range mask:1full,2limited.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "gamma_entries",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of programmable hardware output-LUT entries through an implemented driver path. Zero means unavailable, even when registers exist.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "degamma_entries",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of programmable hardware input-LUT entries through an implemented driver path. Zero means unavailable.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ctm_fraction_bits",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Implemented hardware color-matrix fractional precision, zero when unavailable. Shader/ICC processing belongs to userland.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_tmds_clock_hz",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current source-side TMDS ceiling; zero unknown. Receiver limit is evaluated separately by userland.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dp_payload_bits_per_second",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Confirmed trained DP payload budget after link coding, zero unknown. Not a receiver EDID capability.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Immutable source color facts for an exact output incarnation. The kernel only authenticates and copies bounded metadata; all matrices, ICC, tone mapping, receiver interpretation and link/color policy stay in userland. Missing publication is unsupported, never an inferred HDR capability."
+    },
+    {
+      "name": "GfxRenderColorProgram",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 272,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "272"
+        },
+        {
+          "name": "reserved0",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "reserved0",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "words",
+          "offset": 16,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u32"
+            }
+          },
+          "description": "Version1 bounded scalar color program. Flags1output mapping and2dither; transfers1sRGB,2linear,3PQ,4HLG; alpha1opaque,2straight,3electrical-premultiplied,4optical-premultiplied. Matrices and luminance policy are owned by userland.",
+          "size": 256,
+          "alignment": 4,
+          "source_type": "[64]u32",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Bounded immutable userland color program, not executable instructions or GPU addresses. Version1 carries64 uint32 words: flags/source transfer/target transfer/source alpha; target alpha and3zeros; two3x4 float matrices; source and target white/peak/HLG gamma/black lift; source and target range gain/bias; white gain/scaled peak/knee/shoulder; target peak/dither quantum/2zeros;12zeros. Float words are IEEE754 binary32. COLOR_V1 derives these coefficients; R4D validates and lowers them into its fixed shader. The kernel only checks this header and retains the copy. Reserved0. No ICC policy in the kernel."
+    },
+    {
+      "name": "GfxRenderColorList",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1568,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1568"
+        },
+        {
+          "name": "count",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "commands",
+          "offset": 16,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "named",
+              "name": "GfxRenderCommand"
+            }
+          },
+          "description": "Copied ordered draws; count is 1..16. Unused elements are zero.",
+          "size": 1280,
+          "alignment": 8,
+          "source_type": "[16]GfxRenderCommand",
+          "default_kind": "empty_array"
+        },
+        {
+          "name": "program",
+          "offset": 1296,
+          "type": {
+            "kind": "named",
+            "name": "GfxRenderColorProgram"
+          },
+          "description": "One immutable color program shared by the1..16 compatible draws.",
+          "size": 272,
+          "alignment": 8,
+          "source_type": "GfxRenderColorProgram",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Independent bounded list with one source/target pair and one color program. Commands require sample, nearest filtering and transfer_color. Kernel retains storage and copied metadata until the actual completion; driver owns native shader execution. Existing lists and command prefixes are unchanged."
+    },
+    {
+      "name": "GfxHdrMetadata",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 2,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "primaries",
+          "offset": 0,
+          "type": {
+            "kind": "array",
+            "length": 6,
+            "child": {
+              "kind": "scalar",
+              "name": "u16"
+            }
+          },
+          "description": "primaries",
+          "size": 12,
+          "alignment": 2,
+          "source_type": "[6]u16",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "white",
+          "offset": 12,
+          "type": {
+            "kind": "array",
+            "length": 2,
+            "child": {
+              "kind": "scalar",
+              "name": "u16"
+            }
+          },
+          "description": "white",
+          "size": 4,
+          "alignment": 2,
+          "source_type": "[2]u16",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "max_mastering",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "max_mastering",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_mastering",
+          "offset": 18,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "min_mastering",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_cll",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "max_cll",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_fall",
+          "offset": 22,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "max_fall",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Static metadata, CTA type1. RGB and white xy in1/50000; mastering maximum/CLL/FALL in1cd/m2, minimum in0.0001cd/m2. Zero fields mean unknown, not inferred monitor limits. Userland owns semantic validation and protocol encoding."
+    },
+    {
+      "name": "GfxColorSignal",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "format",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bpc",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bpc",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "primaries",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "primaries",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "transfer",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "transfer",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "range",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "range",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pipeline",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "pipeline",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reference_white",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reference_white",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "peak",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "peak",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "black",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "black",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "metadata_valid",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "metadata_valid",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "metadata",
+          "offset": 48,
+          "type": {
+            "kind": "named",
+            "name": "GfxHdrMetadata"
+          },
+          "description": "metadata",
+          "size": 24,
+          "alignment": 2,
+          "source_type": "GfxHdrMetadata",
+          "default_kind": "empty"
+        },
+        {
+          "name": "reserved0",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "reserved0",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit output signal and completed userland pipeline. Named color values match GfxOutputColorState. Pipeline bits1linear composition,2output transform,4opaque output; only7 is admitted. Luminance uses0.0001cd/m2. HDR requires metadata_valid=1, RGB10, BT2020 and PQ or HLG. Kernel transports bounded integer metadata and checks source masks; R4GFX/R4D jointly validate receiver, source, bandwidth and metadata. Existing scanout assignment continues to describe the separate canonical SDR console shadow."
+    },
+    {
+      "name": "GfxModeColorRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1344,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1344"
+        },
+        {
+          "name": "state",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxAtomicState"
+          },
+          "description": "state",
+          "size": 1240,
+          "alignment": 8,
+          "source_type": "GfxAtomicState",
+          "default_kind": "empty"
+        },
+        {
+          "name": "signal",
+          "offset": 1248,
+          "type": {
+            "kind": "named",
+            "name": "GfxColorSignal"
+          },
+          "description": "signal",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "GfxColorSignal",
+          "default_kind": "empty"
+        },
+        {
+          "name": "image",
+          "offset": 1328,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "image",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "One native mode transaction with a separate encoded output image. State contains exactly one legacy SDR assignment, whose BO remains the canonical CPU console/fallback shadow. Image is a distinct immutable SYSTEM BO in signal.format with matching geometry; it is retained and shared with the driver until confirmation or rollback physically retires this transaction. No payload addresses are retained."
+    },
+    {
+      "name": "GfxDriverModeColor",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 152,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "152"
+        },
+        {
+          "name": "ticket",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "ticket",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "signal",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "GfxColorSignal"
+          },
+          "description": "signal",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "GfxColorSignal",
+          "default_kind": "empty"
+        },
+        {
+          "name": "reference",
+          "offset": 104,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferReference"
+          },
+          "description": "reference",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "GfxBufferReference",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Optional copied color extension for the exact taken native mode ticket and operation sequence. A zero callback result means a legacy SDR job and leaves output untouched. The reference is owned by the driver and retains the separate encoded image. The old GfxDriverModeJob and its SDR reference remain unchanged."
+    },
+    {
+      "name": "DisplayColorSelection",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "output",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "output",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "signal",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "GfxColorSignal"
+          },
+          "description": "signal",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "GfxColorSignal",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Copied color selection for one exact connected output. Desktop validates the signal against its complete composition path and owns mode submission, frame observation, confirmation, rollback and persistent stable receiver choice. Output connector_id=0 denotes no color extension in a Desktop exchange."
+    },
+    {
+      "name": "DisplayColorRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 712,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "base",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DisplayControlRequest"
+          },
+          "description": "base",
+          "size": 600,
+          "alignment": 8,
+          "source_type": "DisplayControlRequest",
+          "default_kind": "empty"
+        },
+        {
+          "name": "color",
+          "offset": 600,
+          "type": {
+            "kind": "named",
+            "name": "DisplayColorSelection"
+          },
+          "description": "color",
+          "size": 112,
+          "alignment": 8,
+          "source_type": "DisplayColorSelection",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "New display-color service request. Base uses action4 and transaction_id0 to test color on the unchanged current layout. Old DisplayControlRequest and its opcodes remain unchanged. Confirm/cancel use the existing owner-bound actions2/3 and status. This new opcode requires a Desktop using DisplayColorExchange."
+    },
+    {
+      "name": "DisplayColorExchange",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1360,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "base",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DisplayControlExchange"
+          },
+          "description": "base",
+          "size": 1248,
+          "alignment": 8,
+          "source_type": "DisplayControlExchange",
+          "default_kind": "empty"
+        },
+        {
+          "name": "color",
+          "offset": 1248,
+          "type": {
+            "kind": "named",
+            "name": "DisplayColorSelection"
+          },
+          "description": "color",
+          "size": 112,
+          "alignment": 8,
+          "source_type": "DisplayColorSelection",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "New Desktop service exchange with a copied optional color extension for base.request. Input color must be empty. The old exchange remains supported for old Desktops and only carries legacy layout requests. Service performs ownership, prefix, capacity and duplicate checks; all color policy stays in Desktop/R4GFX."
     }
   ],
   "operations": [],
@@ -111216,6 +112764,146 @@
       "scope": "gfx_queue",
       "stability": "fixed_contract",
       "description": "Bounded native render list with copied exact logical-pixel sampling grids; backend operation bit256."
+    },
+    {
+      "name": "gfx_buffer_format_xrgb2101010",
+      "value": "808669784",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_buffer",
+      "stability": "fixed_contract",
+      "description": "DRM FourCC xrgb2101010; RGB storage geometry only. Transfer, primaries, profile and output eligibility remain with userland and the device owner."
+    },
+    {
+      "name": "gfx_buffer_format_argb2101010",
+      "value": "808669761",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_buffer",
+      "stability": "fixed_contract",
+      "description": "DRM FourCC argb2101010; RGB storage geometry only. Transfer, primaries, profile and output eligibility remain with userland and the device owner."
+    },
+    {
+      "name": "gfx_buffer_format_abgr16161616f",
+      "value": "1211384385",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_buffer",
+      "stability": "fixed_contract",
+      "description": "DRM FourCC abgr16161616f; RGB storage geometry only. Transfer, primaries, profile and output eligibility remain with userland and the device owner."
+    },
+    {
+      "name": "gfx_output_color_known",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Driver-published output color fact: known. Source implementation is required; receiver EDID cannot grant this bit."
+    },
+    {
+      "name": "gfx_output_color_active",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Driver-published output color fact: active. Source implementation is required; receiver EDID cannot grant this bit."
+    },
+    {
+      "name": "gfx_output_color_identity",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Driver-published output color fact: identity. Source implementation is required; receiver EDID cannot grant this bit."
+    },
+    {
+      "name": "gfx_output_color_hdmi_metadata",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Driver-published output color fact: hdmi_metadata. Source implementation is required; receiver EDID cannot grant this bit."
+    },
+    {
+      "name": "gfx_output_color_dp_metadata",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Driver-published output color fact: dp_metadata. Source implementation is required; receiver EDID cannot grant this bit."
+    },
+    {
+      "name": "gfx_output_color_dp_vsc",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Driver-published output color fact: dp_vsc. Source implementation is required; receiver EDID cannot grant this bit."
+    },
+    {
+      "name": "gfx_output_color_scdc",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Driver-published output color fact: scdc. Source implementation is required; receiver EDID cannot grant this bit."
+    },
+    {
+      "name": "gfx_queue_operation_render_color_list",
+      "value": "9",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Native color render list with one immutable color program; backend operation bit512."
+    },
+    {
+      "name": "gfx_render_transfer_color",
+      "value": "3",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Explicit color program, valid only in gfx_queue_operation_render_color_list. Never inferred from resource format or used by legacy render calls."
+    },
+    {
+      "name": "display_control_op_color_request",
+      "value": "1811",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "Submit DisplayColorRequest and return unchanged DisplayControlStatus."
+    },
+    {
+      "name": "display_control_op_color_exchange",
+      "value": "1812",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "display_control",
+      "stability": "fixed_contract",
+      "description": "Desktop exchanges DisplayColorExchange; supports legacy layout requests plus one color selection."
     }
   ],
   "limits": [
