@@ -1835,6 +1835,15 @@ pub const gfx_power_reason_rejected: u32 = 2;
 pub const gfx_power_reason_timeout: u32 = 3;
 pub const gfx_power_reason_device_lost: u32 = 4;
 pub const gfx_power_reason_unsupported: u32 = 5;
+pub const notification_ok: i32 = 0;
+pub const notification_timeout: i32 = 1;
+pub const notification_error_invalid: i32 = -1;
+pub const notification_error_stale: i32 = -2;
+pub const notification_error_closed: i32 = -3;
+pub const notification_error_context: i32 = -4;
+pub const notification_error_memory: i32 = -5;
+pub const notification_error_release: i32 = -6;
+pub const notification_error_exhausted: i32 = -7;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -7732,12 +7741,17 @@ pub const R4SysFns = struct {
     pub const directory_change_begin = *const fn ([*:0]const u8, *DirectoryChangeCursor) callconv(.c) i32;
     pub const directory_change_poll = *const fn (*DirectoryChangeCursor) callconv(.c) i32;
     pub const file_copy_buffered = *const fn ([*:0]const u8, [*:0]const u8, [*]u8, u32, *FileCopyProgress) callconv(.c) i32;
+    pub const notification_create = *const fn (*u64) callconv(.c) i32;
+    pub const notification_query = *const fn (u64, *u64) callconv(.c) i32;
+    pub const notification_notify = *const fn (u64, u32) callconv(.c) i32;
+    pub const notification_wait = *const fn (u64, u64, u64) callconv(.c) i32;
+    pub const notification_close = *const fn (u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 18,
-    size: u32 = 1168,
+    abi_version: u32 = 19,
+    size: u32 = 1208,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -7883,6 +7897,11 @@ pub const R4XStartR4Sys = extern struct {
     directory_change_begin: usize = 0,
     directory_change_poll: usize = 0,
     file_copy_buffered: usize = 0,
+    notification_create: usize = 0,
+    notification_query: usize = 0,
+    notification_notify: usize = 0,
+    notification_wait: usize = 0,
+    notification_close: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -8612,6 +8631,11 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 141, .offset = 1144, .name = "directory_change_begin", .state = .function, .required = false },
     .{ .number = 142, .offset = 1152, .name = "directory_change_poll", .state = .function, .required = false },
     .{ .number = 143, .offset = 1160, .name = "file_copy_buffered", .state = .function, .required = false },
+    .{ .number = 144, .offset = 1168, .name = "notification_create", .state = .function, .required = false },
+    .{ .number = 145, .offset = 1176, .name = "notification_query", .state = .function, .required = false },
+    .{ .number = 146, .offset = 1184, .name = "notification_notify", .state = .function, .required = false },
+    .{ .number = 147, .offset = 1192, .name = "notification_wait", .state = .function, .required = false },
+    .{ .number = 148, .offset = 1200, .name = "notification_close", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -13904,7 +13928,7 @@ comptime {
     if (@offsetOf(RemoteFrameCaptureStats, "acquires") != 72) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.acquires");
     if (@offsetOf(RemoteFrameCaptureStats, "misses") != 80) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.misses");
     if (@offsetOf(RemoteFrameCaptureStats, "max_reader_ns") != 88) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.max_reader_ns");
-    if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1208) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -14049,6 +14073,11 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "directory_change_begin") != 1144) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_begin");
     if (@offsetOf(R4XStartR4Sys, "directory_change_poll") != 1152) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_poll");
     if (@offsetOf(R4XStartR4Sys, "file_copy_buffered") != 1160) @compileError("generated ABI offset drift: R4XStartR4Sys.file_copy_buffered");
+    if (@offsetOf(R4XStartR4Sys, "notification_create") != 1168) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_create");
+    if (@offsetOf(R4XStartR4Sys, "notification_query") != 1176) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_query");
+    if (@offsetOf(R4XStartR4Sys, "notification_notify") != 1184) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_notify");
+    if (@offsetOf(R4XStartR4Sys, "notification_wait") != 1192) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_wait");
+    if (@offsetOf(R4XStartR4Sys, "notification_close") != 1200) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_close");
     if (@sizeOf(R4XStartR4Desk) != 528) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 403,
+    "group_function_signatures": 408,
     "sdk_operation_contracts": 0,
-    "parity_entries": 403,
+    "parity_entries": 408,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1277,6 +1277,51 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.file_copy_buffered",
       "c_contract": "R4SysFileCopyBufferedFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.notification_create",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.notification_create",
+      "c_contract": "R4SysNotificationCreateFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.notification_query",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.notification_query",
+      "c_contract": "R4SysNotificationQueryFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.notification_notify",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.notification_notify",
+      "c_contract": "R4SysNotificationNotifyFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.notification_wait",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.notification_wait",
+      "c_contract": "R4SysNotificationWaitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.notification_close",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.notification_close",
+      "c_contract": "R4SysNotificationCloseFn",
       "coverage": "generated_signature"
     },
     {

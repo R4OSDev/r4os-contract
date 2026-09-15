@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 411; Funktionen: 403; reserviert/Tombstone: 8
-- Sichtbarkeit: public=305, advanced=98, internal=8
+- Physische Gruppenslots: 416; Funktionen: 408; reserviert/Tombstone: 8
+- Sichtbarkeit: public=310, advanced=98, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 17
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -178,6 +178,11 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4SYS | 141 | `directory_change_begin` | function | public | R4SYS | ja | `filesystem` | borrowed | call | may_block | thread_safe | path_based_no_handle | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 142 | `directory_change_poll` | function | public | R4SYS | ja | `filesystem` | borrowed | call | nonblocking | thread_safe | path_based_no_handle | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 143 | `file_copy_buffered` | function | public | R4SYS | ja | `filesystem` | caller_buffer | call | may_block | thread_safe | path_based_no_handle | progress_reported | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4SYS | 144 | `notification_create` | function | public | R4SYS | ja | `program` | returns_owned_handle | call | may_block | thread_safe | explicit_close_required | success_only | none | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4SYS | 145 | `notification_query` | function | public | R4SYS | ja | `program` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4SYS | 146 | `notification_notify` | function | public | R4SYS | ja | `program` | borrowed | none | nonblocking | thread_safe | none | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
+| R4SYS | 147 | `notification_wait` | function | public | R4SYS | ja | `program` | borrowed | none | blocking_wait | thread_safe | none | none | none | never_automatic | fixed_capacity | zig_and_c_required | wait_budget | shutdown_wakeup | completion_wins | reentrant | none | none | none |
+| R4SYS | 148 | `notification_close` | function | public | R4SYS | ja | `program` | consumes_owned_handle | none | may_block | thread_safe | invalidates_on_success | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
 | R4DESK | 0 | `read_key` | function | public | R4DESK | ja | `desktop` | none | none | may_block | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DESK | 1 | `mouse_state` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 2 | `mouse_show` | function | public | R4DESK | ja | `desktop` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |

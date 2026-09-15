@@ -4742,7 +4742,7 @@ comptime {
     if (@offsetOf(abi.RemoteFrameCaptureStats, "acquires") != 72) @compileError("RemoteFrameCaptureStats.acquires offset");
     if (@offsetOf(abi.RemoteFrameCaptureStats, "misses") != 80) @compileError("RemoteFrameCaptureStats.misses offset");
     if (@offsetOf(abi.RemoteFrameCaptureStats, "max_reader_ns") != 88) @compileError("RemoteFrameCaptureStats.max_reader_ns offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1168) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1208) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -5028,6 +5028,16 @@ comptime {
     if (@sizeOf(abi.R4SysFns.directory_change_poll) != 8) @compileError("R4SysFns.directory_change_poll signature");
     if (@offsetOf(abi.R4XStartR4Sys, "file_copy_buffered") != 1160) @compileError("R4XStartR4Sys.file_copy_buffered offset");
     if (@sizeOf(abi.R4SysFns.file_copy_buffered) != 8) @compileError("R4SysFns.file_copy_buffered signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "notification_create") != 1168) @compileError("R4XStartR4Sys.notification_create offset");
+    if (@sizeOf(abi.R4SysFns.notification_create) != 8) @compileError("R4SysFns.notification_create signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "notification_query") != 1176) @compileError("R4XStartR4Sys.notification_query offset");
+    if (@sizeOf(abi.R4SysFns.notification_query) != 8) @compileError("R4SysFns.notification_query signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "notification_notify") != 1184) @compileError("R4XStartR4Sys.notification_notify offset");
+    if (@sizeOf(abi.R4SysFns.notification_notify) != 8) @compileError("R4SysFns.notification_notify signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "notification_wait") != 1192) @compileError("R4XStartR4Sys.notification_wait offset");
+    if (@sizeOf(abi.R4SysFns.notification_wait) != 8) @compileError("R4SysFns.notification_wait signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "notification_close") != 1200) @compileError("R4XStartR4Sys.notification_close offset");
+    if (@sizeOf(abi.R4SysFns.notification_close) != 8) @compileError("R4SysFns.notification_close signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 528) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

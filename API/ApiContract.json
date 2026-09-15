@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 18,
+      "abi_version": 19,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1168,
+      "size": 1208,
       "slots": [
         {
           "number": 0,
@@ -11628,6 +11628,299 @@
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 144,
+          "offset": 1168,
+          "name": "notification_create",
+          "state": "function",
+          "required": false,
+          "description": "Create a resident process-owned notification with revision zero. Handles never repeat within a boot. Returns notification status; output changes only on success. Allocation failure is explicit. Close explicitly or let exact process retirement reclaim it.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out_handle",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "program",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 145,
+          "offset": 1176,
+          "name": "notification_query",
+          "state": "function",
+          "required": false,
+          "description": "Read the notification revision. Read before testing the userland predicate, then wait with that revision to avoid a lost wake. Foreign or consumed handles are stale; output changes only on success.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out_sequence",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "program",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 146,
+          "offset": 1184,
+          "name": "notification_notify",
+          "state": "function",
+          "required": false,
+          "description": "Increment the revision and wake at most wake_count enrolled tasks atomically. Count must be positive; UINT32_MAX broadcasts. A caller racing enrollment observes the changed revision. No permit, CPU-memory ownership or GPU completion is manufactured. Revision exhaustion closes the object and wakes all with closed.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "wake_count",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "program",
+            "ownership": "borrowed",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 147,
+          "offset": 1192,
+          "name": "notification_wait",
+          "state": "function",
+          "required": false,
+          "description": "Wait only while the resident revision equals observed_sequence. Zero polls; UINT64_MAX waits indefinitely. Predicate check, scheduler enrollment and notify share one owner. Returns 0 on change/wake, 1 on timeout, negative on failure/close; caller must recheck its own predicate. Close cancels enrolled waits. Hard kill detaches the actual task node and needs no caller destructor. No caller address or unwind guard is retained across sleep.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "observed_sequence",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "program",
+            "ownership": "borrowed",
+            "buffer_lifetime": "none",
+            "blocking": "blocking_wait",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "shutdown_wakeup",
+            "timeout_outcome": "completion_wins",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 148,
+          "offset": 1200,
+          "name": "notification_close",
+          "state": "function",
+          "required": false,
+          "description": "Close admission, cancel enrolled waits and release resident backing. Returns 0 after release; retry notification_error_release for the same closed handle. A failed free retains backing and prevents process-slot reuse. Further ordinary operations on a closed retained object fail; a consumed handle is stale.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "program",
+            "ownership": "consumes_owned_handle",
+            "buffer_lifetime": "none",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "invalidates_on_success",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -116996,6 +117289,96 @@
       "scope": "gfx_output",
       "stability": "fixed_contract",
       "description": "Screen power limitation: unsupported."
+    },
+    {
+      "name": "notification_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Completed or revision changed; recheck the caller predicate."
+    },
+    {
+      "name": "notification_timeout",
+      "value": "1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Wait budget elapsed; no implicit notify or close."
+    },
+    {
+      "name": "notification_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Invalid handle, pointer or wake count."
+    },
+    {
+      "name": "notification_error_stale",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Consumed or foreign notification handle."
+    },
+    {
+      "name": "notification_error_closed",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Notification closed; no successful signal is implied."
+    },
+    {
+      "name": "notification_error_context",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "No admitted program task or invalid wait/allocation context."
+    },
+    {
+      "name": "notification_error_memory",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Resident record allocation failed."
+    },
+    {
+      "name": "notification_error_release",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Closed backing retained after failed release; exact retry required."
+    },
+    {
+      "name": "notification_error_exhausted",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Handle or revision counter exhausted without wrap."
     }
   ],
   "limits": [

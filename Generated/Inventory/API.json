@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 403,
-    "group_slot_count": 403,
+    "function_count": 408,
+    "group_slot_count": 408,
     "sdk_only_count": 0,
-    "public_count": 305,
+    "public_count": 310,
     "advanced_count": 98
   },
   "functions": [
@@ -1697,6 +1697,66 @@
       "slot": 143,
       "exposure": "public",
       "description": "Copies under one paired filesystem request, rejecting source aliases before destination mutation. Caller exclusively owns the supplied nonempty buffer until return. File-stream result codes: 0 success, invalid for identical files, too_large above 4 GB, I/O on failure. Progress reports completed appends; failure may leave a partial target. No automatic retry or rollback.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.notification_create",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 144,
+      "exposure": "public",
+      "description": "Create a resident process-owned notification with revision zero. Handles never repeat within a boot. Returns notification status; output changes only on success. Allocation failure is explicit. Close explicitly or let exact process retirement reclaim it.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.notification_query",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 145,
+      "exposure": "public",
+      "description": "Read the notification revision. Read before testing the userland predicate, then wait with that revision to avoid a lost wake. Foreign or consumed handles are stale; output changes only on success.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.notification_notify",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 146,
+      "exposure": "public",
+      "description": "Increment the revision and wake at most wake_count enrolled tasks atomically. Count must be positive; UINT32_MAX broadcasts. A caller racing enrollment observes the changed revision. No permit, CPU-memory ownership or GPU completion is manufactured. Revision exhaustion closes the object and wakes all with closed.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.notification_wait",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 147,
+      "exposure": "public",
+      "description": "Wait only while the resident revision equals observed_sequence. Zero polls; UINT64_MAX waits indefinitely. Predicate check, scheduler enrollment and notify share one owner. Returns 0 on change/wake, 1 on timeout, negative on failure/close; caller must recheck its own predicate. Close cancels enrolled waits. Hard kill detaches the actual task node and needs no caller destructor. No caller address or unwind guard is retained across sleep.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.notification_close",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 148,
+      "exposure": "public",
+      "description": "Close admission, cancel enrolled waits and release resident backing. Returns 0 after release; retry notification_error_release for the same closed handle. A failed free retains backing and prevents process-slot reuse. Further ordinary operations on a closed retained object fail; a consumed handle is stale.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

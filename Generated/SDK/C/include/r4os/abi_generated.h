@@ -1847,6 +1847,15 @@ extern "C" {
 #define R4OS_GFX_POWER_REASON_TIMEOUT 3u
 #define R4OS_GFX_POWER_REASON_DEVICE_LOST 4u
 #define R4OS_GFX_POWER_REASON_UNSUPPORTED 5u
+#define R4OS_NOTIFICATION_OK ((int32_t)0)
+#define R4OS_NOTIFICATION_TIMEOUT ((int32_t)1)
+#define R4OS_NOTIFICATION_ERROR_INVALID ((int32_t)-1)
+#define R4OS_NOTIFICATION_ERROR_STALE ((int32_t)-2)
+#define R4OS_NOTIFICATION_ERROR_CLOSED ((int32_t)-3)
+#define R4OS_NOTIFICATION_ERROR_CONTEXT ((int32_t)-4)
+#define R4OS_NOTIFICATION_ERROR_MEMORY ((int32_t)-5)
+#define R4OS_NOTIFICATION_ERROR_RELEASE ((int32_t)-6)
+#define R4OS_NOTIFICATION_ERROR_EXHAUSTED ((int32_t)-7)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -7992,6 +8001,11 @@ typedef int32_t (*R4SysStorageUseEndFn)(uint64_t use);
 typedef int32_t (*R4SysDirectoryChangeBeginFn)(const uint8_t * arg0, R4DirectoryChangeCursor * cursor);
 typedef int32_t (*R4SysDirectoryChangePollFn)(R4DirectoryChangeCursor * cursor);
 typedef int32_t (*R4SysFileCopyBufferedFn)(const uint8_t * source, const uint8_t * target, uint8_t * buffer, uint32_t length, R4FileCopyProgress * progress);
+typedef int32_t (*R4SysNotificationCreateFn)(uint64_t * out_handle);
+typedef int32_t (*R4SysNotificationQueryFn)(uint64_t handle, uint64_t * out_sequence);
+typedef int32_t (*R4SysNotificationNotifyFn)(uint64_t handle, uint32_t wake_count);
+typedef int32_t (*R4SysNotificationWaitFn)(uint64_t handle, uint64_t observed_sequence, uint64_t timeout_ticks);
+typedef int32_t (*R4SysNotificationCloseFn)(uint64_t handle);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -8142,6 +8156,11 @@ typedef struct R4XStartR4Sys {
     uintptr_t directory_change_begin;
     uintptr_t directory_change_poll;
     uintptr_t file_copy_buffered;
+    uintptr_t notification_create;
+    uintptr_t notification_query;
+    uintptr_t notification_notify;
+    uintptr_t notification_wait;
+    uintptr_t notification_close;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -13455,7 +13474,7 @@ _Static_assert(offsetof(R4RemoteFrameCaptureStats, snapshot_copy_bytes) == 64u, 
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, acquires) == 72u, "RemoteFrameCaptureStats.acquires offset mismatch");
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, misses) == 80u, "RemoteFrameCaptureStats.misses offset mismatch");
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, max_reader_ns) == 88u, "RemoteFrameCaptureStats.max_reader_ns offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1208u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -13741,6 +13760,16 @@ _Static_assert(offsetof(R4XStartR4Sys, directory_change_poll) == 1152u, "R4XStar
 _Static_assert(sizeof(R4SysDirectoryChangePollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, file_copy_buffered) == 1160u, "R4XStartR4Sys.file_copy_buffered offset mismatch");
 _Static_assert(sizeof(R4SysFileCopyBufferedFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, notification_create) == 1168u, "R4XStartR4Sys.notification_create offset mismatch");
+_Static_assert(sizeof(R4SysNotificationCreateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, notification_query) == 1176u, "R4XStartR4Sys.notification_query offset mismatch");
+_Static_assert(sizeof(R4SysNotificationQueryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, notification_notify) == 1184u, "R4XStartR4Sys.notification_notify offset mismatch");
+_Static_assert(sizeof(R4SysNotificationNotifyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, notification_wait) == 1192u, "R4XStartR4Sys.notification_wait offset mismatch");
+_Static_assert(sizeof(R4SysNotificationWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, notification_close) == 1200u, "R4XStartR4Sys.notification_close offset mismatch");
+_Static_assert(sizeof(R4SysNotificationCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 528u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
