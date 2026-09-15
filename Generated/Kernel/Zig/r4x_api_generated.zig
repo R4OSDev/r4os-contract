@@ -7562,6 +7562,34 @@ pub const GfxPowerRequest = extern struct {
     reserved1: u64 = 0,
 };
 
+pub const RemoteFrameLease = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    id: u64 = 0,
+    pixels_addr: u64 = 0,
+    capacity_pixels: u64 = 0,
+    epoch: u64 = 0,
+    acquired_ns: u64 = 0,
+};
+
+pub const RemoteFrameCaptureStats = extern struct {
+    version: u32 = 1,
+    size: u32 = 96,
+    consumers: u32 = 0,
+    leases: u32 = 0,
+    snapshots: u32 = 0,
+    reserved: u32 = 0,
+    epoch: u64 = 0,
+    revision: u64 = 0,
+    live_bytes: u64 = 0,
+    snapshot_bytes: u64 = 0,
+    published_bytes: u64 = 0,
+    snapshot_copy_bytes: u64 = 0,
+    acquires: u64 = 0,
+    misses: u64 = 0,
+    max_reader_ns: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -7917,12 +7945,16 @@ pub const R4DeskFns = struct {
     pub const console_input_wait = *const fn (u64, u64, *u64) callconv(.c) i32;
     pub const physical_key_poll = *const fn (*PhysicalKeyEvent) callconv(.c) i32;
     pub const mouse_motion = *const fn (*MouseMotion) callconv(.c) i32;
+    pub const remote_frame_snapshot_acquire = *const fn (u32, *RemoteFrameInfo, *RemoteFrameLease) callconv(.c) i32;
+    pub const remote_frame_snapshot_release = *const fn (*const RemoteFrameLease) callconv(.c) i32;
+    pub const remote_frame_source_reset = *const fn () callconv(.c) i32;
+    pub const remote_frame_capture_stats = *const fn (*RemoteFrameCaptureStats) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 13,
-    size: u32 = 496,
+    abi_version: u32 = 14,
+    size: u32 = 528,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -7984,6 +8016,10 @@ pub const R4XStartR4Desk = extern struct {
     console_input_wait: usize = 0,
     physical_key_poll: usize = 0,
     mouse_motion: usize = 0,
+    remote_frame_snapshot_acquire: usize = 0,
+    remote_frame_snapshot_release: usize = 0,
+    remote_frame_source_reset: usize = 0,
+    remote_frame_capture_stats: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -8639,6 +8675,10 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 57, .offset = 472, .name = "console_input_wait", .state = .function, .required = false },
     .{ .number = 58, .offset = 480, .name = "physical_key_poll", .state = .function, .required = false },
     .{ .number = 59, .offset = 488, .name = "mouse_motion", .state = .function, .required = false },
+    .{ .number = 60, .offset = 496, .name = "remote_frame_snapshot_acquire", .state = .function, .required = false },
+    .{ .number = 61, .offset = 504, .name = "remote_frame_snapshot_release", .state = .function, .required = false },
+    .{ .number = 62, .offset = 512, .name = "remote_frame_source_reset", .state = .function, .required = false },
+    .{ .number = 63, .offset = 520, .name = "remote_frame_capture_stats", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -13838,6 +13878,32 @@ comptime {
     if (@offsetOf(GfxPowerRequest, "sequence") != 40) @compileError("generated ABI offset drift: GfxPowerRequest.sequence");
     if (@offsetOf(GfxPowerRequest, "deadline_ns") != 48) @compileError("generated ABI offset drift: GfxPowerRequest.deadline_ns");
     if (@offsetOf(GfxPowerRequest, "reserved1") != 56) @compileError("generated ABI offset drift: GfxPowerRequest.reserved1");
+    if (@sizeOf(RemoteFrameLease) != 48) @compileError("generated ABI size drift: RemoteFrameLease");
+    if (@alignOf(RemoteFrameLease) != 8) @compileError("generated ABI alignment drift: RemoteFrameLease");
+    if (@offsetOf(RemoteFrameLease, "version") != 0) @compileError("generated ABI offset drift: RemoteFrameLease.version");
+    if (@offsetOf(RemoteFrameLease, "size") != 4) @compileError("generated ABI offset drift: RemoteFrameLease.size");
+    if (@offsetOf(RemoteFrameLease, "id") != 8) @compileError("generated ABI offset drift: RemoteFrameLease.id");
+    if (@offsetOf(RemoteFrameLease, "pixels_addr") != 16) @compileError("generated ABI offset drift: RemoteFrameLease.pixels_addr");
+    if (@offsetOf(RemoteFrameLease, "capacity_pixels") != 24) @compileError("generated ABI offset drift: RemoteFrameLease.capacity_pixels");
+    if (@offsetOf(RemoteFrameLease, "epoch") != 32) @compileError("generated ABI offset drift: RemoteFrameLease.epoch");
+    if (@offsetOf(RemoteFrameLease, "acquired_ns") != 40) @compileError("generated ABI offset drift: RemoteFrameLease.acquired_ns");
+    if (@sizeOf(RemoteFrameCaptureStats) != 96) @compileError("generated ABI size drift: RemoteFrameCaptureStats");
+    if (@alignOf(RemoteFrameCaptureStats) != 8) @compileError("generated ABI alignment drift: RemoteFrameCaptureStats");
+    if (@offsetOf(RemoteFrameCaptureStats, "version") != 0) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.version");
+    if (@offsetOf(RemoteFrameCaptureStats, "size") != 4) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.size");
+    if (@offsetOf(RemoteFrameCaptureStats, "consumers") != 8) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.consumers");
+    if (@offsetOf(RemoteFrameCaptureStats, "leases") != 12) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.leases");
+    if (@offsetOf(RemoteFrameCaptureStats, "snapshots") != 16) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.snapshots");
+    if (@offsetOf(RemoteFrameCaptureStats, "reserved") != 20) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.reserved");
+    if (@offsetOf(RemoteFrameCaptureStats, "epoch") != 24) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.epoch");
+    if (@offsetOf(RemoteFrameCaptureStats, "revision") != 32) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.revision");
+    if (@offsetOf(RemoteFrameCaptureStats, "live_bytes") != 40) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.live_bytes");
+    if (@offsetOf(RemoteFrameCaptureStats, "snapshot_bytes") != 48) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.snapshot_bytes");
+    if (@offsetOf(RemoteFrameCaptureStats, "published_bytes") != 56) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.published_bytes");
+    if (@offsetOf(RemoteFrameCaptureStats, "snapshot_copy_bytes") != 64) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.snapshot_copy_bytes");
+    if (@offsetOf(RemoteFrameCaptureStats, "acquires") != 72) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.acquires");
+    if (@offsetOf(RemoteFrameCaptureStats, "misses") != 80) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.misses");
+    if (@offsetOf(RemoteFrameCaptureStats, "max_reader_ns") != 88) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.max_reader_ns");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -13983,7 +14049,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "directory_change_begin") != 1144) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_begin");
     if (@offsetOf(R4XStartR4Sys, "directory_change_poll") != 1152) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_change_poll");
     if (@offsetOf(R4XStartR4Sys, "file_copy_buffered") != 1160) @compileError("generated ABI offset drift: R4XStartR4Sys.file_copy_buffered");
-    if (@sizeOf(R4XStartR4Desk) != 496) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 528) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -14044,6 +14110,10 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
     if (@offsetOf(R4XStartR4Desk, "mouse_motion") != 488) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_motion");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_snapshot_acquire") != 496) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_snapshot_acquire");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_snapshot_release") != 504) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_snapshot_release");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_source_reset") != 512) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_source_reset");
+    if (@offsetOf(R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_capture_stats");
     if (@sizeOf(R4XStartR4Draw) != 832) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
@@ -14611,13 +14681,17 @@ pub const R4DeskProvider = struct {
     console_input_wait: ?R4DeskFns.console_input_wait = null,
     physical_key_poll: ?R4DeskFns.physical_key_poll = null,
     mouse_motion: ?R4DeskFns.mouse_motion = null,
+    remote_frame_snapshot_acquire: ?R4DeskFns.remote_frame_snapshot_acquire = null,
+    remote_frame_snapshot_release: ?R4DeskFns.remote_frame_snapshot_release = null,
+    remote_frame_source_reset: ?R4DeskFns.remote_frame_source_reset = null,
+    remote_frame_capture_stats: ?R4DeskFns.remote_frame_capture_stats = null,
 };
 
 pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
     return .{
         .magic = 826623058,
-        .abi_version = 13,
-        .size = 496,
+        .abi_version = 14,
+        .size = 528,
         .flags = 0,
         .read_key = if (provider.read_key) |callback| @intFromPtr(callback) else 0,
         .mouse_state = if (provider.mouse_state) |callback| @intFromPtr(callback) else 0,
@@ -14679,6 +14753,10 @@ pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
         .console_input_wait = if (provider.console_input_wait) |callback| @intFromPtr(callback) else 0,
         .physical_key_poll = if (provider.physical_key_poll) |callback| @intFromPtr(callback) else 0,
         .mouse_motion = if (provider.mouse_motion) |callback| @intFromPtr(callback) else 0,
+        .remote_frame_snapshot_acquire = if (provider.remote_frame_snapshot_acquire) |callback| @intFromPtr(callback) else 0,
+        .remote_frame_snapshot_release = if (provider.remote_frame_snapshot_release) |callback| @intFromPtr(callback) else 0,
+        .remote_frame_source_reset = if (provider.remote_frame_source_reset) |callback| @intFromPtr(callback) else 0,
+        .remote_frame_capture_stats = if (provider.remote_frame_capture_stats) |callback| @intFromPtr(callback) else 0,
     };
 }
 

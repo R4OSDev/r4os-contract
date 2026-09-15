@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 399,
-    "group_slot_count": 399,
+    "function_count": 403,
+    "group_slot_count": 403,
     "sdk_only_count": 0,
     "public_count": 305,
-    "advanced_count": 94
+    "advanced_count": 98
   },
   "functions": [
     {
@@ -2332,7 +2332,7 @@
       "kind": "group_slot",
       "slot": 53,
       "exposure": "advanced",
-      "description": "Registers one active remote-frame readback consumer, wakes the desktop on the first consumer, and returns the active consumer count.",
+      "description": "Registers one active remote-frame readback consumer, wakes the desktop on the first consumer, and returns the active consumer count. Demand is charged to the actual program generation; unmatched releases cannot remove another consumer. Process teardown removes all its outstanding demand.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -2344,7 +2344,7 @@
       "kind": "group_slot",
       "slot": 54,
       "exposure": "advanced",
-      "description": "Releases one active remote-frame readback consumer, discards the full-frame shadow after the last consumer, and returns the remaining consumer count.",
+      "description": "Releases one active remote-frame readback consumer, discards the full-frame shadow after the last consumer, and returns the remaining consumer count. Releases only one demand owned by the actual caller; explicitly leased snapshots remain valid until snapshot_release or process teardown.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -2405,6 +2405,54 @@
       "slot": 59,
       "exposure": "advanced",
       "description": "Returns a MouseMotion snapshot and unclamped accumulated relative input. Version1/size48 required; return0 on success. Does not constrain Desktop coordinates to the boot display. Optional append-only table entry; legacy mouse_state remains unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.remote_frame_snapshot_acquire",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 60,
+      "exposure": "advanced",
+      "description": "Nonblocking acquire(expected_revision,out_info,out_lease):0 success, unavailable on publication race, no frame, no consumer, exhausted lease quota or all three snapshots retained. expected_revision0 selects current; otherwise exact match required before any caller I/O. Returns one immutable coherent frame and pixel lease; release explicitly after network/encoding/file access. Actual program must hold remote_frame_acquire demand. No waiting for readers and no GPU access under kernel owner.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.remote_frame_snapshot_release",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 61,
+      "exposure": "advanced",
+      "description": "Nonblocking release of exact snapshot id+epoch for actual caller generation.0 success; invalid/stale token has no effect. Consumer process teardown releases any remaining lease automatically after execution retirement. Demand and immutable snapshot lifetime are separate: the last demand release does not invalidate a held snapshot.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.remote_frame_source_reset",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 62,
+      "exposure": "advanced",
+      "description": "Desktop publisher claims a fresh source epoch, invalidates live capture/history immediately and wakes consumers. Required at host startup and primary receiver/layout changes. Retained reader snapshots remain immutable until their own release. Process teardown retires its publisher epoch.0 success; no hardware or GPU work in this entry.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.remote_frame_capture_stats",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 63,
+      "exposure": "advanced",
+      "description": "Nonblocking copied publisher and immutable snapshot statistics.0 success; unavailable if another publisher/snapshot operation owns the short access guard. Pixel copies and allocations are preemptible and never hold a no-sleep owner over I/O.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

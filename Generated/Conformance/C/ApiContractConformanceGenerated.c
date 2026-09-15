@@ -203,6 +203,10 @@ static R4DeskRemoteFramePublishRegionsFn r4os_probe_r4desk_remote_frame_publish_
 static R4DeskConsoleInputWaitFn r4os_probe_r4desk_console_input_wait = (R4DeskConsoleInputWaitFn)0;
 static R4DeskPhysicalKeyPollFn r4os_probe_r4desk_physical_key_poll = (R4DeskPhysicalKeyPollFn)0;
 static R4DeskMouseMotionFn r4os_probe_r4desk_mouse_motion = (R4DeskMouseMotionFn)0;
+static R4DeskRemoteFrameSnapshotAcquireFn r4os_probe_r4desk_remote_frame_snapshot_acquire = (R4DeskRemoteFrameSnapshotAcquireFn)0;
+static R4DeskRemoteFrameSnapshotReleaseFn r4os_probe_r4desk_remote_frame_snapshot_release = (R4DeskRemoteFrameSnapshotReleaseFn)0;
+static R4DeskRemoteFrameSourceResetFn r4os_probe_r4desk_remote_frame_source_reset = (R4DeskRemoteFrameSourceResetFn)0;
+static R4DeskRemoteFrameCaptureStatsFn r4os_probe_r4desk_remote_frame_capture_stats = (R4DeskRemoteFrameCaptureStatsFn)0;
 static R4DrawScreenWidthFn r4os_probe_r4draw_screen_width = (R4DrawScreenWidthFn)0;
 static R4DrawScreenHeightFn r4os_probe_r4draw_screen_height = (R4DrawScreenHeightFn)0;
 static R4DrawClearFn r4os_probe_r4draw_clear = (R4DrawClearFn)0;

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 399,
+    "group_function_signatures": 403,
     "sdk_operation_contracts": 0,
-    "parity_entries": 399,
+    "parity_entries": 403,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1808,6 +1808,42 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DeskFns.mouse_motion",
       "c_contract": "R4DeskMouseMotionFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.remote_frame_snapshot_acquire",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.remote_frame_snapshot_acquire",
+      "c_contract": "R4DeskRemoteFrameSnapshotAcquireFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.remote_frame_snapshot_release",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.remote_frame_snapshot_release",
+      "c_contract": "R4DeskRemoteFrameSnapshotReleaseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.remote_frame_source_reset",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.remote_frame_source_reset",
+      "c_contract": "R4DeskRemoteFrameSourceResetFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.remote_frame_capture_stats",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.remote_frame_capture_stats",
+      "c_contract": "R4DeskRemoteFrameCaptureStatsFn",
       "coverage": "generated_signature"
     },
     {

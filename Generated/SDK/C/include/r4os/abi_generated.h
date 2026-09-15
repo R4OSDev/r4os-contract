@@ -2557,6 +2557,8 @@ typedef struct R4GfxTelemetryDemand R4GfxTelemetryDemand;
 typedef struct R4GfxTelemetryState R4GfxTelemetryState;
 typedef struct R4GfxOutputPower R4GfxOutputPower;
 typedef struct R4GfxPowerRequest R4GfxPowerRequest;
+typedef struct R4RemoteFrameLease R4RemoteFrameLease;
+typedef struct R4RemoteFrameCaptureStats R4RemoteFrameCaptureStats;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -7775,6 +7777,34 @@ typedef struct R4GfxPowerRequest {
     uint64_t reserved1;
 } R4GfxPowerRequest;
 
+typedef struct R4RemoteFrameLease {
+    uint32_t version;
+    uint32_t size;
+    uint64_t id;
+    uint64_t pixels_addr;
+    uint64_t capacity_pixels;
+    uint64_t epoch;
+    uint64_t acquired_ns;
+} R4RemoteFrameLease;
+
+typedef struct R4RemoteFrameCaptureStats {
+    uint32_t version;
+    uint32_t size;
+    uint32_t consumers;
+    uint32_t leases;
+    uint32_t snapshots;
+    uint32_t reserved;
+    uint64_t epoch;
+    uint64_t revision;
+    uint64_t live_bytes;
+    uint64_t snapshot_bytes;
+    uint64_t published_bytes;
+    uint64_t snapshot_copy_bytes;
+    uint64_t acquires;
+    uint64_t misses;
+    uint64_t max_reader_ns;
+} R4RemoteFrameCaptureStats;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8173,6 +8203,10 @@ typedef int32_t (*R4DeskRemoteFramePublishRegionsFn)(const R4RemoteFrameInfo * i
 typedef int32_t (*R4DeskConsoleInputWaitFn)(uint64_t last_generation, uint64_t timeout_ticks, uint64_t * out_generation);
 typedef int32_t (*R4DeskPhysicalKeyPollFn)(R4PhysicalKeyEvent * out_event);
 typedef int32_t (*R4DeskMouseMotionFn)(R4MouseMotion * output);
+typedef int32_t (*R4DeskRemoteFrameSnapshotAcquireFn)(uint32_t expected_revision, R4RemoteFrameInfo * out_info, R4RemoteFrameLease * out_lease);
+typedef int32_t (*R4DeskRemoteFrameSnapshotReleaseFn)(const R4RemoteFrameLease * lease);
+typedef int32_t (*R4DeskRemoteFrameSourceResetFn)(void);
+typedef int32_t (*R4DeskRemoteFrameCaptureStatsFn)(R4RemoteFrameCaptureStats * output);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -8239,6 +8273,10 @@ typedef struct R4XStartR4Desk {
     uintptr_t console_input_wait;
     uintptr_t physical_key_poll;
     uintptr_t mouse_motion;
+    uintptr_t remote_frame_snapshot_acquire;
+    uintptr_t remote_frame_snapshot_release;
+    uintptr_t remote_frame_source_reset;
+    uintptr_t remote_frame_capture_stats;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -13393,6 +13431,30 @@ _Static_assert(offsetof(R4GfxPowerRequest, reserved0) == 36u, "GfxPowerRequest.r
 _Static_assert(offsetof(R4GfxPowerRequest, sequence) == 40u, "GfxPowerRequest.sequence offset mismatch");
 _Static_assert(offsetof(R4GfxPowerRequest, deadline_ns) == 48u, "GfxPowerRequest.deadline_ns offset mismatch");
 _Static_assert(offsetof(R4GfxPowerRequest, reserved1) == 56u, "GfxPowerRequest.reserved1 offset mismatch");
+_Static_assert(sizeof(R4RemoteFrameLease) == 48u, "RemoteFrameLease size mismatch");
+_Static_assert(offsetof(R4RemoteFrameLease, version) == 0u, "RemoteFrameLease.version offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameLease, size) == 4u, "RemoteFrameLease.size offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameLease, id) == 8u, "RemoteFrameLease.id offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameLease, pixels_addr) == 16u, "RemoteFrameLease.pixels_addr offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameLease, capacity_pixels) == 24u, "RemoteFrameLease.capacity_pixels offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameLease, epoch) == 32u, "RemoteFrameLease.epoch offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameLease, acquired_ns) == 40u, "RemoteFrameLease.acquired_ns offset mismatch");
+_Static_assert(sizeof(R4RemoteFrameCaptureStats) == 96u, "RemoteFrameCaptureStats size mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, version) == 0u, "RemoteFrameCaptureStats.version offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, size) == 4u, "RemoteFrameCaptureStats.size offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, consumers) == 8u, "RemoteFrameCaptureStats.consumers offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, leases) == 12u, "RemoteFrameCaptureStats.leases offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, snapshots) == 16u, "RemoteFrameCaptureStats.snapshots offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, reserved) == 20u, "RemoteFrameCaptureStats.reserved offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, epoch) == 24u, "RemoteFrameCaptureStats.epoch offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, revision) == 32u, "RemoteFrameCaptureStats.revision offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, live_bytes) == 40u, "RemoteFrameCaptureStats.live_bytes offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, snapshot_bytes) == 48u, "RemoteFrameCaptureStats.snapshot_bytes offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, published_bytes) == 56u, "RemoteFrameCaptureStats.published_bytes offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, snapshot_copy_bytes) == 64u, "RemoteFrameCaptureStats.snapshot_copy_bytes offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, acquires) == 72u, "RemoteFrameCaptureStats.acquires offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, misses) == 80u, "RemoteFrameCaptureStats.misses offset mismatch");
+_Static_assert(offsetof(R4RemoteFrameCaptureStats, max_reader_ns) == 88u, "RemoteFrameCaptureStats.max_reader_ns offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -13679,7 +13741,7 @@ _Static_assert(offsetof(R4XStartR4Sys, directory_change_poll) == 1152u, "R4XStar
 _Static_assert(sizeof(R4SysDirectoryChangePollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, file_copy_buffered) == 1160u, "R4XStartR4Sys.file_copy_buffered offset mismatch");
 _Static_assert(sizeof(R4SysFileCopyBufferedFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 496u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 528u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -13799,6 +13861,14 @@ _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4D
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_motion) == 488u, "R4XStartR4Desk.mouse_motion offset mismatch");
 _Static_assert(sizeof(R4DeskMouseMotionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_snapshot_acquire) == 496u, "R4XStartR4Desk.remote_frame_snapshot_acquire offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFrameSnapshotAcquireFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_snapshot_release) == 504u, "R4XStartR4Desk.remote_frame_snapshot_release offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFrameSnapshotReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_source_reset) == 512u, "R4XStartR4Desk.remote_frame_source_reset offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFrameSourceResetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, remote_frame_capture_stats) == 520u, "R4XStartR4Desk.remote_frame_capture_stats offset mismatch");
+_Static_assert(sizeof(R4DeskRemoteFrameCaptureStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 832u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

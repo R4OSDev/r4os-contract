@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 269 von 269 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 271 von 271 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1834; Limits: 109
 
@@ -290,6 +290,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxTelemetryState` | extensible | extern_struct | 544/8 | 544/8 | 544/8 | 544/8 |
 | `GfxOutputPower` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `GfxPowerRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `RemoteFrameLease` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `RemoteFrameCaptureStats` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 
 ## Typdetails
 
@@ -7384,6 +7386,48 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `sequence` | 40 | 8 | 8 | `u64` | - |
 | `deadline_ns` | 48 | 8 | 8 | `u64` | - |
 | `reserved1` | 56 | 8 | 8 | `u64` | - |
+
+### `RemoteFrameLease`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `id` | 8 | 8 | 8 | `u64` | - |
+| `pixels_addr` | 16 | 8 | 8 | `u64` | - |
+| `capacity_pixels` | 24 | 8 | 8 | `u64` | - |
+| `epoch` | 32 | 8 | 8 | `u64` | - |
+| `acquired_ns` | 40 | 8 | 8 | `u64` | - |
+
+### `RemoteFrameCaptureStats`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `consumers` | 8 | 4 | 4 | `u32` | - |
+| `leases` | 12 | 4 | 4 | `u32` | - |
+| `snapshots` | 16 | 4 | 4 | `u32` | - |
+| `reserved` | 20 | 4 | 4 | `u32` | - |
+| `epoch` | 24 | 8 | 8 | `u64` | - |
+| `revision` | 32 | 8 | 8 | `u64` | - |
+| `live_bytes` | 40 | 8 | 8 | `u64` | - |
+| `snapshot_bytes` | 48 | 8 | 8 | `u64` | - |
+| `published_bytes` | 56 | 8 | 8 | `u64` | - |
+| `snapshot_copy_bytes` | 64 | 8 | 8 | `u64` | - |
+| `acquires` | 72 | 8 | 8 | `u64` | - |
+| `misses` | 80 | 8 | 8 | `u64` | - |
+| `max_reader_ns` | 88 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 
