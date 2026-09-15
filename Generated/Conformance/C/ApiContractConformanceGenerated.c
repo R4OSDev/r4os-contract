@@ -301,6 +301,7 @@ static R4DrawGfxAtomicTestColorFn r4os_probe_r4draw_gfx_atomic_test_color = (R4D
 static R4DrawGfxAtomicSubmitColorFn r4os_probe_r4draw_gfx_atomic_submit_color = (R4DrawGfxAtomicSubmitColorFn)0;
 static R4DrawGfxOutputRefreshFn r4os_probe_r4draw_gfx_output_refresh = (R4DrawGfxOutputRefreshFn)0;
 static R4DrawGfxRefreshRequestFn r4os_probe_r4draw_gfx_refresh_request = (R4DrawGfxRefreshRequestFn)0;
+static R4DrawGfxMemoryBudgetFn r4os_probe_r4draw_gfx_memory_budget = (R4DrawGfxMemoryBudgetFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

@@ -15340,10 +15340,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 28,
+      "abi_version": 29,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 800,
+      "size": 808,
       "slots": [
         {
           "number": 0,
@@ -22592,6 +22592,82 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 98,
+          "offset": 800,
+          "name": "gfx_memory_budget",
+          "state": "function",
+          "required": false,
+          "description": "Query the configured budget and retained BO charges of one exact adapter/memory generation. Read-only; configure operations are rejected. No R4D callback, allocation or hardware query. Error leaves output unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxDeviceBudgetRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxDeviceBudgetState"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
@@ -79411,7 +79487,7 @@
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 1,
-      "size": 56,
+      "size": 136,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -79437,12 +79513,12 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Caller capacity, at least the complete version-1 payload.",
+          "description": "Caller capacity: original56-byte V1 prefix or full136-byte accounting extension. Incomplete tails are not read or written; provider returns its complete prefix size.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "56"
+          "default_value": "136"
         },
         {
           "name": "objects",
@@ -79550,6 +79626,146 @@
             "name": "u64"
           },
           "description": "Admission budget per exact producer generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "system_bytes",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Charged system-memory allocation bytes, including pending and retained release. system_bytes + device_bytes = committed_bytes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_bytes",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Charged driver-owned device-local allocation bytes. Does not include private firmware reservations outside the common BO catalog.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "system_backed_bytes",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "System bytes with registered backing, retained until successful final allocator release. Not an estimate from CPU address presence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_backed_bytes",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Device bytes with driver-committed backing, retained until the driver confirms final release. Not a claim about unacknowledged firmware work.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "system_pinned_bytes",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unique backed system BO bytes with one or more current lifetime leases; aliases and multiple leases count once.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_pinned_bytes",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unique backed device BO bytes with one or more current lifetime leases. Subset of device_backed_bytes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scanout_pinned_bytes",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unique BO bytes with a scanout lease; subset of the pinned totals, not an additional allocation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_mapped_bytes",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unique BO bytes with a device_mapping lease; overlaps pinned and scanout totals. This field alone never grants eviction.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "allocating_bytes",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Charged BO bytes whose allocator publication is still pending. Actual partial allocator work remains owned outside this metadata view.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "destroying_bytes",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Charged BO bytes in final destruction or pending release, retained until exact completion.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -80589,8 +80805,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 184,
+      "version": 3,
+      "size": 192,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -80621,7 +80837,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "184"
+          "default_value": "192"
         },
         {
           "name": "buffer_create",
@@ -80925,6 +81141,20 @@
             "name": "u64"
           },
           "description": "(provider:GfxBufferHandle*, request:GfxBufferHandle*, result:i32, reference:GfxBufferHandle*) -> i32. Complete actual claimed allocation. For result=1 borrow a driver-owned canonical native BO reference; failures require zero reference. Outputs and driver reference remain unchanged. Late completion releases the claim without reviving cancelled work.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "memory_budget",
+          "offset": 184,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "(const GfxDeviceBudgetRequest*, GfxDeviceBudgetState*) -> i32. Optional exact-owner query/configure; output unchanged on failure. No callback, allocation or wait under the BO metadata owner.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -81842,7 +82072,7 @@
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 4,
-      "size": 272,
+      "size": 296,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -81873,7 +82103,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "272"
+          "default_value": "296"
         },
         {
           "name": "fence",
@@ -82079,10 +82309,66 @@
           "alignment": 8,
           "source_type": "GfxOutputTarget",
           "default_kind": "empty"
+        },
+        {
+          "name": "producer_kind",
+          "offset": 272,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Kernel-authenticated queue producer: zero unknown (old prefix), one kernel, two program, three driver.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "producer_reserved",
+          "offset": 276,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "producer_id",
+          "offset": 280,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Stable producer identity, independent of its number of queues.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "producer_generation",
+          "offset": 288,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact producer lifetime. No process-ID reuse alias.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration. Wire version remains 1; the 112-byte prefix stays supported for legacy backends. Copy-rows backends require the complete 136-byte output. byte_length denotes bytes per row for operation 3; offsets are logical BO offsets, independently of conservative pinned extents. The224-byte prefix exposes immutable render state and the original job deadline. Backends advertising render must provide224 bytes; row-copy-only backends still need136, legacy backends112. Renderer leases remain owned by the canonical queue until physical completion. The272-byte tail copies an exact output target. Extra-output registration negotiates this tail; old primary-only backends retain their old required prefixes."
+      "description": "One accepted job taken by its authenticated R4D owner. Descriptor is copied. Exact BO uses persist until complete with proven quiescence or a proven whole-device reset. Data is accessed through page-bounded segment enumeration. Wire version remains 1; the 112-byte prefix stays supported for legacy backends. Copy-rows backends require the complete 136-byte output. byte_length denotes bytes per row for operation 3; offsets are logical BO offsets, independently of conservative pinned extents. The224-byte prefix exposes immutable render state and the original job deadline. Backends advertising render must provide224 bytes; row-copy-only backends still need136, legacy backends112. Renderer leases remain owned by the canonical queue until physical completion. The272-byte tail copies an exact output target. Extra-output registration negotiates this tail; old primary-only backends retain their old required prefixes. Optional complete 296-byte tail supplies authenticated producer identity for bounded driver scheduling. The 272-byte output-target prefix remains sufficient for output registration. Old providers leave the identity unknown; drivers then rotate timelines."
     },
     {
       "name": "GfxDriverQueueApi",
@@ -90623,7 +90909,7 @@
         }
       ],
       "values": [],
-      "description": "Additional independently presented native output. Exact current published connector, head, geometry and backend; flags/reserved0 are zero. Driver retains its actual scanout resources. Registration admits no hardware effect and leaves output inactive. job_size must equal272 and permanently negotiates the complete target-bearing GfxDriverJob for this backend lifetime. Activation follows real driver modeset completion; pause closes admission; removal requires drained queue work and actual hardware quiescence."
+      "description": "Additional independently presented native output. Exact current published connector, head, geometry and backend; flags/reserved0 are zero. Driver retains its actual scanout resources. Registration admits no hardware effect and leaves output inactive. job_size must name a complete supported GfxDriverJob prefix of at least272 bytes and permanently negotiates the complete target-bearing GfxDriverJob for this backend lifetime. Activation follows real driver modeset completion; pause closes admission; removal requires drained queue work and actual hardware quiescence."
     },
     {
       "name": "MouseMotion",
@@ -93996,6 +94282,260 @@
       ],
       "values": [],
       "description": "Bounded per-output presenter intent. Operations0configure/renew,1release,2report flicker,3explicit clear fault. Policy0off,1animated fullscreen,2animated windows/fullscreen. Scene bits1fullscreen,2animated,4capture. Driver revalidates actual route, image, transitions, HDR and audio; scene never proves hardware capability. Input sequence/deadline must be zero. Kernel returns a monotonically assigned sequence and a1.5s intent lease; unchanged renewals preserve sequence. Presenter renews within500ms. Close, expired lease and release request fixed refresh. One program owner per current output; no callbacks or GPU operations while copying intent. Driver reads return latest copied intent, including synthesized off after expiry; absent API implies fixed."
+    },
+    {
+      "name": "GfxDeviceBudgetRequest",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; complete version-1 payload required.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Nonzero exact adapter identity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "operation",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_memory_budget_query or gfx_memory_budget_configure. R4DRAW permits query only.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "memory_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonzero exact provider memory generation; no current-generation alias.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "limit_bytes",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Configure: page-aligned provider admission ceiling, zero closes new allocation admission. Query: zero. Shrink preserves all existing charges; this is not a physical allocation guarantee.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Query or configure one exact provider/adapter/memory-generation admission domain. Only the authenticated R4D may configure it. No allocation or hardware operation is performed."
+    },
+    {
+      "name": "GfxDeviceBudgetState",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; complete version-1 payload required.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "adapter_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact adapter identity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "gfx_memory_budget_closing when the provider owner is closing; other bits zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "memory_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact configured memory generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "limit_bytes",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Provider device-memory admission ceiling; may be below charged_bytes after reduction.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "charged_bytes",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "All still-charged BO bytes of this provider domain, including pending and retained release.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "shared_limit_bytes",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Shared system-memory admission budget. Legacy unconfigured device BOs continue to use this budget.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "shared_charged_bytes",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "BO charges outside configured provider domains; never inferred from free physical RAM.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "shared_producer_limit_bytes",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Shared-memory admission limit per producer; not a preallocated reservation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One coherent common-owner accounting snapshot. Provider limits are metadata supplied by its actual R4D; live charges include unfinished allocations and releases. Firmware/private reservations excluded by provider policy are not charged a second time here."
     }
   ],
   "operations": [],
@@ -114497,6 +115037,36 @@
       "scope": "gfx_output",
       "stability": "fixed_contract",
       "description": "Confirmed active link flag; requires actual acknowledged transport state."
+    },
+    {
+      "name": "gfx_memory_budget_query",
+      "value": "0",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_memory",
+      "stability": "fixed_contract",
+      "description": "Operation for the optional common memory-budget service; configure is R4D-only."
+    },
+    {
+      "name": "gfx_memory_budget_configure",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_memory",
+      "stability": "fixed_contract",
+      "description": "Operation for the optional common memory-budget service; configure is R4D-only."
+    },
+    {
+      "name": "gfx_memory_budget_closing",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_memory",
+      "stability": "fixed_contract",
+      "description": "The configured device budget belongs to a closing provider owner."
     }
   ],
   "limits": [

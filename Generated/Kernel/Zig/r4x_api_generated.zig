@@ -1810,6 +1810,9 @@ pub const gfx_output_link_dp_sst: u32 = 3;
 pub const gfx_output_link_dp_mst: u32 = 4;
 pub const gfx_output_link_fec: u32 = 1;
 pub const gfx_output_link_dsc: u32 = 2;
+pub const gfx_memory_budget_query: u32 = 0;
+pub const gfx_memory_budget_configure: u32 = 1;
+pub const gfx_memory_budget_closing: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6199,7 +6202,7 @@ pub const GfxBufferMap = extern struct {
 
 pub const GfxBufferStats = extern struct {
     version: u32 = 1,
-    size: u32 = 56,
+    size: u32 = 136,
     objects: u32 = 0,
     references: u32 = 0,
     leases: u32 = 0,
@@ -6208,6 +6211,16 @@ pub const GfxBufferStats = extern struct {
     retained_bytes: u64 = 0,
     budget_bytes: u64 = 0,
     producer_budget_bytes: u64 = 0,
+    system_bytes: u64 = 0,
+    device_bytes: u64 = 0,
+    system_backed_bytes: u64 = 0,
+    device_backed_bytes: u64 = 0,
+    system_pinned_bytes: u64 = 0,
+    device_pinned_bytes: u64 = 0,
+    scanout_pinned_bytes: u64 = 0,
+    device_mapped_bytes: u64 = 0,
+    allocating_bytes: u64 = 0,
+    destroying_bytes: u64 = 0,
 };
 
 pub const GfxDeviceRequest = extern struct {
@@ -6299,7 +6312,7 @@ pub const GfxOwnedBufferRelease = extern struct {
 
 pub const GfxDriverMemoryApi = extern struct {
     version: u32 = 1,
-    size: u32 = 184,
+    size: u32 = 192,
     buffer_create: u64 = 0,
     buffer_describe: u64 = 0,
     buffer_import: u64 = 0,
@@ -6322,6 +6335,7 @@ pub const GfxDriverMemoryApi = extern struct {
     native_unregister: u64 = 0,
     native_take: u64 = 0,
     native_complete: u64 = 0,
+    memory_budget: u64 = 0,
 };
 
 pub const GfxFence = extern struct {
@@ -6404,7 +6418,7 @@ pub const GfxBackendRegistration = extern struct {
 
 pub const GfxDriverJob = extern struct {
     version: u32 = 1,
-    size: u32 = 272,
+    size: u32 = 296,
     fence: GfxFence = .{},
     operation: u32 = 0,
     reserved0: u32 = 0,
@@ -6420,6 +6434,10 @@ pub const GfxDriverJob = extern struct {
     render: GfxRenderCommand = .{},
     deadline_ns: u64 = 0,
     display_target: GfxOutputTarget = .{},
+    producer_kind: u32 = 0,
+    producer_reserved: u32 = 0,
+    producer_id: u64 = 0,
+    producer_generation: u64 = 0,
 };
 
 pub const GfxDriverQueueApi = extern struct {
@@ -7424,6 +7442,28 @@ pub const GfxRefreshRequest = extern struct {
     deadline_ns: u64 = 0,
 };
 
+pub const GfxDeviceBudgetRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    adapter_id: u32 = 0,
+    operation: u32 = 0,
+    memory_generation: u64 = 0,
+    limit_bytes: u64 = 0,
+};
+
+pub const GfxDeviceBudgetState = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    adapter_id: u32 = 0,
+    flags: u32 = 0,
+    memory_generation: u64 = 0,
+    limit_bytes: u64 = 0,
+    charged_bytes: u64 = 0,
+    shared_limit_bytes: u64 = 0,
+    shared_charged_bytes: u64 = 0,
+    shared_producer_limit_bytes: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -7947,12 +7987,13 @@ pub const R4DrawFns = struct {
     pub const gfx_atomic_submit_color = *const fn (*const GfxModeColorRequest, u32, *GfxModeStatus) callconv(.c) i32;
     pub const gfx_output_refresh = *const fn (*const GfxOutputTarget, *GfxOutputRefresh) callconv(.c) i32;
     pub const gfx_refresh_request = *const fn (*const GfxRefreshRequest, *GfxRefreshRequest) callconv(.c) i32;
+    pub const gfx_memory_budget = *const fn (*const GfxDeviceBudgetRequest, *GfxDeviceBudgetState) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 28,
-    size: u32 = 800,
+    abi_version: u32 = 29,
+    size: u32 = 808,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -8052,6 +8093,7 @@ pub const R4XStartR4Draw = extern struct {
     gfx_atomic_submit_color: usize = 0,
     gfx_output_refresh: usize = 0,
     gfx_refresh_request: usize = 0,
+    gfx_memory_budget: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -8594,6 +8636,7 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 95, .offset = 776, .name = "gfx_atomic_submit_color", .state = .function, .required = false },
     .{ .number = 96, .offset = 784, .name = "gfx_output_refresh", .state = .function, .required = false },
     .{ .number = 97, .offset = 792, .name = "gfx_refresh_request", .state = .function, .required = false },
+    .{ .number = 98, .offset = 800, .name = "gfx_memory_budget", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -12450,7 +12493,7 @@ comptime {
     if (@offsetOf(GfxBufferMap, "byte_length") != 32) @compileError("generated ABI offset drift: GfxBufferMap.byte_length");
     if (@offsetOf(GfxBufferMap, "cache_policy") != 40) @compileError("generated ABI offset drift: GfxBufferMap.cache_policy");
     if (@offsetOf(GfxBufferMap, "reserved0") != 44) @compileError("generated ABI offset drift: GfxBufferMap.reserved0");
-    if (@sizeOf(GfxBufferStats) != 56) @compileError("generated ABI size drift: GfxBufferStats");
+    if (@sizeOf(GfxBufferStats) != 136) @compileError("generated ABI size drift: GfxBufferStats");
     if (@alignOf(GfxBufferStats) != 8) @compileError("generated ABI alignment drift: GfxBufferStats");
     if (@offsetOf(GfxBufferStats, "version") != 0) @compileError("generated ABI offset drift: GfxBufferStats.version");
     if (@offsetOf(GfxBufferStats, "size") != 4) @compileError("generated ABI offset drift: GfxBufferStats.size");
@@ -12462,6 +12505,16 @@ comptime {
     if (@offsetOf(GfxBufferStats, "retained_bytes") != 32) @compileError("generated ABI offset drift: GfxBufferStats.retained_bytes");
     if (@offsetOf(GfxBufferStats, "budget_bytes") != 40) @compileError("generated ABI offset drift: GfxBufferStats.budget_bytes");
     if (@offsetOf(GfxBufferStats, "producer_budget_bytes") != 48) @compileError("generated ABI offset drift: GfxBufferStats.producer_budget_bytes");
+    if (@offsetOf(GfxBufferStats, "system_bytes") != 56) @compileError("generated ABI offset drift: GfxBufferStats.system_bytes");
+    if (@offsetOf(GfxBufferStats, "device_bytes") != 64) @compileError("generated ABI offset drift: GfxBufferStats.device_bytes");
+    if (@offsetOf(GfxBufferStats, "system_backed_bytes") != 72) @compileError("generated ABI offset drift: GfxBufferStats.system_backed_bytes");
+    if (@offsetOf(GfxBufferStats, "device_backed_bytes") != 80) @compileError("generated ABI offset drift: GfxBufferStats.device_backed_bytes");
+    if (@offsetOf(GfxBufferStats, "system_pinned_bytes") != 88) @compileError("generated ABI offset drift: GfxBufferStats.system_pinned_bytes");
+    if (@offsetOf(GfxBufferStats, "device_pinned_bytes") != 96) @compileError("generated ABI offset drift: GfxBufferStats.device_pinned_bytes");
+    if (@offsetOf(GfxBufferStats, "scanout_pinned_bytes") != 104) @compileError("generated ABI offset drift: GfxBufferStats.scanout_pinned_bytes");
+    if (@offsetOf(GfxBufferStats, "device_mapped_bytes") != 112) @compileError("generated ABI offset drift: GfxBufferStats.device_mapped_bytes");
+    if (@offsetOf(GfxBufferStats, "allocating_bytes") != 120) @compileError("generated ABI offset drift: GfxBufferStats.allocating_bytes");
+    if (@offsetOf(GfxBufferStats, "destroying_bytes") != 128) @compileError("generated ABI offset drift: GfxBufferStats.destroying_bytes");
     if (@sizeOf(GfxDeviceRequest) != 64) @compileError("generated ABI size drift: GfxDeviceRequest");
     if (@alignOf(GfxDeviceRequest) != 8) @compileError("generated ABI alignment drift: GfxDeviceRequest");
     if (@offsetOf(GfxDeviceRequest, "version") != 0) @compileError("generated ABI offset drift: GfxDeviceRequest.version");
@@ -12542,7 +12595,7 @@ comptime {
     if (@offsetOf(GfxOwnedBufferRelease, "adapter_id") != 64) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.adapter_id");
     if (@offsetOf(GfxOwnedBufferRelease, "driver_owner") != 68) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.driver_owner");
     if (@offsetOf(GfxOwnedBufferRelease, "reserved0") != 72) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.reserved0");
-    if (@sizeOf(GfxDriverMemoryApi) != 184) @compileError("generated ABI size drift: GfxDriverMemoryApi");
+    if (@sizeOf(GfxDriverMemoryApi) != 192) @compileError("generated ABI size drift: GfxDriverMemoryApi");
     if (@alignOf(GfxDriverMemoryApi) != 8) @compileError("generated ABI alignment drift: GfxDriverMemoryApi");
     if (@offsetOf(GfxDriverMemoryApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverMemoryApi.version");
     if (@offsetOf(GfxDriverMemoryApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverMemoryApi.size");
@@ -12568,6 +12621,7 @@ comptime {
     if (@offsetOf(GfxDriverMemoryApi, "native_unregister") != 160) @compileError("generated ABI offset drift: GfxDriverMemoryApi.native_unregister");
     if (@offsetOf(GfxDriverMemoryApi, "native_take") != 168) @compileError("generated ABI offset drift: GfxDriverMemoryApi.native_take");
     if (@offsetOf(GfxDriverMemoryApi, "native_complete") != 176) @compileError("generated ABI offset drift: GfxDriverMemoryApi.native_complete");
+    if (@offsetOf(GfxDriverMemoryApi, "memory_budget") != 184) @compileError("generated ABI offset drift: GfxDriverMemoryApi.memory_budget");
     if (@sizeOf(GfxFence) != 40) @compileError("generated ABI size drift: GfxFence");
     if (@alignOf(GfxFence) != 8) @compileError("generated ABI alignment drift: GfxFence");
     if (@offsetOf(GfxFence, "slot") != 0) @compileError("generated ABI offset drift: GfxFence.slot");
@@ -12639,7 +12693,7 @@ comptime {
     if (@offsetOf(GfxBackendRegistration, "context") != 24) @compileError("generated ABI offset drift: GfxBackendRegistration.context");
     if (@offsetOf(GfxBackendRegistration, "operations") != 32) @compileError("generated ABI offset drift: GfxBackendRegistration.operations");
     if (@offsetOf(GfxBackendRegistration, "memory_generation") != 40) @compileError("generated ABI offset drift: GfxBackendRegistration.memory_generation");
-    if (@sizeOf(GfxDriverJob) != 272) @compileError("generated ABI size drift: GfxDriverJob");
+    if (@sizeOf(GfxDriverJob) != 296) @compileError("generated ABI size drift: GfxDriverJob");
     if (@alignOf(GfxDriverJob) != 8) @compileError("generated ABI alignment drift: GfxDriverJob");
     if (@offsetOf(GfxDriverJob, "version") != 0) @compileError("generated ABI offset drift: GfxDriverJob.version");
     if (@offsetOf(GfxDriverJob, "size") != 4) @compileError("generated ABI offset drift: GfxDriverJob.size");
@@ -12658,6 +12712,10 @@ comptime {
     if (@offsetOf(GfxDriverJob, "render") != 136) @compileError("generated ABI offset drift: GfxDriverJob.render");
     if (@offsetOf(GfxDriverJob, "deadline_ns") != 216) @compileError("generated ABI offset drift: GfxDriverJob.deadline_ns");
     if (@offsetOf(GfxDriverJob, "display_target") != 224) @compileError("generated ABI offset drift: GfxDriverJob.display_target");
+    if (@offsetOf(GfxDriverJob, "producer_kind") != 272) @compileError("generated ABI offset drift: GfxDriverJob.producer_kind");
+    if (@offsetOf(GfxDriverJob, "producer_reserved") != 276) @compileError("generated ABI offset drift: GfxDriverJob.producer_reserved");
+    if (@offsetOf(GfxDriverJob, "producer_id") != 280) @compileError("generated ABI offset drift: GfxDriverJob.producer_id");
+    if (@offsetOf(GfxDriverJob, "producer_generation") != 288) @compileError("generated ABI offset drift: GfxDriverJob.producer_generation");
     if (@sizeOf(GfxDriverQueueApi) != 128) @compileError("generated ABI size drift: GfxDriverQueueApi");
     if (@alignOf(GfxDriverQueueApi) != 8) @compileError("generated ABI alignment drift: GfxDriverQueueApi");
     if (@offsetOf(GfxDriverQueueApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverQueueApi.version");
@@ -13583,6 +13641,26 @@ comptime {
     if (@offsetOf(GfxRefreshRequest, "reserved0") != 68) @compileError("generated ABI offset drift: GfxRefreshRequest.reserved0");
     if (@offsetOf(GfxRefreshRequest, "sequence") != 72) @compileError("generated ABI offset drift: GfxRefreshRequest.sequence");
     if (@offsetOf(GfxRefreshRequest, "deadline_ns") != 80) @compileError("generated ABI offset drift: GfxRefreshRequest.deadline_ns");
+    if (@sizeOf(GfxDeviceBudgetRequest) != 32) @compileError("generated ABI size drift: GfxDeviceBudgetRequest");
+    if (@alignOf(GfxDeviceBudgetRequest) != 8) @compileError("generated ABI alignment drift: GfxDeviceBudgetRequest");
+    if (@offsetOf(GfxDeviceBudgetRequest, "version") != 0) @compileError("generated ABI offset drift: GfxDeviceBudgetRequest.version");
+    if (@offsetOf(GfxDeviceBudgetRequest, "size") != 4) @compileError("generated ABI offset drift: GfxDeviceBudgetRequest.size");
+    if (@offsetOf(GfxDeviceBudgetRequest, "adapter_id") != 8) @compileError("generated ABI offset drift: GfxDeviceBudgetRequest.adapter_id");
+    if (@offsetOf(GfxDeviceBudgetRequest, "operation") != 12) @compileError("generated ABI offset drift: GfxDeviceBudgetRequest.operation");
+    if (@offsetOf(GfxDeviceBudgetRequest, "memory_generation") != 16) @compileError("generated ABI offset drift: GfxDeviceBudgetRequest.memory_generation");
+    if (@offsetOf(GfxDeviceBudgetRequest, "limit_bytes") != 24) @compileError("generated ABI offset drift: GfxDeviceBudgetRequest.limit_bytes");
+    if (@sizeOf(GfxDeviceBudgetState) != 64) @compileError("generated ABI size drift: GfxDeviceBudgetState");
+    if (@alignOf(GfxDeviceBudgetState) != 8) @compileError("generated ABI alignment drift: GfxDeviceBudgetState");
+    if (@offsetOf(GfxDeviceBudgetState, "version") != 0) @compileError("generated ABI offset drift: GfxDeviceBudgetState.version");
+    if (@offsetOf(GfxDeviceBudgetState, "size") != 4) @compileError("generated ABI offset drift: GfxDeviceBudgetState.size");
+    if (@offsetOf(GfxDeviceBudgetState, "adapter_id") != 8) @compileError("generated ABI offset drift: GfxDeviceBudgetState.adapter_id");
+    if (@offsetOf(GfxDeviceBudgetState, "flags") != 12) @compileError("generated ABI offset drift: GfxDeviceBudgetState.flags");
+    if (@offsetOf(GfxDeviceBudgetState, "memory_generation") != 16) @compileError("generated ABI offset drift: GfxDeviceBudgetState.memory_generation");
+    if (@offsetOf(GfxDeviceBudgetState, "limit_bytes") != 24) @compileError("generated ABI offset drift: GfxDeviceBudgetState.limit_bytes");
+    if (@offsetOf(GfxDeviceBudgetState, "charged_bytes") != 32) @compileError("generated ABI offset drift: GfxDeviceBudgetState.charged_bytes");
+    if (@offsetOf(GfxDeviceBudgetState, "shared_limit_bytes") != 40) @compileError("generated ABI offset drift: GfxDeviceBudgetState.shared_limit_bytes");
+    if (@offsetOf(GfxDeviceBudgetState, "shared_charged_bytes") != 48) @compileError("generated ABI offset drift: GfxDeviceBudgetState.shared_charged_bytes");
+    if (@offsetOf(GfxDeviceBudgetState, "shared_producer_limit_bytes") != 56) @compileError("generated ABI offset drift: GfxDeviceBudgetState.shared_producer_limit_bytes");
     if (@sizeOf(R4XStartR4Sys) != 1168) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -13789,7 +13867,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "console_input_wait") != 472) @compileError("generated ABI offset drift: R4XStartR4Desk.console_input_wait");
     if (@offsetOf(R4XStartR4Desk, "physical_key_poll") != 480) @compileError("generated ABI offset drift: R4XStartR4Desk.physical_key_poll");
     if (@offsetOf(R4XStartR4Desk, "mouse_motion") != 488) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_motion");
-    if (@sizeOf(R4XStartR4Draw) != 800) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 808) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -13888,6 +13966,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_atomic_submit_color") != 776) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_atomic_submit_color");
     if (@offsetOf(R4XStartR4Draw, "gfx_output_refresh") != 784) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_output_refresh");
     if (@offsetOf(R4XStartR4Draw, "gfx_refresh_request") != 792) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_refresh_request");
+    if (@offsetOf(R4XStartR4Draw, "gfx_memory_budget") != 800) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_memory_budget");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -14522,13 +14601,14 @@ pub const R4DrawProvider = struct {
     gfx_atomic_submit_color: ?R4DrawFns.gfx_atomic_submit_color = null,
     gfx_output_refresh: ?R4DrawFns.gfx_output_refresh = null,
     gfx_refresh_request: ?R4DrawFns.gfx_refresh_request = null,
+    gfx_memory_budget: ?R4DrawFns.gfx_memory_budget = null,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 28,
-        .size = 800,
+        .abi_version = 29,
+        .size = 808,
         .flags = 0,
         .screen_width = if (provider.screen_width) |callback| @intFromPtr(callback) else 0,
         .screen_height = if (provider.screen_height) |callback| @intFromPtr(callback) else 0,
@@ -14628,6 +14708,7 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gfx_atomic_submit_color = if (provider.gfx_atomic_submit_color) |callback| @intFromPtr(callback) else 0,
         .gfx_output_refresh = if (provider.gfx_output_refresh) |callback| @intFromPtr(callback) else 0,
         .gfx_refresh_request = if (provider.gfx_refresh_request) |callback| @intFromPtr(callback) else 0,
+        .gfx_memory_budget = if (provider.gfx_memory_budget) |callback| @intFromPtr(callback) else 0,
     };
 }
 
