@@ -80874,15 +80874,15 @@
         }
       ],
       "values": [],
-      "description": "Issued only after every public reference and device/queue use ends. A false quiescence acknowledgement keeps the same claimed ticket; true requires physical backing and GPU mappings to be unreachable. No callback or hardware I/O under the common owner."
+      "description": "Issued after every public reference and device/queue use ends, or after exact-generation device_lost(quiesced=1) with every device/queue use retired. In the latter case invalid public references remain closable after physical backing release. A false quiescence acknowledgement keeps the same claimed ticket; true requires physical backing and GPU mappings to be unreachable. No callback or hardware I/O under the common owner."
     },
     {
       "name": "GfxDriverMemoryApi",
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 4,
-      "size": 200,
+      "version": 5,
+      "size": 208,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -80913,7 +80913,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "200"
+          "default_value": "208"
         },
         {
           "name": "buffer_create",
@@ -81245,6 +81245,20 @@
             "name": "u64"
           },
           "description": "(const GfxTelemetryState*, GfxTelemetryDemand*) -> i32. Optional exact-owner publication/demand exchange from Driver Work. No callback, allocation or wait. Old192-byte prefix is unchanged; output unchanged on failure.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_lost",
+          "offset": 200,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "(adapter_id:u32, memory_generation:u64, quiesced:u32) -> i32. Optional exact-driver metadata invalidation of native BOs and closure of their device budget. quiesced=0 rejects new access while retaining physical storage; 1 additionally permits backing release after every device/queue lease retires, only with independently proven GPU/DMA stop. Existing public handles remain invalid but closable. CPU BOs and other generations are unaffected. No callback, allocation, hardware access or wait. Available during cached cleanup; the original 200-byte prefix and wire version 1 remain valid.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -85442,8 +85456,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 5,
-      "size": 120,
+      "version": 6,
+      "size": 136,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -85474,7 +85488,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "120"
+          "default_value": "136"
         },
         {
           "name": "boot_info",
@@ -85671,10 +85685,38 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "device_reset",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxBackendBinding*,u64 generation,u32 quiesced,GfxNativeState*). Task-context exact driver/backend reset bridge. quiesced=0 accepts the current native or boot-hold display generation, hides output and returns a new recovering generation; retries use the original generation. Zero backend device/reset generations are allowed only before native queue registration. quiesced=1 requires that returned generation and independently proven whole-backend DMA stop, retires queue/mode/cursor/additional-output consumers and allows CPU-resource cleanup. Busy retains an idempotent cleanup record. Neither operation restores bootfb, releases the immutable boot snapshot or acknowledges a visible image.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "prepare_reset",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxNativeRegistration*,u64 held_generation,u64 reset_generation,GfxNativeState*). After successful quiesced device_reset, prepares a replacement on the same adapter with a strictly newer queue device generation. The original immutable boot hold keeps its own generation; the native candidate receives a fresh display generation. held_generation=0 is valid only without a boot hold. Old callbacks and fences remain stale. Rejected or aborted rebuilding cannot reopen firmware writers; bootfb still requires the original hardware/mapping restore callback.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership. Optional cursor tail preserves the prior 72-byte prefix; layout revision 3/96, wire version 1. Optional0.79.24 output_register/output_transition tail preserves104bytes and wire version1; independent native outputs retain their own state and queue jobs."
+      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership. Optional cursor tail preserves the prior 72-byte prefix; layout revision 3/96, wire version 1. Optional0.79.24 output_register/output_transition tail preserves104bytes and wire version1; independent native outputs retain their own state and queue jobs. Optional 0.79.30 device_reset/prepare_reset tail preserves all 120 prior bytes, slot offsets and wire version 1. Layout revision 6, size136. Only the physical R4D owner proves quiescence; the common bridge owns CPU references and generation changes. Reset completion and boot-display restoration remain separate facts."
     },
     {
       "name": "DriverResourceInfo",

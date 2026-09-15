@@ -6556,6 +6556,7 @@ typedef struct R4GfxDriverMemoryApi {
     uint64_t native_complete;
     uint64_t memory_budget;
     uint64_t telemetry_exchange;
+    uint64_t device_lost;
 } R4GfxDriverMemoryApi;
 
 typedef struct R4GfxFence {
@@ -6958,6 +6959,8 @@ typedef struct R4GfxDriverDisplayApi {
     uint64_t presentation_info;
     uint64_t output_register;
     uint64_t output_transition;
+    uint64_t device_reset;
+    uint64_t prepare_reset;
 } R4GfxDriverDisplayApi;
 
 typedef struct R4DriverResourceInfo {
@@ -12299,7 +12302,7 @@ _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_generation) == 56u, "Gfx
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, adapter_id) == 64u, "GfxOwnedBufferRelease.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_owner) == 68u, "GfxOwnedBufferRelease.driver_owner offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, reserved0) == 72u, "GfxOwnedBufferRelease.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GfxDriverMemoryApi) == 200u, "GfxDriverMemoryApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverMemoryApi) == 208u, "GfxDriverMemoryApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, version) == 0u, "GfxDriverMemoryApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, size) == 4u, "GfxDriverMemoryApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_create) == 8u, "GfxDriverMemoryApi.buffer_create offset mismatch");
@@ -12326,6 +12329,7 @@ _Static_assert(offsetof(R4GfxDriverMemoryApi, native_take) == 168u, "GfxDriverMe
 _Static_assert(offsetof(R4GfxDriverMemoryApi, native_complete) == 176u, "GfxDriverMemoryApi.native_complete offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, memory_budget) == 184u, "GfxDriverMemoryApi.memory_budget offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, telemetry_exchange) == 192u, "GfxDriverMemoryApi.telemetry_exchange offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, device_lost) == 200u, "GfxDriverMemoryApi.device_lost offset mismatch");
 _Static_assert(sizeof(R4GfxFence) == 40u, "GfxFence size mismatch");
 _Static_assert(offsetof(R4GfxFence, slot) == 0u, "GfxFence.slot offset mismatch");
 _Static_assert(offsetof(R4GfxFence, adapter_id) == 4u, "GfxFence.adapter_id offset mismatch");
@@ -12623,7 +12627,7 @@ _Static_assert(offsetof(R4GfxBootHoldRequest, generation) == 16u, "GfxBootHoldRe
 _Static_assert(offsetof(R4GfxBootHoldRequest, reference) == 24u, "GfxBootHoldRequest.reference offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, context) == 40u, "GfxBootHoldRequest.context offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, restore_callback) == 48u, "GfxBootHoldRequest.restore_callback offset mismatch");
-_Static_assert(sizeof(R4GfxDriverDisplayApi) == 120u, "GfxDriverDisplayApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverDisplayApi) == 136u, "GfxDriverDisplayApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, version) == 0u, "GfxDriverDisplayApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, size) == 4u, "GfxDriverDisplayApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_info) == 8u, "GfxDriverDisplayApi.boot_info offset mismatch");
@@ -12640,6 +12644,8 @@ _Static_assert(offsetof(R4GfxDriverDisplayApi, cursor_complete) == 88u, "GfxDriv
 _Static_assert(offsetof(R4GfxDriverDisplayApi, presentation_info) == 96u, "GfxDriverDisplayApi.presentation_info offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, output_register) == 104u, "GfxDriverDisplayApi.output_register offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, output_transition) == 112u, "GfxDriverDisplayApi.output_transition offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, device_reset) == 120u, "GfxDriverDisplayApi.device_reset offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, prepare_reset) == 128u, "GfxDriverDisplayApi.prepare_reset offset mismatch");
 _Static_assert(sizeof(R4DriverResourceInfo) == 32u, "DriverResourceInfo size mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, version) == 0u, "DriverResourceInfo.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, size) == 4u, "DriverResourceInfo.size offset mismatch");

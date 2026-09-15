@@ -44,3 +44,30 @@ Kernel provider builders follow the canonical `required` flag: required
 callbacks must be supplied, while optional callbacks default to null and
 produce a zero capability slot. The table layout and Query import stay
 unchanged when a provider omits a capability.
+
+GPU telemetry identifies one exact adapter and memory generation. A surviving
+driver advances its memory generation monotonically after a GPU reset. The
+common cache accepts that newer epoch, discards the old demand and rejects
+older publications or queries. Fault handling publishes unavailable metrics
+without reading the device; cached measurements are not reset evidence.
+
+The optional `GfxDriverMemoryApi.device_lost` slot at byte200 extends the table
+to208 bytes; its wire version remains1 and every old slot keeps its offset.
+The exact driver invalidates native BOs for one adapter and memory epoch.
+Logical loss rejects new uses but retains DMA. An independently proven stop
+then allows physical backing release once all device/queue leases end, even
+while applications retain invalid handles that they can still close. CPU BOs
+and newer generations are unaffected. This metadata call neither resets the
+GPU nor confirms restoration of the boot framebuffer. The baseline change
+also updates the default caller capacity and documents this release rule;
+it does not change the layout of release tickets or the outer DriverApi.
+
+The optional display reset pair extends `GfxDriverDisplayApi` from120 to136
+bytes without changing wire version1 or the prefix. `device_reset` at120
+invalidates one exact display/backend generation; a separate proven-stop
+call retires its queue, mode, cursor and additional-output consumers. The
+original boot hold remains sealed. `prepare_reset` at128 admits a strictly
+newer queue generation and creates a fresh native display generation; it
+does not reuse the immutable boot-hold ID or grant access to bootfb. Both
+callbacks are required for this capability. Only the existing physical
+restore callback can authorize restoration of the held boot framebuffer.

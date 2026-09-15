@@ -780,3 +780,49 @@ or evidence of firmware completion. Whole-mapping synchronization can still
 overwrite independently updated peer fields in a bidirectional bounce buffer.
 Initial map and final unmap still synchronize the whole mapping; the device
 must be quiescent before teardown. Live GSP dispatch is a separate owner.
+
+GPU reset and retained display ownership (0.79.30)
+-------------------------------------------------
+GfxDriverMemoryApi remains wire1; optional device_lost at200 extends it to208.
+Arguments are (u32 adapter, u64 memory_generation, u32 quiesced), result i32.
+Only the exact driver owner may invalidate its native BO generation. Logical
+loss (quiesced0) closes new use and preserves DMA. quiesced1 requires an
+independent whole-device stop proof; backing becomes releasable after all
+device/queue users retire. Invalid application references may remain as
+closeable stubs. CPU BOs and newer generations are unaffected.
+
+GfxDriverDisplayApi remains wire1, with its original120-byte prefix unchanged.
+The optional reset capability requires BOTH new slots and a136-byte table:
+  device_reset at120: (const GfxBackendBinding*, u64 generation,
+                       u32 quiesced, GfxNativeState*) -> i32
+  prepare_reset at128: (const GfxNativeRegistration*, u64 held_generation,
+                        u64 reset_generation, GfxNativeState*) -> i32
+Call these from the serialized driver worker; never from an IRQ or while an
+unrelated owner lock is held. Busy is retryable within the driver's deadline.
+
+device_reset quiesced0 names the original display generation and exact
+adapter/backend. It closes submissions and returns a fresh recovering/lost
+generation. Retry the original arguments if Busy. Before queue registration,
+both backend device/reset generations may be zero, but the adapter and device
+execution milestone must still match. quiesced1 names the returned recovering
+generation and requires a physical stop proved by the driver. It retires old
+queues, mode/cursor work and additional-output consumers before removing the
+native bridge. It does not free or restore the original boot-display hold.
+A deferred console-restore request can name the current unavailable/
+restore_failed generation with the same exact retained native binding.
+This permits the worker to perform physical recovery after a failed callback;
+it does not admit another owner, binding or arbitrary stale generation.
+
+prepare_reset requires successful retirement, the immutable original boot
+hold ID and the exact recovering generation. Its registration must identify
+a strictly newer queue device generation. Success creates another native
+display generation for prepare/commit; abort leaves the display unavailable.
+Stale generations cannot retire or replace that candidate. The held boot ID
+is never reused as a reset/native display generation.
+
+Neither metadata API is hardware reset evidence. Firmware teardown alone
+cannot retire arbitrary DMA. Only the held physical restore callback followed
+by successful release of its consumers may reopen bootfb. A reset without a
+native bridge can still use that original held callback; failure keeps the
+firmware framebuffer sealed and permits the independent software-graphics
+selection on a subsequent boot.

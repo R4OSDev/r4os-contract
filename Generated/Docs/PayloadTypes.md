@@ -196,7 +196,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxMmioWindow` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxOwnedBufferReservation` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `GfxOwnedBufferRelease` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
-| `GfxDriverMemoryApi` | extensible | extern_struct | 200/8 | 200/8 | 200/8 | 200/8 |
+| `GfxDriverMemoryApi` | extensible | extern_struct | 208/8 | 208/8 | 208/8 | 208/8 |
 | `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
@@ -224,7 +224,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBootHoldRequest` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
-| `GfxDriverDisplayApi` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `GfxDriverDisplayApi` | extensible | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverResourceApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
@@ -5500,7 +5500,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 4 / 200 / 8
+- Version/Größe/Alignment: 5 / 208 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5530,6 +5530,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `native_complete` | 176 | 8 | 8 | `u64` | - |
 | `memory_budget` | 184 | 8 | 8 | `u64` | - |
 | `telemetry_exchange` | 192 | 8 | 8 | `u64` | - |
+| `device_lost` | 200 | 8 | 8 | `u64` | - |
 
 ### `GfxFence`
 
@@ -6076,7 +6077,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 5 / 120 / 8
+- Version/Größe/Alignment: 6 / 136 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6096,6 +6097,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `presentation_info` | 96 | 8 | 8 | `u64` | - |
 | `output_register` | 104 | 8 | 8 | `u64` | - |
 | `output_transition` | 112 | 8 | 8 | `u64` | - |
+| `device_reset` | 120 | 8 | 8 | `u64` | - |
+| `prepare_reset` | 128 | 8 | 8 | `u64` | - |
 
 ### `DriverResourceInfo`
 
