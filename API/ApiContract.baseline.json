@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 19,
+      "abi_version": 20,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1208,
+      "size": 1224,
       "slots": [
         {
           "number": 0,
@@ -11920,6 +11920,145 @@
             "outputs": "none",
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 149,
+          "offset": 1208,
+          "name": "program_local_get",
+          "state": "function",
+          "required": false,
+          "description": "Read a process-local immutable publication by nonzero key. Returns program_local_ok and zero if absent. A key can be a boot-stable library token address. Output changes only on success. No other process, user pointer ownership or current-thread identity is exposed.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "key",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out_value",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "program",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 150,
+          "offset": 1216,
+          "name": "program_local_publish",
+          "state": "function",
+          "required": false,
+          "description": "Publish a nonzero process-local value exactly once for a nonzero key. Returns program_local_ok if installed, program_local_existing if another caller already installed a value; both write the winning value. Caller owns candidate memory and discards it when it loses. Published data must outlive all program threads; no replacement, destructor or allocator policy is provided. The process reaper removes metadata after thread retirement and before VM teardown. Errors leave output unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "key",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out_value",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "program",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "idempotent",
             "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
           }
@@ -117379,6 +117518,66 @@
       "scope": "program",
       "stability": "fixed_contract",
       "description": "Handle or revision counter exhausted without wrap."
+    },
+    {
+      "name": "program_local_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Successful lookup or new publication."
+    },
+    {
+      "name": "program_local_existing",
+      "value": "1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Publication already exists; output is the winning value."
+    },
+    {
+      "name": "program_local_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Zero key/value or invalid output pointer."
+    },
+    {
+      "name": "program_local_error_context",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "No admitted calling process or invalid publication context."
+    },
+    {
+      "name": "program_local_error_memory",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Resident publication metadata allocation failed."
+    },
+    {
+      "name": "program_local_error_closed",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "program",
+      "stability": "fixed_contract",
+      "description": "Process-local publication admission is closed."
     }
   ],
   "limits": [

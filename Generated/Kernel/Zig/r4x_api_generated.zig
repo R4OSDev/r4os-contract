@@ -1844,6 +1844,12 @@ pub const notification_error_context: i32 = -4;
 pub const notification_error_memory: i32 = -5;
 pub const notification_error_release: i32 = -6;
 pub const notification_error_exhausted: i32 = -7;
+pub const program_local_ok: i32 = 0;
+pub const program_local_existing: i32 = 1;
+pub const program_local_error_invalid: i32 = -1;
+pub const program_local_error_context: i32 = -2;
+pub const program_local_error_memory: i32 = -3;
+pub const program_local_error_closed: i32 = -4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -7746,12 +7752,14 @@ pub const R4SysFns = struct {
     pub const notification_notify = *const fn (u64, u32) callconv(.c) i32;
     pub const notification_wait = *const fn (u64, u64, u64) callconv(.c) i32;
     pub const notification_close = *const fn (u64) callconv(.c) i32;
+    pub const program_local_get = *const fn (u64, *u64) callconv(.c) i32;
+    pub const program_local_publish = *const fn (u64, u64, *u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 19,
-    size: u32 = 1208,
+    abi_version: u32 = 20,
+    size: u32 = 1224,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -7902,6 +7910,8 @@ pub const R4XStartR4Sys = extern struct {
     notification_notify: usize = 0,
     notification_wait: usize = 0,
     notification_close: usize = 0,
+    program_local_get: usize = 0,
+    program_local_publish: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -8636,6 +8646,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 146, .offset = 1184, .name = "notification_notify", .state = .function, .required = false },
     .{ .number = 147, .offset = 1192, .name = "notification_wait", .state = .function, .required = false },
     .{ .number = 148, .offset = 1200, .name = "notification_close", .state = .function, .required = false },
+    .{ .number = 149, .offset = 1208, .name = "program_local_get", .state = .function, .required = false },
+    .{ .number = 150, .offset = 1216, .name = "program_local_publish", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -13928,7 +13940,7 @@ comptime {
     if (@offsetOf(RemoteFrameCaptureStats, "acquires") != 72) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.acquires");
     if (@offsetOf(RemoteFrameCaptureStats, "misses") != 80) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.misses");
     if (@offsetOf(RemoteFrameCaptureStats, "max_reader_ns") != 88) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.max_reader_ns");
-    if (@sizeOf(R4XStartR4Sys) != 1208) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1224) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -14078,6 +14090,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "notification_notify") != 1184) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_notify");
     if (@offsetOf(R4XStartR4Sys, "notification_wait") != 1192) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_wait");
     if (@offsetOf(R4XStartR4Sys, "notification_close") != 1200) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_close");
+    if (@offsetOf(R4XStartR4Sys, "program_local_get") != 1208) @compileError("generated ABI offset drift: R4XStartR4Sys.program_local_get");
+    if (@offsetOf(R4XStartR4Sys, "program_local_publish") != 1216) @compileError("generated ABI offset drift: R4XStartR4Sys.program_local_publish");
     if (@sizeOf(R4XStartR4Desk) != 528) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -14500,13 +14514,15 @@ pub const R4SysProvider = struct {
     notification_notify: ?R4SysFns.notification_notify = null,
     notification_wait: ?R4SysFns.notification_wait = null,
     notification_close: ?R4SysFns.notification_close = null,
+    program_local_get: ?R4SysFns.program_local_get = null,
+    program_local_publish: ?R4SysFns.program_local_publish = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 19,
-        .size = 1208,
+        .abi_version = 20,
+        .size = 1224,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -14657,6 +14673,8 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .notification_notify = if (provider.notification_notify) |callback| @intFromPtr(callback) else 0,
         .notification_wait = if (provider.notification_wait) |callback| @intFromPtr(callback) else 0,
         .notification_close = if (provider.notification_close) |callback| @intFromPtr(callback) else 0,
+        .program_local_get = if (provider.program_local_get) |callback| @intFromPtr(callback) else 0,
+        .program_local_publish = if (provider.program_local_publish) |callback| @intFromPtr(callback) else 0,
     };
 }
 

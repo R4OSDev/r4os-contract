@@ -4742,7 +4742,7 @@ comptime {
     if (@offsetOf(abi.RemoteFrameCaptureStats, "acquires") != 72) @compileError("RemoteFrameCaptureStats.acquires offset");
     if (@offsetOf(abi.RemoteFrameCaptureStats, "misses") != 80) @compileError("RemoteFrameCaptureStats.misses offset");
     if (@offsetOf(abi.RemoteFrameCaptureStats, "max_reader_ns") != 88) @compileError("RemoteFrameCaptureStats.max_reader_ns offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1208) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1224) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -5038,6 +5038,10 @@ comptime {
     if (@sizeOf(abi.R4SysFns.notification_wait) != 8) @compileError("R4SysFns.notification_wait signature");
     if (@offsetOf(abi.R4XStartR4Sys, "notification_close") != 1200) @compileError("R4XStartR4Sys.notification_close offset");
     if (@sizeOf(abi.R4SysFns.notification_close) != 8) @compileError("R4SysFns.notification_close signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "program_local_get") != 1208) @compileError("R4XStartR4Sys.program_local_get offset");
+    if (@sizeOf(abi.R4SysFns.program_local_get) != 8) @compileError("R4SysFns.program_local_get signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "program_local_publish") != 1216) @compileError("R4XStartR4Sys.program_local_publish offset");
+    if (@sizeOf(abi.R4SysFns.program_local_publish) != 8) @compileError("R4SysFns.program_local_publish signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 528) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

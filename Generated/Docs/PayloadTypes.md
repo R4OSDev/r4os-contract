@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 271 von 271 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1843; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1849; Limits: 109
 
 ## App-Profile
 
@@ -10011,6 +10011,12 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `notification_error_memory` | `-5` | `i32` | value | number | `program` | fixed_contract |
 | `notification_error_release` | `-6` | `i32` | value | number | `program` | fixed_contract |
 | `notification_error_exhausted` | `-7` | `i32` | value | number | `program` | fixed_contract |
+| `program_local_ok` | `0` | `i32` | value | number | `program` | fixed_contract |
+| `program_local_existing` | `1` | `i32` | value | number | `program` | fixed_contract |
+| `program_local_error_invalid` | `-1` | `i32` | value | number | `program` | fixed_contract |
+| `program_local_error_context` | `-2` | `i32` | value | number | `program` | fixed_contract |
+| `program_local_error_memory` | `-3` | `i32` | value | number | `program` | fixed_contract |
+| `program_local_error_closed` | `-4` | `i32` | value | number | `program` | fixed_contract |
 
 ## Limits
 

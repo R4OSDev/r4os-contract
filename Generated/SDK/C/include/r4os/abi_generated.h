@@ -1856,6 +1856,12 @@ extern "C" {
 #define R4OS_NOTIFICATION_ERROR_MEMORY ((int32_t)-5)
 #define R4OS_NOTIFICATION_ERROR_RELEASE ((int32_t)-6)
 #define R4OS_NOTIFICATION_ERROR_EXHAUSTED ((int32_t)-7)
+#define R4OS_PROGRAM_LOCAL_OK ((int32_t)0)
+#define R4OS_PROGRAM_LOCAL_EXISTING ((int32_t)1)
+#define R4OS_PROGRAM_LOCAL_ERROR_INVALID ((int32_t)-1)
+#define R4OS_PROGRAM_LOCAL_ERROR_CONTEXT ((int32_t)-2)
+#define R4OS_PROGRAM_LOCAL_ERROR_MEMORY ((int32_t)-3)
+#define R4OS_PROGRAM_LOCAL_ERROR_CLOSED ((int32_t)-4)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -8006,6 +8012,8 @@ typedef int32_t (*R4SysNotificationQueryFn)(uint64_t handle, uint64_t * out_sequ
 typedef int32_t (*R4SysNotificationNotifyFn)(uint64_t handle, uint32_t wake_count);
 typedef int32_t (*R4SysNotificationWaitFn)(uint64_t handle, uint64_t observed_sequence, uint64_t timeout_ticks);
 typedef int32_t (*R4SysNotificationCloseFn)(uint64_t handle);
+typedef int32_t (*R4SysProgramLocalGetFn)(uint64_t key, uint64_t * out_value);
+typedef int32_t (*R4SysProgramLocalPublishFn)(uint64_t key, uint64_t value, uint64_t * out_value);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -8161,6 +8169,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t notification_notify;
     uintptr_t notification_wait;
     uintptr_t notification_close;
+    uintptr_t program_local_get;
+    uintptr_t program_local_publish;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -13474,7 +13484,7 @@ _Static_assert(offsetof(R4RemoteFrameCaptureStats, snapshot_copy_bytes) == 64u, 
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, acquires) == 72u, "RemoteFrameCaptureStats.acquires offset mismatch");
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, misses) == 80u, "RemoteFrameCaptureStats.misses offset mismatch");
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, max_reader_ns) == 88u, "RemoteFrameCaptureStats.max_reader_ns offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1208u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1224u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -13770,6 +13780,10 @@ _Static_assert(offsetof(R4XStartR4Sys, notification_wait) == 1192u, "R4XStartR4S
 _Static_assert(sizeof(R4SysNotificationWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, notification_close) == 1200u, "R4XStartR4Sys.notification_close offset mismatch");
 _Static_assert(sizeof(R4SysNotificationCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_local_get) == 1208u, "R4XStartR4Sys.program_local_get offset mismatch");
+_Static_assert(sizeof(R4SysProgramLocalGetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_local_publish) == 1216u, "R4XStartR4Sys.program_local_publish offset mismatch");
+_Static_assert(sizeof(R4SysProgramLocalPublishFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 528u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

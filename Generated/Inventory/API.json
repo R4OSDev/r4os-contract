@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 408,
-    "group_slot_count": 408,
+    "function_count": 410,
+    "group_slot_count": 410,
     "sdk_only_count": 0,
-    "public_count": 310,
+    "public_count": 312,
     "advanced_count": 98
   },
   "functions": [
@@ -1757,6 +1757,30 @@
       "slot": 148,
       "exposure": "public",
       "description": "Close admission, cancel enrolled waits and release resident backing. Returns 0 after release; retry notification_error_release for the same closed handle. A failed free retains backing and prevents process-slot reuse. Further ordinary operations on a closed retained object fail; a consumed handle is stale.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_local_get",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 149,
+      "exposure": "public",
+      "description": "Read a process-local immutable publication by nonzero key. Returns program_local_ok and zero if absent. A key can be a boot-stable library token address. Output changes only on success. No other process, user pointer ownership or current-thread identity is exposed.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_local_publish",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 150,
+      "exposure": "public",
+      "description": "Publish a nonzero process-local value exactly once for a nonzero key. Returns program_local_ok if installed, program_local_existing if another caller already installed a value; both write the winning value. Caller owns candidate memory and discards it when it loses. Published data must outlive all program threads; no replacement, destructor or allocator policy is provided. The process reaper removes metadata after thread retirement and before VM teardown. Errors leave output unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

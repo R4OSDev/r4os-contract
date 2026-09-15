@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 408,
+    "group_function_signatures": 410,
     "sdk_operation_contracts": 0,
-    "parity_entries": 408,
+    "parity_entries": 410,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1322,6 +1322,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.notification_close",
       "c_contract": "R4SysNotificationCloseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_local_get",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_local_get",
+      "c_contract": "R4SysProgramLocalGetFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_local_publish",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_local_publish",
+      "c_contract": "R4SysProgramLocalPublishFn",
       "coverage": "generated_signature"
     },
     {
