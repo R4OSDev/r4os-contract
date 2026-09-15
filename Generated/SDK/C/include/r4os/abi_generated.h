@@ -1825,6 +1825,14 @@ extern "C" {
 #define R4OS_GFX_MEMORY_BUDGET_QUERY 0u
 #define R4OS_GFX_MEMORY_BUDGET_CONFIGURE 1u
 #define R4OS_GFX_MEMORY_BUDGET_CLOSING 1u
+#define R4OS_GFX_TELEMETRY_UNAVAILABLE 0u
+#define R4OS_GFX_TELEMETRY_CHANGING 1u
+#define R4OS_GFX_TELEMETRY_MALFORMED 2u
+#define R4OS_GFX_TELEMETRY_AWAITING_CHANGE 3u
+#define R4OS_GFX_TELEMETRY_FRESH 4u
+#define R4OS_GFX_TELEMETRY_STALE 5u
+#define R4OS_GFX_TELEMETRY_METRIC_MASK 1023ull
+#define R4OS_GFX_TELEMETRY_TIMER_DELTA_VALID 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2529,6 +2537,10 @@ typedef struct R4GfxOutputRefresh R4GfxOutputRefresh;
 typedef struct R4GfxRefreshRequest R4GfxRefreshRequest;
 typedef struct R4GfxDeviceBudgetRequest R4GfxDeviceBudgetRequest;
 typedef struct R4GfxDeviceBudgetState R4GfxDeviceBudgetState;
+typedef struct R4GfxTelemetryMetric R4GfxTelemetryMetric;
+typedef struct R4GfxTelemetryRequest R4GfxTelemetryRequest;
+typedef struct R4GfxTelemetryDemand R4GfxTelemetryDemand;
+typedef struct R4GfxTelemetryState R4GfxTelemetryState;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6543,6 +6555,7 @@ typedef struct R4GfxDriverMemoryApi {
     uint64_t native_take;
     uint64_t native_complete;
     uint64_t memory_budget;
+    uint64_t telemetry_exchange;
 } R4GfxDriverMemoryApi;
 
 typedef struct R4GfxFence {
@@ -7671,6 +7684,49 @@ typedef struct R4GfxDeviceBudgetState {
     uint64_t shared_producer_limit_bytes;
 } R4GfxDeviceBudgetState;
 
+typedef struct R4GfxTelemetryMetric {
+    uint32_t status;
+    uint32_t flags;
+    uint64_t source_stamp;
+    int64_t values[4];
+} R4GfxTelemetryMetric;
+
+typedef struct R4GfxTelemetryRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t adapter_id;
+    uint32_t reserved0;
+    uint64_t memory_generation;
+    uint64_t metric_mask;
+} R4GfxTelemetryRequest;
+
+typedef struct R4GfxTelemetryDemand {
+    uint32_t version;
+    uint32_t size;
+    uint32_t adapter_id;
+    uint32_t reserved0;
+    uint64_t memory_generation;
+    uint64_t until_ns;
+    uint64_t metric_mask;
+} R4GfxTelemetryDemand;
+
+typedef struct R4GfxTelemetryState {
+    uint32_t version;
+    uint32_t size;
+    uint32_t adapter_id;
+    uint32_t reserved0;
+    uint64_t memory_generation;
+    uint64_t sampled_ns;
+    uint64_t valid_until_ns;
+    uint32_t source;
+    uint32_t state;
+    uint32_t policy;
+    uint32_t boost;
+    uint32_t control_status;
+    uint32_t reserved1;
+    R4GfxTelemetryMetric metrics[10];
+} R4GfxTelemetryState;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8236,6 +8292,7 @@ typedef int32_t (*R4DrawGfxAtomicSubmitColorFn)(const R4GfxModeColorRequest * st
 typedef int32_t (*R4DrawGfxOutputRefreshFn)(const R4GfxOutputTarget * target, R4GfxOutputRefresh * output);
 typedef int32_t (*R4DrawGfxRefreshRequestFn)(const R4GfxRefreshRequest * input, R4GfxRefreshRequest * output);
 typedef int32_t (*R4DrawGfxMemoryBudgetFn)(const R4GfxDeviceBudgetRequest * input, R4GfxDeviceBudgetState * output);
+typedef int32_t (*R4DrawGfxTelemetryFn)(const R4GfxTelemetryRequest * input, R4GfxTelemetryState * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -8341,6 +8398,7 @@ typedef struct R4XStartR4Draw {
     uintptr_t gfx_output_refresh;
     uintptr_t gfx_refresh_request;
     uintptr_t gfx_memory_budget;
+    uintptr_t gfx_telemetry;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -12241,7 +12299,7 @@ _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_generation) == 56u, "Gfx
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, adapter_id) == 64u, "GfxOwnedBufferRelease.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_owner) == 68u, "GfxOwnedBufferRelease.driver_owner offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, reserved0) == 72u, "GfxOwnedBufferRelease.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GfxDriverMemoryApi) == 192u, "GfxDriverMemoryApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverMemoryApi) == 200u, "GfxDriverMemoryApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, version) == 0u, "GfxDriverMemoryApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, size) == 4u, "GfxDriverMemoryApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_create) == 8u, "GfxDriverMemoryApi.buffer_create offset mismatch");
@@ -12267,6 +12325,7 @@ _Static_assert(offsetof(R4GfxDriverMemoryApi, native_unregister) == 160u, "GfxDr
 _Static_assert(offsetof(R4GfxDriverMemoryApi, native_take) == 168u, "GfxDriverMemoryApi.native_take offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, native_complete) == 176u, "GfxDriverMemoryApi.native_complete offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, memory_budget) == 184u, "GfxDriverMemoryApi.memory_budget offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, telemetry_exchange) == 192u, "GfxDriverMemoryApi.telemetry_exchange offset mismatch");
 _Static_assert(sizeof(R4GfxFence) == 40u, "GfxFence size mismatch");
 _Static_assert(offsetof(R4GfxFence, slot) == 0u, "GfxFence.slot offset mismatch");
 _Static_assert(offsetof(R4GfxFence, adapter_id) == 4u, "GfxFence.adapter_id offset mismatch");
@@ -13219,6 +13278,41 @@ _Static_assert(offsetof(R4GfxDeviceBudgetState, charged_bytes) == 32u, "GfxDevic
 _Static_assert(offsetof(R4GfxDeviceBudgetState, shared_limit_bytes) == 40u, "GfxDeviceBudgetState.shared_limit_bytes offset mismatch");
 _Static_assert(offsetof(R4GfxDeviceBudgetState, shared_charged_bytes) == 48u, "GfxDeviceBudgetState.shared_charged_bytes offset mismatch");
 _Static_assert(offsetof(R4GfxDeviceBudgetState, shared_producer_limit_bytes) == 56u, "GfxDeviceBudgetState.shared_producer_limit_bytes offset mismatch");
+_Static_assert(sizeof(R4GfxTelemetryMetric) == 48u, "GfxTelemetryMetric size mismatch");
+_Static_assert(offsetof(R4GfxTelemetryMetric, status) == 0u, "GfxTelemetryMetric.status offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryMetric, flags) == 4u, "GfxTelemetryMetric.flags offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryMetric, source_stamp) == 8u, "GfxTelemetryMetric.source_stamp offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryMetric, values) == 16u, "GfxTelemetryMetric.values offset mismatch");
+_Static_assert(sizeof(R4GfxTelemetryRequest) == 32u, "GfxTelemetryRequest size mismatch");
+_Static_assert(offsetof(R4GfxTelemetryRequest, version) == 0u, "GfxTelemetryRequest.version offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryRequest, size) == 4u, "GfxTelemetryRequest.size offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryRequest, adapter_id) == 8u, "GfxTelemetryRequest.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryRequest, reserved0) == 12u, "GfxTelemetryRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryRequest, memory_generation) == 16u, "GfxTelemetryRequest.memory_generation offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryRequest, metric_mask) == 24u, "GfxTelemetryRequest.metric_mask offset mismatch");
+_Static_assert(sizeof(R4GfxTelemetryDemand) == 40u, "GfxTelemetryDemand size mismatch");
+_Static_assert(offsetof(R4GfxTelemetryDemand, version) == 0u, "GfxTelemetryDemand.version offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryDemand, size) == 4u, "GfxTelemetryDemand.size offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryDemand, adapter_id) == 8u, "GfxTelemetryDemand.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryDemand, reserved0) == 12u, "GfxTelemetryDemand.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryDemand, memory_generation) == 16u, "GfxTelemetryDemand.memory_generation offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryDemand, until_ns) == 24u, "GfxTelemetryDemand.until_ns offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryDemand, metric_mask) == 32u, "GfxTelemetryDemand.metric_mask offset mismatch");
+_Static_assert(sizeof(R4GfxTelemetryState) == 544u, "GfxTelemetryState size mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, version) == 0u, "GfxTelemetryState.version offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, size) == 4u, "GfxTelemetryState.size offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, adapter_id) == 8u, "GfxTelemetryState.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, reserved0) == 12u, "GfxTelemetryState.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, memory_generation) == 16u, "GfxTelemetryState.memory_generation offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, sampled_ns) == 24u, "GfxTelemetryState.sampled_ns offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, valid_until_ns) == 32u, "GfxTelemetryState.valid_until_ns offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, source) == 40u, "GfxTelemetryState.source offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, state) == 44u, "GfxTelemetryState.state offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, policy) == 48u, "GfxTelemetryState.policy offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, boost) == 52u, "GfxTelemetryState.boost offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, control_status) == 56u, "GfxTelemetryState.control_status offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, reserved1) == 60u, "GfxTelemetryState.reserved1 offset mismatch");
+_Static_assert(offsetof(R4GfxTelemetryState, metrics) == 64u, "GfxTelemetryState.metrics offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1168u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -13625,7 +13719,7 @@ _Static_assert(offsetof(R4XStartR4Desk, physical_key_poll) == 480u, "R4XStartR4D
 _Static_assert(sizeof(R4DeskPhysicalKeyPollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_motion) == 488u, "R4XStartR4Desk.mouse_motion offset mismatch");
 _Static_assert(sizeof(R4DeskMouseMotionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 808u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 816u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -13824,6 +13918,8 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_refresh_request) == 792u, "R4XStartR
 _Static_assert(sizeof(R4DrawGfxRefreshRequestFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_memory_budget) == 800u, "R4XStartR4Draw.gfx_memory_budget offset mismatch");
 _Static_assert(sizeof(R4DrawGfxMemoryBudgetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_telemetry) == 808u, "R4XStartR4Draw.gfx_telemetry offset mismatch");
+_Static_assert(sizeof(R4DrawGfxTelemetryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

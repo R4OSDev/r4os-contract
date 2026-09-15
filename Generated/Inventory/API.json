@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 396,
-    "group_slot_count": 396,
+    "function_count": 397,
+    "group_slot_count": 397,
     "sdk_only_count": 0,
-    "public_count": 302,
+    "public_count": 303,
     "advanced_count": 94
   },
   "functions": [
@@ -3593,6 +3593,18 @@
       "slot": 98,
       "exposure": "public",
       "description": "Query the configured budget and retained BO charges of one exact adapter/memory generation. Read-only; configure operations are rejected. No R4D callback, allocation or hardware query. Error leaves output unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_telemetry",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 99,
+      "exposure": "public",
+      "description": "Query one exact adapter/memory-generation telemetry snapshot and optionally renew finite demand. Pure metadata exchange with the existing R4D worker. No hardware access or callback. Unknown/expired measurements remain explicit; error preserves output.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
