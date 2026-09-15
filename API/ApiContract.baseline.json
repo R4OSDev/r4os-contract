@@ -91839,7 +91839,7 @@
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 1,
-      "size": 128,
+      "size": 192,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -91865,12 +91865,12 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Caller capacity; complete version1 is128bytes.",
+          "description": "Caller capacity. Version1 accepts the original128-byte prefix; the complete optional link extension ends at192. Partial tails are ignored; query returns128 or192 bytes, never beyond caller capacity.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "128"
+          "default_value": "192"
         },
         {
           "name": "identity",
@@ -92176,6 +92176,202 @@
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_kind",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed active transport: gfx_output_link_*; zero unknown or inactive. The original128-byte prefix is unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_flags",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed active link flags: fec=1,dsc=2. Cleared while inactive; capabilities alone never grant active flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dsc_depths",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Implemented DSC candidate depths shared by the current source and receiver:1RGB8,2RGB10. Discovery only; every candidate still requires its own PPS, bandwidth, IMP and commit admission.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_frl_rate",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Known shared source/receiver FRL ceiling:0unknown,1three3G lanes,2three6G,3four6G,4four8G,5four10G,6four12G. Discovery never proves training or timing capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "compressed_bpp_x16",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact active PPS bits per pixel times16; zero without confirmed DSC. Never reuse for a different mode or color request.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_lanes",
+          "offset": 148,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed active lane count; zero for TMDS or unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_rate_mbps",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed physical bits per second per lane divided by1000000; zero for TMDS or unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "h_active",
+          "offset": 156,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active horizontal pixels belonging to this exact confirmed link.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "h_total",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active total horizontal pixels including blanking.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved_link",
+          "offset": 164,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_payload_bits_per_second",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Active DP budget after coding/FEC reserve, or FRL16/18 coding ceiling. This is not proof that another timing passes packet, blanking, metering or audio limits.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pixel_clock_numerator",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact active pixel clock numerator inHz; divide by pixel_clock_denominator.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pixel_clock_denominator",
+          "offset": 184,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Nonzero active pixel clock denominator; zero when unknown or inactive.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "v_active",
+          "offset": 188,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Active vertical pixels belonging to this exact confirmed link.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
           "default_kind": "integer",
           "default_value": "0"
         }
@@ -114241,6 +114437,66 @@
       "scope": "gfx_output",
       "stability": "fixed_contract",
       "description": "VRR admission or fallback reason: stale_clock."
+    },
+    {
+      "name": "gfx_output_link_tmds",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Confirmed active transport kind in the optional192-byte GfxOutputColorState extension."
+    },
+    {
+      "name": "gfx_output_link_frl",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Confirmed active transport kind in the optional192-byte GfxOutputColorState extension."
+    },
+    {
+      "name": "gfx_output_link_dp_sst",
+      "value": "3",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Confirmed active transport kind in the optional192-byte GfxOutputColorState extension."
+    },
+    {
+      "name": "gfx_output_link_dp_mst",
+      "value": "4",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Confirmed active transport kind in the optional192-byte GfxOutputColorState extension."
+    },
+    {
+      "name": "gfx_output_link_fec",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Confirmed active link flag; requires actual acknowledged transport state."
+    },
+    {
+      "name": "gfx_output_link_dsc",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Confirmed active link flag; requires actual acknowledged transport state."
     }
   ],
   "limits": [

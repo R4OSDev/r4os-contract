@@ -1816,6 +1816,12 @@ extern "C" {
 #define R4OS_GFX_REFRESH_REASON_TIMING_FAULT 11u
 #define R4OS_GFX_REFRESH_REASON_USER_FLICKER 12u
 #define R4OS_GFX_REFRESH_REASON_STALE_CLOCK 13u
+#define R4OS_GFX_OUTPUT_LINK_TMDS 1u
+#define R4OS_GFX_OUTPUT_LINK_FRL 2u
+#define R4OS_GFX_OUTPUT_LINK_DP_SST 3u
+#define R4OS_GFX_OUTPUT_LINK_DP_MST 4u
+#define R4OS_GFX_OUTPUT_LINK_FEC 1u
+#define R4OS_GFX_OUTPUT_LINK_DSC 2u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -7463,6 +7469,20 @@ typedef struct R4GfxOutputColorState {
     uint32_t reserved0;
     uint64_t max_tmds_clock_hz;
     uint64_t dp_payload_bits_per_second;
+    uint32_t link_kind;
+    uint32_t link_flags;
+    uint32_t dsc_depths;
+    uint32_t max_frl_rate;
+    uint32_t compressed_bpp_x16;
+    uint32_t link_lanes;
+    uint32_t link_rate_mbps;
+    uint32_t h_active;
+    uint32_t h_total;
+    uint32_t reserved_link;
+    uint64_t link_payload_bits_per_second;
+    uint64_t pixel_clock_numerator;
+    uint32_t pixel_clock_denominator;
+    uint32_t v_active;
 } R4GfxOutputColorState;
 
 typedef struct R4GfxRenderColorProgram {
@@ -12967,7 +12987,7 @@ _Static_assert(offsetof(R4GfxRenderGridList, count) == 8u, "GfxRenderGridList.co
 _Static_assert(offsetof(R4GfxRenderGridList, reserved0) == 12u, "GfxRenderGridList.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxRenderGridList, commands) == 16u, "GfxRenderGridList.commands offset mismatch");
 _Static_assert(offsetof(R4GfxRenderGridList, grids) == 1296u, "GfxRenderGridList.grids offset mismatch");
-_Static_assert(sizeof(R4GfxOutputColorState) == 128u, "GfxOutputColorState size mismatch");
+_Static_assert(sizeof(R4GfxOutputColorState) == 192u, "GfxOutputColorState size mismatch");
 _Static_assert(offsetof(R4GfxOutputColorState, version) == 0u, "GfxOutputColorState.version offset mismatch");
 _Static_assert(offsetof(R4GfxOutputColorState, size) == 4u, "GfxOutputColorState.size offset mismatch");
 _Static_assert(offsetof(R4GfxOutputColorState, identity) == 8u, "GfxOutputColorState.identity offset mismatch");
@@ -12992,6 +13012,20 @@ _Static_assert(offsetof(R4GfxOutputColorState, ctm_fraction_bits) == 104u, "GfxO
 _Static_assert(offsetof(R4GfxOutputColorState, reserved0) == 108u, "GfxOutputColorState.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxOutputColorState, max_tmds_clock_hz) == 112u, "GfxOutputColorState.max_tmds_clock_hz offset mismatch");
 _Static_assert(offsetof(R4GfxOutputColorState, dp_payload_bits_per_second) == 120u, "GfxOutputColorState.dp_payload_bits_per_second offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, link_kind) == 128u, "GfxOutputColorState.link_kind offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, link_flags) == 132u, "GfxOutputColorState.link_flags offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, dsc_depths) == 136u, "GfxOutputColorState.dsc_depths offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, max_frl_rate) == 140u, "GfxOutputColorState.max_frl_rate offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, compressed_bpp_x16) == 144u, "GfxOutputColorState.compressed_bpp_x16 offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, link_lanes) == 148u, "GfxOutputColorState.link_lanes offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, link_rate_mbps) == 152u, "GfxOutputColorState.link_rate_mbps offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, h_active) == 156u, "GfxOutputColorState.h_active offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, h_total) == 160u, "GfxOutputColorState.h_total offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, reserved_link) == 164u, "GfxOutputColorState.reserved_link offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, link_payload_bits_per_second) == 168u, "GfxOutputColorState.link_payload_bits_per_second offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, pixel_clock_numerator) == 176u, "GfxOutputColorState.pixel_clock_numerator offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, pixel_clock_denominator) == 184u, "GfxOutputColorState.pixel_clock_denominator offset mismatch");
+_Static_assert(offsetof(R4GfxOutputColorState, v_active) == 188u, "GfxOutputColorState.v_active offset mismatch");
 _Static_assert(sizeof(R4GfxRenderColorProgram) == 272u, "GfxRenderColorProgram size mismatch");
 _Static_assert(offsetof(R4GfxRenderColorProgram, version) == 0u, "GfxRenderColorProgram.version offset mismatch");
 _Static_assert(offsetof(R4GfxRenderColorProgram, size) == 4u, "GfxRenderColorProgram.size offset mismatch");
