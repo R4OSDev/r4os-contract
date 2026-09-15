@@ -11,7 +11,7 @@ The identity is the case-insensitive pair (KIND, NAME). One module.R4MF
 describes exactly one output module.
 Unknown keys, empty values and duplicate single-value keys are errors. SOURCE,
 GUEST_FORMAT, GUEST_EXTENSION, GUEST_FEATURE, ZIG_MODULE, C_INCLUDE, C_DEFINE,
-C_FLAG, IMPORT, EXPORT and META are ordered repeatable fields. Their order is
+C_FLAG, NATIVE_ARCHIVE, IMPORT, EXPORT and META are ordered repeatable fields. Their order is
 significant and is preserved by planning and building.
 
 Fields in canonical order:
@@ -38,6 +38,7 @@ Fields in canonical order:
   C_INCLUDE=<relative include root>    optional, repeatable, C inputs only
   C_DEFINE=<NAME>=<VALUE>              optional, repeatable, C inputs only
   C_FLAG=<single compiler flag>        optional, repeatable, C inputs only
+  NATIVE_ARCHIVE=<logical name>        optional, repeatable, Zig R4L only
   IMPORT=<module>:<symbol>:<min-version> repeated; at least one for R4X
   EXPORT=<public-name>:<ELF-symbol>:<revision> repeated; compiled R4L only
   CONTRACT=<project-relative .json>                 compiled R4L only
@@ -119,6 +120,15 @@ therefore included in the machine plan. C manifests reject ZIG_MODULE.
 R4D supports the same compiled modules as R4X; this does not add runtime
 imports, an app class or an R4X entry point. R4L/R4P keep their existing
 explicit build contracts.
+
+NATIVE_ARCHIVE declares a freestanding native archive linked into the owning
+Zig R4L (since 0.79.34). Names use the NAME character/length rules and are
+case-insensitively unique. The owning build supplies exactly one tracked
+LazyPath per declaration, in manifest order, through native_archives in
+R4MFBuildOptions. Missing/extra mappings fail; no implicit host library search
+or linker flags are accepted. The archive must use R4OS-compatible ELF
+relocations and have no unresolved host-runtime dependency. Its source/tool
+preparation belongs to the library; R4M0 import/entry contracts do not change.
 
 ICON, HELP and RESOURCE (since 0.61.12) declare the R4M0 resource area of
 the built module; the binary layout lives in `ABI/R4M0.txt`. Their
