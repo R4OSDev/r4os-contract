@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 267 von 267 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 269 von 269 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1820; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1834; Limits: 109
 
 ## App-Profile
 
@@ -219,7 +219,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxReceiverSource` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
 | `GfxReceiverInfo` | fixed_layout | extern_struct | 8224/8 | 8224/8 | 8224/8 | 8224/8 |
 | `GfxReceiverUpdate` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `GfxDriverOutputApi` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
+| `GfxDriverOutputApi` | extensible | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 | `GfxNativeBootInfo` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -288,6 +288,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxTelemetryRequest` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxTelemetryDemand` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxTelemetryState` | extensible | extern_struct | 544/8 | 544/8 | 544/8 | 544/8 |
+| `GfxOutputPower` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `GfxPowerRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -5973,7 +5975,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 8 / 144 / 8
+- Version/Größe/Alignment: 9 / 160 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5996,6 +5998,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `mode_read_color` | 120 | 8 | 8 | `u64` | - |
 | `refresh_publish` | 128 | 8 | 8 | `u64` | - |
 | `refresh_read` | 136 | 8 | 8 | `u64` | - |
+| `power_publish` | 144 | 8 | 8 | `u64` | - |
+| `power_read` | 152 | 8 | 8 | `u64` | - |
 
 ### `GfxNativeBootInfo`
 
@@ -7339,6 +7343,47 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `control_status` | 56 | 4 | 4 | `u32` | - |
 | `reserved1` | 60 | 4 | 4 | `u32` | - |
 | `metrics` | 64 | 480 | 8 | `[10]GfxTelemetryMetric` | - |
+
+### `GfxOutputPower`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 24 | 8 | `GfxOutputId` | - |
+| `capabilities` | 32 | 4 | 4 | `u32` | - |
+| `phase` | 36 | 4 | 4 | `u32` | - |
+| `sequence` | 40 | 8 | 8 | `u64` | - |
+| `request_sequence` | 48 | 8 | 8 | `u64` | - |
+| `since_ns` | 56 | 8 | 8 | `u64` | - |
+| `control_receipt` | 64 | 8 | 8 | `u64` | - |
+| `core_point` | 72 | 8 | 8 | `u64` | - |
+| `window_point` | 80 | 8 | 8 | `u64` | - |
+| `reason` | 88 | 4 | 4 | `u32` | - |
+| `reserved0` | 92 | 4 | 4 | `u32` | - |
+
+### `GfxPowerRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 24 | 8 | `GfxOutputId` | - |
+| `off` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `sequence` | 40 | 8 | 8 | `u64` | - |
+| `deadline_ns` | 48 | 8 | 8 | `u64` | - |
+| `reserved1` | 56 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 
@@ -9899,6 +9944,20 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_telemetry_stale` | `5` | `u32` | value | enum_value | `gfx_telemetry` | fixed_contract |
 | `gfx_telemetry_metric_mask` | `1023` | `u64` | flag | bitmask | `gfx_telemetry` | fixed_contract |
 | `gfx_telemetry_timer_delta_valid` | `1` | `u32` | flag | bitmask | `gfx_telemetry` | fixed_contract |
+| `gfx_output_flag_sleeping` | `1024` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_cap_signal` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_cap_sink` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_phase_on` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_phase_stopping` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_phase_off` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_phase_waking` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_phase_unavailable` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_reason_none` | `0` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_reason_link` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_reason_rejected` | `2` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_reason_timeout` | `3` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_reason_device_lost` | `4` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_power_reason_unsupported` | `5` | `u32` | value | number | `gfx_output` | fixed_contract |
 
 ## Limits
 

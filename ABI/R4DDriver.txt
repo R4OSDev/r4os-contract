@@ -826,3 +826,32 @@ by successful release of its consumers may reopen bootfb. A reset without a
 native bridge can still use that original held callback; failure keeps the
 firmware framebuffer sealed and permits the independent software-graphics
 selection on a subsequent boot.
+
+
+Monitor power ownership (0.79.31)
+--------------------------------
+GfxDriverOutputApi remains wire1. Its original 144-byte prefix is unchanged;
+the complete power capability requires BOTH power_publish at144 and power_read
+at152, with size160. R4DRAW ABI31 appends gfx_output_power at816 and
+gfx_power_request at824 (size832); Query:1 remains unchanged.
+
+GfxOutputPower is fixed96 and carries the exact GfxOutputId, capabilities,
+phase, sequence/request_sequence, since_ns, control_receipt and Core/Window
+points. Signal retirement and sink power are distinct capabilities. On/Off
+require completed image/retirement points. Sink-capable Off also requires an
+acknowledged monitor control. Publication is driver-owned, outside IRQ, and
+must name its current native output. Metadata never proves physical retirement.
+
+GfxPowerRequest is fixed64. Callers set identity and off0/1; input sequence,
+deadline and reserved fields are zero. Successful requests return the copied
+kernel sequence and lease deadline. One program owns Off for30 seconds;
+renewal retains its sequence. A fresh On always receives a new sequence and
+may cancel any program's Off. Close/expiry wakes only that exact program
+generation. Connection/device replacement discards prior requests and proofs.
+Driver read expires a lease and returns On without blocking. The driver worker
+must continue polling while the output sleeps; screen sleep is not device idle.
+
+The kernel synthesizes gfx_output_flag_sleeping=1024 for stopping/off/waking.
+It keeps logical Desktop placement without admitting native presents. Kernel
+catalog and queue owner locks never span hardware callbacks or wake delivery.
+Full platform S3/S4/S0ix suspend is not supplied by these display APIs.

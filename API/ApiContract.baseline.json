@@ -15340,10 +15340,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 30,
+      "abi_version": 31,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 816,
+      "size": 832,
       "slots": [
         {
           "number": 0,
@@ -22709,6 +22709,158 @@
                   "child": {
                     "kind": "named",
                     "name": "GfxTelemetryState"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 100,
+          "offset": 816,
+          "name": "gfx_output_power",
+          "state": "function",
+          "required": false,
+          "description": "Read acknowledged screen power and independent signal/sink capabilities. Firmware framebuffer and missing drivers return unsupported. Exact connector identity remains queryable while sleeping; output is unchanged on error.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "identity",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputId"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxOutputPower"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 101,
+          "offset": 824,
+          "name": "gfx_power_request",
+          "state": "function",
+          "required": false,
+          "description": "Request or renew screen sleep, or wake immediately. Atomic copied intent with30s off lease; caller close and expiry wake. No GPU/system suspend or synchronous hardware operation. Driver acknowledgement is read separately.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxPowerRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxPowerRequest"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -84626,8 +84778,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 8,
-      "size": 144,
+      "version": 9,
+      "size": 160,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -84658,7 +84810,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "144"
+          "default_value": "160"
         },
         {
           "name": "publish",
@@ -84892,6 +85044,34 @@
             "name": "u64"
           },
           "description": "Optional int32_t callback(const GfxOutputTarget*, GfxRefreshRequest*). Exact144-byte tail. Copies current intent for an owned output; expired/closed intents are off. Returns1success, negative on error. Driver retains hardware ownership and must disable safely on missing/stale intent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "power_publish",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxOutputPower*): actual bound R4D task publishes copied screen lifecycle and physical receipts for its exact connector; no callback, GPU access or resource release under catalog owner.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "power_read",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxOutputId*,GfxPowerRequest*): exact160-byte pair required. Copies off lease or synthesized wake after program close/expiry. Missing API implies no screen sleep; old144-byte prefix and wire version1 remain stable.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -95167,6 +95347,326 @@
       ],
       "values": [],
       "description": "Bounded provider-owned telemetry cache. The common owner authenticates publication and marks expired fresh groups stale. It performs no sensor interpretation or power policy. Error preserves the complete caller output."
+    },
+    {
+      "name": "GfxOutputPower",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "identity",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "identity",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "capabilities",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "capabilities",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "phase",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request_sequence",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "request_sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "since_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "since_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "control_receipt",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "control_receipt",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "core_point",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "core_point",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "window_point",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "window_point",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reason",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied display power state for an exact connector generation. Capability bits1signal retirement,2direct sink power control. MST may stop only its own stream without powering down shared peers. Phase0on,1stopping,2off,3waking,4unavailable. On/off require actual current Core/Window completion; a sink-control receipt is not visible-image proof. Request acceptance never implies completed power change. The GPU, VRAM and system remain running. No S3, S4 or S0ix platform support is advertised by this contract. Zero capability means unsupported (including firmware framebuffer)."
+    },
+    {
+      "name": "GfxPowerRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "identity",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "identity",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "off",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "off",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "deadline_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "reserved1",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Off=1 requests screen sleep; off=0 wakes. Exact connector generation; input sequence/deadline and reserved fields are zero. One program owns a30s off lease, renewed within10s; same intent preserves sequence. Program close or expiry synthesizes wake. Any program may wake immediately. Driver reads consume only copied intent and own all physical actions. New connector/device generations discard old intent; no inherited GPU address or implicit systemsuspend. Result contains assigned sequence/deadline, not physical completion."
     }
   ],
   "operations": [],
@@ -115778,6 +116278,146 @@
       "scope": "gfx_telemetry",
       "stability": "fixed_contract",
       "description": "Metric9 values[1] is a known difference between two valid GPU timer samples; never execution duration."
+    },
+    {
+      "name": "gfx_output_flag_sleeping",
+      "value": "1024",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Kernel-synthesized screen transition/sleep retains desktop placement and CPU backing; not an active scanout or a new receiver capability. R4D publication cannot forge this flag."
+    },
+    {
+      "name": "gfx_power_cap_signal",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power capability: signal."
+    },
+    {
+      "name": "gfx_power_cap_sink",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power capability: sink."
+    },
+    {
+      "name": "gfx_power_phase_on",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power phase: on."
+    },
+    {
+      "name": "gfx_power_phase_stopping",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power phase: stopping."
+    },
+    {
+      "name": "gfx_power_phase_off",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power phase: off."
+    },
+    {
+      "name": "gfx_power_phase_waking",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power phase: waking."
+    },
+    {
+      "name": "gfx_power_phase_unavailable",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power phase: unavailable."
+    },
+    {
+      "name": "gfx_power_reason_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power limitation: none."
+    },
+    {
+      "name": "gfx_power_reason_link",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power limitation: link."
+    },
+    {
+      "name": "gfx_power_reason_rejected",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power limitation: rejected."
+    },
+    {
+      "name": "gfx_power_reason_timeout",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power limitation: timeout."
+    },
+    {
+      "name": "gfx_power_reason_device_lost",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power limitation: device_lost."
+    },
+    {
+      "name": "gfx_power_reason_unsupported",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_output",
+      "stability": "fixed_contract",
+      "description": "Screen power limitation: unsupported."
     }
   ],
   "limits": [

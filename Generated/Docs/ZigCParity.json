@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 397,
+    "group_function_signatures": 399,
     "sdk_operation_contracts": 0,
-    "parity_entries": 397,
+    "parity_entries": 399,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2708,6 +2708,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gfx_telemetry",
       "c_contract": "R4DrawGfxTelemetryFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_output_power",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_output_power",
+      "c_contract": "R4DrawGfxOutputPowerFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_power_request",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_power_request",
+      "c_contract": "R4DrawGfxPowerRequestFn",
       "coverage": "generated_signature"
     },
     {

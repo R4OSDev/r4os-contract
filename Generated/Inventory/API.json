@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 397,
-    "group_slot_count": 397,
+    "function_count": 399,
+    "group_slot_count": 399,
     "sdk_only_count": 0,
-    "public_count": 303,
+    "public_count": 305,
     "advanced_count": 94
   },
   "functions": [
@@ -3605,6 +3605,30 @@
       "slot": 99,
       "exposure": "public",
       "description": "Query one exact adapter/memory-generation telemetry snapshot and optionally renew finite demand. Pure metadata exchange with the existing R4D worker. No hardware access or callback. Unknown/expired measurements remain explicit; error preserves output.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_power",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 100,
+      "exposure": "public",
+      "description": "Read acknowledged screen power and independent signal/sink capabilities. Firmware framebuffer and missing drivers return unsupported. Exact connector identity remains queryable while sleeping; output is unchanged on error.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_power_request",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 101,
+      "exposure": "public",
+      "description": "Request or renew screen sleep, or wake immediately. Atomic copied intent with30s off lease; caller close and expiry wake. No GPU/system suspend or synchronous hardware operation. Driver acknowledgement is read separately.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
