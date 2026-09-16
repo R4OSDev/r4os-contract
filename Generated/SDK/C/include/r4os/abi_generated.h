@@ -8485,6 +8485,7 @@ typedef int32_t (*R4DrawGfxVirtualStartFn)(const R4GfxVirtualRequest * input, R4
 typedef int32_t (*R4DrawGfxVirtualQueryFn)(const R4GfxBufferHandle * request, R4GfxVirtualStatus * output);
 typedef int32_t (*R4DrawGfxVirtualCloseFn)(const R4GfxBufferHandle * request, uint32_t mode);
 typedef int32_t (*R4DrawGfxVirtualWaitFn)(const R4GfxBufferHandle * request, uint32_t until, uint64_t timeout_ticks, R4GfxVirtualStatus * output);
+typedef int32_t (*R4DrawGfxBufferMapPersistentFn)(const R4GfxBufferHandle * reference, uint32_t access, uint64_t offset, uint64_t byte_length, R4GfxBufferMap * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -8597,6 +8598,7 @@ typedef struct R4XStartR4Draw {
     uintptr_t gfx_virtual_query;
     uintptr_t gfx_virtual_close;
     uintptr_t gfx_virtual_wait;
+    uintptr_t gfx_buffer_map_persistent;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -14047,7 +14049,7 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_source_reset) == 512u, "R4X
 _Static_assert(sizeof(R4DeskRemoteFrameSourceResetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, remote_frame_capture_stats) == 520u, "R4XStartR4Desk.remote_frame_capture_stats offset mismatch");
 _Static_assert(sizeof(R4DeskRemoteFrameCaptureStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 864u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 872u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -14260,6 +14262,8 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_virtual_close) == 848u, "R4XStartR4D
 _Static_assert(sizeof(R4DrawGfxVirtualCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_virtual_wait) == 856u, "R4XStartR4Draw.gfx_virtual_wait offset mismatch");
 _Static_assert(sizeof(R4DrawGfxVirtualWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_buffer_map_persistent) == 864u, "R4XStartR4Draw.gfx_buffer_map_persistent offset mismatch");
+_Static_assert(sizeof(R4DrawGfxBufferMapPersistentFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

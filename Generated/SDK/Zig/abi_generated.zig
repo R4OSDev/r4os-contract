@@ -8224,12 +8224,13 @@ pub const R4DrawFns = struct {
     pub const gfx_virtual_query = *const fn (*const GfxBufferHandle, *GfxVirtualStatus) callconv(.c) i32;
     pub const gfx_virtual_close = *const fn (*const GfxBufferHandle, u32) callconv(.c) i32;
     pub const gfx_virtual_wait = *const fn (*const GfxBufferHandle, u32, u64, *GfxVirtualStatus) callconv(.c) i32;
+    pub const gfx_buffer_map_persistent = *const fn (*const GfxBufferHandle, u32, u64, u64, *GfxBufferMap) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 32,
-    size: u32 = 864,
+    abi_version: u32 = 33,
+    size: u32 = 872,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -8337,6 +8338,7 @@ pub const R4XStartR4Draw = extern struct {
     gfx_virtual_query: usize = 0,
     gfx_virtual_close: usize = 0,
     gfx_virtual_wait: usize = 0,
+    gfx_buffer_map_persistent: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -8898,6 +8900,7 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 103, .offset = 840, .name = "gfx_virtual_query", .state = .function, .required = false },
     .{ .number = 104, .offset = 848, .name = "gfx_virtual_close", .state = .function, .required = false },
     .{ .number = 105, .offset = 856, .name = "gfx_virtual_wait", .state = .function, .required = false },
+    .{ .number = 106, .offset = 864, .name = "gfx_buffer_map_persistent", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -14296,7 +14299,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_snapshot_release") != 504) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_snapshot_release");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_source_reset") != 512) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_source_reset");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_capture_stats");
-    if (@sizeOf(R4XStartR4Draw) != 864) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 872) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -14403,6 +14406,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_virtual_query") != 840) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_virtual_query");
     if (@offsetOf(R4XStartR4Draw, "gfx_virtual_close") != 848) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_virtual_close");
     if (@offsetOf(R4XStartR4Draw, "gfx_virtual_wait") != 856) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_virtual_wait");
+    if (@offsetOf(R4XStartR4Draw, "gfx_buffer_map_persistent") != 864) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_buffer_map_persistent");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");

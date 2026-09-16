@@ -320,6 +320,7 @@ static R4DrawGfxVirtualStartFn r4os_probe_r4draw_gfx_virtual_start = (R4DrawGfxV
 static R4DrawGfxVirtualQueryFn r4os_probe_r4draw_gfx_virtual_query = (R4DrawGfxVirtualQueryFn)0;
 static R4DrawGfxVirtualCloseFn r4os_probe_r4draw_gfx_virtual_close = (R4DrawGfxVirtualCloseFn)0;
 static R4DrawGfxVirtualWaitFn r4os_probe_r4draw_gfx_virtual_wait = (R4DrawGfxVirtualWaitFn)0;
+static R4DrawGfxBufferMapPersistentFn r4os_probe_r4draw_gfx_buffer_map_persistent = (R4DrawGfxBufferMapPersistentFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

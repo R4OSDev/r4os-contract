@@ -5226,7 +5226,7 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.remote_frame_source_reset) != 8) @compileError("R4DeskFns.remote_frame_source_reset signature");
     if (@offsetOf(abi.R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("R4XStartR4Desk.remote_frame_capture_stats offset");
     if (@sizeOf(abi.R4DeskFns.remote_frame_capture_stats) != 8) @compileError("R4DeskFns.remote_frame_capture_stats signature");
-    if (@sizeOf(abi.R4XStartR4Draw) != 864) @compileError("R4XStartR4Draw size");
+    if (@sizeOf(abi.R4XStartR4Draw) != 872) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_height") != 24) @compileError("R4XStartR4Draw.screen_height offset");
@@ -5439,6 +5439,8 @@ comptime {
     if (@sizeOf(abi.R4DrawFns.gfx_virtual_close) != 8) @compileError("R4DrawFns.gfx_virtual_close signature");
     if (@offsetOf(abi.R4XStartR4Draw, "gfx_virtual_wait") != 856) @compileError("R4XStartR4Draw.gfx_virtual_wait offset");
     if (@sizeOf(abi.R4DrawFns.gfx_virtual_wait) != 8) @compileError("R4DrawFns.gfx_virtual_wait signature");
+    if (@offsetOf(abi.R4XStartR4Draw, "gfx_buffer_map_persistent") != 864) @compileError("R4XStartR4Draw.gfx_buffer_map_persistent offset");
+    if (@sizeOf(abi.R4DrawFns.gfx_buffer_map_persistent) != 8) @compileError("R4DrawFns.gfx_buffer_map_persistent signature");
     if (@sizeOf(abi.R4XStartR4Net) != 296) @compileError("R4XStartR4Net size");
     if (@offsetOf(abi.R4XStartR4Net, "tcp_connect") != 16) @compileError("R4XStartR4Net.tcp_connect offset");
     if (@sizeOf(abi.R4NetFns.tcp_connect) != 8) @compileError("R4NetFns.tcp_connect signature");

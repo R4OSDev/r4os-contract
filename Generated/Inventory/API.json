@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 414,
-    "group_slot_count": 414,
+    "function_count": 415,
+    "group_slot_count": 415,
     "sdk_only_count": 0,
-    "public_count": 316,
+    "public_count": 317,
     "advanced_count": 98
   },
   "functions": [
@@ -3809,6 +3809,18 @@
       "slot": 105,
       "exposure": "public",
       "description": "Until 0 waits for settled creation, until 1 for confirmed backend retirement. Completion wins a concurrent wait timeout. A wait timeout changes neither the resource deadline nor its ownership. Exact task retirement removes waiter metadata.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_buffer_map_persistent",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 106,
+      "exposure": "public",
+      "description": "Retain a persistent CPU read (0) or read/write (1) mapping of write-back system RAM. This lease holds backing, not exclusive execution access: device/queue uses may coexist. The caller must synchronize all CPU/GPU access and the driver must perform GPU cache/engine barriers. No GPU completion or host-coherent device capability is implied. Ordinary CPU maps, immutable exports and scanout retain their conflict rules. Close through gfx_buffer_unmap; exact process retirement removes this CPU lease while independent device uses continue to retain backing. Unsupported for VRAM, WC/UC or absent CPU backing.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

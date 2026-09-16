@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v32, 864 Bytes, 106 Funktionsfelder und 106 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v33, 872 Bytes, 107 Funktionsfelder und 107 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -115,4 +115,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 103 | 840 | function | `gfx_virtual_query` | `*const fn (*const GfxBufferHandle, *GfxVirtualStatus) callconv(.c) i32` |
 | 104 | 848 | function | `gfx_virtual_close` | `*const fn (*const GfxBufferHandle, u32) callconv(.c) i32` |
 | 105 | 856 | function | `gfx_virtual_wait` | `*const fn (*const GfxBufferHandle, u32, u64, *GfxVirtualStatus) callconv(.c) i32` |
+| 106 | 864 | function | `gfx_buffer_map_persistent` | `*const fn (*const GfxBufferHandle, u32, u64, u64, *GfxBufferMap) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

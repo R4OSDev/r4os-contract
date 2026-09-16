@@ -16014,10 +16014,10 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 32,
+      "abi_version": 33,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 864,
+      "size": 872,
       "slots": [
         {
           "number": 0,
@@ -23878,6 +23878,103 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 106,
+          "offset": 864,
+          "name": "gfx_buffer_map_persistent",
+          "state": "function",
+          "required": false,
+          "description": "Retain a persistent CPU read (0) or read/write (1) mapping of write-back system RAM. This lease holds backing, not exclusive execution access: device/queue uses may coexist. The caller must synchronize all CPU/GPU access and the driver must perform GPU cache/engine barriers. No GPU completion or host-coherent device capability is implied. Ordinary CPU maps, immutable exports and scanout retain their conflict rules. Close through gfx_buffer_unmap; exact process retirement removes this CPU lease while independent device uses continue to retain backing. Unsupported for VRAM, WC/UC or absent CPU backing.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "reference",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxBufferHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "access",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "byte_length",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GfxBufferMap"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DRAW"
+            ],
+            "optional_capability": true,
+            "error_domain": "draw",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
