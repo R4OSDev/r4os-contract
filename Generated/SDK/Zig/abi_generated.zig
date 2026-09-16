@@ -6507,6 +6507,7 @@ pub const GfxDriverQueueApi = extern struct {
     read_native_info: u64 = 0,
     read_native_data: u64 = 0,
     read_native_binding: u64 = 0,
+    queue_owner_info: u64 = 0,
 };
 
 pub const GfxOutputId = extern struct {
@@ -7728,6 +7729,18 @@ pub const GfxNativeBinding = extern struct {
     byte_length: u64 = 0,
     access: u32 = 0,
     reserved0: u32 = 0,
+};
+
+pub const GfxQueueOwnerInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    timeline: u64 = 0,
+    producer_kind: u32 = 0,
+    closing: u32 = 0,
+    producer_id: u64 = 0,
+    producer_generation: u64 = 0,
+    inflight_jobs: u32 = 0,
+    retained_jobs: u32 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -13051,7 +13064,7 @@ comptime {
     if (@offsetOf(GfxDriverJob, "producer_reserved") != 276) @compileError("generated ABI offset drift: GfxDriverJob.producer_reserved");
     if (@offsetOf(GfxDriverJob, "producer_id") != 280) @compileError("generated ABI offset drift: GfxDriverJob.producer_id");
     if (@offsetOf(GfxDriverJob, "producer_generation") != 288) @compileError("generated ABI offset drift: GfxDriverJob.producer_generation");
-    if (@sizeOf(GfxDriverQueueApi) != 160) @compileError("generated ABI size drift: GfxDriverQueueApi");
+    if (@sizeOf(GfxDriverQueueApi) != 168) @compileError("generated ABI size drift: GfxDriverQueueApi");
     if (@alignOf(GfxDriverQueueApi) != 8) @compileError("generated ABI alignment drift: GfxDriverQueueApi");
     if (@offsetOf(GfxDriverQueueApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverQueueApi.version");
     if (@offsetOf(GfxDriverQueueApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverQueueApi.size");
@@ -13074,6 +13087,7 @@ comptime {
     if (@offsetOf(GfxDriverQueueApi, "read_native_info") != 136) @compileError("generated ABI offset drift: GfxDriverQueueApi.read_native_info");
     if (@offsetOf(GfxDriverQueueApi, "read_native_data") != 144) @compileError("generated ABI offset drift: GfxDriverQueueApi.read_native_data");
     if (@offsetOf(GfxDriverQueueApi, "read_native_binding") != 152) @compileError("generated ABI offset drift: GfxDriverQueueApi.read_native_binding");
+    if (@offsetOf(GfxDriverQueueApi, "queue_owner_info") != 160) @compileError("generated ABI offset drift: GfxDriverQueueApi.queue_owner_info");
     if (@sizeOf(GfxOutputId) != 24) @compileError("generated ABI size drift: GfxOutputId");
     if (@alignOf(GfxOutputId) != 8) @compileError("generated ABI alignment drift: GfxOutputId");
     if (@offsetOf(GfxOutputId, "adapter_id") != 0) @compileError("generated ABI offset drift: GfxOutputId.adapter_id");
@@ -14199,6 +14213,17 @@ comptime {
     if (@offsetOf(GfxNativeBinding, "byte_length") != 56) @compileError("generated ABI offset drift: GfxNativeBinding.byte_length");
     if (@offsetOf(GfxNativeBinding, "access") != 64) @compileError("generated ABI offset drift: GfxNativeBinding.access");
     if (@offsetOf(GfxNativeBinding, "reserved0") != 68) @compileError("generated ABI offset drift: GfxNativeBinding.reserved0");
+    if (@sizeOf(GfxQueueOwnerInfo) != 48) @compileError("generated ABI size drift: GfxQueueOwnerInfo");
+    if (@alignOf(GfxQueueOwnerInfo) != 8) @compileError("generated ABI alignment drift: GfxQueueOwnerInfo");
+    if (@offsetOf(GfxQueueOwnerInfo, "version") != 0) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.version");
+    if (@offsetOf(GfxQueueOwnerInfo, "size") != 4) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.size");
+    if (@offsetOf(GfxQueueOwnerInfo, "timeline") != 8) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.timeline");
+    if (@offsetOf(GfxQueueOwnerInfo, "producer_kind") != 16) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.producer_kind");
+    if (@offsetOf(GfxQueueOwnerInfo, "closing") != 20) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.closing");
+    if (@offsetOf(GfxQueueOwnerInfo, "producer_id") != 24) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.producer_id");
+    if (@offsetOf(GfxQueueOwnerInfo, "producer_generation") != 32) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.producer_generation");
+    if (@offsetOf(GfxQueueOwnerInfo, "inflight_jobs") != 40) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.inflight_jobs");
+    if (@offsetOf(GfxQueueOwnerInfo, "retained_jobs") != 44) @compileError("generated ABI offset drift: GfxQueueOwnerInfo.retained_jobs");
     if (@sizeOf(R4XStartR4Sys) != 1224) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");

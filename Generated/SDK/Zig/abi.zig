@@ -2547,6 +2547,7 @@ pub const GfxNativeSubmission = generated.GfxNativeSubmission;
 pub const GfxNativeResource = generated.GfxNativeResource;
 pub const GfxNativeJobInfo = generated.GfxNativeJobInfo;
 pub const GfxNativeBinding = generated.GfxNativeBinding;
+pub const GfxQueueOwnerInfo = generated.GfxQueueOwnerInfo;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

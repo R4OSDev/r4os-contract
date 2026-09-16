@@ -886,3 +886,27 @@ complete296-byte GfxDriverJob, including producer identity; removing capability
 does not shrink this requirement for already admitted jobs. Generic submit
 cannot accept native jobs without the separate payload/ownership admission.
 The native operation is transport only, not a Vulkan or hardware-ready claim.
+
+Logical queue lifetime (Kernel 0.1.192)
+--------------------------------------
+The optional queue table grows to168 bytes with queue_owner_info at160:
+  (const GfxBackendBinding*, u64 timeline, GfxQueueOwnerInfo48*) -> i32
+Outer DriverApi, R4DRAW35 and every preceding queue slot remain unchanged.
+Only the actual driver of the exact backend incarnation may query a timeline.
+Return1 supplies its producer kind/id/generation, closing state and inflight/
+retained job counts. Return0 means its never-reused timeline metadata no longer
+exists. Absence and errors preserve all output fields. Stale/foreign/lost
+backend identities return errors, never a false successful absence.
+
+Closing an idle queue or stopping its producer coalesces a lifecycle hint for
+the live backend's normal worker notification. The driver rechecks its owned
+contexts; no caller callback, kernel pointer or context destructor is retained.
+The shared BO owner only marks resident state; callback submission/wakeup
+follows outside it. Existing retry and callback coalescing still apply.
+
+Inflight includes cancelled active jobs until their physical acknowledgement.
+Closing, zero inflight jobs and even absent queue metadata are LOGICAL facts.
+They never prove physical GPU quiescence or authorize an unproved RM/channel
+release. The driver must retain active execution independently until actual
+completion/reset proof. Context disposal and Vulkan integration remain driver
+and library responsibilities; this operation itself creates no GPU context.

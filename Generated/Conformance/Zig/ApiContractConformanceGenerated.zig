@@ -3794,7 +3794,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverJob, "producer_reserved") != 276) @compileError("GfxDriverJob.producer_reserved offset");
     if (@offsetOf(abi.GfxDriverJob, "producer_id") != 280) @compileError("GfxDriverJob.producer_id offset");
     if (@offsetOf(abi.GfxDriverJob, "producer_generation") != 288) @compileError("GfxDriverJob.producer_generation offset");
-    if (@sizeOf(abi.GfxDriverQueueApi) != 160) @compileError("GfxDriverQueueApi size");
+    if (@sizeOf(abi.GfxDriverQueueApi) != 168) @compileError("GfxDriverQueueApi size");
     if (@offsetOf(abi.GfxDriverQueueApi, "version") != 0) @compileError("GfxDriverQueueApi.version offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "size") != 4) @compileError("GfxDriverQueueApi.size offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "register_backend") != 8) @compileError("GfxDriverQueueApi.register_backend offset");
@@ -3816,6 +3816,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverQueueApi, "read_native_info") != 136) @compileError("GfxDriverQueueApi.read_native_info offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "read_native_data") != 144) @compileError("GfxDriverQueueApi.read_native_data offset");
     if (@offsetOf(abi.GfxDriverQueueApi, "read_native_binding") != 152) @compileError("GfxDriverQueueApi.read_native_binding offset");
+    if (@offsetOf(abi.GfxDriverQueueApi, "queue_owner_info") != 160) @compileError("GfxDriverQueueApi.queue_owner_info offset");
     if (@sizeOf(abi.GfxOutputId) != 24) @compileError("GfxOutputId size");
     if (@offsetOf(abi.GfxOutputId, "adapter_id") != 0) @compileError("GfxOutputId.adapter_id offset");
     if (@offsetOf(abi.GfxOutputId, "connector_id") != 4) @compileError("GfxOutputId.connector_id offset");
@@ -4845,6 +4846,16 @@ comptime {
     if (@offsetOf(abi.GfxNativeBinding, "byte_length") != 56) @compileError("GfxNativeBinding.byte_length offset");
     if (@offsetOf(abi.GfxNativeBinding, "access") != 64) @compileError("GfxNativeBinding.access offset");
     if (@offsetOf(abi.GfxNativeBinding, "reserved0") != 68) @compileError("GfxNativeBinding.reserved0 offset");
+    if (@sizeOf(abi.GfxQueueOwnerInfo) != 48) @compileError("GfxQueueOwnerInfo size");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "version") != 0) @compileError("GfxQueueOwnerInfo.version offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "size") != 4) @compileError("GfxQueueOwnerInfo.size offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "timeline") != 8) @compileError("GfxQueueOwnerInfo.timeline offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "producer_kind") != 16) @compileError("GfxQueueOwnerInfo.producer_kind offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "closing") != 20) @compileError("GfxQueueOwnerInfo.closing offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "producer_id") != 24) @compileError("GfxQueueOwnerInfo.producer_id offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "producer_generation") != 32) @compileError("GfxQueueOwnerInfo.producer_generation offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "inflight_jobs") != 40) @compileError("GfxQueueOwnerInfo.inflight_jobs offset");
+    if (@offsetOf(abi.GfxQueueOwnerInfo, "retained_jobs") != 44) @compileError("GfxQueueOwnerInfo.retained_jobs offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1224) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");

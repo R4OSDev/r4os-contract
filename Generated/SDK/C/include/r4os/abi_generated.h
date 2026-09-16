@@ -2586,6 +2586,7 @@ typedef struct R4GfxNativeSubmission R4GfxNativeSubmission;
 typedef struct R4GfxNativeResource R4GfxNativeResource;
 typedef struct R4GfxNativeJobInfo R4GfxNativeJobInfo;
 typedef struct R4GfxNativeBinding R4GfxNativeBinding;
+typedef struct R4GfxQueueOwnerInfo R4GfxQueueOwnerInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6764,6 +6765,7 @@ typedef struct R4GfxDriverQueueApi {
     uint64_t read_native_info;
     uint64_t read_native_data;
     uint64_t read_native_binding;
+    uint64_t queue_owner_info;
 } R4GfxDriverQueueApi;
 
 typedef struct R4GfxOutputId {
@@ -7954,6 +7956,18 @@ typedef struct R4GfxNativeBinding {
     uint32_t access;
     uint32_t reserved0;
 } R4GfxNativeBinding;
+
+typedef struct R4GfxQueueOwnerInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t timeline;
+    uint32_t producer_kind;
+    uint32_t closing;
+    uint64_t producer_id;
+    uint64_t producer_generation;
+    uint32_t inflight_jobs;
+    uint32_t retained_jobs;
+} R4GfxQueueOwnerInfo;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -12685,7 +12699,7 @@ _Static_assert(offsetof(R4GfxDriverJob, producer_kind) == 272u, "GfxDriverJob.pr
 _Static_assert(offsetof(R4GfxDriverJob, producer_reserved) == 276u, "GfxDriverJob.producer_reserved offset mismatch");
 _Static_assert(offsetof(R4GfxDriverJob, producer_id) == 280u, "GfxDriverJob.producer_id offset mismatch");
 _Static_assert(offsetof(R4GfxDriverJob, producer_generation) == 288u, "GfxDriverJob.producer_generation offset mismatch");
-_Static_assert(sizeof(R4GfxDriverQueueApi) == 160u, "GfxDriverQueueApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverQueueApi) == 168u, "GfxDriverQueueApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, version) == 0u, "GfxDriverQueueApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, size) == 4u, "GfxDriverQueueApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, register_backend) == 8u, "GfxDriverQueueApi.register_backend offset mismatch");
@@ -12707,6 +12721,7 @@ _Static_assert(offsetof(R4GfxDriverQueueApi, publish_properties) == 128u, "GfxDr
 _Static_assert(offsetof(R4GfxDriverQueueApi, read_native_info) == 136u, "GfxDriverQueueApi.read_native_info offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, read_native_data) == 144u, "GfxDriverQueueApi.read_native_data offset mismatch");
 _Static_assert(offsetof(R4GfxDriverQueueApi, read_native_binding) == 152u, "GfxDriverQueueApi.read_native_binding offset mismatch");
+_Static_assert(offsetof(R4GfxDriverQueueApi, queue_owner_info) == 160u, "GfxDriverQueueApi.queue_owner_info offset mismatch");
 _Static_assert(sizeof(R4GfxOutputId) == 24u, "GfxOutputId size mismatch");
 _Static_assert(offsetof(R4GfxOutputId, adapter_id) == 0u, "GfxOutputId.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOutputId, connector_id) == 4u, "GfxOutputId.connector_id offset mismatch");
@@ -13736,6 +13751,16 @@ _Static_assert(offsetof(R4GfxNativeBinding, address) == 48u, "GfxNativeBinding.a
 _Static_assert(offsetof(R4GfxNativeBinding, byte_length) == 56u, "GfxNativeBinding.byte_length offset mismatch");
 _Static_assert(offsetof(R4GfxNativeBinding, access) == 64u, "GfxNativeBinding.access offset mismatch");
 _Static_assert(offsetof(R4GfxNativeBinding, reserved0) == 68u, "GfxNativeBinding.reserved0 offset mismatch");
+_Static_assert(sizeof(R4GfxQueueOwnerInfo) == 48u, "GfxQueueOwnerInfo size mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, version) == 0u, "GfxQueueOwnerInfo.version offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, size) == 4u, "GfxQueueOwnerInfo.size offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, timeline) == 8u, "GfxQueueOwnerInfo.timeline offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, producer_kind) == 16u, "GfxQueueOwnerInfo.producer_kind offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, closing) == 20u, "GfxQueueOwnerInfo.closing offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, producer_id) == 24u, "GfxQueueOwnerInfo.producer_id offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, producer_generation) == 32u, "GfxQueueOwnerInfo.producer_generation offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, inflight_jobs) == 40u, "GfxQueueOwnerInfo.inflight_jobs offset mismatch");
+_Static_assert(offsetof(R4GfxQueueOwnerInfo, retained_jobs) == 44u, "GfxQueueOwnerInfo.retained_jobs offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1224u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
