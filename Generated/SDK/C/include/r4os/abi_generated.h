@@ -2574,6 +2574,11 @@ typedef struct R4GfxOutputPower R4GfxOutputPower;
 typedef struct R4GfxPowerRequest R4GfxPowerRequest;
 typedef struct R4RemoteFrameLease R4RemoteFrameLease;
 typedef struct R4RemoteFrameCaptureStats R4RemoteFrameCaptureStats;
+typedef struct R4GfxVirtualRequest R4GfxVirtualRequest;
+typedef struct R4GfxVirtualStatus R4GfxVirtualStatus;
+typedef struct R4GfxVirtualToken R4GfxVirtualToken;
+typedef struct R4GfxVirtualJob R4GfxVirtualJob;
+typedef struct R4GfxVirtualCompletion R4GfxVirtualCompletion;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -6590,6 +6595,10 @@ typedef struct R4GfxDriverMemoryApi {
     uint64_t memory_budget;
     uint64_t telemetry_exchange;
     uint64_t device_lost;
+    uint64_t virtual_register;
+    uint64_t virtual_unregister;
+    uint64_t virtual_take;
+    uint64_t virtual_complete;
 } R4GfxDriverMemoryApi;
 
 typedef struct R4GfxFence {
@@ -7820,6 +7829,68 @@ typedef struct R4RemoteFrameCaptureStats {
     uint64_t max_reader_ns;
 } R4RemoteFrameCaptureStats;
 
+typedef struct R4GfxVirtualRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t flags;
+    uint32_t adapter_id;
+    uint32_t reserved0;
+    uint64_t memory_generation;
+    R4GfxBufferHandle parent;
+    R4GfxBufferHandle reference;
+    uint64_t byte_offset;
+    uint64_t virtual_offset;
+    uint64_t byte_length;
+    uint64_t alignment;
+    uint64_t fixed_address;
+    uint64_t deadline_ns;
+    uint32_t location;
+    uint32_t reserved1;
+} R4GfxVirtualRequest;
+
+typedef struct R4GfxVirtualStatus {
+    uint32_t version;
+    uint32_t size;
+    R4GfxBufferHandle resource;
+    R4GfxBufferHandle parent;
+    uint32_t kind;
+    uint32_t flags;
+    int32_t result;
+    uint32_t reserved0;
+    uint64_t address;
+    uint64_t byte_length;
+    uint64_t deadline_ns;
+} R4GfxVirtualStatus;
+
+typedef struct R4GfxVirtualToken {
+    uint64_t opaque0;
+    uint64_t opaque1;
+    uint64_t opaque2;
+} R4GfxVirtualToken;
+
+typedef struct R4GfxVirtualJob {
+    uint32_t version;
+    uint32_t size;
+    R4GfxBufferHandle resource;
+    uint32_t operation;
+    uint32_t reserved0;
+    R4GfxVirtualRequest request;
+    R4GfxVirtualToken parent_token;
+    R4GfxVirtualToken token;
+    R4GfxBufferReference reference;
+} R4GfxVirtualJob;
+
+typedef struct R4GfxVirtualCompletion {
+    uint32_t version;
+    uint32_t size;
+    R4GfxBufferHandle resource;
+    uint32_t operation;
+    int32_t result;
+    R4GfxVirtualToken token;
+    uint64_t address;
+} R4GfxVirtualCompletion;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8410,6 +8481,10 @@ typedef int32_t (*R4DrawGfxMemoryBudgetFn)(const R4GfxDeviceBudgetRequest * inpu
 typedef int32_t (*R4DrawGfxTelemetryFn)(const R4GfxTelemetryRequest * input, R4GfxTelemetryState * output);
 typedef int32_t (*R4DrawGfxOutputPowerFn)(const R4GfxOutputId * identity, R4GfxOutputPower * output);
 typedef int32_t (*R4DrawGfxPowerRequestFn)(const R4GfxPowerRequest * input, R4GfxPowerRequest * output);
+typedef int32_t (*R4DrawGfxVirtualStartFn)(const R4GfxVirtualRequest * input, R4GfxVirtualStatus * output);
+typedef int32_t (*R4DrawGfxVirtualQueryFn)(const R4GfxBufferHandle * request, R4GfxVirtualStatus * output);
+typedef int32_t (*R4DrawGfxVirtualCloseFn)(const R4GfxBufferHandle * request, uint32_t mode);
+typedef int32_t (*R4DrawGfxVirtualWaitFn)(const R4GfxBufferHandle * request, uint32_t until, uint64_t timeout_ticks, R4GfxVirtualStatus * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -8518,6 +8593,10 @@ typedef struct R4XStartR4Draw {
     uintptr_t gfx_telemetry;
     uintptr_t gfx_output_power;
     uintptr_t gfx_power_request;
+    uintptr_t gfx_virtual_start;
+    uintptr_t gfx_virtual_query;
+    uintptr_t gfx_virtual_close;
+    uintptr_t gfx_virtual_wait;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -12418,7 +12497,7 @@ _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_generation) == 56u, "Gfx
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, adapter_id) == 64u, "GfxOwnedBufferRelease.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_owner) == 68u, "GfxOwnedBufferRelease.driver_owner offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, reserved0) == 72u, "GfxOwnedBufferRelease.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GfxDriverMemoryApi) == 208u, "GfxDriverMemoryApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverMemoryApi) == 240u, "GfxDriverMemoryApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, version) == 0u, "GfxDriverMemoryApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, size) == 4u, "GfxDriverMemoryApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_create) == 8u, "GfxDriverMemoryApi.buffer_create offset mismatch");
@@ -12446,6 +12525,10 @@ _Static_assert(offsetof(R4GfxDriverMemoryApi, native_complete) == 176u, "GfxDriv
 _Static_assert(offsetof(R4GfxDriverMemoryApi, memory_budget) == 184u, "GfxDriverMemoryApi.memory_budget offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, telemetry_exchange) == 192u, "GfxDriverMemoryApi.telemetry_exchange offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, device_lost) == 200u, "GfxDriverMemoryApi.device_lost offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_register) == 208u, "GfxDriverMemoryApi.virtual_register offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_unregister) == 216u, "GfxDriverMemoryApi.virtual_unregister offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_take) == 224u, "GfxDriverMemoryApi.virtual_take offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_complete) == 232u, "GfxDriverMemoryApi.virtual_complete offset mismatch");
 _Static_assert(sizeof(R4GfxFence) == 40u, "GfxFence size mismatch");
 _Static_assert(offsetof(R4GfxFence, slot) == 0u, "GfxFence.slot offset mismatch");
 _Static_assert(offsetof(R4GfxFence, adapter_id) == 4u, "GfxFence.adapter_id offset mismatch");
@@ -13484,6 +13567,58 @@ _Static_assert(offsetof(R4RemoteFrameCaptureStats, snapshot_copy_bytes) == 64u, 
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, acquires) == 72u, "RemoteFrameCaptureStats.acquires offset mismatch");
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, misses) == 80u, "RemoteFrameCaptureStats.misses offset mismatch");
 _Static_assert(offsetof(R4RemoteFrameCaptureStats, max_reader_ns) == 88u, "RemoteFrameCaptureStats.max_reader_ns offset mismatch");
+_Static_assert(sizeof(R4GfxVirtualRequest) == 120u, "GfxVirtualRequest size mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, version) == 0u, "GfxVirtualRequest.version offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, size) == 4u, "GfxVirtualRequest.size offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, kind) == 8u, "GfxVirtualRequest.kind offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, flags) == 12u, "GfxVirtualRequest.flags offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, adapter_id) == 16u, "GfxVirtualRequest.adapter_id offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, reserved0) == 20u, "GfxVirtualRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, memory_generation) == 24u, "GfxVirtualRequest.memory_generation offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, parent) == 32u, "GfxVirtualRequest.parent offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, reference) == 48u, "GfxVirtualRequest.reference offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, byte_offset) == 64u, "GfxVirtualRequest.byte_offset offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, virtual_offset) == 72u, "GfxVirtualRequest.virtual_offset offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, byte_length) == 80u, "GfxVirtualRequest.byte_length offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, alignment) == 88u, "GfxVirtualRequest.alignment offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, fixed_address) == 96u, "GfxVirtualRequest.fixed_address offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, deadline_ns) == 104u, "GfxVirtualRequest.deadline_ns offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, location) == 112u, "GfxVirtualRequest.location offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualRequest, reserved1) == 116u, "GfxVirtualRequest.reserved1 offset mismatch");
+_Static_assert(sizeof(R4GfxVirtualStatus) == 80u, "GfxVirtualStatus size mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, version) == 0u, "GfxVirtualStatus.version offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, size) == 4u, "GfxVirtualStatus.size offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, resource) == 8u, "GfxVirtualStatus.resource offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, parent) == 24u, "GfxVirtualStatus.parent offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, kind) == 40u, "GfxVirtualStatus.kind offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, flags) == 44u, "GfxVirtualStatus.flags offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, result) == 48u, "GfxVirtualStatus.result offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, reserved0) == 52u, "GfxVirtualStatus.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, address) == 56u, "GfxVirtualStatus.address offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, byte_length) == 64u, "GfxVirtualStatus.byte_length offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualStatus, deadline_ns) == 72u, "GfxVirtualStatus.deadline_ns offset mismatch");
+_Static_assert(sizeof(R4GfxVirtualToken) == 24u, "GfxVirtualToken size mismatch");
+_Static_assert(offsetof(R4GfxVirtualToken, opaque0) == 0u, "GfxVirtualToken.opaque0 offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualToken, opaque1) == 8u, "GfxVirtualToken.opaque1 offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualToken, opaque2) == 16u, "GfxVirtualToken.opaque2 offset mismatch");
+_Static_assert(sizeof(R4GfxVirtualJob) == 248u, "GfxVirtualJob size mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, version) == 0u, "GfxVirtualJob.version offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, size) == 4u, "GfxVirtualJob.size offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, resource) == 8u, "GfxVirtualJob.resource offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, operation) == 24u, "GfxVirtualJob.operation offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, reserved0) == 28u, "GfxVirtualJob.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, request) == 32u, "GfxVirtualJob.request offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, parent_token) == 152u, "GfxVirtualJob.parent_token offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, token) == 176u, "GfxVirtualJob.token offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualJob, reference) == 200u, "GfxVirtualJob.reference offset mismatch");
+_Static_assert(sizeof(R4GfxVirtualCompletion) == 64u, "GfxVirtualCompletion size mismatch");
+_Static_assert(offsetof(R4GfxVirtualCompletion, version) == 0u, "GfxVirtualCompletion.version offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualCompletion, size) == 4u, "GfxVirtualCompletion.size offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualCompletion, resource) == 8u, "GfxVirtualCompletion.resource offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualCompletion, operation) == 24u, "GfxVirtualCompletion.operation offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualCompletion, result) == 28u, "GfxVirtualCompletion.result offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualCompletion, token) == 32u, "GfxVirtualCompletion.token offset mismatch");
+_Static_assert(offsetof(R4GfxVirtualCompletion, address) == 56u, "GfxVirtualCompletion.address offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1224u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -13912,7 +14047,7 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_source_reset) == 512u, "R4X
 _Static_assert(sizeof(R4DeskRemoteFrameSourceResetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, remote_frame_capture_stats) == 520u, "R4XStartR4Desk.remote_frame_capture_stats offset mismatch");
 _Static_assert(sizeof(R4DeskRemoteFrameCaptureStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 832u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 864u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -14117,6 +14252,14 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_output_power) == 816u, "R4XStartR4Dr
 _Static_assert(sizeof(R4DrawGfxOutputPowerFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_power_request) == 824u, "R4XStartR4Draw.gfx_power_request offset mismatch");
 _Static_assert(sizeof(R4DrawGfxPowerRequestFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_virtual_start) == 832u, "R4XStartR4Draw.gfx_virtual_start offset mismatch");
+_Static_assert(sizeof(R4DrawGfxVirtualStartFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_virtual_query) == 840u, "R4XStartR4Draw.gfx_virtual_query offset mismatch");
+_Static_assert(sizeof(R4DrawGfxVirtualQueryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_virtual_close) == 848u, "R4XStartR4Draw.gfx_virtual_close offset mismatch");
+_Static_assert(sizeof(R4DrawGfxVirtualCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_virtual_wait) == 856u, "R4XStartR4Draw.gfx_virtual_wait offset mismatch");
+_Static_assert(sizeof(R4DrawGfxVirtualWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 410,
+    "group_function_signatures": 414,
     "sdk_operation_contracts": 0,
-    "parity_entries": 410,
+    "parity_entries": 414,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2825,6 +2825,42 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DrawFns.gfx_power_request",
       "c_contract": "R4DrawGfxPowerRequestFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_virtual_start",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_virtual_start",
+      "c_contract": "R4DrawGfxVirtualStartFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_virtual_query",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_virtual_query",
+      "c_contract": "R4DrawGfxVirtualQueryFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_virtual_close",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_virtual_close",
+      "c_contract": "R4DrawGfxVirtualCloseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DRAW.gfx_virtual_wait",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DrawFns.gfx_virtual_wait",
+      "c_contract": "R4DrawGfxVirtualWaitFn",
       "coverage": "generated_signature"
     },
     {

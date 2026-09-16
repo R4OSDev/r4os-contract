@@ -6349,7 +6349,7 @@ pub const GfxOwnedBufferRelease = extern struct {
 
 pub const GfxDriverMemoryApi = extern struct {
     version: u32 = 1,
-    size: u32 = 208,
+    size: u32 = 240,
     buffer_create: u64 = 0,
     buffer_describe: u64 = 0,
     buffer_import: u64 = 0,
@@ -6375,6 +6375,10 @@ pub const GfxDriverMemoryApi = extern struct {
     memory_budget: u64 = 0,
     telemetry_exchange: u64 = 0,
     device_lost: u64 = 0,
+    virtual_register: u64 = 0,
+    virtual_unregister: u64 = 0,
+    virtual_take: u64 = 0,
+    virtual_complete: u64 = 0,
 };
 
 pub const GfxFence = extern struct {
@@ -7605,6 +7609,68 @@ pub const RemoteFrameCaptureStats = extern struct {
     max_reader_ns: u64 = 0,
 };
 
+pub const GfxVirtualRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 120,
+    kind: u32 = 0,
+    flags: u32 = 0,
+    adapter_id: u32 = 0,
+    reserved0: u32 = 0,
+    memory_generation: u64 = 0,
+    parent: GfxBufferHandle = .{},
+    reference: GfxBufferHandle = .{},
+    byte_offset: u64 = 0,
+    virtual_offset: u64 = 0,
+    byte_length: u64 = 0,
+    alignment: u64 = 0,
+    fixed_address: u64 = 0,
+    deadline_ns: u64 = 0,
+    location: u32 = 0,
+    reserved1: u32 = 0,
+};
+
+pub const GfxVirtualStatus = extern struct {
+    version: u32 = 1,
+    size: u32 = 80,
+    resource: GfxBufferHandle = .{},
+    parent: GfxBufferHandle = .{},
+    kind: u32 = 0,
+    flags: u32 = 0,
+    result: i32 = 0,
+    reserved0: u32 = 0,
+    address: u64 = 0,
+    byte_length: u64 = 0,
+    deadline_ns: u64 = 0,
+};
+
+pub const GfxVirtualToken = extern struct {
+    opaque0: u64 = 0,
+    opaque1: u64 = 0,
+    opaque2: u64 = 0,
+};
+
+pub const GfxVirtualJob = extern struct {
+    version: u32 = 1,
+    size: u32 = 248,
+    resource: GfxBufferHandle = .{},
+    operation: u32 = 0,
+    reserved0: u32 = 0,
+    request: GfxVirtualRequest = .{},
+    parent_token: GfxVirtualToken = .{},
+    token: GfxVirtualToken = .{},
+    reference: GfxBufferReference = .{},
+};
+
+pub const GfxVirtualCompletion = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    resource: GfxBufferHandle = .{},
+    operation: u32 = 0,
+    result: i32 = 0,
+    token: GfxVirtualToken = .{},
+    address: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8154,12 +8220,16 @@ pub const R4DrawFns = struct {
     pub const gfx_telemetry = *const fn (*const GfxTelemetryRequest, *GfxTelemetryState) callconv(.c) i32;
     pub const gfx_output_power = *const fn (*const GfxOutputId, *GfxOutputPower) callconv(.c) i32;
     pub const gfx_power_request = *const fn (*const GfxPowerRequest, *GfxPowerRequest) callconv(.c) i32;
+    pub const gfx_virtual_start = *const fn (*const GfxVirtualRequest, *GfxVirtualStatus) callconv(.c) i32;
+    pub const gfx_virtual_query = *const fn (*const GfxBufferHandle, *GfxVirtualStatus) callconv(.c) i32;
+    pub const gfx_virtual_close = *const fn (*const GfxBufferHandle, u32) callconv(.c) i32;
+    pub const gfx_virtual_wait = *const fn (*const GfxBufferHandle, u32, u64, *GfxVirtualStatus) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 31,
-    size: u32 = 832,
+    abi_version: u32 = 32,
+    size: u32 = 864,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -8263,6 +8333,10 @@ pub const R4XStartR4Draw = extern struct {
     gfx_telemetry: usize = 0,
     gfx_output_power: usize = 0,
     gfx_power_request: usize = 0,
+    gfx_virtual_start: usize = 0,
+    gfx_virtual_query: usize = 0,
+    gfx_virtual_close: usize = 0,
+    gfx_virtual_wait: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -8820,6 +8894,10 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 99, .offset = 808, .name = "gfx_telemetry", .state = .function, .required = false },
     .{ .number = 100, .offset = 816, .name = "gfx_output_power", .state = .function, .required = false },
     .{ .number = 101, .offset = 824, .name = "gfx_power_request", .state = .function, .required = false },
+    .{ .number = 102, .offset = 832, .name = "gfx_virtual_start", .state = .function, .required = false },
+    .{ .number = 103, .offset = 840, .name = "gfx_virtual_query", .state = .function, .required = false },
+    .{ .number = 104, .offset = 848, .name = "gfx_virtual_close", .state = .function, .required = false },
+    .{ .number = 105, .offset = 856, .name = "gfx_virtual_wait", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -12778,7 +12856,7 @@ comptime {
     if (@offsetOf(GfxOwnedBufferRelease, "adapter_id") != 64) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.adapter_id");
     if (@offsetOf(GfxOwnedBufferRelease, "driver_owner") != 68) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.driver_owner");
     if (@offsetOf(GfxOwnedBufferRelease, "reserved0") != 72) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.reserved0");
-    if (@sizeOf(GfxDriverMemoryApi) != 208) @compileError("generated ABI size drift: GfxDriverMemoryApi");
+    if (@sizeOf(GfxDriverMemoryApi) != 240) @compileError("generated ABI size drift: GfxDriverMemoryApi");
     if (@alignOf(GfxDriverMemoryApi) != 8) @compileError("generated ABI alignment drift: GfxDriverMemoryApi");
     if (@offsetOf(GfxDriverMemoryApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverMemoryApi.version");
     if (@offsetOf(GfxDriverMemoryApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverMemoryApi.size");
@@ -12807,6 +12885,10 @@ comptime {
     if (@offsetOf(GfxDriverMemoryApi, "memory_budget") != 184) @compileError("generated ABI offset drift: GfxDriverMemoryApi.memory_budget");
     if (@offsetOf(GfxDriverMemoryApi, "telemetry_exchange") != 192) @compileError("generated ABI offset drift: GfxDriverMemoryApi.telemetry_exchange");
     if (@offsetOf(GfxDriverMemoryApi, "device_lost") != 200) @compileError("generated ABI offset drift: GfxDriverMemoryApi.device_lost");
+    if (@offsetOf(GfxDriverMemoryApi, "virtual_register") != 208) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_register");
+    if (@offsetOf(GfxDriverMemoryApi, "virtual_unregister") != 216) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_unregister");
+    if (@offsetOf(GfxDriverMemoryApi, "virtual_take") != 224) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_take");
+    if (@offsetOf(GfxDriverMemoryApi, "virtual_complete") != 232) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_complete");
     if (@sizeOf(GfxFence) != 40) @compileError("generated ABI size drift: GfxFence");
     if (@alignOf(GfxFence) != 8) @compileError("generated ABI alignment drift: GfxFence");
     if (@offsetOf(GfxFence, "slot") != 0) @compileError("generated ABI offset drift: GfxFence.slot");
@@ -13940,6 +14022,63 @@ comptime {
     if (@offsetOf(RemoteFrameCaptureStats, "acquires") != 72) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.acquires");
     if (@offsetOf(RemoteFrameCaptureStats, "misses") != 80) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.misses");
     if (@offsetOf(RemoteFrameCaptureStats, "max_reader_ns") != 88) @compileError("generated ABI offset drift: RemoteFrameCaptureStats.max_reader_ns");
+    if (@sizeOf(GfxVirtualRequest) != 120) @compileError("generated ABI size drift: GfxVirtualRequest");
+    if (@alignOf(GfxVirtualRequest) != 8) @compileError("generated ABI alignment drift: GfxVirtualRequest");
+    if (@offsetOf(GfxVirtualRequest, "version") != 0) @compileError("generated ABI offset drift: GfxVirtualRequest.version");
+    if (@offsetOf(GfxVirtualRequest, "size") != 4) @compileError("generated ABI offset drift: GfxVirtualRequest.size");
+    if (@offsetOf(GfxVirtualRequest, "kind") != 8) @compileError("generated ABI offset drift: GfxVirtualRequest.kind");
+    if (@offsetOf(GfxVirtualRequest, "flags") != 12) @compileError("generated ABI offset drift: GfxVirtualRequest.flags");
+    if (@offsetOf(GfxVirtualRequest, "adapter_id") != 16) @compileError("generated ABI offset drift: GfxVirtualRequest.adapter_id");
+    if (@offsetOf(GfxVirtualRequest, "reserved0") != 20) @compileError("generated ABI offset drift: GfxVirtualRequest.reserved0");
+    if (@offsetOf(GfxVirtualRequest, "memory_generation") != 24) @compileError("generated ABI offset drift: GfxVirtualRequest.memory_generation");
+    if (@offsetOf(GfxVirtualRequest, "parent") != 32) @compileError("generated ABI offset drift: GfxVirtualRequest.parent");
+    if (@offsetOf(GfxVirtualRequest, "reference") != 48) @compileError("generated ABI offset drift: GfxVirtualRequest.reference");
+    if (@offsetOf(GfxVirtualRequest, "byte_offset") != 64) @compileError("generated ABI offset drift: GfxVirtualRequest.byte_offset");
+    if (@offsetOf(GfxVirtualRequest, "virtual_offset") != 72) @compileError("generated ABI offset drift: GfxVirtualRequest.virtual_offset");
+    if (@offsetOf(GfxVirtualRequest, "byte_length") != 80) @compileError("generated ABI offset drift: GfxVirtualRequest.byte_length");
+    if (@offsetOf(GfxVirtualRequest, "alignment") != 88) @compileError("generated ABI offset drift: GfxVirtualRequest.alignment");
+    if (@offsetOf(GfxVirtualRequest, "fixed_address") != 96) @compileError("generated ABI offset drift: GfxVirtualRequest.fixed_address");
+    if (@offsetOf(GfxVirtualRequest, "deadline_ns") != 104) @compileError("generated ABI offset drift: GfxVirtualRequest.deadline_ns");
+    if (@offsetOf(GfxVirtualRequest, "location") != 112) @compileError("generated ABI offset drift: GfxVirtualRequest.location");
+    if (@offsetOf(GfxVirtualRequest, "reserved1") != 116) @compileError("generated ABI offset drift: GfxVirtualRequest.reserved1");
+    if (@sizeOf(GfxVirtualStatus) != 80) @compileError("generated ABI size drift: GfxVirtualStatus");
+    if (@alignOf(GfxVirtualStatus) != 8) @compileError("generated ABI alignment drift: GfxVirtualStatus");
+    if (@offsetOf(GfxVirtualStatus, "version") != 0) @compileError("generated ABI offset drift: GfxVirtualStatus.version");
+    if (@offsetOf(GfxVirtualStatus, "size") != 4) @compileError("generated ABI offset drift: GfxVirtualStatus.size");
+    if (@offsetOf(GfxVirtualStatus, "resource") != 8) @compileError("generated ABI offset drift: GfxVirtualStatus.resource");
+    if (@offsetOf(GfxVirtualStatus, "parent") != 24) @compileError("generated ABI offset drift: GfxVirtualStatus.parent");
+    if (@offsetOf(GfxVirtualStatus, "kind") != 40) @compileError("generated ABI offset drift: GfxVirtualStatus.kind");
+    if (@offsetOf(GfxVirtualStatus, "flags") != 44) @compileError("generated ABI offset drift: GfxVirtualStatus.flags");
+    if (@offsetOf(GfxVirtualStatus, "result") != 48) @compileError("generated ABI offset drift: GfxVirtualStatus.result");
+    if (@offsetOf(GfxVirtualStatus, "reserved0") != 52) @compileError("generated ABI offset drift: GfxVirtualStatus.reserved0");
+    if (@offsetOf(GfxVirtualStatus, "address") != 56) @compileError("generated ABI offset drift: GfxVirtualStatus.address");
+    if (@offsetOf(GfxVirtualStatus, "byte_length") != 64) @compileError("generated ABI offset drift: GfxVirtualStatus.byte_length");
+    if (@offsetOf(GfxVirtualStatus, "deadline_ns") != 72) @compileError("generated ABI offset drift: GfxVirtualStatus.deadline_ns");
+    if (@sizeOf(GfxVirtualToken) != 24) @compileError("generated ABI size drift: GfxVirtualToken");
+    if (@alignOf(GfxVirtualToken) != 8) @compileError("generated ABI alignment drift: GfxVirtualToken");
+    if (@offsetOf(GfxVirtualToken, "opaque0") != 0) @compileError("generated ABI offset drift: GfxVirtualToken.opaque0");
+    if (@offsetOf(GfxVirtualToken, "opaque1") != 8) @compileError("generated ABI offset drift: GfxVirtualToken.opaque1");
+    if (@offsetOf(GfxVirtualToken, "opaque2") != 16) @compileError("generated ABI offset drift: GfxVirtualToken.opaque2");
+    if (@sizeOf(GfxVirtualJob) != 248) @compileError("generated ABI size drift: GfxVirtualJob");
+    if (@alignOf(GfxVirtualJob) != 8) @compileError("generated ABI alignment drift: GfxVirtualJob");
+    if (@offsetOf(GfxVirtualJob, "version") != 0) @compileError("generated ABI offset drift: GfxVirtualJob.version");
+    if (@offsetOf(GfxVirtualJob, "size") != 4) @compileError("generated ABI offset drift: GfxVirtualJob.size");
+    if (@offsetOf(GfxVirtualJob, "resource") != 8) @compileError("generated ABI offset drift: GfxVirtualJob.resource");
+    if (@offsetOf(GfxVirtualJob, "operation") != 24) @compileError("generated ABI offset drift: GfxVirtualJob.operation");
+    if (@offsetOf(GfxVirtualJob, "reserved0") != 28) @compileError("generated ABI offset drift: GfxVirtualJob.reserved0");
+    if (@offsetOf(GfxVirtualJob, "request") != 32) @compileError("generated ABI offset drift: GfxVirtualJob.request");
+    if (@offsetOf(GfxVirtualJob, "parent_token") != 152) @compileError("generated ABI offset drift: GfxVirtualJob.parent_token");
+    if (@offsetOf(GfxVirtualJob, "token") != 176) @compileError("generated ABI offset drift: GfxVirtualJob.token");
+    if (@offsetOf(GfxVirtualJob, "reference") != 200) @compileError("generated ABI offset drift: GfxVirtualJob.reference");
+    if (@sizeOf(GfxVirtualCompletion) != 64) @compileError("generated ABI size drift: GfxVirtualCompletion");
+    if (@alignOf(GfxVirtualCompletion) != 8) @compileError("generated ABI alignment drift: GfxVirtualCompletion");
+    if (@offsetOf(GfxVirtualCompletion, "version") != 0) @compileError("generated ABI offset drift: GfxVirtualCompletion.version");
+    if (@offsetOf(GfxVirtualCompletion, "size") != 4) @compileError("generated ABI offset drift: GfxVirtualCompletion.size");
+    if (@offsetOf(GfxVirtualCompletion, "resource") != 8) @compileError("generated ABI offset drift: GfxVirtualCompletion.resource");
+    if (@offsetOf(GfxVirtualCompletion, "operation") != 24) @compileError("generated ABI offset drift: GfxVirtualCompletion.operation");
+    if (@offsetOf(GfxVirtualCompletion, "result") != 28) @compileError("generated ABI offset drift: GfxVirtualCompletion.result");
+    if (@offsetOf(GfxVirtualCompletion, "token") != 32) @compileError("generated ABI offset drift: GfxVirtualCompletion.token");
+    if (@offsetOf(GfxVirtualCompletion, "address") != 56) @compileError("generated ABI offset drift: GfxVirtualCompletion.address");
     if (@sizeOf(R4XStartR4Sys) != 1224) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -14157,7 +14296,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_snapshot_release") != 504) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_snapshot_release");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_source_reset") != 512) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_source_reset");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_capture_stats");
-    if (@sizeOf(R4XStartR4Draw) != 832) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 864) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -14260,6 +14399,10 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_telemetry") != 808) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_telemetry");
     if (@offsetOf(R4XStartR4Draw, "gfx_output_power") != 816) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_output_power");
     if (@offsetOf(R4XStartR4Draw, "gfx_power_request") != 824) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_power_request");
+    if (@offsetOf(R4XStartR4Draw, "gfx_virtual_start") != 832) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_virtual_start");
+    if (@offsetOf(R4XStartR4Draw, "gfx_virtual_query") != 840) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_virtual_query");
+    if (@offsetOf(R4XStartR4Draw, "gfx_virtual_close") != 848) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_virtual_close");
+    if (@offsetOf(R4XStartR4Draw, "gfx_virtual_wait") != 856) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_virtual_wait");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -14920,13 +15063,17 @@ pub const R4DrawProvider = struct {
     gfx_telemetry: ?R4DrawFns.gfx_telemetry = null,
     gfx_output_power: ?R4DrawFns.gfx_output_power = null,
     gfx_power_request: ?R4DrawFns.gfx_power_request = null,
+    gfx_virtual_start: ?R4DrawFns.gfx_virtual_start = null,
+    gfx_virtual_query: ?R4DrawFns.gfx_virtual_query = null,
+    gfx_virtual_close: ?R4DrawFns.gfx_virtual_close = null,
+    gfx_virtual_wait: ?R4DrawFns.gfx_virtual_wait = null,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 31,
-        .size = 832,
+        .abi_version = 32,
+        .size = 864,
         .flags = 0,
         .screen_width = if (provider.screen_width) |callback| @intFromPtr(callback) else 0,
         .screen_height = if (provider.screen_height) |callback| @intFromPtr(callback) else 0,
@@ -15030,6 +15177,10 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gfx_telemetry = if (provider.gfx_telemetry) |callback| @intFromPtr(callback) else 0,
         .gfx_output_power = if (provider.gfx_output_power) |callback| @intFromPtr(callback) else 0,
         .gfx_power_request = if (provider.gfx_power_request) |callback| @intFromPtr(callback) else 0,
+        .gfx_virtual_start = if (provider.gfx_virtual_start) |callback| @intFromPtr(callback) else 0,
+        .gfx_virtual_query = if (provider.gfx_virtual_query) |callback| @intFromPtr(callback) else 0,
+        .gfx_virtual_close = if (provider.gfx_virtual_close) |callback| @intFromPtr(callback) else 0,
+        .gfx_virtual_wait = if (provider.gfx_virtual_wait) |callback| @intFromPtr(callback) else 0,
     };
 }
 

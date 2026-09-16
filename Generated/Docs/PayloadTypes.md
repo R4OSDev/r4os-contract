@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 271 von 271 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 276 von 276 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1849; Limits: 109
 
@@ -196,7 +196,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxMmioWindow` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxOwnedBufferReservation` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `GfxOwnedBufferRelease` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
-| `GfxDriverMemoryApi` | extensible | extern_struct | 208/8 | 208/8 | 208/8 | 208/8 |
+| `GfxDriverMemoryApi` | extensible | extern_struct | 240/8 | 240/8 | 240/8 | 240/8 |
 | `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
@@ -292,6 +292,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxPowerRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `RemoteFrameLease` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `RemoteFrameCaptureStats` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `GfxVirtualRequest` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `GfxVirtualStatus` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `GfxVirtualToken` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `GfxVirtualJob` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
+| `GfxVirtualCompletion` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -5504,7 +5509,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 5 / 208 / 8
+- Version/Größe/Alignment: 6 / 240 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5535,6 +5540,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `memory_budget` | 184 | 8 | 8 | `u64` | - |
 | `telemetry_exchange` | 192 | 8 | 8 | `u64` | - |
 | `device_lost` | 200 | 8 | 8 | `u64` | - |
+| `virtual_register` | 208 | 8 | 8 | `u64` | - |
+| `virtual_unregister` | 216 | 8 | 8 | `u64` | - |
+| `virtual_take` | 224 | 8 | 8 | `u64` | - |
+| `virtual_complete` | 232 | 8 | 8 | `u64` | - |
 
 ### `GfxFence`
 
@@ -7428,6 +7437,103 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `acquires` | 72 | 8 | 8 | `u64` | - |
 | `misses` | 80 | 8 | 8 | `u64` | - |
 | `max_reader_ns` | 88 | 8 | 8 | `u64` | - |
+
+### `GfxVirtualRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 120 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `adapter_id` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `memory_generation` | 24 | 8 | 8 | `u64` | - |
+| `parent` | 32 | 16 | 8 | `GfxBufferHandle` | - |
+| `reference` | 48 | 16 | 8 | `GfxBufferHandle` | - |
+| `byte_offset` | 64 | 8 | 8 | `u64` | - |
+| `virtual_offset` | 72 | 8 | 8 | `u64` | - |
+| `byte_length` | 80 | 8 | 8 | `u64` | - |
+| `alignment` | 88 | 8 | 8 | `u64` | - |
+| `fixed_address` | 96 | 8 | 8 | `u64` | - |
+| `deadline_ns` | 104 | 8 | 8 | `u64` | - |
+| `location` | 112 | 4 | 4 | `u32` | - |
+| `reserved1` | 116 | 4 | 4 | `u32` | - |
+
+### `GfxVirtualStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `resource` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `parent` | 24 | 16 | 8 | `GfxBufferHandle` | - |
+| `kind` | 40 | 4 | 4 | `u32` | - |
+| `flags` | 44 | 4 | 4 | `u32` | - |
+| `result` | 48 | 4 | 4 | `i32` | - |
+| `reserved0` | 52 | 4 | 4 | `u32` | - |
+| `address` | 56 | 8 | 8 | `u64` | - |
+| `byte_length` | 64 | 8 | 8 | `u64` | - |
+| `deadline_ns` | 72 | 8 | 8 | `u64` | - |
+
+### `GfxVirtualToken`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `opaque0` | 0 | 8 | 8 | `u64` | - |
+| `opaque1` | 8 | 8 | 8 | `u64` | - |
+| `opaque2` | 16 | 8 | 8 | `u64` | - |
+
+### `GfxVirtualJob`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 248 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `resource` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `operation` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+| `request` | 32 | 120 | 8 | `GfxVirtualRequest` | - |
+| `parent_token` | 152 | 24 | 8 | `GfxVirtualToken` | - |
+| `token` | 176 | 24 | 8 | `GfxVirtualToken` | - |
+| `reference` | 200 | 48 | 8 | `GfxBufferReference` | - |
+
+### `GfxVirtualCompletion`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `resource` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `operation` | 24 | 4 | 4 | `u32` | - |
+| `result` | 28 | 4 | 4 | `i32` | - |
+| `token` | 32 | 24 | 8 | `GfxVirtualToken` | - |
+| `address` | 56 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 

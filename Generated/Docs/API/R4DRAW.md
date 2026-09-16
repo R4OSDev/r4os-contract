@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v31, 832 Bytes, 102 Funktionsfelder und 102 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v32, 864 Bytes, 106 Funktionsfelder und 106 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -111,4 +111,8 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 99 | 808 | function | `gfx_telemetry` | `*const fn (*const GfxTelemetryRequest, *GfxTelemetryState) callconv(.c) i32` |
 | 100 | 816 | function | `gfx_output_power` | `*const fn (*const GfxOutputId, *GfxOutputPower) callconv(.c) i32` |
 | 101 | 824 | function | `gfx_power_request` | `*const fn (*const GfxPowerRequest, *GfxPowerRequest) callconv(.c) i32` |
+| 102 | 832 | function | `gfx_virtual_start` | `*const fn (*const GfxVirtualRequest, *GfxVirtualStatus) callconv(.c) i32` |
+| 103 | 840 | function | `gfx_virtual_query` | `*const fn (*const GfxBufferHandle, *GfxVirtualStatus) callconv(.c) i32` |
+| 104 | 848 | function | `gfx_virtual_close` | `*const fn (*const GfxBufferHandle, u32) callconv(.c) i32` |
+| 105 | 856 | function | `gfx_virtual_wait` | `*const fn (*const GfxBufferHandle, u32, u64, *GfxVirtualStatus) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

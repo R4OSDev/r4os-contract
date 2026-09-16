@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 410,
-    "group_slot_count": 410,
+    "function_count": 414,
+    "group_slot_count": 414,
     "sdk_only_count": 0,
-    "public_count": 312,
+    "public_count": 316,
     "advanced_count": 98
   },
   "functions": [
@@ -3761,6 +3761,54 @@
       "slot": 101,
       "exposure": "public",
       "description": "Request or renew screen sleep, or wake immediately. Atomic copied intent with30s off lease; caller close and expiry wake. No GPU/system suspend or synchronous hardware operation. Driver acknowledgement is read separately.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_virtual_start",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 102,
+      "exposure": "public",
+      "description": "Copy and admit an owner-bound GPU range or binding. Output changes only on success; a pending handle is not proof of completed hardware work. Finite creation deadline and exact adapter generation are required.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_virtual_query",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 103,
+      "exposure": "public",
+      "description": "Read the exact caller resource, including after retirement requested with close mode 0. Never infer GPU quiescence from the creation result.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_virtual_close",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 104,
+      "exposure": "public",
+      "description": "Mode 0 requests resource retirement while retaining the public handle for query/wait; mode 1 additionally releases that handle. Range close propagates to all bindings. Neither mode waits for GPU quiescence or discards an outstanding driver claim.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_virtual_wait",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 105,
+      "exposure": "public",
+      "description": "Until 0 waits for settled creation, until 1 for confirmed backend retirement. Completion wins a concurrent wait timeout. A wait timeout changes neither the resource deadline nor its ownership. Exact task retirement removes waiter metadata.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
