@@ -16014,7 +16014,7 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 35,
+      "abi_version": 36,
       "header_size": 16,
       "pointer_size": 8,
       "size": 888,
@@ -97455,7 +97455,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Range: bit 0 blocklinear layout. Binding: zero. Unsupported layouts must be rejected.",
+          "description": "Range: bit0 blocklinear, bits8..15 driver-specific page layout (requires bit0, R4DRAW36 and explicit backend support); other bits zero. Layout0 retains legacy behavior. Kernel preserves the ID; the backend must reject unsupported layouts before allocation. Binding flags are zero.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -119784,6 +119784,46 @@
       "scope": "gfx_queue",
       "stability": "fixed_contract",
       "description": "Maximum bytes in one driver read_native_data call; not a submission size or resource-count limit."
+    },
+    {
+      "name": "gfx_virtual_flag_blocklinear",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
+    },
+    {
+      "name": "gfx_virtual_layout_shift",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
+    },
+    {
+      "name": "gfx_virtual_layout_mask",
+      "value": "65280",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
+    },
+    {
+      "name": "gfx_virtual_layout_api_version",
+      "value": "36",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
     }
   ],
   "limits": [

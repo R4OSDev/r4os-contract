@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 282 von 282 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1851; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1855; Limits: 109
 
 ## App-Profile
 
@@ -10243,6 +10243,10 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `program_local_error_closed` | `-4` | `i32` | value | number | `program` | fixed_contract |
 | `gfx_queue_operation_native` | `10` | `u32` | identity | number | `gfx_queue` | fixed_contract |
 | `gfx_native_read_capacity` | `1024` | `u32` | identity | number | `gfx_queue` | fixed_contract |
+| `gfx_virtual_flag_blocklinear` | `1` | `u32` | value | number | `gfx_virtual` | fixed_contract |
+| `gfx_virtual_layout_shift` | `8` | `u32` | value | number | `gfx_virtual` | fixed_contract |
+| `gfx_virtual_layout_mask` | `65280` | `u32` | value | number | `gfx_virtual` | fixed_contract |
+| `gfx_virtual_layout_api_version` | `36` | `u32` | value | number | `gfx_virtual` | fixed_contract |
 
 ## Limits
 

@@ -16014,7 +16014,7 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 35,
+      "abi_version": 36,
       "header_size": 16,
       "pointer_size": 8,
       "size": 888,
@@ -83952,8 +83952,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 9,
-      "size": 160,
+      "version": 10,
+      "size": 168,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -84246,6 +84246,20 @@
             "name": "u64"
           },
           "description": "Optional i32(const GfxFence*, u32 index, GfxNativeBinding*). Exact active native job and actual driver owner required; producer close does not revoke the retained binding. Full output unchanged on failure.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queue_owner_info",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxBackendBinding*, u64 timeline, GfxQueueOwnerInfo*). Actual driver and exact current backend required. Returns 1 with logical queue ownership, 0 if the never-reused timeline no longer exists; failure/absence preserves output. Closing or producer exit coalesces a normal backend notification even for an idle queue. Neither this snapshot nor its counters prove GPU quiescence.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -97441,7 +97455,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Range: bit 0 blocklinear layout. Binding: zero. Unsupported layouts must be rejected.",
+          "description": "Range: bit0 blocklinear, bits8..15 driver-specific page layout (requires bit0, R4DRAW36 and explicit backend support); other bits zero. Layout0 retains legacy behavior. Kernel preserves the ID; the backend must reject unsupported layouts before allocation. Binding flags are zero.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -98708,6 +98722,147 @@
       ],
       "values": [],
       "description": "Driver-only admitted VA binding snapshot. Token originates in this same driver provider and survives producer close through the active job. Address and size describe the whole binding; common BO execution ownership is retained by the queue, never by this copied token."
+    },
+    {
+      "name": "GfxQueueOwnerInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete output prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "timeline",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact never-reused queue identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "producer_kind",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Same 1-based kind as GfxDriverJob.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "closing",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "1 once queue close, producer exit or logical device loss begins; otherwise 0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "producer_id",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact producer identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "producer_generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact producer incarnation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "inflight_jobs",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Queued or device-active jobs, including cancelled active work until its physical acknowledgement. Not a complete GPU-quiescence proof.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained_jobs",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Retained job records including references/dependencies/waiters; not a physical activity counter.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Driver-only logical queue ownership for persistent execution-context retirement. Scope is the exact registered backend incarnation. Closing snapshots may still retain physically active work. A returned zero means no such live queue metadata, not a GPU-stop proof. Query again when notified; close notifications coalesce and contain no per-queue callback."
     }
   ],
   "operations": [],
@@ -119629,6 +119784,46 @@
       "scope": "gfx_queue",
       "stability": "fixed_contract",
       "description": "Maximum bytes in one driver read_native_data call; not a submission size or resource-count limit."
+    },
+    {
+      "name": "gfx_virtual_flag_blocklinear",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
+    },
+    {
+      "name": "gfx_virtual_layout_shift",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
+    },
+    {
+      "name": "gfx_virtual_layout_mask",
+      "value": "65280",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
+    },
+    {
+      "name": "gfx_virtual_layout_api_version",
+      "value": "36",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gfx_virtual",
+      "stability": "fixed_contract",
+      "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
     }
   ],
   "limits": [
