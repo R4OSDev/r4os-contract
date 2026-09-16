@@ -855,3 +855,34 @@ The kernel synthesizes gfx_output_flag_sleeping=1024 for stopping/off/waking.
 It keeps logical Desktop placement without admitting native presents. Kernel
 catalog and queue owner locks never span hardware callbacks or wake delivery.
 Full platform S3/S4/S0ix suspend is not supplied by these display APIs.
+
+Opaque native queue submission (Kernel 0.1.191)
+----------------------------------------------
+R4DRAW ABI35/888 appends gfx_queue_submit_native at880. Operation10 requires
+explicit backend advertisement and an exact nonempty profile UUID/revision.
+GfxNativeSubmission56 supplies command bytes and GfxNativeResource32 entries.
+The common queue copies both; it never parses vendor commands or Linux ioctls.
+Every entry names a producer-owned, acknowledged gfx_virtual mapping on the
+same driver/adapter/memory generation, with read or read/write access. The
+mapping's entire extent is retained; the declared set must cover all GPU use.
+Aliases deduplicate to canonical BO execution leases with unioned access and
+extents. Queue dependencies, normal-copy hazards and CPU-map exclusion apply.
+Closing mappings/references, cancelling or exiting the producer cannot retire
+active execution. Only completed work or proven device quiescence releases the
+leases; a worker subsequently permits unmap and frees resident metadata.
+
+GfxDriverQueueApi remains wire-version1; its optional extent is now160 bytes.
+Existing fields and the legacy128 default remain unchanged. New callbacks:
+  read_native_info at136: (GfxFence*, GfxNativeJobInfo40*) -> i32
+  read_native_data at144: (GfxFence*, u32 offset, u8* output, u32 count) -> i32
+  read_native_binding at152: (GfxFence*, u32 index, GfxNativeBinding72*) -> i32
+All require the actual bound driver and exact active native fence. Metadata
+remains readable after logical cancellation/loss until physical retirement.
+Data reads are atomic, nonempty and at most1024 bytes; this bounds each copy,
+not total job size. Binding output preserves submitted order and access and
+contains the exact held provider token/address/length. No kernel pointer is
+exported. Failure preserves outputs. A native-capable backend requires the
+complete296-byte GfxDriverJob, including producer identity; removing capability
+does not shrink this requirement for already admitted jobs. Generic submit
+cannot accept native jobs without the separate payload/ownership admission.
+The native operation is transport only, not a Vulkan or hardware-ready claim.

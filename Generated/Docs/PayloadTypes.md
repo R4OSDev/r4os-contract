@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 277 von 277 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 281 von 281 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1849; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1851; Limits: 109
 
 ## App-Profile
 
@@ -205,7 +205,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBackendRegistration` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GfxDriverJob` | extensible | extern_struct | 296/8 | 296/8 | 296/8 | 296/8 |
-| `GfxDriverQueueApi` | extensible | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
+| `GfxDriverQueueApi` | extensible | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 | `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxDisplayLimits` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
@@ -298,6 +298,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxVirtualJob` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `GfxVirtualCompletion` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxBackendProperties` | extensible | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
+| `GfxNativeSubmission` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `GfxNativeResource` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `GfxNativeJobInfo` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `GfxNativeBinding` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 
 ## Typdetails
 
@@ -5709,7 +5713,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 8 / 136 / 8
+- Version/Größe/Alignment: 9 / 160 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5731,6 +5735,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `read_render_grid_list` | 112 | 8 | 8 | `u64` | - |
 | `read_render_color_list` | 120 | 8 | 8 | `u64` | - |
 | `publish_properties` | 128 | 8 | 8 | `u64` | - |
+| `read_native_info` | 136 | 8 | 8 | `u64` | - |
+| `read_native_data` | 144 | 8 | 8 | `u64` | - |
+| `read_native_binding` | 152 | 8 | 8 | `u64` | - |
 
 ### `GfxOutputId`
 
@@ -7553,6 +7560,77 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `revision` | 24 | 4 | 4 | `u32` | - |
 | `data_bytes` | 28 | 4 | 4 | `u32` | - |
 | `data` | 32 | 256 | 1 | `[256]u8` | - |
+
+### `GfxNativeSubmission`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `interface_id_lo` | 8 | 8 | 8 | `u64` | - |
+| `interface_id_hi` | 16 | 8 | 8 | `u64` | - |
+| `revision` | 24 | 4 | 4 | `u32` | - |
+| `command_bytes` | 28 | 4 | 4 | `u32` | - |
+| `resource_count` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `commands` | 40 | 8 | 8 | `u64` | - |
+| `resources` | 48 | 8 | 8 | `u64` | - |
+
+### `GfxNativeResource`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `binding` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `access` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+
+### `GfxNativeJobInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `interface_id_lo` | 8 | 8 | 8 | `u64` | - |
+| `interface_id_hi` | 16 | 8 | 8 | `u64` | - |
+| `revision` | 24 | 4 | 4 | `u32` | - |
+| `command_bytes` | 28 | 4 | 4 | `u32` | - |
+| `resource_count` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+
+### `GfxNativeBinding`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 72 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `binding` | 8 | 16 | 8 | `GfxBufferHandle` | - |
+| `token` | 24 | 24 | 8 | `GfxVirtualToken` | - |
+| `address` | 48 | 8 | 8 | `u64` | - |
+| `byte_length` | 56 | 8 | 8 | `u64` | - |
+| `access` | 64 | 4 | 4 | `u32` | - |
+| `reserved0` | 68 | 4 | 4 | `u32` | - |
 
 ## Fehlerdomänen
 
@@ -10142,6 +10220,8 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `program_local_error_context` | `-2` | `i32` | value | number | `program` | fixed_contract |
 | `program_local_error_memory` | `-3` | `i32` | value | number | `program` | fixed_contract |
 | `program_local_error_closed` | `-4` | `i32` | value | number | `program` | fixed_contract |
+| `gfx_queue_operation_native` | `10` | `u32` | identity | number | `gfx_queue` | fixed_contract |
+| `gfx_native_read_capacity` | `1024` | `u32` | identity | number | `gfx_queue` | fixed_contract |
 
 ## Limits
 
