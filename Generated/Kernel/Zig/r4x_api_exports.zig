@@ -2540,6 +2540,7 @@ pub const GfxVirtualStatus = generated.GfxVirtualStatus;
 pub const GfxVirtualToken = generated.GfxVirtualToken;
 pub const GfxVirtualJob = generated.GfxVirtualJob;
 pub const GfxVirtualCompletion = generated.GfxVirtualCompletion;
+pub const GfxBackendProperties = generated.GfxBackendProperties;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

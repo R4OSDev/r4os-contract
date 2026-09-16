@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 415,
-    "group_slot_count": 415,
+    "function_count": 416,
+    "group_slot_count": 416,
     "sdk_only_count": 0,
-    "public_count": 317,
+    "public_count": 318,
     "advanced_count": 98
   },
   "functions": [
@@ -3821,6 +3821,18 @@
       "slot": 106,
       "exposure": "public",
       "description": "Retain a persistent CPU read (0) or read/write (1) mapping of write-back system RAM. This lease holds backing, not exclusive execution access: device/queue uses may coexist. The caller must synchronize all CPU/GPU access and the driver must perform GPU cache/engine barriers. No GPU completion or host-coherent device capability is implied. Ordinary CPU maps, immutable exports and scanout retain their conflict rules. Close through gfx_buffer_unmap; exact process retirement removes this CPU lease while independent device uses continue to retain backing. Unsupported for VRAM, WC/UC or absent CPU backing.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_backend_properties",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 107,
+      "exposure": "public",
+      "description": "Read immutable vendor properties for an exact backend binding. Returns 1 on success, 0 when this live incarnation has no properties, negative for invalid/stale/lost/unsupported binding. Full output required; output unchanged on every non-success. Properties are hardware/protocol facts, not admitted queue operations or Vulkan feature qualification.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 276 von 276 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 277 von 277 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1849; Limits: 109
 
@@ -205,7 +205,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxBackendBinding` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBackendRegistration` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GfxDriverJob` | extensible | extern_struct | 296/8 | 296/8 | 296/8 | 296/8 |
-| `GfxDriverQueueApi` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `GfxDriverQueueApi` | extensible | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
 | `GfxOutputId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxOutputMode` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `GfxDisplayLimits` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
@@ -297,6 +297,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxVirtualToken` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `GfxVirtualJob` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `GfxVirtualCompletion` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `GfxBackendProperties` | extensible | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
 
 ## Typdetails
 
@@ -5708,7 +5709,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 7 / 128 / 8
+- Version/Größe/Alignment: 8 / 136 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5729,6 +5730,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `scanout_retire_requested` | 104 | 8 | 8 | `u64` | - |
 | `read_render_grid_list` | 112 | 8 | 8 | `u64` | - |
 | `read_render_color_list` | 120 | 8 | 8 | `u64` | - |
+| `publish_properties` | 128 | 8 | 8 | `u64` | - |
 
 ### `GfxOutputId`
 
@@ -7534,6 +7536,23 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `result` | 28 | 4 | 4 | `i32` | - |
 | `token` | 32 | 24 | 8 | `GfxVirtualToken` | - |
 | `address` | 56 | 8 | 8 | `u64` | - |
+
+### `GfxBackendProperties`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 288 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `interface_id_lo` | 8 | 8 | 8 | `u64` | - |
+| `interface_id_hi` | 16 | 8 | 8 | `u64` | - |
+| `revision` | 24 | 4 | 4 | `u32` | - |
+| `data_bytes` | 28 | 4 | 4 | `u32` | - |
+| `data` | 32 | 256 | 1 | `[256]u8` | - |
 
 ## Fehlerdomänen
 
