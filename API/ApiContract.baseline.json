@@ -98863,6 +98863,1414 @@
       ],
       "values": [],
       "description": "Driver-only logical queue ownership for persistent execution-context retirement. Scope is the exact registered backend incarnation. Closing snapshots may still retain physically active work. A returned zero means no such live queue metadata, not a GPU-stop proof. Query again when notified; close notifications coalesce and contain no per-queue callback."
+    },
+    {
+      "name": "WindowGraphicsSurface",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 72,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "72"
+        },
+        {
+          "name": "service",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "service",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "desktop",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "desktop",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "owner",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "owner",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "window_id",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "window_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "serial",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "serial",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact WINSVC, desktop, application and window incarnation. Serial never repeats within a service incarnation; no pointer or GPU address crosses IPC."
+    },
+    {
+      "name": "WindowGraphicsFormat",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "format",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "color",
+          "offset": 8,
+          "type": {
+            "kind": "array",
+            "length": 48,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Opaque byte copy of R4GFX R4GfxColorDescription version 1. Desktop validates it through the existing color API; WINSVC does not implement color management.",
+          "size": 48,
+          "alignment": 1,
+          "source_type": "[48]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "One Desktop-admitted canonical pixel format and color description. This is not a Vulkan enum or a hardware-support inference."
+    },
+    {
+      "name": "WindowGraphicsConfig",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 680,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "680"
+        },
+        {
+          "name": "revision",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "width",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "height",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "present_modes",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "present_modes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_images",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "min_images",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_images",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_images",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format_count",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format_count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "backend",
+          "offset": 48,
+          "type": {
+            "kind": "named",
+            "name": "GfxBackendInfo"
+          },
+          "description": "backend",
+          "size": 152,
+          "alignment": 8,
+          "source_type": "GfxBackendInfo",
+          "default_kind": "empty"
+        },
+        {
+          "name": "output",
+          "offset": 200,
+          "type": {
+            "kind": "named",
+            "name": "GfxOutputId"
+          },
+          "description": "output",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "GfxOutputId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "display_generation",
+          "offset": 224,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "display_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "formats",
+          "offset": 232,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "named",
+              "name": "WindowGraphicsFormat"
+            }
+          },
+          "description": "formats",
+          "size": 448,
+          "alignment": 4,
+          "source_type": "[8]WindowGraphicsFormat",
+          "default_kind": "empty_array"
+        }
+      ],
+      "values": [],
+      "description": "Desktop-published common window presentation capabilities. Revision changes on geometry/output/color/capability changes; visibility alone does not retire images. At most eight actual format/color pairs; no kernel display policy."
+    },
+    {
+      "name": "WindowGraphicsPublication",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 800,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "800"
+        },
+        {
+          "name": "desktop",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "desktop",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "owner",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "owner",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "window_id",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "window_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "action",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "action",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "surface",
+          "offset": 48,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsSurface"
+          },
+          "description": "surface",
+          "size": 72,
+          "alignment": 8,
+          "source_type": "WindowGraphicsSurface",
+          "default_kind": "empty"
+        },
+        {
+          "name": "config",
+          "offset": 120,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsConfig"
+          },
+          "description": "config",
+          "size": 680,
+          "alignment": 8,
+          "source_type": "WindowGraphicsConfig",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Desktop-only publish/remove of a window surface. Surface identifies an existing incarnation for updates; zero surface creates a new incarnation."
+    },
+    {
+      "name": "WindowGraphicsRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 208,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "208"
+        },
+        {
+          "name": "owner",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "owner",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "action",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "action",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "window_id",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "window_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "surface",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsSurface"
+          },
+          "description": "surface",
+          "size": 72,
+          "alignment": 8,
+          "source_type": "WindowGraphicsSurface",
+          "default_kind": "empty"
+        },
+        {
+          "name": "chain",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "chain",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request_serial",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "request_serial",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "config_revision",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "config_revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_count",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "image_count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_slot",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "image_slot",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format_index",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format_index",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "present_mode",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "present_mode",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "acquire_token",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "acquire_token",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 152,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferHandle"
+          },
+          "description": "source",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "GfxBufferHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "fence",
+          "offset": 168,
+          "type": {
+            "kind": "named",
+            "name": "GfxFence"
+          },
+          "description": "fence",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GfxFence",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Application operations on the common GPU window queue. Attach imports an independent BO reference once; present transfers an acquisition token and retained producer fence, never pixels."
+    },
+    {
+      "name": "WindowGraphicsFrame",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 408,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "408"
+        },
+        {
+          "name": "surface",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsSurface"
+          },
+          "description": "surface",
+          "size": 72,
+          "alignment": 8,
+          "source_type": "WindowGraphicsSurface",
+          "default_kind": "empty"
+        },
+        {
+          "name": "chain",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "chain",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "config_revision",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "config_revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_slot",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "image_slot",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "acquire_token",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "acquire_token",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "present_serial",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "present_serial",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 120,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferReference"
+          },
+          "description": "source",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "GfxBufferReference",
+          "default_kind": "empty"
+        },
+        {
+          "name": "descriptor",
+          "offset": 168,
+          "type": {
+            "kind": "named",
+            "name": "GfxBufferDescriptor"
+          },
+          "description": "descriptor",
+          "size": 144,
+          "alignment": 8,
+          "source_type": "GfxBufferDescriptor",
+          "default_kind": "empty"
+        },
+        {
+          "name": "format",
+          "offset": 312,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsFormat"
+          },
+          "description": "format",
+          "size": 56,
+          "alignment": 4,
+          "source_type": "WindowGraphicsFormat",
+          "default_kind": "empty"
+        },
+        {
+          "name": "ready",
+          "offset": 368,
+          "type": {
+            "kind": "named",
+            "name": "GfxFence"
+          },
+          "description": "ready",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GfxFence",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "One compositor lease. Source is borrowed from WINSVC and must be imported before acknowledge/release; producer keeps ready alive until lease retirement. Any GPU consumer must use ready as a dependency."
+    },
+    {
+      "name": "WindowGraphicsReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1248,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1248"
+        },
+        {
+          "name": "result",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "result",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "surface",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsSurface"
+          },
+          "description": "surface",
+          "size": 72,
+          "alignment": 8,
+          "source_type": "WindowGraphicsSurface",
+          "default_kind": "empty"
+        },
+        {
+          "name": "chain",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "chain",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_slot",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "image_slot",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "acquire_token",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "acquire_token",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wait_fence",
+          "offset": 120,
+          "type": {
+            "kind": "named",
+            "name": "GfxFence"
+          },
+          "description": "wait_fence",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GfxFence",
+          "default_kind": "empty"
+        },
+        {
+          "name": "config",
+          "offset": 160,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsConfig"
+          },
+          "description": "config",
+          "size": 680,
+          "alignment": 8,
+          "source_type": "WindowGraphicsConfig",
+          "default_kind": "empty"
+        },
+        {
+          "name": "frame",
+          "offset": 840,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsFrame"
+          },
+          "description": "frame",
+          "size": 408,
+          "alignment": 8,
+          "source_type": "WindowGraphicsFrame",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Complete response snapshot. A pending consumer fence may be waited outside WINSVC before retrying acquire; a changed revision supports finite service long-poll without periodic GPU polling."
+    },
+    {
+      "name": "WindowGraphicsConsumer",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 176,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "176"
+        },
+        {
+          "name": "desktop",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "desktop",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "action",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "action",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "surface",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "WindowGraphicsSurface"
+          },
+          "description": "surface",
+          "size": 72,
+          "alignment": 8,
+          "source_type": "WindowGraphicsSurface",
+          "default_kind": "empty"
+        },
+        {
+          "name": "chain",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "chain",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_slot",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "image_slot",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "result",
+          "offset": 116,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "result",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "acquire_token",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "acquire_token",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fence",
+          "offset": 128,
+          "type": {
+            "kind": "named",
+            "name": "GfxFence"
+          },
+          "description": "fence",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GfxFence",
+          "default_kind": "empty"
+        },
+        {
+          "name": "request_serial",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Strictly increasing per surface consumer request. Retry the exact latest successful mutation to recover its reply without taking another image.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Desktop takes a queued image or returns a precise lease after its final compositor/direct-scanout/capture use. A zero return fence is valid only when the image was never submitted to a GPU consumer."
+    },
+    {
+      "name": "WindowGraphicsWait",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "owner",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "owner",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "known_revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "known_revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_tick",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "deadline_tick",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One finite change waiter per exact participant. Reply signals a metadata revision, never GPU completion. WINSVC restart closes the service request through the existing endpoint owner."
     }
   ],
   "operations": [],
@@ -119824,6 +121232,386 @@
       "scope": "gfx_virtual",
       "stability": "fixed_contract",
       "description": "R4DRAW36 keeps every table slot and request/job layout. Range flags bit0 means blocklinear; bits8..15 encode an opaque driver-specific uncompressed page layout. Nonzero layout requires bit0 and explicit backend support. Kernel preserves the ID without interpreting it. Bindings require flags0. Earlier API versions do not support layout IDs."
+    },
+    {
+      "name": "window_graphics_op_client",
+      "value": "1824",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common GPU-window producer request through WINSVC."
+    },
+    {
+      "name": "window_graphics_op_publish",
+      "value": "1825",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Desktop publishes or removes common window presentation capabilities."
+    },
+    {
+      "name": "window_graphics_op_consumer",
+      "value": "1826",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Desktop takes or retires a GPU-window frame lease."
+    },
+    {
+      "name": "window_graphics_op_wait",
+      "value": "1827",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Finite participant wait for a changed GPU-window broker revision."
+    },
+    {
+      "name": "window_graphics_visible",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Surface may currently be presented. Hidden surfaces retain their acquired/consumer lifetime."
+    },
+    {
+      "name": "window_graphics_fifo",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "FIFO window image admission; existing Desktop/output policy owns actual presentation timing."
+    },
+    {
+      "name": "window_graphics_mailbox",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Only queued, not consumer-leased, images may be superseded."
+    },
+    {
+      "name": "window_graphics_query",
+      "value": "0",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action query."
+    },
+    {
+      "name": "window_graphics_create_chain",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action create_chain."
+    },
+    {
+      "name": "window_graphics_attach",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action attach."
+    },
+    {
+      "name": "window_graphics_acquire",
+      "value": "3",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action acquire."
+    },
+    {
+      "name": "window_graphics_present",
+      "value": "4",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action present."
+    },
+    {
+      "name": "window_graphics_cancel_acquire",
+      "value": "5",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action cancel_acquire."
+    },
+    {
+      "name": "window_graphics_close_chain",
+      "value": "6",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action close_chain."
+    },
+    {
+      "name": "window_graphics_chain_status",
+      "value": "7",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Application action chain_status."
+    },
+    {
+      "name": "window_graphics_publish",
+      "value": "0",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Create/update the exact desktop-owned surface publication."
+    },
+    {
+      "name": "window_graphics_remove",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Remove an exact surface incarnation and retire its chains."
+    },
+    {
+      "name": "window_graphics_take",
+      "value": "0",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Lease one pending image in FIFO order for the selected surface; the caller retains producer synchronization."
+    },
+    {
+      "name": "window_graphics_return",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Return the exact consumer lease with its final GPU-use fence or an explicit unused receipt."
+    },
+    {
+      "name": "window_graphics_ok",
+      "value": "1",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result ok."
+    },
+    {
+      "name": "window_graphics_not_ready",
+      "value": "0",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result not_ready."
+    },
+    {
+      "name": "window_graphics_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result invalid."
+    },
+    {
+      "name": "window_graphics_unavailable",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result unavailable."
+    },
+    {
+      "name": "window_graphics_stale",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result stale."
+    },
+    {
+      "name": "window_graphics_busy",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result busy."
+    },
+    {
+      "name": "window_graphics_capacity",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result capacity."
+    },
+    {
+      "name": "window_graphics_out_of_date",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result out_of_date."
+    },
+    {
+      "name": "window_graphics_device_lost",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result device_lost."
+    },
+    {
+      "name": "window_graphics_closed",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result closed."
+    },
+    {
+      "name": "window_graphics_not_owner",
+      "value": "-9",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result not_owner."
+    },
+    {
+      "name": "window_graphics_failed",
+      "value": "-10",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result failed."
+    },
+    {
+      "name": "window_graphics_timeout",
+      "value": "-11",
+      "value_type": "i32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Common window transport result timeout."
+    },
+    {
+      "name": "window_graphics_image_vacant",
+      "value": "0",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Reply flags on chain_status: state of the selected image; no GPU completion is implied."
+    },
+    {
+      "name": "window_graphics_image_available",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Reply flags on chain_status: state of the selected image; no GPU completion is implied."
+    },
+    {
+      "name": "window_graphics_image_acquired",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Reply flags on chain_status: state of the selected image; no GPU completion is implied."
+    },
+    {
+      "name": "window_graphics_image_queued",
+      "value": "3",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Reply flags on chain_status: state of the selected image; no GPU completion is implied."
+    },
+    {
+      "name": "window_graphics_image_leased",
+      "value": "4",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Reply flags on chain_status: state of the selected image; no GPU completion is implied."
+    },
+    {
+      "name": "window_graphics_image_returning",
+      "value": "5",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Reply flags on chain_status: state of the selected image; no GPU completion is implied."
     }
   ],
   "limits": [

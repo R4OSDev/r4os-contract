@@ -1868,6 +1868,44 @@ extern "C" {
 #define R4OS_GFX_VIRTUAL_LAYOUT_SHIFT 8u
 #define R4OS_GFX_VIRTUAL_LAYOUT_MASK 65280u
 #define R4OS_GFX_VIRTUAL_LAYOUT_API_VERSION 36u
+#define R4OS_WINDOW_GRAPHICS_OP_CLIENT 1824u
+#define R4OS_WINDOW_GRAPHICS_OP_PUBLISH 1825u
+#define R4OS_WINDOW_GRAPHICS_OP_CONSUMER 1826u
+#define R4OS_WINDOW_GRAPHICS_OP_WAIT 1827u
+#define R4OS_WINDOW_GRAPHICS_VISIBLE 1u
+#define R4OS_WINDOW_GRAPHICS_FIFO 1u
+#define R4OS_WINDOW_GRAPHICS_MAILBOX 2u
+#define R4OS_WINDOW_GRAPHICS_QUERY 0u
+#define R4OS_WINDOW_GRAPHICS_CREATE_CHAIN 1u
+#define R4OS_WINDOW_GRAPHICS_ATTACH 2u
+#define R4OS_WINDOW_GRAPHICS_ACQUIRE 3u
+#define R4OS_WINDOW_GRAPHICS_PRESENT 4u
+#define R4OS_WINDOW_GRAPHICS_CANCEL_ACQUIRE 5u
+#define R4OS_WINDOW_GRAPHICS_CLOSE_CHAIN 6u
+#define R4OS_WINDOW_GRAPHICS_CHAIN_STATUS 7u
+#define R4OS_WINDOW_GRAPHICS_PUBLISH 0u
+#define R4OS_WINDOW_GRAPHICS_REMOVE 1u
+#define R4OS_WINDOW_GRAPHICS_TAKE 0u
+#define R4OS_WINDOW_GRAPHICS_RETURN 1u
+#define R4OS_WINDOW_GRAPHICS_OK ((int32_t)1)
+#define R4OS_WINDOW_GRAPHICS_NOT_READY ((int32_t)0)
+#define R4OS_WINDOW_GRAPHICS_INVALID ((int32_t)-1)
+#define R4OS_WINDOW_GRAPHICS_UNAVAILABLE ((int32_t)-2)
+#define R4OS_WINDOW_GRAPHICS_STALE ((int32_t)-3)
+#define R4OS_WINDOW_GRAPHICS_BUSY ((int32_t)-4)
+#define R4OS_WINDOW_GRAPHICS_CAPACITY ((int32_t)-5)
+#define R4OS_WINDOW_GRAPHICS_OUT_OF_DATE ((int32_t)-6)
+#define R4OS_WINDOW_GRAPHICS_DEVICE_LOST ((int32_t)-7)
+#define R4OS_WINDOW_GRAPHICS_CLOSED ((int32_t)-8)
+#define R4OS_WINDOW_GRAPHICS_NOT_OWNER ((int32_t)-9)
+#define R4OS_WINDOW_GRAPHICS_FAILED ((int32_t)-10)
+#define R4OS_WINDOW_GRAPHICS_TIMEOUT ((int32_t)-11)
+#define R4OS_WINDOW_GRAPHICS_IMAGE_VACANT 0u
+#define R4OS_WINDOW_GRAPHICS_IMAGE_AVAILABLE 1u
+#define R4OS_WINDOW_GRAPHICS_IMAGE_ACQUIRED 2u
+#define R4OS_WINDOW_GRAPHICS_IMAGE_QUEUED 3u
+#define R4OS_WINDOW_GRAPHICS_IMAGE_LEASED 4u
+#define R4OS_WINDOW_GRAPHICS_IMAGE_RETURNING 5u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2591,6 +2629,15 @@ typedef struct R4GfxNativeResource R4GfxNativeResource;
 typedef struct R4GfxNativeJobInfo R4GfxNativeJobInfo;
 typedef struct R4GfxNativeBinding R4GfxNativeBinding;
 typedef struct R4GfxQueueOwnerInfo R4GfxQueueOwnerInfo;
+typedef struct R4WindowGraphicsSurface R4WindowGraphicsSurface;
+typedef struct R4WindowGraphicsFormat R4WindowGraphicsFormat;
+typedef struct R4WindowGraphicsConfig R4WindowGraphicsConfig;
+typedef struct R4WindowGraphicsPublication R4WindowGraphicsPublication;
+typedef struct R4WindowGraphicsRequest R4WindowGraphicsRequest;
+typedef struct R4WindowGraphicsFrame R4WindowGraphicsFrame;
+typedef struct R4WindowGraphicsReply R4WindowGraphicsReply;
+typedef struct R4WindowGraphicsConsumer R4WindowGraphicsConsumer;
+typedef struct R4WindowGraphicsWait R4WindowGraphicsWait;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -7972,6 +8019,126 @@ typedef struct R4GfxQueueOwnerInfo {
     uint32_t inflight_jobs;
     uint32_t retained_jobs;
 } R4GfxQueueOwnerInfo;
+
+typedef struct R4WindowGraphicsSurface {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle service;
+    R4ProgramProcessHandle desktop;
+    R4ProgramProcessHandle owner;
+    uint32_t window_id;
+    uint32_t reserved;
+    uint64_t serial;
+} R4WindowGraphicsSurface;
+
+typedef struct R4WindowGraphicsFormat {
+    uint32_t format;
+    uint32_t reserved;
+    uint8_t color[48];
+} R4WindowGraphicsFormat;
+
+typedef struct R4WindowGraphicsConfig {
+    uint32_t version;
+    uint32_t size;
+    uint64_t revision;
+    uint32_t width;
+    uint32_t height;
+    uint32_t flags;
+    uint32_t present_modes;
+    uint32_t min_images;
+    uint32_t max_images;
+    uint32_t format_count;
+    uint32_t reserved;
+    R4GfxBackendInfo backend;
+    R4GfxOutputId output;
+    uint64_t display_generation;
+    R4WindowGraphicsFormat formats[8];
+} R4WindowGraphicsConfig;
+
+typedef struct R4WindowGraphicsPublication {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle desktop;
+    R4ProgramProcessHandle owner;
+    uint32_t window_id;
+    uint32_t action;
+    R4WindowGraphicsSurface surface;
+    R4WindowGraphicsConfig config;
+} R4WindowGraphicsPublication;
+
+typedef struct R4WindowGraphicsRequest {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle owner;
+    uint32_t action;
+    uint32_t window_id;
+    R4WindowGraphicsSurface surface;
+    uint64_t chain;
+    uint64_t request_serial;
+    uint64_t config_revision;
+    uint32_t image_count;
+    uint32_t image_slot;
+    uint32_t format_index;
+    uint32_t present_mode;
+    uint64_t acquire_token;
+    R4GfxBufferHandle source;
+    R4GfxFence fence;
+} R4WindowGraphicsRequest;
+
+typedef struct R4WindowGraphicsFrame {
+    uint32_t version;
+    uint32_t size;
+    R4WindowGraphicsSurface surface;
+    uint64_t chain;
+    uint64_t config_revision;
+    uint32_t image_slot;
+    uint32_t flags;
+    uint64_t acquire_token;
+    uint64_t present_serial;
+    R4GfxBufferReference source;
+    R4GfxBufferDescriptor descriptor;
+    R4WindowGraphicsFormat format;
+    R4GfxFence ready;
+} R4WindowGraphicsFrame;
+
+typedef struct R4WindowGraphicsReply {
+    uint32_t version;
+    uint32_t size;
+    int32_t result;
+    uint32_t flags;
+    uint64_t revision;
+    R4WindowGraphicsSurface surface;
+    uint64_t chain;
+    uint32_t image_slot;
+    uint32_t reserved;
+    uint64_t acquire_token;
+    R4GfxFence wait_fence;
+    R4WindowGraphicsConfig config;
+    R4WindowGraphicsFrame frame;
+} R4WindowGraphicsReply;
+
+typedef struct R4WindowGraphicsConsumer {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle desktop;
+    uint32_t action;
+    uint32_t reserved;
+    R4WindowGraphicsSurface surface;
+    uint64_t chain;
+    uint32_t image_slot;
+    int32_t result;
+    uint64_t acquire_token;
+    R4GfxFence fence;
+    uint64_t request_serial;
+} R4WindowGraphicsConsumer;
+
+typedef struct R4WindowGraphicsWait {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle owner;
+    uint64_t known_revision;
+    uint64_t deadline_tick;
+} R4WindowGraphicsWait;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -13765,6 +13932,108 @@ _Static_assert(offsetof(R4GfxQueueOwnerInfo, producer_id) == 24u, "GfxQueueOwner
 _Static_assert(offsetof(R4GfxQueueOwnerInfo, producer_generation) == 32u, "GfxQueueOwnerInfo.producer_generation offset mismatch");
 _Static_assert(offsetof(R4GfxQueueOwnerInfo, inflight_jobs) == 40u, "GfxQueueOwnerInfo.inflight_jobs offset mismatch");
 _Static_assert(offsetof(R4GfxQueueOwnerInfo, retained_jobs) == 44u, "GfxQueueOwnerInfo.retained_jobs offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsSurface) == 72u, "WindowGraphicsSurface size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, version) == 0u, "WindowGraphicsSurface.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, size) == 4u, "WindowGraphicsSurface.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, service) == 8u, "WindowGraphicsSurface.service offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, desktop) == 24u, "WindowGraphicsSurface.desktop offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, owner) == 40u, "WindowGraphicsSurface.owner offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, window_id) == 56u, "WindowGraphicsSurface.window_id offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, reserved) == 60u, "WindowGraphicsSurface.reserved offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsSurface, serial) == 64u, "WindowGraphicsSurface.serial offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsFormat) == 56u, "WindowGraphicsFormat size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFormat, format) == 0u, "WindowGraphicsFormat.format offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFormat, reserved) == 4u, "WindowGraphicsFormat.reserved offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFormat, color) == 8u, "WindowGraphicsFormat.color offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsConfig) == 680u, "WindowGraphicsConfig size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, version) == 0u, "WindowGraphicsConfig.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, size) == 4u, "WindowGraphicsConfig.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, revision) == 8u, "WindowGraphicsConfig.revision offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, width) == 16u, "WindowGraphicsConfig.width offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, height) == 20u, "WindowGraphicsConfig.height offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, flags) == 24u, "WindowGraphicsConfig.flags offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, present_modes) == 28u, "WindowGraphicsConfig.present_modes offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, min_images) == 32u, "WindowGraphicsConfig.min_images offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, max_images) == 36u, "WindowGraphicsConfig.max_images offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, format_count) == 40u, "WindowGraphicsConfig.format_count offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, reserved) == 44u, "WindowGraphicsConfig.reserved offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, backend) == 48u, "WindowGraphicsConfig.backend offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, output) == 200u, "WindowGraphicsConfig.output offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, display_generation) == 224u, "WindowGraphicsConfig.display_generation offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConfig, formats) == 232u, "WindowGraphicsConfig.formats offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsPublication) == 800u, "WindowGraphicsPublication size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, version) == 0u, "WindowGraphicsPublication.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, size) == 4u, "WindowGraphicsPublication.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, desktop) == 8u, "WindowGraphicsPublication.desktop offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, owner) == 24u, "WindowGraphicsPublication.owner offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, window_id) == 40u, "WindowGraphicsPublication.window_id offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, action) == 44u, "WindowGraphicsPublication.action offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, surface) == 48u, "WindowGraphicsPublication.surface offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsPublication, config) == 120u, "WindowGraphicsPublication.config offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsRequest) == 208u, "WindowGraphicsRequest size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, version) == 0u, "WindowGraphicsRequest.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, size) == 4u, "WindowGraphicsRequest.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, owner) == 8u, "WindowGraphicsRequest.owner offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, action) == 24u, "WindowGraphicsRequest.action offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, window_id) == 28u, "WindowGraphicsRequest.window_id offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, surface) == 32u, "WindowGraphicsRequest.surface offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, chain) == 104u, "WindowGraphicsRequest.chain offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, request_serial) == 112u, "WindowGraphicsRequest.request_serial offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, config_revision) == 120u, "WindowGraphicsRequest.config_revision offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, image_count) == 128u, "WindowGraphicsRequest.image_count offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, image_slot) == 132u, "WindowGraphicsRequest.image_slot offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, format_index) == 136u, "WindowGraphicsRequest.format_index offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, present_mode) == 140u, "WindowGraphicsRequest.present_mode offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, acquire_token) == 144u, "WindowGraphicsRequest.acquire_token offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, source) == 152u, "WindowGraphicsRequest.source offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsRequest, fence) == 168u, "WindowGraphicsRequest.fence offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsFrame) == 408u, "WindowGraphicsFrame size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, version) == 0u, "WindowGraphicsFrame.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, size) == 4u, "WindowGraphicsFrame.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, surface) == 8u, "WindowGraphicsFrame.surface offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, chain) == 80u, "WindowGraphicsFrame.chain offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, config_revision) == 88u, "WindowGraphicsFrame.config_revision offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, image_slot) == 96u, "WindowGraphicsFrame.image_slot offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, flags) == 100u, "WindowGraphicsFrame.flags offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, acquire_token) == 104u, "WindowGraphicsFrame.acquire_token offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, present_serial) == 112u, "WindowGraphicsFrame.present_serial offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, source) == 120u, "WindowGraphicsFrame.source offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, descriptor) == 168u, "WindowGraphicsFrame.descriptor offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, format) == 312u, "WindowGraphicsFrame.format offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsFrame, ready) == 368u, "WindowGraphicsFrame.ready offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsReply) == 1248u, "WindowGraphicsReply size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, version) == 0u, "WindowGraphicsReply.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, size) == 4u, "WindowGraphicsReply.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, result) == 8u, "WindowGraphicsReply.result offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, flags) == 12u, "WindowGraphicsReply.flags offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, revision) == 16u, "WindowGraphicsReply.revision offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, surface) == 24u, "WindowGraphicsReply.surface offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, chain) == 96u, "WindowGraphicsReply.chain offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, image_slot) == 104u, "WindowGraphicsReply.image_slot offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, reserved) == 108u, "WindowGraphicsReply.reserved offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, acquire_token) == 112u, "WindowGraphicsReply.acquire_token offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, wait_fence) == 120u, "WindowGraphicsReply.wait_fence offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, config) == 160u, "WindowGraphicsReply.config offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsReply, frame) == 840u, "WindowGraphicsReply.frame offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsConsumer) == 176u, "WindowGraphicsConsumer size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, version) == 0u, "WindowGraphicsConsumer.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, size) == 4u, "WindowGraphicsConsumer.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, desktop) == 8u, "WindowGraphicsConsumer.desktop offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, action) == 24u, "WindowGraphicsConsumer.action offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, reserved) == 28u, "WindowGraphicsConsumer.reserved offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, surface) == 32u, "WindowGraphicsConsumer.surface offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, chain) == 104u, "WindowGraphicsConsumer.chain offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, image_slot) == 112u, "WindowGraphicsConsumer.image_slot offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, result) == 116u, "WindowGraphicsConsumer.result offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, acquire_token) == 120u, "WindowGraphicsConsumer.acquire_token offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, fence) == 128u, "WindowGraphicsConsumer.fence offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsConsumer, request_serial) == 168u, "WindowGraphicsConsumer.request_serial offset mismatch");
+_Static_assert(sizeof(R4WindowGraphicsWait) == 40u, "WindowGraphicsWait size mismatch");
+_Static_assert(offsetof(R4WindowGraphicsWait, version) == 0u, "WindowGraphicsWait.version offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsWait, size) == 4u, "WindowGraphicsWait.size offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsWait, owner) == 8u, "WindowGraphicsWait.owner offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsWait, known_revision) == 24u, "WindowGraphicsWait.known_revision offset mismatch");
+_Static_assert(offsetof(R4WindowGraphicsWait, deadline_tick) == 32u, "WindowGraphicsWait.deadline_tick offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1224u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 282 von 282 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 291 von 291 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1855; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1893; Limits: 109
 
 ## App-Profile
 
@@ -303,6 +303,15 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeJobInfo` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxNativeBinding` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `GfxQueueOwnerInfo` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `WindowGraphicsSurface` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
+| `WindowGraphicsFormat` | fixed_layout | extern_struct | 56/4 | 56/4 | 56/4 | 56/4 |
+| `WindowGraphicsConfig` | fixed_layout | extern_struct | 680/8 | 680/8 | 680/8 | 680/8 |
+| `WindowGraphicsPublication` | fixed_layout | extern_struct | 800/8 | 800/8 | 800/8 | 800/8 |
+| `WindowGraphicsRequest` | fixed_layout | extern_struct | 208/8 | 208/8 | 208/8 | 208/8 |
+| `WindowGraphicsFrame` | fixed_layout | extern_struct | 408/8 | 408/8 | 408/8 | 408/8 |
+| `WindowGraphicsReply` | fixed_layout | extern_struct | 1248/8 | 1248/8 | 1248/8 | 1248/8 |
+| `WindowGraphicsConsumer` | fixed_layout | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
+| `WindowGraphicsWait` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -7653,6 +7662,189 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `inflight_jobs` | 40 | 4 | 4 | `u32` | - |
 | `retained_jobs` | 44 | 4 | 4 | `u32` | - |
 
+### `WindowGraphicsSurface`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 72 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `service` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `desktop` | 24 | 16 | 8 | `ProgramProcessHandle` | - |
+| `owner` | 40 | 16 | 8 | `ProgramProcessHandle` | - |
+| `window_id` | 56 | 4 | 4 | `u32` | - |
+| `reserved` | 60 | 4 | 4 | `u32` | - |
+| `serial` | 64 | 8 | 8 | `u64` | - |
+
+### `WindowGraphicsFormat`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `format` | 0 | 4 | 4 | `u32` | - |
+| `reserved` | 4 | 4 | 4 | `u32` | - |
+| `color` | 8 | 48 | 1 | `[48]u8` | - |
+
+### `WindowGraphicsConfig`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 680 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `revision` | 8 | 8 | 8 | `u64` | - |
+| `width` | 16 | 4 | 4 | `u32` | - |
+| `height` | 20 | 4 | 4 | `u32` | - |
+| `flags` | 24 | 4 | 4 | `u32` | - |
+| `present_modes` | 28 | 4 | 4 | `u32` | - |
+| `min_images` | 32 | 4 | 4 | `u32` | - |
+| `max_images` | 36 | 4 | 4 | `u32` | - |
+| `format_count` | 40 | 4 | 4 | `u32` | - |
+| `reserved` | 44 | 4 | 4 | `u32` | - |
+| `backend` | 48 | 152 | 8 | `GfxBackendInfo` | - |
+| `output` | 200 | 24 | 8 | `GfxOutputId` | - |
+| `display_generation` | 224 | 8 | 8 | `u64` | - |
+| `formats` | 232 | 448 | 4 | `[8]WindowGraphicsFormat` | - |
+
+### `WindowGraphicsPublication`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 800 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `desktop` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `owner` | 24 | 16 | 8 | `ProgramProcessHandle` | - |
+| `window_id` | 40 | 4 | 4 | `u32` | - |
+| `action` | 44 | 4 | 4 | `u32` | - |
+| `surface` | 48 | 72 | 8 | `WindowGraphicsSurface` | - |
+| `config` | 120 | 680 | 8 | `WindowGraphicsConfig` | - |
+
+### `WindowGraphicsRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 208 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `owner` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `action` | 24 | 4 | 4 | `u32` | - |
+| `window_id` | 28 | 4 | 4 | `u32` | - |
+| `surface` | 32 | 72 | 8 | `WindowGraphicsSurface` | - |
+| `chain` | 104 | 8 | 8 | `u64` | - |
+| `request_serial` | 112 | 8 | 8 | `u64` | - |
+| `config_revision` | 120 | 8 | 8 | `u64` | - |
+| `image_count` | 128 | 4 | 4 | `u32` | - |
+| `image_slot` | 132 | 4 | 4 | `u32` | - |
+| `format_index` | 136 | 4 | 4 | `u32` | - |
+| `present_mode` | 140 | 4 | 4 | `u32` | - |
+| `acquire_token` | 144 | 8 | 8 | `u64` | - |
+| `source` | 152 | 16 | 8 | `GfxBufferHandle` | - |
+| `fence` | 168 | 40 | 8 | `GfxFence` | - |
+
+### `WindowGraphicsFrame`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 408 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `surface` | 8 | 72 | 8 | `WindowGraphicsSurface` | - |
+| `chain` | 80 | 8 | 8 | `u64` | - |
+| `config_revision` | 88 | 8 | 8 | `u64` | - |
+| `image_slot` | 96 | 4 | 4 | `u32` | - |
+| `flags` | 100 | 4 | 4 | `u32` | - |
+| `acquire_token` | 104 | 8 | 8 | `u64` | - |
+| `present_serial` | 112 | 8 | 8 | `u64` | - |
+| `source` | 120 | 48 | 8 | `GfxBufferReference` | - |
+| `descriptor` | 168 | 144 | 8 | `GfxBufferDescriptor` | - |
+| `format` | 312 | 56 | 4 | `WindowGraphicsFormat` | - |
+| `ready` | 368 | 40 | 8 | `GfxFence` | - |
+
+### `WindowGraphicsReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1248 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `result` | 8 | 4 | 4 | `i32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `revision` | 16 | 8 | 8 | `u64` | - |
+| `surface` | 24 | 72 | 8 | `WindowGraphicsSurface` | - |
+| `chain` | 96 | 8 | 8 | `u64` | - |
+| `image_slot` | 104 | 4 | 4 | `u32` | - |
+| `reserved` | 108 | 4 | 4 | `u32` | - |
+| `acquire_token` | 112 | 8 | 8 | `u64` | - |
+| `wait_fence` | 120 | 40 | 8 | `GfxFence` | - |
+| `config` | 160 | 680 | 8 | `WindowGraphicsConfig` | - |
+| `frame` | 840 | 408 | 8 | `WindowGraphicsFrame` | - |
+
+### `WindowGraphicsConsumer`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 176 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `desktop` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `action` | 24 | 4 | 4 | `u32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+| `surface` | 32 | 72 | 8 | `WindowGraphicsSurface` | - |
+| `chain` | 104 | 8 | 8 | `u64` | - |
+| `image_slot` | 112 | 4 | 4 | `u32` | - |
+| `result` | 116 | 4 | 4 | `i32` | - |
+| `acquire_token` | 120 | 8 | 8 | `u64` | - |
+| `fence` | 128 | 40 | 8 | `GfxFence` | - |
+| `request_serial` | 168 | 8 | 8 | `u64` | - |
+
+### `WindowGraphicsWait`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `owner` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `known_revision` | 24 | 8 | 8 | `u64` | - |
+| `deadline_tick` | 32 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -10247,6 +10439,44 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_virtual_layout_shift` | `8` | `u32` | value | number | `gfx_virtual` | fixed_contract |
 | `gfx_virtual_layout_mask` | `65280` | `u32` | value | number | `gfx_virtual` | fixed_contract |
 | `gfx_virtual_layout_api_version` | `36` | `u32` | value | number | `gfx_virtual` | fixed_contract |
+| `window_graphics_op_client` | `1824` | `u16` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_op_publish` | `1825` | `u16` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_op_consumer` | `1826` | `u16` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_op_wait` | `1827` | `u16` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_visible` | `1` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_fifo` | `1` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_mailbox` | `2` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_query` | `0` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_create_chain` | `1` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_attach` | `2` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_acquire` | `3` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_present` | `4` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_cancel_acquire` | `5` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_close_chain` | `6` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_chain_status` | `7` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_publish` | `0` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_remove` | `1` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_take` | `0` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_return` | `1` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_ok` | `1` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_not_ready` | `0` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_invalid` | `-1` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_unavailable` | `-2` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_stale` | `-3` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_busy` | `-4` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_capacity` | `-5` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_out_of_date` | `-6` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_device_lost` | `-7` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_closed` | `-8` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_not_owner` | `-9` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_failed` | `-10` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_timeout` | `-11` | `i32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_image_vacant` | `0` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_image_available` | `1` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_image_acquired` | `2` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_image_queued` | `3` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_image_leased` | `4` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `window_graphics_image_returning` | `5` | `u32` | identity | number | `window_graphics` | fixed_contract |
 
 ## Limits
 
