@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 417,
-    "group_slot_count": 417,
+    "function_count": 418,
+    "group_slot_count": 418,
     "sdk_only_count": 0,
     "public_count": 319,
-    "advanced_count": 98
+    "advanced_count": 99
   },
   "functions": [
     {
@@ -2537,6 +2537,18 @@
       "slot": 63,
       "exposure": "advanced",
       "description": "Nonblocking copied publisher and immutable snapshot statistics.0 success; unavailable if another publisher/snapshot operation owns the short access guard. Pixel copies and allocations are preemptible and never hold a no-sleep owner over I/O.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.desktop_activity_notify",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 64,
+      "exposure": "advanced",
+      "description": "Wake existing desktop-activity waiters after publishing userland GUI work. Returns 0. This notification carries no frame, input event or completion proof; callers must publish their state before signalling. Coalesce idle/unchanged work.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

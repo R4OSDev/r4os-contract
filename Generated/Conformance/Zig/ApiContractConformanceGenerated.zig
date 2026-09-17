@@ -5258,7 +5258,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_local_get) != 8) @compileError("R4SysFns.program_local_get signature");
     if (@offsetOf(abi.R4XStartR4Sys, "program_local_publish") != 1216) @compileError("R4XStartR4Sys.program_local_publish offset");
     if (@sizeOf(abi.R4SysFns.program_local_publish) != 8) @compileError("R4SysFns.program_local_publish signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 528) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 536) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -5386,6 +5386,8 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.remote_frame_source_reset) != 8) @compileError("R4DeskFns.remote_frame_source_reset signature");
     if (@offsetOf(abi.R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("R4XStartR4Desk.remote_frame_capture_stats offset");
     if (@sizeOf(abi.R4DeskFns.remote_frame_capture_stats) != 8) @compileError("R4DeskFns.remote_frame_capture_stats signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("R4XStartR4Desk.desktop_activity_notify offset");
+    if (@sizeOf(abi.R4DeskFns.desktop_activity_notify) != 8) @compileError("R4DeskFns.desktop_activity_notify signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 888) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");

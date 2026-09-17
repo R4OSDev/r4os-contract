@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 417,
+    "group_function_signatures": 418,
     "sdk_operation_contracts": 0,
-    "parity_entries": 417,
+    "parity_entries": 418,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1907,6 +1907,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DeskFns.remote_frame_capture_stats",
       "c_contract": "R4DeskRemoteFrameCaptureStatsFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.desktop_activity_notify",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.desktop_activity_notify",
+      "c_contract": "R4DeskDesktopActivityNotifyFn",
       "coverage": "generated_signature"
     },
     {

@@ -12074,10 +12074,10 @@
       "fn_namespace": "R4DeskFns",
       "required": false,
       "magic": 826623058,
-      "abi_version": 14,
+      "abi_version": 15,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 528,
+      "size": 536,
       "slots": [
         {
           "number": 0,
@@ -15999,6 +15999,47 @@
             "outputs": "success_only",
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 64,
+          "offset": 528,
+          "name": "desktop_activity_notify",
+          "state": "function",
+          "required": false,
+          "description": "Wake existing desktop-activity waiters after publishing userland GUI work. Returns 0. This notification carries no frame, input event or completion proof; callers must publish their state before signalling. Coalesce idle/unchanged work.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "idempotent",
             "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
@@ -121612,6 +121653,26 @@
       "scope": "window_graphics",
       "stability": "fixed_contract",
       "description": "Reply flags on chain_status: state of the selected image; no GPU completion is implied."
+    },
+    {
+      "name": "window_graphics_release_fence",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Confirm that WINSVC no longer borrows the final consumer fence for an exact returned acquisition token. Pending GPU work returns NOT_READY."
+    },
+    {
+      "name": "window_graphics_fence_released",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Return/release-fence reply: WINSVC no longer borrows consumer fence metadata. The caller must still observe physical job completion before freeing its own resources."
     }
   ],
   "limits": [

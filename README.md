@@ -74,8 +74,10 @@ restore callback can authorize restoration of the held boot framebuffer.
 
 The 0.79.37 `WindowGraphics*` payloads add four userland WINSVC operations
 for common GPU-window publication, producer/consumer leases and finite
-change waits. Existing table versions, function slots, payloads and numeric
-constants remain unchanged. Opaque color bytes carry the existing R4GFX
+change waits. Consumer fence acknowledgements add two constants without
+changing payload layouts. R4DESK v15 appends the optional
+`desktop_activity_notify` slot; all old function slots are unchanged.
+Opaque color bytes carry the existing R4GFX
 description; they do not add kernel color or window-presentation policy.
 The service implementation is available; Desktop and Vulkan WSI consumers
 are still being integrated.

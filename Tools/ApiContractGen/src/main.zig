@@ -398,7 +398,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.69.48 adds one-generation multi-region publication at slot 56;
     // 0.69.67 appends the generation-bound console-input wait at slot 57;
     // 0.72.1 adds ordered layout-independent physical keys at slot 58.
-    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 63, .reserved = 1, .tombstones = 0 },
+    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 64, .reserved = 1, .tombstones = 0 },
     // 0.62.3 used the first public R4DRAW extension slot for font_reload;
     // 0.62.4 added the transient glyph-row query, 0.62.41 appends the
     // font-neutral hosted Alpha8 coverage-mask transport, and 0.62.43 adds

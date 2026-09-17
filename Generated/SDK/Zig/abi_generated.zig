@@ -1894,6 +1894,8 @@ pub const window_graphics_image_acquired: u32 = 2;
 pub const window_graphics_image_queued: u32 = 3;
 pub const window_graphics_image_leased: u32 = 4;
 pub const window_graphics_image_returning: u32 = 5;
+pub const window_graphics_release_fence: u32 = 2;
+pub const window_graphics_fence_released: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8278,12 +8280,13 @@ pub const R4DeskFns = struct {
     pub const remote_frame_snapshot_release = *const fn (*const RemoteFrameLease) callconv(.c) i32;
     pub const remote_frame_source_reset = *const fn () callconv(.c) i32;
     pub const remote_frame_capture_stats = *const fn (*RemoteFrameCaptureStats) callconv(.c) i32;
+    pub const desktop_activity_notify = *const fn () callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 14,
-    size: u32 = 528,
+    abi_version: u32 = 15,
+    size: u32 = 536,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -8349,6 +8352,7 @@ pub const R4XStartR4Desk = extern struct {
     remote_frame_snapshot_release: usize = 0,
     remote_frame_source_reset: usize = 0,
     remote_frame_capture_stats: usize = 0,
+    desktop_activity_notify: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -9029,6 +9033,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 61, .offset = 504, .name = "remote_frame_snapshot_release", .state = .function, .required = false },
     .{ .number = 62, .offset = 512, .name = "remote_frame_source_reset", .state = .function, .required = false },
     .{ .number = 63, .offset = 520, .name = "remote_frame_capture_stats", .state = .function, .required = false },
+    .{ .number = 64, .offset = 528, .name = "desktop_activity_notify", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -14649,7 +14654,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "notification_close") != 1200) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_close");
     if (@offsetOf(R4XStartR4Sys, "program_local_get") != 1208) @compileError("generated ABI offset drift: R4XStartR4Sys.program_local_get");
     if (@offsetOf(R4XStartR4Sys, "program_local_publish") != 1216) @compileError("generated ABI offset drift: R4XStartR4Sys.program_local_publish");
-    if (@sizeOf(R4XStartR4Desk) != 528) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -14714,6 +14719,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_snapshot_release") != 504) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_snapshot_release");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_source_reset") != 512) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_source_reset");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_capture_stats");
+    if (@offsetOf(R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("generated ABI offset drift: R4XStartR4Desk.desktop_activity_notify");
     if (@sizeOf(R4XStartR4Draw) != 888) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");

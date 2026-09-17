@@ -1906,6 +1906,8 @@ extern "C" {
 #define R4OS_WINDOW_GRAPHICS_IMAGE_QUEUED 3u
 #define R4OS_WINDOW_GRAPHICS_IMAGE_LEASED 4u
 #define R4OS_WINDOW_GRAPHICS_IMAGE_RETURNING 5u
+#define R4OS_WINDOW_GRAPHICS_RELEASE_FENCE 2u
+#define R4OS_WINDOW_GRAPHICS_FENCE_RELEASED 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -8556,6 +8558,7 @@ typedef int32_t (*R4DeskRemoteFrameSnapshotAcquireFn)(uint32_t expected_revision
 typedef int32_t (*R4DeskRemoteFrameSnapshotReleaseFn)(const R4RemoteFrameLease * lease);
 typedef int32_t (*R4DeskRemoteFrameSourceResetFn)(void);
 typedef int32_t (*R4DeskRemoteFrameCaptureStatsFn)(R4RemoteFrameCaptureStats * output);
+typedef int32_t (*R4DeskDesktopActivityNotifyFn)(void);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -8626,6 +8629,7 @@ typedef struct R4XStartR4Desk {
     uintptr_t remote_frame_snapshot_release;
     uintptr_t remote_frame_source_reset;
     uintptr_t remote_frame_capture_stats;
+    uintptr_t desktop_activity_notify;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -14334,7 +14338,7 @@ _Static_assert(offsetof(R4XStartR4Sys, program_local_get) == 1208u, "R4XStartR4S
 _Static_assert(sizeof(R4SysProgramLocalGetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_local_publish) == 1216u, "R4XStartR4Sys.program_local_publish offset mismatch");
 _Static_assert(sizeof(R4SysProgramLocalPublishFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 528u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -14462,6 +14466,8 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_source_reset) == 512u, "R4X
 _Static_assert(sizeof(R4DeskRemoteFrameSourceResetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, remote_frame_capture_stats) == 520u, "R4XStartR4Desk.remote_frame_capture_stats offset mismatch");
 _Static_assert(sizeof(R4DeskRemoteFrameCaptureStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, desktop_activity_notify) == 528u, "R4XStartR4Desk.desktop_activity_notify offset mismatch");
+_Static_assert(sizeof(R4DeskDesktopActivityNotifyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 888u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
