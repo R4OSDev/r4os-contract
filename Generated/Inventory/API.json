@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 419,
-    "group_slot_count": 419,
+    "function_count": 422,
+    "group_slot_count": 422,
     "sdk_only_count": 0,
-    "public_count": 320,
+    "public_count": 323,
     "advanced_count": 99
   },
   "functions": [
@@ -1781,6 +1781,42 @@
       "slot": 150,
       "exposure": "public",
       "description": "Publish a nonzero process-local value exactly once for a nonzero key. Returns program_local_ok if installed, program_local_existing if another caller already installed a value; both write the winning value. Caller owns candidate memory and discards it when it loses. Published data must outlive all program threads; no replacement, destructor or allocator policy is provided. The process reaper removes metadata after thread retirement and before VM teardown. Errors leave output unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.thread_current_handle",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 151,
+      "exposure": "public",
+      "description": "Copy the calling program thread identity, including thread and process generations, into ProgramJoinHandle. Returns thread_ok on success, thread_error_no_instance outside a program thread, or thread_error_invalid for a null output. Errors leave output unchanged. The identity is borrowed: no pin, join lease, allocation or wait is created; normal status/join admission and retirement rules still apply. Lookup uses the current task execution owner and never scans a registry. Valid for the main thread as well as secondary threads.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.cpu_capacity",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 152,
+      "exposure": "public",
+      "description": "Copy current schedulable CPU capacity for ordinary program threads. Returns thread_ok, thread_error_invalid for null output, or thread_error_busy before capacity is available; errors leave output unchanged. available_cpus counts one atomic scheduler-admission mask snapshot (no process affinity restrictions currently exist). configured_cpus counts dense CPU slots admitted by the boot SMP plan, including failed/offline slots; it is not the CPUID package count, firmware total or kernel maximum. Capacity is advisory, not a reservation, affinity mask, cache topology or performance guarantee. No allocation or wait.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_exit",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 153,
+      "exposure": "public",
+      "description": "Terminates the entire calling program from its main or a secondary thread. On admission this does not return. reason accepts program_exit_reason_natural or program_exit_reason_failed only; invalid reason returns thread_error_invalid, missing program-thread ownership returns thread_error_no_instance, and a non-sleepable context or held kernel lock/unwind lifetime returns thread_error_busy without initiating exit. The first committed concurrent process exit wins. The existing exit/reaper path closes admission, stops peers and retains stacks, I/O and graphics resources through actual retirement; the caller transfers its own terminal Task to the scheduler reaper. Does not run user destructors, atexit, TLS callbacks, stream flushing or foreign stack unwinding; normal userland shutdown precedes this primitive, fatal shutdown may omit it. External kill still rejects self. Older providers may omit this optional tail.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

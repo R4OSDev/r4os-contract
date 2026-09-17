@@ -1909,6 +1909,11 @@ extern "C" {
 #define R4OS_WINDOW_GRAPHICS_RELEASE_FENCE 2u
 #define R4OS_WINDOW_GRAPHICS_FENCE_RELEASED 1u
 #define R4OS_GFX_QUEUE_OPERATION_RENDER_COLOR_GRID_LIST 11u
+#define R4OS_WINDOW_MODE_OP_QUERY 1840u
+#define R4OS_WINDOW_MODE_OP_REQUEST 1841u
+#define R4OS_WINDOW_MODE_OP_EXCHANGE 1842u
+#define R4OS_GUI_WINDOW_FLAG_FULLSCREEN 16u
+#define R4OS_WINDOW_GRAPHICS_INSPECT 3u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2642,6 +2647,11 @@ typedef struct R4WindowGraphicsReply R4WindowGraphicsReply;
 typedef struct R4WindowGraphicsConsumer R4WindowGraphicsConsumer;
 typedef struct R4WindowGraphicsWait R4WindowGraphicsWait;
 typedef struct R4GfxRenderColorGridList R4GfxRenderColorGridList;
+typedef struct R4CpuCapacity R4CpuCapacity;
+typedef struct R4WindowModeIdentity R4WindowModeIdentity;
+typedef struct R4WindowModeRequest R4WindowModeRequest;
+typedef struct R4WindowModeReply R4WindowModeReply;
+typedef struct R4WindowModeExchange R4WindowModeExchange;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8154,6 +8164,51 @@ typedef struct R4GfxRenderColorGridList {
     R4GfxSampleGrid grids[16];
 } R4GfxRenderColorGridList;
 
+typedef struct R4CpuCapacity {
+    uint32_t available_cpus;
+    uint32_t configured_cpus;
+} R4CpuCapacity;
+
+typedef struct R4WindowModeIdentity {
+    R4ProgramProcessHandle service;
+    R4ProgramProcessHandle desktop;
+    R4ProgramProcessHandle owner;
+    uint64_t serial;
+    uint32_t window_id;
+    uint32_t reserved;
+} R4WindowModeIdentity;
+
+typedef struct R4WindowModeRequest {
+    uint32_t version;
+    uint32_t size;
+    R4WindowModeIdentity identity;
+    uint64_t request_id;
+    uint32_t action;
+    uint32_t mode;
+} R4WindowModeRequest;
+
+typedef struct R4WindowModeReply {
+    uint32_t version;
+    uint32_t size;
+    R4WindowModeIdentity identity;
+    uint64_t request_id;
+    int32_t result;
+    uint32_t phase;
+    uint32_t mode;
+    uint32_t requested_mode;
+} R4WindowModeReply;
+
+typedef struct R4WindowModeExchange {
+    uint32_t version;
+    uint32_t size;
+    R4WindowModeIdentity identity;
+    uint64_t ack_request_id;
+    int32_t ack_result;
+    uint32_t mode;
+    uint32_t flags;
+    uint32_t reserved;
+} R4WindowModeExchange;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8348,6 +8403,9 @@ typedef int32_t (*R4SysNotificationWaitFn)(uint64_t handle, uint64_t observed_se
 typedef int32_t (*R4SysNotificationCloseFn)(uint64_t handle);
 typedef int32_t (*R4SysProgramLocalGetFn)(uint64_t key, uint64_t * out_value);
 typedef int32_t (*R4SysProgramLocalPublishFn)(uint64_t key, uint64_t value, uint64_t * out_value);
+typedef int32_t (*R4SysThreadCurrentHandleFn)(R4ProgramJoinHandle * out_handle);
+typedef int32_t (*R4SysCpuCapacityFn)(R4CpuCapacity * output);
+typedef int32_t (*R4SysProgramExitFn)(int32_t exit_code, uint32_t reason);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -8505,6 +8563,9 @@ typedef struct R4XStartR4Sys {
     uintptr_t notification_close;
     uintptr_t program_local_get;
     uintptr_t program_local_publish;
+    uintptr_t thread_current_handle;
+    uintptr_t cpu_capacity;
+    uintptr_t program_exit;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -14060,7 +14121,42 @@ _Static_assert(offsetof(R4GfxRenderColorGridList, reserved0) == 12u, "GfxRenderC
 _Static_assert(offsetof(R4GfxRenderColorGridList, commands) == 16u, "GfxRenderColorGridList.commands offset mismatch");
 _Static_assert(offsetof(R4GfxRenderColorGridList, program) == 1296u, "GfxRenderColorGridList.program offset mismatch");
 _Static_assert(offsetof(R4GfxRenderColorGridList, grids) == 1568u, "GfxRenderColorGridList.grids offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1224u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4CpuCapacity) == 8u, "CpuCapacity size mismatch");
+_Static_assert(offsetof(R4CpuCapacity, available_cpus) == 0u, "CpuCapacity.available_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuCapacity, configured_cpus) == 4u, "CpuCapacity.configured_cpus offset mismatch");
+_Static_assert(sizeof(R4WindowModeIdentity) == 64u, "WindowModeIdentity size mismatch");
+_Static_assert(offsetof(R4WindowModeIdentity, service) == 0u, "WindowModeIdentity.service offset mismatch");
+_Static_assert(offsetof(R4WindowModeIdentity, desktop) == 16u, "WindowModeIdentity.desktop offset mismatch");
+_Static_assert(offsetof(R4WindowModeIdentity, owner) == 32u, "WindowModeIdentity.owner offset mismatch");
+_Static_assert(offsetof(R4WindowModeIdentity, serial) == 48u, "WindowModeIdentity.serial offset mismatch");
+_Static_assert(offsetof(R4WindowModeIdentity, window_id) == 56u, "WindowModeIdentity.window_id offset mismatch");
+_Static_assert(offsetof(R4WindowModeIdentity, reserved) == 60u, "WindowModeIdentity.reserved offset mismatch");
+_Static_assert(sizeof(R4WindowModeRequest) == 88u, "WindowModeRequest size mismatch");
+_Static_assert(offsetof(R4WindowModeRequest, version) == 0u, "WindowModeRequest.version offset mismatch");
+_Static_assert(offsetof(R4WindowModeRequest, size) == 4u, "WindowModeRequest.size offset mismatch");
+_Static_assert(offsetof(R4WindowModeRequest, identity) == 8u, "WindowModeRequest.identity offset mismatch");
+_Static_assert(offsetof(R4WindowModeRequest, request_id) == 72u, "WindowModeRequest.request_id offset mismatch");
+_Static_assert(offsetof(R4WindowModeRequest, action) == 80u, "WindowModeRequest.action offset mismatch");
+_Static_assert(offsetof(R4WindowModeRequest, mode) == 84u, "WindowModeRequest.mode offset mismatch");
+_Static_assert(sizeof(R4WindowModeReply) == 96u, "WindowModeReply size mismatch");
+_Static_assert(offsetof(R4WindowModeReply, version) == 0u, "WindowModeReply.version offset mismatch");
+_Static_assert(offsetof(R4WindowModeReply, size) == 4u, "WindowModeReply.size offset mismatch");
+_Static_assert(offsetof(R4WindowModeReply, identity) == 8u, "WindowModeReply.identity offset mismatch");
+_Static_assert(offsetof(R4WindowModeReply, request_id) == 72u, "WindowModeReply.request_id offset mismatch");
+_Static_assert(offsetof(R4WindowModeReply, result) == 80u, "WindowModeReply.result offset mismatch");
+_Static_assert(offsetof(R4WindowModeReply, phase) == 84u, "WindowModeReply.phase offset mismatch");
+_Static_assert(offsetof(R4WindowModeReply, mode) == 88u, "WindowModeReply.mode offset mismatch");
+_Static_assert(offsetof(R4WindowModeReply, requested_mode) == 92u, "WindowModeReply.requested_mode offset mismatch");
+_Static_assert(sizeof(R4WindowModeExchange) == 96u, "WindowModeExchange size mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, version) == 0u, "WindowModeExchange.version offset mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, size) == 4u, "WindowModeExchange.size offset mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, identity) == 8u, "WindowModeExchange.identity offset mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, ack_request_id) == 72u, "WindowModeExchange.ack_request_id offset mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, ack_result) == 80u, "WindowModeExchange.ack_result offset mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, mode) == 84u, "WindowModeExchange.mode offset mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, flags) == 88u, "WindowModeExchange.flags offset mismatch");
+_Static_assert(offsetof(R4WindowModeExchange, reserved) == 92u, "WindowModeExchange.reserved offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1248u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -14360,6 +14456,12 @@ _Static_assert(offsetof(R4XStartR4Sys, program_local_get) == 1208u, "R4XStartR4S
 _Static_assert(sizeof(R4SysProgramLocalGetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_local_publish) == 1216u, "R4XStartR4Sys.program_local_publish offset mismatch");
 _Static_assert(sizeof(R4SysProgramLocalPublishFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, thread_current_handle) == 1224u, "R4XStartR4Sys.thread_current_handle offset mismatch");
+_Static_assert(sizeof(R4SysThreadCurrentHandleFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, cpu_capacity) == 1232u, "R4XStartR4Sys.cpu_capacity offset mismatch");
+_Static_assert(sizeof(R4SysCpuCapacityFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_exit) == 1240u, "R4XStartR4Sys.program_exit offset mismatch");
+_Static_assert(sizeof(R4SysProgramExitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

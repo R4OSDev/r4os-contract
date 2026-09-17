@@ -1897,6 +1897,11 @@ pub const window_graphics_image_returning: u32 = 5;
 pub const window_graphics_release_fence: u32 = 2;
 pub const window_graphics_fence_released: u32 = 1;
 pub const gfx_queue_operation_render_color_grid_list: u32 = 11;
+pub const window_mode_op_query: u16 = 1840;
+pub const window_mode_op_request: u16 = 1841;
+pub const window_mode_op_exchange: u16 = 1842;
+pub const gui_window_flag_fullscreen: u32 = 16;
+pub const window_graphics_inspect: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -7918,6 +7923,51 @@ pub const GfxRenderColorGridList = extern struct {
     grids: [16]GfxSampleGrid = .{GfxSampleGrid{}} ** 16,
 };
 
+pub const CpuCapacity = extern struct {
+    available_cpus: u32 = 0,
+    configured_cpus: u32 = 0,
+};
+
+pub const WindowModeIdentity = extern struct {
+    service: ProgramProcessHandle = .{},
+    desktop: ProgramProcessHandle = .{},
+    owner: ProgramProcessHandle = .{},
+    serial: u64 = 0,
+    window_id: u32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const WindowModeRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 88,
+    identity: WindowModeIdentity = .{},
+    request_id: u64 = 0,
+    action: u32 = 0,
+    mode: u32 = 0,
+};
+
+pub const WindowModeReply = extern struct {
+    version: u32 = 1,
+    size: u32 = 96,
+    identity: WindowModeIdentity = .{},
+    request_id: u64 = 0,
+    result: i32 = 0,
+    phase: u32 = 0,
+    mode: u32 = 0,
+    requested_mode: u32 = 0,
+};
+
+pub const WindowModeExchange = extern struct {
+    version: u32 = 1,
+    size: u32 = 96,
+    identity: WindowModeIdentity = .{},
+    ack_request_id: u64 = 0,
+    ack_result: i32 = 0,
+    mode: u32 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8067,12 +8117,15 @@ pub const R4SysFns = struct {
     pub const notification_close = *const fn (u64) callconv(.c) i32;
     pub const program_local_get = *const fn (u64, *u64) callconv(.c) i32;
     pub const program_local_publish = *const fn (u64, u64, *u64) callconv(.c) i32;
+    pub const thread_current_handle = *const fn (*ProgramJoinHandle) callconv(.c) i32;
+    pub const cpu_capacity = *const fn (*CpuCapacity) callconv(.c) i32;
+    pub const program_exit = *const fn (i32, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 20,
-    size: u32 = 1224,
+    abi_version: u32 = 23,
+    size: u32 = 1248,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -8225,6 +8278,9 @@ pub const R4XStartR4Sys = extern struct {
     notification_close: usize = 0,
     program_local_get: usize = 0,
     program_local_publish: usize = 0,
+    thread_current_handle: usize = 0,
+    cpu_capacity: usize = 0,
+    program_exit: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -8979,6 +9035,9 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 148, .offset = 1200, .name = "notification_close", .state = .function, .required = false },
     .{ .number = 149, .offset = 1208, .name = "program_local_get", .state = .function, .required = false },
     .{ .number = 150, .offset = 1216, .name = "program_local_publish", .state = .function, .required = false },
+    .{ .number = 151, .offset = 1224, .name = "thread_current_handle", .state = .function, .required = false },
+    .{ .number = 152, .offset = 1232, .name = "cpu_capacity", .state = .function, .required = false },
+    .{ .number = 153, .offset = 1240, .name = "program_exit", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -14525,7 +14584,47 @@ comptime {
     if (@offsetOf(GfxRenderColorGridList, "commands") != 16) @compileError("generated ABI offset drift: GfxRenderColorGridList.commands");
     if (@offsetOf(GfxRenderColorGridList, "program") != 1296) @compileError("generated ABI offset drift: GfxRenderColorGridList.program");
     if (@offsetOf(GfxRenderColorGridList, "grids") != 1568) @compileError("generated ABI offset drift: GfxRenderColorGridList.grids");
-    if (@sizeOf(R4XStartR4Sys) != 1224) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(CpuCapacity) != 8) @compileError("generated ABI size drift: CpuCapacity");
+    if (@alignOf(CpuCapacity) != 4) @compileError("generated ABI alignment drift: CpuCapacity");
+    if (@offsetOf(CpuCapacity, "available_cpus") != 0) @compileError("generated ABI offset drift: CpuCapacity.available_cpus");
+    if (@offsetOf(CpuCapacity, "configured_cpus") != 4) @compileError("generated ABI offset drift: CpuCapacity.configured_cpus");
+    if (@sizeOf(WindowModeIdentity) != 64) @compileError("generated ABI size drift: WindowModeIdentity");
+    if (@alignOf(WindowModeIdentity) != 8) @compileError("generated ABI alignment drift: WindowModeIdentity");
+    if (@offsetOf(WindowModeIdentity, "service") != 0) @compileError("generated ABI offset drift: WindowModeIdentity.service");
+    if (@offsetOf(WindowModeIdentity, "desktop") != 16) @compileError("generated ABI offset drift: WindowModeIdentity.desktop");
+    if (@offsetOf(WindowModeIdentity, "owner") != 32) @compileError("generated ABI offset drift: WindowModeIdentity.owner");
+    if (@offsetOf(WindowModeIdentity, "serial") != 48) @compileError("generated ABI offset drift: WindowModeIdentity.serial");
+    if (@offsetOf(WindowModeIdentity, "window_id") != 56) @compileError("generated ABI offset drift: WindowModeIdentity.window_id");
+    if (@offsetOf(WindowModeIdentity, "reserved") != 60) @compileError("generated ABI offset drift: WindowModeIdentity.reserved");
+    if (@sizeOf(WindowModeRequest) != 88) @compileError("generated ABI size drift: WindowModeRequest");
+    if (@alignOf(WindowModeRequest) != 8) @compileError("generated ABI alignment drift: WindowModeRequest");
+    if (@offsetOf(WindowModeRequest, "version") != 0) @compileError("generated ABI offset drift: WindowModeRequest.version");
+    if (@offsetOf(WindowModeRequest, "size") != 4) @compileError("generated ABI offset drift: WindowModeRequest.size");
+    if (@offsetOf(WindowModeRequest, "identity") != 8) @compileError("generated ABI offset drift: WindowModeRequest.identity");
+    if (@offsetOf(WindowModeRequest, "request_id") != 72) @compileError("generated ABI offset drift: WindowModeRequest.request_id");
+    if (@offsetOf(WindowModeRequest, "action") != 80) @compileError("generated ABI offset drift: WindowModeRequest.action");
+    if (@offsetOf(WindowModeRequest, "mode") != 84) @compileError("generated ABI offset drift: WindowModeRequest.mode");
+    if (@sizeOf(WindowModeReply) != 96) @compileError("generated ABI size drift: WindowModeReply");
+    if (@alignOf(WindowModeReply) != 8) @compileError("generated ABI alignment drift: WindowModeReply");
+    if (@offsetOf(WindowModeReply, "version") != 0) @compileError("generated ABI offset drift: WindowModeReply.version");
+    if (@offsetOf(WindowModeReply, "size") != 4) @compileError("generated ABI offset drift: WindowModeReply.size");
+    if (@offsetOf(WindowModeReply, "identity") != 8) @compileError("generated ABI offset drift: WindowModeReply.identity");
+    if (@offsetOf(WindowModeReply, "request_id") != 72) @compileError("generated ABI offset drift: WindowModeReply.request_id");
+    if (@offsetOf(WindowModeReply, "result") != 80) @compileError("generated ABI offset drift: WindowModeReply.result");
+    if (@offsetOf(WindowModeReply, "phase") != 84) @compileError("generated ABI offset drift: WindowModeReply.phase");
+    if (@offsetOf(WindowModeReply, "mode") != 88) @compileError("generated ABI offset drift: WindowModeReply.mode");
+    if (@offsetOf(WindowModeReply, "requested_mode") != 92) @compileError("generated ABI offset drift: WindowModeReply.requested_mode");
+    if (@sizeOf(WindowModeExchange) != 96) @compileError("generated ABI size drift: WindowModeExchange");
+    if (@alignOf(WindowModeExchange) != 8) @compileError("generated ABI alignment drift: WindowModeExchange");
+    if (@offsetOf(WindowModeExchange, "version") != 0) @compileError("generated ABI offset drift: WindowModeExchange.version");
+    if (@offsetOf(WindowModeExchange, "size") != 4) @compileError("generated ABI offset drift: WindowModeExchange.size");
+    if (@offsetOf(WindowModeExchange, "identity") != 8) @compileError("generated ABI offset drift: WindowModeExchange.identity");
+    if (@offsetOf(WindowModeExchange, "ack_request_id") != 72) @compileError("generated ABI offset drift: WindowModeExchange.ack_request_id");
+    if (@offsetOf(WindowModeExchange, "ack_result") != 80) @compileError("generated ABI offset drift: WindowModeExchange.ack_result");
+    if (@offsetOf(WindowModeExchange, "mode") != 84) @compileError("generated ABI offset drift: WindowModeExchange.mode");
+    if (@offsetOf(WindowModeExchange, "flags") != 88) @compileError("generated ABI offset drift: WindowModeExchange.flags");
+    if (@offsetOf(WindowModeExchange, "reserved") != 92) @compileError("generated ABI offset drift: WindowModeExchange.reserved");
+    if (@sizeOf(R4XStartR4Sys) != 1248) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -14677,6 +14776,9 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "notification_close") != 1200) @compileError("generated ABI offset drift: R4XStartR4Sys.notification_close");
     if (@offsetOf(R4XStartR4Sys, "program_local_get") != 1208) @compileError("generated ABI offset drift: R4XStartR4Sys.program_local_get");
     if (@offsetOf(R4XStartR4Sys, "program_local_publish") != 1216) @compileError("generated ABI offset drift: R4XStartR4Sys.program_local_publish");
+    if (@offsetOf(R4XStartR4Sys, "thread_current_handle") != 1224) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_current_handle");
+    if (@offsetOf(R4XStartR4Sys, "cpu_capacity") != 1232) @compileError("generated ABI offset drift: R4XStartR4Sys.cpu_capacity");
+    if (@offsetOf(R4XStartR4Sys, "program_exit") != 1240) @compileError("generated ABI offset drift: R4XStartR4Sys.program_exit");
     if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

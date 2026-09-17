@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 292 von 292 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 297 von 297 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1896; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1901; Limits: 109
 
 ## App-Profile
 
@@ -313,6 +313,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `WindowGraphicsConsumer` | fixed_layout | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
 | `WindowGraphicsWait` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxRenderColorGridList` | fixed_layout | extern_struct | 2592/8 | 2592/8 | 2592/8 | 2592/8 |
+| `CpuCapacity` | fixed_layout | extern_struct | 8/4 | 8/4 | 8/4 | 8/4 |
+| `WindowModeIdentity` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `WindowModeRequest` | fixed_layout | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `WindowModeReply` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `WindowModeExchange` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 
 ## Typdetails
 
@@ -7863,6 +7868,86 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `program` | 1296 | 272 | 8 | `GfxRenderColorProgram` | - |
 | `grids` | 1568 | 1024 | 4 | `[16]GfxSampleGrid` | - |
 
+### `CpuCapacity`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 8 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `available_cpus` | 0 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 4 | 4 | 4 | `u32` | - |
+
+### `WindowModeIdentity`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `service` | 0 | 16 | 8 | `ProgramProcessHandle` | - |
+| `desktop` | 16 | 16 | 8 | `ProgramProcessHandle` | - |
+| `owner` | 32 | 16 | 8 | `ProgramProcessHandle` | - |
+| `serial` | 48 | 8 | 8 | `u64` | - |
+| `window_id` | 56 | 4 | 4 | `u32` | - |
+| `reserved` | 60 | 4 | 4 | `u32` | - |
+
+### `WindowModeRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 64 | 8 | `WindowModeIdentity` | - |
+| `request_id` | 72 | 8 | 8 | `u64` | - |
+| `action` | 80 | 4 | 4 | `u32` | - |
+| `mode` | 84 | 4 | 4 | `u32` | - |
+
+### `WindowModeReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 64 | 8 | `WindowModeIdentity` | - |
+| `request_id` | 72 | 8 | 8 | `u64` | - |
+| `result` | 80 | 4 | 4 | `i32` | - |
+| `phase` | 84 | 4 | 4 | `u32` | - |
+| `mode` | 88 | 4 | 4 | `u32` | - |
+| `requested_mode` | 92 | 4 | 4 | `u32` | - |
+
+### `WindowModeExchange`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 64 | 8 | `WindowModeIdentity` | - |
+| `ack_request_id` | 72 | 8 | 8 | `u64` | - |
+| `ack_result` | 80 | 4 | 4 | `i32` | - |
+| `mode` | 84 | 4 | 4 | `u32` | - |
+| `flags` | 88 | 4 | 4 | `u32` | - |
+| `reserved` | 92 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -10498,6 +10583,11 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `window_graphics_release_fence` | `2` | `u32` | identity | number | `window_graphics` | fixed_contract |
 | `window_graphics_fence_released` | `1` | `u32` | flag | bitmask | `window_graphics` | fixed_contract |
 | `gfx_queue_operation_render_color_grid_list` | `11` | `u32` | identity | number | `gfx_queue` | fixed_contract |
+| `window_mode_op_query` | `1840` | `u16` | identity | number | `window_mode` | fixed_contract |
+| `window_mode_op_request` | `1841` | `u16` | identity | number | `window_mode` | fixed_contract |
+| `window_mode_op_exchange` | `1842` | `u16` | identity | number | `window_mode` | fixed_contract |
+| `gui_window_flag_fullscreen` | `16` | `u32` | identity | number | `window_mode` | fixed_contract |
+| `window_graphics_inspect` | `3` | `u32` | identity | number | `window_graphics` | fixed_contract |
 
 ## Limits
 

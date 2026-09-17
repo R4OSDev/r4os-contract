@@ -390,7 +390,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // offset writes, file-size queries and advisory range locks at 123..125.
     // 0.76.8 appends fifteen storage inventory/claim/I/O/mount/use slots.
     // Baseline refresh 0.79.4 includes the existing slots through 143.
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 148, .reserved = 2, .tombstones = 1 },
+    // 0.79.39 adds process-scoped self-exit at slot153 (v23); the v22
+    // 1240-byte prefix and all existing function signatures are retained.
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 151, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47
