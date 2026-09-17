@@ -1908,6 +1908,7 @@ extern "C" {
 #define R4OS_WINDOW_GRAPHICS_IMAGE_RETURNING 5u
 #define R4OS_WINDOW_GRAPHICS_RELEASE_FENCE 2u
 #define R4OS_WINDOW_GRAPHICS_FENCE_RELEASED 1u
+#define R4OS_GFX_QUEUE_OPERATION_RENDER_COLOR_GRID_LIST 11u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2640,6 +2641,7 @@ typedef struct R4WindowGraphicsFrame R4WindowGraphicsFrame;
 typedef struct R4WindowGraphicsReply R4WindowGraphicsReply;
 typedef struct R4WindowGraphicsConsumer R4WindowGraphicsConsumer;
 typedef struct R4WindowGraphicsWait R4WindowGraphicsWait;
+typedef struct R4GfxRenderColorGridList R4GfxRenderColorGridList;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8142,6 +8144,16 @@ typedef struct R4WindowGraphicsWait {
     uint64_t deadline_tick;
 } R4WindowGraphicsWait;
 
+typedef struct R4GfxRenderColorGridList {
+    uint32_t version;
+    uint32_t size;
+    uint32_t count;
+    uint32_t reserved0;
+    R4GfxRenderCommand commands[16];
+    R4GfxRenderColorProgram program;
+    R4GfxSampleGrid grids[16];
+} R4GfxRenderColorGridList;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8741,6 +8753,7 @@ typedef int32_t (*R4DrawGfxVirtualWaitFn)(const R4GfxBufferHandle * request, uin
 typedef int32_t (*R4DrawGfxBufferMapPersistentFn)(const R4GfxBufferHandle * reference, uint32_t access, uint64_t offset, uint64_t byte_length, R4GfxBufferMap * output);
 typedef int32_t (*R4DrawGfxQueueBackendPropertiesFn)(const R4GfxBackendBinding * binding, R4GfxBackendProperties * output);
 typedef int32_t (*R4DrawGfxQueueSubmitNativeFn)(const R4GfxQueueHandle * queue, const R4GfxSubmission * submission, const R4GfxNativeSubmission * native, R4GfxFenceStatus * output);
+typedef int32_t (*R4DrawGfxQueueSubmitRenderColorGridListFn)(const R4GfxQueueHandle * queue, const R4GfxSubmission * submission, const R4GfxRenderColorGridList * list, R4GfxFenceStatus * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -8856,6 +8869,7 @@ typedef struct R4XStartR4Draw {
     uintptr_t gfx_buffer_map_persistent;
     uintptr_t gfx_queue_backend_properties;
     uintptr_t gfx_queue_submit_native;
+    uintptr_t gfx_queue_submit_render_color_grid_list;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -14038,6 +14052,14 @@ _Static_assert(offsetof(R4WindowGraphicsWait, size) == 4u, "WindowGraphicsWait.s
 _Static_assert(offsetof(R4WindowGraphicsWait, owner) == 8u, "WindowGraphicsWait.owner offset mismatch");
 _Static_assert(offsetof(R4WindowGraphicsWait, known_revision) == 24u, "WindowGraphicsWait.known_revision offset mismatch");
 _Static_assert(offsetof(R4WindowGraphicsWait, deadline_tick) == 32u, "WindowGraphicsWait.deadline_tick offset mismatch");
+_Static_assert(sizeof(R4GfxRenderColorGridList) == 2592u, "GfxRenderColorGridList size mismatch");
+_Static_assert(offsetof(R4GfxRenderColorGridList, version) == 0u, "GfxRenderColorGridList.version offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorGridList, size) == 4u, "GfxRenderColorGridList.size offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorGridList, count) == 8u, "GfxRenderColorGridList.count offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorGridList, reserved0) == 12u, "GfxRenderColorGridList.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorGridList, commands) == 16u, "GfxRenderColorGridList.commands offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorGridList, program) == 1296u, "GfxRenderColorGridList.program offset mismatch");
+_Static_assert(offsetof(R4GfxRenderColorGridList, grids) == 1568u, "GfxRenderColorGridList.grids offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1224u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -14468,7 +14490,7 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_capture_stats) == 520u, "R4
 _Static_assert(sizeof(R4DeskRemoteFrameCaptureStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, desktop_activity_notify) == 528u, "R4XStartR4Desk.desktop_activity_notify offset mismatch");
 _Static_assert(sizeof(R4DeskDesktopActivityNotifyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 888u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 896u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -14687,6 +14709,8 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_queue_backend_properties) == 872u, "
 _Static_assert(sizeof(R4DrawGfxQueueBackendPropertiesFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_queue_submit_native) == 880u, "R4XStartR4Draw.gfx_queue_submit_native offset mismatch");
 _Static_assert(sizeof(R4DrawGfxQueueSubmitNativeFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_queue_submit_render_color_grid_list) == 888u, "R4XStartR4Draw.gfx_queue_submit_render_color_grid_list offset mismatch");
+_Static_assert(sizeof(R4DrawGfxQueueSubmitRenderColorGridListFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

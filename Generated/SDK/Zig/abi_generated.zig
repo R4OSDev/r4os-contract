@@ -1896,6 +1896,7 @@ pub const window_graphics_image_leased: u32 = 4;
 pub const window_graphics_image_returning: u32 = 5;
 pub const window_graphics_release_fence: u32 = 2;
 pub const window_graphics_fence_released: u32 = 1;
+pub const gfx_queue_operation_render_color_grid_list: u32 = 11;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -7907,6 +7908,16 @@ pub const WindowGraphicsWait = extern struct {
     deadline_tick: u64 = 0,
 };
 
+pub const GfxRenderColorGridList = extern struct {
+    version: u32 = 1,
+    size: u32 = 2592,
+    count: u32 = 0,
+    reserved0: u32 = 0,
+    commands: [16]GfxRenderCommand = .{GfxRenderCommand{}} ** 16,
+    program: GfxRenderColorProgram = .{},
+    grids: [16]GfxSampleGrid = .{GfxSampleGrid{}} ** 16,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8465,12 +8476,13 @@ pub const R4DrawFns = struct {
     pub const gfx_buffer_map_persistent = *const fn (*const GfxBufferHandle, u32, u64, u64, *GfxBufferMap) callconv(.c) i32;
     pub const gfx_queue_backend_properties = *const fn (*const GfxBackendBinding, *GfxBackendProperties) callconv(.c) i32;
     pub const gfx_queue_submit_native = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxNativeSubmission, *GfxFenceStatus) callconv(.c) i32;
+    pub const gfx_queue_submit_render_color_grid_list = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorGridList, *GfxFenceStatus) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 36,
-    size: u32 = 888,
+    abi_version: u32 = 37,
+    size: u32 = 896,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -8581,6 +8593,7 @@ pub const R4XStartR4Draw = extern struct {
     gfx_buffer_map_persistent: usize = 0,
     gfx_queue_backend_properties: usize = 0,
     gfx_queue_submit_native: usize = 0,
+    gfx_queue_submit_render_color_grid_list: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -9146,6 +9159,7 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 106, .offset = 864, .name = "gfx_buffer_map_persistent", .state = .function, .required = false },
     .{ .number = 107, .offset = 872, .name = "gfx_queue_backend_properties", .state = .function, .required = false },
     .{ .number = 108, .offset = 880, .name = "gfx_queue_submit_native", .state = .function, .required = false },
+    .{ .number = 109, .offset = 888, .name = "gfx_queue_submit_render_color_grid_list", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -14502,6 +14516,15 @@ comptime {
     if (@offsetOf(WindowGraphicsWait, "owner") != 8) @compileError("generated ABI offset drift: WindowGraphicsWait.owner");
     if (@offsetOf(WindowGraphicsWait, "known_revision") != 24) @compileError("generated ABI offset drift: WindowGraphicsWait.known_revision");
     if (@offsetOf(WindowGraphicsWait, "deadline_tick") != 32) @compileError("generated ABI offset drift: WindowGraphicsWait.deadline_tick");
+    if (@sizeOf(GfxRenderColorGridList) != 2592) @compileError("generated ABI size drift: GfxRenderColorGridList");
+    if (@alignOf(GfxRenderColorGridList) != 8) @compileError("generated ABI alignment drift: GfxRenderColorGridList");
+    if (@offsetOf(GfxRenderColorGridList, "version") != 0) @compileError("generated ABI offset drift: GfxRenderColorGridList.version");
+    if (@offsetOf(GfxRenderColorGridList, "size") != 4) @compileError("generated ABI offset drift: GfxRenderColorGridList.size");
+    if (@offsetOf(GfxRenderColorGridList, "count") != 8) @compileError("generated ABI offset drift: GfxRenderColorGridList.count");
+    if (@offsetOf(GfxRenderColorGridList, "reserved0") != 12) @compileError("generated ABI offset drift: GfxRenderColorGridList.reserved0");
+    if (@offsetOf(GfxRenderColorGridList, "commands") != 16) @compileError("generated ABI offset drift: GfxRenderColorGridList.commands");
+    if (@offsetOf(GfxRenderColorGridList, "program") != 1296) @compileError("generated ABI offset drift: GfxRenderColorGridList.program");
+    if (@offsetOf(GfxRenderColorGridList, "grids") != 1568) @compileError("generated ABI offset drift: GfxRenderColorGridList.grids");
     if (@sizeOf(R4XStartR4Sys) != 1224) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -14720,7 +14743,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_source_reset") != 512) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_source_reset");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_capture_stats");
     if (@offsetOf(R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("generated ABI offset drift: R4XStartR4Desk.desktop_activity_notify");
-    if (@sizeOf(R4XStartR4Draw) != 888) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 896) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -14830,6 +14853,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_buffer_map_persistent") != 864) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_buffer_map_persistent");
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_backend_properties") != 872) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_backend_properties");
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_native") != 880) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_native");
+    if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_render_color_grid_list") != 888) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_render_color_grid_list");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");

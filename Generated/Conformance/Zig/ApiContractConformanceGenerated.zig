@@ -4958,6 +4958,14 @@ comptime {
     if (@offsetOf(abi.WindowGraphicsWait, "owner") != 8) @compileError("WindowGraphicsWait.owner offset");
     if (@offsetOf(abi.WindowGraphicsWait, "known_revision") != 24) @compileError("WindowGraphicsWait.known_revision offset");
     if (@offsetOf(abi.WindowGraphicsWait, "deadline_tick") != 32) @compileError("WindowGraphicsWait.deadline_tick offset");
+    if (@sizeOf(abi.GfxRenderColorGridList) != 2592) @compileError("GfxRenderColorGridList size");
+    if (@offsetOf(abi.GfxRenderColorGridList, "version") != 0) @compileError("GfxRenderColorGridList.version offset");
+    if (@offsetOf(abi.GfxRenderColorGridList, "size") != 4) @compileError("GfxRenderColorGridList.size offset");
+    if (@offsetOf(abi.GfxRenderColorGridList, "count") != 8) @compileError("GfxRenderColorGridList.count offset");
+    if (@offsetOf(abi.GfxRenderColorGridList, "reserved0") != 12) @compileError("GfxRenderColorGridList.reserved0 offset");
+    if (@offsetOf(abi.GfxRenderColorGridList, "commands") != 16) @compileError("GfxRenderColorGridList.commands offset");
+    if (@offsetOf(abi.GfxRenderColorGridList, "program") != 1296) @compileError("GfxRenderColorGridList.program offset");
+    if (@offsetOf(abi.GfxRenderColorGridList, "grids") != 1568) @compileError("GfxRenderColorGridList.grids offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1224) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -5388,7 +5396,7 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.remote_frame_capture_stats) != 8) @compileError("R4DeskFns.remote_frame_capture_stats signature");
     if (@offsetOf(abi.R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("R4XStartR4Desk.desktop_activity_notify offset");
     if (@sizeOf(abi.R4DeskFns.desktop_activity_notify) != 8) @compileError("R4DeskFns.desktop_activity_notify signature");
-    if (@sizeOf(abi.R4XStartR4Draw) != 888) @compileError("R4XStartR4Draw size");
+    if (@sizeOf(abi.R4XStartR4Draw) != 896) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_height") != 24) @compileError("R4XStartR4Draw.screen_height offset");
@@ -5607,6 +5615,8 @@ comptime {
     if (@sizeOf(abi.R4DrawFns.gfx_queue_backend_properties) != 8) @compileError("R4DrawFns.gfx_queue_backend_properties signature");
     if (@offsetOf(abi.R4XStartR4Draw, "gfx_queue_submit_native") != 880) @compileError("R4XStartR4Draw.gfx_queue_submit_native offset");
     if (@sizeOf(abi.R4DrawFns.gfx_queue_submit_native) != 8) @compileError("R4DrawFns.gfx_queue_submit_native signature");
+    if (@offsetOf(abi.R4XStartR4Draw, "gfx_queue_submit_render_color_grid_list") != 888) @compileError("R4XStartR4Draw.gfx_queue_submit_render_color_grid_list offset");
+    if (@sizeOf(abi.R4DrawFns.gfx_queue_submit_render_color_grid_list) != 8) @compileError("R4DrawFns.gfx_queue_submit_render_color_grid_list signature");
     if (@sizeOf(abi.R4XStartR4Net) != 296) @compileError("R4XStartR4Net size");
     if (@offsetOf(abi.R4XStartR4Net, "tcp_connect") != 16) @compileError("R4XStartR4Net.tcp_connect offset");
     if (@sizeOf(abi.R4NetFns.tcp_connect) != 8) @compileError("R4NetFns.tcp_connect signature");

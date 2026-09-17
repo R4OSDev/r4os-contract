@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 418,
-    "group_slot_count": 418,
+    "function_count": 419,
+    "group_slot_count": 419,
     "sdk_only_count": 0,
-    "public_count": 319,
+    "public_count": 320,
     "advanced_count": 99
   },
   "functions": [
@@ -3857,6 +3857,18 @@
       "slot": 108,
       "exposure": "public",
       "description": "Submit native command metadata with the ordinary queue fence/dependency/deadline contract. operation must be native; all ordinary source/target/render/row fields must be empty. Backend native operation and exact profile identity required. Copies payload and binding array; reserves acknowledged mappings and canonical BO execution under the common owner. Close/cancel/producer exit cannot free active GPU resources; physical completion or proved reset is required. Driver validates private payload. Output unchanged on failure; no Linux ioctl or vendor method interpretation in the kernel.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_queue_submit_render_color_grid_list",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 109,
+      "exposure": "public",
+      "description": "Atomically submit1..16 compatible color draws with per-draw logical grids. Requires render_color_grid_list capability. Copies all descriptors before entering the queue owner; no pixel conversion, intermediate image or partial submission.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

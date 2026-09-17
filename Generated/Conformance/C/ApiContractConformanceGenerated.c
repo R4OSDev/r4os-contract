@@ -324,6 +324,7 @@ static R4DrawGfxVirtualWaitFn r4os_probe_r4draw_gfx_virtual_wait = (R4DrawGfxVir
 static R4DrawGfxBufferMapPersistentFn r4os_probe_r4draw_gfx_buffer_map_persistent = (R4DrawGfxBufferMapPersistentFn)0;
 static R4DrawGfxQueueBackendPropertiesFn r4os_probe_r4draw_gfx_queue_backend_properties = (R4DrawGfxQueueBackendPropertiesFn)0;
 static R4DrawGfxQueueSubmitNativeFn r4os_probe_r4draw_gfx_queue_submit_native = (R4DrawGfxQueueSubmitNativeFn)0;
+static R4DrawGfxQueueSubmitRenderColorGridListFn r4os_probe_r4draw_gfx_queue_submit_render_color_grid_list = (R4DrawGfxQueueSubmitRenderColorGridListFn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

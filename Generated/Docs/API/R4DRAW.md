@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v36, 888 Bytes, 109 Funktionsfelder und 109 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v37, 896 Bytes, 110 Funktionsfelder und 110 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -118,4 +118,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 106 | 864 | function | `gfx_buffer_map_persistent` | `*const fn (*const GfxBufferHandle, u32, u64, u64, *GfxBufferMap) callconv(.c) i32` |
 | 107 | 872 | function | `gfx_queue_backend_properties` | `*const fn (*const GfxBackendBinding, *GfxBackendProperties) callconv(.c) i32` |
 | 108 | 880 | function | `gfx_queue_submit_native` | `*const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxNativeSubmission, *GfxFenceStatus) callconv(.c) i32` |
+| 109 | 888 | function | `gfx_queue_submit_render_color_grid_list` | `*const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorGridList, *GfxFenceStatus) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->
