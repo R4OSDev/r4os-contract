@@ -35,8 +35,8 @@ Fields in canonical order:
   OPTIMIZE=size|speed                  optional for every kind, default size
   PACKAGE=<group name>                 optional for R4X, no build semantics
   ZIG_MODULE=<alias>:<relative .zig>   optional for R4X/R4D, repeatable, Zig only
-  C_INCLUDE=<relative include root>    optional, repeatable, C inputs only
-  C_DEFINE=<NAME>=<VALUE>              optional, repeatable, C inputs only
+  C_INCLUDE=<relative include root>    optional, repeatable, C or native Zig R4L
+  C_DEFINE=<NAME>=<VALUE>              optional, repeatable, C or native Zig R4L
   C_FLAG=<single compiler flag>        optional, repeatable, C inputs only
   NATIVE_ARCHIVE=<logical name>        optional, repeatable, Zig R4L only
   IMPORT=<module>:<symbol>:<min-version> repeated; at least one for R4X
@@ -62,8 +62,10 @@ directory, use forward slashes and may not escape with "..". Their extensions
 must match these language rules. TARGET uses forward slashes,
 contains no dot segments and respects the current R4OS path/component limits.
 
-C_INCLUDE, C_DEFINE and C_FLAG are available only when the project contains
-C sources, including mixed Zig/C R4L and R4D artifacts. Include roots are relative
+C_INCLUDE and C_DEFINE are available when the project contains C sources,
+including mixed Zig/C R4L and R4D artifacts, or when a Zig R4L declares
+NATIVE_ARCHIVE and needs headers for @cImport. C_FLAG still requires C sources.
+Include roots are relative
 build dependencies and may deliberately use ".." to reach a package sibling;
 absolute paths, backslashes and explicit "." components are forbidden.
 C_DEFINE splits at the first "=" and requires a C identifier plus a
