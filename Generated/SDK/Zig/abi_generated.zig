@@ -7968,6 +7968,19 @@ pub const WindowModeExchange = extern struct {
     reserved: u32 = 0,
 };
 
+pub const DriverModuleInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    owner: u32 = 0,
+    flags: u32 = 0,
+    generation: u64 = 0,
+    module_generation: u32 = 0,
+    reserved: u32 = 0,
+    driver_name: [32]u8 = .{0} ** 32,
+    module_version: [32]u8 = .{0} ** 32,
+    firmware_version: [32]u8 = .{0} ** 32,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8828,12 +8841,13 @@ pub const R4DevFns = struct {
     pub const performance_pci_inventory = *const fn (*ProgramPciInventoryPerformanceInfo) callconv(.c) i32;
     pub const performance_input = *const fn (*ProgramInputPerformanceInfo) callconv(.c) i32;
     pub const display_state = *const fn (*DisplayStateInfo) callconv(.c) i32;
+    pub const driver_module_info = *const fn (u32, *DriverModuleInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 11,
-    size: u32 = 360,
+    abi_version: u32 = 12,
+    size: u32 = 368,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -8878,6 +8892,7 @@ pub const R4XStartR4Dev = extern struct {
     performance_pci_inventory: usize = 0,
     performance_input: usize = 0,
     display_state: usize = 0,
+    driver_module_info: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -9329,6 +9344,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 40, .offset = 336, .name = "performance_pci_inventory", .state = .function, .required = false },
     .{ .number = 41, .offset = 344, .name = "performance_input", .state = .function, .required = false },
     .{ .number = 42, .offset = 352, .name = "display_state", .state = .function, .required = false },
+    .{ .number = 43, .offset = 360, .name = "driver_module_info", .state = .function, .required = false },
 };
 
 comptime {
@@ -14624,6 +14640,18 @@ comptime {
     if (@offsetOf(WindowModeExchange, "mode") != 84) @compileError("generated ABI offset drift: WindowModeExchange.mode");
     if (@offsetOf(WindowModeExchange, "flags") != 88) @compileError("generated ABI offset drift: WindowModeExchange.flags");
     if (@offsetOf(WindowModeExchange, "reserved") != 92) @compileError("generated ABI offset drift: WindowModeExchange.reserved");
+    if (@sizeOf(DriverModuleInfo) != 128) @compileError("generated ABI size drift: DriverModuleInfo");
+    if (@alignOf(DriverModuleInfo) != 8) @compileError("generated ABI alignment drift: DriverModuleInfo");
+    if (@offsetOf(DriverModuleInfo, "version") != 0) @compileError("generated ABI offset drift: DriverModuleInfo.version");
+    if (@offsetOf(DriverModuleInfo, "size") != 4) @compileError("generated ABI offset drift: DriverModuleInfo.size");
+    if (@offsetOf(DriverModuleInfo, "owner") != 8) @compileError("generated ABI offset drift: DriverModuleInfo.owner");
+    if (@offsetOf(DriverModuleInfo, "flags") != 12) @compileError("generated ABI offset drift: DriverModuleInfo.flags");
+    if (@offsetOf(DriverModuleInfo, "generation") != 16) @compileError("generated ABI offset drift: DriverModuleInfo.generation");
+    if (@offsetOf(DriverModuleInfo, "module_generation") != 24) @compileError("generated ABI offset drift: DriverModuleInfo.module_generation");
+    if (@offsetOf(DriverModuleInfo, "reserved") != 28) @compileError("generated ABI offset drift: DriverModuleInfo.reserved");
+    if (@offsetOf(DriverModuleInfo, "driver_name") != 32) @compileError("generated ABI offset drift: DriverModuleInfo.driver_name");
+    if (@offsetOf(DriverModuleInfo, "module_version") != 64) @compileError("generated ABI offset drift: DriverModuleInfo.module_version");
+    if (@offsetOf(DriverModuleInfo, "firmware_version") != 96) @compileError("generated ABI offset drift: DriverModuleInfo.firmware_version");
     if (@sizeOf(R4XStartR4Sys) != 1248) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -15016,7 +15044,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 360) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 368) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -15060,4 +15088,5 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_pci_inventory") != 336) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_pci_inventory");
     if (@offsetOf(R4XStartR4Dev, "performance_input") != 344) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_input");
     if (@offsetOf(R4XStartR4Dev, "display_state") != 352) @compileError("generated ABI offset drift: R4XStartR4Dev.display_state");
+    if (@offsetOf(R4XStartR4Dev, "driver_module_info") != 360) @compileError("generated ABI offset drift: R4XStartR4Dev.driver_module_info");
 }

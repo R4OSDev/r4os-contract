@@ -5001,6 +5001,17 @@ comptime {
     if (@offsetOf(abi.WindowModeExchange, "mode") != 84) @compileError("WindowModeExchange.mode offset");
     if (@offsetOf(abi.WindowModeExchange, "flags") != 88) @compileError("WindowModeExchange.flags offset");
     if (@offsetOf(abi.WindowModeExchange, "reserved") != 92) @compileError("WindowModeExchange.reserved offset");
+    if (@sizeOf(abi.DriverModuleInfo) != 128) @compileError("DriverModuleInfo size");
+    if (@offsetOf(abi.DriverModuleInfo, "version") != 0) @compileError("DriverModuleInfo.version offset");
+    if (@offsetOf(abi.DriverModuleInfo, "size") != 4) @compileError("DriverModuleInfo.size offset");
+    if (@offsetOf(abi.DriverModuleInfo, "owner") != 8) @compileError("DriverModuleInfo.owner offset");
+    if (@offsetOf(abi.DriverModuleInfo, "flags") != 12) @compileError("DriverModuleInfo.flags offset");
+    if (@offsetOf(abi.DriverModuleInfo, "generation") != 16) @compileError("DriverModuleInfo.generation offset");
+    if (@offsetOf(abi.DriverModuleInfo, "module_generation") != 24) @compileError("DriverModuleInfo.module_generation offset");
+    if (@offsetOf(abi.DriverModuleInfo, "reserved") != 28) @compileError("DriverModuleInfo.reserved offset");
+    if (@offsetOf(abi.DriverModuleInfo, "driver_name") != 32) @compileError("DriverModuleInfo.driver_name offset");
+    if (@offsetOf(abi.DriverModuleInfo, "module_version") != 64) @compileError("DriverModuleInfo.module_version offset");
+    if (@offsetOf(abi.DriverModuleInfo, "firmware_version") != 96) @compileError("DriverModuleInfo.firmware_version offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1248) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -5774,7 +5785,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 360) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 368) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -5859,6 +5870,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.performance_input) != 8) @compileError("R4DevFns.performance_input signature");
     if (@offsetOf(abi.R4XStartR4Dev, "display_state") != 352) @compileError("R4XStartR4Dev.display_state offset");
     if (@sizeOf(abi.R4DevFns.display_state) != 8) @compileError("R4DevFns.display_state signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "driver_module_info") != 360) @compileError("R4XStartR4Dev.driver_module_info offset");
+    if (@sizeOf(abi.R4DevFns.driver_module_info) != 8) @compileError("R4DevFns.driver_module_info signature");
 }
 
 test "generated API contract compiles" {}

@@ -92,8 +92,8 @@ Gruppentabellen
     R4XSTART_R4NET_SIZE    = 296
     R4XSTART_R4AUDIO_VERSION = 2
     R4XSTART_R4AUDIO_SIZE    = 200
-    R4XSTART_R4DEV_VERSION = 11
-    R4XSTART_R4DEV_SIZE    = 360
+    R4XSTART_R4DEV_VERSION = 12
+    R4XSTART_R4DEV_SIZE    = 368
 
 Diese Zahlen beschreiben die aktuellen Provider-Tabellen. Die gleichnamigen
 generierten SDK-Importkonstanten bezeichnen den unterstuetzten Mindestprefix

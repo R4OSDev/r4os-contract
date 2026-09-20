@@ -2613,6 +2613,7 @@ pub const WindowModeIdentity = generated.WindowModeIdentity;
 pub const WindowModeRequest = generated.WindowModeRequest;
 pub const WindowModeReply = generated.WindowModeReply;
 pub const WindowModeExchange = generated.WindowModeExchange;
+pub const DriverModuleInfo = generated.DriverModuleInfo;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

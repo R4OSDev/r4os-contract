@@ -3,11 +3,11 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 422,
-    "group_slot_count": 422,
+    "function_count": 423,
+    "group_slot_count": 423,
     "sdk_only_count": 0,
     "public_count": 323,
-    "advanced_count": 99
+    "advanced_count": 100
   },
   "functions": [
     {
@@ -5069,6 +5069,18 @@
       "slot": 42,
       "exposure": "advanced",
       "description": "Returns one coherent display owner, candidate, generation, capability and fallback snapshot without PCI or MMIO reads.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.driver_module_info",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 43,
+      "exposure": "advanced",
+      "description": "Copies retained metadata of the initialized R4D owner; no file, PCI or MMIO reads. Returns 1 on success, 0 for no runtime R4D, -1 for invalid capacity/version/owner, -2 while the lifecycle is busy. No output on failure. Firmware version names the declared embedded bundle, never successful device execution.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

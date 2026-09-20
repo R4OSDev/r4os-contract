@@ -2652,6 +2652,7 @@ typedef struct R4WindowModeIdentity R4WindowModeIdentity;
 typedef struct R4WindowModeRequest R4WindowModeRequest;
 typedef struct R4WindowModeReply R4WindowModeReply;
 typedef struct R4WindowModeExchange R4WindowModeExchange;
+typedef struct R4DriverModuleInfo R4DriverModuleInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8209,6 +8210,19 @@ typedef struct R4WindowModeExchange {
     uint32_t reserved;
 } R4WindowModeExchange;
 
+typedef struct R4DriverModuleInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t owner;
+    uint32_t flags;
+    uint64_t generation;
+    uint32_t module_generation;
+    uint32_t reserved;
+    uint8_t driver_name[32];
+    uint8_t module_version[32];
+    uint8_t firmware_version[32];
+} R4DriverModuleInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9104,6 +9118,7 @@ typedef int32_t (*R4DevPerformanceDriverWorkFn)(uint32_t owner, R4ProgramDriverW
 typedef int32_t (*R4DevPerformancePciInventoryFn)(R4ProgramPciInventoryPerformanceInfo * out);
 typedef int32_t (*R4DevPerformanceInputFn)(R4ProgramInputPerformanceInfo * out);
 typedef int32_t (*R4DevDisplayStateFn)(R4DisplayStateInfo * out);
+typedef int32_t (*R4DevDriverModuleInfoFn)(uint32_t owner, R4DriverModuleInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9153,6 +9168,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_pci_inventory;
     uintptr_t performance_input;
     uintptr_t display_state;
+    uintptr_t driver_module_info;
 } R4XStartR4Dev;
 
 
@@ -14156,6 +14172,17 @@ _Static_assert(offsetof(R4WindowModeExchange, ack_result) == 80u, "WindowModeExc
 _Static_assert(offsetof(R4WindowModeExchange, mode) == 84u, "WindowModeExchange.mode offset mismatch");
 _Static_assert(offsetof(R4WindowModeExchange, flags) == 88u, "WindowModeExchange.flags offset mismatch");
 _Static_assert(offsetof(R4WindowModeExchange, reserved) == 92u, "WindowModeExchange.reserved offset mismatch");
+_Static_assert(sizeof(R4DriverModuleInfo) == 128u, "DriverModuleInfo size mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, version) == 0u, "DriverModuleInfo.version offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, size) == 4u, "DriverModuleInfo.size offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, owner) == 8u, "DriverModuleInfo.owner offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, flags) == 12u, "DriverModuleInfo.flags offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, generation) == 16u, "DriverModuleInfo.generation offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, module_generation) == 24u, "DriverModuleInfo.module_generation offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, reserved) == 28u, "DriverModuleInfo.reserved offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, driver_name) == 32u, "DriverModuleInfo.driver_name offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, module_version) == 64u, "DriverModuleInfo.module_version offset mismatch");
+_Static_assert(offsetof(R4DriverModuleInfo, firmware_version) == 96u, "DriverModuleInfo.firmware_version offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1248u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -14929,7 +14956,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 360u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 368u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15014,6 +15041,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_input) == 344u, "R4XStartR4De
 _Static_assert(sizeof(R4DevPerformanceInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, display_state) == 352u, "R4XStartR4Dev.display_state offset mismatch");
 _Static_assert(sizeof(R4DevDisplayStateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, driver_module_info) == 360u, "R4XStartR4Dev.driver_module_info offset mismatch");
+_Static_assert(sizeof(R4DevDriverModuleInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

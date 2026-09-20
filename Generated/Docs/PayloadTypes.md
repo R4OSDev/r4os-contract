@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 297 von 297 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 298 von 298 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1901; Limits: 109
 
@@ -318,6 +318,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `WindowModeRequest` | fixed_layout | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `WindowModeReply` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `WindowModeExchange` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `DriverModuleInfo` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 
 ## Typdetails
 
@@ -7947,6 +7948,26 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `mode` | 84 | 4 | 4 | `u32` | - |
 | `flags` | 88 | 4 | 4 | `u32` | - |
 | `reserved` | 92 | 4 | 4 | `u32` | - |
+
+### `DriverModuleInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `owner` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `module_generation` | 24 | 4 | 4 | `u32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+| `driver_name` | 32 | 32 | 1 | `[32]u8` | - |
+| `module_version` | 64 | 32 | 1 | `[32]u8` | - |
+| `firmware_version` | 96 | 32 | 1 | `[32]u8` | - |
 
 ## Fehlerdomänen
 
