@@ -1902,6 +1902,21 @@ pub const window_mode_op_request: u16 = 1841;
 pub const window_mode_op_exchange: u16 = 1842;
 pub const gui_window_flag_fullscreen: u32 = 16;
 pub const window_graphics_inspect: u32 = 3;
+pub const gfx_brightness_path_none: u32 = 0;
+pub const gfx_brightness_path_pwm: u32 = 1;
+pub const gfx_brightness_path_aux8: u32 = 2;
+pub const gfx_brightness_path_aux16: u32 = 3;
+pub const gfx_brightness_phase_unavailable: u32 = 0;
+pub const gfx_brightness_phase_ready: u32 = 1;
+pub const gfx_brightness_phase_failed: u32 = 2;
+pub const gfx_brightness_reason_none: u32 = 0;
+pub const gfx_brightness_reason_unsupported: u32 = 1;
+pub const gfx_brightness_reason_firmware_owner: u32 = 2;
+pub const gfx_brightness_reason_invalid_panel: u32 = 3;
+pub const gfx_brightness_reason_timeout: u32 = 4;
+pub const gfx_brightness_reason_io: u32 = 5;
+pub const gfx_brightness_reason_inactive: u32 = 6;
+pub const gfx_brightness_flag_current_known: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6723,7 +6738,7 @@ pub const GfxReceiverUpdate = extern struct {
 
 pub const GfxDriverOutputApi = extern struct {
     version: u32 = 1,
-    size: u32 = 160,
+    size: u32 = 176,
     publish: u64 = 0,
     withdraw: u64 = 0,
     register_source: u64 = 0,
@@ -6743,6 +6758,8 @@ pub const GfxDriverOutputApi = extern struct {
     refresh_read: u64 = 0,
     power_publish: u64 = 0,
     power_read: u64 = 0,
+    brightness_publish: u64 = 0,
+    brightness_read: u64 = 0,
 };
 
 pub const GfxNativeBootInfo = extern struct {
@@ -7996,6 +8013,32 @@ pub const DriverModuleInfo = extern struct {
     firmware_version: [32]u8 = .{0} ** 32,
 };
 
+pub const GfxOutputBrightness = extern struct {
+    version: u32 = 1,
+    size: u32 = 88,
+    identity: GfxOutputId = .{},
+    path: u32 = 0,
+    phase: u32 = 0,
+    minimum: u32 = 0,
+    maximum: u32 = 0,
+    current: u32 = 0,
+    flags: u32 = 0,
+    reason: u32 = 0,
+    reserved0: u32 = 0,
+    sequence: u64 = 0,
+    request_sequence: u64 = 0,
+    since_ns: u64 = 0,
+};
+
+pub const GfxBrightnessRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    identity: GfxOutputId = .{},
+    level: u32 = 0,
+    reserved0: u32 = 0,
+    sequence: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8561,12 +8604,14 @@ pub const R4DrawFns = struct {
     pub const gfx_queue_backend_properties = *const fn (*const GfxBackendBinding, *GfxBackendProperties) callconv(.c) i32;
     pub const gfx_queue_submit_native = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxNativeSubmission, *GfxFenceStatus) callconv(.c) i32;
     pub const gfx_queue_submit_render_color_grid_list = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorGridList, *GfxFenceStatus) callconv(.c) i32;
+    pub const gfx_output_brightness = *const fn (*const GfxOutputId, *GfxOutputBrightness) callconv(.c) i32;
+    pub const gfx_brightness_request = *const fn (*const GfxBrightnessRequest, *GfxBrightnessRequest) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 37,
-    size: u32 = 896,
+    abi_version: u32 = 38,
+    size: u32 = 912,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -8678,6 +8723,8 @@ pub const R4XStartR4Draw = extern struct {
     gfx_queue_backend_properties: usize = 0,
     gfx_queue_submit_native: usize = 0,
     gfx_queue_submit_render_color_grid_list: usize = 0,
+    gfx_output_brightness: usize = 0,
+    gfx_brightness_request: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -9249,6 +9296,8 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 107, .offset = 872, .name = "gfx_queue_backend_properties", .state = .function, .required = false },
     .{ .number = 108, .offset = 880, .name = "gfx_queue_submit_native", .state = .function, .required = false },
     .{ .number = 109, .offset = 888, .name = "gfx_queue_submit_render_color_grid_list", .state = .function, .required = false },
+    .{ .number = 110, .offset = 896, .name = "gfx_output_brightness", .state = .function, .required = false },
+    .{ .number = 111, .offset = 904, .name = "gfx_brightness_request", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -13507,7 +13556,7 @@ comptime {
     if (@offsetOf(GfxReceiverUpdate, "count") != 32) @compileError("generated ABI offset drift: GfxReceiverUpdate.count");
     if (@offsetOf(GfxReceiverUpdate, "reserved0") != 36) @compileError("generated ABI offset drift: GfxReceiverUpdate.reserved0");
     if (@offsetOf(GfxReceiverUpdate, "receivers") != 40) @compileError("generated ABI offset drift: GfxReceiverUpdate.receivers");
-    if (@sizeOf(GfxDriverOutputApi) != 160) @compileError("generated ABI size drift: GfxDriverOutputApi");
+    if (@sizeOf(GfxDriverOutputApi) != 176) @compileError("generated ABI size drift: GfxDriverOutputApi");
     if (@alignOf(GfxDriverOutputApi) != 8) @compileError("generated ABI alignment drift: GfxDriverOutputApi");
     if (@offsetOf(GfxDriverOutputApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverOutputApi.version");
     if (@offsetOf(GfxDriverOutputApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverOutputApi.size");
@@ -13530,6 +13579,8 @@ comptime {
     if (@offsetOf(GfxDriverOutputApi, "refresh_read") != 136) @compileError("generated ABI offset drift: GfxDriverOutputApi.refresh_read");
     if (@offsetOf(GfxDriverOutputApi, "power_publish") != 144) @compileError("generated ABI offset drift: GfxDriverOutputApi.power_publish");
     if (@offsetOf(GfxDriverOutputApi, "power_read") != 152) @compileError("generated ABI offset drift: GfxDriverOutputApi.power_read");
+    if (@offsetOf(GfxDriverOutputApi, "brightness_publish") != 160) @compileError("generated ABI offset drift: GfxDriverOutputApi.brightness_publish");
+    if (@offsetOf(GfxDriverOutputApi, "brightness_read") != 168) @compileError("generated ABI offset drift: GfxDriverOutputApi.brightness_read");
     if (@sizeOf(GfxNativeBootInfo) != 56) @compileError("generated ABI size drift: GfxNativeBootInfo");
     if (@alignOf(GfxNativeBootInfo) != 8) @compileError("generated ABI alignment drift: GfxNativeBootInfo");
     if (@offsetOf(GfxNativeBootInfo, "version") != 0) @compileError("generated ABI offset drift: GfxNativeBootInfo.version");
@@ -14681,6 +14732,30 @@ comptime {
     if (@offsetOf(DriverModuleInfo, "driver_name") != 32) @compileError("generated ABI offset drift: DriverModuleInfo.driver_name");
     if (@offsetOf(DriverModuleInfo, "module_version") != 64) @compileError("generated ABI offset drift: DriverModuleInfo.module_version");
     if (@offsetOf(DriverModuleInfo, "firmware_version") != 96) @compileError("generated ABI offset drift: DriverModuleInfo.firmware_version");
+    if (@sizeOf(GfxOutputBrightness) != 88) @compileError("generated ABI size drift: GfxOutputBrightness");
+    if (@alignOf(GfxOutputBrightness) != 8) @compileError("generated ABI alignment drift: GfxOutputBrightness");
+    if (@offsetOf(GfxOutputBrightness, "version") != 0) @compileError("generated ABI offset drift: GfxOutputBrightness.version");
+    if (@offsetOf(GfxOutputBrightness, "size") != 4) @compileError("generated ABI offset drift: GfxOutputBrightness.size");
+    if (@offsetOf(GfxOutputBrightness, "identity") != 8) @compileError("generated ABI offset drift: GfxOutputBrightness.identity");
+    if (@offsetOf(GfxOutputBrightness, "path") != 32) @compileError("generated ABI offset drift: GfxOutputBrightness.path");
+    if (@offsetOf(GfxOutputBrightness, "phase") != 36) @compileError("generated ABI offset drift: GfxOutputBrightness.phase");
+    if (@offsetOf(GfxOutputBrightness, "minimum") != 40) @compileError("generated ABI offset drift: GfxOutputBrightness.minimum");
+    if (@offsetOf(GfxOutputBrightness, "maximum") != 44) @compileError("generated ABI offset drift: GfxOutputBrightness.maximum");
+    if (@offsetOf(GfxOutputBrightness, "current") != 48) @compileError("generated ABI offset drift: GfxOutputBrightness.current");
+    if (@offsetOf(GfxOutputBrightness, "flags") != 52) @compileError("generated ABI offset drift: GfxOutputBrightness.flags");
+    if (@offsetOf(GfxOutputBrightness, "reason") != 56) @compileError("generated ABI offset drift: GfxOutputBrightness.reason");
+    if (@offsetOf(GfxOutputBrightness, "reserved0") != 60) @compileError("generated ABI offset drift: GfxOutputBrightness.reserved0");
+    if (@offsetOf(GfxOutputBrightness, "sequence") != 64) @compileError("generated ABI offset drift: GfxOutputBrightness.sequence");
+    if (@offsetOf(GfxOutputBrightness, "request_sequence") != 72) @compileError("generated ABI offset drift: GfxOutputBrightness.request_sequence");
+    if (@offsetOf(GfxOutputBrightness, "since_ns") != 80) @compileError("generated ABI offset drift: GfxOutputBrightness.since_ns");
+    if (@sizeOf(GfxBrightnessRequest) != 48) @compileError("generated ABI size drift: GfxBrightnessRequest");
+    if (@alignOf(GfxBrightnessRequest) != 8) @compileError("generated ABI alignment drift: GfxBrightnessRequest");
+    if (@offsetOf(GfxBrightnessRequest, "version") != 0) @compileError("generated ABI offset drift: GfxBrightnessRequest.version");
+    if (@offsetOf(GfxBrightnessRequest, "size") != 4) @compileError("generated ABI offset drift: GfxBrightnessRequest.size");
+    if (@offsetOf(GfxBrightnessRequest, "identity") != 8) @compileError("generated ABI offset drift: GfxBrightnessRequest.identity");
+    if (@offsetOf(GfxBrightnessRequest, "level") != 32) @compileError("generated ABI offset drift: GfxBrightnessRequest.level");
+    if (@offsetOf(GfxBrightnessRequest, "reserved0") != 36) @compileError("generated ABI offset drift: GfxBrightnessRequest.reserved0");
+    if (@offsetOf(GfxBrightnessRequest, "sequence") != 40) @compileError("generated ABI offset drift: GfxBrightnessRequest.sequence");
     if (@sizeOf(R4XStartR4Sys) != 1248) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -14902,7 +14977,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_source_reset") != 512) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_source_reset");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_capture_stats");
     if (@offsetOf(R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("generated ABI offset drift: R4XStartR4Desk.desktop_activity_notify");
-    if (@sizeOf(R4XStartR4Draw) != 896) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -15013,6 +15088,8 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_backend_properties") != 872) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_backend_properties");
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_native") != 880) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_native");
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_render_color_grid_list") != 888) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_render_color_grid_list");
+    if (@offsetOf(R4XStartR4Draw, "gfx_output_brightness") != 896) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_output_brightness");
+    if (@offsetOf(R4XStartR4Draw, "gfx_brightness_request") != 904) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_brightness_request");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
@@ -15690,13 +15767,15 @@ pub const R4DrawProvider = struct {
     gfx_queue_backend_properties: ?R4DrawFns.gfx_queue_backend_properties = null,
     gfx_queue_submit_native: ?R4DrawFns.gfx_queue_submit_native = null,
     gfx_queue_submit_render_color_grid_list: ?R4DrawFns.gfx_queue_submit_render_color_grid_list = null,
+    gfx_output_brightness: ?R4DrawFns.gfx_output_brightness = null,
+    gfx_brightness_request: ?R4DrawFns.gfx_brightness_request = null,
 };
 
 pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
     return .{
         .magic = 827802706,
-        .abi_version = 37,
-        .size = 896,
+        .abi_version = 38,
+        .size = 912,
         .flags = 0,
         .screen_width = if (provider.screen_width) |callback| @intFromPtr(callback) else 0,
         .screen_height = if (provider.screen_height) |callback| @intFromPtr(callback) else 0,
@@ -15808,6 +15887,8 @@ pub fn buildR4DrawTable(provider: R4DrawProvider) R4XStartR4Draw {
         .gfx_queue_backend_properties = if (provider.gfx_queue_backend_properties) |callback| @intFromPtr(callback) else 0,
         .gfx_queue_submit_native = if (provider.gfx_queue_submit_native) |callback| @intFromPtr(callback) else 0,
         .gfx_queue_submit_render_color_grid_list = if (provider.gfx_queue_submit_render_color_grid_list) |callback| @intFromPtr(callback) else 0,
+        .gfx_output_brightness = if (provider.gfx_output_brightness) |callback| @intFromPtr(callback) else 0,
+        .gfx_brightness_request = if (provider.gfx_brightness_request) |callback| @intFromPtr(callback) else 0,
     };
 }
 

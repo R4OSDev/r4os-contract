@@ -1914,6 +1914,21 @@ extern "C" {
 #define R4OS_WINDOW_MODE_OP_EXCHANGE 1842u
 #define R4OS_GUI_WINDOW_FLAG_FULLSCREEN 16u
 #define R4OS_WINDOW_GRAPHICS_INSPECT 3u
+#define R4OS_GFX_BRIGHTNESS_PATH_NONE 0u
+#define R4OS_GFX_BRIGHTNESS_PATH_PWM 1u
+#define R4OS_GFX_BRIGHTNESS_PATH_AUX8 2u
+#define R4OS_GFX_BRIGHTNESS_PATH_AUX16 3u
+#define R4OS_GFX_BRIGHTNESS_PHASE_UNAVAILABLE 0u
+#define R4OS_GFX_BRIGHTNESS_PHASE_READY 1u
+#define R4OS_GFX_BRIGHTNESS_PHASE_FAILED 2u
+#define R4OS_GFX_BRIGHTNESS_REASON_NONE 0u
+#define R4OS_GFX_BRIGHTNESS_REASON_UNSUPPORTED 1u
+#define R4OS_GFX_BRIGHTNESS_REASON_FIRMWARE_OWNER 2u
+#define R4OS_GFX_BRIGHTNESS_REASON_INVALID_PANEL 3u
+#define R4OS_GFX_BRIGHTNESS_REASON_TIMEOUT 4u
+#define R4OS_GFX_BRIGHTNESS_REASON_IO 5u
+#define R4OS_GFX_BRIGHTNESS_REASON_INACTIVE 6u
+#define R4OS_GFX_BRIGHTNESS_FLAG_CURRENT_KNOWN 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2654,6 +2669,8 @@ typedef struct R4WindowModeRequest R4WindowModeRequest;
 typedef struct R4WindowModeReply R4WindowModeReply;
 typedef struct R4WindowModeExchange R4WindowModeExchange;
 typedef struct R4DriverModuleInfo R4DriverModuleInfo;
+typedef struct R4GfxOutputBrightness R4GfxOutputBrightness;
+typedef struct R4GfxBrightnessRequest R4GfxBrightnessRequest;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -7018,6 +7035,8 @@ typedef struct R4GfxDriverOutputApi {
     uint64_t refresh_read;
     uint64_t power_publish;
     uint64_t power_read;
+    uint64_t brightness_publish;
+    uint64_t brightness_read;
 } R4GfxDriverOutputApi;
 
 typedef struct R4GfxNativeBootInfo {
@@ -8239,6 +8258,32 @@ typedef struct R4DriverModuleInfo {
     uint8_t firmware_version[32];
 } R4DriverModuleInfo;
 
+typedef struct R4GfxOutputBrightness {
+    uint32_t version;
+    uint32_t size;
+    R4GfxOutputId identity;
+    uint32_t path;
+    uint32_t phase;
+    uint32_t minimum;
+    uint32_t maximum;
+    uint32_t current;
+    uint32_t flags;
+    uint32_t reason;
+    uint32_t reserved0;
+    uint64_t sequence;
+    uint64_t request_sequence;
+    uint64_t since_ns;
+} R4GfxOutputBrightness;
+
+typedef struct R4GfxBrightnessRequest {
+    uint32_t version;
+    uint32_t size;
+    R4GfxOutputId identity;
+    uint32_t level;
+    uint32_t reserved0;
+    uint64_t sequence;
+} R4GfxBrightnessRequest;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8845,6 +8890,8 @@ typedef int32_t (*R4DrawGfxBufferMapPersistentFn)(const R4GfxBufferHandle * refe
 typedef int32_t (*R4DrawGfxQueueBackendPropertiesFn)(const R4GfxBackendBinding * binding, R4GfxBackendProperties * output);
 typedef int32_t (*R4DrawGfxQueueSubmitNativeFn)(const R4GfxQueueHandle * queue, const R4GfxSubmission * submission, const R4GfxNativeSubmission * native, R4GfxFenceStatus * output);
 typedef int32_t (*R4DrawGfxQueueSubmitRenderColorGridListFn)(const R4GfxQueueHandle * queue, const R4GfxSubmission * submission, const R4GfxRenderColorGridList * list, R4GfxFenceStatus * output);
+typedef int32_t (*R4DrawGfxOutputBrightnessFn)(const R4GfxOutputId * identity, R4GfxOutputBrightness * output);
+typedef int32_t (*R4DrawGfxBrightnessRequestFn)(const R4GfxBrightnessRequest * input, R4GfxBrightnessRequest * output);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -8961,6 +9008,8 @@ typedef struct R4XStartR4Draw {
     uintptr_t gfx_queue_backend_properties;
     uintptr_t gfx_queue_submit_native;
     uintptr_t gfx_queue_submit_render_color_grid_list;
+    uintptr_t gfx_output_brightness;
+    uintptr_t gfx_brightness_request;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -13139,7 +13188,7 @@ _Static_assert(offsetof(R4GfxReceiverUpdate, sequence) == 24u, "GfxReceiverUpdat
 _Static_assert(offsetof(R4GfxReceiverUpdate, count) == 32u, "GfxReceiverUpdate.count offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, reserved0) == 36u, "GfxReceiverUpdate.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxReceiverUpdate, receivers) == 40u, "GfxReceiverUpdate.receivers offset mismatch");
-_Static_assert(sizeof(R4GfxDriverOutputApi) == 160u, "GfxDriverOutputApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverOutputApi) == 176u, "GfxDriverOutputApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, version) == 0u, "GfxDriverOutputApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, size) == 4u, "GfxDriverOutputApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, publish) == 8u, "GfxDriverOutputApi.publish offset mismatch");
@@ -13161,6 +13210,8 @@ _Static_assert(offsetof(R4GfxDriverOutputApi, refresh_publish) == 128u, "GfxDriv
 _Static_assert(offsetof(R4GfxDriverOutputApi, refresh_read) == 136u, "GfxDriverOutputApi.refresh_read offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, power_publish) == 144u, "GfxDriverOutputApi.power_publish offset mismatch");
 _Static_assert(offsetof(R4GfxDriverOutputApi, power_read) == 152u, "GfxDriverOutputApi.power_read offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, brightness_publish) == 160u, "GfxDriverOutputApi.brightness_publish offset mismatch");
+_Static_assert(offsetof(R4GfxDriverOutputApi, brightness_read) == 168u, "GfxDriverOutputApi.brightness_read offset mismatch");
 _Static_assert(sizeof(R4GfxNativeBootInfo) == 56u, "GfxNativeBootInfo size mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, version) == 0u, "GfxNativeBootInfo.version offset mismatch");
 _Static_assert(offsetof(R4GfxNativeBootInfo, size) == 4u, "GfxNativeBootInfo.size offset mismatch");
@@ -14212,6 +14263,28 @@ _Static_assert(offsetof(R4DriverModuleInfo, reserved) == 28u, "DriverModuleInfo.
 _Static_assert(offsetof(R4DriverModuleInfo, driver_name) == 32u, "DriverModuleInfo.driver_name offset mismatch");
 _Static_assert(offsetof(R4DriverModuleInfo, module_version) == 64u, "DriverModuleInfo.module_version offset mismatch");
 _Static_assert(offsetof(R4DriverModuleInfo, firmware_version) == 96u, "DriverModuleInfo.firmware_version offset mismatch");
+_Static_assert(sizeof(R4GfxOutputBrightness) == 88u, "GfxOutputBrightness size mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, version) == 0u, "GfxOutputBrightness.version offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, size) == 4u, "GfxOutputBrightness.size offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, identity) == 8u, "GfxOutputBrightness.identity offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, path) == 32u, "GfxOutputBrightness.path offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, phase) == 36u, "GfxOutputBrightness.phase offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, minimum) == 40u, "GfxOutputBrightness.minimum offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, maximum) == 44u, "GfxOutputBrightness.maximum offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, current) == 48u, "GfxOutputBrightness.current offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, flags) == 52u, "GfxOutputBrightness.flags offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, reason) == 56u, "GfxOutputBrightness.reason offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, reserved0) == 60u, "GfxOutputBrightness.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, sequence) == 64u, "GfxOutputBrightness.sequence offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, request_sequence) == 72u, "GfxOutputBrightness.request_sequence offset mismatch");
+_Static_assert(offsetof(R4GfxOutputBrightness, since_ns) == 80u, "GfxOutputBrightness.since_ns offset mismatch");
+_Static_assert(sizeof(R4GfxBrightnessRequest) == 48u, "GfxBrightnessRequest size mismatch");
+_Static_assert(offsetof(R4GfxBrightnessRequest, version) == 0u, "GfxBrightnessRequest.version offset mismatch");
+_Static_assert(offsetof(R4GfxBrightnessRequest, size) == 4u, "GfxBrightnessRequest.size offset mismatch");
+_Static_assert(offsetof(R4GfxBrightnessRequest, identity) == 8u, "GfxBrightnessRequest.identity offset mismatch");
+_Static_assert(offsetof(R4GfxBrightnessRequest, level) == 32u, "GfxBrightnessRequest.level offset mismatch");
+_Static_assert(offsetof(R4GfxBrightnessRequest, reserved0) == 36u, "GfxBrightnessRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4GfxBrightnessRequest, sequence) == 40u, "GfxBrightnessRequest.sequence offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1248u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -14648,7 +14721,7 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_capture_stats) == 520u, "R4
 _Static_assert(sizeof(R4DeskRemoteFrameCaptureStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, desktop_activity_notify) == 528u, "R4XStartR4Desk.desktop_activity_notify offset mismatch");
 _Static_assert(sizeof(R4DeskDesktopActivityNotifyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 896u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 912u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -14869,6 +14942,10 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_queue_submit_native) == 880u, "R4XSt
 _Static_assert(sizeof(R4DrawGfxQueueSubmitNativeFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_queue_submit_render_color_grid_list) == 888u, "R4XStartR4Draw.gfx_queue_submit_render_color_grid_list offset mismatch");
 _Static_assert(sizeof(R4DrawGfxQueueSubmitRenderColorGridListFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_output_brightness) == 896u, "R4XStartR4Draw.gfx_output_brightness offset mismatch");
+_Static_assert(sizeof(R4DrawGfxOutputBrightnessFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, gfx_brightness_request) == 904u, "R4XStartR4Draw.gfx_brightness_request offset mismatch");
+_Static_assert(sizeof(R4DrawGfxBrightnessRequestFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

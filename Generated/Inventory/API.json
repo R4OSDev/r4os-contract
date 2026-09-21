@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 423,
-    "group_slot_count": 423,
+    "function_count": 425,
+    "group_slot_count": 425,
     "sdk_only_count": 0,
-    "public_count": 323,
+    "public_count": 325,
     "advanced_count": 100
   },
   "functions": [
@@ -3905,6 +3905,30 @@
       "slot": 109,
       "exposure": "public",
       "description": "Atomically submit1..16 compatible color draws with per-draw logical grids. Requires render_color_grid_list capability. Copies all descriptors before entering the queue owner; no pixel conversion, intermediate image or partial submission.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_output_brightness",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 110,
+      "exposure": "public",
+      "description": "Read the last driver brightness receipt. Output unchanged on failure; unavailable is explicit. current is confirmed programmed intensity, not measured luminance.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.gfx_brightness_request",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 111,
+      "exposure": "public",
+      "description": "Admit a normalized brightness request for an exact native output generation. Latest writer wins, survives caller exit. Returns an admission serial only; hardware completion/failure is read separately. No synchronous hardware call.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
