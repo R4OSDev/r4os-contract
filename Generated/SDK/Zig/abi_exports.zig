@@ -2521,6 +2521,7 @@ pub const GfxNativeState = generated.GfxNativeState;
 pub const GfxBootHoldRequest = generated.GfxBootHoldRequest;
 pub const GfxDriverDisplayApi = generated.GfxDriverDisplayApi;
 pub const DriverResourceInfo = generated.DriverResourceInfo;
+pub const DriverFirmwareTableInfo = generated.DriverFirmwareTableInfo;
 pub const DriverResourceApi = generated.DriverResourceApi;
 pub const DriverHeapAllocation = generated.DriverHeapAllocation;
 pub const DriverHeapStats = generated.DriverHeapStats;

@@ -2560,6 +2560,7 @@ typedef struct R4GfxNativeState R4GfxNativeState;
 typedef struct R4GfxBootHoldRequest R4GfxBootHoldRequest;
 typedef struct R4GfxDriverDisplayApi R4GfxDriverDisplayApi;
 typedef struct R4DriverResourceInfo R4DriverResourceInfo;
+typedef struct R4DriverFirmwareTableInfo R4DriverFirmwareTableInfo;
 typedef struct R4DriverResourceApi R4DriverResourceApi;
 typedef struct R4DriverHeapAllocation R4DriverHeapAllocation;
 typedef struct R4DriverHeapStats R4DriverHeapStats;
@@ -7094,12 +7095,26 @@ typedef struct R4DriverResourceInfo {
     uint64_t module_generation;
 } R4DriverResourceInfo;
 
+typedef struct R4DriverFirmwareTableInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t handle;
+    uint64_t byte_length;
+    uint64_t generation;
+    uint32_t signature;
+    uint32_t revision;
+    uint32_t flags;
+    uint32_t reserved;
+} R4DriverFirmwareTableInfo;
+
 typedef struct R4DriverResourceApi {
     uint32_t version;
     uint32_t size;
     uint64_t stat;
     uint64_t read_at;
     uint64_t now_ns;
+    uint64_t acpi_stat;
+    uint64_t acpi_read_at;
 } R4DriverResourceApi;
 
 typedef struct R4DriverHeapAllocation {
@@ -13208,12 +13223,24 @@ _Static_assert(offsetof(R4DriverResourceInfo, size) == 4u, "DriverResourceInfo.s
 _Static_assert(offsetof(R4DriverResourceInfo, handle) == 8u, "DriverResourceInfo.handle offset mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, byte_length) == 16u, "DriverResourceInfo.byte_length offset mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, module_generation) == 24u, "DriverResourceInfo.module_generation offset mismatch");
-_Static_assert(sizeof(R4DriverResourceApi) == 32u, "DriverResourceApi size mismatch");
+_Static_assert(sizeof(R4DriverFirmwareTableInfo) == 48u, "DriverFirmwareTableInfo size mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, version) == 0u, "DriverFirmwareTableInfo.version offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, size) == 4u, "DriverFirmwareTableInfo.size offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, handle) == 8u, "DriverFirmwareTableInfo.handle offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, byte_length) == 16u, "DriverFirmwareTableInfo.byte_length offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, generation) == 24u, "DriverFirmwareTableInfo.generation offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, signature) == 32u, "DriverFirmwareTableInfo.signature offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, revision) == 36u, "DriverFirmwareTableInfo.revision offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, flags) == 40u, "DriverFirmwareTableInfo.flags offset mismatch");
+_Static_assert(offsetof(R4DriverFirmwareTableInfo, reserved) == 44u, "DriverFirmwareTableInfo.reserved offset mismatch");
+_Static_assert(sizeof(R4DriverResourceApi) == 48u, "DriverResourceApi size mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, version) == 0u, "DriverResourceApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, size) == 4u, "DriverResourceApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, stat) == 8u, "DriverResourceApi.stat offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, read_at) == 16u, "DriverResourceApi.read_at offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, now_ns) == 24u, "DriverResourceApi.now_ns offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, acpi_stat) == 32u, "DriverResourceApi.acpi_stat offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, acpi_read_at) == 40u, "DriverResourceApi.acpi_read_at offset mismatch");
 _Static_assert(sizeof(R4DriverHeapAllocation) == 40u, "DriverHeapAllocation size mismatch");
 _Static_assert(offsetof(R4DriverHeapAllocation, version) == 0u, "DriverHeapAllocation.version offset mismatch");
 _Static_assert(offsetof(R4DriverHeapAllocation, size) == 4u, "DriverHeapAllocation.size offset mismatch");

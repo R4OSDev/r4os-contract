@@ -6820,12 +6820,26 @@ pub const DriverResourceInfo = extern struct {
     module_generation: u64 = 0,
 };
 
+pub const DriverFirmwareTableInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    handle: u64 = 0,
+    byte_length: u64 = 0,
+    generation: u64 = 0,
+    signature: u32 = 0,
+    revision: u32 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+};
+
 pub const DriverResourceApi = extern struct {
     version: u32 = 1,
-    size: u32 = 32,
+    size: u32 = 48,
     stat: u64 = 0,
     read_at: u64 = 0,
     now_ns: u64 = 0,
+    acpi_stat: u64 = 0,
+    acpi_read_at: u64 = 0,
 };
 
 pub const DriverHeapAllocation = extern struct {
@@ -13584,13 +13598,26 @@ comptime {
     if (@offsetOf(DriverResourceInfo, "handle") != 8) @compileError("generated ABI offset drift: DriverResourceInfo.handle");
     if (@offsetOf(DriverResourceInfo, "byte_length") != 16) @compileError("generated ABI offset drift: DriverResourceInfo.byte_length");
     if (@offsetOf(DriverResourceInfo, "module_generation") != 24) @compileError("generated ABI offset drift: DriverResourceInfo.module_generation");
-    if (@sizeOf(DriverResourceApi) != 32) @compileError("generated ABI size drift: DriverResourceApi");
+    if (@sizeOf(DriverFirmwareTableInfo) != 48) @compileError("generated ABI size drift: DriverFirmwareTableInfo");
+    if (@alignOf(DriverFirmwareTableInfo) != 8) @compileError("generated ABI alignment drift: DriverFirmwareTableInfo");
+    if (@offsetOf(DriverFirmwareTableInfo, "version") != 0) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.version");
+    if (@offsetOf(DriverFirmwareTableInfo, "size") != 4) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.size");
+    if (@offsetOf(DriverFirmwareTableInfo, "handle") != 8) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.handle");
+    if (@offsetOf(DriverFirmwareTableInfo, "byte_length") != 16) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.byte_length");
+    if (@offsetOf(DriverFirmwareTableInfo, "generation") != 24) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.generation");
+    if (@offsetOf(DriverFirmwareTableInfo, "signature") != 32) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.signature");
+    if (@offsetOf(DriverFirmwareTableInfo, "revision") != 36) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.revision");
+    if (@offsetOf(DriverFirmwareTableInfo, "flags") != 40) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.flags");
+    if (@offsetOf(DriverFirmwareTableInfo, "reserved") != 44) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.reserved");
+    if (@sizeOf(DriverResourceApi) != 48) @compileError("generated ABI size drift: DriverResourceApi");
     if (@alignOf(DriverResourceApi) != 8) @compileError("generated ABI alignment drift: DriverResourceApi");
     if (@offsetOf(DriverResourceApi, "version") != 0) @compileError("generated ABI offset drift: DriverResourceApi.version");
     if (@offsetOf(DriverResourceApi, "size") != 4) @compileError("generated ABI offset drift: DriverResourceApi.size");
     if (@offsetOf(DriverResourceApi, "stat") != 8) @compileError("generated ABI offset drift: DriverResourceApi.stat");
     if (@offsetOf(DriverResourceApi, "read_at") != 16) @compileError("generated ABI offset drift: DriverResourceApi.read_at");
     if (@offsetOf(DriverResourceApi, "now_ns") != 24) @compileError("generated ABI offset drift: DriverResourceApi.now_ns");
+    if (@offsetOf(DriverResourceApi, "acpi_stat") != 32) @compileError("generated ABI offset drift: DriverResourceApi.acpi_stat");
+    if (@offsetOf(DriverResourceApi, "acpi_read_at") != 40) @compileError("generated ABI offset drift: DriverResourceApi.acpi_read_at");
     if (@sizeOf(DriverHeapAllocation) != 40) @compileError("generated ABI size drift: DriverHeapAllocation");
     if (@alignOf(DriverHeapAllocation) != 8) @compileError("generated ABI alignment drift: DriverHeapAllocation");
     if (@offsetOf(DriverHeapAllocation, "version") != 0) @compileError("generated ABI offset drift: DriverHeapAllocation.version");

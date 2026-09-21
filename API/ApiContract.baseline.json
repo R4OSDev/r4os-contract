@@ -28114,10 +28114,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 11,
+      "abi_version": 12,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 360,
+      "size": 368,
       "slots": [
         {
           "number": 0,
@@ -30997,6 +30997,72 @@
                   "child": {
                     "kind": "named",
                     "name": "DisplayStateInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 43,
+          "offset": 360,
+          "name": "driver_module_info",
+          "state": "function",
+          "required": false,
+          "description": "Copies retained metadata of the initialized R4D owner; no file, PCI or MMIO reads. Returns 1 on success, 0 for no runtime R4D, -1 for invalid capacity/version/owner, -2 while the lifecycle is busy. No output on failure. Firmware version names the declared embedded bundle, never successful device execution.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "owner",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DriverModuleInfo"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -87700,12 +87766,12 @@
       "description": "Named file resource in the exact loaded R4D container. Handle is a non-owning catalog reference, bound to the authenticated driver start and module generation; no path reopening, file lease, allocation or close operation. Bytes/preload loads without a retained file source return source-unavailable."
     },
     {
-      "name": "DriverResourceApi",
+      "name": "DriverFirmwareTableInfo",
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 1,
-      "size": 32,
+      "size": 48,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -87731,12 +87797,153 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Caller capacity, at least the complete version-1 payload.",
+          "description": "Caller capacity, at least 48 bytes.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "32"
+          "default_value": "48"
+        },
+        {
+          "name": "handle",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque non-owning kernel boot ACPI table identity, distinct from module-resource handles. Never a physical address.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "byte_length",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated exact ACPI SDT length, including its 36-byte header; at most 1 MB.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Boot catalog generation encoded in the handle; reinspection and changed contents invalidate old references.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "signature",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Four-byte ACPI signature interpreted as a little-endian integer.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original ACPI SDT revision byte.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved, zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved, zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Read-only ACPI root table captured by the platform boot owner. No allocation or close needed. Stat/read use the actual bound R4D init/work owner and are unavailable after its close. Source buffers stay kernel-owned and must never be modified. Errors leave stat output unchanged; discard read output on failure. No AML, ROM execution or vendor-specific parsing occurs in the kernel."
+    },
+    {
+      "name": "DriverResourceApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; original 32-byte prefix remains supported.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
         },
         {
           "name": "stat",
@@ -87779,10 +87986,38 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "acpi_stat",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t acpi_stat(uint32_t signature, uint32_t zero_based_index, DriverFirmwareTableInfo*). Optional tail. Reads the complete boot root-table catalog; absent=-5, unavailable/corrupt=-4, changed=-3. No mapping or firmware execution.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "acpi_read_at",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t acpi_read_at(uint64_t handle, uint64_t offset, uint8_t* output, uint32_t length, uint64_t deadline_ns). Optional tail. Exact 1..65536 resident bytes from the captured table, checked against boot SHA256 before/after copy and absolute deadline. Positive byte count or negative resource error; partial output must be discarded.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v29. Stat/read authenticate init/task and driver-work owners; IRQ and storage callbacks are rejected. now_ns is a read-only clock. Per-call owner serialization and filesystem mount-generation admission, with no long-lived mount lease. Handles do not promise immutable storage: firmware consumers must verify pinned size/hash/ABI before use. Reads may modify a partial output on failure; discard it. Absolute nanosecond deadlines are checked before and after synchronous I/O; buffer reuse occurs only after I/O returns safely, so hardware cleanup can exceed the deadline."
+      "description": "Optional DriverApi v29. Stat/read authenticate init/task and driver-work owners; IRQ and storage callbacks are rejected. now_ns is a read-only clock. Per-call owner serialization and filesystem mount-generation admission, with no long-lived mount lease. Handles do not promise immutable storage: firmware consumers must verify pinned size/hash/ABI before use. Reads may modify a partial output on failure; discard it. Absolute nanosecond deadlines are checked before and after synchronous I/O; buffer reuse occurs only after I/O returns safely, so hardware cleanup can exceed the deadline. The optional 48-byte ACPI tail preserves every field in the original 32-byte prefix and outer DriverApi v29 query slot. It exposes read-only boot root tables independently from loaded module file resources. Consumers negotiate both callbacks before using ACPI. Root discovery failure or capacity exhaustion never appears as an empty catalog; corrupt and missing tables are distinct."
     },
     {
       "name": "DriverHeapAllocation",
@@ -101197,6 +101432,170 @@
       ],
       "values": [],
       "description": "Desktop-only publication and pending-request exchange; reply is WindowModeReply. Request ID plus exact prior identity acknowledges once. Repeated exchanges cannot repeat a completed request; remove and process/service death discard the publication."
+    },
+    {
+      "name": "DriverModuleInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Requested and returned payload version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; at least 128 bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "owner",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact runtime driver owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Quarantine and metadata availability bits.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Runtime driver incarnation; nonzero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "module_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Loaded module incarnation; nonzero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "driver_name",
+          "offset": 32,
+          "type": {
+            "kind": "array",
+            "length": 32,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Initialized driver name.",
+          "size": 32,
+          "alignment": 1,
+          "source_type": "[32]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "module_version",
+          "offset": 64,
+          "type": {
+            "kind": "array",
+            "length": 32,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Version retained from module.version metadata at load.",
+          "size": 32,
+          "alignment": 1,
+          "source_type": "[32]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "firmware_version",
+          "offset": 96,
+          "type": {
+            "kind": "array",
+            "length": 32,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Declared embedded bundle from firmware.version metadata at load, not device execution.",
+          "size": 32,
+          "alignment": 1,
+          "source_type": "[32]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Resident metadata from the actually loaded R4D container, retained through its runtime generation. Join to DisplayStateInfo by owner and revalidate display revision/generation. Flags: bit 0 quarantined; bit 1 module version present; bit 2 declared firmware bundle version present. Empty strings mean unavailable. No firmware-execution or device-health claim. Snapshot does not pin the driver. All strings are NUL terminated; reserved is zero."
     }
   ],
   "operations": [],
