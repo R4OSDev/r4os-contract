@@ -910,3 +910,15 @@ They never prove physical GPU quiescence or authorize an unproved RM/channel
 release. The driver must retain active execution independently until actual
 completion/reset proof. Context disposal and Vulkan integration remain driver
 and library responsibilities; this operation itself creates no GPU context.
+
+0.80.7: reserved physical device storage
+--------------------------------------
+GfxDriverMemoryApi v1 appends reserved_span at240, total248. It returns
+gfx_buffer_result_ok only for complete page-aligned immutable boot-map
+coverage by reserved/framebuffer entries, with no overlap with any other
+memory kind. Unknown gaps and malformed/conflicting entries fail. The
+query neither allocates nor maps pages, and changes no physical RAM totals.
+It requires the actual bound driver Init/Work owner. Existing 112..240-byte
+callers receive exactly their negotiated prefix. No outer DriverApi change.
+CPU maps remain a separate cache-policy and lifetime decision. The proof
+means storage is outside the PMM, not that another device cannot use it.

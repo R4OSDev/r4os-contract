@@ -82689,8 +82689,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 6,
-      "size": 240,
+      "version": 7,
+      "size": 248,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82721,7 +82721,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "240"
+          "default_value": "248"
         },
         {
           "name": "buffer_create",
@@ -83128,10 +83128,24 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "reserved_span",
+          "offset": 240,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t reserved_span(uint64_t physical_base, uint64_t bytes). Optional tail; 1 only for an aligned nonzero <=52-bit span fully covered by immutable boot reserved/framebuffer entries and no overlapping allocatable or reclaimable memory. Unknown gaps, conflicting entries and overflow fail. No allocation, mapping, RAM charge, ownership transfer or AMD-specific policy. Actual bound driver Init/Work owner; invalid=-1, unsupported=-6 using graphics buffer errors.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "DriverApi v25 owner-bound memory extension, optional owned-buffer tail after the original 112-byte prefix. Actual Init/ordinary Work context required; cached cleanup remains valid while closing. Outer DriverApi stays unchanged. Wire version stays 1. The 152-byte prefix is unchanged; the optional 184-byte tail exposes native allocation providers. The optional 240-byte tail adds owner-bound virtual-memory transport; the 208-byte prefix and wire version 1 stay unchanged."
+      "description": "DriverApi v25 owner-bound memory extension, optional owned-buffer tail after the original 112-byte prefix. Actual Init/ordinary Work context required; cached cleanup remains valid while closing. Outer DriverApi stays unchanged. Wire version stays 1. The 152-byte prefix is unchanged; the optional 184-byte tail exposes native allocation providers. The optional 240-byte tail adds owner-bound virtual-memory transport; the 208-byte prefix and wire version 1 stay unchanged. Optional reserved_span at 240 (table size 248) proves that a device storage carveout is outside all PMM-managed memory before a driver partitions it. Original 112/240-byte prefixes and outer DriverApi remain binary stable."
     },
     {
       "name": "GfxFence",

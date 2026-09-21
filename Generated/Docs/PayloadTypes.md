@@ -196,7 +196,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxMmioWindow` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxOwnedBufferReservation` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `GfxOwnedBufferRelease` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
-| `GfxDriverMemoryApi` | extensible | extern_struct | 240/8 | 240/8 | 240/8 | 240/8 |
+| `GfxDriverMemoryApi` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 | `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
@@ -5532,7 +5532,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 6 / 240 / 8
+- Version/Größe/Alignment: 7 / 248 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5567,6 +5567,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `virtual_unregister` | 216 | 8 | 8 | `u64` | - |
 | `virtual_take` | 224 | 8 | 8 | `u64` | - |
 | `virtual_complete` | 232 | 8 | 8 | `u64` | - |
+| `reserved_span` | 240 | 8 | 8 | `u64` | - |
 
 ### `GfxFence`
 

@@ -6674,6 +6674,7 @@ typedef struct R4GfxDriverMemoryApi {
     uint64_t virtual_unregister;
     uint64_t virtual_take;
     uint64_t virtual_complete;
+    uint64_t reserved_span;
 } R4GfxDriverMemoryApi;
 
 typedef struct R4GfxFence {
@@ -12862,7 +12863,7 @@ _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_generation) == 56u, "Gfx
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, adapter_id) == 64u, "GfxOwnedBufferRelease.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_owner) == 68u, "GfxOwnedBufferRelease.driver_owner offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, reserved0) == 72u, "GfxOwnedBufferRelease.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GfxDriverMemoryApi) == 240u, "GfxDriverMemoryApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverMemoryApi) == 248u, "GfxDriverMemoryApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, version) == 0u, "GfxDriverMemoryApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, size) == 4u, "GfxDriverMemoryApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_create) == 8u, "GfxDriverMemoryApi.buffer_create offset mismatch");
@@ -12894,6 +12895,7 @@ _Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_register) == 208u, "GfxDri
 _Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_unregister) == 216u, "GfxDriverMemoryApi.virtual_unregister offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_take) == 224u, "GfxDriverMemoryApi.virtual_take offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_complete) == 232u, "GfxDriverMemoryApi.virtual_complete offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, reserved_span) == 240u, "GfxDriverMemoryApi.reserved_span offset mismatch");
 _Static_assert(sizeof(R4GfxFence) == 40u, "GfxFence size mismatch");
 _Static_assert(offsetof(R4GfxFence, slot) == 0u, "GfxFence.slot offset mismatch");
 _Static_assert(offsetof(R4GfxFence, adapter_id) == 4u, "GfxFence.adapter_id offset mismatch");

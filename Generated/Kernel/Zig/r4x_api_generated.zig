@@ -6401,7 +6401,7 @@ pub const GfxOwnedBufferRelease = extern struct {
 
 pub const GfxDriverMemoryApi = extern struct {
     version: u32 = 1,
-    size: u32 = 240,
+    size: u32 = 248,
     buffer_create: u64 = 0,
     buffer_describe: u64 = 0,
     buffer_import: u64 = 0,
@@ -6431,6 +6431,7 @@ pub const GfxDriverMemoryApi = extern struct {
     virtual_unregister: u64 = 0,
     virtual_take: u64 = 0,
     virtual_complete: u64 = 0,
+    reserved_span: u64 = 0,
 };
 
 pub const GfxFence = extern struct {
@@ -13207,7 +13208,7 @@ comptime {
     if (@offsetOf(GfxOwnedBufferRelease, "adapter_id") != 64) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.adapter_id");
     if (@offsetOf(GfxOwnedBufferRelease, "driver_owner") != 68) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.driver_owner");
     if (@offsetOf(GfxOwnedBufferRelease, "reserved0") != 72) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.reserved0");
-    if (@sizeOf(GfxDriverMemoryApi) != 240) @compileError("generated ABI size drift: GfxDriverMemoryApi");
+    if (@sizeOf(GfxDriverMemoryApi) != 248) @compileError("generated ABI size drift: GfxDriverMemoryApi");
     if (@alignOf(GfxDriverMemoryApi) != 8) @compileError("generated ABI alignment drift: GfxDriverMemoryApi");
     if (@offsetOf(GfxDriverMemoryApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverMemoryApi.version");
     if (@offsetOf(GfxDriverMemoryApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverMemoryApi.size");
@@ -13240,6 +13241,7 @@ comptime {
     if (@offsetOf(GfxDriverMemoryApi, "virtual_unregister") != 216) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_unregister");
     if (@offsetOf(GfxDriverMemoryApi, "virtual_take") != 224) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_take");
     if (@offsetOf(GfxDriverMemoryApi, "virtual_complete") != 232) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_complete");
+    if (@offsetOf(GfxDriverMemoryApi, "reserved_span") != 240) @compileError("generated ABI offset drift: GfxDriverMemoryApi.reserved_span");
     if (@sizeOf(GfxFence) != 40) @compileError("generated ABI size drift: GfxFence");
     if (@alignOf(GfxFence) != 8) @compileError("generated ABI alignment drift: GfxFence");
     if (@offsetOf(GfxFence, "slot") != 0) @compileError("generated ABI offset drift: GfxFence.slot");
