@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 425,
-    "group_slot_count": 425,
+    "function_count": 426,
+    "group_slot_count": 426,
     "sdk_only_count": 0,
-    "public_count": 325,
+    "public_count": 326,
     "advanced_count": 100
   },
   "functions": [
@@ -1817,6 +1817,18 @@
       "slot": 153,
       "exposure": "public",
       "description": "Terminates the entire calling program from its main or a secondary thread. On admission this does not return. reason accepts program_exit_reason_natural or program_exit_reason_failed only; invalid reason returns thread_error_invalid, missing program-thread ownership returns thread_error_no_instance, and a non-sleepable context or held kernel lock/unwind lifetime returns thread_error_busy without initiating exit. The first committed concurrent process exit wins. The existing exit/reaper path closes admission, stops peers and retains stacks, I/O and graphics resources through actual retirement; the caller transfers its own terminal Task to the scheduler reaper. Does not run user destructors, atexit, TLS callbacks, stream flushing or foreign stack unwinding; normal userland shutdown precedes this primitive, fatal shutdown may omit it. External kill still rejects self. Older providers may omit this optional tail.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.platform_input_snapshot",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 154,
+      "exposure": "public",
+      "description": "Copy the canonical ACPI/USB Consumer input snapshot without consuming events.1 success, negative invalid output. Caller initializes version1/size64; output unchanged on failure. No hardware access, callback or allocation. Desktop policy observes counter deltas and lid state independently from normal keyboard text.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

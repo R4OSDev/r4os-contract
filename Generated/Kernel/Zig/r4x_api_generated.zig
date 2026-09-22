@@ -1922,6 +1922,11 @@ pub const gfx_telemetry_partial_values: u32 = 2;
 pub const gfx_telemetry_current_clocks: u32 = 4;
 pub const gfx_telemetry_fabric_clock: u32 = 8;
 pub const gfx_telemetry_value_mask: u32 = 3840;
+pub const platform_input_kind_brightness_up: u32 = 1;
+pub const platform_input_kind_brightness_down: u32 = 2;
+pub const platform_input_kind_lid: u32 = 3;
+pub const platform_input_kind_capabilities: u32 = 4;
+pub const hid_report_op_consumer: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6857,12 +6862,13 @@ pub const DriverFirmwareTableInfo = extern struct {
 
 pub const DriverResourceApi = extern struct {
     version: u32 = 1,
-    size: u32 = 48,
+    size: u32 = 56,
     stat: u64 = 0,
     read_at: u64 = 0,
     now_ns: u64 = 0,
     acpi_stat: u64 = 0,
     acpi_read_at: u64 = 0,
+    platform_query: u64 = 0,
 };
 
 pub const DriverHeapAllocation = extern struct {
@@ -8044,6 +8050,39 @@ pub const GfxBrightnessRequest = extern struct {
     sequence: u64 = 0,
 };
 
+pub const PlatformInputSnapshot = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    sequence: u64 = 0,
+    brightness_up: u64 = 0,
+    brightness_down: u64 = 0,
+    lid_sequence: u64 = 0,
+    lid_state: u32 = 0,
+    capabilities: u32 = 0,
+    sources: u32 = 0,
+    reserved: u32 = 0,
+    since_ns: u64 = 0,
+};
+
+pub const DriverPlatformApi = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    rsdp: u64 = 0,
+    physical_view: u64 = 0,
+    input_submit: u64 = 0,
+};
+
+pub const HidConsumerOp = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    summary_address: u64 = 0,
+    report_len: u32 = 0,
+    report_id: u32 = 0,
+    capabilities: u32 = 0,
+    pressed: u32 = 0,
+    report: [32]u8 = .{0} ** 32,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8196,12 +8235,13 @@ pub const R4SysFns = struct {
     pub const thread_current_handle = *const fn (*ProgramJoinHandle) callconv(.c) i32;
     pub const cpu_capacity = *const fn (*CpuCapacity) callconv(.c) i32;
     pub const program_exit = *const fn (i32, u32) callconv(.c) i32;
+    pub const platform_input_snapshot = *const fn (*PlatformInputSnapshot) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 23,
-    size: u32 = 1248,
+    abi_version: u32 = 24,
+    size: u32 = 1256,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -8357,6 +8397,7 @@ pub const R4XStartR4Sys = extern struct {
     thread_current_handle: usize = 0,
     cpu_capacity: usize = 0,
     program_exit: usize = 0,
+    platform_input_snapshot: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -9120,6 +9161,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 151, .offset = 1224, .name = "thread_current_handle", .state = .function, .required = false },
     .{ .number = 152, .offset = 1232, .name = "cpu_capacity", .state = .function, .required = false },
     .{ .number = 153, .offset = 1240, .name = "program_exit", .state = .function, .required = false },
+    .{ .number = 154, .offset = 1248, .name = "platform_input_snapshot", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -13667,7 +13709,7 @@ comptime {
     if (@offsetOf(DriverFirmwareTableInfo, "revision") != 36) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.revision");
     if (@offsetOf(DriverFirmwareTableInfo, "flags") != 40) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.flags");
     if (@offsetOf(DriverFirmwareTableInfo, "reserved") != 44) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.reserved");
-    if (@sizeOf(DriverResourceApi) != 48) @compileError("generated ABI size drift: DriverResourceApi");
+    if (@sizeOf(DriverResourceApi) != 56) @compileError("generated ABI size drift: DriverResourceApi");
     if (@alignOf(DriverResourceApi) != 8) @compileError("generated ABI alignment drift: DriverResourceApi");
     if (@offsetOf(DriverResourceApi, "version") != 0) @compileError("generated ABI offset drift: DriverResourceApi.version");
     if (@offsetOf(DriverResourceApi, "size") != 4) @compileError("generated ABI offset drift: DriverResourceApi.size");
@@ -13676,6 +13718,7 @@ comptime {
     if (@offsetOf(DriverResourceApi, "now_ns") != 24) @compileError("generated ABI offset drift: DriverResourceApi.now_ns");
     if (@offsetOf(DriverResourceApi, "acpi_stat") != 32) @compileError("generated ABI offset drift: DriverResourceApi.acpi_stat");
     if (@offsetOf(DriverResourceApi, "acpi_read_at") != 40) @compileError("generated ABI offset drift: DriverResourceApi.acpi_read_at");
+    if (@offsetOf(DriverResourceApi, "platform_query") != 48) @compileError("generated ABI offset drift: DriverResourceApi.platform_query");
     if (@sizeOf(DriverHeapAllocation) != 40) @compileError("generated ABI size drift: DriverHeapAllocation");
     if (@alignOf(DriverHeapAllocation) != 8) @compileError("generated ABI alignment drift: DriverHeapAllocation");
     if (@offsetOf(DriverHeapAllocation, "version") != 0) @compileError("generated ABI offset drift: DriverHeapAllocation.version");
@@ -14761,7 +14804,37 @@ comptime {
     if (@offsetOf(GfxBrightnessRequest, "level") != 32) @compileError("generated ABI offset drift: GfxBrightnessRequest.level");
     if (@offsetOf(GfxBrightnessRequest, "reserved0") != 36) @compileError("generated ABI offset drift: GfxBrightnessRequest.reserved0");
     if (@offsetOf(GfxBrightnessRequest, "sequence") != 40) @compileError("generated ABI offset drift: GfxBrightnessRequest.sequence");
-    if (@sizeOf(R4XStartR4Sys) != 1248) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(PlatformInputSnapshot) != 64) @compileError("generated ABI size drift: PlatformInputSnapshot");
+    if (@alignOf(PlatformInputSnapshot) != 8) @compileError("generated ABI alignment drift: PlatformInputSnapshot");
+    if (@offsetOf(PlatformInputSnapshot, "version") != 0) @compileError("generated ABI offset drift: PlatformInputSnapshot.version");
+    if (@offsetOf(PlatformInputSnapshot, "size") != 4) @compileError("generated ABI offset drift: PlatformInputSnapshot.size");
+    if (@offsetOf(PlatformInputSnapshot, "sequence") != 8) @compileError("generated ABI offset drift: PlatformInputSnapshot.sequence");
+    if (@offsetOf(PlatformInputSnapshot, "brightness_up") != 16) @compileError("generated ABI offset drift: PlatformInputSnapshot.brightness_up");
+    if (@offsetOf(PlatformInputSnapshot, "brightness_down") != 24) @compileError("generated ABI offset drift: PlatformInputSnapshot.brightness_down");
+    if (@offsetOf(PlatformInputSnapshot, "lid_sequence") != 32) @compileError("generated ABI offset drift: PlatformInputSnapshot.lid_sequence");
+    if (@offsetOf(PlatformInputSnapshot, "lid_state") != 40) @compileError("generated ABI offset drift: PlatformInputSnapshot.lid_state");
+    if (@offsetOf(PlatformInputSnapshot, "capabilities") != 44) @compileError("generated ABI offset drift: PlatformInputSnapshot.capabilities");
+    if (@offsetOf(PlatformInputSnapshot, "sources") != 48) @compileError("generated ABI offset drift: PlatformInputSnapshot.sources");
+    if (@offsetOf(PlatformInputSnapshot, "reserved") != 52) @compileError("generated ABI offset drift: PlatformInputSnapshot.reserved");
+    if (@offsetOf(PlatformInputSnapshot, "since_ns") != 56) @compileError("generated ABI offset drift: PlatformInputSnapshot.since_ns");
+    if (@sizeOf(DriverPlatformApi) != 32) @compileError("generated ABI size drift: DriverPlatformApi");
+    if (@alignOf(DriverPlatformApi) != 8) @compileError("generated ABI alignment drift: DriverPlatformApi");
+    if (@offsetOf(DriverPlatformApi, "version") != 0) @compileError("generated ABI offset drift: DriverPlatformApi.version");
+    if (@offsetOf(DriverPlatformApi, "size") != 4) @compileError("generated ABI offset drift: DriverPlatformApi.size");
+    if (@offsetOf(DriverPlatformApi, "rsdp") != 8) @compileError("generated ABI offset drift: DriverPlatformApi.rsdp");
+    if (@offsetOf(DriverPlatformApi, "physical_view") != 16) @compileError("generated ABI offset drift: DriverPlatformApi.physical_view");
+    if (@offsetOf(DriverPlatformApi, "input_submit") != 24) @compileError("generated ABI offset drift: DriverPlatformApi.input_submit");
+    if (@sizeOf(HidConsumerOp) != 64) @compileError("generated ABI size drift: HidConsumerOp");
+    if (@alignOf(HidConsumerOp) != 8) @compileError("generated ABI alignment drift: HidConsumerOp");
+    if (@offsetOf(HidConsumerOp, "version") != 0) @compileError("generated ABI offset drift: HidConsumerOp.version");
+    if (@offsetOf(HidConsumerOp, "size") != 4) @compileError("generated ABI offset drift: HidConsumerOp.size");
+    if (@offsetOf(HidConsumerOp, "summary_address") != 8) @compileError("generated ABI offset drift: HidConsumerOp.summary_address");
+    if (@offsetOf(HidConsumerOp, "report_len") != 16) @compileError("generated ABI offset drift: HidConsumerOp.report_len");
+    if (@offsetOf(HidConsumerOp, "report_id") != 20) @compileError("generated ABI offset drift: HidConsumerOp.report_id");
+    if (@offsetOf(HidConsumerOp, "capabilities") != 24) @compileError("generated ABI offset drift: HidConsumerOp.capabilities");
+    if (@offsetOf(HidConsumerOp, "pressed") != 28) @compileError("generated ABI offset drift: HidConsumerOp.pressed");
+    if (@offsetOf(HidConsumerOp, "report") != 32) @compileError("generated ABI offset drift: HidConsumerOp.report");
+    if (@sizeOf(R4XStartR4Sys) != 1256) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -14916,6 +14989,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "thread_current_handle") != 1224) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_current_handle");
     if (@offsetOf(R4XStartR4Sys, "cpu_capacity") != 1232) @compileError("generated ABI offset drift: R4XStartR4Sys.cpu_capacity");
     if (@offsetOf(R4XStartR4Sys, "program_exit") != 1240) @compileError("generated ABI offset drift: R4XStartR4Sys.program_exit");
+    if (@offsetOf(R4XStartR4Sys, "platform_input_snapshot") != 1248) @compileError("generated ABI offset drift: R4XStartR4Sys.platform_input_snapshot");
     if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -15355,13 +15429,14 @@ pub const R4SysProvider = struct {
     thread_current_handle: ?R4SysFns.thread_current_handle = null,
     cpu_capacity: ?R4SysFns.cpu_capacity = null,
     program_exit: ?R4SysFns.program_exit = null,
+    platform_input_snapshot: ?R4SysFns.platform_input_snapshot = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 23,
-        .size = 1248,
+        .abi_version = 24,
+        .size = 1256,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -15517,6 +15592,7 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .thread_current_handle = if (provider.thread_current_handle) |callback| @intFromPtr(callback) else 0,
         .cpu_capacity = if (provider.cpu_capacity) |callback| @intFromPtr(callback) else 0,
         .program_exit = if (provider.program_exit) |callback| @intFromPtr(callback) else 0,
+        .platform_input_snapshot = if (provider.platform_input_snapshot) |callback| @intFromPtr(callback) else 0,
     };
 }
 

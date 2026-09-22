@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 23,
+      "abi_version": 24,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1248,
+      "size": 1256,
       "slots": [
         {
           "number": 0,
@@ -12233,6 +12233,65 @@
             "outputs": "none",
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 154,
+          "offset": 1248,
+          "name": "platform_input_snapshot",
+          "state": "function",
+          "required": false,
+          "description": "Copy the canonical ACPI/USB Consumer input snapshot without consuming events.1 success, negative invalid output. Caller initializes version1/size64; output unchanged on failure. No hardware access, callback or allocation. Desktop policy observes counter deltas and lid state independently from normal keyboard text.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "PlatformInputSnapshot"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "none",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
             "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
@@ -88105,8 +88164,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 48,
+      "version": 2,
+      "size": 56,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -88137,7 +88196,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "48"
+          "default_value": "56"
         },
         {
           "name": "stat",
@@ -88208,10 +88267,24 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "platform_query",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32 platform_query(DriverPlatformApi*). Optional complete56-byte resource-table tail. Negotiates the external platform driver primitives while preserving the original32/48-byte prefixes and outer DriverApi35. Query once in Init; callbacks admit dedicated owner tasks explicitly.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v29. Stat/read authenticate init/task and driver-work owners; IRQ and storage callbacks are rejected. now_ns is a read-only clock. Per-call owner serialization and filesystem mount-generation admission, with no long-lived mount lease. Handles do not promise immutable storage: firmware consumers must verify pinned size/hash/ABI before use. Reads may modify a partial output on failure; discard it. Absolute nanosecond deadlines are checked before and after synchronous I/O; buffer reuse occurs only after I/O returns safely, so hardware cleanup can exceed the deadline. The optional 48-byte ACPI tail preserves every field in the original 32-byte prefix and outer DriverApi v29 query slot. It exposes read-only boot root tables independently from loaded module file resources. Consumers negotiate both callbacks before using ACPI. Root discovery failure or capacity exhaustion never appears as an empty catalog; corrupt and missing tables are distinct."
+      "description": "Optional DriverApi v29. Stat/read authenticate init/task and driver-work owners; IRQ and storage callbacks are rejected. now_ns is a read-only clock. Per-call owner serialization and filesystem mount-generation admission, with no long-lived mount lease. Handles do not promise immutable storage: firmware consumers must verify pinned size/hash/ABI before use. Reads may modify a partial output on failure; discard it. Absolute nanosecond deadlines are checked before and after synchronous I/O; buffer reuse occurs only after I/O returns safely, so hardware cleanup can exceed the deadline. The optional 48-byte ACPI tail preserves every field in the original 32-byte prefix and outer DriverApi v29 query slot. It exposes read-only boot root tables independently from loaded module file resources. Consumers negotiate both callbacks before using ACPI. Root discovery failure or capacity exhaustion never appears as an empty catalog; corrupt and missing tables are distinct. The56-byte tail adds a separately negotiated DriverPlatformApi for external ACPI/EC execution; the copied boot-table operations retain their existing read-only semantics."
     },
     {
       "name": "DriverHeapAllocation",
@@ -102096,6 +102169,388 @@
       ],
       "values": [],
       "description": "Atomic latest-writer intent. An admitted request survives caller exit until replaced or the connection changes. It is not a hardware completion; observe GfxOutputBrightness. No automatic retry after a driver failure."
+    },
+    {
+      "name": "PlatformInputSnapshot",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller byte capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "sequence",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic publication sequence, zero before any source.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "brightness_up",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic count of confirmed brightness-increase events; not a held key or synthetic scancode.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "brightness_down",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic count of confirmed brightness-decrease events.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lid_sequence",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Publication sequence of the latest confirmed lid state or source loss.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lid_state",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 unknown,1 open,2 closed. No system sleep is implied.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capabilities",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Source capabilities: bit0 brightness events, bit1 lid. Not a claim about panel control or physical qualification.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sources",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Available producers: bit0 ACPI, bit1 USB Consumer.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "since_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Canonical monotonic time of the last update; zero before source publication.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Non-consuming snapshot of canonical platform input. Independent consumers retain their own counters. On first read or counter regression they establish a baseline without replaying historical button presses. Lid state is level-triggered; source removal resets it to unknown. The desktop owns screen/brightness policy. No AML, vendor scancode or sleep transition in this common owner."
+    },
+    {
+      "name": "DriverPlatformApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller byte capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "rsdp",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "u64 rsdp(void): admitted boot RSDP physical address or0. Cached table conveys no owner; each call authenticates the current driver init/work/dedicated task.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "physical_view",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32 physical_view(u64 physical,u64 bytes,u64* cpu): borrow an existing permanent platform direct-map span; 0 success, negative resource error. At most 16 MB; retained ACPI/reserved memory or existing UC device pages only. No new mappings, cache aliases, allocation or unmap. CPU pointer remains valid until reboot. Does not bypass a device register owner or grant DMA ownership.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "input_submit",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32 input_submit(u32 kind,u32 value):1 brightness up,2 down(value1);3 lid(value0 unknown,1 open,2 closed);4 ACPI source capabilities(value bit0 brightness/bit1 lid). Authenticated driver epoch, non-IRQ. 0 success; negative resource error. Source capabilities must precede events; one external ACPI source at a time. Close removes only that source and invalidates its lid state.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Minimal platform primitives for an external ACPI/EC driver. Firmware parsing, AML, EC transactions, Notify and policy stay outside the kernel. Physical views borrow preexisting platform mappings; unsupported/unmapped spans fail explicitly. Ordinary programs cannot call this table."
+    },
+    {
+      "name": "HidConsumerOp",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version 1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller byte capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "summary_address",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Borrowed aligned pointer to the validated legacy HidReportSummary from HIDREPORT parse. The pointer and summary remain immutable for this synchronous call.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "report_len",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 queries descriptor capability only; otherwise 1..32 actual input bytes including any report ID prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "report_id",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Output decoded report ID (0 without IDs), or 0xffffffff when the report has no consumer fields.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capabilities",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Output descriptor capabilities: bit 0 brightness up, bit 1 down. Does not claim hardware or keyboard boot-mode support.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pressed",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Output currently pressed controls for this report ID: bit 0 brightness up, bit 1 down. Caller owns per-ID edge detection; other report IDs preserve their held state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "report",
+          "offset": 32,
+          "type": {
+            "kind": "array",
+            "length": 32,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Caller supplied actual report bytes; unused tail is zero.",
+          "size": 32,
+          "alignment": 1,
+          "source_type": "[32]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Synchronous usb.hid_report Consumer Control decode, opcode 3. Return 0 success or -2 malformed/unsupported descriptor or report. Only absolute page 0x0c usages 0x6f/0x70 produce controls. Descriptor bounds, complete reports, IDs, array selectors and bitfields are validated by the protocol module. A failure never authorizes input publication. No fabricated set-1 scancode."
     }
   ],
   "operations": [],
@@ -123717,6 +124172,56 @@
       "scope": "gfx_telemetry",
       "stability": "fixed_contract",
       "description": "Metric flags bits8..11: known component values when partial_values is set."
+    },
+    {
+      "name": "platform_input_kind_brightness_up",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "input",
+      "stability": "fixed_contract",
+      "description": "External platform input kind: brightness_up."
+    },
+    {
+      "name": "platform_input_kind_brightness_down",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "input",
+      "stability": "fixed_contract",
+      "description": "External platform input kind: brightness_down."
+    },
+    {
+      "name": "platform_input_kind_lid",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "input",
+      "stability": "fixed_contract",
+      "description": "External platform input kind: lid."
+    },
+    {
+      "name": "platform_input_kind_capabilities",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "input",
+      "stability": "fixed_contract",
+      "description": "External platform input kind: capabilities."
+    },
+    {
+      "name": "hid_report_op_consumer",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "hid_report",
+      "stability": "fixed_contract",
+      "description": "Decode/query a HidConsumerOp through usb.hid_report; synchronous, pointer borrowed for the call."
     }
   ],
   "limits": [

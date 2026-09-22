@@ -1934,6 +1934,11 @@ extern "C" {
 #define R4OS_GFX_TELEMETRY_CURRENT_CLOCKS 4u
 #define R4OS_GFX_TELEMETRY_FABRIC_CLOCK 8u
 #define R4OS_GFX_TELEMETRY_VALUE_MASK 3840u
+#define R4OS_PLATFORM_INPUT_KIND_BRIGHTNESS_UP 1u
+#define R4OS_PLATFORM_INPUT_KIND_BRIGHTNESS_DOWN 2u
+#define R4OS_PLATFORM_INPUT_KIND_LID 3u
+#define R4OS_PLATFORM_INPUT_KIND_CAPABILITIES 4u
+#define R4OS_HID_REPORT_OP_CONSUMER 3u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2676,6 +2681,9 @@ typedef struct R4WindowModeExchange R4WindowModeExchange;
 typedef struct R4DriverModuleInfo R4DriverModuleInfo;
 typedef struct R4GfxOutputBrightness R4GfxOutputBrightness;
 typedef struct R4GfxBrightnessRequest R4GfxBrightnessRequest;
+typedef struct R4PlatformInputSnapshot R4PlatformInputSnapshot;
+typedef struct R4DriverPlatformApi R4DriverPlatformApi;
+typedef struct R4HidConsumerOp R4HidConsumerOp;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -7140,6 +7148,7 @@ typedef struct R4DriverResourceApi {
     uint64_t now_ns;
     uint64_t acpi_stat;
     uint64_t acpi_read_at;
+    uint64_t platform_query;
 } R4DriverResourceApi;
 
 typedef struct R4DriverHeapAllocation {
@@ -8289,6 +8298,39 @@ typedef struct R4GfxBrightnessRequest {
     uint64_t sequence;
 } R4GfxBrightnessRequest;
 
+typedef struct R4PlatformInputSnapshot {
+    uint32_t version;
+    uint32_t size;
+    uint64_t sequence;
+    uint64_t brightness_up;
+    uint64_t brightness_down;
+    uint64_t lid_sequence;
+    uint32_t lid_state;
+    uint32_t capabilities;
+    uint32_t sources;
+    uint32_t reserved;
+    uint64_t since_ns;
+} R4PlatformInputSnapshot;
+
+typedef struct R4DriverPlatformApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t rsdp;
+    uint64_t physical_view;
+    uint64_t input_submit;
+} R4DriverPlatformApi;
+
+typedef struct R4HidConsumerOp {
+    uint32_t version;
+    uint32_t size;
+    uint64_t summary_address;
+    uint32_t report_len;
+    uint32_t report_id;
+    uint32_t capabilities;
+    uint32_t pressed;
+    uint8_t report[32];
+} R4HidConsumerOp;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8486,6 +8528,7 @@ typedef int32_t (*R4SysProgramLocalPublishFn)(uint64_t key, uint64_t value, uint
 typedef int32_t (*R4SysThreadCurrentHandleFn)(R4ProgramJoinHandle * out_handle);
 typedef int32_t (*R4SysCpuCapacityFn)(R4CpuCapacity * output);
 typedef int32_t (*R4SysProgramExitFn)(int32_t exit_code, uint32_t reason);
+typedef int32_t (*R4SysPlatformInputSnapshotFn)(R4PlatformInputSnapshot * output);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -8646,6 +8689,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t thread_current_handle;
     uintptr_t cpu_capacity;
     uintptr_t program_exit;
+    uintptr_t platform_input_snapshot;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -13291,7 +13335,7 @@ _Static_assert(offsetof(R4DriverFirmwareTableInfo, signature) == 32u, "DriverFir
 _Static_assert(offsetof(R4DriverFirmwareTableInfo, revision) == 36u, "DriverFirmwareTableInfo.revision offset mismatch");
 _Static_assert(offsetof(R4DriverFirmwareTableInfo, flags) == 40u, "DriverFirmwareTableInfo.flags offset mismatch");
 _Static_assert(offsetof(R4DriverFirmwareTableInfo, reserved) == 44u, "DriverFirmwareTableInfo.reserved offset mismatch");
-_Static_assert(sizeof(R4DriverResourceApi) == 48u, "DriverResourceApi size mismatch");
+_Static_assert(sizeof(R4DriverResourceApi) == 56u, "DriverResourceApi size mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, version) == 0u, "DriverResourceApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, size) == 4u, "DriverResourceApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, stat) == 8u, "DriverResourceApi.stat offset mismatch");
@@ -13299,6 +13343,7 @@ _Static_assert(offsetof(R4DriverResourceApi, read_at) == 16u, "DriverResourceApi
 _Static_assert(offsetof(R4DriverResourceApi, now_ns) == 24u, "DriverResourceApi.now_ns offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, acpi_stat) == 32u, "DriverResourceApi.acpi_stat offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, acpi_read_at) == 40u, "DriverResourceApi.acpi_read_at offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, platform_query) == 48u, "DriverResourceApi.platform_query offset mismatch");
 _Static_assert(sizeof(R4DriverHeapAllocation) == 40u, "DriverHeapAllocation size mismatch");
 _Static_assert(offsetof(R4DriverHeapAllocation, version) == 0u, "DriverHeapAllocation.version offset mismatch");
 _Static_assert(offsetof(R4DriverHeapAllocation, size) == 4u, "DriverHeapAllocation.size offset mismatch");
@@ -14290,7 +14335,34 @@ _Static_assert(offsetof(R4GfxBrightnessRequest, identity) == 8u, "GfxBrightnessR
 _Static_assert(offsetof(R4GfxBrightnessRequest, level) == 32u, "GfxBrightnessRequest.level offset mismatch");
 _Static_assert(offsetof(R4GfxBrightnessRequest, reserved0) == 36u, "GfxBrightnessRequest.reserved0 offset mismatch");
 _Static_assert(offsetof(R4GfxBrightnessRequest, sequence) == 40u, "GfxBrightnessRequest.sequence offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1248u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4PlatformInputSnapshot) == 64u, "PlatformInputSnapshot size mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, version) == 0u, "PlatformInputSnapshot.version offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, size) == 4u, "PlatformInputSnapshot.size offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, sequence) == 8u, "PlatformInputSnapshot.sequence offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, brightness_up) == 16u, "PlatformInputSnapshot.brightness_up offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, brightness_down) == 24u, "PlatformInputSnapshot.brightness_down offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, lid_sequence) == 32u, "PlatformInputSnapshot.lid_sequence offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, lid_state) == 40u, "PlatformInputSnapshot.lid_state offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, capabilities) == 44u, "PlatformInputSnapshot.capabilities offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, sources) == 48u, "PlatformInputSnapshot.sources offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, reserved) == 52u, "PlatformInputSnapshot.reserved offset mismatch");
+_Static_assert(offsetof(R4PlatformInputSnapshot, since_ns) == 56u, "PlatformInputSnapshot.since_ns offset mismatch");
+_Static_assert(sizeof(R4DriverPlatformApi) == 32u, "DriverPlatformApi size mismatch");
+_Static_assert(offsetof(R4DriverPlatformApi, version) == 0u, "DriverPlatformApi.version offset mismatch");
+_Static_assert(offsetof(R4DriverPlatformApi, size) == 4u, "DriverPlatformApi.size offset mismatch");
+_Static_assert(offsetof(R4DriverPlatformApi, rsdp) == 8u, "DriverPlatformApi.rsdp offset mismatch");
+_Static_assert(offsetof(R4DriverPlatformApi, physical_view) == 16u, "DriverPlatformApi.physical_view offset mismatch");
+_Static_assert(offsetof(R4DriverPlatformApi, input_submit) == 24u, "DriverPlatformApi.input_submit offset mismatch");
+_Static_assert(sizeof(R4HidConsumerOp) == 64u, "HidConsumerOp size mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, version) == 0u, "HidConsumerOp.version offset mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, size) == 4u, "HidConsumerOp.size offset mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, summary_address) == 8u, "HidConsumerOp.summary_address offset mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, report_len) == 16u, "HidConsumerOp.report_len offset mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, report_id) == 20u, "HidConsumerOp.report_id offset mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, capabilities) == 24u, "HidConsumerOp.capabilities offset mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, pressed) == 28u, "HidConsumerOp.pressed offset mismatch");
+_Static_assert(offsetof(R4HidConsumerOp, report) == 32u, "HidConsumerOp.report offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1256u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -14596,6 +14668,8 @@ _Static_assert(offsetof(R4XStartR4Sys, cpu_capacity) == 1232u, "R4XStartR4Sys.cp
 _Static_assert(sizeof(R4SysCpuCapacityFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_exit) == 1240u, "R4XStartR4Sys.program_exit offset mismatch");
 _Static_assert(sizeof(R4SysProgramExitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, platform_input_snapshot) == 1248u, "R4XStartR4Sys.platform_input_snapshot offset mismatch");
+_Static_assert(sizeof(R4SysPlatformInputSnapshotFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
