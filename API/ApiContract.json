@@ -97025,7 +97025,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Metric9 only: bit0 says values[1] contains the difference from the preceding valid GPU timer sample; otherwise that value is unknown/zero. All other bits and metrics zero.",
+          "description": "Metric9 bit0: valid preceding GPU timer delta. Fresh metrics0/2 may set partial_values with a nonzero bits8..11 availability mask; absent values must be zero. Metric0 may additionally set current_clocks/fabric_clock. All other bits and nonfresh flags zero.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -97395,7 +97395,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "0 unknown;1 NVIDIA firmware RUSD and optional documented GPU timer. RUSD clocks are targets, never measured engine frequency.",
+          "description": "0 unknown;1 NVIDIA firmware RUSD/optional GPU timer;2 AMD SMU10 mailbox/THM. Source1 clocks are firmware targets. Source2 current clocks explicitly carry current_clocks; fabric frequency is explicitly labeled. Host observation stamps are not GPU timestamps.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -97483,7 +97483,7 @@
               "name": "GfxTelemetryMetric"
             }
           },
-          "description": "Indexes:0 target graphics/memory/video/SM Hz;1 NVIDIA RUSD throttle reasons;2 GPU/memory busy percent;3 P-state index;4 requested/enforced GPU limit mW;5 GPU and6 memory millidegrees Celsius;7 average GPU/module/memory mW;8 instantaneous GPU/module/CPU mW;9 GPU global timer ns, optional sample delta ns, and host request/response times ns. Timer intervals are not job durations; clock epochs are not equated. Unavailable fields are explicit.",
+          "description": "Indexes:0 target graphics/memory/video/SM Hz;1 NVIDIA RUSD throttle reasons;2 GPU/memory busy percent;3 P-state index;4 requested/enforced GPU limit mW;5 GPU and6 memory millidegrees Celsius;7 average GPU/module/memory mW;8 instantaneous GPU/module/CPU mW;9 GPU global timer ns, optional sample delta ns, and host request/response times ns. Timer intervals are not job durations; clock epochs are not equated. Unavailable fields are explicit. Metric0 current/fabric flags qualify the clock semantics; partial_values makes missing components explicit. Source2 metric5 is the shared APU temperature, not discrete GPU junction temperature; CPU/APU power limits remain unknown unless actually reported.",
           "size": 480,
           "alignment": 8,
           "source_type": "[10]GfxTelemetryMetric",
@@ -123667,6 +123667,56 @@
       "scope": "gfx_output",
       "stability": "fixed_contract",
       "description": "Current programmed brightness was confirmed. This is not a physical luminance measurement."
+    },
+    {
+      "name": "gfx_telemetry_source_smu10",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "enum_value",
+      "scope": "gfx_telemetry",
+      "stability": "fixed_contract",
+      "description": "AMD SMU10 mailbox/THM readings; no firmware timestamp or GPU job timer is inferred."
+    },
+    {
+      "name": "gfx_telemetry_partial_values",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_telemetry",
+      "stability": "fixed_contract",
+      "description": "For fresh metrics0 and2, bits8..11 explicitly select available values; unselected values are zero/unknown. Without this flag legacy metric fields remain available."
+    },
+    {
+      "name": "gfx_telemetry_current_clocks",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_telemetry",
+      "stability": "fixed_contract",
+      "description": "Metric0 values are queried current clocks rather than firmware target requests."
+    },
+    {
+      "name": "gfx_telemetry_fabric_clock",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_telemetry",
+      "stability": "fixed_contract",
+      "description": "Metric0 value1 is a fabric clock, never DRAM transfer rate or memory clock."
+    },
+    {
+      "name": "gfx_telemetry_value_mask",
+      "value": "3840",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "gfx_telemetry",
+      "stability": "fixed_contract",
+      "description": "Metric flags bits8..11: known component values when partial_values is set."
     }
   ],
   "limits": [

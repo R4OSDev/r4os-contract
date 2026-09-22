@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 301 von 301 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1916; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1921; Limits: 109
 
 ## App-Profile
 
@@ -10691,6 +10691,11 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gfx_brightness_reason_io` | `5` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_brightness_reason_inactive` | `6` | `u32` | value | number | `gfx_output` | fixed_contract |
 | `gfx_brightness_flag_current_known` | `1` | `u32` | value | number | `gfx_output` | fixed_contract |
+| `gfx_telemetry_source_smu10` | `2` | `u32` | value | enum_value | `gfx_telemetry` | fixed_contract |
+| `gfx_telemetry_partial_values` | `2` | `u32` | flag | bitmask | `gfx_telemetry` | fixed_contract |
+| `gfx_telemetry_current_clocks` | `4` | `u32` | flag | bitmask | `gfx_telemetry` | fixed_contract |
+| `gfx_telemetry_fabric_clock` | `8` | `u32` | flag | bitmask | `gfx_telemetry` | fixed_contract |
+| `gfx_telemetry_value_mask` | `3840` | `u32` | flag | bitmask | `gfx_telemetry` | fixed_contract |
 
 ## Limits
 
