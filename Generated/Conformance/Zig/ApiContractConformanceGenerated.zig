@@ -3676,7 +3676,7 @@ comptime {
     if (@offsetOf(abi.GfxOwnedBufferRelease, "adapter_id") != 64) @compileError("GfxOwnedBufferRelease.adapter_id offset");
     if (@offsetOf(abi.GfxOwnedBufferRelease, "driver_owner") != 68) @compileError("GfxOwnedBufferRelease.driver_owner offset");
     if (@offsetOf(abi.GfxOwnedBufferRelease, "reserved0") != 72) @compileError("GfxOwnedBufferRelease.reserved0 offset");
-    if (@sizeOf(abi.GfxDriverMemoryApi) != 248) @compileError("GfxDriverMemoryApi size");
+    if (@sizeOf(abi.GfxDriverMemoryApi) != 256) @compileError("GfxDriverMemoryApi size");
     if (@offsetOf(abi.GfxDriverMemoryApi, "version") != 0) @compileError("GfxDriverMemoryApi.version offset");
     if (@offsetOf(abi.GfxDriverMemoryApi, "size") != 4) @compileError("GfxDriverMemoryApi.size offset");
     if (@offsetOf(abi.GfxDriverMemoryApi, "buffer_create") != 8) @compileError("GfxDriverMemoryApi.buffer_create offset");
@@ -3709,6 +3709,7 @@ comptime {
     if (@offsetOf(abi.GfxDriverMemoryApi, "virtual_take") != 224) @compileError("GfxDriverMemoryApi.virtual_take offset");
     if (@offsetOf(abi.GfxDriverMemoryApi, "virtual_complete") != 232) @compileError("GfxDriverMemoryApi.virtual_complete offset");
     if (@offsetOf(abi.GfxDriverMemoryApi, "reserved_span") != 240) @compileError("GfxDriverMemoryApi.reserved_span offset");
+    if (@offsetOf(abi.GfxDriverMemoryApi, "unmanaged_span") != 248) @compileError("GfxDriverMemoryApi.unmanaged_span offset");
     if (@sizeOf(abi.GfxFence) != 40) @compileError("GfxFence size");
     if (@offsetOf(abi.GfxFence, "slot") != 0) @compileError("GfxFence.slot offset");
     if (@offsetOf(abi.GfxFence, "adapter_id") != 4) @compileError("GfxFence.adapter_id offset");

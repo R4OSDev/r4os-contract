@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 304 von 304 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1926; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1928; Limits: 109
 
 ## App-Profile
 
@@ -196,7 +196,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxMmioWindow` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `GfxOwnedBufferReservation` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `GfxOwnedBufferRelease` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
-| `GfxDriverMemoryApi` | extensible | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
+| `GfxDriverMemoryApi` | extensible | extern_struct | 256/8 | 256/8 | 256/8 | 256/8 |
 | `GfxFence` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueConfig` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GfxQueueHandle` | extensible | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
@@ -5537,7 +5537,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 7 / 248 / 8
+- Version/Größe/Alignment: 8 / 256 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -5573,6 +5573,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `virtual_take` | 224 | 8 | 8 | `u64` | - |
 | `virtual_complete` | 232 | 8 | 8 | `u64` | - |
 | `reserved_span` | 240 | 8 | 8 | `u64` | - |
+| `unmanaged_span` | 248 | 8 | 8 | `u64` | - |
 
 ### `GfxFence`
 
@@ -8987,7 +8988,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `35` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `36` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_api_thread_work_version` | `35` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -10759,6 +10760,8 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `platform_input_kind_lid` | `3` | `u32` | value | number | `input` | fixed_contract |
 | `platform_input_kind_capabilities` | `4` | `u32` | value | number | `input` | fixed_contract |
 | `hid_report_op_consumer` | `3` | `u32` | value | number | `hid_report` | fixed_contract |
+| `driver_api_owned_work_version` | `36` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_work_owner_busy` | `-32000` | `i32` | value | status | `driver_work` | fixed_contract |
 
 ## Limits
 

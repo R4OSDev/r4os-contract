@@ -18,10 +18,42 @@ version 32 appends dedicated driver tasks; version 33 appends resident
 counting semaphores. Version 34 appends byte-range DMA synchronization;
 version 35 preserves the complete 648-byte layout and adds owned normal-work
 submission from dedicated tasks plus terminal display shutdown semantics.
+Version 36 appends driver_work_submit_owned at offset 648 (size 656); the
+complete v35 prefix and ordinary Work semantics remain unchanged.
 StorageBackend version 2
 appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
 its offer. None of these extensions changes an older prefix.
+
+Bounded lifecycle-owner Work (Kernel 0.1.212)
+-------------------------------------------
+driver_work_submit_owned(handler, context, completion*) queues one bounded
+task-class callback on the existing normal BSP Work lane. Init/Shutdown or
+a live dedicated driver task supplies the authenticated owner. IRQ and
+storage callbacks cannot use this entrypoint. Dedicated tasks retain their
+existing CPU/thread/heap services; direct BO, PCI/MMIO and display admission
+is not broadened. Older kernels are detected by version, size and callback.
+
+The Work callback obtains the preemptible lifecycle guard without waiting.
+When another task owns it, completion result driver_work_owner_busy (-32000)
+means no callback ran. The caller releases that completion before retrying.
+This prevents a shared worker waiting behind Shutdown while Shutdown checks
+the worker. Under the guard, the normal live driver/heap epoch is checked;
+closing or stale owners cannot start new work. Ordinary Work still lacks
+legacy MMIO/display admission and remains suitable for its existing uses.
+
+A callback is one bounded step: no driver-task join, completion wait or
+pacing loop may span it. Slow device sequences run in their separate driver
+task and submit copied metadata or bounded owner operations as needed.
+The usual completion, cancellation and owner-cleanup rules apply. Context
+storage remains resident until a terminal completion is released, including
+after timeout, failed wait or a late result. A timeout proves neither that
+the callback stopped nor that its hardware/resources can be freed.
+
+The existing EXAMPLE fixture has an optional mode=owned-work-test probe.
+It checks dedicated/ordinary admission refusal, BUSY while Init owns the
+guard, then an owned memory/display query and balanced CPU BO lifecycle
+after Init returns. It performs no device MMIO or GPU submission.
 
 Asynchronous primary mode ownership (Kernel 0.1.161)
 --------------------------------------------------
@@ -922,3 +954,35 @@ It requires the actual bound driver Init/Work owner. Existing 112..240-byte
 callers receive exactly their negotiated prefix. No outer DriverApi change.
 CPU maps remain a separate cache-policy and lifetime decision. The proof
 means storage is outside the PMM, not that another device cannot use it.
+
+0.80.39: independently measured storage omitted from UEFI memory maps
+-------------------------------------------------------------------
+GfxDriverMemoryApi wire v1 appends unmanaged_span at248, total256 (schema
+type revision8). The original248-byte prefix and reserved_span semantics
+are unchanged. Only the default caller capacity grows to256. Kernel211
+returns the negotiated prefix; older kernels leave the optional slot absent.
+The new query rejects invalid/incomplete maps and every overlap with usable,
+reclaimable, kernel/module, ACPI, bad or unknown memory. It permits gaps and
+reserved/framebuffer entries. This is a negative system-memory proof only:
+the driver must independently measure the existence and extent of its device
+storage. It neither adds RAM nor allocates, maps or transfers ownership.
+This handles the Lenovo Raven2 UMA extent omitted from its complete UEFI map.
+Actual Init/Work ownership and gfx-buffer errors match reserved_span.
+The controlled baseline update compares every existing field's offset, type,
+size, alignment and semantics; only size.default changes248->256. Existing
+C/Zig facade probes cover every truncated tail and unchanged64-bit arguments.
+
+
+Terminal display cleanup tasks (Kernel 0.1.213, DriverApi36)
+---------------------------------------------------------
+Ordinary driver close/unload still closes new thread queries and starts.
+During terminal system-transition shutdown only, the synchronous display
+lifecycle owner may query/start a dedicated cleanup task after existing
+tasks receive stop/wakeup. Calls from existing or cleanup child tasks do not
+inherit that permission. Heap, resources, semaphores, GPU BOs and work
+admissions remain closed; cleanup uses retained ownership and mappings.
+After the shutdown callback, including failure, thread admission closes
+before the existing callback/task/display/GPU quiescence checks. A retained
+task or unacknowledged hardware state still vetoes warm reset and backing
+release. This is a lifecycle semantic clarification; DriverApi36 remains
+656 bytes and adds no further slot or public payload.

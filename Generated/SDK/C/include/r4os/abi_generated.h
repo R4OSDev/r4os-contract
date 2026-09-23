@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 35u
+#define R4OS_DRIVER_API_VERSION 36u
 #define R4OS_DRIVER_API_THREAD_WORK_VERSION 35u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
@@ -1939,6 +1939,8 @@ extern "C" {
 #define R4OS_PLATFORM_INPUT_KIND_LID 3u
 #define R4OS_PLATFORM_INPUT_KIND_CAPABILITIES 4u
 #define R4OS_HID_REPORT_OP_CONSUMER 3u
+#define R4OS_DRIVER_API_OWNED_WORK_VERSION 36u
+#define R4OS_DRIVER_WORK_OWNER_BUSY ((int32_t)-32000)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -6705,6 +6707,7 @@ typedef struct R4GfxDriverMemoryApi {
     uint64_t virtual_take;
     uint64_t virtual_complete;
     uint64_t reserved_span;
+    uint64_t unmanaged_span;
 } R4GfxDriverMemoryApi;
 
 typedef struct R4GfxFence {
@@ -12961,7 +12964,7 @@ _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_generation) == 56u, "Gfx
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, adapter_id) == 64u, "GfxOwnedBufferRelease.adapter_id offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, driver_owner) == 68u, "GfxOwnedBufferRelease.driver_owner offset mismatch");
 _Static_assert(offsetof(R4GfxOwnedBufferRelease, reserved0) == 72u, "GfxOwnedBufferRelease.reserved0 offset mismatch");
-_Static_assert(sizeof(R4GfxDriverMemoryApi) == 248u, "GfxDriverMemoryApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverMemoryApi) == 256u, "GfxDriverMemoryApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, version) == 0u, "GfxDriverMemoryApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, size) == 4u, "GfxDriverMemoryApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, buffer_create) == 8u, "GfxDriverMemoryApi.buffer_create offset mismatch");
@@ -12994,6 +12997,7 @@ _Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_unregister) == 216u, "GfxD
 _Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_take) == 224u, "GfxDriverMemoryApi.virtual_take offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, virtual_complete) == 232u, "GfxDriverMemoryApi.virtual_complete offset mismatch");
 _Static_assert(offsetof(R4GfxDriverMemoryApi, reserved_span) == 240u, "GfxDriverMemoryApi.reserved_span offset mismatch");
+_Static_assert(offsetof(R4GfxDriverMemoryApi, unmanaged_span) == 248u, "GfxDriverMemoryApi.unmanaged_span offset mismatch");
 _Static_assert(sizeof(R4GfxFence) == 40u, "GfxFence size mismatch");
 _Static_assert(offsetof(R4GfxFence, slot) == 0u, "GfxFence.slot offset mismatch");
 _Static_assert(offsetof(R4GfxFence, adapter_id) == 4u, "GfxFence.adapter_id offset mismatch");

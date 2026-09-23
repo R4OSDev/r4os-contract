@@ -82900,8 +82900,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 7,
-      "size": 248,
+      "version": 8,
+      "size": 256,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -82932,7 +82932,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "248"
+          "default_value": "256"
         },
         {
           "name": "buffer_create",
@@ -83353,10 +83353,24 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "unmanaged_span",
+          "offset": 248,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t unmanaged_span(uint64_t physical_base, uint64_t bytes). Optional tail; 1 proves an aligned nonzero <=52-bit span overlaps no system memory in a complete, valid immutable boot map. Reserved/framebuffer entries and unlisted gaps are allowed; usable, reclaimable, kernel/module, ACPI, bad and unknown memory overlap fail. This is only a negative PMM/system-memory proof: the driver must independently measure actual device storage. It grants no device ownership, mapping, cache alias, allocation or RAM charge. Actual bound driver Init/Work owner; invalid=-1, unsupported=-6. reserved_span retains its stricter complete-coverage semantics.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "DriverApi v25 owner-bound memory extension, optional owned-buffer tail after the original 112-byte prefix. Actual Init/ordinary Work context required; cached cleanup remains valid while closing. Outer DriverApi stays unchanged. Wire version stays 1. The 152-byte prefix is unchanged; the optional 184-byte tail exposes native allocation providers. The optional 240-byte tail adds owner-bound virtual-memory transport; the 208-byte prefix and wire version 1 stay unchanged. Optional reserved_span at 240 (table size 248) proves that a device storage carveout is outside all PMM-managed memory before a driver partitions it. Original 112/240-byte prefixes and outer DriverApi remain binary stable."
+      "description": "DriverApi v25 owner-bound memory extension, optional owned-buffer tail after the original 112-byte prefix. Actual Init/ordinary Work context required; cached cleanup remains valid while closing. Outer DriverApi stays unchanged. Wire version stays 1. The 152-byte prefix is unchanged; the optional 184-byte tail exposes native allocation providers. The optional 240-byte tail adds owner-bound virtual-memory transport; the 208-byte prefix and wire version 1 stay unchanged. Optional reserved_span at 240 (table size 248) proves that a device storage carveout is outside all PMM-managed memory before a driver partitions it. Original 112/240-byte prefixes and outer DriverApi remain binary stable. Optional unmanaged_span at248 (table size256) separately proves exclusion from system memory even when UEFI omits a device carveout. The existing248-byte prefix, wire version1 and outer DriverApi remain binary stable; only the default caller capacity grows."
     },
     {
       "name": "GfxFence",
@@ -106505,7 +106519,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "35",
+      "value": "36",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -124222,6 +124236,26 @@
       "scope": "hid_report",
       "stability": "fixed_contract",
       "description": "Decode/query a HidConsumerOp through usb.hid_report; synchronous, pointer borrowed for the call."
+    },
+    {
+      "name": "driver_api_owned_work_version",
+      "value": "36",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "driver_api",
+      "stability": "fixed_contract",
+      "description": "Minimum DriverApi for the optional driver_work_submit_owned callback at offset648, size656. It posts one bounded callback onto normal BSP Driver Work under the authenticated lifecycle owner. Dedicated tasks retain only CPU/thread services; no direct PCI/MMIO/display admission. A context remains alive through completion, cancellation and release. No driver wait or worker join may span the callback."
+    },
+    {
+      "name": "driver_work_owner_busy",
+      "value": "-32000",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "status",
+      "scope": "driver_work",
+      "stability": "fixed_contract",
+      "description": "Owned Work completion: lifecycle owner was busy; no callback executed. Release completion and resubmit later. No shared worker waits behind shutdown."
     }
   ],
   "limits": [

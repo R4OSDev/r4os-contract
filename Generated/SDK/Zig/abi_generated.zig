@@ -155,7 +155,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 35;
+pub const driver_api_version: u32 = 36;
 pub const driver_api_thread_work_version: u32 = 35;
 pub const driver_magic: u32 = 826888260;
 pub const driver_work_flag_from_irq: u32 = 1;
@@ -1927,6 +1927,8 @@ pub const platform_input_kind_brightness_down: u32 = 2;
 pub const platform_input_kind_lid: u32 = 3;
 pub const platform_input_kind_capabilities: u32 = 4;
 pub const hid_report_op_consumer: u32 = 3;
+pub const driver_api_owned_work_version: u32 = 36;
+pub const driver_work_owner_busy: i32 = -32000;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -6426,7 +6428,7 @@ pub const GfxOwnedBufferRelease = extern struct {
 
 pub const GfxDriverMemoryApi = extern struct {
     version: u32 = 1,
-    size: u32 = 248,
+    size: u32 = 256,
     buffer_create: u64 = 0,
     buffer_describe: u64 = 0,
     buffer_import: u64 = 0,
@@ -6457,6 +6459,7 @@ pub const GfxDriverMemoryApi = extern struct {
     virtual_take: u64 = 0,
     virtual_complete: u64 = 0,
     reserved_span: u64 = 0,
+    unmanaged_span: u64 = 0,
 };
 
 pub const GfxFence = extern struct {
@@ -13304,7 +13307,7 @@ comptime {
     if (@offsetOf(GfxOwnedBufferRelease, "adapter_id") != 64) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.adapter_id");
     if (@offsetOf(GfxOwnedBufferRelease, "driver_owner") != 68) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.driver_owner");
     if (@offsetOf(GfxOwnedBufferRelease, "reserved0") != 72) @compileError("generated ABI offset drift: GfxOwnedBufferRelease.reserved0");
-    if (@sizeOf(GfxDriverMemoryApi) != 248) @compileError("generated ABI size drift: GfxDriverMemoryApi");
+    if (@sizeOf(GfxDriverMemoryApi) != 256) @compileError("generated ABI size drift: GfxDriverMemoryApi");
     if (@alignOf(GfxDriverMemoryApi) != 8) @compileError("generated ABI alignment drift: GfxDriverMemoryApi");
     if (@offsetOf(GfxDriverMemoryApi, "version") != 0) @compileError("generated ABI offset drift: GfxDriverMemoryApi.version");
     if (@offsetOf(GfxDriverMemoryApi, "size") != 4) @compileError("generated ABI offset drift: GfxDriverMemoryApi.size");
@@ -13338,6 +13341,7 @@ comptime {
     if (@offsetOf(GfxDriverMemoryApi, "virtual_take") != 224) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_take");
     if (@offsetOf(GfxDriverMemoryApi, "virtual_complete") != 232) @compileError("generated ABI offset drift: GfxDriverMemoryApi.virtual_complete");
     if (@offsetOf(GfxDriverMemoryApi, "reserved_span") != 240) @compileError("generated ABI offset drift: GfxDriverMemoryApi.reserved_span");
+    if (@offsetOf(GfxDriverMemoryApi, "unmanaged_span") != 248) @compileError("generated ABI offset drift: GfxDriverMemoryApi.unmanaged_span");
     if (@sizeOf(GfxFence) != 40) @compileError("generated ABI size drift: GfxFence");
     if (@alignOf(GfxFence) != 8) @compileError("generated ABI alignment drift: GfxFence");
     if (@offsetOf(GfxFence, "slot") != 0) @compileError("generated ABI offset drift: GfxFence.slot");

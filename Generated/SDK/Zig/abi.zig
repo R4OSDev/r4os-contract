@@ -1926,6 +1926,8 @@ pub const platform_input_kind_brightness_down = generated.platform_input_kind_br
 pub const platform_input_kind_lid = generated.platform_input_kind_lid;
 pub const platform_input_kind_capabilities = generated.platform_input_kind_capabilities;
 pub const hid_report_op_consumer = generated.hid_report_op_consumer;
+pub const driver_api_owned_work_version = generated.driver_api_owned_work_version;
+pub const driver_work_owner_busy = generated.driver_work_owner_busy;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;
@@ -4020,6 +4022,8 @@ pub const DriverApi = extern struct {
     // Technical facade outside the generated exports block: v34 range sync.
     dma_sync_range_for_device: ?*const fn (*const DmaMapping, u32, u32) callconv(.c) i32 = null,
     dma_sync_range_for_cpu: ?*const fn (*const DmaMapping, u32, u32) callconv(.c) i32 = null,
+    // v36: bounded BSP Work slice under the authenticated lifecycle owner.
+    driver_work_submit_owned: ?*const fn (DriverWorkHandler, usize, *u32) callconv(.c) i32 = null,
 };
 
 pub const ProtocolApi = extern struct {
