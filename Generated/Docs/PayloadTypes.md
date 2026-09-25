@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 304 von 304 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1928; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1929; Limits: 109
 
 ## App-Profile
 
@@ -10578,6 +10578,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `display_presentation_info_overlay` | `128` | `u32` | value | number | `display_presentation` | fixed_contract |
 | `gfx_queue_operation_direct_present` | `7` | `u32` | value | number | `gfx_queue` | fixed_contract |
 | `display_presentation_flag_direct` | `4` | `u32` | value | number | `display` | fixed_contract |
+| `display_presentation_flag_polled` | `8` | `u32` | value | number | `display` | fixed_contract |
 | `audio_output_reason_auto_display_port` | `8` | `u32` | identity | number | `audio_service_outputs` | fixed_contract |
 | `gfx_output_kind_dvi` | `6` | `u32` | value | number | `gfx_outputs` | fixed_contract |
 | `display_presentation_info_system_source` | `256` | `u32` | value | number | `display_presentation` | fixed_contract |

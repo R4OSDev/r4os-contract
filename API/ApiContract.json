@@ -90649,7 +90649,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Copy engine point that prepared the latest visible image; independent of the common queue point.",
+          "description": "Copy engine point that prepared the latest visible image; independent of the common queue point. Zero for explicitly polled scanout receipts; their exact completed copy/display job is identified by source_timeline/source_point.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -90663,7 +90663,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Window notifier point for the latest visible image.",
+          "description": "Window notifier point for the latest visible image. Zero for explicitly polled scanout receipts without a Window notifier.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -90691,7 +90691,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Monotonic CPU time when hardware activation and the head event were observed.",
+          "description": "Monotonic CPU time when hardware activation and the head event were observed, or when explicitly polled scanout address and subsequent hardware frame progress were jointly confirmed. Not an estimated VBlank instant.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -90705,7 +90705,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Raw Window BEGUN GPU timestamp; not converted to CPU nanoseconds.",
+          "description": "Raw Window BEGUN GPU timestamp; not converted to CPU nanoseconds. Zero for explicitly polled scanout receipts.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -90719,7 +90719,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Observed head IRQ sequence used by the visible receipt; not an estimated refresh count.",
+          "description": "Observed head IRQ sequence used by the visible receipt; not an estimated refresh count. Zero for explicitly polled scanout receipts; hardware frame counters must not be relabeled as IRQs.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -90733,7 +90733,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Monotonic CPU timestamp of that observed head IRQ.",
+          "description": "Monotonic CPU timestamp of that observed head IRQ. Zero for explicitly polled scanout receipts.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -90747,7 +90747,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "CPU observation of previous-image FINISHED for the latest visible flip; zero while still held.",
+          "description": "CPU observation of previous-image FINISHED, or confirmed previous-image scanout retirement for an explicitly polled flip; zero while still held.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -90756,7 +90756,7 @@
         }
       ],
       "values": [],
-      "description": "Read-only native presentation statistics, separate from the fixed-layout DisplaySummary and existing CPU/common-copy fences. Counters and the latest visible receipt share one coherent bounded snapshot. No IRQ, timer tick, GET or copy completion alone is a visible flip. Samples from stale owner/device/display lifetimes are rejected. Boot framebuffer and unsupported providers return unavailable without inventing hardware data."
+      "description": "Read-only native presentation statistics, separate from the fixed-layout DisplaySummary and existing CPU/common-copy fences. Counters and the latest visible receipt share one coherent bounded snapshot. No IRQ, timer tick, GET or copy completion alone is a visible flip. Explicit polled receipts require completed source work plus the exact active scanout address and subsequent hardware frame progress; notifier, IRQ and GPU timestamp fields remain zero. Initial boot or mode-only receipts carry no completed application source fence. Samples from stale owner/device/display lifetimes are rejected. Boot framebuffer and unsupported providers return unavailable without inventing hardware data."
     },
     {
       "name": "DisplayCursorInfo",
@@ -122416,6 +122416,16 @@
       "scope": "display",
       "stability": "fixed_contract",
       "description": "The latest visible receipt scans the submitted source directly. render_point may be zero because no CE copy occurred; source_timeline/point and actual Window/head receipts remain mandatory. released_ns still describes the previous image, never this source."
+    },
+    {
+      "name": "display_presentation_flag_polled",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "display",
+      "stability": "fixed_contract",
+      "description": "Explicitly polled composition-copy scanout receipt: exact source_timeline/source_point identity after the device copy completes, plus exact active address and subsequent hardware frame progress observed by the authenticated driver. This metadata does not complete or retire the common queue fence. visible_sequence counts confirmed submitted images, excluding boot, mode-only and cursor transitions. render_point, window_point, gpu_timestamp, irq_sequence and irq_observed_ns must all be zero; direct is not permitted. The legacy interrupt/notifier validation remains mandatory without this flag. The binary layout and version are unchanged."
     },
     {
       "name": "audio_output_reason_auto_display_port",

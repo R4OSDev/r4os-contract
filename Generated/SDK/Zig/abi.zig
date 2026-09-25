@@ -1744,6 +1744,7 @@ pub const display_presentation_info_direct = generated.display_presentation_info
 pub const display_presentation_info_overlay = generated.display_presentation_info_overlay;
 pub const gfx_queue_operation_direct_present = generated.gfx_queue_operation_direct_present;
 pub const display_presentation_flag_direct = generated.display_presentation_flag_direct;
+pub const display_presentation_flag_polled = generated.display_presentation_flag_polled;
 pub const audio_output_reason_auto_display_port = generated.audio_output_reason_auto_display_port;
 pub const gfx_output_kind_dvi = generated.gfx_output_kind_dvi;
 pub const display_presentation_info_system_source = generated.display_presentation_info_system_source;

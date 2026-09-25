@@ -1745,6 +1745,7 @@ pub const display_presentation_info_direct: u32 = 64;
 pub const display_presentation_info_overlay: u32 = 128;
 pub const gfx_queue_operation_direct_present: u32 = 7;
 pub const display_presentation_flag_direct: u32 = 4;
+pub const display_presentation_flag_polled: u32 = 8;
 pub const audio_output_reason_auto_display_port: u32 = 8;
 pub const gfx_output_kind_dvi: u32 = 6;
 pub const display_presentation_info_system_source: u32 = 256;
