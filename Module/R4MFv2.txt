@@ -376,3 +376,16 @@ error for unsupported languages or profiles instead of selecting another
 project path. Historical R4CP is read only by the explicit R4BUILD CONVERT
 one-shot command; normal R4CODE and R4BUILD operation does not accept it as a
 project contract.
+
+Optional parallel execution owner (0.81.19)
+------------------------------------------
+META=runtime.parallel=owned-v1 declares that the module owner audited the
+reachable program, library and API state for parallel background execution.
+META=runtime.parallel=bsp or an absent key retains BSP execution. Duplicate
+or unknown values are invalid. Foreground/shell execution remains BSP;
+background child threads inherit the instance declaration, not a pathname.
+This is an ownership declaration, not a sandbox or user affinity setting.
+owned-v1 GUI drawing has one main-thread producer; other threads may use
+audited compute/IPC paths. VM pages stay non-evictable within existing limits
+until the parallel pager has its own complete ownership proof. Library and
+driver callback reentrancy is never implied by merely importing an API.
