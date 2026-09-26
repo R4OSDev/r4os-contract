@@ -8087,6 +8087,16 @@ pub const HidConsumerOp = extern struct {
     report: [32]u8 = .{0} ** 32,
 };
 
+pub const DirectoryScanCursor = extern struct {
+    version: u32 = 1,
+    size: u32 = 1088,
+    change: DirectoryChangeCursor = .{},
+    owner_id: u32 = 0,
+    owner_kind: u32 = 0,
+    owner_generation: u64 = 0,
+    backend: [128]u64 = .{0} ** 128,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8240,12 +8250,13 @@ pub const R4SysFns = struct {
     pub const cpu_capacity = *const fn (*CpuCapacity) callconv(.c) i32;
     pub const program_exit = *const fn (i32, u32) callconv(.c) i32;
     pub const platform_input_snapshot = *const fn (*PlatformInputSnapshot) callconv(.c) i32;
+    pub const directory_next = *const fn ([*:0]const u8, *DirectoryScanCursor, [*]u8, u32, *FileInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 24,
-    size: u32 = 1256,
+    abi_version: u32 = 25,
+    size: u32 = 1264,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -8402,6 +8413,7 @@ pub const R4XStartR4Sys = extern struct {
     cpu_capacity: usize = 0,
     program_exit: usize = 0,
     platform_input_snapshot: usize = 0,
+    directory_next: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -9166,6 +9178,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 152, .offset = 1232, .name = "cpu_capacity", .state = .function, .required = false },
     .{ .number = 153, .offset = 1240, .name = "program_exit", .state = .function, .required = false },
     .{ .number = 154, .offset = 1248, .name = "platform_input_snapshot", .state = .function, .required = false },
+    .{ .number = 155, .offset = 1256, .name = "directory_next", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -14839,7 +14852,16 @@ comptime {
     if (@offsetOf(HidConsumerOp, "capabilities") != 24) @compileError("generated ABI offset drift: HidConsumerOp.capabilities");
     if (@offsetOf(HidConsumerOp, "pressed") != 28) @compileError("generated ABI offset drift: HidConsumerOp.pressed");
     if (@offsetOf(HidConsumerOp, "report") != 32) @compileError("generated ABI offset drift: HidConsumerOp.report");
-    if (@sizeOf(R4XStartR4Sys) != 1256) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(DirectoryScanCursor) != 1088) @compileError("generated ABI size drift: DirectoryScanCursor");
+    if (@alignOf(DirectoryScanCursor) != 8) @compileError("generated ABI alignment drift: DirectoryScanCursor");
+    if (@offsetOf(DirectoryScanCursor, "version") != 0) @compileError("generated ABI offset drift: DirectoryScanCursor.version");
+    if (@offsetOf(DirectoryScanCursor, "size") != 4) @compileError("generated ABI offset drift: DirectoryScanCursor.size");
+    if (@offsetOf(DirectoryScanCursor, "change") != 8) @compileError("generated ABI offset drift: DirectoryScanCursor.change");
+    if (@offsetOf(DirectoryScanCursor, "owner_id") != 48) @compileError("generated ABI offset drift: DirectoryScanCursor.owner_id");
+    if (@offsetOf(DirectoryScanCursor, "owner_kind") != 52) @compileError("generated ABI offset drift: DirectoryScanCursor.owner_kind");
+    if (@offsetOf(DirectoryScanCursor, "owner_generation") != 56) @compileError("generated ABI offset drift: DirectoryScanCursor.owner_generation");
+    if (@offsetOf(DirectoryScanCursor, "backend") != 64) @compileError("generated ABI offset drift: DirectoryScanCursor.backend");
+    if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -14995,6 +15017,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "cpu_capacity") != 1232) @compileError("generated ABI offset drift: R4XStartR4Sys.cpu_capacity");
     if (@offsetOf(R4XStartR4Sys, "program_exit") != 1240) @compileError("generated ABI offset drift: R4XStartR4Sys.program_exit");
     if (@offsetOf(R4XStartR4Sys, "platform_input_snapshot") != 1248) @compileError("generated ABI offset drift: R4XStartR4Sys.platform_input_snapshot");
+    if (@offsetOf(R4XStartR4Sys, "directory_next") != 1256) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_next");
     if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -15435,13 +15458,14 @@ pub const R4SysProvider = struct {
     cpu_capacity: ?R4SysFns.cpu_capacity = null,
     program_exit: ?R4SysFns.program_exit = null,
     platform_input_snapshot: ?R4SysFns.platform_input_snapshot = null,
+    directory_next: ?R4SysFns.directory_next = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 24,
-        .size = 1256,
+        .abi_version = 25,
+        .size = 1264,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -15598,6 +15622,7 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .cpu_capacity = if (provider.cpu_capacity) |callback| @intFromPtr(callback) else 0,
         .program_exit = if (provider.program_exit) |callback| @intFromPtr(callback) else 0,
         .platform_input_snapshot = if (provider.platform_input_snapshot) |callback| @intFromPtr(callback) else 0,
+        .directory_next = if (provider.directory_next) |callback| @intFromPtr(callback) else 0,
     };
 }
 

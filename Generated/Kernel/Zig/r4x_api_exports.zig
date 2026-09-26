@@ -2648,6 +2648,7 @@ pub const GfxBrightnessRequest = generated.GfxBrightnessRequest;
 pub const PlatformInputSnapshot = generated.PlatformInputSnapshot;
 pub const DriverPlatformApi = generated.DriverPlatformApi;
 pub const HidConsumerOp = generated.HidConsumerOp;
+pub const DirectoryScanCursor = generated.DirectoryScanCursor;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

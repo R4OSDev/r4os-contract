@@ -3,10 +3,10 @@
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
   "summary": {
-    "function_count": 426,
-    "group_slot_count": 426,
+    "function_count": 427,
+    "group_slot_count": 427,
     "sdk_only_count": 0,
-    "public_count": 326,
+    "public_count": 327,
     "advanced_count": 100
   },
   "functions": [
@@ -1829,6 +1829,18 @@
       "slot": 154,
       "exposure": "public",
       "description": "Copy the canonical ACPI/USB Consumer input snapshot without consuming events.1 success, negative invalid output. Caller initializes version1/size64; output unchanged on failure. No hardware access, callback or allocation. Desktop policy observes counter deltas and lid state independently from normal keyboard text.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.directory_next",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 155,
+      "exposure": "public",
+      "description": "Resume owner-bound directory enumeration without prefix scans. Initialize DirectoryScanCursor to defaults. Returns 0 file, 1 directory, 2 bounded progress without an entry (retry), -5 complete EOF, -10 restart after directory mutation, history overflow, owner/path/mount change; other negatives are errors (-1 invalid, -3 missing mount, -7 output too small, -9 I/O). On restart/error discard all partial results; no truncated successful generation. Cursor and output are unchanged on errors; progress and EOF publish cursor only. Success copies a NUL-terminated absolute path. One call examines at most 256 physical directory entries, with a bounded NTFS ancestor stack. Internal state is opaque, must not be edited or used concurrently. No persistent kernel resource, allocation or mount pin; discarding/resetting cursor cancels/closes immediately. A call pins its mount and holds the filesystem request gate; an unmount between calls invalidates continuation. Old dir_entry ABI remains unchanged. A found entry also copies FileInfo metadata from the same enumeration record; no second name lookup. NTFS directory-index metadata has the same snapshot semantics as its index entry. On progress, EOF or failure metadata is unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

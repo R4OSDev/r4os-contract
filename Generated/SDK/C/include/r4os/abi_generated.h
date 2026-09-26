@@ -2687,6 +2687,7 @@ typedef struct R4GfxBrightnessRequest R4GfxBrightnessRequest;
 typedef struct R4PlatformInputSnapshot R4PlatformInputSnapshot;
 typedef struct R4DriverPlatformApi R4DriverPlatformApi;
 typedef struct R4HidConsumerOp R4HidConsumerOp;
+typedef struct R4DirectoryScanCursor R4DirectoryScanCursor;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8335,6 +8336,16 @@ typedef struct R4HidConsumerOp {
     uint8_t report[32];
 } R4HidConsumerOp;
 
+typedef struct R4DirectoryScanCursor {
+    uint32_t version;
+    uint32_t size;
+    R4DirectoryChangeCursor change;
+    uint32_t owner_id;
+    uint32_t owner_kind;
+    uint64_t owner_generation;
+    uint64_t backend[128];
+} R4DirectoryScanCursor;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -8533,6 +8544,7 @@ typedef int32_t (*R4SysThreadCurrentHandleFn)(R4ProgramJoinHandle * out_handle);
 typedef int32_t (*R4SysCpuCapacityFn)(R4CpuCapacity * output);
 typedef int32_t (*R4SysProgramExitFn)(int32_t exit_code, uint32_t reason);
 typedef int32_t (*R4SysPlatformInputSnapshotFn)(R4PlatformInputSnapshot * output);
+typedef int32_t (*R4SysDirectoryNextFn)(const uint8_t * arg0, R4DirectoryScanCursor * cursor, uint8_t * arg2, uint32_t arg3, R4FileInfo * info);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -8694,6 +8706,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t cpu_capacity;
     uintptr_t program_exit;
     uintptr_t platform_input_snapshot;
+    uintptr_t directory_next;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -14367,7 +14380,15 @@ _Static_assert(offsetof(R4HidConsumerOp, report_id) == 20u, "HidConsumerOp.repor
 _Static_assert(offsetof(R4HidConsumerOp, capabilities) == 24u, "HidConsumerOp.capabilities offset mismatch");
 _Static_assert(offsetof(R4HidConsumerOp, pressed) == 28u, "HidConsumerOp.pressed offset mismatch");
 _Static_assert(offsetof(R4HidConsumerOp, report) == 32u, "HidConsumerOp.report offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1256u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4DirectoryScanCursor) == 1088u, "DirectoryScanCursor size mismatch");
+_Static_assert(offsetof(R4DirectoryScanCursor, version) == 0u, "DirectoryScanCursor.version offset mismatch");
+_Static_assert(offsetof(R4DirectoryScanCursor, size) == 4u, "DirectoryScanCursor.size offset mismatch");
+_Static_assert(offsetof(R4DirectoryScanCursor, change) == 8u, "DirectoryScanCursor.change offset mismatch");
+_Static_assert(offsetof(R4DirectoryScanCursor, owner_id) == 48u, "DirectoryScanCursor.owner_id offset mismatch");
+_Static_assert(offsetof(R4DirectoryScanCursor, owner_kind) == 52u, "DirectoryScanCursor.owner_kind offset mismatch");
+_Static_assert(offsetof(R4DirectoryScanCursor, owner_generation) == 56u, "DirectoryScanCursor.owner_generation offset mismatch");
+_Static_assert(offsetof(R4DirectoryScanCursor, backend) == 64u, "DirectoryScanCursor.backend offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -14675,6 +14696,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_exit) == 1240u, "R4XStartR4Sys.pr
 _Static_assert(sizeof(R4SysProgramExitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, platform_input_snapshot) == 1248u, "R4XStartR4Sys.platform_input_snapshot offset mismatch");
 _Static_assert(sizeof(R4SysPlatformInputSnapshotFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, directory_next) == 1256u, "R4XStartR4Sys.directory_next offset mismatch");
+_Static_assert(sizeof(R4SysDirectoryNextFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

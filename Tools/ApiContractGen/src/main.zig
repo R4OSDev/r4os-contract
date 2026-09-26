@@ -392,7 +392,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // Baseline refresh 0.79.4 includes the existing slots through 143.
     // 0.79.39 adds process-scoped self-exit at slot153 (v23); the v22
     // 1240-byte prefix and all existing function signatures are retained.
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 152, .reserved = 2, .tombstones = 1 },
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 153, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47

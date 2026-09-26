@@ -5078,7 +5078,15 @@ comptime {
     if (@offsetOf(abi.HidConsumerOp, "capabilities") != 24) @compileError("HidConsumerOp.capabilities offset");
     if (@offsetOf(abi.HidConsumerOp, "pressed") != 28) @compileError("HidConsumerOp.pressed offset");
     if (@offsetOf(abi.HidConsumerOp, "report") != 32) @compileError("HidConsumerOp.report offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1256) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.DirectoryScanCursor) != 1088) @compileError("DirectoryScanCursor size");
+    if (@offsetOf(abi.DirectoryScanCursor, "version") != 0) @compileError("DirectoryScanCursor.version offset");
+    if (@offsetOf(abi.DirectoryScanCursor, "size") != 4) @compileError("DirectoryScanCursor.size offset");
+    if (@offsetOf(abi.DirectoryScanCursor, "change") != 8) @compileError("DirectoryScanCursor.change offset");
+    if (@offsetOf(abi.DirectoryScanCursor, "owner_id") != 48) @compileError("DirectoryScanCursor.owner_id offset");
+    if (@offsetOf(abi.DirectoryScanCursor, "owner_kind") != 52) @compileError("DirectoryScanCursor.owner_kind offset");
+    if (@offsetOf(abi.DirectoryScanCursor, "owner_generation") != 56) @compileError("DirectoryScanCursor.owner_generation offset");
+    if (@offsetOf(abi.DirectoryScanCursor, "backend") != 64) @compileError("DirectoryScanCursor.backend offset");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1264) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -5386,6 +5394,8 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_exit) != 8) @compileError("R4SysFns.program_exit signature");
     if (@offsetOf(abi.R4XStartR4Sys, "platform_input_snapshot") != 1248) @compileError("R4XStartR4Sys.platform_input_snapshot offset");
     if (@sizeOf(abi.R4SysFns.platform_input_snapshot) != 8) @compileError("R4SysFns.platform_input_snapshot signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "directory_next") != 1256) @compileError("R4XStartR4Sys.directory_next offset");
+    if (@sizeOf(abi.R4SysFns.directory_next) != 8) @compileError("R4SysFns.directory_next signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 536) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

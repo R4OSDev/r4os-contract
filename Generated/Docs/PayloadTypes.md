@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 304 von 304 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 305 von 305 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 63; Konstanten: 1929; Limits: 109
 
@@ -325,6 +325,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `PlatformInputSnapshot` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `DriverPlatformApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `HidConsumerOp` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `DirectoryScanCursor` | extensible | extern_struct | 1088/8 | 1088/8 | 1088/8 | 1088/8 |
 
 ## Typdetails
 
@@ -8094,6 +8095,23 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `capabilities` | 24 | 4 | 4 | `u32` | - |
 | `pressed` | 28 | 4 | 4 | `u32` | - |
 | `report` | 32 | 32 | 1 | `[32]u8` | - |
+
+### `DirectoryScanCursor`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1088 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `change` | 8 | 40 | 8 | `DirectoryChangeCursor` | - |
+| `owner_id` | 48 | 4 | 4 | `u32` | - |
+| `owner_kind` | 52 | 4 | 4 | `u32` | - |
+| `owner_generation` | 56 | 8 | 8 | `u64` | - |
+| `backend` | 64 | 1024 | 8 | `[128]u64` | - |
 
 ## Fehlerdomänen
 

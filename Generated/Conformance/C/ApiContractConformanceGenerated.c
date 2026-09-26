@@ -155,6 +155,7 @@ static R4SysThreadCurrentHandleFn r4os_probe_r4sys_thread_current_handle = (R4Sy
 static R4SysCpuCapacityFn r4os_probe_r4sys_cpu_capacity = (R4SysCpuCapacityFn)0;
 static R4SysProgramExitFn r4os_probe_r4sys_program_exit = (R4SysProgramExitFn)0;
 static R4SysPlatformInputSnapshotFn r4os_probe_r4sys_platform_input_snapshot = (R4SysPlatformInputSnapshotFn)0;
+static R4SysDirectoryNextFn r4os_probe_r4sys_directory_next = (R4SysDirectoryNextFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;
