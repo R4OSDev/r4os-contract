@@ -87803,8 +87803,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 6,
-      "size": 136,
+      "version": 7,
+      "size": 144,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -87835,7 +87835,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "136"
+          "default_value": "144"
         },
         {
           "name": "boot_info",
@@ -88060,10 +88060,24 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "terminal_release",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(const GfxBackendBinding*,u64 reset_generation,GfxNativeState*). Terminal system shutdown only, using the already-bound table and actual R4D lifecycle owner. Requires the exact successful quiesced device_reset receipt after all common consumers retired. Releases the immutable boot RAM snapshot without restoring hardware or pixels; display stays unavailable and all firmware/normal writers stay revoked. Output-lost plus retained=0 acknowledges release, not a visible image. Busy retains the same cleanup identity for retry. Exact successful retries are idempotent; foreign, stale, nonretired or ordinary runtime calls cannot release ownership. No new hardware/DMA-stop assertion is accepted here.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership. Optional cursor tail preserves the prior 72-byte prefix; layout revision 3/96, wire version 1. Optional0.79.24 output_register/output_transition tail preserves104bytes and wire version1; independent native outputs retain their own state and queue jobs. Optional 0.79.30 device_reset/prepare_reset tail preserves all 120 prior bytes, slot offsets and wire version 1. Layout revision 6, size136. Only the physical R4D owner proves quiescence; the common bridge owns CPU references and generation changes. Reset completion and boot-display restoration remain separate facts."
+      "description": "Optional DriverApi v28 native CPU shadow bridge. Boot/prepare/transition require actual bound R4D task/init ownership. Schedule also accepts the actual IRQ owner and coalesces bounded work without BO access. CPU upload operation 2 is accepted only on the kernel-owned queue for the bound BO. Earlier DriverApi offsets remain unchanged. Optional 0.79.10 tails preserve the original 40-byte prefix and DriverApi v28 query slot. Older providers/consumers remain usable through size checks. A held boot display stays preparing with the real pending owner; no native capabilities or reset completion are claimed. It must be abandoned before effects or physically recovered before writers reopen. The optional 0.79.13 prepare_held tail preserves all 56 existing bytes. It transfers the existing held generation without reopening firmware writers. Ordinary prepare/commit cannot bypass a hold; only the explicitly prepared held candidate may commit. Cancellation returns old-preserved only after native candidate cleanup; a remaining boot hold still sets retained=1. Output-lost retains unfinished native cleanup: retry abort with the returned generation. Preparation errors may also return such retained cleanup state, with generation zero if native preparation was never admitted. Native restore cleanup retries do not replay acknowledged hardware recovery. Optional 0.79.14 statistics tail preserves all 64 prior bytes; layout revision 2, wire version 1. Providers publish only complete slots within caller capacity. Statistics reporting is optional and cannot change copy-fence semantics or display ownership. Optional cursor tail preserves the prior 72-byte prefix; layout revision 3/96, wire version 1. Optional0.79.24 output_register/output_transition tail preserves104bytes and wire version1; independent native outputs retain their own state and queue jobs. Optional 0.79.30 device_reset/prepare_reset tail preserves all 120 prior bytes, slot offsets and wire version 1. Layout revision 6, size136. Only the physical R4D owner proves quiescence; the common bridge owns CPU references and generation changes. Reset completion and boot-display restoration remain separate facts. Optional 0.82.1 terminal_release tail preserves the 136-byte prefix and wire version 1; layout revision 7, size144. A completed device reset can release the retained boot image exclusively during terminal system transition, while output remains unavailable. Existing recovery and boot-restoration semantics are unchanged."
     },
     {
       "name": "DriverResourceInfo",

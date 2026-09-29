@@ -860,6 +860,39 @@ firmware framebuffer sealed and permits the independent software-graphics
 selection on a subsequent boot.
 
 
+Terminal display release (0.82.1, Kernel 0.1.232)
+------------------------------------------------
+The optional terminal_release slot at136 extends GfxDriverDisplayApi to144
+bytes, layout revision7 and unchanged wire1. Signature:
+  (const GfxBackendBinding*, u64 reset_generation, GfxNativeState*) -> i32
+Every earlier field and offset remains unchanged. Query writes only complete
+slots within caller capacity; consumers check size and a nonzero slot. The
+controlled baseline update changes only this extensible type, its size
+default136->144, appended slot and explanatory description.
+
+Call through the already-bound display table from the actual R4D lifecycle
+owner. New table queries remain closed after shutdown admission. This call
+requires terminal system transition and the exact successful quiesced
+device_reset receipt: same driver/start epoch, backend and returned reset
+generation, with all queue/mode/cursor/output and native-bridge cleanup
+acknowledged. It accepts no additional assertion of physical GPU quiescence.
+
+After those checks, release the immutable boot RAM snapshot through its
+existing CPU cleanup owner. Never invoke a hardware restore callback, copy
+pixels to the old mapping or reopen framebuffer writers. The display becomes
+unavailable with no retained owner; output-lost/retained0 and the exact reset
+generation acknowledge cleanup, not image restoration. Busy preserves the
+same cleanup identity for retry, including partially released CPU resources.
+Exact successful retries return the same receipt. Foreign/stale/unretired
+identities fail; ordinary reset/reprepare cannot reuse a completed terminal
+receipt. Generation exhaustion is checked before CPU release.
+
+This releases only display ownership. Remaining driver DMA/MMIO/IRQ, heap,
+work and task resources still veto warm reset through the existing system
+transition checks. Native-driver shutdown must explicitly reach this API;
+the presence of this slot alone cannot make a retained NVIDIA driver safe.
+
+
 Monitor power ownership (0.79.31)
 --------------------------------
 GfxDriverOutputApi remains wire1. Its original 144-byte prefix is unchanged;
