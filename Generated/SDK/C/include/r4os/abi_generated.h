@@ -7124,6 +7124,7 @@ typedef struct R4GfxDriverDisplayApi {
     uint64_t device_reset;
     uint64_t prepare_reset;
     uint64_t terminal_release;
+    uint64_t resume_headless;
 } R4GfxDriverDisplayApi;
 
 typedef struct R4DriverResourceInfo {
@@ -13319,7 +13320,7 @@ _Static_assert(offsetof(R4GfxBootHoldRequest, generation) == 16u, "GfxBootHoldRe
 _Static_assert(offsetof(R4GfxBootHoldRequest, reference) == 24u, "GfxBootHoldRequest.reference offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, context) == 40u, "GfxBootHoldRequest.context offset mismatch");
 _Static_assert(offsetof(R4GfxBootHoldRequest, restore_callback) == 48u, "GfxBootHoldRequest.restore_callback offset mismatch");
-_Static_assert(sizeof(R4GfxDriverDisplayApi) == 144u, "GfxDriverDisplayApi size mismatch");
+_Static_assert(sizeof(R4GfxDriverDisplayApi) == 152u, "GfxDriverDisplayApi size mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, version) == 0u, "GfxDriverDisplayApi.version offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, size) == 4u, "GfxDriverDisplayApi.size offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, boot_info) == 8u, "GfxDriverDisplayApi.boot_info offset mismatch");
@@ -13339,6 +13340,7 @@ _Static_assert(offsetof(R4GfxDriverDisplayApi, output_transition) == 112u, "GfxD
 _Static_assert(offsetof(R4GfxDriverDisplayApi, device_reset) == 120u, "GfxDriverDisplayApi.device_reset offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, prepare_reset) == 128u, "GfxDriverDisplayApi.prepare_reset offset mismatch");
 _Static_assert(offsetof(R4GfxDriverDisplayApi, terminal_release) == 136u, "GfxDriverDisplayApi.terminal_release offset mismatch");
+_Static_assert(offsetof(R4GfxDriverDisplayApi, resume_headless) == 144u, "GfxDriverDisplayApi.resume_headless offset mismatch");
 _Static_assert(sizeof(R4DriverResourceInfo) == 32u, "DriverResourceInfo size mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, version) == 0u, "DriverResourceInfo.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceInfo, size) == 4u, "DriverResourceInfo.size offset mismatch");

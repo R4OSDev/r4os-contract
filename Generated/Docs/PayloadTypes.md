@@ -224,7 +224,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxNativeRegistration` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `GfxNativeState` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `GfxBootHoldRequest` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
-| `GfxDriverDisplayApi` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
+| `GfxDriverDisplayApi` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverFirmwareTableInfo` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `DriverResourceApi` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
@@ -6130,7 +6130,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 7 / 144 / 8
+- Version/Größe/Alignment: 8 / 152 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6153,6 +6153,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `device_reset` | 120 | 8 | 8 | `u64` | - |
 | `prepare_reset` | 128 | 8 | 8 | `u64` | - |
 | `terminal_release` | 136 | 8 | 8 | `u64` | - |
+| `resume_headless` | 144 | 8 | 8 | `u64` | - |
 
 ### `DriverResourceInfo`
 
