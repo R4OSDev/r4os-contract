@@ -1004,6 +1004,7 @@ pub const program_inventory_status_complete: u8 = 0;
 pub const program_inventory_status_invalid: u8 = 3;
 pub const program_inventory_status_more: u8 = 1;
 pub const program_inventory_status_restart: u8 = 2;
+pub const program_instance_flag_desktop_host: u8 = 8;
 pub const program_inventory_summary_flag_stable: u32 = 1;
 pub const program_inventory_version: u16 = 1;
 pub const program_join_handle_size: u16 = 32;

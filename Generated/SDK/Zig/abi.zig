@@ -1003,6 +1003,7 @@ pub const program_inventory_status_complete = generated.program_inventory_status
 pub const program_inventory_status_invalid = generated.program_inventory_status_invalid;
 pub const program_inventory_status_more = generated.program_inventory_status_more;
 pub const program_inventory_status_restart = generated.program_inventory_status_restart;
+pub const program_instance_flag_desktop_host = generated.program_instance_flag_desktop_host;
 pub const program_inventory_summary_flag_stable = generated.program_inventory_summary_flag_stable;
 pub const program_inventory_version = generated.program_inventory_version;
 pub const program_join_handle_size = generated.program_join_handle_size;
@@ -2745,6 +2746,7 @@ pub const ProgramInstanceFlag = struct {
     pub const close_requested: u8 = 1;
     pub const desktop_requested: u8 = 2;
     pub const terminal_mode: u8 = 4;
+    pub const desktop_host: u8 = generated.program_instance_flag_desktop_host;
 };
 
 pub const ConsoleHostKind = enum(u32) {

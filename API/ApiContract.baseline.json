@@ -115269,6 +115269,16 @@
       "description": "Captured registry epoch changed; caller must restart from begin."
     },
     {
+      "name": "program_instance_flag_desktop_host",
+      "value": "8",
+      "value_type": "u8",
+      "category": "value",
+      "unit": "bit",
+      "scope": "program_inventory",
+      "stability": "fixed_contract",
+      "description": "Immutable GUI process declaration app.role=desktop_host from admitted module metadata. This is an owner role, not a permission or a shell-lifecycle change."
+    },
+    {
       "name": "program_inventory_summary_flag_stable",
       "value": "1",
       "value_type": "u32",
