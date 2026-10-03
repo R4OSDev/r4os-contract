@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 305 von 305 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1930; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1931; Limits: 109
 
 ## App-Profile
 
@@ -10784,6 +10784,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `hid_report_op_consumer` | `3` | `u32` | value | number | `hid_report` | fixed_contract |
 | `driver_api_owned_work_version` | `36` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_work_owner_busy` | `-32000` | `i32` | value | status | `driver_work` | fixed_contract |
+| `window_graphics_headless` | `2` | `u32` | identity | number | `window_graphics` | fixed_contract |
 
 ## Limits
 

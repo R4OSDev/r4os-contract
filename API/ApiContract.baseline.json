@@ -124537,6 +124537,16 @@
       "scope": "driver_work",
       "stability": "fixed_contract",
       "description": "Owned Work completion: lifecycle owner was busy; no callback executed. Release completion and resubmit later. No shared worker waits behind shutdown."
+    },
+    {
+      "name": "window_graphics_headless",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "window_graphics",
+      "stability": "fixed_contract",
+      "description": "Explicit display-independent software window. Backend adapter zero and all-zero output identity are required; display_generation is the Desktop logical output revision. Real GPU producers use portable system BOs and retain their exact device-execution fences. This flag establishes no active connector, scanout or physical presentation. Transition to an output changes config revision and invalidates existing swapchains."
     }
   ],
   "limits": [

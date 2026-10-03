@@ -1931,6 +1931,7 @@ pub const platform_input_kind_capabilities: u32 = 4;
 pub const hid_report_op_consumer: u32 = 3;
 pub const driver_api_owned_work_version: u32 = 36;
 pub const driver_work_owner_busy: i32 = -32000;
+pub const window_graphics_headless: u32 = 2;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
