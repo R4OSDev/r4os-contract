@@ -845,14 +845,17 @@ restore_failed generation with the same exact retained native binding.
 This permits the worker to perform physical recovery after a failed callback;
 it does not admit another owner, binding or arbitrary stale generation.
 
-After successful retirement, a headless GPU may rebuild without preparing
-scanout. Optional resume_headless at144 (layout revision8, size152, wire1)
+After successful retirement, a GPU may rebuild before preparing scanout,
+including while receiver discovery waits. Optional resume_headless at144 (layout revision8, size152, wire1)
 accepts (const GfxBackendBinding*, u64 reset_generation, GfxNativeState*).
 It verifies a strictly newer live queue of the same driver/start epoch and
 adapter and records that exact binding while display stays recovering/lost,
 retained=1. Earlier144bytes, slots and wire1 remain binary compatible.
 Exact repeats are idempotent. Old device_reset, prepare_reset and terminal
 release arguments cannot use the obsolete quiescence receipt afterward.
+prepare_reset may consume the recorded rebuilt binding to prepare native
+scanout later; a different newer binding is rejected. This does not reuse
+the old physical stop proof for the rebuilt GPU.
 A later quiesced0 must name the recorded rebuilt binding and recovering
 generation. It creates a fresh stop identity and needs its own physical stop
 and quiesced1 retirement. The queue may already have been logically closed;
