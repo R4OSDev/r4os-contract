@@ -119619,6 +119619,16 @@
       "description": "Audio output catalog contract: audio_backend_outputs_version."
     },
     {
+      "name": "audio_backend_idle_version",
+      "value": "4",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "audio_outputs",
+      "stability": "fixed_contract",
+      "description": "Audio backend v4 appends an optional PCM-idle callback after the unchanged 96-byte v3 output descriptor. Idle drains caller PCM while permitting a driver-owned silent carrier; Stop still quiesces physical output."
+    },
+    {
       "name": "audio_output_kind_line_out",
       "value": "0",
       "value_type": "u32",

@@ -1438,6 +1438,7 @@ pub const vm_commit_flag_resident = generated.vm_commit_flag_resident;
 pub const file_update_atomic_checked_flag_long_stage = generated.file_update_atomic_checked_flag_long_stage;
 pub const vm_commit_resident_max_bytes = generated.vm_commit_resident_max_bytes;
 pub const audio_backend_outputs_version = generated.audio_backend_outputs_version;
+pub const audio_backend_idle_version = generated.audio_backend_idle_version;
 pub const audio_output_kind_line_out = generated.audio_output_kind_line_out;
 pub const audio_output_kind_speaker = generated.audio_output_kind_speaker;
 pub const audio_output_kind_headphone = generated.audio_output_kind_headphone;

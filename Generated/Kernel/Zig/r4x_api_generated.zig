@@ -1439,6 +1439,7 @@ pub const vm_commit_flag_resident: u64 = 1;
 pub const file_update_atomic_checked_flag_long_stage: u32 = 16;
 pub const vm_commit_resident_max_bytes: u64 = 262144;
 pub const audio_backend_outputs_version: u32 = 3;
+pub const audio_backend_idle_version: u32 = 4;
 pub const audio_output_kind_line_out: u32 = 0;
 pub const audio_output_kind_speaker: u32 = 1;
 pub const audio_output_kind_headphone: u32 = 2;

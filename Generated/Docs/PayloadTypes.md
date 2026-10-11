@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 305 von 305 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1931; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1932; Limits: 109
 
 ## App-Profile
 
@@ -10292,6 +10292,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `file_update_atomic_checked_flag_long_stage` | `16` | `u32` | flag | bitmask | `file_update_atomic_checked` | fixed_contract |
 | `vm_commit_resident_max_bytes` | `262144` | `u64` | value | bytes | `vm_commit` | fixed_contract |
 | `audio_backend_outputs_version` | `3` | `u32` | version | number | `audio_outputs` | fixed_contract |
+| `audio_backend_idle_version` | `4` | `u32` | version | number | `audio_outputs` | fixed_contract |
 | `audio_output_kind_line_out` | `0` | `u32` | version | number | `audio_outputs` | fixed_contract |
 | `audio_output_kind_speaker` | `1` | `u32` | version | number | `audio_outputs` | fixed_contract |
 | `audio_output_kind_headphone` | `2` | `u32` | version | number | `audio_outputs` | fixed_contract |

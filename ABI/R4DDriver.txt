@@ -243,6 +243,22 @@ preserves queued application PCM and retains the R4D callback owner across
 waits and work-completion operations. R4AUDIO version 2 appends catalog and
 selection slots for AUDSVC and diagnostics. User preference belongs to AUDSVC.
 
+AudioBackend version 4 (Kernel 0.1.259) appends one optional C-calling-
+convention callback at byte 96, for a minimum size of 104 bytes:
+`idle(context: ?*anyopaque) i32`. Versions 2 and 3 retain their exact prefixes.
+The context remains the original prefix context; Idle uses the same guarded
+R4D callback lifetime and PCM/output serialization as Stop. It completes
+ordinary last-client or synthesizer PCM, draining all accepted caller frames,
+while permitting a driver-owned silent output carrier. A null Idle falls
+back to Stop. Negative results, including Busy, remain failures to finish;
+they are never converted into a physical-stop acknowledgement.
+
+Route replacement, unregister and terminal owner shutdown require the
+existing physical Stop/DriverShutdown path. No caller stream or completion
+may own the retained carrier. A kernel unaware of descriptor version 4 must
+reject it; a driver requiring v4 and its supporting kernel must be deployed
+atomically. The public R4AUDIO and AUDSVC tables are unchanged.
+
 Pinned buffers and DMA mappings
 -------------------------------
 
