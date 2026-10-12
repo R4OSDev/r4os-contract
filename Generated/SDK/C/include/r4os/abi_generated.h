@@ -1945,6 +1945,7 @@ extern "C" {
 #define R4OS_DRIVER_API_OWNED_WORK_VERSION 36u
 #define R4OS_DRIVER_WORK_OWNER_BUSY ((int32_t)-32000)
 #define R4OS_WINDOW_GRAPHICS_HEADLESS 2u
+#define R4OS_PERFORMANCE_IRQ_COVERAGE_INSTRUMENTATION_DISABLED 32u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2691,6 +2692,9 @@ typedef struct R4PlatformInputSnapshot R4PlatformInputSnapshot;
 typedef struct R4DriverPlatformApi R4DriverPlatformApi;
 typedef struct R4HidConsumerOp R4HidConsumerOp;
 typedef struct R4DirectoryScanCursor R4DirectoryScanCursor;
+typedef struct R4ProgramInstrumentationInfo R4ProgramInstrumentationInfo;
+typedef struct R4ProgramLockPerformanceInfo R4ProgramLockPerformanceInfo;
+typedef struct R4ProgramStackPerformanceInfo R4ProgramStackPerformanceInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8351,6 +8355,58 @@ typedef struct R4DirectoryScanCursor {
     uint64_t backend[128];
 } R4DirectoryScanCursor;
 
+typedef struct R4ProgramInstrumentationInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t mode;
+    uint32_t service_lock_stride;
+    uint32_t work_critical_stride;
+    uint32_t lock_count;
+    uint32_t stack_group_count;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t clock_flags;
+    uint64_t clock_resolution_ns;
+} R4ProgramInstrumentationInfo;
+
+typedef struct R4ProgramLockPerformanceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t index;
+    uint32_t flags;
+    uint8_t name[32];
+    uint64_t acquisitions;
+    uint64_t nested_acquisitions;
+    uint64_t collisions;
+    uint64_t cpu_collisions;
+    uint64_t wait_spins;
+    uint64_t max_wait_spins;
+    uint64_t hold_cycles;
+    uint64_t max_hold_cycles;
+    uint64_t order_violations;
+} R4ProgramLockPerformanceInfo;
+
+typedef struct R4ProgramStackPerformanceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t index;
+    uint32_t kind;
+    uint32_t flags;
+    uint32_t reserved;
+    uint8_t name[32];
+    uint64_t created;
+    uint64_t released;
+    uint64_t reserve_max_bytes;
+    uint64_t initial_commit_max_bytes;
+    uint64_t committed_max_bytes;
+    uint64_t high_water_total_bytes;
+    uint64_t high_water_max_bytes;
+    uint64_t create_cycles_total;
+    uint64_t create_cycles_max;
+    uint64_t release_cycles_total;
+    uint64_t release_cycles_max;
+} R4ProgramStackPerformanceInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9255,6 +9311,9 @@ typedef int32_t (*R4DevPerformancePciInventoryFn)(R4ProgramPciInventoryPerforman
 typedef int32_t (*R4DevPerformanceInputFn)(R4ProgramInputPerformanceInfo * out);
 typedef int32_t (*R4DevDisplayStateFn)(R4DisplayStateInfo * out);
 typedef int32_t (*R4DevDriverModuleInfoFn)(uint32_t owner, R4DriverModuleInfo * out);
+typedef int32_t (*R4DevPerformanceInstrumentationFn)(R4ProgramInstrumentationInfo * out);
+typedef int32_t (*R4DevPerformanceLockFn)(uint32_t index, R4ProgramLockPerformanceInfo * out);
+typedef int32_t (*R4DevPerformanceStackFn)(uint32_t index, R4ProgramStackPerformanceInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9305,6 +9364,9 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_input;
     uintptr_t display_state;
     uintptr_t driver_module_info;
+    uintptr_t performance_instrumentation;
+    uintptr_t performance_lock;
+    uintptr_t performance_stack;
 } R4XStartR4Dev;
 
 
@@ -14395,6 +14457,52 @@ _Static_assert(offsetof(R4DirectoryScanCursor, owner_id) == 48u, "DirectoryScanC
 _Static_assert(offsetof(R4DirectoryScanCursor, owner_kind) == 52u, "DirectoryScanCursor.owner_kind offset mismatch");
 _Static_assert(offsetof(R4DirectoryScanCursor, owner_generation) == 56u, "DirectoryScanCursor.owner_generation offset mismatch");
 _Static_assert(offsetof(R4DirectoryScanCursor, backend) == 64u, "DirectoryScanCursor.backend offset mismatch");
+_Static_assert(sizeof(R4ProgramInstrumentationInfo) == 48u, "ProgramInstrumentationInfo size mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, version) == 0u, "ProgramInstrumentationInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, size) == 4u, "ProgramInstrumentationInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, mode) == 8u, "ProgramInstrumentationInfo.mode offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, service_lock_stride) == 12u, "ProgramInstrumentationInfo.service_lock_stride offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, work_critical_stride) == 16u, "ProgramInstrumentationInfo.work_critical_stride offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, lock_count) == 20u, "ProgramInstrumentationInfo.lock_count offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, stack_group_count) == 24u, "ProgramInstrumentationInfo.stack_group_count offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, clock_source) == 28u, "ProgramInstrumentationInfo.clock_source offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, clock_generation) == 32u, "ProgramInstrumentationInfo.clock_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, clock_flags) == 36u, "ProgramInstrumentationInfo.clock_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramInstrumentationInfo, clock_resolution_ns) == 40u, "ProgramInstrumentationInfo.clock_resolution_ns offset mismatch");
+_Static_assert(sizeof(R4ProgramLockPerformanceInfo) == 120u, "ProgramLockPerformanceInfo size mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, version) == 0u, "ProgramLockPerformanceInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, size) == 4u, "ProgramLockPerformanceInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, index) == 8u, "ProgramLockPerformanceInfo.index offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, flags) == 12u, "ProgramLockPerformanceInfo.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, name) == 16u, "ProgramLockPerformanceInfo.name offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, acquisitions) == 48u, "ProgramLockPerformanceInfo.acquisitions offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, nested_acquisitions) == 56u, "ProgramLockPerformanceInfo.nested_acquisitions offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, collisions) == 64u, "ProgramLockPerformanceInfo.collisions offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, cpu_collisions) == 72u, "ProgramLockPerformanceInfo.cpu_collisions offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, wait_spins) == 80u, "ProgramLockPerformanceInfo.wait_spins offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, max_wait_spins) == 88u, "ProgramLockPerformanceInfo.max_wait_spins offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, hold_cycles) == 96u, "ProgramLockPerformanceInfo.hold_cycles offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, max_hold_cycles) == 104u, "ProgramLockPerformanceInfo.max_hold_cycles offset mismatch");
+_Static_assert(offsetof(R4ProgramLockPerformanceInfo, order_violations) == 112u, "ProgramLockPerformanceInfo.order_violations offset mismatch");
+_Static_assert(sizeof(R4ProgramStackPerformanceInfo) == 144u, "ProgramStackPerformanceInfo size mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, version) == 0u, "ProgramStackPerformanceInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, size) == 4u, "ProgramStackPerformanceInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, index) == 8u, "ProgramStackPerformanceInfo.index offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, kind) == 12u, "ProgramStackPerformanceInfo.kind offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, flags) == 16u, "ProgramStackPerformanceInfo.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, reserved) == 20u, "ProgramStackPerformanceInfo.reserved offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, name) == 24u, "ProgramStackPerformanceInfo.name offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, created) == 56u, "ProgramStackPerformanceInfo.created offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, released) == 64u, "ProgramStackPerformanceInfo.released offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, reserve_max_bytes) == 72u, "ProgramStackPerformanceInfo.reserve_max_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, initial_commit_max_bytes) == 80u, "ProgramStackPerformanceInfo.initial_commit_max_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, committed_max_bytes) == 88u, "ProgramStackPerformanceInfo.committed_max_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, high_water_total_bytes) == 96u, "ProgramStackPerformanceInfo.high_water_total_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, high_water_max_bytes) == 104u, "ProgramStackPerformanceInfo.high_water_max_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, create_cycles_total) == 112u, "ProgramStackPerformanceInfo.create_cycles_total offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, create_cycles_max) == 120u, "ProgramStackPerformanceInfo.create_cycles_max offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, release_cycles_total) == 128u, "ProgramStackPerformanceInfo.release_cycles_total offset mismatch");
+_Static_assert(offsetof(R4ProgramStackPerformanceInfo, release_cycles_max) == 136u, "ProgramStackPerformanceInfo.release_cycles_max offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15176,7 +15284,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 368u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 392u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15263,6 +15371,12 @@ _Static_assert(offsetof(R4XStartR4Dev, display_state) == 352u, "R4XStartR4Dev.di
 _Static_assert(sizeof(R4DevDisplayStateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, driver_module_info) == 360u, "R4XStartR4Dev.driver_module_info offset mismatch");
 _Static_assert(sizeof(R4DevDriverModuleInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_instrumentation) == 368u, "R4XStartR4Dev.performance_instrumentation offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceInstrumentationFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_lock) == 376u, "R4XStartR4Dev.performance_lock offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceLockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_stack) == 384u, "R4XStartR4Dev.performance_stack offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceStackFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

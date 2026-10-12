@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 305 von 305 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 308 von 308 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1932; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1933; Limits: 109
 
 ## App-Profile
 
@@ -326,6 +326,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DriverPlatformApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `HidConsumerOp` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `DirectoryScanCursor` | extensible | extern_struct | 1088/8 | 1088/8 | 1088/8 | 1088/8 |
+| `ProgramInstrumentationInfo` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `ProgramLockPerformanceInfo` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `ProgramStackPerformanceInfo` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 
 ## Typdetails
 
@@ -8115,6 +8118,79 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `owner_generation` | 56 | 8 | 8 | `u64` | - |
 | `backend` | 64 | 1024 | 8 | `[128]u64` | - |
 
+### `ProgramInstrumentationInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `mode` | 8 | 4 | 4 | `u32` | - |
+| `service_lock_stride` | 12 | 4 | 4 | `u32` | - |
+| `work_critical_stride` | 16 | 4 | 4 | `u32` | - |
+| `lock_count` | 20 | 4 | 4 | `u32` | - |
+| `stack_group_count` | 24 | 4 | 4 | `u32` | - |
+| `clock_source` | 28 | 4 | 4 | `u32` | - |
+| `clock_generation` | 32 | 4 | 4 | `u32` | - |
+| `clock_flags` | 36 | 4 | 4 | `u32` | - |
+| `clock_resolution_ns` | 40 | 8 | 8 | `u64` | - |
+
+### `ProgramLockPerformanceInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 120 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `name` | 16 | 32 | 1 | `[32]u8` | - |
+| `acquisitions` | 48 | 8 | 8 | `u64` | - |
+| `nested_acquisitions` | 56 | 8 | 8 | `u64` | - |
+| `collisions` | 64 | 8 | 8 | `u64` | - |
+| `cpu_collisions` | 72 | 8 | 8 | `u64` | - |
+| `wait_spins` | 80 | 8 | 8 | `u64` | - |
+| `max_wait_spins` | 88 | 8 | 8 | `u64` | - |
+| `hold_cycles` | 96 | 8 | 8 | `u64` | - |
+| `max_hold_cycles` | 104 | 8 | 8 | `u64` | - |
+| `order_violations` | 112 | 8 | 8 | `u64` | - |
+
+### `ProgramStackPerformanceInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 144 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `index` | 8 | 4 | 4 | `u32` | - |
+| `kind` | 12 | 4 | 4 | `u32` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `reserved` | 20 | 4 | 4 | `u32` | - |
+| `name` | 24 | 32 | 1 | `[32]u8` | - |
+| `created` | 56 | 8 | 8 | `u64` | - |
+| `released` | 64 | 8 | 8 | `u64` | - |
+| `reserve_max_bytes` | 72 | 8 | 8 | `u64` | - |
+| `initial_commit_max_bytes` | 80 | 8 | 8 | `u64` | - |
+| `committed_max_bytes` | 88 | 8 | 8 | `u64` | - |
+| `high_water_total_bytes` | 96 | 8 | 8 | `u64` | - |
+| `high_water_max_bytes` | 104 | 8 | 8 | `u64` | - |
+| `create_cycles_total` | 112 | 8 | 8 | `u64` | - |
+| `create_cycles_max` | 120 | 8 | 8 | `u64` | - |
+| `release_cycles_total` | 128 | 8 | 8 | `u64` | - |
+| `release_cycles_max` | 136 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -10786,6 +10862,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `driver_api_owned_work_version` | `36` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_work_owner_busy` | `-32000` | `i32` | value | status | `driver_work` | fixed_contract |
 | `window_graphics_headless` | `2` | `u32` | identity | number | `window_graphics` | fixed_contract |
+| `performance_irq_coverage_instrumentation_disabled` | `32` | `u32` | flag | bitmask | `performance_irq_timing` | fixed_contract |
 
 ## Limits
 

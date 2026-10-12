@@ -430,5 +430,8 @@ static R4DevPerformancePciInventoryFn r4os_probe_r4dev_performance_pci_inventory
 static R4DevPerformanceInputFn r4os_probe_r4dev_performance_input = (R4DevPerformanceInputFn)0;
 static R4DevDisplayStateFn r4os_probe_r4dev_display_state = (R4DevDisplayStateFn)0;
 static R4DevDriverModuleInfoFn r4os_probe_r4dev_driver_module_info = (R4DevDriverModuleInfoFn)0;
+static R4DevPerformanceInstrumentationFn r4os_probe_r4dev_performance_instrumentation = (R4DevPerformanceInstrumentationFn)0;
+static R4DevPerformanceLockFn r4os_probe_r4dev_performance_lock = (R4DevPerformanceLockFn)0;
+static R4DevPerformanceStackFn r4os_probe_r4dev_performance_stack = (R4DevPerformanceStackFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

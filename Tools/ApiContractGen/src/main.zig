@@ -424,10 +424,9 @@ const phase_a_groups = [_]ExpectedGroup{
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 35, .reserved = 0, .tombstones = 0 },
     // 0.78.16 appends physical audio-output enumeration and selection.
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 21, .reserved = 2, .tombstones = 0 },
-    // R4DEV's existing 0.79.42 driver_module_info occupies slot43 (v12).
-    // Include that already published append in controlled baseline refreshes;
-    // the display snapshot and frozen slot27 retain their original layout.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 42, .reserved = 2, .tombstones = 0 },
+    // 0.83.1 appends resident instrumentation, lock and stack snapshots at
+    // slots 44..46 (v13); every existing slot and payload prefix is retained.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 45, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {

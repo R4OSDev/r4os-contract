@@ -1933,6 +1933,7 @@ pub const hid_report_op_consumer: u32 = 3;
 pub const driver_api_owned_work_version: u32 = 36;
 pub const driver_work_owner_busy: i32 = -32000;
 pub const window_graphics_headless: u32 = 2;
+pub const performance_irq_coverage_instrumentation_disabled: u32 = 32;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8102,6 +8103,58 @@ pub const DirectoryScanCursor = extern struct {
     backend: [128]u64 = .{0} ** 128,
 };
 
+pub const ProgramInstrumentationInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    mode: u32 = 0,
+    service_lock_stride: u32 = 0,
+    work_critical_stride: u32 = 0,
+    lock_count: u32 = 0,
+    stack_group_count: u32 = 0,
+    clock_source: u32 = 0,
+    clock_generation: u32 = 0,
+    clock_flags: u32 = 0,
+    clock_resolution_ns: u64 = 0,
+};
+
+pub const ProgramLockPerformanceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 120,
+    index: u32 = 0,
+    flags: u32 = 0,
+    name: [32]u8 = .{0} ** 32,
+    acquisitions: u64 = 0,
+    nested_acquisitions: u64 = 0,
+    collisions: u64 = 0,
+    cpu_collisions: u64 = 0,
+    wait_spins: u64 = 0,
+    max_wait_spins: u64 = 0,
+    hold_cycles: u64 = 0,
+    max_hold_cycles: u64 = 0,
+    order_violations: u64 = 0,
+};
+
+pub const ProgramStackPerformanceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 144,
+    index: u32 = 0,
+    kind: u32 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+    name: [32]u8 = .{0} ** 32,
+    created: u64 = 0,
+    released: u64 = 0,
+    reserve_max_bytes: u64 = 0,
+    initial_commit_max_bytes: u64 = 0,
+    committed_max_bytes: u64 = 0,
+    high_water_total_bytes: u64 = 0,
+    high_water_max_bytes: u64 = 0,
+    create_cycles_total: u64 = 0,
+    create_cycles_max: u64 = 0,
+    release_cycles_total: u64 = 0,
+    release_cycles_max: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8971,12 +9024,15 @@ pub const R4DevFns = struct {
     pub const performance_input = *const fn (*ProgramInputPerformanceInfo) callconv(.c) i32;
     pub const display_state = *const fn (*DisplayStateInfo) callconv(.c) i32;
     pub const driver_module_info = *const fn (u32, *DriverModuleInfo) callconv(.c) i32;
+    pub const performance_instrumentation = *const fn (*ProgramInstrumentationInfo) callconv(.c) i32;
+    pub const performance_lock = *const fn (u32, *ProgramLockPerformanceInfo) callconv(.c) i32;
+    pub const performance_stack = *const fn (u32, *ProgramStackPerformanceInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 12,
-    size: u32 = 368,
+    abi_version: u32 = 13,
+    size: u32 = 392,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9022,6 +9078,9 @@ pub const R4XStartR4Dev = extern struct {
     performance_input: usize = 0,
     display_state: usize = 0,
     driver_module_info: usize = 0,
+    performance_instrumentation: usize = 0,
+    performance_lock: usize = 0,
+    performance_stack: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -9478,6 +9537,9 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 41, .offset = 344, .name = "performance_input", .state = .function, .required = false },
     .{ .number = 42, .offset = 352, .name = "display_state", .state = .function, .required = false },
     .{ .number = 43, .offset = 360, .name = "driver_module_info", .state = .function, .required = false },
+    .{ .number = 44, .offset = 368, .name = "performance_instrumentation", .state = .function, .required = false },
+    .{ .number = 45, .offset = 376, .name = "performance_lock", .state = .function, .required = false },
+    .{ .number = 46, .offset = 384, .name = "performance_stack", .state = .function, .required = false },
 };
 
 comptime {
@@ -14868,6 +14930,55 @@ comptime {
     if (@offsetOf(DirectoryScanCursor, "owner_kind") != 52) @compileError("generated ABI offset drift: DirectoryScanCursor.owner_kind");
     if (@offsetOf(DirectoryScanCursor, "owner_generation") != 56) @compileError("generated ABI offset drift: DirectoryScanCursor.owner_generation");
     if (@offsetOf(DirectoryScanCursor, "backend") != 64) @compileError("generated ABI offset drift: DirectoryScanCursor.backend");
+    if (@sizeOf(ProgramInstrumentationInfo) != 48) @compileError("generated ABI size drift: ProgramInstrumentationInfo");
+    if (@alignOf(ProgramInstrumentationInfo) != 8) @compileError("generated ABI alignment drift: ProgramInstrumentationInfo");
+    if (@offsetOf(ProgramInstrumentationInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.version");
+    if (@offsetOf(ProgramInstrumentationInfo, "size") != 4) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.size");
+    if (@offsetOf(ProgramInstrumentationInfo, "mode") != 8) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.mode");
+    if (@offsetOf(ProgramInstrumentationInfo, "service_lock_stride") != 12) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.service_lock_stride");
+    if (@offsetOf(ProgramInstrumentationInfo, "work_critical_stride") != 16) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.work_critical_stride");
+    if (@offsetOf(ProgramInstrumentationInfo, "lock_count") != 20) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.lock_count");
+    if (@offsetOf(ProgramInstrumentationInfo, "stack_group_count") != 24) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.stack_group_count");
+    if (@offsetOf(ProgramInstrumentationInfo, "clock_source") != 28) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.clock_source");
+    if (@offsetOf(ProgramInstrumentationInfo, "clock_generation") != 32) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.clock_generation");
+    if (@offsetOf(ProgramInstrumentationInfo, "clock_flags") != 36) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.clock_flags");
+    if (@offsetOf(ProgramInstrumentationInfo, "clock_resolution_ns") != 40) @compileError("generated ABI offset drift: ProgramInstrumentationInfo.clock_resolution_ns");
+    if (@sizeOf(ProgramLockPerformanceInfo) != 120) @compileError("generated ABI size drift: ProgramLockPerformanceInfo");
+    if (@alignOf(ProgramLockPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramLockPerformanceInfo");
+    if (@offsetOf(ProgramLockPerformanceInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.version");
+    if (@offsetOf(ProgramLockPerformanceInfo, "size") != 4) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.size");
+    if (@offsetOf(ProgramLockPerformanceInfo, "index") != 8) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.index");
+    if (@offsetOf(ProgramLockPerformanceInfo, "flags") != 12) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.flags");
+    if (@offsetOf(ProgramLockPerformanceInfo, "name") != 16) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.name");
+    if (@offsetOf(ProgramLockPerformanceInfo, "acquisitions") != 48) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.acquisitions");
+    if (@offsetOf(ProgramLockPerformanceInfo, "nested_acquisitions") != 56) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.nested_acquisitions");
+    if (@offsetOf(ProgramLockPerformanceInfo, "collisions") != 64) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.collisions");
+    if (@offsetOf(ProgramLockPerformanceInfo, "cpu_collisions") != 72) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.cpu_collisions");
+    if (@offsetOf(ProgramLockPerformanceInfo, "wait_spins") != 80) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.wait_spins");
+    if (@offsetOf(ProgramLockPerformanceInfo, "max_wait_spins") != 88) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.max_wait_spins");
+    if (@offsetOf(ProgramLockPerformanceInfo, "hold_cycles") != 96) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.hold_cycles");
+    if (@offsetOf(ProgramLockPerformanceInfo, "max_hold_cycles") != 104) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.max_hold_cycles");
+    if (@offsetOf(ProgramLockPerformanceInfo, "order_violations") != 112) @compileError("generated ABI offset drift: ProgramLockPerformanceInfo.order_violations");
+    if (@sizeOf(ProgramStackPerformanceInfo) != 144) @compileError("generated ABI size drift: ProgramStackPerformanceInfo");
+    if (@alignOf(ProgramStackPerformanceInfo) != 8) @compileError("generated ABI alignment drift: ProgramStackPerformanceInfo");
+    if (@offsetOf(ProgramStackPerformanceInfo, "version") != 0) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.version");
+    if (@offsetOf(ProgramStackPerformanceInfo, "size") != 4) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.size");
+    if (@offsetOf(ProgramStackPerformanceInfo, "index") != 8) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.index");
+    if (@offsetOf(ProgramStackPerformanceInfo, "kind") != 12) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.kind");
+    if (@offsetOf(ProgramStackPerformanceInfo, "flags") != 16) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.flags");
+    if (@offsetOf(ProgramStackPerformanceInfo, "reserved") != 20) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.reserved");
+    if (@offsetOf(ProgramStackPerformanceInfo, "name") != 24) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.name");
+    if (@offsetOf(ProgramStackPerformanceInfo, "created") != 56) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.created");
+    if (@offsetOf(ProgramStackPerformanceInfo, "released") != 64) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.released");
+    if (@offsetOf(ProgramStackPerformanceInfo, "reserve_max_bytes") != 72) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.reserve_max_bytes");
+    if (@offsetOf(ProgramStackPerformanceInfo, "initial_commit_max_bytes") != 80) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.initial_commit_max_bytes");
+    if (@offsetOf(ProgramStackPerformanceInfo, "committed_max_bytes") != 88) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.committed_max_bytes");
+    if (@offsetOf(ProgramStackPerformanceInfo, "high_water_total_bytes") != 96) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.high_water_total_bytes");
+    if (@offsetOf(ProgramStackPerformanceInfo, "high_water_max_bytes") != 104) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.high_water_max_bytes");
+    if (@offsetOf(ProgramStackPerformanceInfo, "create_cycles_total") != 112) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.create_cycles_total");
+    if (@offsetOf(ProgramStackPerformanceInfo, "create_cycles_max") != 120) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.create_cycles_max");
+    if (@offsetOf(ProgramStackPerformanceInfo, "release_cycles_total") != 128) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.release_cycles_total");
+    if (@offsetOf(ProgramStackPerformanceInfo, "release_cycles_max") != 136) @compileError("generated ABI offset drift: ProgramStackPerformanceInfo.release_cycles_max");
     if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -15264,7 +15375,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 368) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 392) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -15309,6 +15420,9 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_input") != 344) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_input");
     if (@offsetOf(R4XStartR4Dev, "display_state") != 352) @compileError("generated ABI offset drift: R4XStartR4Dev.display_state");
     if (@offsetOf(R4XStartR4Dev, "driver_module_info") != 360) @compileError("generated ABI offset drift: R4XStartR4Dev.driver_module_info");
+    if (@offsetOf(R4XStartR4Dev, "performance_instrumentation") != 368) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_instrumentation");
+    if (@offsetOf(R4XStartR4Dev, "performance_lock") != 376) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_lock");
+    if (@offsetOf(R4XStartR4Dev, "performance_stack") != 384) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_stack");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -16191,13 +16305,16 @@ pub const R4DevProvider = struct {
     performance_input: ?R4DevFns.performance_input = null,
     display_state: ?R4DevFns.display_state = null,
     driver_module_info: ?R4DevFns.driver_module_info = null,
+    performance_instrumentation: ?R4DevFns.performance_instrumentation = null,
+    performance_lock: ?R4DevFns.performance_lock = null,
+    performance_stack: ?R4DevFns.performance_stack = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 12,
-        .size = 368,
+        .abi_version = 13,
+        .size = 392,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -16243,5 +16360,8 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .performance_input = if (provider.performance_input) |callback| @intFromPtr(callback) else 0,
         .display_state = if (provider.display_state) |callback| @intFromPtr(callback) else 0,
         .driver_module_info = if (provider.driver_module_info) |callback| @intFromPtr(callback) else 0,
+        .performance_instrumentation = if (provider.performance_instrumentation) |callback| @intFromPtr(callback) else 0,
+        .performance_lock = if (provider.performance_lock) |callback| @intFromPtr(callback) else 0,
+        .performance_stack = if (provider.performance_stack) |callback| @intFromPtr(callback) else 0,
     };
 }
