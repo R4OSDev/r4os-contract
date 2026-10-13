@@ -11,6 +11,7 @@
         "Generated",
         "Module",
         "Tools",
+        "Tests",
         "build.zig",
         "build.zig.zon",
         "README.md",
