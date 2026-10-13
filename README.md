@@ -21,6 +21,16 @@ Generated files are checked during normal builds. Intentional contract changes
 must use the repository's explicit generator write workflow and update the
 matching baseline.
 
+`Generated/SDK/Rust/` is the standalone `no_std` Rust projection of the same
+canonical platform and technical ABI. `write` generates Zig/C first, then
+reflects their current typed definitions into Rust. Normal builds and `check`
+compare Rust output without writing it; `test` also compiles both Rust targets
+and runs the existing Contract gate with a native Rust/Zig/C callback fixture.
+Use the pinned workspace Rust launcher; standalone tests require Rust 1.99.0.
+See `Generated/Inventory/RustABI.json` and the workspace guide
+`Docs/API/RustContractBindings.txt`. Adding this binding leaves API versions,
+the canonical schema/baseline and existing Zig/C consumers unchanged.
+
 The technical `DriverApi` facade lives outside the marked generated exports
 block in `Generated/SDK/Zig/abi.zig`; the generator preserves that area.
 DriverApi34 appends two optional DMA range-sync callbacks after the unchanged

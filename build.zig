@@ -29,11 +29,32 @@ pub fn build(b: *std.Build) void {
     const check_step = b.step("check", "Validate the schema and check every generated Contract artifact");
     check_step.dependOn(&check_run.step);
 
+    const technical_abi = b.createModule(.{
+        .root_source_file = b.path("Generated/SDK/Zig/abi.zig"),
+        .target = b.graph.host,
+        .optimize = optimize,
+    });
+    const rust_check_generator = addRustGenerator(b, optimize, technical_abi, "api-rust-gen");
+    b.installArtifact(rust_check_generator);
+    const rust_check = b.addRunArtifact(rust_check_generator);
+    rust_check.setCwd(b.path("."));
+    rust_check.addArg("--check");
+    check_step.dependOn(&rust_check.step);
+
     const write_run = b.addRunArtifact(generator);
     write_run.setCwd(b.path("."));
     write_run.addArg("--write");
     const write_step = b.step("write", "Materialize generated Contract artifacts after an intentional schema change");
     write_step.dependOn(&write_run.step);
+
+    // Compile reflection only after the schema generator has materialized its
+    // new Zig types. Check/default builds never acquire this write dependency.
+    const rust_write_generator = addRustGenerator(b, optimize, technical_abi, "api-rust-gen-write");
+    rust_write_generator.step.dependOn(&write_run.step);
+    const rust_write = b.addRunArtifact(rust_write_generator);
+    rust_write.setCwd(b.path("."));
+    rust_write.addArg("--write");
+    write_step.dependOn(&rust_write.step);
 
     const selftest_run = b.addRunArtifact(generator);
     selftest_run.setCwd(b.path("."));
@@ -107,6 +128,22 @@ pub fn build(b: *std.Build) void {
     test_step.dependOn(&run_kernel_tests.step);
     test_step.dependOn(&run_zig_conformance.step);
     test_step.dependOn(&c_conformance.step);
+    test_step.dependOn(&rust_check.step);
+    const rust_conformance = b.addSystemCommand(&.{ "pwsh", "-NoLogo", "-NoProfile", "-File" });
+    rust_conformance.addFileArg(b.path("Tools/Test-RustABI.ps1"));
+    rust_conformance.step.dependOn(&rust_check.step);
+    test_step.dependOn(&rust_conformance.step);
 
     b.getInstallStep().dependOn(&check_run.step);
+    b.getInstallStep().dependOn(&rust_check.step);
+}
+
+fn addRustGenerator(b: *std.Build, optimize: std.builtin.OptimizeMode, abi_module: *std.Build.Module, name: []const u8) *std.Build.Step.Compile {
+    const module = b.createModule(.{
+        .root_source_file = b.path("Tools/AbiRustGen/src/main.zig"),
+        .target = b.graph.host,
+        .optimize = optimize,
+    });
+    module.addImport("r4os_technical_abi", abi_module);
+    return b.addExecutable(.{ .name = name, .root_module = module });
 }

@@ -1448,6 +1448,8 @@ fn renderApiInventory(allocator: std.mem.Allocator, contract: *const Contract) !
             "  \"schema_version\": 1,\n" ++
             "  \"generated_from\": \"{s}\",\n" ++
             "  \"contract_schema_version\": {d},\n" ++
+            "  \"rust_binding\": \"Generated/SDK/Rust/src/lib.rs\",\n" ++
+            "  \"rust_inventory\": \"Generated/Inventory/RustABI.json\",\n" ++
             "  \"summary\": {{\n" ++
             "    \"function_count\": {d},\n" ++
             "    \"group_slot_count\": {d},\n" ++

@@ -13,12 +13,16 @@ Wahrheit und Ausgaben
   Append-only-Vergleichsstand.
 - `ABI/` enthaelt die lesbaren Container-, Start- und Runtime-R4L-Vertraege.
 - `Module/R4MFv2.txt` beschreibt das gemeinsame Modulmanifest.
-- `Generated/` enthaelt die daraus erzeugten Zig-, Kernel- und C-Pakete,
+- `Generated/` enthaelt die daraus erzeugten Zig-, Kernel-, C- und Rust-Pakete,
   Conformance-Fixtures, Referenzdokumente und das API-Inventar.
 - Die exportierte Zig-ABI verbindet die schemagenerierten Definitionen mit
   den gemeinsamen technischen Plattformtypen aus dem eingefrorenen
   Referenzstand.
 - `Tools/ApiContractGen/` besitzt den Generator und seine Negativtests.
+- `Tools/AbiRustGen/` reflektiert die kanonischen ABI-Typen einschliesslich
+  der technischen Fassaden nach Rust. `write` erzeugt Zig/C zuerst und Rust
+  danach; normaler Build/check vergleichen nur. `test` prueft auch Rust-Host-
+  und Baretarget-Layouts sowie echte Rust/Zig/C-Callbacks im gleichen Gate.
 
 Nicht enthalten sind Kernelimplementierungen, handgeschriebene SDK-Fassaden,
 Module oder fachliche Vertraege konkreter Runtime-R4Ls. Eine benannte

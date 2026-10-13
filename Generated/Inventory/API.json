@@ -2,6 +2,8 @@
   "schema_version": 1,
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
+  "rust_binding": "Generated/SDK/Rust/src/lib.rs",
+  "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
     "function_count": 430,
     "group_slot_count": 430,
