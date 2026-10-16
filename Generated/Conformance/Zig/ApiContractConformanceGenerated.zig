@@ -5134,6 +5134,36 @@ comptime {
     if (@offsetOf(abi.ProgramStackPerformanceInfo, "create_cycles_max") != 120) @compileError("ProgramStackPerformanceInfo.create_cycles_max offset");
     if (@offsetOf(abi.ProgramStackPerformanceInfo, "release_cycles_total") != 128) @compileError("ProgramStackPerformanceInfo.release_cycles_total offset");
     if (@offsetOf(abi.ProgramStackPerformanceInfo, "release_cycles_max") != 136) @compileError("ProgramStackPerformanceInfo.release_cycles_max offset");
+    if (@sizeOf(abi.ProgramStackFaultInfo) != 192) @compileError("ProgramStackFaultInfo size");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "version") != 0) @compileError("ProgramStackFaultInfo.version offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "size") != 4) @compileError("ProgramStackFaultInfo.size offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "cpu_index") != 8) @compileError("ProgramStackFaultInfo.cpu_index offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "flags") != 12) @compileError("ProgramStackFaultInfo.flags offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "sequence") != 16) @compileError("ProgramStackFaultInfo.sequence offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "stack_kind") != 24) @compileError("ProgramStackFaultInfo.stack_kind offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "reason") != 28) @compileError("ProgramStackFaultInfo.reason offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "vm_error") != 32) @compileError("ProgramStackFaultInfo.vm_error offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "exception_vector") != 36) @compileError("ProgramStackFaultInfo.exception_vector offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "task_id") != 40) @compileError("ProgramStackFaultInfo.task_id offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "instance_id") != 44) @compileError("ProgramStackFaultInfo.instance_id offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "thread_id") != 48) @compileError("ProgramStackFaultInfo.thread_id offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "reserved0") != 52) @compileError("ProgramStackFaultInfo.reserved0 offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "task_generation") != 56) @compileError("ProgramStackFaultInfo.task_generation offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "instance_generation") != 64) @compileError("ProgramStackFaultInfo.instance_generation offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "thread_generation") != 72) @compileError("ProgramStackFaultInfo.thread_generation offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "fault_address") != 80) @compileError("ProgramStackFaultInfo.fault_address offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "interrupted_rsp") != 88) @compileError("ProgramStackFaultInfo.interrupted_rsp offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "page_fault_error") != 96) @compileError("ProgramStackFaultInfo.page_fault_error offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "reserve_base") != 104) @compileError("ProgramStackFaultInfo.reserve_base offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "reserve_bytes") != 112) @compileError("ProgramStackFaultInfo.reserve_bytes offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "committed_base") != 120) @compileError("ProgramStackFaultInfo.committed_base offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "committed_bytes") != 128) @compileError("ProgramStackFaultInfo.committed_bytes offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "guard_base") != 136) @compileError("ProgramStackFaultInfo.guard_base offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "guard_bytes") != 144) @compileError("ProgramStackFaultInfo.guard_bytes offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "stack_top") != 152) @compileError("ProgramStackFaultInfo.stack_top offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "image_base") != 160) @compileError("ProgramStackFaultInfo.image_base offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "image_bytes") != 168) @compileError("ProgramStackFaultInfo.image_bytes offset");
+    if (@offsetOf(abi.ProgramStackFaultInfo, "memory_tag") != 176) @compileError("ProgramStackFaultInfo.memory_tag offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1264) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -5915,7 +5945,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 392) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 400) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -6008,6 +6038,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.performance_lock) != 8) @compileError("R4DevFns.performance_lock signature");
     if (@offsetOf(abi.R4XStartR4Dev, "performance_stack") != 384) @compileError("R4XStartR4Dev.performance_stack offset");
     if (@sizeOf(abi.R4DevFns.performance_stack) != 8) @compileError("R4DevFns.performance_stack signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "stack_fault") != 392) @compileError("R4XStartR4Dev.stack_fault offset");
+    if (@sizeOf(abi.R4DevFns.stack_fault) != 8) @compileError("R4DevFns.stack_fault signature");
 }
 
 test "generated API contract compiles" {}

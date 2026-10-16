@@ -433,5 +433,6 @@ static R4DevDriverModuleInfoFn r4os_probe_r4dev_driver_module_info = (R4DevDrive
 static R4DevPerformanceInstrumentationFn r4os_probe_r4dev_performance_instrumentation = (R4DevPerformanceInstrumentationFn)0;
 static R4DevPerformanceLockFn r4os_probe_r4dev_performance_lock = (R4DevPerformanceLockFn)0;
 static R4DevPerformanceStackFn r4os_probe_r4dev_performance_stack = (R4DevPerformanceStackFn)0;
+static R4DevStackFaultFn r4os_probe_r4dev_stack_fault = (R4DevStackFaultFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

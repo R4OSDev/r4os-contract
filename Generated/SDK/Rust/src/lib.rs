@@ -1938,6 +1938,24 @@ pub const driver_api_owned_work_version: u32 = 36;
 pub const driver_work_owner_busy: i32 = -32000;
 pub const window_graphics_headless: u32 = 2;
 pub const performance_irq_coverage_instrumentation_disabled: u32 = 32;
+pub const stack_fault_flag_task: u32 = 1;
+pub const stack_fault_flag_instance: u32 = 2;
+pub const stack_fault_flag_thread: u32 = 4;
+pub const stack_fault_flag_bounds: u32 = 8;
+pub const stack_fault_kind_unknown: u32 = 0;
+pub const stack_fault_kind_program_main: u32 = 1;
+pub const stack_fault_kind_program_thread: u32 = 2;
+pub const stack_fault_kind_kernel_task: u32 = 3;
+pub const stack_fault_kind_exception: u32 = 4;
+pub const stack_fault_reason_unknown: u32 = 0;
+pub const stack_fault_reason_reserve_exhausted: u32 = 1;
+pub const stack_fault_reason_kernel_guard: u32 = 2;
+pub const stack_fault_reason_physical_budget: u32 = 3;
+pub const stack_fault_reason_vm_commit: u32 = 4;
+pub const stack_fault_reason_growth_forbidden: u32 = 5;
+pub const stack_fault_reason_protection: u32 = 6;
+pub const stack_fault_reason_vm_guard: u32 = 7;
+pub const stack_fault_reason_continuation_headroom: u32 = 8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -15689,6 +15707,76 @@ impl Default for ProgramStackPerformanceInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramStackFaultInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub sequence: u64,
+    pub stack_kind: u32,
+    pub reason: u32,
+    pub vm_error: u32,
+    pub exception_vector: u32,
+    pub task_id: u32,
+    pub instance_id: u32,
+    pub thread_id: u32,
+    pub reserved0: u32,
+    pub task_generation: u64,
+    pub instance_generation: u64,
+    pub thread_generation: u64,
+    pub fault_address: u64,
+    pub interrupted_rsp: u64,
+    pub page_fault_error: u64,
+    pub reserve_base: u64,
+    pub reserve_bytes: u64,
+    pub committed_base: u64,
+    pub committed_bytes: u64,
+    pub guard_base: u64,
+    pub guard_bytes: u64,
+    pub stack_top: u64,
+    pub image_base: u64,
+    pub image_bytes: u64,
+    pub memory_tag: [u8; 16],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramStackFaultInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 192,
+            cpu_index: 0,
+            flags: 0,
+            sequence: 0,
+            stack_kind: 0,
+            reason: 0,
+            vm_error: 0,
+            exception_vector: 0,
+            task_id: 0,
+            instance_id: 0,
+            thread_id: 0,
+            reserved0: 0,
+            task_generation: 0,
+            instance_generation: 0,
+            thread_generation: 0,
+            fault_address: 0,
+            interrupted_rsp: 0,
+            page_fault_error: 0,
+            reserve_base: 0,
+            reserve_bytes: 0,
+            committed_base: 0,
+            committed_bytes: 0,
+            guard_base: 0,
+            guard_bytes: 0,
+            stack_top: 0,
+            image_base: 0,
+            image_bytes: 0,
+            memory_tag: [0; 16],
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17038,6 +17126,7 @@ pub mod R4DevFns {
     pub type performance_instrumentation = unsafe extern "C" fn(*mut ProgramInstrumentationInfo) -> i32;
     pub type performance_lock = unsafe extern "C" fn(u32, *mut ProgramLockPerformanceInfo) -> i32;
     pub type performance_stack = unsafe extern "C" fn(u32, *mut ProgramStackPerformanceInfo) -> i32;
+    pub type stack_fault = unsafe extern "C" fn(u32, *mut ProgramStackFaultInfo) -> i32;
 }
 
 #[repr(C)]
@@ -17094,14 +17183,15 @@ pub struct R4XStartR4Dev {
     pub performance_instrumentation: usize,
     pub performance_lock: usize,
     pub performance_stack: usize,
+    pub stack_fault: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 13,
-            size: 392,
+            abi_version: 14,
+            size: 400,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17150,6 +17240,7 @@ impl Default for R4XStartR4Dev {
             performance_instrumentation: 0,
             performance_lock: 0,
             performance_stack: 0,
+            stack_fault: 0,
         }
     }
 }
@@ -26498,6 +26589,37 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramStackPerformanceInfo, release_cycles_max) == 136);
     assert!(core::mem::size_of::<ProgramStackPerformanceInfo>() == 144);
     assert!(core::mem::align_of::<ProgramStackPerformanceInfo>() == 8);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, version) == 0);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, size) == 4);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, flags) == 12);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, sequence) == 16);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, stack_kind) == 24);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, reason) == 28);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, vm_error) == 32);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, exception_vector) == 36);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, task_id) == 40);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, instance_id) == 44);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, thread_id) == 48);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, reserved0) == 52);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, task_generation) == 56);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, instance_generation) == 64);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, thread_generation) == 72);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, fault_address) == 80);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, interrupted_rsp) == 88);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, page_fault_error) == 96);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, reserve_base) == 104);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, reserve_bytes) == 112);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, committed_base) == 120);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, committed_bytes) == 128);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, guard_base) == 136);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, guard_bytes) == 144);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, stack_top) == 152);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, image_base) == 160);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, image_bytes) == 168);
+    assert!(core::mem::offset_of!(ProgramStackFaultInfo, memory_tag) == 176);
+    assert!(core::mem::size_of::<ProgramStackFaultInfo>() == 192);
+    assert!(core::mem::align_of::<ProgramStackFaultInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -26972,7 +27094,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_instrumentation) == 368);
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_lock) == 376);
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_stack) == 384);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 392);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, stack_fault) == 392);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 400);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

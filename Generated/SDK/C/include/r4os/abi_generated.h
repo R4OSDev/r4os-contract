@@ -1946,6 +1946,24 @@ extern "C" {
 #define R4OS_DRIVER_WORK_OWNER_BUSY ((int32_t)-32000)
 #define R4OS_WINDOW_GRAPHICS_HEADLESS 2u
 #define R4OS_PERFORMANCE_IRQ_COVERAGE_INSTRUMENTATION_DISABLED 32u
+#define R4OS_STACK_FAULT_FLAG_TASK 1u
+#define R4OS_STACK_FAULT_FLAG_INSTANCE 2u
+#define R4OS_STACK_FAULT_FLAG_THREAD 4u
+#define R4OS_STACK_FAULT_FLAG_BOUNDS 8u
+#define R4OS_STACK_FAULT_KIND_UNKNOWN 0u
+#define R4OS_STACK_FAULT_KIND_PROGRAM_MAIN 1u
+#define R4OS_STACK_FAULT_KIND_PROGRAM_THREAD 2u
+#define R4OS_STACK_FAULT_KIND_KERNEL_TASK 3u
+#define R4OS_STACK_FAULT_KIND_EXCEPTION 4u
+#define R4OS_STACK_FAULT_REASON_UNKNOWN 0u
+#define R4OS_STACK_FAULT_REASON_RESERVE_EXHAUSTED 1u
+#define R4OS_STACK_FAULT_REASON_KERNEL_GUARD 2u
+#define R4OS_STACK_FAULT_REASON_PHYSICAL_BUDGET 3u
+#define R4OS_STACK_FAULT_REASON_VM_COMMIT 4u
+#define R4OS_STACK_FAULT_REASON_GROWTH_FORBIDDEN 5u
+#define R4OS_STACK_FAULT_REASON_PROTECTION 6u
+#define R4OS_STACK_FAULT_REASON_VM_GUARD 7u
+#define R4OS_STACK_FAULT_REASON_CONTINUATION_HEADROOM 8u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2695,6 +2713,7 @@ typedef struct R4DirectoryScanCursor R4DirectoryScanCursor;
 typedef struct R4ProgramInstrumentationInfo R4ProgramInstrumentationInfo;
 typedef struct R4ProgramLockPerformanceInfo R4ProgramLockPerformanceInfo;
 typedef struct R4ProgramStackPerformanceInfo R4ProgramStackPerformanceInfo;
+typedef struct R4ProgramStackFaultInfo R4ProgramStackFaultInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8407,6 +8426,38 @@ typedef struct R4ProgramStackPerformanceInfo {
     uint64_t release_cycles_max;
 } R4ProgramStackPerformanceInfo;
 
+typedef struct R4ProgramStackFaultInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t flags;
+    uint64_t sequence;
+    uint32_t stack_kind;
+    uint32_t reason;
+    uint32_t vm_error;
+    uint32_t exception_vector;
+    uint32_t task_id;
+    uint32_t instance_id;
+    uint32_t thread_id;
+    uint32_t reserved0;
+    uint64_t task_generation;
+    uint64_t instance_generation;
+    uint64_t thread_generation;
+    uint64_t fault_address;
+    uint64_t interrupted_rsp;
+    uint64_t page_fault_error;
+    uint64_t reserve_base;
+    uint64_t reserve_bytes;
+    uint64_t committed_base;
+    uint64_t committed_bytes;
+    uint64_t guard_base;
+    uint64_t guard_bytes;
+    uint64_t stack_top;
+    uint64_t image_base;
+    uint64_t image_bytes;
+    uint8_t memory_tag[16];
+} R4ProgramStackFaultInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9314,6 +9365,7 @@ typedef int32_t (*R4DevDriverModuleInfoFn)(uint32_t owner, R4DriverModuleInfo * 
 typedef int32_t (*R4DevPerformanceInstrumentationFn)(R4ProgramInstrumentationInfo * out);
 typedef int32_t (*R4DevPerformanceLockFn)(uint32_t index, R4ProgramLockPerformanceInfo * out);
 typedef int32_t (*R4DevPerformanceStackFn)(uint32_t index, R4ProgramStackPerformanceInfo * out);
+typedef int32_t (*R4DevStackFaultFn)(uint32_t index, R4ProgramStackFaultInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9367,6 +9419,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_instrumentation;
     uintptr_t performance_lock;
     uintptr_t performance_stack;
+    uintptr_t stack_fault;
 } R4XStartR4Dev;
 
 
@@ -14503,6 +14556,36 @@ _Static_assert(offsetof(R4ProgramStackPerformanceInfo, create_cycles_total) == 1
 _Static_assert(offsetof(R4ProgramStackPerformanceInfo, create_cycles_max) == 120u, "ProgramStackPerformanceInfo.create_cycles_max offset mismatch");
 _Static_assert(offsetof(R4ProgramStackPerformanceInfo, release_cycles_total) == 128u, "ProgramStackPerformanceInfo.release_cycles_total offset mismatch");
 _Static_assert(offsetof(R4ProgramStackPerformanceInfo, release_cycles_max) == 136u, "ProgramStackPerformanceInfo.release_cycles_max offset mismatch");
+_Static_assert(sizeof(R4ProgramStackFaultInfo) == 192u, "ProgramStackFaultInfo size mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, version) == 0u, "ProgramStackFaultInfo.version offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, size) == 4u, "ProgramStackFaultInfo.size offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, cpu_index) == 8u, "ProgramStackFaultInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, flags) == 12u, "ProgramStackFaultInfo.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, sequence) == 16u, "ProgramStackFaultInfo.sequence offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, stack_kind) == 24u, "ProgramStackFaultInfo.stack_kind offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, reason) == 28u, "ProgramStackFaultInfo.reason offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, vm_error) == 32u, "ProgramStackFaultInfo.vm_error offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, exception_vector) == 36u, "ProgramStackFaultInfo.exception_vector offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, task_id) == 40u, "ProgramStackFaultInfo.task_id offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, instance_id) == 44u, "ProgramStackFaultInfo.instance_id offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, thread_id) == 48u, "ProgramStackFaultInfo.thread_id offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, reserved0) == 52u, "ProgramStackFaultInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, task_generation) == 56u, "ProgramStackFaultInfo.task_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, instance_generation) == 64u, "ProgramStackFaultInfo.instance_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, thread_generation) == 72u, "ProgramStackFaultInfo.thread_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, fault_address) == 80u, "ProgramStackFaultInfo.fault_address offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, interrupted_rsp) == 88u, "ProgramStackFaultInfo.interrupted_rsp offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, page_fault_error) == 96u, "ProgramStackFaultInfo.page_fault_error offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, reserve_base) == 104u, "ProgramStackFaultInfo.reserve_base offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, reserve_bytes) == 112u, "ProgramStackFaultInfo.reserve_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, committed_base) == 120u, "ProgramStackFaultInfo.committed_base offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, committed_bytes) == 128u, "ProgramStackFaultInfo.committed_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, guard_base) == 136u, "ProgramStackFaultInfo.guard_base offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, guard_bytes) == 144u, "ProgramStackFaultInfo.guard_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, stack_top) == 152u, "ProgramStackFaultInfo.stack_top offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, image_base) == 160u, "ProgramStackFaultInfo.image_base offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, image_bytes) == 168u, "ProgramStackFaultInfo.image_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramStackFaultInfo, memory_tag) == 176u, "ProgramStackFaultInfo.memory_tag offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15284,7 +15367,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 392u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 400u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15377,6 +15460,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_lock) == 376u, "R4XStartR4Dev
 _Static_assert(sizeof(R4DevPerformanceLockFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, performance_stack) == 384u, "R4XStartR4Dev.performance_stack offset mismatch");
 _Static_assert(sizeof(R4DevPerformanceStackFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, stack_fault) == 392u, "R4XStartR4Dev.stack_fault offset mismatch");
+_Static_assert(sizeof(R4DevStackFaultFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

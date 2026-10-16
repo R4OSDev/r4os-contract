@@ -28443,10 +28443,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 13,
+      "abi_version": 14,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 392,
+      "size": 400,
       "slots": [
         {
           "number": 0,
@@ -31583,6 +31583,72 @@
                   "child": {
                     "kind": "named",
                     "name": "ProgramStackPerformanceInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 47,
+          "offset": 392,
+          "name": "stack_fault",
+          "state": "function",
+          "required": false,
+          "description": "Read the latest resident stack failure for CPU slot index. Returns 1 for a coherent snapshot (sequence zero means no recorded failure), 0 beyond CPU slots, -1 for invalid version/capacity and -2 for a concurrently changing record after three attempts. Failure never changes output. No allocation, owner acquisition, scan, wait, trace activation or state reset.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramStackFaultInfo"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -103670,6 +103736,430 @@
       ],
       "values": [],
       "description": "Resident stack aggregates. Kind 0 enumerates kernel task roles, kind 1 enumerates R4X memory profiles including main and thread stacks. Flags bit 0: detailed high-water and cycle measurements available; bit 1: cumulative high-water total available (kernel only). High-water is a pattern-based estimate of released stacks, not an overflow detector. Guards and memory initialization remain functional in both modes. Atomic field snapshot; bytes and raw TSC ticks have separate fields."
+    },
+    {
+      "name": "ProgramStackFaultInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 192,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Requested and returned version 1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; complete version-1 payload required.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "192"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Resident CPU slot, not an online CPU count.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Independent availability flags; absent identity/bounds are unavailable, not measured zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Even per-CPU publication revision; zero means no recorded failure. Latest only, no event history.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stack_kind",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "stack_fault_kind_*: unavailable, R4X main/thread, kernel task or exception stack.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "stack_fault_reason_*; unknown remains explicit when attribution is insufficient.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vm_error",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original private VM status when reported by the failing guard/commit operation, otherwise zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "exception_vector",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original CPU exception vector.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_id",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact current task, only valid with task availability flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "instance_id",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Executing R4X instance, only valid with instance availability flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "thread_id",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Executing R4X thread, only valid with thread availability flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_generation",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact task generation retained by current task execution.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "instance_generation",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Generation from existing retained execution binding, never a registry scan.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "thread_generation",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact thread generation from current task binding.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fault_address",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original captured CR2 for page faults; zero for other vectors.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interrupted_rsp",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original interrupted RSP, not the emergency or diagnostic stack pointer.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "page_fault_error",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original page-fault error word; zero for other vectors.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserve_base",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact stack reservation base when bounds are available.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserve_bytes",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reserved address span including final guard.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "committed_base",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current committed stack floor, independent of optional high-water scans.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "committed_bytes",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current committed span, not measured usage.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "guard_base",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current guard base; terminal reservation floor derives from reserve_base.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "guard_bytes",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Guard size; zero for unguarded exception stacks.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stack_top",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exclusive stack top.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_base",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Executing R4X image from the existing instance binding; not attribution of arbitrary driver/library RIP.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "image_bytes",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Executing R4X image size.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "memory_tag",
+          "offset": 176,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Existing R4X memory tag, may be truncated/non-unique; exact identity is instance ID plus generation.",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Latest bounded stack failure per CPU. Collected without allocation or registry traversal from the exact interrupted execution binding. Available independently of detailed instrumentation. Faults with no proven association retain unavailable fields; current R4X identity is not evidence of the faulting driver/library. No high-water estimate. Fatal records are printed by the existing crash path; the live API retains the latest record until overwritten or reboot."
     }
   ],
   "operations": [],
@@ -125411,6 +125901,186 @@
       "scope": "performance_irq_timing",
       "stability": "fixed_contract",
       "description": "IRQ detail measurement disabled at kernel build time; zero timing fields are unavailable, not measurements. Dispatch and external-handler coverage bits are absent."
+    },
+    {
+      "name": "stack_fault_flag_task",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Task ID and generation available."
+    },
+    {
+      "name": "stack_fault_flag_instance",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Executing R4X ID, generation, image and memory tag available."
+    },
+    {
+      "name": "stack_fault_flag_thread",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Executing R4X thread ID and generation available."
+    },
+    {
+      "name": "stack_fault_flag_bounds",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Stack reservation and committed bounds available; bytes are not high-water usage."
+    },
+    {
+      "name": "stack_fault_kind_unknown",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Stack association unavailable."
+    },
+    {
+      "name": "stack_fault_kind_program_main",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Main R4X program stack."
+    },
+    {
+      "name": "stack_fault_kind_program_thread",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Secondary R4X program stack."
+    },
+    {
+      "name": "stack_fault_kind_kernel_task",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Resident scheduler task stack, including driver work."
+    },
+    {
+      "name": "stack_fault_kind_exception",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Resident per-CPU exception/double-fault stack."
+    },
+    {
+      "name": "stack_fault_reason_unknown",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "No proven stack failure cause."
+    },
+    {
+      "name": "stack_fault_reason_reserve_exhausted",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "R4X terminal guard/reservation floor reached."
+    },
+    {
+      "name": "stack_fault_reason_kernel_guard",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Fault hits the exact current task kernel-stack guard."
+    },
+    {
+      "name": "stack_fault_reason_physical_budget",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Stack growth rejected by physical system budget or VM OutOfMemory."
+    },
+    {
+      "name": "stack_fault_reason_vm_commit",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "VM stack commit failed; vm_error retains its status."
+    },
+    {
+      "name": "stack_fault_reason_growth_forbidden",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Required stack growth forbidden while a no-sleep/runtime owner is held."
+    },
+    {
+      "name": "stack_fault_reason_protection",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Present/protection fault within the proven stack span, not a growth request."
+    },
+    {
+      "name": "stack_fault_reason_vm_guard",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "VM guard remove/move operation failed; vm_error retains its status."
+    },
+    {
+      "name": "stack_fault_reason_continuation_headroom",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "stack_fault",
+      "stability": "fixed_contract",
+      "description": "Interrupted stack cannot provide required resident page-in continuation headroom."
     }
   ],
   "limits": [

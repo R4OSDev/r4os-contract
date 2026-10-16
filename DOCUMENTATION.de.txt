@@ -116,3 +116,12 @@ Vier additive drive_role_* Konstanten benennen die schon vorhandenen
 DriveInfo.role-Werte none=0, system=1, data=2, ram=3. Keine bestehende
 Konstante, Funktion, Tabelle oder Payloadgroesse aendert sich. Die explizite
 Baseline-Aktualisierung wurde auf genau diese Ergaenzungen begrenzt.
+
+R4DEV v14 / Stackfehler (0.84.1)
+--------------------------------
+Der optionale append-only Slot stack_fault liefert je CPU den letzten
+residenten ProgramStackFaultInfo-Datensatz. Aufnahme ohne Allokation,
+Owner-Lock oder Registryscan; Generationen stammen aus der vorhandenen
+Taskbindung. Verfuegbarkeitsflags unterscheiden fehlende Zuordnung von
+gemessenen Werten. Commitgroessen sind kein Hochwasser. Alte 438 Slots,
+308 Payloads und 1933 Konstanten bleiben unveraendert.

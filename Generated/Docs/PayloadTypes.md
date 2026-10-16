@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 308 von 308 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 309 von 309 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1933; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1951; Limits: 109
 
 ## App-Profile
 
@@ -329,6 +329,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramInstrumentationInfo` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `ProgramLockPerformanceInfo` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
 | `ProgramStackPerformanceInfo` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
+| `ProgramStackFaultInfo` | extensible | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
 
 ## Typdetails
 
@@ -8191,6 +8192,45 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `release_cycles_total` | 128 | 8 | 8 | `u64` | - |
 | `release_cycles_max` | 136 | 8 | 8 | `u64` | - |
 
+### `ProgramStackFaultInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 192 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `sequence` | 16 | 8 | 8 | `u64` | - |
+| `stack_kind` | 24 | 4 | 4 | `u32` | - |
+| `reason` | 28 | 4 | 4 | `u32` | - |
+| `vm_error` | 32 | 4 | 4 | `u32` | - |
+| `exception_vector` | 36 | 4 | 4 | `u32` | - |
+| `task_id` | 40 | 4 | 4 | `u32` | - |
+| `instance_id` | 44 | 4 | 4 | `u32` | - |
+| `thread_id` | 48 | 4 | 4 | `u32` | - |
+| `reserved0` | 52 | 4 | 4 | `u32` | - |
+| `task_generation` | 56 | 8 | 8 | `u64` | - |
+| `instance_generation` | 64 | 8 | 8 | `u64` | - |
+| `thread_generation` | 72 | 8 | 8 | `u64` | - |
+| `fault_address` | 80 | 8 | 8 | `u64` | - |
+| `interrupted_rsp` | 88 | 8 | 8 | `u64` | - |
+| `page_fault_error` | 96 | 8 | 8 | `u64` | - |
+| `reserve_base` | 104 | 8 | 8 | `u64` | - |
+| `reserve_bytes` | 112 | 8 | 8 | `u64` | - |
+| `committed_base` | 120 | 8 | 8 | `u64` | - |
+| `committed_bytes` | 128 | 8 | 8 | `u64` | - |
+| `guard_base` | 136 | 8 | 8 | `u64` | - |
+| `guard_bytes` | 144 | 8 | 8 | `u64` | - |
+| `stack_top` | 152 | 8 | 8 | `u64` | - |
+| `image_base` | 160 | 8 | 8 | `u64` | - |
+| `image_bytes` | 168 | 8 | 8 | `u64` | - |
+| `memory_tag` | 176 | 16 | 1 | `[16]u8` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -10863,6 +10903,24 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `driver_work_owner_busy` | `-32000` | `i32` | value | status | `driver_work` | fixed_contract |
 | `window_graphics_headless` | `2` | `u32` | identity | number | `window_graphics` | fixed_contract |
 | `performance_irq_coverage_instrumentation_disabled` | `32` | `u32` | flag | bitmask | `performance_irq_timing` | fixed_contract |
+| `stack_fault_flag_task` | `1` | `u32` | flag | bitmask | `stack_fault` | fixed_contract |
+| `stack_fault_flag_instance` | `2` | `u32` | flag | bitmask | `stack_fault` | fixed_contract |
+| `stack_fault_flag_thread` | `4` | `u32` | flag | bitmask | `stack_fault` | fixed_contract |
+| `stack_fault_flag_bounds` | `8` | `u32` | flag | bitmask | `stack_fault` | fixed_contract |
+| `stack_fault_kind_unknown` | `0` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_kind_program_main` | `1` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_kind_program_thread` | `2` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_kind_kernel_task` | `3` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_kind_exception` | `4` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_unknown` | `0` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_reserve_exhausted` | `1` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_kernel_guard` | `2` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_physical_budget` | `3` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_vm_commit` | `4` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_growth_forbidden` | `5` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_protection` | `6` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_vm_guard` | `7` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `stack_fault_reason_continuation_headroom` | `8` | `u32` | value | number | `stack_fault` | fixed_contract |
 
 ## Limits
 

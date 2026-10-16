@@ -424,9 +424,9 @@ const phase_a_groups = [_]ExpectedGroup{
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 35, .reserved = 0, .tombstones = 0 },
     // 0.78.16 appends physical audio-output enumeration and selection.
     .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 21, .reserved = 2, .tombstones = 0 },
-    // 0.83.1 appends resident instrumentation, lock and stack snapshots at
-    // slots 44..46 (v13); every existing slot and payload prefix is retained.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 45, .reserved = 2, .tombstones = 0 },
+    // 0.84.1 appends the bounded resident stack-failure snapshot at slot 47
+    // (v14); every existing slot and payload prefix is retained.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 46, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {
