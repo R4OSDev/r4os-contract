@@ -4655,8 +4655,8 @@ pub const NetBackendStatus = extern struct {
     tx_errors: u64 = 0,
     rx_overflows: u64 = 0,
     rx_recoveries: u64 = 0,
-    // 0.69.50: negotiated backend/offload visibility. Drivers that retain
-    // the v1 flat path leave these append-only counters at zero.
+    // Negotiated backend/offload visibility. V2 drivers using only the
+    // canonical flat callbacks leave these metadata counters at zero.
     offered_capabilities: u64 = 0,
     accepted_capabilities: u64 = 0,
     rx_offload_packets: u64 = 0,
@@ -4737,9 +4737,10 @@ pub const NetBackend = extern struct {
     poll: ?*const fn (?*anyopaque) callconv(.c) void = null,
     shutdown: ?*const fn (?*anyopaque) callconv(.c) i32 = null,
     status: ?*const fn (?*anyopaque, *NetBackendStatus) callconv(.c) i32 = null,
-    // Version 2 append-only capability offer. Required bits reject
-    // registration unless selected; optional rejected bits use the flat v1
-    // transmit/receive path. The first selected consumer is RX L4 checksum.
+    // Complete version 2 descriptor required since Kernel 0.1.304. Required
+    // bits reject registration unless selected; optional rejected bits use
+    // the canonical flat callbacks. transmit_packet remains optional.
+    // The first selected metadata consumer is RX L4 checksum.
     offered_capabilities: u64 = 0,
     required_capabilities: u64 = 0,
     rx_queue_count: u16 = 1,

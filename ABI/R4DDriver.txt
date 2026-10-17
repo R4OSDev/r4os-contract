@@ -436,10 +436,18 @@ plus-handoff tail latency remain diagnostically visible.
 Negotiated network queues and offloads
 ---------------------------------------
 
+Since Kernel 0.1.304, register_net_backend accepts only NetBackend version2
+with size at least120bytes. Version and size are read before any later
+field. Unsupported/short records return-1 before registry/topology mutation
+or callback execution; the old72-byte v1 prefix is no longer accepted.
+The v2 layout and DriverApi slot positions are unchanged. Flat transmit,
+optional transmit_packet, single queues/segments and necessary poll callbacks
+retain their v2 meaning; no optional capability becomes mandatory.
+
 NetBackend version 2 appends an offered and required 64-bit capability set,
 RX/TX queue and segment maxima, RX/TX ownership modes, an interrupt-moderation
-offer and the optional packet TX callback after the complete version-1
-descriptor. A version-1 descriptor remains the flat single-queue backend.
+offer and the optional packet TX callback after the preserved72-byte
+prefix. Flat single-queue callbacks remain valid within the complete v2 record.
 Unknown and unsupported optional bits appear in `rejected`; a required bit
 which is absent, unknown or unsupported rejects registration. No partial
 required selection is possible.
