@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DEV (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DEV (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Dev` v20, 456 Bytes, 53 Funktionsfelder und 55 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Dev` v21, 536 Bytes, 63 Funktionsfelder und 65 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DevFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -64,4 +64,14 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 52 | 432 | function | `storage_block_queue_check` | `*const fn (*ProgramKernelBlockQueueCheck) callconv(.c) i32` |
 | 53 | 440 | function | `storage_nvme_check` | `*const fn (*ProgramKernelNvmeCheck) callconv(.c) i32` |
 | 54 | 448 | function | `usb_contract_check` | `*const fn (*ProgramKernelUsbCheck) callconv(.c) i32` |
+| 55 | 456 | function | `serial_count` | `*const fn () callconv(.c) u32` |
+| 56 | 464 | function | `serial_port_at` | `*const fn (u32, *SerialPortInfo) callconv(.c) i32` |
+| 57 | 472 | function | `serial_open` | `*const fn (u64, u64, *const SerialConfig, *u64) callconv(.c) i32` |
+| 58 | 480 | function | `serial_configure` | `*const fn (u64, *const SerialConfig) callconv(.c) i32` |
+| 59 | 488 | function | `serial_read` | `*const fn (u64, [*]u8, u32, u64, *SerialTransfer) callconv(.c) i32` |
+| 60 | 496 | function | `serial_write` | `*const fn (u64, [*]const u8, u32, u64, *SerialTransfer) callconv(.c) i32` |
+| 61 | 504 | function | `serial_drain` | `*const fn (u64, u64) callconv(.c) i32` |
+| 62 | 512 | function | `serial_status` | `*const fn (u64, *SerialStatus) callconv(.c) i32` |
+| 63 | 520 | function | `serial_cancel` | `*const fn (u64) callconv(.c) i32` |
+| 64 | 528 | function | `serial_close` | `*const fn (u64, u32, u64) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DEV -->

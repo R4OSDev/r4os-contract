@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 36u
+#define R4OS_DRIVER_API_VERSION 37u
 #define R4OS_DRIVER_API_THREAD_WORK_VERSION 35u
 #define R4OS_DRIVER_MAGIC 826888260u
 #define R4OS_DRIVER_WORK_FLAG_FROM_IRQ 1u
@@ -2089,6 +2089,37 @@ extern "C" {
 #define R4OS_KERNEL_USB_CHECK_CASE_RING 1u
 #define R4OS_KERNEL_USB_CHECK_CASE_ROUTER 2u
 #define R4OS_KERNEL_USB_CHECK_CASES_ALL 3u
+#define R4OS_SERIAL_RESOURCE_IO 1u
+#define R4OS_SERIAL_RESOURCE_MMIO 2u
+#define R4OS_SERIAL_RESOURCE_OPAQUE 3u
+#define R4OS_SERIAL_CAP_RX 1u
+#define R4OS_SERIAL_CAP_TX 2u
+#define R4OS_SERIAL_CAP_RTS_CTS 4u
+#define R4OS_SERIAL_CAP_LINE_STATUS 8u
+#define R4OS_SERIAL_CAP_IRQ 16u
+#define R4OS_SERIAL_PORT_PRESENT 1u
+#define R4OS_SERIAL_PORT_OPEN 2u
+#define R4OS_SERIAL_PORT_DEBUG_RESERVED 4u
+#define R4OS_SERIAL_PORT_CLOSING 8u
+#define R4OS_SERIAL_PORT_HARDWARE_ERROR 16u
+#define R4OS_SERIAL_PORT_FIFO 32u
+#define R4OS_SERIAL_EVENT_RX 1u
+#define R4OS_SERIAL_EVENT_TX 2u
+#define R4OS_SERIAL_EVENT_STATE 4u
+#define R4OS_SERIAL_EVENT_ERROR 8u
+#define R4OS_SERIAL_EVENT_MODEM 16u
+#define R4OS_SERIAL_TRANSFER_OVERFLOW 1u
+#define R4OS_SERIAL_TRANSFER_LINE_ERROR 2u
+#define R4OS_SERIAL_TRANSFER_PARTIAL 4u
+#define R4OS_SERIAL_CLOSE_ABORT 1u
+#define R4OS_SERIAL_FLOW_NONE 0u
+#define R4OS_SERIAL_FLOW_RTS_CTS 1u
+#define R4OS_SERIAL_PARITY_NONE 0u
+#define R4OS_SERIAL_PARITY_ODD 1u
+#define R4OS_SERIAL_PARITY_EVEN 2u
+#define R4OS_SERIAL_PARITY_MARK 3u
+#define R4OS_SERIAL_PARITY_SPACE 4u
+#define R4OS_DRIVER_API_SERIAL_VERSION 37u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2198,6 +2229,8 @@ extern "C" {
 #define R4OS_TRAY_MAX_ITEMS 16ull
 #define R4OS_TRAY_MAX_OWNERS 16ull
 #define R4OS_TRAY_TOOLTIP_BYTES 64ull
+#define R4OS_SERIAL_MAX_TRANSFER_BYTES 2147483647u
+#define R4OS_SERIAL_BOUNCE_BYTES 256u
 #define R4OS_ARP_RESULT_BUFFER_SMALL ((int32_t)-4)
 #define R4OS_ARP_RESULT_NOT_ARP ((int32_t)1)
 #define R4OS_ARP_RESULT_OK ((int32_t)0)
@@ -2490,6 +2523,21 @@ extern "C" {
 #define R4OS_STORAGE_ERROR_REMOUNT ((int32_t)-9)
 #define R4OS_STORAGE_ERROR_INCOMPLETE ((int32_t)-10)
 #define R4OS_STORAGE_ERROR_NOT_FOUND ((int32_t)-11)
+#define R4OS_SERIAL_OK ((int32_t)0)
+#define R4OS_SERIAL_ERROR_INVALID ((int32_t)-1)
+#define R4OS_SERIAL_ERROR_NOT_FOUND ((int32_t)-2)
+#define R4OS_SERIAL_ERROR_BUSY ((int32_t)-3)
+#define R4OS_SERIAL_ERROR_CLOSED ((int32_t)-4)
+#define R4OS_SERIAL_ERROR_STALE ((int32_t)-5)
+#define R4OS_SERIAL_ERROR_TIMEOUT ((int32_t)-6)
+#define R4OS_SERIAL_ERROR_CANCELLED ((int32_t)-7)
+#define R4OS_SERIAL_ERROR_NO_MEMORY ((int32_t)-8)
+#define R4OS_SERIAL_ERROR_HARDWARE ((int32_t)-9)
+#define R4OS_SERIAL_ERROR_UNSUPPORTED ((int32_t)-10)
+#define R4OS_SERIAL_ERROR_OVERFLOW ((int32_t)-11)
+#define R4OS_SERIAL_ERROR_WOULD_BLOCK ((int32_t)-12)
+#define R4OS_SERIAL_ERROR_OWNER ((int32_t)-13)
+#define R4OS_SERIAL_ERROR_TOO_LARGE ((int32_t)-14)
 
 typedef enum R4ErrorDomain {
     R4_ERROR_DOMAIN_NONE = 0,
@@ -2508,7 +2556,8 @@ typedef enum R4ErrorDomain {
     R4_ERROR_DOMAIN_NETWORK = 13,
     R4_ERROR_DOMAIN_AUDIO = 14,
     R4_ERROR_DOMAIN_DEVICE = 15,
-    R4_ERROR_DOMAIN_STORAGE = 16
+    R4_ERROR_DOMAIN_STORAGE = 16,
+    R4_ERROR_DOMAIN_SERIAL = 17
 } R4ErrorDomain;
 
 #define R4L_GROUP_R4SYS 1u
@@ -2846,6 +2895,12 @@ typedef struct R4ProgramSmpTlbSnapshot R4ProgramSmpTlbSnapshot;
 typedef struct R4ProgramKernelBlockQueueCheck R4ProgramKernelBlockQueueCheck;
 typedef struct R4ProgramKernelNvmeCheck R4ProgramKernelNvmeCheck;
 typedef struct R4ProgramKernelUsbCheck R4ProgramKernelUsbCheck;
+typedef struct R4SerialConfig R4SerialConfig;
+typedef struct R4SerialPortInfo R4SerialPortInfo;
+typedef struct R4SerialTransfer R4SerialTransfer;
+typedef struct R4SerialStatus R4SerialStatus;
+typedef struct R4SerialBackend R4SerialBackend;
+typedef struct R4DriverSerialApi R4DriverSerialApi;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8815,6 +8870,92 @@ typedef struct R4ProgramKernelUsbCheck {
     uint32_t reserved0;
 } R4ProgramKernelUsbCheck;
 
+typedef struct R4SerialConfig {
+    uint32_t version;
+    uint32_t size;
+    uint32_t baud_rate;
+    uint8_t data_bits;
+    uint8_t parity;
+    uint8_t stop_bits;
+    uint8_t flow_control;
+    uint32_t flags;
+    uint32_t reserved0;
+    uint32_t reserved1;
+    uint32_t reserved2;
+} R4SerialConfig;
+
+typedef struct R4SerialPortInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t port_id;
+    uint64_t generation;
+    uint32_t com_number;
+    uint32_t flags;
+    uint64_t capabilities;
+    uint8_t name[16];
+    uint8_t hardware_identity[64];
+    uint32_t transport;
+    uint32_t reserved;
+} R4SerialPortInfo;
+
+typedef struct R4SerialTransfer {
+    uint32_t version;
+    uint32_t size;
+    uint32_t requested;
+    uint32_t completed;
+    int32_t status;
+    uint32_t flags;
+    uint64_t overflows;
+} R4SerialTransfer;
+
+typedef struct R4SerialStatus {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t line_status;
+    uint32_t modem_status;
+    uint32_t rx_pending;
+    uint32_t tx_pending;
+    uint32_t baud_rate;
+    uint64_t rx_bytes;
+    uint64_t tx_bytes;
+    uint64_t rx_dropped;
+    uint64_t line_errors;
+    uint64_t tx_dropped;
+    uint64_t generation;
+    int32_t last_error;
+    uint32_t reserved;
+} R4SerialStatus;
+
+typedef struct R4SerialBackend {
+    uint32_t version;
+    uint32_t size;
+    uint32_t com_number;
+    uint32_t resource_kind;
+    uint64_t resource_base;
+    uint64_t resource_length;
+    uint32_t irq;
+    uint32_t capabilities;
+    uint8_t hardware_identity[64];
+    uint64_t context;
+    uint64_t open;
+    uint64_t configure;
+    uint64_t read;
+    uint64_t write;
+    uint64_t drain;
+    uint64_t status;
+    uint64_t close;
+} R4SerialBackend;
+
+typedef struct R4DriverSerialApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t register_port;
+    uint64_t unregister_port;
+    uint64_t notify;
+    uint64_t admission;
+} R4DriverSerialApi;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9730,6 +9871,16 @@ typedef int32_t (*R4DevPerformanceSmpTlbFn)(R4ProgramSmpTlbSnapshot * out);
 typedef int32_t (*R4DevStorageBlockQueueCheckFn)(R4ProgramKernelBlockQueueCheck * out);
 typedef int32_t (*R4DevStorageNvmeCheckFn)(R4ProgramKernelNvmeCheck * out);
 typedef int32_t (*R4DevUsbContractCheckFn)(R4ProgramKernelUsbCheck * out);
+typedef uint32_t (*R4DevSerialCountFn)(void);
+typedef int32_t (*R4DevSerialPortAtFn)(uint32_t index, R4SerialPortInfo * out);
+typedef int32_t (*R4DevSerialOpenFn)(uint64_t port_id, uint64_t generation, const R4SerialConfig * config, uint64_t * out_handle);
+typedef int32_t (*R4DevSerialConfigureFn)(uint64_t handle, const R4SerialConfig * config);
+typedef int32_t (*R4DevSerialReadFn)(uint64_t handle, uint8_t * buffer, uint32_t capacity, uint64_t timeout_ticks, R4SerialTransfer * out);
+typedef int32_t (*R4DevSerialWriteFn)(uint64_t handle, const uint8_t * buffer, uint32_t length, uint64_t timeout_ticks, R4SerialTransfer * out);
+typedef int32_t (*R4DevSerialDrainFn)(uint64_t handle, uint64_t timeout_ticks);
+typedef int32_t (*R4DevSerialStatusFn)(uint64_t handle, R4SerialStatus * out);
+typedef int32_t (*R4DevSerialCancelFn)(uint64_t handle);
+typedef int32_t (*R4DevSerialCloseFn)(uint64_t handle, uint32_t flags, uint64_t timeout_ticks);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9791,6 +9942,16 @@ typedef struct R4XStartR4Dev {
     uintptr_t storage_block_queue_check;
     uintptr_t storage_nvme_check;
     uintptr_t usb_contract_check;
+    uintptr_t serial_count;
+    uintptr_t serial_port_at;
+    uintptr_t serial_open;
+    uintptr_t serial_configure;
+    uintptr_t serial_read;
+    uintptr_t serial_write;
+    uintptr_t serial_drain;
+    uintptr_t serial_status;
+    uintptr_t serial_cancel;
+    uintptr_t serial_close;
 } R4XStartR4Dev;
 
 
@@ -15168,6 +15329,80 @@ _Static_assert(offsetof(R4ProgramKernelUsbCheck, attempted_cases) == 16u, "Progr
 _Static_assert(offsetof(R4ProgramKernelUsbCheck, passed_cases) == 20u, "ProgramKernelUsbCheck.passed_cases offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelUsbCheck, failed_cases) == 24u, "ProgramKernelUsbCheck.failed_cases offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelUsbCheck, reserved0) == 28u, "ProgramKernelUsbCheck.reserved0 offset mismatch");
+_Static_assert(sizeof(R4SerialConfig) == 32u, "SerialConfig size mismatch");
+_Static_assert(offsetof(R4SerialConfig, version) == 0u, "SerialConfig.version offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, size) == 4u, "SerialConfig.size offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, baud_rate) == 8u, "SerialConfig.baud_rate offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, data_bits) == 12u, "SerialConfig.data_bits offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, parity) == 13u, "SerialConfig.parity offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, stop_bits) == 14u, "SerialConfig.stop_bits offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, flow_control) == 15u, "SerialConfig.flow_control offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, flags) == 16u, "SerialConfig.flags offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, reserved0) == 20u, "SerialConfig.reserved0 offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, reserved1) == 24u, "SerialConfig.reserved1 offset mismatch");
+_Static_assert(offsetof(R4SerialConfig, reserved2) == 28u, "SerialConfig.reserved2 offset mismatch");
+_Static_assert(sizeof(R4SerialPortInfo) == 128u, "SerialPortInfo size mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, version) == 0u, "SerialPortInfo.version offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, size) == 4u, "SerialPortInfo.size offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, port_id) == 8u, "SerialPortInfo.port_id offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, generation) == 16u, "SerialPortInfo.generation offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, com_number) == 24u, "SerialPortInfo.com_number offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, flags) == 28u, "SerialPortInfo.flags offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, capabilities) == 32u, "SerialPortInfo.capabilities offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, name) == 40u, "SerialPortInfo.name offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, hardware_identity) == 56u, "SerialPortInfo.hardware_identity offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, transport) == 120u, "SerialPortInfo.transport offset mismatch");
+_Static_assert(offsetof(R4SerialPortInfo, reserved) == 124u, "SerialPortInfo.reserved offset mismatch");
+_Static_assert(sizeof(R4SerialTransfer) == 32u, "SerialTransfer size mismatch");
+_Static_assert(offsetof(R4SerialTransfer, version) == 0u, "SerialTransfer.version offset mismatch");
+_Static_assert(offsetof(R4SerialTransfer, size) == 4u, "SerialTransfer.size offset mismatch");
+_Static_assert(offsetof(R4SerialTransfer, requested) == 8u, "SerialTransfer.requested offset mismatch");
+_Static_assert(offsetof(R4SerialTransfer, completed) == 12u, "SerialTransfer.completed offset mismatch");
+_Static_assert(offsetof(R4SerialTransfer, status) == 16u, "SerialTransfer.status offset mismatch");
+_Static_assert(offsetof(R4SerialTransfer, flags) == 20u, "SerialTransfer.flags offset mismatch");
+_Static_assert(offsetof(R4SerialTransfer, overflows) == 24u, "SerialTransfer.overflows offset mismatch");
+_Static_assert(sizeof(R4SerialStatus) == 88u, "SerialStatus size mismatch");
+_Static_assert(offsetof(R4SerialStatus, version) == 0u, "SerialStatus.version offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, size) == 4u, "SerialStatus.size offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, flags) == 8u, "SerialStatus.flags offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, line_status) == 12u, "SerialStatus.line_status offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, modem_status) == 16u, "SerialStatus.modem_status offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, rx_pending) == 20u, "SerialStatus.rx_pending offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, tx_pending) == 24u, "SerialStatus.tx_pending offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, baud_rate) == 28u, "SerialStatus.baud_rate offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, rx_bytes) == 32u, "SerialStatus.rx_bytes offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, tx_bytes) == 40u, "SerialStatus.tx_bytes offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, rx_dropped) == 48u, "SerialStatus.rx_dropped offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, line_errors) == 56u, "SerialStatus.line_errors offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, tx_dropped) == 64u, "SerialStatus.tx_dropped offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, generation) == 72u, "SerialStatus.generation offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, last_error) == 80u, "SerialStatus.last_error offset mismatch");
+_Static_assert(offsetof(R4SerialStatus, reserved) == 84u, "SerialStatus.reserved offset mismatch");
+_Static_assert(sizeof(R4SerialBackend) == 168u, "SerialBackend size mismatch");
+_Static_assert(offsetof(R4SerialBackend, version) == 0u, "SerialBackend.version offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, size) == 4u, "SerialBackend.size offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, com_number) == 8u, "SerialBackend.com_number offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, resource_kind) == 12u, "SerialBackend.resource_kind offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, resource_base) == 16u, "SerialBackend.resource_base offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, resource_length) == 24u, "SerialBackend.resource_length offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, irq) == 32u, "SerialBackend.irq offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, capabilities) == 36u, "SerialBackend.capabilities offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, hardware_identity) == 40u, "SerialBackend.hardware_identity offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, context) == 104u, "SerialBackend.context offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, open) == 112u, "SerialBackend.open offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, configure) == 120u, "SerialBackend.configure offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, read) == 128u, "SerialBackend.read offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, write) == 136u, "SerialBackend.write offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, drain) == 144u, "SerialBackend.drain offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, status) == 152u, "SerialBackend.status offset mismatch");
+_Static_assert(offsetof(R4SerialBackend, close) == 160u, "SerialBackend.close offset mismatch");
+_Static_assert(sizeof(R4DriverSerialApi) == 40u, "DriverSerialApi size mismatch");
+_Static_assert(offsetof(R4DriverSerialApi, version) == 0u, "DriverSerialApi.version offset mismatch");
+_Static_assert(offsetof(R4DriverSerialApi, size) == 4u, "DriverSerialApi.size offset mismatch");
+_Static_assert(offsetof(R4DriverSerialApi, register_port) == 8u, "DriverSerialApi.register_port offset mismatch");
+_Static_assert(offsetof(R4DriverSerialApi, unregister_port) == 16u, "DriverSerialApi.unregister_port offset mismatch");
+_Static_assert(offsetof(R4DriverSerialApi, notify) == 24u, "DriverSerialApi.notify offset mismatch");
+_Static_assert(offsetof(R4DriverSerialApi, admission) == 32u, "DriverSerialApi.admission offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15949,7 +16184,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 456u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 536u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -16058,6 +16293,26 @@ _Static_assert(offsetof(R4XStartR4Dev, storage_nvme_check) == 440u, "R4XStartR4D
 _Static_assert(sizeof(R4DevStorageNvmeCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, usb_contract_check) == 448u, "R4XStartR4Dev.usb_contract_check offset mismatch");
 _Static_assert(sizeof(R4DevUsbContractCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_count) == 456u, "R4XStartR4Dev.serial_count offset mismatch");
+_Static_assert(sizeof(R4DevSerialCountFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_port_at) == 464u, "R4XStartR4Dev.serial_port_at offset mismatch");
+_Static_assert(sizeof(R4DevSerialPortAtFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_open) == 472u, "R4XStartR4Dev.serial_open offset mismatch");
+_Static_assert(sizeof(R4DevSerialOpenFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_configure) == 480u, "R4XStartR4Dev.serial_configure offset mismatch");
+_Static_assert(sizeof(R4DevSerialConfigureFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_read) == 488u, "R4XStartR4Dev.serial_read offset mismatch");
+_Static_assert(sizeof(R4DevSerialReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_write) == 496u, "R4XStartR4Dev.serial_write offset mismatch");
+_Static_assert(sizeof(R4DevSerialWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_drain) == 504u, "R4XStartR4Dev.serial_drain offset mismatch");
+_Static_assert(sizeof(R4DevSerialDrainFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_status) == 512u, "R4XStartR4Dev.serial_status offset mismatch");
+_Static_assert(sizeof(R4DevSerialStatusFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_cancel) == 520u, "R4XStartR4Dev.serial_cancel offset mismatch");
+_Static_assert(sizeof(R4DevSerialCancelFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, serial_close) == 528u, "R4XStartR4Dev.serial_close offset mismatch");
+_Static_assert(sizeof(R4DevSerialCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

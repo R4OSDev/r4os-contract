@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 316 von 316 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 322 von 322 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2076; Limits: 109
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2107; Limits: 111
 
 ## App-Profile
 
@@ -337,6 +337,12 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramKernelBlockQueueCheck` | fixed_layout | extern_struct | 240/8 | 240/8 | 240/8 | 240/8 |
 | `ProgramKernelNvmeCheck` | fixed_layout | extern_struct | 296/8 | 296/8 | 296/8 | 296/8 |
 | `ProgramKernelUsbCheck` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `SerialConfig` | extensible | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `SerialPortInfo` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `SerialTransfer` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `SerialStatus` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `SerialBackend` | extensible | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
+| `DriverSerialApi` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -8512,6 +8518,134 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `failed_cases` | 24 | 4 | 4 | `u32` | - |
 | `reserved0` | 28 | 4 | 4 | `u32` | - |
 
+### `SerialConfig`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `baud_rate` | 8 | 4 | 4 | `u32` | - |
+| `data_bits` | 12 | 1 | 1 | `u8` | - |
+| `parity` | 13 | 1 | 1 | `u8` | - |
+| `stop_bits` | 14 | 1 | 1 | `u8` | - |
+| `flow_control` | 15 | 1 | 1 | `u8` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `reserved1` | 24 | 4 | 4 | `u32` | - |
+| `reserved2` | 28 | 4 | 4 | `u32` | - |
+
+### `SerialPortInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `port_id` | 8 | 8 | 8 | `u64` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `com_number` | 24 | 4 | 4 | `u32` | - |
+| `flags` | 28 | 4 | 4 | `u32` | - |
+| `capabilities` | 32 | 8 | 8 | `u64` | - |
+| `name` | 40 | 16 | 1 | `[16]u8` | - |
+| `hardware_identity` | 56 | 64 | 1 | `[64]u8` | - |
+| `transport` | 120 | 4 | 4 | `u32` | - |
+| `reserved` | 124 | 4 | 4 | `u32` | - |
+
+### `SerialTransfer`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `requested` | 8 | 4 | 4 | `u32` | - |
+| `completed` | 12 | 4 | 4 | `u32` | - |
+| `status` | 16 | 4 | 4 | `i32` | - |
+| `flags` | 20 | 4 | 4 | `u32` | - |
+| `overflows` | 24 | 8 | 8 | `u64` | - |
+
+### `SerialStatus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `line_status` | 12 | 4 | 4 | `u32` | - |
+| `modem_status` | 16 | 4 | 4 | `u32` | - |
+| `rx_pending` | 20 | 4 | 4 | `u32` | - |
+| `tx_pending` | 24 | 4 | 4 | `u32` | - |
+| `baud_rate` | 28 | 4 | 4 | `u32` | - |
+| `rx_bytes` | 32 | 8 | 8 | `u64` | - |
+| `tx_bytes` | 40 | 8 | 8 | `u64` | - |
+| `rx_dropped` | 48 | 8 | 8 | `u64` | - |
+| `line_errors` | 56 | 8 | 8 | `u64` | - |
+| `tx_dropped` | 64 | 8 | 8 | `u64` | - |
+| `generation` | 72 | 8 | 8 | `u64` | - |
+| `last_error` | 80 | 4 | 4 | `i32` | - |
+| `reserved` | 84 | 4 | 4 | `u32` | - |
+
+### `SerialBackend`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 168 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `com_number` | 8 | 4 | 4 | `u32` | - |
+| `resource_kind` | 12 | 4 | 4 | `u32` | - |
+| `resource_base` | 16 | 8 | 8 | `u64` | - |
+| `resource_length` | 24 | 8 | 8 | `u64` | - |
+| `irq` | 32 | 4 | 4 | `u32` | - |
+| `capabilities` | 36 | 4 | 4 | `u32` | - |
+| `hardware_identity` | 40 | 64 | 1 | `[64]u8` | - |
+| `context` | 104 | 8 | 8 | `u64` | - |
+| `open` | 112 | 8 | 8 | `u64` | - |
+| `configure` | 120 | 8 | 8 | `u64` | - |
+| `read` | 128 | 8 | 8 | `u64` | - |
+| `write` | 136 | 8 | 8 | `u64` | - |
+| `drain` | 144 | 8 | 8 | `u64` | - |
+| `status` | 152 | 8 | 8 | `u64` | - |
+| `close` | 160 | 8 | 8 | `u64` | - |
+
+### `DriverSerialApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `register_port` | 8 | 8 | 8 | `u64` | - |
+| `unregister_port` | 16 | 8 | 8 | `u64` | - |
+| `notify` | 24 | 8 | 8 | `u64` | - |
+| `admission` | 32 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -9247,6 +9381,28 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `storage_error_incomplete` | -10 | `i32` |
 | `storage_error_not_found` | -11 | `i32` |
 
+### `serial`
+
+Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `serial_ok` | 0 | `i32` |
+| `serial_error_invalid` | -1 | `i32` |
+| `serial_error_not_found` | -2 | `i32` |
+| `serial_error_busy` | -3 | `i32` |
+| `serial_error_closed` | -4 | `i32` |
+| `serial_error_stale` | -5 | `i32` |
+| `serial_error_timeout` | -6 | `i32` |
+| `serial_error_cancelled` | -7 | `i32` |
+| `serial_error_no_memory` | -8 | `i32` |
+| `serial_error_hardware` | -9 | `i32` |
+| `serial_error_unsupported` | -10 | `i32` |
+| `serial_error_overflow` | -11 | `i32` |
+| `serial_error_would_block` | -12 | `i32` |
+| `serial_error_owner` | -13 | `i32` |
+| `serial_error_too_large` | -14 | `i32` |
+
 ## Konstanten
 
 | Name | Wert | Typ | Kategorie | Einheit | Geltung | Stabilität |
@@ -9405,7 +9561,7 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `36` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `37` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_api_thread_work_version` | `35` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
@@ -11327,6 +11483,37 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `kernel_usb_check_case_ring` | `1` | `u32` | flag | bitmask | `kernel_usb_check` | fixed_contract |
 | `kernel_usb_check_case_router` | `2` | `u32` | flag | bitmask | `kernel_usb_check` | fixed_contract |
 | `kernel_usb_check_cases_all` | `3` | `u32` | flag | bitmask | `kernel_usb_check` | fixed_contract |
+| `serial_resource_io` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_resource_mmio` | `2` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_resource_opaque` | `3` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_cap_rx` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_cap_tx` | `2` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_cap_rts_cts` | `4` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_cap_line_status` | `8` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_cap_irq` | `16` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_port_present` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_port_open` | `2` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_port_debug_reserved` | `4` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_port_closing` | `8` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_port_hardware_error` | `16` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_port_fifo` | `32` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_event_rx` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_event_tx` | `2` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_event_state` | `4` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_event_error` | `8` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_event_modem` | `16` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_transfer_overflow` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_transfer_line_error` | `2` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_transfer_partial` | `4` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_close_abort` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_flow_none` | `0` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_flow_rts_cts` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_parity_none` | `0` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_parity_odd` | `1` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_parity_even` | `2` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_parity_mark` | `3` | `u32` | value | number | `serial` | fixed_contract |
+| `serial_parity_space` | `4` | `u32` | value | number | `serial` | fixed_contract |
+| `driver_api_serial_version` | `37` | `u32` | version | number | `serial` | fixed_contract |
 
 ## Limits
 
@@ -11441,3 +11628,5 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `tray_max_items` | `16` | `usize` | count | `tray_registry` | fixed_contract |
 | `tray_max_owners` | `16` | `usize` | count | `tray_registry` | fixed_contract |
 | `tray_tooltip_bytes` | `64` | `usize` | bytes | `tray_item` | fixed_contract |
+| `serial_max_transfer_bytes` | `2147483647` | `u32` | bytes | `serial` | fixed_contract |
+| `serial_bounce_bytes` | `256` | `u32` | bytes | `serial` | fixed_contract |

@@ -159,7 +159,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 36;
+pub const driver_api_version: u32 = 37;
 pub const driver_api_thread_work_version: u32 = 35;
 pub const driver_magic: u32 = 826888260;
 pub const driver_work_flag_from_irq: u32 = 1;
@@ -2081,6 +2081,37 @@ pub const kernel_usb_check_status_failed: u32 = 2;
 pub const kernel_usb_check_case_ring: u32 = 1;
 pub const kernel_usb_check_case_router: u32 = 2;
 pub const kernel_usb_check_cases_all: u32 = 3;
+pub const serial_resource_io: u32 = 1;
+pub const serial_resource_mmio: u32 = 2;
+pub const serial_resource_opaque: u32 = 3;
+pub const serial_cap_rx: u32 = 1;
+pub const serial_cap_tx: u32 = 2;
+pub const serial_cap_rts_cts: u32 = 4;
+pub const serial_cap_line_status: u32 = 8;
+pub const serial_cap_irq: u32 = 16;
+pub const serial_port_present: u32 = 1;
+pub const serial_port_open: u32 = 2;
+pub const serial_port_debug_reserved: u32 = 4;
+pub const serial_port_closing: u32 = 8;
+pub const serial_port_hardware_error: u32 = 16;
+pub const serial_port_fifo: u32 = 32;
+pub const serial_event_rx: u32 = 1;
+pub const serial_event_tx: u32 = 2;
+pub const serial_event_state: u32 = 4;
+pub const serial_event_error: u32 = 8;
+pub const serial_event_modem: u32 = 16;
+pub const serial_transfer_overflow: u32 = 1;
+pub const serial_transfer_line_error: u32 = 2;
+pub const serial_transfer_partial: u32 = 4;
+pub const serial_close_abort: u32 = 1;
+pub const serial_flow_none: u32 = 0;
+pub const serial_flow_rts_cts: u32 = 1;
+pub const serial_parity_none: u32 = 0;
+pub const serial_parity_odd: u32 = 1;
+pub const serial_parity_even: u32 = 2;
+pub const serial_parity_mark: u32 = 3;
+pub const serial_parity_space: u32 = 4;
+pub const driver_api_serial_version: u32 = 37;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -2190,6 +2221,8 @@ pub const tray_icon_width: usize = 16;
 pub const tray_max_items: usize = 16;
 pub const tray_max_owners: usize = 16;
 pub const tray_tooltip_bytes: usize = 64;
+pub const serial_max_transfer_bytes: u32 = 2147483647;
+pub const serial_bounce_bytes: u32 = 256;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -2482,6 +2515,21 @@ pub const storage_error_unsupported: i32 = -8;
 pub const storage_error_remount: i32 = -9;
 pub const storage_error_incomplete: i32 = -10;
 pub const storage_error_not_found: i32 = -11;
+pub const serial_ok: i32 = 0;
+pub const serial_error_invalid: i32 = -1;
+pub const serial_error_not_found: i32 = -2;
+pub const serial_error_busy: i32 = -3;
+pub const serial_error_closed: i32 = -4;
+pub const serial_error_stale: i32 = -5;
+pub const serial_error_timeout: i32 = -6;
+pub const serial_error_cancelled: i32 = -7;
+pub const serial_error_no_memory: i32 = -8;
+pub const serial_error_hardware: i32 = -9;
+pub const serial_error_unsupported: i32 = -10;
+pub const serial_error_overflow: i32 = -11;
+pub const serial_error_would_block: i32 = -12;
+pub const serial_error_owner: i32 = -13;
+pub const serial_error_too_large: i32 = -14;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -2504,6 +2552,7 @@ impl R4ErrorDomain {
     pub const audio: Self = Self(14);
     pub const device: Self = Self(15);
     pub const storage: Self = Self(16);
+    pub const serial: Self = Self(17);
 }
 
 #[repr(transparent)]
@@ -16394,6 +16443,214 @@ impl Default for ProgramKernelUsbCheck {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SerialConfig {
+    pub version: u32,
+    pub size: u32,
+    pub baud_rate: u32,
+    pub data_bits: u8,
+    pub parity: u8,
+    pub stop_bits: u8,
+    pub flow_control: u8,
+    pub flags: u32,
+    pub reserved0: u32,
+    pub reserved1: u32,
+    pub reserved2: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for SerialConfig {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            baud_rate: 115200,
+            data_bits: 8,
+            parity: 0,
+            stop_bits: 1,
+            flow_control: 0,
+            flags: 0,
+            reserved0: 0,
+            reserved1: 0,
+            reserved2: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SerialPortInfo {
+    pub version: u32,
+    pub size: u32,
+    pub port_id: u64,
+    pub generation: u64,
+    pub com_number: u32,
+    pub flags: u32,
+    pub capabilities: u64,
+    pub name: [u8; 16],
+    pub hardware_identity: [u8; 64],
+    pub transport: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for SerialPortInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            port_id: 0,
+            generation: 0,
+            com_number: 0,
+            flags: 0,
+            capabilities: 0,
+            name: [0; 16],
+            hardware_identity: [0; 64],
+            transport: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SerialTransfer {
+    pub version: u32,
+    pub size: u32,
+    pub requested: u32,
+    pub completed: u32,
+    pub status: i32,
+    pub flags: u32,
+    pub overflows: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for SerialTransfer {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            requested: 0,
+            completed: 0,
+            status: 0,
+            flags: 0,
+            overflows: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SerialStatus {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub line_status: u32,
+    pub modem_status: u32,
+    pub rx_pending: u32,
+    pub tx_pending: u32,
+    pub baud_rate: u32,
+    pub rx_bytes: u64,
+    pub tx_bytes: u64,
+    pub rx_dropped: u64,
+    pub line_errors: u64,
+    pub tx_dropped: u64,
+    pub generation: u64,
+    pub last_error: i32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for SerialStatus {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 88,
+            flags: 0,
+            line_status: 0,
+            modem_status: 0,
+            rx_pending: 0,
+            tx_pending: 0,
+            baud_rate: 0,
+            rx_bytes: 0,
+            tx_bytes: 0,
+            rx_dropped: 0,
+            line_errors: 0,
+            tx_dropped: 0,
+            generation: 0,
+            last_error: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct SerialBackend {
+    pub version: u32,
+    pub size: u32,
+    pub com_number: u32,
+    pub resource_kind: u32,
+    pub resource_base: u64,
+    pub resource_length: u64,
+    pub irq: u32,
+    pub capabilities: u32,
+    pub hardware_identity: [u8; 64],
+    pub context: u64,
+    pub open: u64,
+    pub configure: u64,
+    pub read: u64,
+    pub write: u64,
+    pub drain: u64,
+    pub status: u64,
+    pub close: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for SerialBackend {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 168,
+            com_number: 0,
+            resource_kind: 0,
+            resource_base: 0,
+            resource_length: 0,
+            irq: 0,
+            capabilities: 0,
+            hardware_identity: [0; 64],
+            context: 0,
+            open: 0,
+            configure: 0,
+            read: 0,
+            write: 0,
+            drain: 0,
+            status: 0,
+            close: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DriverSerialApi {
+    pub version: u32,
+    pub size: u32,
+    pub register_port: u64,
+    pub unregister_port: u64,
+    pub notify: u64,
+    pub admission: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DriverSerialApi {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            register_port: 0,
+            unregister_port: 0,
+            notify: 0,
+            admission: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17751,6 +18008,16 @@ pub mod R4DevFns {
     pub type storage_block_queue_check = unsafe extern "C" fn(*mut ProgramKernelBlockQueueCheck) -> i32;
     pub type storage_nvme_check = unsafe extern "C" fn(*mut ProgramKernelNvmeCheck) -> i32;
     pub type usb_contract_check = unsafe extern "C" fn(*mut ProgramKernelUsbCheck) -> i32;
+    pub type serial_count = unsafe extern "C" fn() -> u32;
+    pub type serial_port_at = unsafe extern "C" fn(u32, *mut SerialPortInfo) -> i32;
+    pub type serial_open = unsafe extern "C" fn(u64, u64, *const SerialConfig, *mut u64) -> i32;
+    pub type serial_configure = unsafe extern "C" fn(u64, *const SerialConfig) -> i32;
+    pub type serial_read = unsafe extern "C" fn(u64, *mut u8, u32, u64, *mut SerialTransfer) -> i32;
+    pub type serial_write = unsafe extern "C" fn(u64, *const u8, u32, u64, *mut SerialTransfer) -> i32;
+    pub type serial_drain = unsafe extern "C" fn(u64, u64) -> i32;
+    pub type serial_status = unsafe extern "C" fn(u64, *mut SerialStatus) -> i32;
+    pub type serial_cancel = unsafe extern "C" fn(u64) -> i32;
+    pub type serial_close = unsafe extern "C" fn(u64, u32, u64) -> i32;
 }
 
 #[repr(C)]
@@ -17815,14 +18082,24 @@ pub struct R4XStartR4Dev {
     pub storage_block_queue_check: usize,
     pub storage_nvme_check: usize,
     pub usb_contract_check: usize,
+    pub serial_count: usize,
+    pub serial_port_at: usize,
+    pub serial_open: usize,
+    pub serial_configure: usize,
+    pub serial_read: usize,
+    pub serial_write: usize,
+    pub serial_drain: usize,
+    pub serial_status: usize,
+    pub serial_cancel: usize,
+    pub serial_close: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 20,
-            size: 456,
+            abi_version: 21,
+            size: 536,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17879,6 +18156,16 @@ impl Default for R4XStartR4Dev {
             storage_block_queue_check: 0,
             storage_nvme_check: 0,
             usb_contract_check: 0,
+            serial_count: 0,
+            serial_port_at: 0,
+            serial_open: 0,
+            serial_configure: 0,
+            serial_read: 0,
+            serial_write: 0,
+            serial_drain: 0,
+            serial_status: 0,
+            serial_cancel: 0,
+            serial_close: 0,
         }
     }
 }
@@ -20663,6 +20950,7 @@ pub struct DriverApi {
     pub dma_sync_range_for_device: Option<unsafe extern "C" fn(*const DmaMapping, u32, u32) -> i32>,
     pub dma_sync_range_for_cpu: Option<unsafe extern "C" fn(*const DmaMapping, u32, u32) -> i32>,
     pub driver_work_submit_owned: Option<unsafe extern "C" fn(unsafe extern "C" fn(usize) -> i32, usize, *mut u32) -> i32>,
+    pub serial_query: Option<unsafe extern "C" fn(*mut DriverSerialApi) -> i32>,
 }
 
 #[repr(C)]
@@ -27540,6 +27828,86 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramKernelUsbCheck, reserved0) == 28);
     assert!(core::mem::size_of::<ProgramKernelUsbCheck>() == 32);
     assert!(core::mem::align_of::<ProgramKernelUsbCheck>() == 4);
+    assert!(core::mem::offset_of!(SerialConfig, version) == 0);
+    assert!(core::mem::offset_of!(SerialConfig, size) == 4);
+    assert!(core::mem::offset_of!(SerialConfig, baud_rate) == 8);
+    assert!(core::mem::offset_of!(SerialConfig, data_bits) == 12);
+    assert!(core::mem::offset_of!(SerialConfig, parity) == 13);
+    assert!(core::mem::offset_of!(SerialConfig, stop_bits) == 14);
+    assert!(core::mem::offset_of!(SerialConfig, flow_control) == 15);
+    assert!(core::mem::offset_of!(SerialConfig, flags) == 16);
+    assert!(core::mem::offset_of!(SerialConfig, reserved0) == 20);
+    assert!(core::mem::offset_of!(SerialConfig, reserved1) == 24);
+    assert!(core::mem::offset_of!(SerialConfig, reserved2) == 28);
+    assert!(core::mem::size_of::<SerialConfig>() == 32);
+    assert!(core::mem::align_of::<SerialConfig>() == 4);
+    assert!(core::mem::offset_of!(SerialPortInfo, version) == 0);
+    assert!(core::mem::offset_of!(SerialPortInfo, size) == 4);
+    assert!(core::mem::offset_of!(SerialPortInfo, port_id) == 8);
+    assert!(core::mem::offset_of!(SerialPortInfo, generation) == 16);
+    assert!(core::mem::offset_of!(SerialPortInfo, com_number) == 24);
+    assert!(core::mem::offset_of!(SerialPortInfo, flags) == 28);
+    assert!(core::mem::offset_of!(SerialPortInfo, capabilities) == 32);
+    assert!(core::mem::offset_of!(SerialPortInfo, name) == 40);
+    assert!(core::mem::offset_of!(SerialPortInfo, hardware_identity) == 56);
+    assert!(core::mem::offset_of!(SerialPortInfo, transport) == 120);
+    assert!(core::mem::offset_of!(SerialPortInfo, reserved) == 124);
+    assert!(core::mem::size_of::<SerialPortInfo>() == 128);
+    assert!(core::mem::align_of::<SerialPortInfo>() == 8);
+    assert!(core::mem::offset_of!(SerialTransfer, version) == 0);
+    assert!(core::mem::offset_of!(SerialTransfer, size) == 4);
+    assert!(core::mem::offset_of!(SerialTransfer, requested) == 8);
+    assert!(core::mem::offset_of!(SerialTransfer, completed) == 12);
+    assert!(core::mem::offset_of!(SerialTransfer, status) == 16);
+    assert!(core::mem::offset_of!(SerialTransfer, flags) == 20);
+    assert!(core::mem::offset_of!(SerialTransfer, overflows) == 24);
+    assert!(core::mem::size_of::<SerialTransfer>() == 32);
+    assert!(core::mem::align_of::<SerialTransfer>() == 8);
+    assert!(core::mem::offset_of!(SerialStatus, version) == 0);
+    assert!(core::mem::offset_of!(SerialStatus, size) == 4);
+    assert!(core::mem::offset_of!(SerialStatus, flags) == 8);
+    assert!(core::mem::offset_of!(SerialStatus, line_status) == 12);
+    assert!(core::mem::offset_of!(SerialStatus, modem_status) == 16);
+    assert!(core::mem::offset_of!(SerialStatus, rx_pending) == 20);
+    assert!(core::mem::offset_of!(SerialStatus, tx_pending) == 24);
+    assert!(core::mem::offset_of!(SerialStatus, baud_rate) == 28);
+    assert!(core::mem::offset_of!(SerialStatus, rx_bytes) == 32);
+    assert!(core::mem::offset_of!(SerialStatus, tx_bytes) == 40);
+    assert!(core::mem::offset_of!(SerialStatus, rx_dropped) == 48);
+    assert!(core::mem::offset_of!(SerialStatus, line_errors) == 56);
+    assert!(core::mem::offset_of!(SerialStatus, tx_dropped) == 64);
+    assert!(core::mem::offset_of!(SerialStatus, generation) == 72);
+    assert!(core::mem::offset_of!(SerialStatus, last_error) == 80);
+    assert!(core::mem::offset_of!(SerialStatus, reserved) == 84);
+    assert!(core::mem::size_of::<SerialStatus>() == 88);
+    assert!(core::mem::align_of::<SerialStatus>() == 8);
+    assert!(core::mem::offset_of!(SerialBackend, version) == 0);
+    assert!(core::mem::offset_of!(SerialBackend, size) == 4);
+    assert!(core::mem::offset_of!(SerialBackend, com_number) == 8);
+    assert!(core::mem::offset_of!(SerialBackend, resource_kind) == 12);
+    assert!(core::mem::offset_of!(SerialBackend, resource_base) == 16);
+    assert!(core::mem::offset_of!(SerialBackend, resource_length) == 24);
+    assert!(core::mem::offset_of!(SerialBackend, irq) == 32);
+    assert!(core::mem::offset_of!(SerialBackend, capabilities) == 36);
+    assert!(core::mem::offset_of!(SerialBackend, hardware_identity) == 40);
+    assert!(core::mem::offset_of!(SerialBackend, context) == 104);
+    assert!(core::mem::offset_of!(SerialBackend, open) == 112);
+    assert!(core::mem::offset_of!(SerialBackend, configure) == 120);
+    assert!(core::mem::offset_of!(SerialBackend, read) == 128);
+    assert!(core::mem::offset_of!(SerialBackend, write) == 136);
+    assert!(core::mem::offset_of!(SerialBackend, drain) == 144);
+    assert!(core::mem::offset_of!(SerialBackend, status) == 152);
+    assert!(core::mem::offset_of!(SerialBackend, close) == 160);
+    assert!(core::mem::size_of::<SerialBackend>() == 168);
+    assert!(core::mem::align_of::<SerialBackend>() == 8);
+    assert!(core::mem::offset_of!(DriverSerialApi, version) == 0);
+    assert!(core::mem::offset_of!(DriverSerialApi, size) == 4);
+    assert!(core::mem::offset_of!(DriverSerialApi, register_port) == 8);
+    assert!(core::mem::offset_of!(DriverSerialApi, unregister_port) == 16);
+    assert!(core::mem::offset_of!(DriverSerialApi, notify) == 24);
+    assert!(core::mem::offset_of!(DriverSerialApi, admission) == 32);
+    assert!(core::mem::size_of::<DriverSerialApi>() == 40);
+    assert!(core::mem::align_of::<DriverSerialApi>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -28022,7 +28390,17 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, storage_block_queue_check) == 432);
     assert!(core::mem::offset_of!(R4XStartR4Dev, storage_nvme_check) == 440);
     assert!(core::mem::offset_of!(R4XStartR4Dev, usb_contract_check) == 448);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 456);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_count) == 456);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_port_at) == 464);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_open) == 472);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_configure) == 480);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_read) == 488);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_write) == 496);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_drain) == 504);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_status) == 512);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_cancel) == 520);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, serial_close) == 528);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 536);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);
@@ -29173,7 +29551,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverApi, dma_sync_range_for_device) == 632);
     assert!(core::mem::offset_of!(DriverApi, dma_sync_range_for_cpu) == 640);
     assert!(core::mem::offset_of!(DriverApi, driver_work_submit_owned) == 648);
-    assert!(core::mem::size_of::<DriverApi>() == 656);
+    assert!(core::mem::offset_of!(DriverApi, serial_query) == 656);
+    assert!(core::mem::size_of::<DriverApi>() == 664);
     assert!(core::mem::align_of::<DriverApi>() == 8);
     assert!(core::mem::offset_of!(ProtocolApi, magic) == 0);
     assert!(core::mem::offset_of!(ProtocolApi, version) == 4);

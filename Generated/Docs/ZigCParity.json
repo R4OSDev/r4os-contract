@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 438,
+    "group_function_signatures": 448,
     "sdk_operation_contracts": 0,
-    "parity_entries": 438,
+    "parity_entries": 448,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -3950,6 +3950,96 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.usb_contract_check",
       "c_contract": "R4DevUsbContractCheckFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_count",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_count",
+      "c_contract": "R4DevSerialCountFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_port_at",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_port_at",
+      "c_contract": "R4DevSerialPortAtFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_open",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_open",
+      "c_contract": "R4DevSerialOpenFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_configure",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_configure",
+      "c_contract": "R4DevSerialConfigureFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_read",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_read",
+      "c_contract": "R4DevSerialReadFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_write",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_write",
+      "c_contract": "R4DevSerialWriteFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_drain",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_drain",
+      "c_contract": "R4DevSerialDrainFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_status",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_status",
+      "c_contract": "R4DevSerialStatusFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_cancel",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_cancel",
+      "c_contract": "R4DevSerialCancelFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.serial_close",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.serial_close",
+      "c_contract": "R4DevSerialCloseFn",
       "coverage": "generated_signature"
     }
   ],

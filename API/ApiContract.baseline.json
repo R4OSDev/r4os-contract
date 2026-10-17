@@ -28443,10 +28443,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 20,
+      "abi_version": 21,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 456,
+      "size": 536,
       "slots": [
         {
           "number": 0,
@@ -32105,6 +32105,697 @@
             "outputs": "success_only",
             "side_effects": "none",
             "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 55,
+          "offset": 456,
+          "name": "serial_count",
+          "state": "function",
+          "required": false,
+          "description": "Count currently registered ports, including reserved debug ports. Dynamic count, no two-port maximum.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "u32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 56,
+          "offset": 464,
+          "name": "serial_port_at",
+          "state": "function",
+          "required": false,
+          "description": "Copy one current port descriptor by catalog index;0success, NotFound at end. Enumeration is not an open reservation; use copied port_id+generation.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "SerialPortInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 57,
+          "offset": 472,
+          "name": "serial_open",
+          "state": "function",
+          "required": false,
+          "description": "Exclusively bind exact port generation to current process generation. Out handle zero on failure. Debug COM1 remains Busy until actual handoff.0success; provider open bounded/no retained buffers.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "port_id",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "generation",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "config",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "SerialConfig"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_handle",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "explicit_close_required",
+            "outputs": "valid_on_documented_error",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 58,
+          "offset": 480,
+          "name": "serial_configure",
+          "state": "function",
+          "required": false,
+          "description": "Configure exact process-owned open port; Busy until previous TX physically drains. Unsupported settings unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "config",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "SerialConfig"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 59,
+          "offset": 488,
+          "name": "serial_read",
+          "state": "function",
+          "required": false,
+          "description": "Read_some raw bytes, wait for at least one only.0timeout polls. Finite logical-tick deadline, UINT64_MAX invalid. Per-port IRQ event wait leaves Ready list. Valid transfer output retains partial bytes/errors even on failure; no automatic replay. Empty call has no device effects.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "buffer",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "SerialTransfer"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "progress_reported",
+            "side_effects": "confirmed_progress",
+            "retry": "retry_from_reported_progress",
+            "buffer_too_small": "explicit_length",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 60,
+          "offset": 496,
+          "name": "serial_write",
+          "state": "function",
+          "required": false,
+          "description": "Queue raw bytes with exact accepted prefix; no framing.0timeout polls, finite ticks only. Per-port IRQ queue-space wait leaves Ready list. Partial bytes retained on timeout/cancel/error; caller keeps buffer through return. Physical completion requires drain.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "buffer",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": true,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "length",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "length",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "SerialTransfer"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "progress_reported",
+            "side_effects": "confirmed_progress",
+            "retry": "retry_from_reported_progress",
+            "buffer_too_small": "explicit_length",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 61,
+          "offset": 504,
+          "name": "serial_drain",
+          "state": "function",
+          "required": false,
+          "description": "Confirm empty software TX and actual hardware TEMT, not remote receipt. Finite ticks,0polls. IRQ readiness plus bounded timer for final shift completion; no yield spin.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 62,
+          "offset": 512,
+          "name": "serial_status",
+          "state": "function",
+          "required": false,
+          "description": "Coherent exact open-handle line/modem/buffer/error snapshot. No UART access through a reserved debug port.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "SerialStatus"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 63,
+          "offset": 520,
+          "name": "serial_cancel",
+          "state": "function",
+          "required": false,
+          "description": "Cancel already admitted operations on this exact process-owned opening; wake only its serial waiters. Retain actual accepted bytes and device-owned buffers. Future operations may continue; no unrelated task/work completion signaled.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 64,
+          "offset": 528,
+          "name": "serial_close",
+          "state": "function",
+          "required": false,
+          "description": "Close admission, cancel/wake operations, await real callback references and hardware stop. Normal flags0 drains; serial_close_abort discards own queued bytes with accounting. Finite ticks;0polls. Timeout/unknown retains same closing handle and port/context for retry, successful0 alone releases ownership. Process/driver exit uses explicit abort with same actual quiescence.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "flags",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "consumes_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "invalidates_on_success",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
           }
@@ -107534,6 +108225,1057 @@
       ],
       "values": [],
       "description": "Fixed v1 result for the existing bounded local ring-cycle and HID/storage/command event-router cases. Case masks report actual attempted/passed/failed groups; physical USB state and availability are irrelevant."
+    },
+    {
+      "name": "SerialConfig",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 4,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; reject an incomplete or wrong-version prefix unchanged. Write only this complete v1 prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "baud_rate",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "baud rate.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "115200"
+        },
+        {
+          "name": "data_bits",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "data bits.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "8"
+        },
+        {
+          "name": "parity",
+          "offset": 13,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "parity.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stop_bits",
+          "offset": 14,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "stop bits.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "flow_control",
+          "offset": 15,
+          "type": {
+            "kind": "scalar",
+            "name": "u8"
+          },
+          "description": "flow control.",
+          "size": 1,
+          "alignment": 1,
+          "source_type": "u8",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved2",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved2.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "UART configuration: data5..8, parity none/odd/even/mark/space, stop1or2 (2 means1.5 for5data), flow none/RTSCTS where supported. Flags/reserved zero. Configure only after previous TX physically drains; unsupported settings have no effects. Rates must have an exact supported divisor; status reports actual baud."
+    },
+    {
+      "name": "SerialPortInfo",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; reject an incomplete or wrong-version prefix unchanged. Write only this complete v1 prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "port_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "port id.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "com_number",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "com number.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capabilities",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "capabilities.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "name",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "name.",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "hardware_identity",
+          "offset": 56,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "hardware identity.",
+          "size": 64,
+          "alignment": 1,
+          "source_type": "[64]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "transport",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "transport.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 124,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One current catalog registration. Stable COM number and copied NUL-terminated name/hardware identity never derive from array/free-slot order. Open binds exact port_id+generation. A reserved debug COM1 may be visible without any driver UART probe. Transport is informative; application calls never use hardware addresses. Catalog storage scales with registered identities; exhaustion is an error."
+    },
+    {
+      "name": "SerialTransfer",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; reject an incomplete or wrong-version prefix unchanged. Write only this complete v1 prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "requested",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "requested.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "completed.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "status.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "overflows",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "overflows.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Actual partial progress even on timeout/cancel/overflow/hardware failure after valid prefix admission. Read is read_some, success may be shorter than capacity. Write counts bytes accepted into the device-owned TX queue, not physical or remote receipt. drain separately confirms physical TEMT. No automatic replay of an accepted prefix. Empty calls succeed without device access."
+    },
+    {
+      "name": "SerialStatus",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 88,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; reject an incomplete or wrong-version prefix unchanged. Write only this complete v1 prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "88"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "line_status",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "line status.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "modem_status",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "modem status.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rx_pending",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "rx pending.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tx_pending",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "tx pending.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "baud_rate",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "baud rate.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rx_bytes",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "rx bytes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tx_bytes",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "tx bytes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rx_dropped",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "rx dropped.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "line_errors",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "line errors.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tx_dropped",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "tx dropped.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_error",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "last error.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact open-handle snapshot. rx/tx bytes count bytes consumed from/written to UART, not remote receipt. tx_dropped counts discarded software-queued bytes; physical FIFO/shift uncertainty never becomes a successful close. Line errors count observed LSR error reports. Kernel overlays current close/debug/generation state; UART reads are forbidden while debug owns COM1."
+    },
+    {
+      "name": "SerialBackend",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 168,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; reject an incomplete or wrong-version prefix unchanged. Write only this complete v1 prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "168"
+        },
+        {
+          "name": "com_number",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "com number.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "resource_kind",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "resource kind.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "resource_base",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "resource base.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "resource_length",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "resource length.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "irq",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "irq.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capabilities",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Supported serial_cap_* operations/flow/status capabilities. No unsupported flow-control promise.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hardware_identity",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 64,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "hardware identity.",
+          "size": 64,
+          "alignment": 1,
+          "source_type": "[64]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "context",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "context.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "open",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t open(uint64_t context,const SerialConfig*). Bounded nonblocking; failure leaves hardware quiescent. Success retains IRQ/buffers until close acknowledgment.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "configure",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t configure(uint64_t context,const SerialConfig*). Bounded; Busy until prior TX/TEMT drained; failure has no configuration effects.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "read",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t read(uint64_t context,uint8_t* resident,uint32_t capacity,SerialTransfer*). Bounded read_some, exact consumed bytes/errors; WouldBlock if none. Never retain caller buffer.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "write",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t write(uint64_t context,const uint8_t* resident,uint32_t length,SerialTransfer*). Bounded queue admission, exact accepted prefix; WouldBlock if full. Never retain caller buffer.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "drain",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t drain(uint64_t context). Nonblocking0 only with software queue empty and true physical transmitter completion; otherwise WouldBlock/error.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t status(uint64_t context,SerialStatus*). Bounded coherent UART/accounting snapshot; no borrowed application memory.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "close",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t close(uint64_t context,uint32_t flags). Nonblocking/idempotent same close: normal drains, abort discards own software queue with accounting.0 only after IRQ/device access stopped and true TEMT; WouldBlock retains full ownership. Negative unknown completion retains claim. Unopened ports return0 without UART access.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Resident external serial provider for one exactly declared physical resource and stable configured COM number. Canonical NUL-terminated ASCII hardware identity; no number assignment from available catalog slots. Scalar addresses/context/callbacks are original resident provider values, all seven callbacks required. Register metadata before probing. admission(registration) must permit normal ownership before probe/config/read; COM1 debug claim always wins. Provider callbacks are bounded/nonblocking and resident through actual unregister; kernel callback loans protect module lifetime, no registry/runtime lock spans foreign code. Resource IO/MMIO ranges must be confirmed by the provider, overlap rejects; optional future opaque transports use the same application API. No callback may retain bounce buffers. IRQ-safe driver notification happens after dropping driver locks."
+    },
+    {
+      "name": "DriverSerialApi",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Payload version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; reject an incomplete or wrong-version prefix unchanged. Write only this complete v1 prefix.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "register_port",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t register_port(const SerialBackend*,uint64_t* registration). Valid task/R4D owner only. Output zero on failure. Dynamic catalog allocation and no2port cap; same hardware keeps configured COM name across reloads. No UART access in registration.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "unregister_port",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t unregister_port(uint64_t registration). Exact R4D registration; succeeds only after handles/callbacks/waits and physical close are genuinely quiescent. Busy/unknown retains descriptor/context; cached operation usable during DriverShutdown.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "notify",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t notify(uint64_t registration,uint32_t event_mask). Exact R4D IRQ/work/callback owner; bounded resident per-port sequence/wake, no allocation or waits. No driver lock held across notify.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "admission",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "int32_t admission(uint64_t registration). Exact registration;0 permits provider probing/normal ownership, Busy while early COM1 debug claims overlapping IO. No UART/register access. Driver callbacks/open revalidate separately; debug cannot reacquire once released.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Optional DriverApi37 serial registration service, cached by the R4D for shutdown. Queries require authenticated sleep-capable init/work context, never IRQ; notify supports actual IRQ binding. Closing stops new opens and wakes/cancels exact requests; real callback/close/unregister acknowledgment precedes IRQ/heap/module release. Future transport providers supply stable configured COM mappings and use identical application methods."
     }
   ],
   "operations": [],
@@ -107622,6 +109364,11 @@
       "name": "storage",
       "id": 16,
       "description": "Storage identity, exclusive operations, bounded raw I/O and volume mounts."
+    },
+    {
+      "name": "serial",
+      "id": 17,
+      "description": "Raw serial port configuration, transfer progress, exclusive identity and acknowledged close."
     }
   ],
   "error_domains": [
@@ -109943,6 +111690,105 @@
         }
       ],
       "description": "Storage admission, identity, I/O and remount result domain."
+    },
+    {
+      "name": "serial",
+      "unit": "status_code",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "serial_ok",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Success."
+        },
+        {
+          "name": "serial_error_invalid",
+          "value": -1,
+          "value_type": "i32",
+          "description": "Invalid prefix/config/argument."
+        },
+        {
+          "name": "serial_error_not_found",
+          "value": -2,
+          "value_type": "i32",
+          "description": "Absent port."
+        },
+        {
+          "name": "serial_error_busy",
+          "value": -3,
+          "value_type": "i32",
+          "description": "Exclusive/debug/closing resource still owned."
+        },
+        {
+          "name": "serial_error_closed",
+          "value": -4,
+          "value_type": "i32",
+          "description": "Open handle already closed or process admission closed."
+        },
+        {
+          "name": "serial_error_stale",
+          "value": -5,
+          "value_type": "i32",
+          "description": "Port/open generation no longer matches."
+        },
+        {
+          "name": "serial_error_timeout",
+          "value": -6,
+          "value_type": "i32",
+          "description": "Deadline expired, exact partial progress retained."
+        },
+        {
+          "name": "serial_error_cancelled",
+          "value": -7,
+          "value_type": "i32",
+          "description": "Exact admitted operation cancelled; partial progress retained."
+        },
+        {
+          "name": "serial_error_no_memory",
+          "value": -8,
+          "value_type": "i32",
+          "description": "Real dynamic catalog/provider memory unavailable."
+        },
+        {
+          "name": "serial_error_hardware",
+          "value": -9,
+          "value_type": "i32",
+          "description": "Unconfirmed or failed hardware operation; no false release."
+        },
+        {
+          "name": "serial_error_unsupported",
+          "value": -10,
+          "value_type": "i32",
+          "description": "Unsupported configuration/transport/capability."
+        },
+        {
+          "name": "serial_error_overflow",
+          "value": -11,
+          "value_type": "i32",
+          "description": "Actual receive overflow; original returned bytes retained."
+        },
+        {
+          "name": "serial_error_would_block",
+          "value": -12,
+          "value_type": "i32",
+          "description": "Nonblocking operation has no current progress."
+        },
+        {
+          "name": "serial_error_owner",
+          "value": -13,
+          "value_type": "i32",
+          "description": "Wrong process/provider instance."
+        },
+        {
+          "name": "serial_error_too_large",
+          "value": -14,
+          "value_type": "i32",
+          "description": "Unrepresentable transfer/deadline."
+        }
+      ],
+      "description": "Raw serial port ownership, configuration, partial transfer, cancellation and confirmed hardware close."
     }
   ],
   "constants": [
@@ -111488,7 +113334,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "36",
+      "value": "37",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -130705,6 +132551,316 @@
       "scope": "kernel_usb_check",
       "stability": "fixed_contract",
       "description": "Both existing local functional case groups."
+    },
+    {
+      "name": "serial_resource_io",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial resource io."
+    },
+    {
+      "name": "serial_resource_mmio",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial resource mmio."
+    },
+    {
+      "name": "serial_resource_opaque",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial resource opaque."
+    },
+    {
+      "name": "serial_cap_rx",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial cap rx."
+    },
+    {
+      "name": "serial_cap_tx",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial cap tx."
+    },
+    {
+      "name": "serial_cap_rts_cts",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial cap rts cts."
+    },
+    {
+      "name": "serial_cap_line_status",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial cap line status."
+    },
+    {
+      "name": "serial_cap_irq",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial cap irq."
+    },
+    {
+      "name": "serial_port_present",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial port present."
+    },
+    {
+      "name": "serial_port_open",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial port open."
+    },
+    {
+      "name": "serial_port_debug_reserved",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial port debug reserved."
+    },
+    {
+      "name": "serial_port_closing",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial port closing."
+    },
+    {
+      "name": "serial_port_hardware_error",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial port hardware error."
+    },
+    {
+      "name": "serial_port_fifo",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial port fifo."
+    },
+    {
+      "name": "serial_event_rx",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial event rx."
+    },
+    {
+      "name": "serial_event_tx",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial event tx."
+    },
+    {
+      "name": "serial_event_state",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial event state."
+    },
+    {
+      "name": "serial_event_error",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial event error."
+    },
+    {
+      "name": "serial_event_modem",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial event modem."
+    },
+    {
+      "name": "serial_transfer_overflow",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial transfer overflow."
+    },
+    {
+      "name": "serial_transfer_line_error",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial transfer line error."
+    },
+    {
+      "name": "serial_transfer_partial",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial transfer partial."
+    },
+    {
+      "name": "serial_close_abort",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial close abort."
+    },
+    {
+      "name": "serial_flow_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial flow none."
+    },
+    {
+      "name": "serial_flow_rts_cts",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial flow rts cts."
+    },
+    {
+      "name": "serial_parity_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial parity none."
+    },
+    {
+      "name": "serial_parity_odd",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial parity odd."
+    },
+    {
+      "name": "serial_parity_even",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial parity even."
+    },
+    {
+      "name": "serial_parity_mark",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial parity mark."
+    },
+    {
+      "name": "serial_parity_space",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "serial parity space."
+    },
+    {
+      "name": "driver_api_serial_version",
+      "value": "37",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "driver api serial version."
     }
   ],
   "limits": [
@@ -131688,6 +133844,24 @@
       "scope": "tray_item",
       "stability": "fixed_contract",
       "description": "Maximum copied UTF-8 tooltip bytes per tray item."
+    },
+    {
+      "name": "serial_max_transfer_bytes",
+      "value": "2147483647",
+      "value_type": "u32",
+      "unit": "bytes",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "Largest representable transfer length; reject before buffer or device access."
+    },
+    {
+      "name": "serial_bounce_bytes",
+      "value": "256",
+      "value_type": "u32",
+      "unit": "bytes",
+      "scope": "serial",
+      "stability": "fixed_contract",
+      "description": "Maximum resident per-call bounce span; provider retains no caller buffer."
     }
   ],
   "artifact_metadata": {

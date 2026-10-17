@@ -155,7 +155,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 36;
+pub const driver_api_version: u32 = 37;
 pub const driver_api_thread_work_version: u32 = 35;
 pub const driver_magic: u32 = 826888260;
 pub const driver_work_flag_from_irq: u32 = 1;
@@ -2077,6 +2077,37 @@ pub const kernel_usb_check_status_failed: u32 = 2;
 pub const kernel_usb_check_case_ring: u32 = 1;
 pub const kernel_usb_check_case_router: u32 = 2;
 pub const kernel_usb_check_cases_all: u32 = 3;
+pub const serial_resource_io: u32 = 1;
+pub const serial_resource_mmio: u32 = 2;
+pub const serial_resource_opaque: u32 = 3;
+pub const serial_cap_rx: u32 = 1;
+pub const serial_cap_tx: u32 = 2;
+pub const serial_cap_rts_cts: u32 = 4;
+pub const serial_cap_line_status: u32 = 8;
+pub const serial_cap_irq: u32 = 16;
+pub const serial_port_present: u32 = 1;
+pub const serial_port_open: u32 = 2;
+pub const serial_port_debug_reserved: u32 = 4;
+pub const serial_port_closing: u32 = 8;
+pub const serial_port_hardware_error: u32 = 16;
+pub const serial_port_fifo: u32 = 32;
+pub const serial_event_rx: u32 = 1;
+pub const serial_event_tx: u32 = 2;
+pub const serial_event_state: u32 = 4;
+pub const serial_event_error: u32 = 8;
+pub const serial_event_modem: u32 = 16;
+pub const serial_transfer_overflow: u32 = 1;
+pub const serial_transfer_line_error: u32 = 2;
+pub const serial_transfer_partial: u32 = 4;
+pub const serial_close_abort: u32 = 1;
+pub const serial_flow_none: u32 = 0;
+pub const serial_flow_rts_cts: u32 = 1;
+pub const serial_parity_none: u32 = 0;
+pub const serial_parity_odd: u32 = 1;
+pub const serial_parity_even: u32 = 2;
+pub const serial_parity_mark: u32 = 3;
+pub const serial_parity_space: u32 = 4;
+pub const driver_api_serial_version: u32 = 37;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -2186,6 +2217,8 @@ pub const tray_icon_width: usize = 16;
 pub const tray_max_items: usize = 16;
 pub const tray_max_owners: usize = 16;
 pub const tray_tooltip_bytes: usize = 64;
+pub const serial_max_transfer_bytes: u32 = 2147483647;
+pub const serial_bounce_bytes: u32 = 256;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -2478,6 +2511,21 @@ pub const storage_error_unsupported: i32 = -8;
 pub const storage_error_remount: i32 = -9;
 pub const storage_error_incomplete: i32 = -10;
 pub const storage_error_not_found: i32 = -11;
+pub const serial_ok: i32 = 0;
+pub const serial_error_invalid: i32 = -1;
+pub const serial_error_not_found: i32 = -2;
+pub const serial_error_busy: i32 = -3;
+pub const serial_error_closed: i32 = -4;
+pub const serial_error_stale: i32 = -5;
+pub const serial_error_timeout: i32 = -6;
+pub const serial_error_cancelled: i32 = -7;
+pub const serial_error_no_memory: i32 = -8;
+pub const serial_error_hardware: i32 = -9;
+pub const serial_error_unsupported: i32 = -10;
+pub const serial_error_overflow: i32 = -11;
+pub const serial_error_would_block: i32 = -12;
+pub const serial_error_owner: i32 = -13;
+pub const serial_error_too_large: i32 = -14;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -2497,6 +2545,7 @@ pub const R4ErrorDomain = enum(u16) {
     audio = 14,
     device = 15,
     storage = 16,
+    serial = 17,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -8555,6 +8604,92 @@ pub const ProgramKernelUsbCheck = extern struct {
     reserved0: u32 = 0,
 };
 
+pub const SerialConfig = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    baud_rate: u32 = 115200,
+    data_bits: u8 = 8,
+    parity: u8 = 0,
+    stop_bits: u8 = 1,
+    flow_control: u8 = 0,
+    flags: u32 = 0,
+    reserved0: u32 = 0,
+    reserved1: u32 = 0,
+    reserved2: u32 = 0,
+};
+
+pub const SerialPortInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    port_id: u64 = 0,
+    generation: u64 = 0,
+    com_number: u32 = 0,
+    flags: u32 = 0,
+    capabilities: u64 = 0,
+    name: [16]u8 = .{0} ** 16,
+    hardware_identity: [64]u8 = .{0} ** 64,
+    transport: u32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const SerialTransfer = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    requested: u32 = 0,
+    completed: u32 = 0,
+    status: i32 = 0,
+    flags: u32 = 0,
+    overflows: u64 = 0,
+};
+
+pub const SerialStatus = extern struct {
+    version: u32 = 1,
+    size: u32 = 88,
+    flags: u32 = 0,
+    line_status: u32 = 0,
+    modem_status: u32 = 0,
+    rx_pending: u32 = 0,
+    tx_pending: u32 = 0,
+    baud_rate: u32 = 0,
+    rx_bytes: u64 = 0,
+    tx_bytes: u64 = 0,
+    rx_dropped: u64 = 0,
+    line_errors: u64 = 0,
+    tx_dropped: u64 = 0,
+    generation: u64 = 0,
+    last_error: i32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const SerialBackend = extern struct {
+    version: u32 = 1,
+    size: u32 = 168,
+    com_number: u32 = 0,
+    resource_kind: u32 = 0,
+    resource_base: u64 = 0,
+    resource_length: u64 = 0,
+    irq: u32 = 0,
+    capabilities: u32 = 0,
+    hardware_identity: [64]u8 = .{0} ** 64,
+    context: u64 = 0,
+    open: u64 = 0,
+    configure: u64 = 0,
+    read: u64 = 0,
+    write: u64 = 0,
+    drain: u64 = 0,
+    status: u64 = 0,
+    close: u64 = 0,
+};
+
+pub const DriverSerialApi = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    register_port: u64 = 0,
+    unregister_port: u64 = 0,
+    notify: u64 = 0,
+    admission: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -9435,12 +9570,22 @@ pub const R4DevFns = struct {
     pub const storage_block_queue_check = *const fn (*ProgramKernelBlockQueueCheck) callconv(.c) i32;
     pub const storage_nvme_check = *const fn (*ProgramKernelNvmeCheck) callconv(.c) i32;
     pub const usb_contract_check = *const fn (*ProgramKernelUsbCheck) callconv(.c) i32;
+    pub const serial_count = *const fn () callconv(.c) u32;
+    pub const serial_port_at = *const fn (u32, *SerialPortInfo) callconv(.c) i32;
+    pub const serial_open = *const fn (u64, u64, *const SerialConfig, *u64) callconv(.c) i32;
+    pub const serial_configure = *const fn (u64, *const SerialConfig) callconv(.c) i32;
+    pub const serial_read = *const fn (u64, [*]u8, u32, u64, *SerialTransfer) callconv(.c) i32;
+    pub const serial_write = *const fn (u64, [*]const u8, u32, u64, *SerialTransfer) callconv(.c) i32;
+    pub const serial_drain = *const fn (u64, u64) callconv(.c) i32;
+    pub const serial_status = *const fn (u64, *SerialStatus) callconv(.c) i32;
+    pub const serial_cancel = *const fn (u64) callconv(.c) i32;
+    pub const serial_close = *const fn (u64, u32, u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 20,
-    size: u32 = 456,
+    abi_version: u32 = 21,
+    size: u32 = 536,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9497,6 +9642,16 @@ pub const R4XStartR4Dev = extern struct {
     storage_block_queue_check: usize = 0,
     storage_nvme_check: usize = 0,
     usb_contract_check: usize = 0,
+    serial_count: usize = 0,
+    serial_port_at: usize = 0,
+    serial_open: usize = 0,
+    serial_configure: usize = 0,
+    serial_read: usize = 0,
+    serial_write: usize = 0,
+    serial_drain: usize = 0,
+    serial_status: usize = 0,
+    serial_cancel: usize = 0,
+    serial_close: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -9964,6 +10119,16 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 52, .offset = 432, .name = "storage_block_queue_check", .state = .function, .required = false },
     .{ .number = 53, .offset = 440, .name = "storage_nvme_check", .state = .function, .required = false },
     .{ .number = 54, .offset = 448, .name = "usb_contract_check", .state = .function, .required = false },
+    .{ .number = 55, .offset = 456, .name = "serial_count", .state = .function, .required = false },
+    .{ .number = 56, .offset = 464, .name = "serial_port_at", .state = .function, .required = false },
+    .{ .number = 57, .offset = 472, .name = "serial_open", .state = .function, .required = false },
+    .{ .number = 58, .offset = 480, .name = "serial_configure", .state = .function, .required = false },
+    .{ .number = 59, .offset = 488, .name = "serial_read", .state = .function, .required = false },
+    .{ .number = 60, .offset = 496, .name = "serial_write", .state = .function, .required = false },
+    .{ .number = 61, .offset = 504, .name = "serial_drain", .state = .function, .required = false },
+    .{ .number = 62, .offset = 512, .name = "serial_status", .state = .function, .required = false },
+    .{ .number = 63, .offset = 520, .name = "serial_cancel", .state = .function, .required = false },
+    .{ .number = 64, .offset = 528, .name = "serial_close", .state = .function, .required = false },
 };
 
 comptime {
@@ -15652,6 +15817,86 @@ comptime {
     if (@offsetOf(ProgramKernelUsbCheck, "passed_cases") != 20) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.passed_cases");
     if (@offsetOf(ProgramKernelUsbCheck, "failed_cases") != 24) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.failed_cases");
     if (@offsetOf(ProgramKernelUsbCheck, "reserved0") != 28) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.reserved0");
+    if (@sizeOf(SerialConfig) != 32) @compileError("generated ABI size drift: SerialConfig");
+    if (@alignOf(SerialConfig) != 4) @compileError("generated ABI alignment drift: SerialConfig");
+    if (@offsetOf(SerialConfig, "version") != 0) @compileError("generated ABI offset drift: SerialConfig.version");
+    if (@offsetOf(SerialConfig, "size") != 4) @compileError("generated ABI offset drift: SerialConfig.size");
+    if (@offsetOf(SerialConfig, "baud_rate") != 8) @compileError("generated ABI offset drift: SerialConfig.baud_rate");
+    if (@offsetOf(SerialConfig, "data_bits") != 12) @compileError("generated ABI offset drift: SerialConfig.data_bits");
+    if (@offsetOf(SerialConfig, "parity") != 13) @compileError("generated ABI offset drift: SerialConfig.parity");
+    if (@offsetOf(SerialConfig, "stop_bits") != 14) @compileError("generated ABI offset drift: SerialConfig.stop_bits");
+    if (@offsetOf(SerialConfig, "flow_control") != 15) @compileError("generated ABI offset drift: SerialConfig.flow_control");
+    if (@offsetOf(SerialConfig, "flags") != 16) @compileError("generated ABI offset drift: SerialConfig.flags");
+    if (@offsetOf(SerialConfig, "reserved0") != 20) @compileError("generated ABI offset drift: SerialConfig.reserved0");
+    if (@offsetOf(SerialConfig, "reserved1") != 24) @compileError("generated ABI offset drift: SerialConfig.reserved1");
+    if (@offsetOf(SerialConfig, "reserved2") != 28) @compileError("generated ABI offset drift: SerialConfig.reserved2");
+    if (@sizeOf(SerialPortInfo) != 128) @compileError("generated ABI size drift: SerialPortInfo");
+    if (@alignOf(SerialPortInfo) != 8) @compileError("generated ABI alignment drift: SerialPortInfo");
+    if (@offsetOf(SerialPortInfo, "version") != 0) @compileError("generated ABI offset drift: SerialPortInfo.version");
+    if (@offsetOf(SerialPortInfo, "size") != 4) @compileError("generated ABI offset drift: SerialPortInfo.size");
+    if (@offsetOf(SerialPortInfo, "port_id") != 8) @compileError("generated ABI offset drift: SerialPortInfo.port_id");
+    if (@offsetOf(SerialPortInfo, "generation") != 16) @compileError("generated ABI offset drift: SerialPortInfo.generation");
+    if (@offsetOf(SerialPortInfo, "com_number") != 24) @compileError("generated ABI offset drift: SerialPortInfo.com_number");
+    if (@offsetOf(SerialPortInfo, "flags") != 28) @compileError("generated ABI offset drift: SerialPortInfo.flags");
+    if (@offsetOf(SerialPortInfo, "capabilities") != 32) @compileError("generated ABI offset drift: SerialPortInfo.capabilities");
+    if (@offsetOf(SerialPortInfo, "name") != 40) @compileError("generated ABI offset drift: SerialPortInfo.name");
+    if (@offsetOf(SerialPortInfo, "hardware_identity") != 56) @compileError("generated ABI offset drift: SerialPortInfo.hardware_identity");
+    if (@offsetOf(SerialPortInfo, "transport") != 120) @compileError("generated ABI offset drift: SerialPortInfo.transport");
+    if (@offsetOf(SerialPortInfo, "reserved") != 124) @compileError("generated ABI offset drift: SerialPortInfo.reserved");
+    if (@sizeOf(SerialTransfer) != 32) @compileError("generated ABI size drift: SerialTransfer");
+    if (@alignOf(SerialTransfer) != 8) @compileError("generated ABI alignment drift: SerialTransfer");
+    if (@offsetOf(SerialTransfer, "version") != 0) @compileError("generated ABI offset drift: SerialTransfer.version");
+    if (@offsetOf(SerialTransfer, "size") != 4) @compileError("generated ABI offset drift: SerialTransfer.size");
+    if (@offsetOf(SerialTransfer, "requested") != 8) @compileError("generated ABI offset drift: SerialTransfer.requested");
+    if (@offsetOf(SerialTransfer, "completed") != 12) @compileError("generated ABI offset drift: SerialTransfer.completed");
+    if (@offsetOf(SerialTransfer, "status") != 16) @compileError("generated ABI offset drift: SerialTransfer.status");
+    if (@offsetOf(SerialTransfer, "flags") != 20) @compileError("generated ABI offset drift: SerialTransfer.flags");
+    if (@offsetOf(SerialTransfer, "overflows") != 24) @compileError("generated ABI offset drift: SerialTransfer.overflows");
+    if (@sizeOf(SerialStatus) != 88) @compileError("generated ABI size drift: SerialStatus");
+    if (@alignOf(SerialStatus) != 8) @compileError("generated ABI alignment drift: SerialStatus");
+    if (@offsetOf(SerialStatus, "version") != 0) @compileError("generated ABI offset drift: SerialStatus.version");
+    if (@offsetOf(SerialStatus, "size") != 4) @compileError("generated ABI offset drift: SerialStatus.size");
+    if (@offsetOf(SerialStatus, "flags") != 8) @compileError("generated ABI offset drift: SerialStatus.flags");
+    if (@offsetOf(SerialStatus, "line_status") != 12) @compileError("generated ABI offset drift: SerialStatus.line_status");
+    if (@offsetOf(SerialStatus, "modem_status") != 16) @compileError("generated ABI offset drift: SerialStatus.modem_status");
+    if (@offsetOf(SerialStatus, "rx_pending") != 20) @compileError("generated ABI offset drift: SerialStatus.rx_pending");
+    if (@offsetOf(SerialStatus, "tx_pending") != 24) @compileError("generated ABI offset drift: SerialStatus.tx_pending");
+    if (@offsetOf(SerialStatus, "baud_rate") != 28) @compileError("generated ABI offset drift: SerialStatus.baud_rate");
+    if (@offsetOf(SerialStatus, "rx_bytes") != 32) @compileError("generated ABI offset drift: SerialStatus.rx_bytes");
+    if (@offsetOf(SerialStatus, "tx_bytes") != 40) @compileError("generated ABI offset drift: SerialStatus.tx_bytes");
+    if (@offsetOf(SerialStatus, "rx_dropped") != 48) @compileError("generated ABI offset drift: SerialStatus.rx_dropped");
+    if (@offsetOf(SerialStatus, "line_errors") != 56) @compileError("generated ABI offset drift: SerialStatus.line_errors");
+    if (@offsetOf(SerialStatus, "tx_dropped") != 64) @compileError("generated ABI offset drift: SerialStatus.tx_dropped");
+    if (@offsetOf(SerialStatus, "generation") != 72) @compileError("generated ABI offset drift: SerialStatus.generation");
+    if (@offsetOf(SerialStatus, "last_error") != 80) @compileError("generated ABI offset drift: SerialStatus.last_error");
+    if (@offsetOf(SerialStatus, "reserved") != 84) @compileError("generated ABI offset drift: SerialStatus.reserved");
+    if (@sizeOf(SerialBackend) != 168) @compileError("generated ABI size drift: SerialBackend");
+    if (@alignOf(SerialBackend) != 8) @compileError("generated ABI alignment drift: SerialBackend");
+    if (@offsetOf(SerialBackend, "version") != 0) @compileError("generated ABI offset drift: SerialBackend.version");
+    if (@offsetOf(SerialBackend, "size") != 4) @compileError("generated ABI offset drift: SerialBackend.size");
+    if (@offsetOf(SerialBackend, "com_number") != 8) @compileError("generated ABI offset drift: SerialBackend.com_number");
+    if (@offsetOf(SerialBackend, "resource_kind") != 12) @compileError("generated ABI offset drift: SerialBackend.resource_kind");
+    if (@offsetOf(SerialBackend, "resource_base") != 16) @compileError("generated ABI offset drift: SerialBackend.resource_base");
+    if (@offsetOf(SerialBackend, "resource_length") != 24) @compileError("generated ABI offset drift: SerialBackend.resource_length");
+    if (@offsetOf(SerialBackend, "irq") != 32) @compileError("generated ABI offset drift: SerialBackend.irq");
+    if (@offsetOf(SerialBackend, "capabilities") != 36) @compileError("generated ABI offset drift: SerialBackend.capabilities");
+    if (@offsetOf(SerialBackend, "hardware_identity") != 40) @compileError("generated ABI offset drift: SerialBackend.hardware_identity");
+    if (@offsetOf(SerialBackend, "context") != 104) @compileError("generated ABI offset drift: SerialBackend.context");
+    if (@offsetOf(SerialBackend, "open") != 112) @compileError("generated ABI offset drift: SerialBackend.open");
+    if (@offsetOf(SerialBackend, "configure") != 120) @compileError("generated ABI offset drift: SerialBackend.configure");
+    if (@offsetOf(SerialBackend, "read") != 128) @compileError("generated ABI offset drift: SerialBackend.read");
+    if (@offsetOf(SerialBackend, "write") != 136) @compileError("generated ABI offset drift: SerialBackend.write");
+    if (@offsetOf(SerialBackend, "drain") != 144) @compileError("generated ABI offset drift: SerialBackend.drain");
+    if (@offsetOf(SerialBackend, "status") != 152) @compileError("generated ABI offset drift: SerialBackend.status");
+    if (@offsetOf(SerialBackend, "close") != 160) @compileError("generated ABI offset drift: SerialBackend.close");
+    if (@sizeOf(DriverSerialApi) != 40) @compileError("generated ABI size drift: DriverSerialApi");
+    if (@alignOf(DriverSerialApi) != 8) @compileError("generated ABI alignment drift: DriverSerialApi");
+    if (@offsetOf(DriverSerialApi, "version") != 0) @compileError("generated ABI offset drift: DriverSerialApi.version");
+    if (@offsetOf(DriverSerialApi, "size") != 4) @compileError("generated ABI offset drift: DriverSerialApi.size");
+    if (@offsetOf(DriverSerialApi, "register_port") != 8) @compileError("generated ABI offset drift: DriverSerialApi.register_port");
+    if (@offsetOf(DriverSerialApi, "unregister_port") != 16) @compileError("generated ABI offset drift: DriverSerialApi.unregister_port");
+    if (@offsetOf(DriverSerialApi, "notify") != 24) @compileError("generated ABI offset drift: DriverSerialApi.notify");
+    if (@offsetOf(DriverSerialApi, "admission") != 32) @compileError("generated ABI offset drift: DriverSerialApi.admission");
     if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -16048,7 +16293,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 456) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 536) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -16104,4 +16349,14 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "storage_block_queue_check") != 432) @compileError("generated ABI offset drift: R4XStartR4Dev.storage_block_queue_check");
     if (@offsetOf(R4XStartR4Dev, "storage_nvme_check") != 440) @compileError("generated ABI offset drift: R4XStartR4Dev.storage_nvme_check");
     if (@offsetOf(R4XStartR4Dev, "usb_contract_check") != 448) @compileError("generated ABI offset drift: R4XStartR4Dev.usb_contract_check");
+    if (@offsetOf(R4XStartR4Dev, "serial_count") != 456) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_count");
+    if (@offsetOf(R4XStartR4Dev, "serial_port_at") != 464) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_port_at");
+    if (@offsetOf(R4XStartR4Dev, "serial_open") != 472) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_open");
+    if (@offsetOf(R4XStartR4Dev, "serial_configure") != 480) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_configure");
+    if (@offsetOf(R4XStartR4Dev, "serial_read") != 488) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_read");
+    if (@offsetOf(R4XStartR4Dev, "serial_write") != 496) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_write");
+    if (@offsetOf(R4XStartR4Dev, "serial_drain") != 504) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_drain");
+    if (@offsetOf(R4XStartR4Dev, "serial_status") != 512) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_status");
+    if (@offsetOf(R4XStartR4Dev, "serial_cancel") != 520) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_cancel");
+    if (@offsetOf(R4XStartR4Dev, "serial_close") != 528) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_close");
 }

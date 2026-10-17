@@ -441,5 +441,15 @@ static R4DevPerformanceSmpTlbFn r4os_probe_r4dev_performance_smp_tlb = (R4DevPer
 static R4DevStorageBlockQueueCheckFn r4os_probe_r4dev_storage_block_queue_check = (R4DevStorageBlockQueueCheckFn)0;
 static R4DevStorageNvmeCheckFn r4os_probe_r4dev_storage_nvme_check = (R4DevStorageNvmeCheckFn)0;
 static R4DevUsbContractCheckFn r4os_probe_r4dev_usb_contract_check = (R4DevUsbContractCheckFn)0;
+static R4DevSerialCountFn r4os_probe_r4dev_serial_count = (R4DevSerialCountFn)0;
+static R4DevSerialPortAtFn r4os_probe_r4dev_serial_port_at = (R4DevSerialPortAtFn)0;
+static R4DevSerialOpenFn r4os_probe_r4dev_serial_open = (R4DevSerialOpenFn)0;
+static R4DevSerialConfigureFn r4os_probe_r4dev_serial_configure = (R4DevSerialConfigureFn)0;
+static R4DevSerialReadFn r4os_probe_r4dev_serial_read = (R4DevSerialReadFn)0;
+static R4DevSerialWriteFn r4os_probe_r4dev_serial_write = (R4DevSerialWriteFn)0;
+static R4DevSerialDrainFn r4os_probe_r4dev_serial_drain = (R4DevSerialDrainFn)0;
+static R4DevSerialStatusFn r4os_probe_r4dev_serial_status = (R4DevSerialStatusFn)0;
+static R4DevSerialCancelFn r4os_probe_r4dev_serial_cancel = (R4DevSerialCancelFn)0;
+static R4DevSerialCloseFn r4os_probe_r4dev_serial_close = (R4DevSerialCloseFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

@@ -117,7 +117,7 @@ R4DEV v20 appends `usb_contract_check` at offset448 after the unchanged
 ring-cycle and event-router cases. It is bounded and reentrant, borrows only
 caller output and touches no live USB controller, mailbox or hardware.
 
-SerialLink retirement (0.84.34 / package0.64.19)
+SerialLink retirement (0.84.34 / package0.64.20)
 --------------------------------------------
 R4NET slots27-31 and all published names/signatures/payload layouts remain
 frozen. These five compatibility stubs always return err_no_fn and touch no

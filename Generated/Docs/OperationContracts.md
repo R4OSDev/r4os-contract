@@ -2,10 +2,10 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 446; Funktionen: 438; reserviert/Tombstone: 8
-- Sichtbarkeit: public=327, advanced=111, internal=8
+- Physische Gruppenslots: 456; Funktionen: 448; reserviert/Tombstone: 8
+- Sichtbarkeit: public=337, advanced=111, internal=8
 - Zentrale SDK-only-Operationen: 0
-- Statusdomänen: 17
+- Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
 
 ## Statusdomänen
@@ -29,6 +29,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | 14 | `audio` | Audio-, SID- und MIDI-Operation. |
 | 15 | `device` | Device- und Diagnoseoperation. |
 | 16 | `storage` | Storage identity, exclusive operations, bounded raw I/O and volume mounts. |
+| 17 | `serial` | Raw serial port configuration, transfer progress, exclusive identity and acknowledged close. |
 
 ## Gruppenslots
 
@@ -480,3 +481,13 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DEV | 52 | `storage_block_queue_check` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | may_block | thread_safe | none | valid_on_documented_error | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | cooperative_stop | none | serialized | none | call | none |
 | R4DEV | 53 | `storage_nvme_check` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | may_block | thread_safe | none | valid_on_documented_error | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | cooperative_stop | none | serialized | none | call | none |
 | R4DEV | 54 | `usb_contract_check` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DEV | 55 | `serial_count` | function | public | R4DEV | ja | `serial` | borrowed | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 56 | `serial_port_at` | function | public | R4DEV | ja | `serial` | borrowed | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 57 | `serial_open` | function | public | R4DEV | ja | `serial` | returns_owned_handle | call | nonblocking | thread_safe | explicit_close_required | valid_on_documented_error | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 58 | `serial_configure` | function | public | R4DEV | ja | `serial` | borrowed | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 59 | `serial_read` | function | public | R4DEV | ja | `serial` | borrowed | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | explicit_length | zig_and_c_required | wait_budget | cooperative_stop | outcome_unknown | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 60 | `serial_write` | function | public | R4DEV | ja | `serial` | borrowed | call | may_block | thread_safe | none | progress_reported | confirmed_progress | retry_from_reported_progress | explicit_length | zig_and_c_required | wait_budget | cooperative_stop | outcome_unknown | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 61 | `serial_drain` | function | public | R4DEV | ja | `serial` | borrowed | call | may_block | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | wait_budget | cooperative_stop | outcome_unknown | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 62 | `serial_status` | function | public | R4DEV | ja | `serial` | borrowed | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 63 | `serial_cancel` | function | public | R4DEV | ja | `serial` | borrowed | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | cancel_wake_join_cleanup |
+| R4DEV | 64 | `serial_close` | function | public | R4DEV | ja | `serial` | consumes_owned_handle | call | may_block | thread_safe | invalidates_on_success | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | wait_budget | cooperative_stop | outcome_unknown | reentrant | none | call | cancel_wake_join_cleanup |

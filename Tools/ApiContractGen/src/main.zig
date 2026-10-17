@@ -427,7 +427,8 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.84.1 appends the bounded resident stack-failure snapshot at slot 47
     // (v14); 0.84.11 appends explicit owned kernel-heap checks at 48 (v15).
     // Every existing slot and payload prefix is retained.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 53, .reserved = 2, .tombstones = 0 },
+    // 0.84.36 appends ten raw COM functions; all55 old slots stay unchanged.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 63, .reserved = 2, .tombstones = 0 },
 };
 
 pub fn main(init: std.process.Init) !void {

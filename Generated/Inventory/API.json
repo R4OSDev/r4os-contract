@@ -5,10 +5,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 438,
-    "group_slot_count": 438,
+    "function_count": 448,
+    "group_slot_count": 448,
     "sdk_only_count": 0,
-    "public_count": 327,
+    "public_count": 337,
     "advanced_count": 111
   },
   "functions": [
@@ -5263,6 +5263,126 @@
       "slot": 54,
       "exposure": "advanced",
       "description": "Explicit bounded synthetic USB ring-cycle and event-router contracts using the existing native owner functions. Only private stack-local state; no allocation, waits, tasks, live mailbox access, real TRB submission, port reset or hardware reconfiguration. Reentrant and repeatable without USB hardware. This is not a physical USB/liveboot qualification. Returns1 for a fixed32-byte report,-1 for invalid header/capacity with output unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_count",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 55,
+      "exposure": "public",
+      "description": "Count currently registered ports, including reserved debug ports. Dynamic count, no two-port maximum.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_port_at",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 56,
+      "exposure": "public",
+      "description": "Copy one current port descriptor by catalog index;0success, NotFound at end. Enumeration is not an open reservation; use copied port_id+generation.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_open",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 57,
+      "exposure": "public",
+      "description": "Exclusively bind exact port generation to current process generation. Out handle zero on failure. Debug COM1 remains Busy until actual handoff.0success; provider open bounded/no retained buffers.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_configure",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 58,
+      "exposure": "public",
+      "description": "Configure exact process-owned open port; Busy until previous TX physically drains. Unsupported settings unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_read",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 59,
+      "exposure": "public",
+      "description": "Read_some raw bytes, wait for at least one only.0timeout polls. Finite logical-tick deadline, UINT64_MAX invalid. Per-port IRQ event wait leaves Ready list. Valid transfer output retains partial bytes/errors even on failure; no automatic replay. Empty call has no device effects.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_write",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 60,
+      "exposure": "public",
+      "description": "Queue raw bytes with exact accepted prefix; no framing.0timeout polls, finite ticks only. Per-port IRQ queue-space wait leaves Ready list. Partial bytes retained on timeout/cancel/error; caller keeps buffer through return. Physical completion requires drain.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_drain",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 61,
+      "exposure": "public",
+      "description": "Confirm empty software TX and actual hardware TEMT, not remote receipt. Finite ticks,0polls. IRQ readiness plus bounded timer for final shift completion; no yield spin.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_status",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 62,
+      "exposure": "public",
+      "description": "Coherent exact open-handle line/modem/buffer/error snapshot. No UART access through a reserved debug port.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_cancel",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 63,
+      "exposure": "public",
+      "description": "Cancel already admitted operations on this exact process-owned opening; wake only its serial waiters. Retain actual accepted bytes and device-owned buffers. Future operations may continue; no unrelated task/work completion signaled.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.serial_close",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 64,
+      "exposure": "public",
+      "description": "Close admission, cancel/wake operations, await real callback references and hardware stop. Normal flags0 drains; serial_close_abort discards own queued bytes with accounting. Finite ticks;0polls. Timeout/unknown retains same closing handle and port/context for retry, successful0 alone releases ownership. Process/driver exit uses explicit abort with same actual quiescence.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
