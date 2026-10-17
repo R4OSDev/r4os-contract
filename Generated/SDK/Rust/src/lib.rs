@@ -2032,6 +2032,48 @@ pub const kernel_block_queue_check_case_flush: u32 = 64;
 pub const kernel_block_queue_check_case_batch: u32 = 128;
 pub const kernel_block_queue_check_cases_all: u32 = 255;
 pub const kernel_block_queue_check_stage_cleanup: u32 = 9;
+pub const kernel_nvme_check_version: u32 = 1;
+pub const kernel_nvme_check_status_unavailable: u32 = 0;
+pub const kernel_nvme_check_status_passed: u32 = 1;
+pub const kernel_nvme_check_status_failed: u32 = 2;
+pub const kernel_nvme_check_status_busy: u32 = 3;
+pub const kernel_nvme_check_status_cancelled: u32 = 4;
+pub const kernel_nvme_check_flag_work_complete: u32 = 1;
+pub const kernel_nvme_check_flag_cleanup_complete: u32 = 2;
+pub const kernel_nvme_check_flag_partial_snapshot: u32 = 4;
+pub const kernel_nvme_check_unavailable_none: u32 = 0;
+pub const kernel_nvme_check_unavailable_device: u32 = 1;
+pub const kernel_nvme_check_unavailable_backend: u32 = 2;
+pub const kernel_nvme_check_unavailable_observation: u32 = 3;
+pub const kernel_nvme_check_unavailable_geometry: u32 = 4;
+pub const kernel_nvme_check_unavailable_irq: u32 = 5;
+pub const kernel_nvme_check_unavailable_context: u32 = 6;
+pub const kernel_nvme_check_stage_none: u32 = 0;
+pub const kernel_nvme_check_stage_binding: u32 = 1;
+pub const kernel_nvme_check_stage_buffer: u32 = 2;
+pub const kernel_nvme_check_stage_read: u32 = 3;
+pub const kernel_nvme_check_stage_observation: u32 = 4;
+pub const kernel_nvme_check_stage_irq: u32 = 5;
+pub const kernel_nvme_check_stage_cleanup: u32 = 6;
+pub const kernel_nvme_check_receipt_runtime: u32 = 1;
+pub const kernel_nvme_check_receipt_asynchronous: u32 = 2;
+pub const kernel_nvme_check_receipt_completed: u32 = 4;
+pub const kernel_nvme_check_receipt_clean: u32 = 8;
+pub const storage_observation_version: u32 = 1;
+pub const storage_request_flag_observation: u32 = 1;
+pub const storage_observation_flag_irq: u32 = 1;
+pub const storage_observation_flag_worker: u32 = 2;
+pub const storage_observation_flag_cqe: u32 = 4;
+pub const storage_observation_flag_dma_released: u32 = 8;
+pub const storage_observation_flag_poll: u32 = 16;
+pub const storage_observation_flag_cancel: u32 = 32;
+pub const storage_observation_flag_epoch_changed: u32 = 64;
+pub const storage_observation_flag_not_submitted: u32 = 128;
+pub const storage_observation_irq_none: u32 = 0;
+pub const storage_observation_irq_msi: u32 = 1;
+pub const storage_observation_irq_msix: u32 = 2;
+pub const storage_backend_status_observation_supported: u32 = 131072;
+pub const storage_backend_status_cleanup_retained: u32 = 262144;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -16207,6 +16249,116 @@ impl Default for ProgramKernelBlockQueueCheck {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelNvmeCheck {
+    pub version: u32,
+    pub size: u32,
+    pub status: u32,
+    pub flags: u32,
+    pub unavailable_reason: u32,
+    pub fail_stage: u32,
+    pub cleanup_errors: u32,
+    pub sector_size: u32,
+    pub device_slot: u32,
+    pub native_receipt_flags: u32,
+    pub observation_flags: u32,
+    pub controller_index: u32,
+    pub controller_generation: u32,
+    pub namespace_generation: u32,
+    pub namespace_id: u32,
+    pub namespace_slot: u32,
+    pub queue_id: u32,
+    pub command_id: u32,
+    pub hardware_status: u32,
+    pub driver_result: i32,
+    pub completed_bytes: u32,
+    pub irq_mode: u32,
+    pub driver_state_before: u32,
+    pub driver_state_after: u32,
+    pub run_id: u64,
+    pub device_generation: u64,
+    pub request_id: u64,
+    pub backend_handle: u64,
+    pub observed_handle: u64,
+    pub irq_generation: u64,
+    pub work_sequence: u64,
+    pub command_sequence: u64,
+    pub start_tick: u64,
+    pub finish_tick: u64,
+    pub data_checksum: u64,
+    pub tasks_created: u64,
+    pub tasks_reaped: u64,
+    pub retained_task_count: u64,
+    pub retained_device_pin_count: u64,
+    pub retained_buffer_count: u64,
+    pub callback_count: u64,
+    pub worker_requests_before: u64,
+    pub worker_requests_after: u64,
+    pub worker_completions_before: u64,
+    pub worker_completions_after: u64,
+    pub async_submissions_before: u64,
+    pub async_submissions_after: u64,
+    pub async_completions_before: u64,
+    pub async_completions_after: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelNvmeCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 296,
+            status: 0,
+            flags: 0,
+            unavailable_reason: 0,
+            fail_stage: 0,
+            cleanup_errors: 0,
+            sector_size: 0,
+            device_slot: 0,
+            native_receipt_flags: 0,
+            observation_flags: 0,
+            controller_index: 0,
+            controller_generation: 0,
+            namespace_generation: 0,
+            namespace_id: 0,
+            namespace_slot: 0,
+            queue_id: 0,
+            command_id: 0,
+            hardware_status: 0,
+            driver_result: -1,
+            completed_bytes: 0,
+            irq_mode: 0,
+            driver_state_before: 0,
+            driver_state_after: 0,
+            run_id: 0,
+            device_generation: 0,
+            request_id: 0,
+            backend_handle: 0,
+            observed_handle: 0,
+            irq_generation: 0,
+            work_sequence: 0,
+            command_sequence: 0,
+            start_tick: 0,
+            finish_tick: 0,
+            data_checksum: 0,
+            tasks_created: 0,
+            tasks_reaped: 0,
+            retained_task_count: 0,
+            retained_device_pin_count: 0,
+            retained_buffer_count: 0,
+            callback_count: 0,
+            worker_requests_before: 0,
+            worker_requests_after: 0,
+            worker_completions_before: 0,
+            worker_completions_after: 0,
+            async_submissions_before: 0,
+            async_submissions_after: 0,
+            async_completions_before: 0,
+            async_completions_after: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17562,6 +17714,7 @@ pub mod R4DevFns {
     pub type smp_kernel_check = unsafe extern "C" fn(*mut ProgramKernelSmpCheck) -> i32;
     pub type performance_smp_tlb = unsafe extern "C" fn(*mut ProgramSmpTlbSnapshot) -> i32;
     pub type storage_block_queue_check = unsafe extern "C" fn(*mut ProgramKernelBlockQueueCheck) -> i32;
+    pub type storage_nvme_check = unsafe extern "C" fn(*mut ProgramKernelNvmeCheck) -> i32;
 }
 
 #[repr(C)]
@@ -17624,14 +17777,15 @@ pub struct R4XStartR4Dev {
     pub smp_kernel_check: usize,
     pub performance_smp_tlb: usize,
     pub storage_block_queue_check: usize,
+    pub storage_nvme_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 18,
-            size: 440,
+            abi_version: 19,
+            size: 448,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17686,6 +17840,7 @@ impl Default for R4XStartR4Dev {
             smp_kernel_check: 0,
             performance_smp_tlb: 0,
             storage_block_queue_check: 0,
+            storage_nvme_check: 0,
         }
     }
 }
@@ -20933,6 +21088,70 @@ pub struct StorageRequest {
     pub buffer_bytes: u32,
     pub buffer_addr: u64,
     pub complete: unsafe extern "C" fn(u64, i32, u32) -> (),
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct StorageRequestObservation {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub controller_index: u32,
+    pub controller_generation: u32,
+    pub namespace_generation: u32,
+    pub namespace_id: u32,
+    pub namespace_slot: u32,
+    pub queue_id: u32,
+    pub command_id: u32,
+    pub hardware_status: u32,
+    pub result: i32,
+    pub bytes: u32,
+    pub irq_mode: u32,
+    pub handle: u64,
+    pub irq_generation: u64,
+    pub work_sequence: u64,
+    pub command_sequence: u64,
+    pub start_tick: u64,
+    pub finish_tick: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for StorageRequestObservation {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 104,
+            flags: 0,
+            controller_index: 0,
+            controller_generation: 0,
+            namespace_generation: 0,
+            namespace_id: 0,
+            namespace_slot: 0,
+            queue_id: 0,
+            command_id: 0,
+            hardware_status: 0,
+            result: -1,
+            bytes: 0,
+            irq_mode: 0,
+            handle: 0,
+            irq_generation: 0,
+            work_sequence: 0,
+            command_sequence: 0,
+            start_tick: 0,
+            finish_tick: 0,
+        }
+    }
+}
+
+pub type StorageRequestObserve = unsafe extern "C" fn(u64, *const StorageRequestObservation) -> ();
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct StorageObservedRequest {
+    pub base: StorageRequest,
+    pub observation_version: u32,
+    pub reserved0: u32,
+    pub cookie: u64,
+    pub observe: Option<unsafe extern "C" fn(u64, *const StorageRequestObservation) -> ()>,
 }
 
 pub type StorageSubmitFn = unsafe extern "C" fn(*mut core::ffi::c_void, *const StorageRequest) -> i32;
@@ -27222,6 +27441,57 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, retained_buffer_count) == 232);
     assert!(core::mem::size_of::<ProgramKernelBlockQueueCheck>() == 240);
     assert!(core::mem::align_of::<ProgramKernelBlockQueueCheck>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, status) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, flags) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, unavailable_reason) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, fail_stage) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, cleanup_errors) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, sector_size) == 28);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, device_slot) == 32);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, native_receipt_flags) == 36);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, observation_flags) == 40);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, controller_index) == 44);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, controller_generation) == 48);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, namespace_generation) == 52);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, namespace_id) == 56);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, namespace_slot) == 60);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, queue_id) == 64);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, command_id) == 68);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, hardware_status) == 72);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, driver_result) == 76);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, completed_bytes) == 80);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, irq_mode) == 84);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, driver_state_before) == 88);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, driver_state_after) == 92);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, run_id) == 96);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, device_generation) == 104);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, request_id) == 112);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, backend_handle) == 120);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, observed_handle) == 128);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, irq_generation) == 136);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, work_sequence) == 144);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, command_sequence) == 152);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, start_tick) == 160);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, finish_tick) == 168);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, data_checksum) == 176);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, tasks_created) == 184);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, tasks_reaped) == 192);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, retained_task_count) == 200);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, retained_device_pin_count) == 208);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, retained_buffer_count) == 216);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, callback_count) == 224);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, worker_requests_before) == 232);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, worker_requests_after) == 240);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, worker_completions_before) == 248);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, worker_completions_after) == 256);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, async_submissions_before) == 264);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, async_submissions_after) == 272);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, async_completions_before) == 280);
+    assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, async_completions_after) == 288);
+    assert!(core::mem::size_of::<ProgramKernelNvmeCheck>() == 296);
+    assert!(core::mem::align_of::<ProgramKernelNvmeCheck>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -27702,7 +27972,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, smp_kernel_check) == 416);
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_smp_tlb) == 424);
     assert!(core::mem::offset_of!(R4XStartR4Dev, storage_block_queue_check) == 432);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 440);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, storage_nvme_check) == 440);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 448);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);
@@ -29046,6 +29317,37 @@ const _: () = {
     assert!(core::mem::offset_of!(StorageRequest, complete) == 48);
     assert!(core::mem::size_of::<StorageRequest>() == 56);
     assert!(core::mem::align_of::<StorageRequest>() == 8);
+    assert!(core::mem::offset_of!(StorageRequestObservation, version) == 0);
+    assert!(core::mem::offset_of!(StorageRequestObservation, size) == 4);
+    assert!(core::mem::offset_of!(StorageRequestObservation, flags) == 8);
+    assert!(core::mem::offset_of!(StorageRequestObservation, controller_index) == 12);
+    assert!(core::mem::offset_of!(StorageRequestObservation, controller_generation) == 16);
+    assert!(core::mem::offset_of!(StorageRequestObservation, namespace_generation) == 20);
+    assert!(core::mem::offset_of!(StorageRequestObservation, namespace_id) == 24);
+    assert!(core::mem::offset_of!(StorageRequestObservation, namespace_slot) == 28);
+    assert!(core::mem::offset_of!(StorageRequestObservation, queue_id) == 32);
+    assert!(core::mem::offset_of!(StorageRequestObservation, command_id) == 36);
+    assert!(core::mem::offset_of!(StorageRequestObservation, hardware_status) == 40);
+    assert!(core::mem::offset_of!(StorageRequestObservation, result) == 44);
+    assert!(core::mem::offset_of!(StorageRequestObservation, bytes) == 48);
+    assert!(core::mem::offset_of!(StorageRequestObservation, irq_mode) == 52);
+    assert!(core::mem::offset_of!(StorageRequestObservation, handle) == 56);
+    assert!(core::mem::offset_of!(StorageRequestObservation, irq_generation) == 64);
+    assert!(core::mem::offset_of!(StorageRequestObservation, work_sequence) == 72);
+    assert!(core::mem::offset_of!(StorageRequestObservation, command_sequence) == 80);
+    assert!(core::mem::offset_of!(StorageRequestObservation, start_tick) == 88);
+    assert!(core::mem::offset_of!(StorageRequestObservation, finish_tick) == 96);
+    assert!(core::mem::size_of::<StorageRequestObservation>() == 104);
+    assert!(core::mem::align_of::<StorageRequestObservation>() == 8);
+    assert!(core::mem::size_of::<StorageRequestObserve>() == 8);
+    assert!(core::mem::align_of::<StorageRequestObserve>() == 8);
+    assert!(core::mem::offset_of!(StorageObservedRequest, base) == 0);
+    assert!(core::mem::offset_of!(StorageObservedRequest, observation_version) == 56);
+    assert!(core::mem::offset_of!(StorageObservedRequest, reserved0) == 60);
+    assert!(core::mem::offset_of!(StorageObservedRequest, cookie) == 64);
+    assert!(core::mem::offset_of!(StorageObservedRequest, observe) == 72);
+    assert!(core::mem::size_of::<StorageObservedRequest>() == 80);
+    assert!(core::mem::align_of::<StorageObservedRequest>() == 8);
     assert!(core::mem::size_of::<StorageSubmitFn>() == 8);
     assert!(core::mem::align_of::<StorageSubmitFn>() == 8);
     assert!(core::mem::size_of::<StorageCancelFn>() == 8);

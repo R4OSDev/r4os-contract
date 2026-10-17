@@ -103,3 +103,11 @@ R4DEV v18 appends `storage_block_queue_check` at offset432 after the unchanged
 432-byte prefix. `ProgramKernelBlockQueueCheck` v1 is fixed240bytes. It reports
 only its own synthetic cases, exact request/task/device receipts and retained
 resources; no global queue reset, physical test disk or separate score.
+
+R4DEV v19 appends `storage_nvme_check` at offset440 after the unchanged
+440-byte prefix; its fixed v1 report is296bytes. The optional technical
+`StorageObservedRequest` is80bytes and retains the complete56-byte
+`StorageRequest` prefix. Only the observation flag and an advertised backend
+capability select it. Its synchronous104-byte callback record identifies the
+actual CQE, IRQ-driven worker and acknowledged DMA release before logical
+completion. Normal56-byte requests and their callbacks remain unchanged.

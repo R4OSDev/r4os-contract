@@ -2027,6 +2027,48 @@ pub const kernel_block_queue_check_case_flush = generated.kernel_block_queue_che
 pub const kernel_block_queue_check_case_batch = generated.kernel_block_queue_check_case_batch;
 pub const kernel_block_queue_check_cases_all = generated.kernel_block_queue_check_cases_all;
 pub const kernel_block_queue_check_stage_cleanup = generated.kernel_block_queue_check_stage_cleanup;
+pub const kernel_nvme_check_version = generated.kernel_nvme_check_version;
+pub const kernel_nvme_check_status_unavailable = generated.kernel_nvme_check_status_unavailable;
+pub const kernel_nvme_check_status_passed = generated.kernel_nvme_check_status_passed;
+pub const kernel_nvme_check_status_failed = generated.kernel_nvme_check_status_failed;
+pub const kernel_nvme_check_status_busy = generated.kernel_nvme_check_status_busy;
+pub const kernel_nvme_check_status_cancelled = generated.kernel_nvme_check_status_cancelled;
+pub const kernel_nvme_check_flag_work_complete = generated.kernel_nvme_check_flag_work_complete;
+pub const kernel_nvme_check_flag_cleanup_complete = generated.kernel_nvme_check_flag_cleanup_complete;
+pub const kernel_nvme_check_flag_partial_snapshot = generated.kernel_nvme_check_flag_partial_snapshot;
+pub const kernel_nvme_check_unavailable_none = generated.kernel_nvme_check_unavailable_none;
+pub const kernel_nvme_check_unavailable_device = generated.kernel_nvme_check_unavailable_device;
+pub const kernel_nvme_check_unavailable_backend = generated.kernel_nvme_check_unavailable_backend;
+pub const kernel_nvme_check_unavailable_observation = generated.kernel_nvme_check_unavailable_observation;
+pub const kernel_nvme_check_unavailable_geometry = generated.kernel_nvme_check_unavailable_geometry;
+pub const kernel_nvme_check_unavailable_irq = generated.kernel_nvme_check_unavailable_irq;
+pub const kernel_nvme_check_unavailable_context = generated.kernel_nvme_check_unavailable_context;
+pub const kernel_nvme_check_stage_none = generated.kernel_nvme_check_stage_none;
+pub const kernel_nvme_check_stage_binding = generated.kernel_nvme_check_stage_binding;
+pub const kernel_nvme_check_stage_buffer = generated.kernel_nvme_check_stage_buffer;
+pub const kernel_nvme_check_stage_read = generated.kernel_nvme_check_stage_read;
+pub const kernel_nvme_check_stage_observation = generated.kernel_nvme_check_stage_observation;
+pub const kernel_nvme_check_stage_irq = generated.kernel_nvme_check_stage_irq;
+pub const kernel_nvme_check_stage_cleanup = generated.kernel_nvme_check_stage_cleanup;
+pub const kernel_nvme_check_receipt_runtime = generated.kernel_nvme_check_receipt_runtime;
+pub const kernel_nvme_check_receipt_asynchronous = generated.kernel_nvme_check_receipt_asynchronous;
+pub const kernel_nvme_check_receipt_completed = generated.kernel_nvme_check_receipt_completed;
+pub const kernel_nvme_check_receipt_clean = generated.kernel_nvme_check_receipt_clean;
+pub const storage_observation_version = generated.storage_observation_version;
+pub const storage_request_flag_observation = generated.storage_request_flag_observation;
+pub const storage_observation_flag_irq = generated.storage_observation_flag_irq;
+pub const storage_observation_flag_worker = generated.storage_observation_flag_worker;
+pub const storage_observation_flag_cqe = generated.storage_observation_flag_cqe;
+pub const storage_observation_flag_dma_released = generated.storage_observation_flag_dma_released;
+pub const storage_observation_flag_poll = generated.storage_observation_flag_poll;
+pub const storage_observation_flag_cancel = generated.storage_observation_flag_cancel;
+pub const storage_observation_flag_epoch_changed = generated.storage_observation_flag_epoch_changed;
+pub const storage_observation_flag_not_submitted = generated.storage_observation_flag_not_submitted;
+pub const storage_observation_irq_none = generated.storage_observation_irq_none;
+pub const storage_observation_irq_msi = generated.storage_observation_irq_msi;
+pub const storage_observation_irq_msix = generated.storage_observation_irq_msix;
+pub const storage_backend_status_observation_supported = generated.storage_backend_status_observation_supported;
+pub const storage_backend_status_cleanup_retained = generated.storage_backend_status_cleanup_retained;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;
@@ -2756,6 +2798,7 @@ pub const ProgramKernelSchedulerCheck = generated.ProgramKernelSchedulerCheck;
 pub const ProgramKernelSmpCheck = generated.ProgramKernelSmpCheck;
 pub const ProgramSmpTlbSnapshot = generated.ProgramSmpTlbSnapshot;
 pub const ProgramKernelBlockQueueCheck = generated.ProgramKernelBlockQueueCheck;
+pub const ProgramKernelNvmeCheck = generated.ProgramKernelNvmeCheck;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;
@@ -4371,6 +4414,46 @@ pub const StorageRequest = extern struct {
     buffer_addr: u64 = 0,
     complete: StorageRequestComplete,
 };
+
+// Optional own-request observation, outside the generated export block.
+// StorageRequest stays byte-for-byte unchanged; its size/flag admits this tail.
+pub const StorageRequestObservation = extern struct {
+    version: u32 = storage_observation_version,
+    size: u32 = @sizeOf(StorageRequestObservation),
+    flags: u32 = 0,
+    controller_index: u32 = 0,
+    controller_generation: u32 = 0,
+    namespace_generation: u32 = 0,
+    namespace_id: u32 = 0,
+    namespace_slot: u32 = 0,
+    queue_id: u32 = 0,
+    command_id: u32 = 0,
+    hardware_status: u32 = 0,
+    result: i32 = storage_request_result_error,
+    bytes: u32 = 0,
+    irq_mode: u32 = storage_observation_irq_none,
+    handle: u64 = 0,
+    irq_generation: u64 = 0,
+    work_sequence: u64 = 0,
+    command_sequence: u64 = 0,
+    start_tick: u64 = 0,
+    finish_tick: u64 = 0,
+};
+pub const StorageRequestObserve = *const fn (u64, *const StorageRequestObservation) callconv(.c) void;
+pub const StorageObservedRequest = extern struct {
+    base: StorageRequest,
+    observation_version: u32 = storage_observation_version,
+    reserved0: u32 = 0,
+    cookie: u64 = 0,
+    observe: ?StorageRequestObserve = null,
+};
+comptime {
+    if (@sizeOf(StorageRequest) != 56 or @offsetOf(StorageObservedRequest, "base") != 0 or
+        @offsetOf(StorageObservedRequest, "observation_version") != 56 or
+        @offsetOf(StorageObservedRequest, "cookie") != 64 or @offsetOf(StorageObservedRequest, "observe") != 72 or
+        @sizeOf(StorageObservedRequest) != 80 or @sizeOf(StorageRequestObservation) != 104)
+        @compileError("Storage observation prefix/layout changed");
+}
 
 pub const StorageSubmitFn = *const fn (?*anyopaque, *const StorageRequest) callconv(.c) i32;
 pub const StorageCancelFn = *const fn (?*anyopaque, u64, u32) callconv(.c) i32;

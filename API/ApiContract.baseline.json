@@ -28443,10 +28443,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 18,
+      "abi_version": 19,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 440,
+      "size": 448,
       "slots": [
         {
           "number": 0,
@@ -31951,6 +31951,65 @@
                   "child": {
                     "kind": "named",
                     "name": "ProgramKernelBlockQueueCheck"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "none",
+            "reentrancy": "serialized",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "valid_on_documented_error",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 53,
+          "offset": 440,
+          "name": "storage_nvme_check",
+          "state": "function",
+          "required": false,
+          "description": "Explicit bounded read-only NVMe IRQ/completion proof. Binds one exact device generation and resident buffer through actual read completion and release. Matches native request/backend identity to a driver observation of its own hardware CQE, namespace/controller epochs and IRQ-driven worker pass after DMA release acknowledgment. Passive per-device before/after counters are descriptive only. Missing hardware/observation/IRQ capability is unavailable, not a pass. No deliberate write/reset/reconfiguration/fault injection. Caller output never reaches a worker; late or uncertain state retains resources/session. Returns1 for fixed report,0 for context unavailable,-1 for invalid header/capacity unchanged output.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramKernelNvmeCheck"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -106590,6 +106649,706 @@
       ],
       "values": [],
       "description": "Fixed v1 owned synthetic blockqueue result. Counts refer to this request, not global runtime counter differences. Static buffers are reusable only after true requester and controller/backend release."
+    },
+    {
+      "name": "ProgramKernelNvmeCheck",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 296,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "296"
+        },
+        {
+          "name": "status",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "status.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "unavailable_reason",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "unavailable reason.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "fail_stage",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "fail stage.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_errors",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cleanup errors.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sector_size",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "sector size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_slot",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "device slot.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "native_receipt_flags",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "native receipt flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observation_flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "observation flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "controller_index",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "controller index.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "controller_generation",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "controller generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "namespace_generation",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "namespace generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "namespace_id",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "namespace id.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "namespace_slot",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "namespace slot.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queue_id",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "queue id.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "command_id",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "command id.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hardware_status",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "hardware status.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "driver_result",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "driver result.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "-1"
+        },
+        {
+          "name": "completed_bytes",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "completed bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "irq_mode",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "irq mode.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "driver_state_before",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "driver state before.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "driver_state_after",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "driver state after.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "run_id",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "run id.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_generation",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "device generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request_id",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "request id.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "backend_handle",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "backend handle.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_handle",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "observed handle.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "irq_generation",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "irq generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "work_sequence",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "work sequence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "command_sequence",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "command sequence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "start_tick",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "start tick.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "finish_tick",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "finish tick.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "data_checksum",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "data checksum.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tasks_created",
+          "offset": 184,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "tasks created.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tasks_reaped",
+          "offset": 192,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "tasks reaped.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained_task_count",
+          "offset": 200,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "retained task count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained_device_pin_count",
+          "offset": 208,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "retained device pin count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retained_buffer_count",
+          "offset": 216,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "retained buffer count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "callback_count",
+          "offset": 224,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "callback count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_requests_before",
+          "offset": 232,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "worker requests before is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_requests_after",
+          "offset": 240,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "worker requests after is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_completions_before",
+          "offset": 248,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "worker completions before is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_completions_after",
+          "offset": 256,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "worker completions after is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "async_submissions_before",
+          "offset": 264,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "async submissions before is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "async_submissions_after",
+          "offset": 272,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "async submissions after is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "async_completions_before",
+          "offset": 280,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "async completions before is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "async_completions_after",
+          "offset": 288,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "async completions after is passive per-device context, never own-request proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fixed v1 read-only NVMe proof. Native actual ticket/completion receipt and exact driver hardware observation determine success. Historical status/per-device counter progress cannot substitute for them."
     }
   ],
   "operations": [],
@@ -129271,6 +130030,426 @@
       "scope": "kernel_block_queue_check",
       "stability": "fixed_contract",
       "description": "Own cleanup failed."
+    },
+    {
+      "name": "kernel_nvme_check_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Fixed296-byte active NVMe result v1."
+    },
+    {
+      "name": "kernel_nvme_check_status_unavailable",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Active NVMe unavailable."
+    },
+    {
+      "name": "kernel_nvme_check_status_passed",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Active NVMe passed."
+    },
+    {
+      "name": "kernel_nvme_check_status_failed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Active NVMe failed."
+    },
+    {
+      "name": "kernel_nvme_check_status_busy",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Active NVMe busy."
+    },
+    {
+      "name": "kernel_nvme_check_status_cancelled",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Active NVMe cancelled."
+    },
+    {
+      "name": "kernel_nvme_check_flag_work_complete",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Actual work_complete."
+    },
+    {
+      "name": "kernel_nvme_check_flag_cleanup_complete",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Actual cleanup_complete."
+    },
+    {
+      "name": "kernel_nvme_check_flag_partial_snapshot",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Actual partial_snapshot."
+    },
+    {
+      "name": "kernel_nvme_check_unavailable_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Unavailable reason none."
+    },
+    {
+      "name": "kernel_nvme_check_unavailable_device",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Unavailable reason device."
+    },
+    {
+      "name": "kernel_nvme_check_unavailable_backend",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Unavailable reason backend."
+    },
+    {
+      "name": "kernel_nvme_check_unavailable_observation",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Unavailable reason observation."
+    },
+    {
+      "name": "kernel_nvme_check_unavailable_geometry",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Unavailable reason geometry."
+    },
+    {
+      "name": "kernel_nvme_check_unavailable_irq",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Unavailable reason irq."
+    },
+    {
+      "name": "kernel_nvme_check_unavailable_context",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Unavailable reason context."
+    },
+    {
+      "name": "kernel_nvme_check_stage_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Functional stage none."
+    },
+    {
+      "name": "kernel_nvme_check_stage_binding",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Functional stage binding."
+    },
+    {
+      "name": "kernel_nvme_check_stage_buffer",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Functional stage buffer."
+    },
+    {
+      "name": "kernel_nvme_check_stage_read",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Functional stage read."
+    },
+    {
+      "name": "kernel_nvme_check_stage_observation",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Functional stage observation."
+    },
+    {
+      "name": "kernel_nvme_check_stage_irq",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Functional stage irq."
+    },
+    {
+      "name": "kernel_nvme_check_stage_cleanup",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Functional stage cleanup."
+    },
+    {
+      "name": "kernel_nvme_check_receipt_runtime",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Exact native request runtime receipt."
+    },
+    {
+      "name": "kernel_nvme_check_receipt_asynchronous",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Exact native request asynchronous receipt."
+    },
+    {
+      "name": "kernel_nvme_check_receipt_completed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Exact native request completed receipt."
+    },
+    {
+      "name": "kernel_nvme_check_receipt_clean",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_nvme_check",
+      "stability": "fixed_contract",
+      "description": "Exact native request clean receipt."
+    },
+    {
+      "name": "storage_observation_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "storage",
+      "stability": "fixed_contract",
+      "description": "Driver own-request observation v1, fixed104bytes."
+    },
+    {
+      "name": "storage_request_flag_observation",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_request",
+      "stability": "fixed_contract",
+      "description": "Extended80-byte StorageObservedRequest with immutable cookie/callback. Only send to a backend advertising support."
+    },
+    {
+      "name": "storage_observation_flag_irq",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request irq fact."
+    },
+    {
+      "name": "storage_observation_flag_worker",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request worker fact."
+    },
+    {
+      "name": "storage_observation_flag_cqe",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request cqe fact."
+    },
+    {
+      "name": "storage_observation_flag_dma_released",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request dma_released fact."
+    },
+    {
+      "name": "storage_observation_flag_poll",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request poll fact."
+    },
+    {
+      "name": "storage_observation_flag_cancel",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request cancel fact."
+    },
+    {
+      "name": "storage_observation_flag_epoch_changed",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request epoch_changed fact."
+    },
+    {
+      "name": "storage_observation_flag_not_submitted",
+      "value": "128",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Exact observed request not_submitted fact."
+    },
+    {
+      "name": "storage_observation_irq_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Bound IRQ mode none."
+    },
+    {
+      "name": "storage_observation_irq_msi",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Bound IRQ mode msi."
+    },
+    {
+      "name": "storage_observation_irq_msix",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "storage_observation",
+      "stability": "fixed_contract",
+      "description": "Bound IRQ mode msix."
+    },
+    {
+      "name": "storage_backend_status_observation_supported",
+      "value": "131072",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_backend_status",
+      "stability": "fixed_contract",
+      "description": "Backend observation_supported fact; no historical check pass."
+    },
+    {
+      "name": "storage_backend_status_cleanup_retained",
+      "value": "262144",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "storage_backend_status",
+      "stability": "fixed_contract",
+      "description": "Backend cleanup_retained fact; no historical check pass."
     }
   ],
   "limits": [

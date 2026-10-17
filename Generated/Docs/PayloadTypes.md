@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 314 von 314 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 315 von 315 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2027; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2069; Limits: 109
 
 ## App-Profile
 
@@ -335,6 +335,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramKernelSmpCheck` | fixed_layout | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
 | `ProgramSmpTlbSnapshot` | fixed_layout | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
 | `ProgramKernelBlockQueueCheck` | fixed_layout | extern_struct | 240/8 | 240/8 | 240/8 | 240/8 |
+| `ProgramKernelNvmeCheck` | fixed_layout | extern_struct | 296/8 | 296/8 | 296/8 | 296/8 |
 
 ## Typdetails
 
@@ -8433,6 +8434,65 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `retained_request_count` | 224 | 8 | 8 | `u64` | - |
 | `retained_buffer_count` | 232 | 8 | 8 | `u64` | - |
 
+### `ProgramKernelNvmeCheck`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 296 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `status` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `unavailable_reason` | 16 | 4 | 4 | `u32` | - |
+| `fail_stage` | 20 | 4 | 4 | `u32` | - |
+| `cleanup_errors` | 24 | 4 | 4 | `u32` | - |
+| `sector_size` | 28 | 4 | 4 | `u32` | - |
+| `device_slot` | 32 | 4 | 4 | `u32` | - |
+| `native_receipt_flags` | 36 | 4 | 4 | `u32` | - |
+| `observation_flags` | 40 | 4 | 4 | `u32` | - |
+| `controller_index` | 44 | 4 | 4 | `u32` | - |
+| `controller_generation` | 48 | 4 | 4 | `u32` | - |
+| `namespace_generation` | 52 | 4 | 4 | `u32` | - |
+| `namespace_id` | 56 | 4 | 4 | `u32` | - |
+| `namespace_slot` | 60 | 4 | 4 | `u32` | - |
+| `queue_id` | 64 | 4 | 4 | `u32` | - |
+| `command_id` | 68 | 4 | 4 | `u32` | - |
+| `hardware_status` | 72 | 4 | 4 | `u32` | - |
+| `driver_result` | 76 | 4 | 4 | `i32` | - |
+| `completed_bytes` | 80 | 4 | 4 | `u32` | - |
+| `irq_mode` | 84 | 4 | 4 | `u32` | - |
+| `driver_state_before` | 88 | 4 | 4 | `u32` | - |
+| `driver_state_after` | 92 | 4 | 4 | `u32` | - |
+| `run_id` | 96 | 8 | 8 | `u64` | - |
+| `device_generation` | 104 | 8 | 8 | `u64` | - |
+| `request_id` | 112 | 8 | 8 | `u64` | - |
+| `backend_handle` | 120 | 8 | 8 | `u64` | - |
+| `observed_handle` | 128 | 8 | 8 | `u64` | - |
+| `irq_generation` | 136 | 8 | 8 | `u64` | - |
+| `work_sequence` | 144 | 8 | 8 | `u64` | - |
+| `command_sequence` | 152 | 8 | 8 | `u64` | - |
+| `start_tick` | 160 | 8 | 8 | `u64` | - |
+| `finish_tick` | 168 | 8 | 8 | `u64` | - |
+| `data_checksum` | 176 | 8 | 8 | `u64` | - |
+| `tasks_created` | 184 | 8 | 8 | `u64` | - |
+| `tasks_reaped` | 192 | 8 | 8 | `u64` | - |
+| `retained_task_count` | 200 | 8 | 8 | `u64` | - |
+| `retained_device_pin_count` | 208 | 8 | 8 | `u64` | - |
+| `retained_buffer_count` | 216 | 8 | 8 | `u64` | - |
+| `callback_count` | 224 | 8 | 8 | `u64` | - |
+| `worker_requests_before` | 232 | 8 | 8 | `u64` | - |
+| `worker_requests_after` | 240 | 8 | 8 | `u64` | - |
+| `worker_completions_before` | 248 | 8 | 8 | `u64` | - |
+| `worker_completions_after` | 256 | 8 | 8 | `u64` | - |
+| `async_submissions_before` | 264 | 8 | 8 | `u64` | - |
+| `async_submissions_after` | 272 | 8 | 8 | `u64` | - |
+| `async_completions_before` | 280 | 8 | 8 | `u64` | - |
+| `async_completions_after` | 288 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11199,6 +11259,48 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `kernel_block_queue_check_case_batch` | `128` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
 | `kernel_block_queue_check_cases_all` | `255` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
 | `kernel_block_queue_check_stage_cleanup` | `9` | `u32` | value | number | `kernel_block_queue_check` | fixed_contract |
+| `kernel_nvme_check_version` | `1` | `u32` | version | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_status_unavailable` | `0` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_status_passed` | `1` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_status_failed` | `2` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_status_busy` | `3` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_status_cancelled` | `4` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_flag_work_complete` | `1` | `u32` | flag | bitmask | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_flag_cleanup_complete` | `2` | `u32` | flag | bitmask | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_flag_partial_snapshot` | `4` | `u32` | flag | bitmask | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_unavailable_none` | `0` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_unavailable_device` | `1` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_unavailable_backend` | `2` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_unavailable_observation` | `3` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_unavailable_geometry` | `4` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_unavailable_irq` | `5` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_unavailable_context` | `6` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_stage_none` | `0` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_stage_binding` | `1` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_stage_buffer` | `2` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_stage_read` | `3` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_stage_observation` | `4` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_stage_irq` | `5` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_stage_cleanup` | `6` | `u32` | value | number | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_receipt_runtime` | `1` | `u32` | flag | bitmask | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_receipt_asynchronous` | `2` | `u32` | flag | bitmask | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_receipt_completed` | `4` | `u32` | flag | bitmask | `kernel_nvme_check` | fixed_contract |
+| `kernel_nvme_check_receipt_clean` | `8` | `u32` | flag | bitmask | `kernel_nvme_check` | fixed_contract |
+| `storage_observation_version` | `1` | `u32` | version | number | `storage` | fixed_contract |
+| `storage_request_flag_observation` | `1` | `u32` | flag | bitmask | `storage_request` | fixed_contract |
+| `storage_observation_flag_irq` | `1` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_flag_worker` | `2` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_flag_cqe` | `4` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_flag_dma_released` | `8` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_flag_poll` | `16` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_flag_cancel` | `32` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_flag_epoch_changed` | `64` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_flag_not_submitted` | `128` | `u32` | flag | bitmask | `storage_observation` | fixed_contract |
+| `storage_observation_irq_none` | `0` | `u32` | value | number | `storage_observation` | fixed_contract |
+| `storage_observation_irq_msi` | `1` | `u32` | value | number | `storage_observation` | fixed_contract |
+| `storage_observation_irq_msix` | `2` | `u32` | value | number | `storage_observation` | fixed_contract |
+| `storage_backend_status_observation_supported` | `131072` | `u32` | flag | bitmask | `storage_backend_status` | fixed_contract |
+| `storage_backend_status_cleanup_retained` | `262144` | `u32` | flag | bitmask | `storage_backend_status` | fixed_contract |
 
 ## Limits
 

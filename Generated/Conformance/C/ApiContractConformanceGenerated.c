@@ -439,5 +439,6 @@ static R4DevSchedulerKernelCheckFn r4os_probe_r4dev_scheduler_kernel_check = (R4
 static R4DevSmpKernelCheckFn r4os_probe_r4dev_smp_kernel_check = (R4DevSmpKernelCheckFn)0;
 static R4DevPerformanceSmpTlbFn r4os_probe_r4dev_performance_smp_tlb = (R4DevPerformanceSmpTlbFn)0;
 static R4DevStorageBlockQueueCheckFn r4os_probe_r4dev_storage_block_queue_check = (R4DevStorageBlockQueueCheckFn)0;
+static R4DevStorageNvmeCheckFn r4os_probe_r4dev_storage_nvme_check = (R4DevStorageNvmeCheckFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

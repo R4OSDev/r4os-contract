@@ -2040,6 +2040,48 @@ extern "C" {
 #define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_BATCH 128u
 #define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASES_ALL 255u
 #define R4OS_KERNEL_BLOCK_QUEUE_CHECK_STAGE_CLEANUP 9u
+#define R4OS_KERNEL_NVME_CHECK_VERSION 1u
+#define R4OS_KERNEL_NVME_CHECK_STATUS_UNAVAILABLE 0u
+#define R4OS_KERNEL_NVME_CHECK_STATUS_PASSED 1u
+#define R4OS_KERNEL_NVME_CHECK_STATUS_FAILED 2u
+#define R4OS_KERNEL_NVME_CHECK_STATUS_BUSY 3u
+#define R4OS_KERNEL_NVME_CHECK_STATUS_CANCELLED 4u
+#define R4OS_KERNEL_NVME_CHECK_FLAG_WORK_COMPLETE 1u
+#define R4OS_KERNEL_NVME_CHECK_FLAG_CLEANUP_COMPLETE 2u
+#define R4OS_KERNEL_NVME_CHECK_FLAG_PARTIAL_SNAPSHOT 4u
+#define R4OS_KERNEL_NVME_CHECK_UNAVAILABLE_NONE 0u
+#define R4OS_KERNEL_NVME_CHECK_UNAVAILABLE_DEVICE 1u
+#define R4OS_KERNEL_NVME_CHECK_UNAVAILABLE_BACKEND 2u
+#define R4OS_KERNEL_NVME_CHECK_UNAVAILABLE_OBSERVATION 3u
+#define R4OS_KERNEL_NVME_CHECK_UNAVAILABLE_GEOMETRY 4u
+#define R4OS_KERNEL_NVME_CHECK_UNAVAILABLE_IRQ 5u
+#define R4OS_KERNEL_NVME_CHECK_UNAVAILABLE_CONTEXT 6u
+#define R4OS_KERNEL_NVME_CHECK_STAGE_NONE 0u
+#define R4OS_KERNEL_NVME_CHECK_STAGE_BINDING 1u
+#define R4OS_KERNEL_NVME_CHECK_STAGE_BUFFER 2u
+#define R4OS_KERNEL_NVME_CHECK_STAGE_READ 3u
+#define R4OS_KERNEL_NVME_CHECK_STAGE_OBSERVATION 4u
+#define R4OS_KERNEL_NVME_CHECK_STAGE_IRQ 5u
+#define R4OS_KERNEL_NVME_CHECK_STAGE_CLEANUP 6u
+#define R4OS_KERNEL_NVME_CHECK_RECEIPT_RUNTIME 1u
+#define R4OS_KERNEL_NVME_CHECK_RECEIPT_ASYNCHRONOUS 2u
+#define R4OS_KERNEL_NVME_CHECK_RECEIPT_COMPLETED 4u
+#define R4OS_KERNEL_NVME_CHECK_RECEIPT_CLEAN 8u
+#define R4OS_STORAGE_OBSERVATION_VERSION 1u
+#define R4OS_STORAGE_REQUEST_FLAG_OBSERVATION 1u
+#define R4OS_STORAGE_OBSERVATION_FLAG_IRQ 1u
+#define R4OS_STORAGE_OBSERVATION_FLAG_WORKER 2u
+#define R4OS_STORAGE_OBSERVATION_FLAG_CQE 4u
+#define R4OS_STORAGE_OBSERVATION_FLAG_DMA_RELEASED 8u
+#define R4OS_STORAGE_OBSERVATION_FLAG_POLL 16u
+#define R4OS_STORAGE_OBSERVATION_FLAG_CANCEL 32u
+#define R4OS_STORAGE_OBSERVATION_FLAG_EPOCH_CHANGED 64u
+#define R4OS_STORAGE_OBSERVATION_FLAG_NOT_SUBMITTED 128u
+#define R4OS_STORAGE_OBSERVATION_IRQ_NONE 0u
+#define R4OS_STORAGE_OBSERVATION_IRQ_MSI 1u
+#define R4OS_STORAGE_OBSERVATION_IRQ_MSIX 2u
+#define R4OS_STORAGE_BACKEND_STATUS_OBSERVATION_SUPPORTED 131072u
+#define R4OS_STORAGE_BACKEND_STATUS_CLEANUP_RETAINED 262144u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2795,6 +2837,7 @@ typedef struct R4ProgramKernelSchedulerCheck R4ProgramKernelSchedulerCheck;
 typedef struct R4ProgramKernelSmpCheck R4ProgramKernelSmpCheck;
 typedef struct R4ProgramSmpTlbSnapshot R4ProgramSmpTlbSnapshot;
 typedef struct R4ProgramKernelBlockQueueCheck R4ProgramKernelBlockQueueCheck;
+typedef struct R4ProgramKernelNvmeCheck R4ProgramKernelNvmeCheck;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8701,6 +8744,58 @@ typedef struct R4ProgramKernelBlockQueueCheck {
     uint64_t retained_buffer_count;
 } R4ProgramKernelBlockQueueCheck;
 
+typedef struct R4ProgramKernelNvmeCheck {
+    uint32_t version;
+    uint32_t size;
+    uint32_t status;
+    uint32_t flags;
+    uint32_t unavailable_reason;
+    uint32_t fail_stage;
+    uint32_t cleanup_errors;
+    uint32_t sector_size;
+    uint32_t device_slot;
+    uint32_t native_receipt_flags;
+    uint32_t observation_flags;
+    uint32_t controller_index;
+    uint32_t controller_generation;
+    uint32_t namespace_generation;
+    uint32_t namespace_id;
+    uint32_t namespace_slot;
+    uint32_t queue_id;
+    uint32_t command_id;
+    uint32_t hardware_status;
+    int32_t driver_result;
+    uint32_t completed_bytes;
+    uint32_t irq_mode;
+    uint32_t driver_state_before;
+    uint32_t driver_state_after;
+    uint64_t run_id;
+    uint64_t device_generation;
+    uint64_t request_id;
+    uint64_t backend_handle;
+    uint64_t observed_handle;
+    uint64_t irq_generation;
+    uint64_t work_sequence;
+    uint64_t command_sequence;
+    uint64_t start_tick;
+    uint64_t finish_tick;
+    uint64_t data_checksum;
+    uint64_t tasks_created;
+    uint64_t tasks_reaped;
+    uint64_t retained_task_count;
+    uint64_t retained_device_pin_count;
+    uint64_t retained_buffer_count;
+    uint64_t callback_count;
+    uint64_t worker_requests_before;
+    uint64_t worker_requests_after;
+    uint64_t worker_completions_before;
+    uint64_t worker_completions_after;
+    uint64_t async_submissions_before;
+    uint64_t async_submissions_after;
+    uint64_t async_completions_before;
+    uint64_t async_completions_after;
+} R4ProgramKernelNvmeCheck;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9614,6 +9709,7 @@ typedef int32_t (*R4DevSchedulerKernelCheckFn)(uint32_t selection, R4ProgramKern
 typedef int32_t (*R4DevSmpKernelCheckFn)(R4ProgramKernelSmpCheck * out);
 typedef int32_t (*R4DevPerformanceSmpTlbFn)(R4ProgramSmpTlbSnapshot * out);
 typedef int32_t (*R4DevStorageBlockQueueCheckFn)(R4ProgramKernelBlockQueueCheck * out);
+typedef int32_t (*R4DevStorageNvmeCheckFn)(R4ProgramKernelNvmeCheck * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9673,6 +9769,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t smp_kernel_check;
     uintptr_t performance_smp_tlb;
     uintptr_t storage_block_queue_check;
+    uintptr_t storage_nvme_check;
 } R4XStartR4Dev;
 
 
@@ -14991,6 +15088,56 @@ _Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, in_flight_high_water) ==
 _Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, parallel_active_max) == 216u, "ProgramKernelBlockQueueCheck.parallel_active_max offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, retained_request_count) == 224u, "ProgramKernelBlockQueueCheck.retained_request_count offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, retained_buffer_count) == 232u, "ProgramKernelBlockQueueCheck.retained_buffer_count offset mismatch");
+_Static_assert(sizeof(R4ProgramKernelNvmeCheck) == 296u, "ProgramKernelNvmeCheck size mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, version) == 0u, "ProgramKernelNvmeCheck.version offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, size) == 4u, "ProgramKernelNvmeCheck.size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, status) == 8u, "ProgramKernelNvmeCheck.status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, flags) == 12u, "ProgramKernelNvmeCheck.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, unavailable_reason) == 16u, "ProgramKernelNvmeCheck.unavailable_reason offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, fail_stage) == 20u, "ProgramKernelNvmeCheck.fail_stage offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, cleanup_errors) == 24u, "ProgramKernelNvmeCheck.cleanup_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, sector_size) == 28u, "ProgramKernelNvmeCheck.sector_size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, device_slot) == 32u, "ProgramKernelNvmeCheck.device_slot offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, native_receipt_flags) == 36u, "ProgramKernelNvmeCheck.native_receipt_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, observation_flags) == 40u, "ProgramKernelNvmeCheck.observation_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, controller_index) == 44u, "ProgramKernelNvmeCheck.controller_index offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, controller_generation) == 48u, "ProgramKernelNvmeCheck.controller_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, namespace_generation) == 52u, "ProgramKernelNvmeCheck.namespace_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, namespace_id) == 56u, "ProgramKernelNvmeCheck.namespace_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, namespace_slot) == 60u, "ProgramKernelNvmeCheck.namespace_slot offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, queue_id) == 64u, "ProgramKernelNvmeCheck.queue_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, command_id) == 68u, "ProgramKernelNvmeCheck.command_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, hardware_status) == 72u, "ProgramKernelNvmeCheck.hardware_status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, driver_result) == 76u, "ProgramKernelNvmeCheck.driver_result offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, completed_bytes) == 80u, "ProgramKernelNvmeCheck.completed_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, irq_mode) == 84u, "ProgramKernelNvmeCheck.irq_mode offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, driver_state_before) == 88u, "ProgramKernelNvmeCheck.driver_state_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, driver_state_after) == 92u, "ProgramKernelNvmeCheck.driver_state_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, run_id) == 96u, "ProgramKernelNvmeCheck.run_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, device_generation) == 104u, "ProgramKernelNvmeCheck.device_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, request_id) == 112u, "ProgramKernelNvmeCheck.request_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, backend_handle) == 120u, "ProgramKernelNvmeCheck.backend_handle offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, observed_handle) == 128u, "ProgramKernelNvmeCheck.observed_handle offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, irq_generation) == 136u, "ProgramKernelNvmeCheck.irq_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, work_sequence) == 144u, "ProgramKernelNvmeCheck.work_sequence offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, command_sequence) == 152u, "ProgramKernelNvmeCheck.command_sequence offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, start_tick) == 160u, "ProgramKernelNvmeCheck.start_tick offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, finish_tick) == 168u, "ProgramKernelNvmeCheck.finish_tick offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, data_checksum) == 176u, "ProgramKernelNvmeCheck.data_checksum offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, tasks_created) == 184u, "ProgramKernelNvmeCheck.tasks_created offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, tasks_reaped) == 192u, "ProgramKernelNvmeCheck.tasks_reaped offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, retained_task_count) == 200u, "ProgramKernelNvmeCheck.retained_task_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, retained_device_pin_count) == 208u, "ProgramKernelNvmeCheck.retained_device_pin_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, retained_buffer_count) == 216u, "ProgramKernelNvmeCheck.retained_buffer_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, callback_count) == 224u, "ProgramKernelNvmeCheck.callback_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, worker_requests_before) == 232u, "ProgramKernelNvmeCheck.worker_requests_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, worker_requests_after) == 240u, "ProgramKernelNvmeCheck.worker_requests_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, worker_completions_before) == 248u, "ProgramKernelNvmeCheck.worker_completions_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, worker_completions_after) == 256u, "ProgramKernelNvmeCheck.worker_completions_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, async_submissions_before) == 264u, "ProgramKernelNvmeCheck.async_submissions_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, async_submissions_after) == 272u, "ProgramKernelNvmeCheck.async_submissions_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, async_completions_before) == 280u, "ProgramKernelNvmeCheck.async_completions_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelNvmeCheck, async_completions_after) == 288u, "ProgramKernelNvmeCheck.async_completions_after offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15772,7 +15919,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 440u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 448u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15877,6 +16024,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_smp_tlb) == 424u, "R4XStartR4
 _Static_assert(sizeof(R4DevPerformanceSmpTlbFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, storage_block_queue_check) == 432u, "R4XStartR4Dev.storage_block_queue_check offset mismatch");
 _Static_assert(sizeof(R4DevStorageBlockQueueCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, storage_nvme_check) == 440u, "R4XStartR4Dev.storage_nvme_check offset mismatch");
+_Static_assert(sizeof(R4DevStorageNvmeCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }
