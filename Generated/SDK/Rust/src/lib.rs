@@ -1956,6 +1956,23 @@ pub const stack_fault_reason_growth_forbidden: u32 = 5;
 pub const stack_fault_reason_protection: u32 = 6;
 pub const stack_fault_reason_vm_guard: u32 = 7;
 pub const stack_fault_reason_continuation_headroom: u32 = 8;
+pub const kernel_heap_check_version: u32 = 1;
+pub const kernel_heap_check_status_unavailable: u32 = 0;
+pub const kernel_heap_check_status_passed: u32 = 1;
+pub const kernel_heap_check_status_failed: u32 = 2;
+pub const kernel_heap_check_status_busy: u32 = 3;
+pub const kernel_heap_check_status_cancelled: u32 = 4;
+pub const kernel_heap_check_flag_initialized: u32 = 1;
+pub const kernel_heap_check_flag_cleanup_complete: u32 = 2;
+pub const kernel_heap_check_case_none: u32 = 0;
+pub const kernel_heap_check_case_rust_allocator: u32 = 1;
+pub const kernel_heap_check_case_patterns: u32 = 2;
+pub const kernel_heap_check_case_alignment: u32 = 3;
+pub const kernel_heap_check_case_double_free: u32 = 4;
+pub const kernel_heap_check_case_churn: u32 = 5;
+pub const kernel_heap_check_case_acceptance: u32 = 6;
+pub const kernel_heap_check_case_resident_commit: u32 = 7;
+pub const kernel_heap_check_case_cleanup: u32 = 8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -15777,6 +15794,70 @@ impl Default for ProgramStackFaultInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelHeapCheck {
+    pub version: u32,
+    pub size: u32,
+    pub status: u32,
+    pub flags: u32,
+    pub cases_completed: u32,
+    pub failed_case: u32,
+    pub churn_ops: u32,
+    pub acceptance_iterations: u32,
+    pub cleanup_errors: u32,
+    pub reserved0: u32,
+    pub run_id: u64,
+    pub before_used_bytes: u64,
+    pub after_used_bytes: u64,
+    pub before_active_blocks: u64,
+    pub after_active_blocks: u64,
+    pub owned_allocations: u64,
+    pub owned_releases: u64,
+    pub owned_live_blocks: u64,
+    pub owned_live_bytes: u64,
+    pub peak_owned_bytes: u64,
+    pub owned_allocation_bytes: u64,
+    pub expected_double_free_errors: u64,
+    pub expected_vm_errors: u64,
+    pub vm_reservations: u64,
+    pub vm_releases: u64,
+    pub vm_live_reservations: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelHeapCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 168,
+            status: 0,
+            flags: 0,
+            cases_completed: 0,
+            failed_case: 0,
+            churn_ops: 0,
+            acceptance_iterations: 0,
+            cleanup_errors: 0,
+            reserved0: 0,
+            run_id: 0,
+            before_used_bytes: 0,
+            after_used_bytes: 0,
+            before_active_blocks: 0,
+            after_active_blocks: 0,
+            owned_allocations: 0,
+            owned_releases: 0,
+            owned_live_blocks: 0,
+            owned_live_bytes: 0,
+            peak_owned_bytes: 0,
+            owned_allocation_bytes: 0,
+            expected_double_free_errors: 0,
+            expected_vm_errors: 0,
+            vm_reservations: 0,
+            vm_releases: 0,
+            vm_live_reservations: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17127,6 +17208,7 @@ pub mod R4DevFns {
     pub type performance_lock = unsafe extern "C" fn(u32, *mut ProgramLockPerformanceInfo) -> i32;
     pub type performance_stack = unsafe extern "C" fn(u32, *mut ProgramStackPerformanceInfo) -> i32;
     pub type stack_fault = unsafe extern "C" fn(u32, *mut ProgramStackFaultInfo) -> i32;
+    pub type memory_kernel_heap_check = unsafe extern "C" fn(*mut ProgramKernelHeapCheck) -> i32;
 }
 
 #[repr(C)]
@@ -17184,14 +17266,15 @@ pub struct R4XStartR4Dev {
     pub performance_lock: usize,
     pub performance_stack: usize,
     pub stack_fault: usize,
+    pub memory_kernel_heap_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 14,
-            size: 400,
+            abi_version: 15,
+            size: 408,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17241,6 +17324,7 @@ impl Default for R4XStartR4Dev {
             performance_lock: 0,
             performance_stack: 0,
             stack_fault: 0,
+            memory_kernel_heap_check: 0,
         }
     }
 }
@@ -26620,6 +26704,34 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramStackFaultInfo, memory_tag) == 176);
     assert!(core::mem::size_of::<ProgramStackFaultInfo>() == 192);
     assert!(core::mem::align_of::<ProgramStackFaultInfo>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, status) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, flags) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, cases_completed) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, failed_case) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, churn_ops) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, acceptance_iterations) == 28);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, cleanup_errors) == 32);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, reserved0) == 36);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, run_id) == 40);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, before_used_bytes) == 48);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, after_used_bytes) == 56);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, before_active_blocks) == 64);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, after_active_blocks) == 72);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, owned_allocations) == 80);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, owned_releases) == 88);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, owned_live_blocks) == 96);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, owned_live_bytes) == 104);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, peak_owned_bytes) == 112);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, owned_allocation_bytes) == 120);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, expected_double_free_errors) == 128);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, expected_vm_errors) == 136);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, vm_reservations) == 144);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, vm_releases) == 152);
+    assert!(core::mem::offset_of!(ProgramKernelHeapCheck, vm_live_reservations) == 160);
+    assert!(core::mem::size_of::<ProgramKernelHeapCheck>() == 168);
+    assert!(core::mem::align_of::<ProgramKernelHeapCheck>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -27095,7 +27207,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_lock) == 376);
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_stack) == 384);
     assert!(core::mem::offset_of!(R4XStartR4Dev, stack_fault) == 392);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 400);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, memory_kernel_heap_check) == 400);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 408);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

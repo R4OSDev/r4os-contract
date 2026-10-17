@@ -5164,6 +5164,33 @@ comptime {
     if (@offsetOf(abi.ProgramStackFaultInfo, "image_base") != 160) @compileError("ProgramStackFaultInfo.image_base offset");
     if (@offsetOf(abi.ProgramStackFaultInfo, "image_bytes") != 168) @compileError("ProgramStackFaultInfo.image_bytes offset");
     if (@offsetOf(abi.ProgramStackFaultInfo, "memory_tag") != 176) @compileError("ProgramStackFaultInfo.memory_tag offset");
+    if (@sizeOf(abi.ProgramKernelHeapCheck) != 168) @compileError("ProgramKernelHeapCheck size");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "version") != 0) @compileError("ProgramKernelHeapCheck.version offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "size") != 4) @compileError("ProgramKernelHeapCheck.size offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "status") != 8) @compileError("ProgramKernelHeapCheck.status offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "flags") != 12) @compileError("ProgramKernelHeapCheck.flags offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "cases_completed") != 16) @compileError("ProgramKernelHeapCheck.cases_completed offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "failed_case") != 20) @compileError("ProgramKernelHeapCheck.failed_case offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "churn_ops") != 24) @compileError("ProgramKernelHeapCheck.churn_ops offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "acceptance_iterations") != 28) @compileError("ProgramKernelHeapCheck.acceptance_iterations offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "cleanup_errors") != 32) @compileError("ProgramKernelHeapCheck.cleanup_errors offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "reserved0") != 36) @compileError("ProgramKernelHeapCheck.reserved0 offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "run_id") != 40) @compileError("ProgramKernelHeapCheck.run_id offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "before_used_bytes") != 48) @compileError("ProgramKernelHeapCheck.before_used_bytes offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "after_used_bytes") != 56) @compileError("ProgramKernelHeapCheck.after_used_bytes offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "before_active_blocks") != 64) @compileError("ProgramKernelHeapCheck.before_active_blocks offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "after_active_blocks") != 72) @compileError("ProgramKernelHeapCheck.after_active_blocks offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "owned_allocations") != 80) @compileError("ProgramKernelHeapCheck.owned_allocations offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "owned_releases") != 88) @compileError("ProgramKernelHeapCheck.owned_releases offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "owned_live_blocks") != 96) @compileError("ProgramKernelHeapCheck.owned_live_blocks offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "owned_live_bytes") != 104) @compileError("ProgramKernelHeapCheck.owned_live_bytes offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "peak_owned_bytes") != 112) @compileError("ProgramKernelHeapCheck.peak_owned_bytes offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "owned_allocation_bytes") != 120) @compileError("ProgramKernelHeapCheck.owned_allocation_bytes offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "expected_double_free_errors") != 128) @compileError("ProgramKernelHeapCheck.expected_double_free_errors offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "expected_vm_errors") != 136) @compileError("ProgramKernelHeapCheck.expected_vm_errors offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "vm_reservations") != 144) @compileError("ProgramKernelHeapCheck.vm_reservations offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "vm_releases") != 152) @compileError("ProgramKernelHeapCheck.vm_releases offset");
+    if (@offsetOf(abi.ProgramKernelHeapCheck, "vm_live_reservations") != 160) @compileError("ProgramKernelHeapCheck.vm_live_reservations offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1264) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -5945,7 +5972,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 400) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 408) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -6040,6 +6067,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.performance_stack) != 8) @compileError("R4DevFns.performance_stack signature");
     if (@offsetOf(abi.R4XStartR4Dev, "stack_fault") != 392) @compileError("R4XStartR4Dev.stack_fault offset");
     if (@sizeOf(abi.R4DevFns.stack_fault) != 8) @compileError("R4DevFns.stack_fault signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "memory_kernel_heap_check") != 400) @compileError("R4XStartR4Dev.memory_kernel_heap_check offset");
+    if (@sizeOf(abi.R4DevFns.memory_kernel_heap_check) != 8) @compileError("R4DevFns.memory_kernel_heap_check signature");
 }
 
 test "generated API contract compiles" {}

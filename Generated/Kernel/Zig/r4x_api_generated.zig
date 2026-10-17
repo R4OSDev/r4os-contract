@@ -1952,6 +1952,23 @@ pub const stack_fault_reason_growth_forbidden: u32 = 5;
 pub const stack_fault_reason_protection: u32 = 6;
 pub const stack_fault_reason_vm_guard: u32 = 7;
 pub const stack_fault_reason_continuation_headroom: u32 = 8;
+pub const kernel_heap_check_version: u32 = 1;
+pub const kernel_heap_check_status_unavailable: u32 = 0;
+pub const kernel_heap_check_status_passed: u32 = 1;
+pub const kernel_heap_check_status_failed: u32 = 2;
+pub const kernel_heap_check_status_busy: u32 = 3;
+pub const kernel_heap_check_status_cancelled: u32 = 4;
+pub const kernel_heap_check_flag_initialized: u32 = 1;
+pub const kernel_heap_check_flag_cleanup_complete: u32 = 2;
+pub const kernel_heap_check_case_none: u32 = 0;
+pub const kernel_heap_check_case_rust_allocator: u32 = 1;
+pub const kernel_heap_check_case_patterns: u32 = 2;
+pub const kernel_heap_check_case_alignment: u32 = 3;
+pub const kernel_heap_check_case_double_free: u32 = 4;
+pub const kernel_heap_check_case_churn: u32 = 5;
+pub const kernel_heap_check_case_acceptance: u32 = 6;
+pub const kernel_heap_check_case_resident_commit: u32 = 7;
+pub const kernel_heap_check_case_cleanup: u32 = 8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8205,6 +8222,35 @@ pub const ProgramStackFaultInfo = extern struct {
     memory_tag: [16]u8 = .{0} ** 16,
 };
 
+pub const ProgramKernelHeapCheck = extern struct {
+    version: u32 = 1,
+    size: u32 = 168,
+    status: u32 = 0,
+    flags: u32 = 0,
+    cases_completed: u32 = 0,
+    failed_case: u32 = 0,
+    churn_ops: u32 = 0,
+    acceptance_iterations: u32 = 0,
+    cleanup_errors: u32 = 0,
+    reserved0: u32 = 0,
+    run_id: u64 = 0,
+    before_used_bytes: u64 = 0,
+    after_used_bytes: u64 = 0,
+    before_active_blocks: u64 = 0,
+    after_active_blocks: u64 = 0,
+    owned_allocations: u64 = 0,
+    owned_releases: u64 = 0,
+    owned_live_blocks: u64 = 0,
+    owned_live_bytes: u64 = 0,
+    peak_owned_bytes: u64 = 0,
+    owned_allocation_bytes: u64 = 0,
+    expected_double_free_errors: u64 = 0,
+    expected_vm_errors: u64 = 0,
+    vm_reservations: u64 = 0,
+    vm_releases: u64 = 0,
+    vm_live_reservations: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -9078,12 +9124,13 @@ pub const R4DevFns = struct {
     pub const performance_lock = *const fn (u32, *ProgramLockPerformanceInfo) callconv(.c) i32;
     pub const performance_stack = *const fn (u32, *ProgramStackPerformanceInfo) callconv(.c) i32;
     pub const stack_fault = *const fn (u32, *ProgramStackFaultInfo) callconv(.c) i32;
+    pub const memory_kernel_heap_check = *const fn (*ProgramKernelHeapCheck) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 14,
-    size: u32 = 400,
+    abi_version: u32 = 15,
+    size: u32 = 408,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9133,6 +9180,7 @@ pub const R4XStartR4Dev = extern struct {
     performance_lock: usize = 0,
     performance_stack: usize = 0,
     stack_fault: usize = 0,
+    memory_kernel_heap_check: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -9593,6 +9641,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 45, .offset = 376, .name = "performance_lock", .state = .function, .required = false },
     .{ .number = 46, .offset = 384, .name = "performance_stack", .state = .function, .required = false },
     .{ .number = 47, .offset = 392, .name = "stack_fault", .state = .function, .required = false },
+    .{ .number = 48, .offset = 400, .name = "memory_kernel_heap_check", .state = .function, .required = false },
 };
 
 comptime {
@@ -15063,6 +15112,34 @@ comptime {
     if (@offsetOf(ProgramStackFaultInfo, "image_base") != 160) @compileError("generated ABI offset drift: ProgramStackFaultInfo.image_base");
     if (@offsetOf(ProgramStackFaultInfo, "image_bytes") != 168) @compileError("generated ABI offset drift: ProgramStackFaultInfo.image_bytes");
     if (@offsetOf(ProgramStackFaultInfo, "memory_tag") != 176) @compileError("generated ABI offset drift: ProgramStackFaultInfo.memory_tag");
+    if (@sizeOf(ProgramKernelHeapCheck) != 168) @compileError("generated ABI size drift: ProgramKernelHeapCheck");
+    if (@alignOf(ProgramKernelHeapCheck) != 8) @compileError("generated ABI alignment drift: ProgramKernelHeapCheck");
+    if (@offsetOf(ProgramKernelHeapCheck, "version") != 0) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.version");
+    if (@offsetOf(ProgramKernelHeapCheck, "size") != 4) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.size");
+    if (@offsetOf(ProgramKernelHeapCheck, "status") != 8) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.status");
+    if (@offsetOf(ProgramKernelHeapCheck, "flags") != 12) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.flags");
+    if (@offsetOf(ProgramKernelHeapCheck, "cases_completed") != 16) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.cases_completed");
+    if (@offsetOf(ProgramKernelHeapCheck, "failed_case") != 20) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.failed_case");
+    if (@offsetOf(ProgramKernelHeapCheck, "churn_ops") != 24) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.churn_ops");
+    if (@offsetOf(ProgramKernelHeapCheck, "acceptance_iterations") != 28) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.acceptance_iterations");
+    if (@offsetOf(ProgramKernelHeapCheck, "cleanup_errors") != 32) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.cleanup_errors");
+    if (@offsetOf(ProgramKernelHeapCheck, "reserved0") != 36) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.reserved0");
+    if (@offsetOf(ProgramKernelHeapCheck, "run_id") != 40) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.run_id");
+    if (@offsetOf(ProgramKernelHeapCheck, "before_used_bytes") != 48) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.before_used_bytes");
+    if (@offsetOf(ProgramKernelHeapCheck, "after_used_bytes") != 56) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.after_used_bytes");
+    if (@offsetOf(ProgramKernelHeapCheck, "before_active_blocks") != 64) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.before_active_blocks");
+    if (@offsetOf(ProgramKernelHeapCheck, "after_active_blocks") != 72) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.after_active_blocks");
+    if (@offsetOf(ProgramKernelHeapCheck, "owned_allocations") != 80) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.owned_allocations");
+    if (@offsetOf(ProgramKernelHeapCheck, "owned_releases") != 88) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.owned_releases");
+    if (@offsetOf(ProgramKernelHeapCheck, "owned_live_blocks") != 96) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.owned_live_blocks");
+    if (@offsetOf(ProgramKernelHeapCheck, "owned_live_bytes") != 104) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.owned_live_bytes");
+    if (@offsetOf(ProgramKernelHeapCheck, "peak_owned_bytes") != 112) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.peak_owned_bytes");
+    if (@offsetOf(ProgramKernelHeapCheck, "owned_allocation_bytes") != 120) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.owned_allocation_bytes");
+    if (@offsetOf(ProgramKernelHeapCheck, "expected_double_free_errors") != 128) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.expected_double_free_errors");
+    if (@offsetOf(ProgramKernelHeapCheck, "expected_vm_errors") != 136) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.expected_vm_errors");
+    if (@offsetOf(ProgramKernelHeapCheck, "vm_reservations") != 144) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.vm_reservations");
+    if (@offsetOf(ProgramKernelHeapCheck, "vm_releases") != 152) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.vm_releases");
+    if (@offsetOf(ProgramKernelHeapCheck, "vm_live_reservations") != 160) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.vm_live_reservations");
     if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -15459,7 +15536,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 400) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 408) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -15508,6 +15585,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_lock") != 376) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_lock");
     if (@offsetOf(R4XStartR4Dev, "performance_stack") != 384) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_stack");
     if (@offsetOf(R4XStartR4Dev, "stack_fault") != 392) @compileError("generated ABI offset drift: R4XStartR4Dev.stack_fault");
+    if (@offsetOf(R4XStartR4Dev, "memory_kernel_heap_check") != 400) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_kernel_heap_check");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -16394,13 +16472,14 @@ pub const R4DevProvider = struct {
     performance_lock: ?R4DevFns.performance_lock = null,
     performance_stack: ?R4DevFns.performance_stack = null,
     stack_fault: ?R4DevFns.stack_fault = null,
+    memory_kernel_heap_check: ?R4DevFns.memory_kernel_heap_check = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 14,
-        .size = 400,
+        .abi_version = 15,
+        .size = 408,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -16450,5 +16529,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .performance_lock = if (provider.performance_lock) |callback| @intFromPtr(callback) else 0,
         .performance_stack = if (provider.performance_stack) |callback| @intFromPtr(callback) else 0,
         .stack_fault = if (provider.stack_fault) |callback| @intFromPtr(callback) else 0,
+        .memory_kernel_heap_check = if (provider.memory_kernel_heap_check) |callback| @intFromPtr(callback) else 0,
     };
 }

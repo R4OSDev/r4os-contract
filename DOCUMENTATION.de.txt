@@ -125,3 +125,15 @@ Owner-Lock oder Registryscan; Generationen stammen aus der vorhandenen
 Taskbindung. Verfuegbarkeitsflags unterscheiden fehlende Zuordnung von
 gemessenen Werten. Commitgroessen sind kein Hochwasser. Alte 438 Slots,
 308 Payloads und 1933 Konstanten bleiben unveraendert.
+
+R4DEV v15 / Kernelheap-Pruefung (0.84.11)
+---------------------------------------
+Der optionale Slot memory_kernel_heap_check erweitert das 400-Byte-
+Layoutpraefix auf 408 Bytes. ProgramKernelHeapCheck ist ein neuer fester
+168-Byte-v1-Datensatz. Bestehende Slots, Payloads und Konstanten behalten
+ihre Bedeutung. Die kontrollierte Baseline-Ergaenzung folgt einem expliziten
+Praefixvergleich; Packageversion 0.64.12, bestehende Baselineidentitaet bleibt.
+Eigene Allokationen und VM-Reservierungen bestimmen die Rueckgabebilanz;
+globale Vorher-/Nachher-Werte sind Beobachtungen. Absichtliche Double-Free-
+und VM-Fehler bleiben getrennt. Ein aktiver Lauf meldet Busy. Nicht quittierte
+Freigaben behalten ihre genaue Diagnoseidentitaet und sperren neue Laeufe.

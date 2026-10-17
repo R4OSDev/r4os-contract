@@ -1964,6 +1964,23 @@ extern "C" {
 #define R4OS_STACK_FAULT_REASON_PROTECTION 6u
 #define R4OS_STACK_FAULT_REASON_VM_GUARD 7u
 #define R4OS_STACK_FAULT_REASON_CONTINUATION_HEADROOM 8u
+#define R4OS_KERNEL_HEAP_CHECK_VERSION 1u
+#define R4OS_KERNEL_HEAP_CHECK_STATUS_UNAVAILABLE 0u
+#define R4OS_KERNEL_HEAP_CHECK_STATUS_PASSED 1u
+#define R4OS_KERNEL_HEAP_CHECK_STATUS_FAILED 2u
+#define R4OS_KERNEL_HEAP_CHECK_STATUS_BUSY 3u
+#define R4OS_KERNEL_HEAP_CHECK_STATUS_CANCELLED 4u
+#define R4OS_KERNEL_HEAP_CHECK_FLAG_INITIALIZED 1u
+#define R4OS_KERNEL_HEAP_CHECK_FLAG_CLEANUP_COMPLETE 2u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_NONE 0u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_RUST_ALLOCATOR 1u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_PATTERNS 2u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_ALIGNMENT 3u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_DOUBLE_FREE 4u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_CHURN 5u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_ACCEPTANCE 6u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_RESIDENT_COMMIT 7u
+#define R4OS_KERNEL_HEAP_CHECK_CASE_CLEANUP 8u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2714,6 +2731,7 @@ typedef struct R4ProgramInstrumentationInfo R4ProgramInstrumentationInfo;
 typedef struct R4ProgramLockPerformanceInfo R4ProgramLockPerformanceInfo;
 typedef struct R4ProgramStackPerformanceInfo R4ProgramStackPerformanceInfo;
 typedef struct R4ProgramStackFaultInfo R4ProgramStackFaultInfo;
+typedef struct R4ProgramKernelHeapCheck R4ProgramKernelHeapCheck;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8458,6 +8476,35 @@ typedef struct R4ProgramStackFaultInfo {
     uint8_t memory_tag[16];
 } R4ProgramStackFaultInfo;
 
+typedef struct R4ProgramKernelHeapCheck {
+    uint32_t version;
+    uint32_t size;
+    uint32_t status;
+    uint32_t flags;
+    uint32_t cases_completed;
+    uint32_t failed_case;
+    uint32_t churn_ops;
+    uint32_t acceptance_iterations;
+    uint32_t cleanup_errors;
+    uint32_t reserved0;
+    uint64_t run_id;
+    uint64_t before_used_bytes;
+    uint64_t after_used_bytes;
+    uint64_t before_active_blocks;
+    uint64_t after_active_blocks;
+    uint64_t owned_allocations;
+    uint64_t owned_releases;
+    uint64_t owned_live_blocks;
+    uint64_t owned_live_bytes;
+    uint64_t peak_owned_bytes;
+    uint64_t owned_allocation_bytes;
+    uint64_t expected_double_free_errors;
+    uint64_t expected_vm_errors;
+    uint64_t vm_reservations;
+    uint64_t vm_releases;
+    uint64_t vm_live_reservations;
+} R4ProgramKernelHeapCheck;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9366,6 +9413,7 @@ typedef int32_t (*R4DevPerformanceInstrumentationFn)(R4ProgramInstrumentationInf
 typedef int32_t (*R4DevPerformanceLockFn)(uint32_t index, R4ProgramLockPerformanceInfo * out);
 typedef int32_t (*R4DevPerformanceStackFn)(uint32_t index, R4ProgramStackPerformanceInfo * out);
 typedef int32_t (*R4DevStackFaultFn)(uint32_t index, R4ProgramStackFaultInfo * out);
+typedef int32_t (*R4DevMemoryKernelHeapCheckFn)(R4ProgramKernelHeapCheck * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9420,6 +9468,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_lock;
     uintptr_t performance_stack;
     uintptr_t stack_fault;
+    uintptr_t memory_kernel_heap_check;
 } R4XStartR4Dev;
 
 
@@ -14586,6 +14635,33 @@ _Static_assert(offsetof(R4ProgramStackFaultInfo, stack_top) == 152u, "ProgramSta
 _Static_assert(offsetof(R4ProgramStackFaultInfo, image_base) == 160u, "ProgramStackFaultInfo.image_base offset mismatch");
 _Static_assert(offsetof(R4ProgramStackFaultInfo, image_bytes) == 168u, "ProgramStackFaultInfo.image_bytes offset mismatch");
 _Static_assert(offsetof(R4ProgramStackFaultInfo, memory_tag) == 176u, "ProgramStackFaultInfo.memory_tag offset mismatch");
+_Static_assert(sizeof(R4ProgramKernelHeapCheck) == 168u, "ProgramKernelHeapCheck size mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, version) == 0u, "ProgramKernelHeapCheck.version offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, size) == 4u, "ProgramKernelHeapCheck.size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, status) == 8u, "ProgramKernelHeapCheck.status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, flags) == 12u, "ProgramKernelHeapCheck.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, cases_completed) == 16u, "ProgramKernelHeapCheck.cases_completed offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, failed_case) == 20u, "ProgramKernelHeapCheck.failed_case offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, churn_ops) == 24u, "ProgramKernelHeapCheck.churn_ops offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, acceptance_iterations) == 28u, "ProgramKernelHeapCheck.acceptance_iterations offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, cleanup_errors) == 32u, "ProgramKernelHeapCheck.cleanup_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, reserved0) == 36u, "ProgramKernelHeapCheck.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, run_id) == 40u, "ProgramKernelHeapCheck.run_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, before_used_bytes) == 48u, "ProgramKernelHeapCheck.before_used_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, after_used_bytes) == 56u, "ProgramKernelHeapCheck.after_used_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, before_active_blocks) == 64u, "ProgramKernelHeapCheck.before_active_blocks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, after_active_blocks) == 72u, "ProgramKernelHeapCheck.after_active_blocks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, owned_allocations) == 80u, "ProgramKernelHeapCheck.owned_allocations offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, owned_releases) == 88u, "ProgramKernelHeapCheck.owned_releases offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, owned_live_blocks) == 96u, "ProgramKernelHeapCheck.owned_live_blocks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, owned_live_bytes) == 104u, "ProgramKernelHeapCheck.owned_live_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, peak_owned_bytes) == 112u, "ProgramKernelHeapCheck.peak_owned_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, owned_allocation_bytes) == 120u, "ProgramKernelHeapCheck.owned_allocation_bytes offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, expected_double_free_errors) == 128u, "ProgramKernelHeapCheck.expected_double_free_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, expected_vm_errors) == 136u, "ProgramKernelHeapCheck.expected_vm_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, vm_reservations) == 144u, "ProgramKernelHeapCheck.vm_reservations offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, vm_releases) == 152u, "ProgramKernelHeapCheck.vm_releases offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelHeapCheck, vm_live_reservations) == 160u, "ProgramKernelHeapCheck.vm_live_reservations offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15367,7 +15443,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 400u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 408u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15462,6 +15538,8 @@ _Static_assert(offsetof(R4XStartR4Dev, performance_stack) == 384u, "R4XStartR4De
 _Static_assert(sizeof(R4DevPerformanceStackFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, stack_fault) == 392u, "R4XStartR4Dev.stack_fault offset mismatch");
 _Static_assert(sizeof(R4DevStackFaultFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, memory_kernel_heap_check) == 400u, "R4XStartR4Dev.memory_kernel_heap_check offset mismatch");
+_Static_assert(sizeof(R4DevMemoryKernelHeapCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

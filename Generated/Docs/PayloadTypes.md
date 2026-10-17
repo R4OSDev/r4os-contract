@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 309 von 309 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 310 von 310 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1951; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1968; Limits: 109
 
 ## App-Profile
 
@@ -330,6 +330,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramLockPerformanceInfo` | extensible | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
 | `ProgramStackPerformanceInfo` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 | `ProgramStackFaultInfo` | extensible | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
+| `ProgramKernelHeapCheck` | fixed_layout | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
 
 ## Typdetails
 
@@ -8231,6 +8232,42 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `image_bytes` | 168 | 8 | 8 | `u64` | - |
 | `memory_tag` | 176 | 16 | 1 | `[16]u8` | - |
 
+### `ProgramKernelHeapCheck`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 168 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `status` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `cases_completed` | 16 | 4 | 4 | `u32` | - |
+| `failed_case` | 20 | 4 | 4 | `u32` | - |
+| `churn_ops` | 24 | 4 | 4 | `u32` | - |
+| `acceptance_iterations` | 28 | 4 | 4 | `u32` | - |
+| `cleanup_errors` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `run_id` | 40 | 8 | 8 | `u64` | - |
+| `before_used_bytes` | 48 | 8 | 8 | `u64` | - |
+| `after_used_bytes` | 56 | 8 | 8 | `u64` | - |
+| `before_active_blocks` | 64 | 8 | 8 | `u64` | - |
+| `after_active_blocks` | 72 | 8 | 8 | `u64` | - |
+| `owned_allocations` | 80 | 8 | 8 | `u64` | - |
+| `owned_releases` | 88 | 8 | 8 | `u64` | - |
+| `owned_live_blocks` | 96 | 8 | 8 | `u64` | - |
+| `owned_live_bytes` | 104 | 8 | 8 | `u64` | - |
+| `peak_owned_bytes` | 112 | 8 | 8 | `u64` | - |
+| `owned_allocation_bytes` | 120 | 8 | 8 | `u64` | - |
+| `expected_double_free_errors` | 128 | 8 | 8 | `u64` | - |
+| `expected_vm_errors` | 136 | 8 | 8 | `u64` | - |
+| `vm_reservations` | 144 | 8 | 8 | `u64` | - |
+| `vm_releases` | 152 | 8 | 8 | `u64` | - |
+| `vm_live_reservations` | 160 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -10921,6 +10958,23 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `stack_fault_reason_protection` | `6` | `u32` | value | number | `stack_fault` | fixed_contract |
 | `stack_fault_reason_vm_guard` | `7` | `u32` | value | number | `stack_fault` | fixed_contract |
 | `stack_fault_reason_continuation_headroom` | `8` | `u32` | value | number | `stack_fault` | fixed_contract |
+| `kernel_heap_check_version` | `1` | `u32` | version | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_status_unavailable` | `0` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_status_passed` | `1` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_status_failed` | `2` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_status_busy` | `3` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_status_cancelled` | `4` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_flag_initialized` | `1` | `u32` | flag | bitmask | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_flag_cleanup_complete` | `2` | `u32` | flag | bitmask | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_none` | `0` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_rust_allocator` | `1` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_patterns` | `2` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_alignment` | `3` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_double_free` | `4` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_churn` | `5` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_acceptance` | `6` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_resident_commit` | `7` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_heap_check_case_cleanup` | `8` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
 
 ## Limits
 
