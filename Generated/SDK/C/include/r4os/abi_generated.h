@@ -1999,6 +1999,28 @@ extern "C" {
 #define R4OS_KERNEL_SCHEDULER_CHECK_ISOLATED_TIMEOUT_BATCH_64 2u
 #define R4OS_KERNEL_SCHEDULER_CHECK_ISOLATED_RESERVE_OOM 4u
 #define R4OS_KERNEL_SCHEDULER_CHECK_ISOLATED_PRIORITY_BOOT 8u
+#define R4OS_KERNEL_SMP_CHECK_VERSION 1u
+#define R4OS_KERNEL_SMP_CHECK_STATUS_UNAVAILABLE 0u
+#define R4OS_KERNEL_SMP_CHECK_STATUS_PASSED 1u
+#define R4OS_KERNEL_SMP_CHECK_STATUS_FAILED 2u
+#define R4OS_KERNEL_SMP_CHECK_STATUS_BUSY 3u
+#define R4OS_KERNEL_SMP_CHECK_STATUS_CANCELLED 4u
+#define R4OS_KERNEL_SMP_CHECK_FLAG_WORK_COMPLETE 1u
+#define R4OS_KERNEL_SMP_CHECK_FLAG_CLEANUP_COMPLETE 2u
+#define R4OS_KERNEL_SMP_CHECK_ISOLATED_TLB_TIMEOUT 1u
+#define R4OS_KERNEL_SMP_CHECK_ISOLATED_BOOT_EXTRAS 2u
+#define R4OS_KERNEL_SMP_CHECK_STAGE_NONE 0u
+#define R4OS_KERNEL_SMP_CHECK_STAGE_MAPPING 1u
+#define R4OS_KERNEL_SMP_CHECK_STAGE_WORKERS 2u
+#define R4OS_KERNEL_SMP_CHECK_STAGE_TLB 3u
+#define R4OS_KERNEL_SMP_CHECK_STAGE_CLOCK 4u
+#define R4OS_KERNEL_SMP_CHECK_STAGE_OWNER 5u
+#define R4OS_KERNEL_SMP_CHECK_STAGE_CLEANUP 6u
+#define R4OS_SMP_TLB_SNAPSHOT_VERSION 1u
+#define R4OS_SMP_TLB_SNAPSHOT_FLAG_CLOCK_AVAILABLE 1u
+#define R4OS_SMP_TLB_SNAPSHOT_FLAG_TLB_REGISTERED 2u
+#define R4OS_SMP_TLB_SNAPSHOT_FLAG_ISOLATED_INJECTION 4u
+#define R4OS_KERNEL_SMP_CHECK_FLAG_PARTIAL_SNAPSHOT 4u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2751,6 +2773,8 @@ typedef struct R4ProgramStackPerformanceInfo R4ProgramStackPerformanceInfo;
 typedef struct R4ProgramStackFaultInfo R4ProgramStackFaultInfo;
 typedef struct R4ProgramKernelHeapCheck R4ProgramKernelHeapCheck;
 typedef struct R4ProgramKernelSchedulerCheck R4ProgramKernelSchedulerCheck;
+typedef struct R4ProgramKernelSmpCheck R4ProgramKernelSmpCheck;
+typedef struct R4ProgramSmpTlbSnapshot R4ProgramSmpTlbSnapshot;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8549,6 +8573,75 @@ typedef struct R4ProgramKernelSchedulerCheck {
     uint64_t unwind_checks;
 } R4ProgramKernelSchedulerCheck;
 
+typedef struct R4ProgramKernelSmpCheck {
+    uint32_t version;
+    uint32_t size;
+    uint32_t status;
+    uint32_t flags;
+    uint32_t online_count;
+    uint32_t fail_stage;
+    uint32_t worker_failures;
+    uint32_t clock_regressions;
+    uint32_t tlb_failures;
+    uint32_t owner_failures;
+    uint32_t cleanup_errors;
+    uint32_t isolated_mask;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint64_t run_id;
+    uint64_t online_mask;
+    uint64_t placement_mask;
+    uint64_t observed_mask;
+    uint64_t tlb_ready_mask;
+    uint64_t tlb_updated_mask;
+    uint64_t owner_done_mask;
+    uint64_t expected_checksum;
+    uint64_t actual_checksum;
+    uint64_t tlb_generation;
+    uint64_t tlb_target_mask;
+    uint64_t tlb_acknowledgement_mask;
+    uint64_t tlb_offline_mask;
+    uint64_t clock_registered_mask;
+    uint64_t tasks_created;
+    uint64_t tasks_reaped;
+    uint64_t retained_task_count;
+    uint64_t retained_frame_count;
+    uint64_t retained_allocation_count;
+    uint64_t mutex_operations;
+    uint64_t retained_range_count;
+} R4ProgramKernelSmpCheck;
+
+typedef struct R4ProgramSmpTlbSnapshot {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t online_count;
+    uint32_t schedulable_count;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t clock_flags;
+    uint32_t clock_fallback_reason;
+    uint32_t reserved0;
+    uint64_t online_mask;
+    uint64_t schedulable_mask;
+    uint64_t clock_registered_mask;
+    uint64_t clock_frequency_hz;
+    uint64_t clock_resolution_ns;
+    uint64_t max_cpu_skew_ns;
+    uint64_t calibration_error_ppm;
+    uint64_t tlb_requests;
+    uint64_t tlb_successes;
+    uint64_t tlb_timeouts;
+    uint64_t tlb_expected_timeouts;
+    uint64_t tlb_ipis_sent;
+    uint64_t tlb_acknowledgements;
+    uint64_t tlb_offline_exclusions;
+    uint64_t tlb_local_page_flushes;
+    uint64_t tlb_local_full_reloads;
+    uint64_t tlb_max_wait_spins;
+    uint64_t tlb_generation;
+} R4ProgramSmpTlbSnapshot;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9459,6 +9552,8 @@ typedef int32_t (*R4DevPerformanceStackFn)(uint32_t index, R4ProgramStackPerform
 typedef int32_t (*R4DevStackFaultFn)(uint32_t index, R4ProgramStackFaultInfo * out);
 typedef int32_t (*R4DevMemoryKernelHeapCheckFn)(R4ProgramKernelHeapCheck * out);
 typedef int32_t (*R4DevSchedulerKernelCheckFn)(uint32_t selection, R4ProgramKernelSchedulerCheck * out);
+typedef int32_t (*R4DevSmpKernelCheckFn)(R4ProgramKernelSmpCheck * out);
+typedef int32_t (*R4DevPerformanceSmpTlbFn)(R4ProgramSmpTlbSnapshot * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9515,6 +9610,8 @@ typedef struct R4XStartR4Dev {
     uintptr_t stack_fault;
     uintptr_t memory_kernel_heap_check;
     uintptr_t scheduler_kernel_check;
+    uintptr_t smp_kernel_check;
+    uintptr_t performance_smp_tlb;
 } R4XStartR4Dev;
 
 
@@ -14731,6 +14828,71 @@ _Static_assert(offsetof(R4ProgramKernelSchedulerCheck, if_checks) == 96u, "Progr
 _Static_assert(offsetof(R4ProgramKernelSchedulerCheck, deadline_tasks) == 104u, "ProgramKernelSchedulerCheck.deadline_tasks offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelSchedulerCheck, role_mask) == 112u, "ProgramKernelSchedulerCheck.role_mask offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelSchedulerCheck, unwind_checks) == 120u, "ProgramKernelSchedulerCheck.unwind_checks offset mismatch");
+_Static_assert(sizeof(R4ProgramKernelSmpCheck) == 224u, "ProgramKernelSmpCheck size mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, version) == 0u, "ProgramKernelSmpCheck.version offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, size) == 4u, "ProgramKernelSmpCheck.size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, status) == 8u, "ProgramKernelSmpCheck.status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, flags) == 12u, "ProgramKernelSmpCheck.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, online_count) == 16u, "ProgramKernelSmpCheck.online_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, fail_stage) == 20u, "ProgramKernelSmpCheck.fail_stage offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, worker_failures) == 24u, "ProgramKernelSmpCheck.worker_failures offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, clock_regressions) == 28u, "ProgramKernelSmpCheck.clock_regressions offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tlb_failures) == 32u, "ProgramKernelSmpCheck.tlb_failures offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, owner_failures) == 36u, "ProgramKernelSmpCheck.owner_failures offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, cleanup_errors) == 40u, "ProgramKernelSmpCheck.cleanup_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, isolated_mask) == 44u, "ProgramKernelSmpCheck.isolated_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, clock_source) == 48u, "ProgramKernelSmpCheck.clock_source offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, clock_generation) == 52u, "ProgramKernelSmpCheck.clock_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, run_id) == 56u, "ProgramKernelSmpCheck.run_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, online_mask) == 64u, "ProgramKernelSmpCheck.online_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, placement_mask) == 72u, "ProgramKernelSmpCheck.placement_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, observed_mask) == 80u, "ProgramKernelSmpCheck.observed_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tlb_ready_mask) == 88u, "ProgramKernelSmpCheck.tlb_ready_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tlb_updated_mask) == 96u, "ProgramKernelSmpCheck.tlb_updated_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, owner_done_mask) == 104u, "ProgramKernelSmpCheck.owner_done_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, expected_checksum) == 112u, "ProgramKernelSmpCheck.expected_checksum offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, actual_checksum) == 120u, "ProgramKernelSmpCheck.actual_checksum offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tlb_generation) == 128u, "ProgramKernelSmpCheck.tlb_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tlb_target_mask) == 136u, "ProgramKernelSmpCheck.tlb_target_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tlb_acknowledgement_mask) == 144u, "ProgramKernelSmpCheck.tlb_acknowledgement_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tlb_offline_mask) == 152u, "ProgramKernelSmpCheck.tlb_offline_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, clock_registered_mask) == 160u, "ProgramKernelSmpCheck.clock_registered_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tasks_created) == 168u, "ProgramKernelSmpCheck.tasks_created offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, tasks_reaped) == 176u, "ProgramKernelSmpCheck.tasks_reaped offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, retained_task_count) == 184u, "ProgramKernelSmpCheck.retained_task_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, retained_frame_count) == 192u, "ProgramKernelSmpCheck.retained_frame_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, retained_allocation_count) == 200u, "ProgramKernelSmpCheck.retained_allocation_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, mutex_operations) == 208u, "ProgramKernelSmpCheck.mutex_operations offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSmpCheck, retained_range_count) == 216u, "ProgramKernelSmpCheck.retained_range_count offset mismatch");
+_Static_assert(sizeof(R4ProgramSmpTlbSnapshot) == 184u, "ProgramSmpTlbSnapshot size mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, version) == 0u, "ProgramSmpTlbSnapshot.version offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, size) == 4u, "ProgramSmpTlbSnapshot.size offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, flags) == 8u, "ProgramSmpTlbSnapshot.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, online_count) == 12u, "ProgramSmpTlbSnapshot.online_count offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, schedulable_count) == 16u, "ProgramSmpTlbSnapshot.schedulable_count offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, clock_source) == 20u, "ProgramSmpTlbSnapshot.clock_source offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, clock_generation) == 24u, "ProgramSmpTlbSnapshot.clock_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, clock_flags) == 28u, "ProgramSmpTlbSnapshot.clock_flags offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, clock_fallback_reason) == 32u, "ProgramSmpTlbSnapshot.clock_fallback_reason offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, reserved0) == 36u, "ProgramSmpTlbSnapshot.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, online_mask) == 40u, "ProgramSmpTlbSnapshot.online_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, schedulable_mask) == 48u, "ProgramSmpTlbSnapshot.schedulable_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, clock_registered_mask) == 56u, "ProgramSmpTlbSnapshot.clock_registered_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, clock_frequency_hz) == 64u, "ProgramSmpTlbSnapshot.clock_frequency_hz offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, clock_resolution_ns) == 72u, "ProgramSmpTlbSnapshot.clock_resolution_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, max_cpu_skew_ns) == 80u, "ProgramSmpTlbSnapshot.max_cpu_skew_ns offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, calibration_error_ppm) == 88u, "ProgramSmpTlbSnapshot.calibration_error_ppm offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_requests) == 96u, "ProgramSmpTlbSnapshot.tlb_requests offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_successes) == 104u, "ProgramSmpTlbSnapshot.tlb_successes offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_timeouts) == 112u, "ProgramSmpTlbSnapshot.tlb_timeouts offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_expected_timeouts) == 120u, "ProgramSmpTlbSnapshot.tlb_expected_timeouts offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_ipis_sent) == 128u, "ProgramSmpTlbSnapshot.tlb_ipis_sent offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_acknowledgements) == 136u, "ProgramSmpTlbSnapshot.tlb_acknowledgements offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_offline_exclusions) == 144u, "ProgramSmpTlbSnapshot.tlb_offline_exclusions offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_local_page_flushes) == 152u, "ProgramSmpTlbSnapshot.tlb_local_page_flushes offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_local_full_reloads) == 160u, "ProgramSmpTlbSnapshot.tlb_local_full_reloads offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_max_wait_spins) == 168u, "ProgramSmpTlbSnapshot.tlb_max_wait_spins offset mismatch");
+_Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_generation) == 176u, "ProgramSmpTlbSnapshot.tlb_generation offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15512,7 +15674,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 416u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 432u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15611,6 +15773,10 @@ _Static_assert(offsetof(R4XStartR4Dev, memory_kernel_heap_check) == 400u, "R4XSt
 _Static_assert(sizeof(R4DevMemoryKernelHeapCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, scheduler_kernel_check) == 408u, "R4XStartR4Dev.scheduler_kernel_check offset mismatch");
 _Static_assert(sizeof(R4DevSchedulerKernelCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, smp_kernel_check) == 416u, "R4XStartR4Dev.smp_kernel_check offset mismatch");
+_Static_assert(sizeof(R4DevSmpKernelCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, performance_smp_tlb) == 424u, "R4XStartR4Dev.performance_smp_tlb offset mismatch");
+_Static_assert(sizeof(R4DevPerformanceSmpTlbFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

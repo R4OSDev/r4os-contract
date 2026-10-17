@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 311 von 311 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 313 von 313 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1986; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2008; Limits: 109
 
 ## App-Profile
 
@@ -332,6 +332,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramStackFaultInfo` | extensible | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
 | `ProgramKernelHeapCheck` | fixed_layout | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
 | `ProgramKernelSchedulerCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `ProgramKernelSmpCheck` | fixed_layout | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
+| `ProgramSmpTlbSnapshot` | fixed_layout | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
 
 ## Typdetails
 
@@ -8301,6 +8303,89 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `role_mask` | 112 | 8 | 8 | `u64` | - |
 | `unwind_checks` | 120 | 8 | 8 | `u64` | - |
 
+### `ProgramKernelSmpCheck`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 224 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `status` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `online_count` | 16 | 4 | 4 | `u32` | - |
+| `fail_stage` | 20 | 4 | 4 | `u32` | - |
+| `worker_failures` | 24 | 4 | 4 | `u32` | - |
+| `clock_regressions` | 28 | 4 | 4 | `u32` | - |
+| `tlb_failures` | 32 | 4 | 4 | `u32` | - |
+| `owner_failures` | 36 | 4 | 4 | `u32` | - |
+| `cleanup_errors` | 40 | 4 | 4 | `u32` | - |
+| `isolated_mask` | 44 | 4 | 4 | `u32` | - |
+| `clock_source` | 48 | 4 | 4 | `u32` | - |
+| `clock_generation` | 52 | 4 | 4 | `u32` | - |
+| `run_id` | 56 | 8 | 8 | `u64` | - |
+| `online_mask` | 64 | 8 | 8 | `u64` | - |
+| `placement_mask` | 72 | 8 | 8 | `u64` | - |
+| `observed_mask` | 80 | 8 | 8 | `u64` | - |
+| `tlb_ready_mask` | 88 | 8 | 8 | `u64` | - |
+| `tlb_updated_mask` | 96 | 8 | 8 | `u64` | - |
+| `owner_done_mask` | 104 | 8 | 8 | `u64` | - |
+| `expected_checksum` | 112 | 8 | 8 | `u64` | - |
+| `actual_checksum` | 120 | 8 | 8 | `u64` | - |
+| `tlb_generation` | 128 | 8 | 8 | `u64` | - |
+| `tlb_target_mask` | 136 | 8 | 8 | `u64` | - |
+| `tlb_acknowledgement_mask` | 144 | 8 | 8 | `u64` | - |
+| `tlb_offline_mask` | 152 | 8 | 8 | `u64` | - |
+| `clock_registered_mask` | 160 | 8 | 8 | `u64` | - |
+| `tasks_created` | 168 | 8 | 8 | `u64` | - |
+| `tasks_reaped` | 176 | 8 | 8 | `u64` | - |
+| `retained_task_count` | 184 | 8 | 8 | `u64` | - |
+| `retained_frame_count` | 192 | 8 | 8 | `u64` | - |
+| `retained_allocation_count` | 200 | 8 | 8 | `u64` | - |
+| `mutex_operations` | 208 | 8 | 8 | `u64` | - |
+| `retained_range_count` | 216 | 8 | 8 | `u64` | - |
+
+### `ProgramSmpTlbSnapshot`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 184 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `online_count` | 12 | 4 | 4 | `u32` | - |
+| `schedulable_count` | 16 | 4 | 4 | `u32` | - |
+| `clock_source` | 20 | 4 | 4 | `u32` | - |
+| `clock_generation` | 24 | 4 | 4 | `u32` | - |
+| `clock_flags` | 28 | 4 | 4 | `u32` | - |
+| `clock_fallback_reason` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `online_mask` | 40 | 8 | 8 | `u64` | - |
+| `schedulable_mask` | 48 | 8 | 8 | `u64` | - |
+| `clock_registered_mask` | 56 | 8 | 8 | `u64` | - |
+| `clock_frequency_hz` | 64 | 8 | 8 | `u64` | - |
+| `clock_resolution_ns` | 72 | 8 | 8 | `u64` | - |
+| `max_cpu_skew_ns` | 80 | 8 | 8 | `u64` | - |
+| `calibration_error_ppm` | 88 | 8 | 8 | `u64` | - |
+| `tlb_requests` | 96 | 8 | 8 | `u64` | - |
+| `tlb_successes` | 104 | 8 | 8 | `u64` | - |
+| `tlb_timeouts` | 112 | 8 | 8 | `u64` | - |
+| `tlb_expected_timeouts` | 120 | 8 | 8 | `u64` | - |
+| `tlb_ipis_sent` | 128 | 8 | 8 | `u64` | - |
+| `tlb_acknowledgements` | 136 | 8 | 8 | `u64` | - |
+| `tlb_offline_exclusions` | 144 | 8 | 8 | `u64` | - |
+| `tlb_local_page_flushes` | 152 | 8 | 8 | `u64` | - |
+| `tlb_local_full_reloads` | 160 | 8 | 8 | `u64` | - |
+| `tlb_max_wait_spins` | 168 | 8 | 8 | `u64` | - |
+| `tlb_generation` | 176 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11026,6 +11111,28 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `kernel_scheduler_check_isolated_timeout_batch_64` | `2` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
 | `kernel_scheduler_check_isolated_reserve_oom` | `4` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
 | `kernel_scheduler_check_isolated_priority_boot` | `8` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_smp_check_version` | `1` | `u32` | version | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_status_unavailable` | `0` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_status_passed` | `1` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_status_failed` | `2` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_status_busy` | `3` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_status_cancelled` | `4` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_flag_work_complete` | `1` | `u32` | flag | bitmask | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_flag_cleanup_complete` | `2` | `u32` | flag | bitmask | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_isolated_tlb_timeout` | `1` | `u32` | flag | bitmask | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_isolated_boot_extras` | `2` | `u32` | flag | bitmask | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_stage_none` | `0` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_stage_mapping` | `1` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_stage_workers` | `2` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_stage_tlb` | `3` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_stage_clock` | `4` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_stage_owner` | `5` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `kernel_smp_check_stage_cleanup` | `6` | `u32` | value | number | `kernel_smp_check` | fixed_contract |
+| `smp_tlb_snapshot_version` | `1` | `u32` | version | number | `smp_tlb_snapshot` | fixed_contract |
+| `smp_tlb_snapshot_flag_clock_available` | `1` | `u32` | flag | bitmask | `smp_tlb_snapshot` | fixed_contract |
+| `smp_tlb_snapshot_flag_tlb_registered` | `2` | `u32` | flag | bitmask | `smp_tlb_snapshot` | fixed_contract |
+| `smp_tlb_snapshot_flag_isolated_injection` | `4` | `u32` | flag | bitmask | `smp_tlb_snapshot` | fixed_contract |
+| `kernel_smp_check_flag_partial_snapshot` | `4` | `u32` | flag | bitmask | `kernel_smp_check` | fixed_contract |
 
 ## Limits
 

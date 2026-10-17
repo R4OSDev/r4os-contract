@@ -1991,6 +1991,28 @@ pub const kernel_scheduler_check_isolated_timer_reprogram: u32 = 1;
 pub const kernel_scheduler_check_isolated_timeout_batch_64: u32 = 2;
 pub const kernel_scheduler_check_isolated_reserve_oom: u32 = 4;
 pub const kernel_scheduler_check_isolated_priority_boot: u32 = 8;
+pub const kernel_smp_check_version: u32 = 1;
+pub const kernel_smp_check_status_unavailable: u32 = 0;
+pub const kernel_smp_check_status_passed: u32 = 1;
+pub const kernel_smp_check_status_failed: u32 = 2;
+pub const kernel_smp_check_status_busy: u32 = 3;
+pub const kernel_smp_check_status_cancelled: u32 = 4;
+pub const kernel_smp_check_flag_work_complete: u32 = 1;
+pub const kernel_smp_check_flag_cleanup_complete: u32 = 2;
+pub const kernel_smp_check_isolated_tlb_timeout: u32 = 1;
+pub const kernel_smp_check_isolated_boot_extras: u32 = 2;
+pub const kernel_smp_check_stage_none: u32 = 0;
+pub const kernel_smp_check_stage_mapping: u32 = 1;
+pub const kernel_smp_check_stage_workers: u32 = 2;
+pub const kernel_smp_check_stage_tlb: u32 = 3;
+pub const kernel_smp_check_stage_clock: u32 = 4;
+pub const kernel_smp_check_stage_owner: u32 = 5;
+pub const kernel_smp_check_stage_cleanup: u32 = 6;
+pub const smp_tlb_snapshot_version: u32 = 1;
+pub const smp_tlb_snapshot_flag_clock_available: u32 = 1;
+pub const smp_tlb_snapshot_flag_tlb_registered: u32 = 2;
+pub const smp_tlb_snapshot_flag_isolated_injection: u32 = 4;
+pub const kernel_smp_check_flag_partial_snapshot: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -15932,6 +15954,156 @@ impl Default for ProgramKernelSchedulerCheck {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelSmpCheck {
+    pub version: u32,
+    pub size: u32,
+    pub status: u32,
+    pub flags: u32,
+    pub online_count: u32,
+    pub fail_stage: u32,
+    pub worker_failures: u32,
+    pub clock_regressions: u32,
+    pub tlb_failures: u32,
+    pub owner_failures: u32,
+    pub cleanup_errors: u32,
+    pub isolated_mask: u32,
+    pub clock_source: u32,
+    pub clock_generation: u32,
+    pub run_id: u64,
+    pub online_mask: u64,
+    pub placement_mask: u64,
+    pub observed_mask: u64,
+    pub tlb_ready_mask: u64,
+    pub tlb_updated_mask: u64,
+    pub owner_done_mask: u64,
+    pub expected_checksum: u64,
+    pub actual_checksum: u64,
+    pub tlb_generation: u64,
+    pub tlb_target_mask: u64,
+    pub tlb_acknowledgement_mask: u64,
+    pub tlb_offline_mask: u64,
+    pub clock_registered_mask: u64,
+    pub tasks_created: u64,
+    pub tasks_reaped: u64,
+    pub retained_task_count: u64,
+    pub retained_frame_count: u64,
+    pub retained_allocation_count: u64,
+    pub mutex_operations: u64,
+    pub retained_range_count: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelSmpCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 224,
+            status: 0,
+            flags: 0,
+            online_count: 0,
+            fail_stage: 0,
+            worker_failures: 0,
+            clock_regressions: 0,
+            tlb_failures: 0,
+            owner_failures: 0,
+            cleanup_errors: 0,
+            isolated_mask: 3,
+            clock_source: 0,
+            clock_generation: 0,
+            run_id: 0,
+            online_mask: 0,
+            placement_mask: 0,
+            observed_mask: 0,
+            tlb_ready_mask: 0,
+            tlb_updated_mask: 0,
+            owner_done_mask: 0,
+            expected_checksum: 0,
+            actual_checksum: 0,
+            tlb_generation: 0,
+            tlb_target_mask: 0,
+            tlb_acknowledgement_mask: 0,
+            tlb_offline_mask: 0,
+            clock_registered_mask: 0,
+            tasks_created: 0,
+            tasks_reaped: 0,
+            retained_task_count: 0,
+            retained_frame_count: 0,
+            retained_allocation_count: 0,
+            mutex_operations: 0,
+            retained_range_count: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramSmpTlbSnapshot {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub online_count: u32,
+    pub schedulable_count: u32,
+    pub clock_source: u32,
+    pub clock_generation: u32,
+    pub clock_flags: u32,
+    pub clock_fallback_reason: u32,
+    pub reserved0: u32,
+    pub online_mask: u64,
+    pub schedulable_mask: u64,
+    pub clock_registered_mask: u64,
+    pub clock_frequency_hz: u64,
+    pub clock_resolution_ns: u64,
+    pub max_cpu_skew_ns: u64,
+    pub calibration_error_ppm: u64,
+    pub tlb_requests: u64,
+    pub tlb_successes: u64,
+    pub tlb_timeouts: u64,
+    pub tlb_expected_timeouts: u64,
+    pub tlb_ipis_sent: u64,
+    pub tlb_acknowledgements: u64,
+    pub tlb_offline_exclusions: u64,
+    pub tlb_local_page_flushes: u64,
+    pub tlb_local_full_reloads: u64,
+    pub tlb_max_wait_spins: u64,
+    pub tlb_generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramSmpTlbSnapshot {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 184,
+            flags: 0,
+            online_count: 0,
+            schedulable_count: 0,
+            clock_source: 0,
+            clock_generation: 0,
+            clock_flags: 0,
+            clock_fallback_reason: 0,
+            reserved0: 0,
+            online_mask: 0,
+            schedulable_mask: 0,
+            clock_registered_mask: 0,
+            clock_frequency_hz: 0,
+            clock_resolution_ns: 0,
+            max_cpu_skew_ns: 0,
+            calibration_error_ppm: 0,
+            tlb_requests: 0,
+            tlb_successes: 0,
+            tlb_timeouts: 0,
+            tlb_expected_timeouts: 0,
+            tlb_ipis_sent: 0,
+            tlb_acknowledgements: 0,
+            tlb_offline_exclusions: 0,
+            tlb_local_page_flushes: 0,
+            tlb_local_full_reloads: 0,
+            tlb_max_wait_spins: 0,
+            tlb_generation: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17284,6 +17456,8 @@ pub mod R4DevFns {
     pub type stack_fault = unsafe extern "C" fn(u32, *mut ProgramStackFaultInfo) -> i32;
     pub type memory_kernel_heap_check = unsafe extern "C" fn(*mut ProgramKernelHeapCheck) -> i32;
     pub type scheduler_kernel_check = unsafe extern "C" fn(u32, *mut ProgramKernelSchedulerCheck) -> i32;
+    pub type smp_kernel_check = unsafe extern "C" fn(*mut ProgramKernelSmpCheck) -> i32;
+    pub type performance_smp_tlb = unsafe extern "C" fn(*mut ProgramSmpTlbSnapshot) -> i32;
 }
 
 #[repr(C)]
@@ -17343,14 +17517,16 @@ pub struct R4XStartR4Dev {
     pub stack_fault: usize,
     pub memory_kernel_heap_check: usize,
     pub scheduler_kernel_check: usize,
+    pub smp_kernel_check: usize,
+    pub performance_smp_tlb: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 16,
-            size: 416,
+            abi_version: 17,
+            size: 432,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17402,6 +17578,8 @@ impl Default for R4XStartR4Dev {
             stack_fault: 0,
             memory_kernel_heap_check: 0,
             scheduler_kernel_check: 0,
+            smp_kernel_check: 0,
+            performance_smp_tlb: 0,
         }
     }
 }
@@ -26833,6 +27011,73 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, unwind_checks) == 120);
     assert!(core::mem::size_of::<ProgramKernelSchedulerCheck>() == 128);
     assert!(core::mem::align_of::<ProgramKernelSchedulerCheck>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, status) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, flags) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, online_count) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, fail_stage) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, worker_failures) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, clock_regressions) == 28);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tlb_failures) == 32);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, owner_failures) == 36);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, cleanup_errors) == 40);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, isolated_mask) == 44);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, clock_source) == 48);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, clock_generation) == 52);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, run_id) == 56);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, online_mask) == 64);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, placement_mask) == 72);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, observed_mask) == 80);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tlb_ready_mask) == 88);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tlb_updated_mask) == 96);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, owner_done_mask) == 104);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, expected_checksum) == 112);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, actual_checksum) == 120);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tlb_generation) == 128);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tlb_target_mask) == 136);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tlb_acknowledgement_mask) == 144);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tlb_offline_mask) == 152);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, clock_registered_mask) == 160);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tasks_created) == 168);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, tasks_reaped) == 176);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, retained_task_count) == 184);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, retained_frame_count) == 192);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, retained_allocation_count) == 200);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, mutex_operations) == 208);
+    assert!(core::mem::offset_of!(ProgramKernelSmpCheck, retained_range_count) == 216);
+    assert!(core::mem::size_of::<ProgramKernelSmpCheck>() == 224);
+    assert!(core::mem::align_of::<ProgramKernelSmpCheck>() == 8);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, version) == 0);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, size) == 4);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, flags) == 8);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, online_count) == 12);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, schedulable_count) == 16);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, clock_source) == 20);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, clock_generation) == 24);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, clock_flags) == 28);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, clock_fallback_reason) == 32);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, reserved0) == 36);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, online_mask) == 40);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, schedulable_mask) == 48);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, clock_registered_mask) == 56);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, clock_frequency_hz) == 64);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, clock_resolution_ns) == 72);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, max_cpu_skew_ns) == 80);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, calibration_error_ppm) == 88);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_requests) == 96);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_successes) == 104);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_timeouts) == 112);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_expected_timeouts) == 120);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_ipis_sent) == 128);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_acknowledgements) == 136);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_offline_exclusions) == 144);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_local_page_flushes) == 152);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_local_full_reloads) == 160);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_max_wait_spins) == 168);
+    assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_generation) == 176);
+    assert!(core::mem::size_of::<ProgramSmpTlbSnapshot>() == 184);
+    assert!(core::mem::align_of::<ProgramSmpTlbSnapshot>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -27310,7 +27555,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, stack_fault) == 392);
     assert!(core::mem::offset_of!(R4XStartR4Dev, memory_kernel_heap_check) == 400);
     assert!(core::mem::offset_of!(R4XStartR4Dev, scheduler_kernel_check) == 408);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 416);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, smp_kernel_check) == 416);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, performance_smp_tlb) == 424);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 432);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

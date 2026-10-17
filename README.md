@@ -5,11 +5,12 @@ It contains the R4M0 container contract, shared layouts and error codes,
 platform API groups, generated bindings, conformance fixtures, and the
 contract generator.
 
-R4DEV v16 appends `scheduler_kernel_check` after its preserved 408-byte
-prefix. `ProgramKernelSchedulerCheck` is a fixed 128-byte result for explicit
-native sync/scheduler/IRQ-FPU work, owned task generations and actual release
-receipts. Boot-only global timer and reserve injections remain isolated.
-Existing layouts, slots, constants and the preceding heap check are preserved.
+R4DEV v17 appends `smp_kernel_check` and `performance_smp_tlb` after the
+preserved 416-byte prefix (total432). Fixed v1 payloads separately expose
+explicit owned functional SMP work (224bytes) and passive remote-TLB/clock
+facts (184bytes). Exact own task/ACK/backing receipts determine success;
+global timeout injection remains isolated. Existing slots, layouts and
+constants are preserved.
 
 Optional Runtime-R4L APIs are intentionally not defined here; each independent
 library owns its own contract and bindings.
