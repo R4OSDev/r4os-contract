@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 315 von 315 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 316 von 316 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2069; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2076; Limits: 109
 
 ## App-Profile
 
@@ -336,6 +336,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramSmpTlbSnapshot` | fixed_layout | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
 | `ProgramKernelBlockQueueCheck` | fixed_layout | extern_struct | 240/8 | 240/8 | 240/8 | 240/8 |
 | `ProgramKernelNvmeCheck` | fixed_layout | extern_struct | 296/8 | 296/8 | 296/8 | 296/8 |
+| `ProgramKernelUsbCheck` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
 
 ## Typdetails
 
@@ -8493,6 +8494,24 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `async_completions_before` | 280 | 8 | 8 | `u64` | - |
 | `async_completions_after` | 288 | 8 | 8 | `u64` | - |
 
+### `ProgramKernelUsbCheck`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `status` | 8 | 4 | 4 | `u32` | - |
+| `selected_cases` | 12 | 4 | 4 | `u32` | - |
+| `attempted_cases` | 16 | 4 | 4 | `u32` | - |
+| `passed_cases` | 20 | 4 | 4 | `u32` | - |
+| `failed_cases` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11301,6 +11320,13 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `storage_observation_irq_msix` | `2` | `u32` | value | number | `storage_observation` | fixed_contract |
 | `storage_backend_status_observation_supported` | `131072` | `u32` | flag | bitmask | `storage_backend_status` | fixed_contract |
 | `storage_backend_status_cleanup_retained` | `262144` | `u32` | flag | bitmask | `storage_backend_status` | fixed_contract |
+| `kernel_usb_check_version` | `1` | `u32` | version | number | `kernel_usb_check` | fixed_contract |
+| `kernel_usb_check_status_unavailable` | `0` | `u32` | value | number | `kernel_usb_check` | fixed_contract |
+| `kernel_usb_check_status_passed` | `1` | `u32` | value | number | `kernel_usb_check` | fixed_contract |
+| `kernel_usb_check_status_failed` | `2` | `u32` | value | number | `kernel_usb_check` | fixed_contract |
+| `kernel_usb_check_case_ring` | `1` | `u32` | flag | bitmask | `kernel_usb_check` | fixed_contract |
+| `kernel_usb_check_case_router` | `2` | `u32` | flag | bitmask | `kernel_usb_check` | fixed_contract |
+| `kernel_usb_check_cases_all` | `3` | `u32` | flag | bitmask | `kernel_usb_check` | fixed_contract |
 
 ## Limits
 

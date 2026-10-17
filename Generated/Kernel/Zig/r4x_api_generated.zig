@@ -2070,6 +2070,13 @@ pub const storage_observation_irq_msi: u32 = 1;
 pub const storage_observation_irq_msix: u32 = 2;
 pub const storage_backend_status_observation_supported: u32 = 131072;
 pub const storage_backend_status_cleanup_retained: u32 = 262144;
+pub const kernel_usb_check_version: u32 = 1;
+pub const kernel_usb_check_status_unavailable: u32 = 0;
+pub const kernel_usb_check_status_passed: u32 = 1;
+pub const kernel_usb_check_status_failed: u32 = 2;
+pub const kernel_usb_check_case_ring: u32 = 1;
+pub const kernel_usb_check_case_router: u32 = 2;
+pub const kernel_usb_check_cases_all: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8537,6 +8544,17 @@ pub const ProgramKernelNvmeCheck = extern struct {
     async_completions_after: u64 = 0,
 };
 
+pub const ProgramKernelUsbCheck = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    status: u32 = 0,
+    selected_cases: u32 = 0,
+    attempted_cases: u32 = 0,
+    passed_cases: u32 = 0,
+    failed_cases: u32 = 0,
+    reserved0: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -9416,12 +9434,13 @@ pub const R4DevFns = struct {
     pub const performance_smp_tlb = *const fn (*ProgramSmpTlbSnapshot) callconv(.c) i32;
     pub const storage_block_queue_check = *const fn (*ProgramKernelBlockQueueCheck) callconv(.c) i32;
     pub const storage_nvme_check = *const fn (*ProgramKernelNvmeCheck) callconv(.c) i32;
+    pub const usb_contract_check = *const fn (*ProgramKernelUsbCheck) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 19,
-    size: u32 = 448,
+    abi_version: u32 = 20,
+    size: u32 = 456,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9477,6 +9496,7 @@ pub const R4XStartR4Dev = extern struct {
     performance_smp_tlb: usize = 0,
     storage_block_queue_check: usize = 0,
     storage_nvme_check: usize = 0,
+    usb_contract_check: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -9943,6 +9963,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 51, .offset = 424, .name = "performance_smp_tlb", .state = .function, .required = false },
     .{ .number = 52, .offset = 432, .name = "storage_block_queue_check", .state = .function, .required = false },
     .{ .number = 53, .offset = 440, .name = "storage_nvme_check", .state = .function, .required = false },
+    .{ .number = 54, .offset = 448, .name = "usb_contract_check", .state = .function, .required = false },
 };
 
 comptime {
@@ -15621,6 +15642,16 @@ comptime {
     if (@offsetOf(ProgramKernelNvmeCheck, "async_submissions_after") != 272) @compileError("generated ABI offset drift: ProgramKernelNvmeCheck.async_submissions_after");
     if (@offsetOf(ProgramKernelNvmeCheck, "async_completions_before") != 280) @compileError("generated ABI offset drift: ProgramKernelNvmeCheck.async_completions_before");
     if (@offsetOf(ProgramKernelNvmeCheck, "async_completions_after") != 288) @compileError("generated ABI offset drift: ProgramKernelNvmeCheck.async_completions_after");
+    if (@sizeOf(ProgramKernelUsbCheck) != 32) @compileError("generated ABI size drift: ProgramKernelUsbCheck");
+    if (@alignOf(ProgramKernelUsbCheck) != 4) @compileError("generated ABI alignment drift: ProgramKernelUsbCheck");
+    if (@offsetOf(ProgramKernelUsbCheck, "version") != 0) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.version");
+    if (@offsetOf(ProgramKernelUsbCheck, "size") != 4) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.size");
+    if (@offsetOf(ProgramKernelUsbCheck, "status") != 8) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.status");
+    if (@offsetOf(ProgramKernelUsbCheck, "selected_cases") != 12) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.selected_cases");
+    if (@offsetOf(ProgramKernelUsbCheck, "attempted_cases") != 16) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.attempted_cases");
+    if (@offsetOf(ProgramKernelUsbCheck, "passed_cases") != 20) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.passed_cases");
+    if (@offsetOf(ProgramKernelUsbCheck, "failed_cases") != 24) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.failed_cases");
+    if (@offsetOf(ProgramKernelUsbCheck, "reserved0") != 28) @compileError("generated ABI offset drift: ProgramKernelUsbCheck.reserved0");
     if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -16017,7 +16048,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 448) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 456) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -16072,6 +16103,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_smp_tlb") != 424) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_smp_tlb");
     if (@offsetOf(R4XStartR4Dev, "storage_block_queue_check") != 432) @compileError("generated ABI offset drift: R4XStartR4Dev.storage_block_queue_check");
     if (@offsetOf(R4XStartR4Dev, "storage_nvme_check") != 440) @compileError("generated ABI offset drift: R4XStartR4Dev.storage_nvme_check");
+    if (@offsetOf(R4XStartR4Dev, "usb_contract_check") != 448) @compileError("generated ABI offset drift: R4XStartR4Dev.usb_contract_check");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -16964,13 +16996,14 @@ pub const R4DevProvider = struct {
     performance_smp_tlb: ?R4DevFns.performance_smp_tlb = null,
     storage_block_queue_check: ?R4DevFns.storage_block_queue_check = null,
     storage_nvme_check: ?R4DevFns.storage_nvme_check = null,
+    usb_contract_check: ?R4DevFns.usb_contract_check = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 19,
-        .size = 448,
+        .abi_version = 20,
+        .size = 456,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -17026,5 +17059,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .performance_smp_tlb = if (provider.performance_smp_tlb) |callback| @intFromPtr(callback) else 0,
         .storage_block_queue_check = if (provider.storage_block_queue_check) |callback| @intFromPtr(callback) else 0,
         .storage_nvme_check = if (provider.storage_nvme_check) |callback| @intFromPtr(callback) else 0,
+        .usb_contract_check = if (provider.usb_contract_check) |callback| @intFromPtr(callback) else 0,
     };
 }

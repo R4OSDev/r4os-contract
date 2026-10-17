@@ -111,3 +111,8 @@ R4DEV v19 appends `storage_nvme_check` at offset440 after the unchanged
 capability select it. Its synchronous104-byte callback record identifies the
 actual CQE, IRQ-driven worker and acknowledged DMA release before logical
 completion. Normal56-byte requests and their callbacks remain unchanged.
+
+R4DEV v20 appends `usb_contract_check` at offset448 after the unchanged
+448-byte layout prefix. Its fixed32-byte v1 report covers the existing local
+ring-cycle and event-router cases. It is bounded and reentrant, borrows only
+caller output and touches no live USB controller, mailbox or hardware.

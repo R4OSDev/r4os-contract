@@ -2074,6 +2074,13 @@ pub const storage_observation_irq_msi: u32 = 1;
 pub const storage_observation_irq_msix: u32 = 2;
 pub const storage_backend_status_observation_supported: u32 = 131072;
 pub const storage_backend_status_cleanup_retained: u32 = 262144;
+pub const kernel_usb_check_version: u32 = 1;
+pub const kernel_usb_check_status_unavailable: u32 = 0;
+pub const kernel_usb_check_status_passed: u32 = 1;
+pub const kernel_usb_check_status_failed: u32 = 2;
+pub const kernel_usb_check_case_ring: u32 = 1;
+pub const kernel_usb_check_case_router: u32 = 2;
+pub const kernel_usb_check_cases_all: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -16359,6 +16366,34 @@ impl Default for ProgramKernelNvmeCheck {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelUsbCheck {
+    pub version: u32,
+    pub size: u32,
+    pub status: u32,
+    pub selected_cases: u32,
+    pub attempted_cases: u32,
+    pub passed_cases: u32,
+    pub failed_cases: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelUsbCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            status: 0,
+            selected_cases: 0,
+            attempted_cases: 0,
+            passed_cases: 0,
+            failed_cases: 0,
+            reserved0: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17715,6 +17750,7 @@ pub mod R4DevFns {
     pub type performance_smp_tlb = unsafe extern "C" fn(*mut ProgramSmpTlbSnapshot) -> i32;
     pub type storage_block_queue_check = unsafe extern "C" fn(*mut ProgramKernelBlockQueueCheck) -> i32;
     pub type storage_nvme_check = unsafe extern "C" fn(*mut ProgramKernelNvmeCheck) -> i32;
+    pub type usb_contract_check = unsafe extern "C" fn(*mut ProgramKernelUsbCheck) -> i32;
 }
 
 #[repr(C)]
@@ -17778,14 +17814,15 @@ pub struct R4XStartR4Dev {
     pub performance_smp_tlb: usize,
     pub storage_block_queue_check: usize,
     pub storage_nvme_check: usize,
+    pub usb_contract_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 19,
-            size: 448,
+            abi_version: 20,
+            size: 456,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17841,6 +17878,7 @@ impl Default for R4XStartR4Dev {
             performance_smp_tlb: 0,
             storage_block_queue_check: 0,
             storage_nvme_check: 0,
+            usb_contract_check: 0,
         }
     }
 }
@@ -27492,6 +27530,16 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramKernelNvmeCheck, async_completions_after) == 288);
     assert!(core::mem::size_of::<ProgramKernelNvmeCheck>() == 296);
     assert!(core::mem::align_of::<ProgramKernelNvmeCheck>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, status) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, selected_cases) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, attempted_cases) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, passed_cases) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, failed_cases) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelUsbCheck, reserved0) == 28);
+    assert!(core::mem::size_of::<ProgramKernelUsbCheck>() == 32);
+    assert!(core::mem::align_of::<ProgramKernelUsbCheck>() == 4);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -27973,7 +28021,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_smp_tlb) == 424);
     assert!(core::mem::offset_of!(R4XStartR4Dev, storage_block_queue_check) == 432);
     assert!(core::mem::offset_of!(R4XStartR4Dev, storage_nvme_check) == 440);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 448);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, usb_contract_check) == 448);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 456);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

@@ -5366,6 +5366,15 @@ comptime {
     if (@offsetOf(abi.ProgramKernelNvmeCheck, "async_submissions_after") != 272) @compileError("ProgramKernelNvmeCheck.async_submissions_after offset");
     if (@offsetOf(abi.ProgramKernelNvmeCheck, "async_completions_before") != 280) @compileError("ProgramKernelNvmeCheck.async_completions_before offset");
     if (@offsetOf(abi.ProgramKernelNvmeCheck, "async_completions_after") != 288) @compileError("ProgramKernelNvmeCheck.async_completions_after offset");
+    if (@sizeOf(abi.ProgramKernelUsbCheck) != 32) @compileError("ProgramKernelUsbCheck size");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "version") != 0) @compileError("ProgramKernelUsbCheck.version offset");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "size") != 4) @compileError("ProgramKernelUsbCheck.size offset");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "status") != 8) @compileError("ProgramKernelUsbCheck.status offset");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "selected_cases") != 12) @compileError("ProgramKernelUsbCheck.selected_cases offset");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "attempted_cases") != 16) @compileError("ProgramKernelUsbCheck.attempted_cases offset");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "passed_cases") != 20) @compileError("ProgramKernelUsbCheck.passed_cases offset");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "failed_cases") != 24) @compileError("ProgramKernelUsbCheck.failed_cases offset");
+    if (@offsetOf(abi.ProgramKernelUsbCheck, "reserved0") != 28) @compileError("ProgramKernelUsbCheck.reserved0 offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1264) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6147,7 +6156,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 448) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 456) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -6254,6 +6263,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.storage_block_queue_check) != 8) @compileError("R4DevFns.storage_block_queue_check signature");
     if (@offsetOf(abi.R4XStartR4Dev, "storage_nvme_check") != 440) @compileError("R4XStartR4Dev.storage_nvme_check offset");
     if (@sizeOf(abi.R4DevFns.storage_nvme_check) != 8) @compileError("R4DevFns.storage_nvme_check signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "usb_contract_check") != 448) @compileError("R4XStartR4Dev.usb_contract_check offset");
+    if (@sizeOf(abi.R4DevFns.usb_contract_check) != 8) @compileError("R4DevFns.usb_contract_check signature");
 }
 
 test "generated API contract compiles" {}

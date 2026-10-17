@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 437,
-    "group_slot_count": 437,
+    "function_count": 438,
+    "group_slot_count": 438,
     "sdk_only_count": 0,
     "public_count": 327,
-    "advanced_count": 110
+    "advanced_count": 111
   },
   "functions": [
     {
@@ -5251,6 +5251,18 @@
       "slot": 53,
       "exposure": "advanced",
       "description": "Explicit bounded read-only NVMe IRQ/completion proof. Binds one exact device generation and resident buffer through actual read completion and release. Matches native request/backend identity to a driver observation of its own hardware CQE, namespace/controller epochs and IRQ-driven worker pass after DMA release acknowledgment. Passive per-device before/after counters are descriptive only. Missing hardware/observation/IRQ capability is unavailable, not a pass. No deliberate write/reset/reconfiguration/fault injection. Caller output never reaches a worker; late or uncertain state retains resources/session. Returns1 for fixed report,0 for context unavailable,-1 for invalid header/capacity unchanged output.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.usb_contract_check",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 54,
+      "exposure": "advanced",
+      "description": "Explicit bounded synthetic USB ring-cycle and event-router contracts using the existing native owner functions. Only private stack-local state; no allocation, waits, tasks, live mailbox access, real TRB submission, port reset or hardware reconfiguration. Reentrant and repeatable without USB hardware. This is not a physical USB/liveboot qualification. Returns1 for a fixed32-byte report,-1 for invalid header/capacity with output unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

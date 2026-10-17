@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 437,
+    "group_function_signatures": 438,
     "sdk_operation_contracts": 0,
-    "parity_entries": 437,
+    "parity_entries": 438,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -3941,6 +3941,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.storage_nvme_check",
       "c_contract": "R4DevStorageNvmeCheckFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.usb_contract_check",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.usb_contract_check",
+      "c_contract": "R4DevUsbContractCheckFn",
       "coverage": "generated_signature"
     }
   ],
