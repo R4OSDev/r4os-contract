@@ -26645,7 +26645,7 @@
           "name": "serial_link_status",
           "state": "function",
           "required": false,
-          "description": "Returns serial-link connection and transfer state.",
+          "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -26704,7 +26704,7 @@
           "name": "serial_link_poll",
           "state": "function",
           "required": false,
-          "description": "Polls the serial link for newly received messages.",
+          "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
           "signature": {
             "calling_convention": "c",
             "parameters": [],
@@ -26745,7 +26745,7 @@
           "name": "serial_link_send_message",
           "state": "function",
           "required": false,
-          "description": "Sends one framed message over the serial link.",
+          "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -26811,7 +26811,7 @@
           "name": "serial_link_host_test",
           "state": "function",
           "required": false,
-          "description": "Runs the serial-link host interoperability probe.",
+          "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
           "signature": {
             "calling_convention": "c",
             "parameters": [],
@@ -26852,7 +26852,7 @@
           "name": "serial_link_inbox",
           "state": "function",
           "required": false,
-          "description": "Reads one message from the serial-link inbox.",
+          "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
           "signature": {
             "calling_convention": "c",
             "parameters": [

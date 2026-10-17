@@ -4290,7 +4290,7 @@
       "kind": "group_slot",
       "slot": 27,
       "exposure": "advanced",
-      "description": "Returns serial-link connection and transfer state.",
+      "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -4302,7 +4302,7 @@
       "kind": "group_slot",
       "slot": 28,
       "exposure": "advanced",
-      "description": "Polls the serial link for newly received messages.",
+      "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -4314,7 +4314,7 @@
       "kind": "group_slot",
       "slot": 29,
       "exposure": "advanced",
-      "description": "Sends one framed message over the serial link.",
+      "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -4326,7 +4326,7 @@
       "kind": "group_slot",
       "slot": 30,
       "exposure": "advanced",
-      "description": "Runs the serial-link host interoperability probe.",
+      "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -4338,7 +4338,7 @@
       "kind": "group_slot",
       "slot": 31,
       "exposure": "advanced",
-      "description": "Reads one message from the serial-link inbox.",
+      "description": "Reserved ABI compatibility stub since0.84.34: always returns err_no_fn without reading or writing buffers, accessing any UART, polling, sending, loading a module or scheduling work. SerialLink is removed; slot name, number, signature and payload layouts stay frozen.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

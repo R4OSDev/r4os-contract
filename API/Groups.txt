@@ -39,7 +39,9 @@ R4NET
 -----
 
 Netzwerkfunktionen fuer Adapterstatus, UDP/TCP, DNS, DHCP, ICMP,
-Netzwerkdienste, Diagnose und Serial-Link-Transport.
+Netzwerkdienste und Diagnose. Die ehemaligen SerialLink-Slots27-31 bleiben
+als binär stabile Kompatibilitätsstubs reserviert: immer err_no_fn, keine
+Puffer- oder UART-Zugriffe. Kein SerialLink-Transport und keine aktive SDK-Fassade.
 
 R4AUDIO
 -------

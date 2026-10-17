@@ -116,3 +116,12 @@ R4DEV v20 appends `usb_contract_check` at offset448 after the unchanged
 448-byte layout prefix. Its fixed32-byte v1 report covers the existing local
 ring-cycle and event-router cases. It is bounded and reentrant, borrows only
 caller output and touches no live USB controller, mailbox or hardware.
+
+SerialLink retirement (0.84.34 / package0.64.19)
+--------------------------------------------
+R4NET slots27-31 and all published names/signatures/payload layouts remain
+frozen. These five compatibility stubs always return err_no_fn and touch no
+buffer, UART, loader or work queue. SerialLink runtime/modules/SDK facades are
+removed. A table pointer does not imply that the retired transport is available.
+Only the five descriptions changed in the controlled documentation baseline;
+all other schema values and generated Zig/C/Rust bindings are byte-identical.
