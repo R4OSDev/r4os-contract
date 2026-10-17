@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 435,
+    "group_function_signatures": 436,
     "sdk_operation_contracts": 0,
-    "parity_entries": 435,
+    "parity_entries": 436,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -3923,6 +3923,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.performance_smp_tlb",
       "c_contract": "R4DevPerformanceSmpTlbFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.storage_block_queue_check",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.storage_block_queue_check",
+      "c_contract": "R4DevStorageBlockQueueCheckFn",
       "coverage": "generated_signature"
     }
   ],

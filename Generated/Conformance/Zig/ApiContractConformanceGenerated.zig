@@ -5279,6 +5279,43 @@ comptime {
     if (@offsetOf(abi.ProgramSmpTlbSnapshot, "tlb_local_full_reloads") != 160) @compileError("ProgramSmpTlbSnapshot.tlb_local_full_reloads offset");
     if (@offsetOf(abi.ProgramSmpTlbSnapshot, "tlb_max_wait_spins") != 168) @compileError("ProgramSmpTlbSnapshot.tlb_max_wait_spins offset");
     if (@offsetOf(abi.ProgramSmpTlbSnapshot, "tlb_generation") != 176) @compileError("ProgramSmpTlbSnapshot.tlb_generation offset");
+    if (@sizeOf(abi.ProgramKernelBlockQueueCheck) != 240) @compileError("ProgramKernelBlockQueueCheck size");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "version") != 0) @compileError("ProgramKernelBlockQueueCheck.version offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "size") != 4) @compileError("ProgramKernelBlockQueueCheck.size offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "status") != 8) @compileError("ProgramKernelBlockQueueCheck.status offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "flags") != 12) @compileError("ProgramKernelBlockQueueCheck.flags offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "selected_cases") != 16) @compileError("ProgramKernelBlockQueueCheck.selected_cases offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "passed_cases") != 20) @compileError("ProgramKernelBlockQueueCheck.passed_cases offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "failed_cases") != 24) @compileError("ProgramKernelBlockQueueCheck.failed_cases offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "attempted_cases") != 28) @compileError("ProgramKernelBlockQueueCheck.attempted_cases offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "unavailable_cases") != 32) @compileError("ProgramKernelBlockQueueCheck.unavailable_cases offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "fail_stage") != 36) @compileError("ProgramKernelBlockQueueCheck.fail_stage offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "cleanup_errors") != 40) @compileError("ProgramKernelBlockQueueCheck.cleanup_errors offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "duplicate_disposition") != 44) @compileError("ProgramKernelBlockQueueCheck.duplicate_disposition offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "run_id") != 48) @compileError("ProgramKernelBlockQueueCheck.run_id offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "tasks_created") != 56) @compileError("ProgramKernelBlockQueueCheck.tasks_created offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "tasks_reaped") != 64) @compileError("ProgramKernelBlockQueueCheck.tasks_reaped offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "retained_task_count") != 72) @compileError("ProgramKernelBlockQueueCheck.retained_task_count offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "controllers_registered") != 80) @compileError("ProgramKernelBlockQueueCheck.controllers_registered offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "controllers_unregistered") != 88) @compileError("ProgramKernelBlockQueueCheck.controllers_unregistered offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "retained_controller_count") != 96) @compileError("ProgramKernelBlockQueueCheck.retained_controller_count offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "async_submissions") != 104) @compileError("ProgramKernelBlockQueueCheck.async_submissions offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "async_completions") != 112) @compileError("ProgramKernelBlockQueueCheck.async_completions offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "completion_receipts") != 120) @compileError("ProgramKernelBlockQueueCheck.completion_receipts offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "duplicate_rejections") != 128) @compileError("ProgramKernelBlockQueueCheck.duplicate_rejections offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "late_rejections") != 136) @compileError("ProgramKernelBlockQueueCheck.late_rejections offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "cancel_requests") != 144) @compileError("ProgramKernelBlockQueueCheck.cancel_requests offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "timeout_cancels") != 152) @compileError("ProgramKernelBlockQueueCheck.timeout_cancels offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "reset_cancels") != 160) @compileError("ProgramKernelBlockQueueCheck.reset_cancels offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "resets") != 168) @compileError("ProgramKernelBlockQueueCheck.resets offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "read_ops") != 176) @compileError("ProgramKernelBlockQueueCheck.read_ops offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "write_ops") != 184) @compileError("ProgramKernelBlockQueueCheck.write_ops offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "flush_ops") != 192) @compileError("ProgramKernelBlockQueueCheck.flush_ops offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "queue_high_water") != 200) @compileError("ProgramKernelBlockQueueCheck.queue_high_water offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "in_flight_high_water") != 208) @compileError("ProgramKernelBlockQueueCheck.in_flight_high_water offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "parallel_active_max") != 216) @compileError("ProgramKernelBlockQueueCheck.parallel_active_max offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "retained_request_count") != 224) @compileError("ProgramKernelBlockQueueCheck.retained_request_count offset");
+    if (@offsetOf(abi.ProgramKernelBlockQueueCheck, "retained_buffer_count") != 232) @compileError("ProgramKernelBlockQueueCheck.retained_buffer_count offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1264) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6060,7 +6097,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 432) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 440) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -6163,6 +6200,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.smp_kernel_check) != 8) @compileError("R4DevFns.smp_kernel_check signature");
     if (@offsetOf(abi.R4XStartR4Dev, "performance_smp_tlb") != 424) @compileError("R4XStartR4Dev.performance_smp_tlb offset");
     if (@sizeOf(abi.R4DevFns.performance_smp_tlb) != 8) @compileError("R4DevFns.performance_smp_tlb signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "storage_block_queue_check") != 432) @compileError("R4XStartR4Dev.storage_block_queue_check offset");
+    if (@sizeOf(abi.R4DevFns.storage_block_queue_check) != 8) @compileError("R4DevFns.storage_block_queue_check signature");
 }
 
 test "generated API contract compiles" {}

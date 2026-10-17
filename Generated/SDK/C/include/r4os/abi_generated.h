@@ -2021,6 +2021,25 @@ extern "C" {
 #define R4OS_SMP_TLB_SNAPSHOT_FLAG_TLB_REGISTERED 2u
 #define R4OS_SMP_TLB_SNAPSHOT_FLAG_ISOLATED_INJECTION 4u
 #define R4OS_KERNEL_SMP_CHECK_FLAG_PARTIAL_SNAPSHOT 4u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_VERSION 1u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_STATUS_UNAVAILABLE 0u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_STATUS_PASSED 1u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_STATUS_FAILED 2u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_STATUS_BUSY 3u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_STATUS_CANCELLED 4u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_FLAG_WORK_COMPLETE 1u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_FLAG_CLEANUP_COMPLETE 2u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_FLAG_PARTIAL_SNAPSHOT 4u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_PARALLEL 1u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_QUEUE 2u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_REORDERED 4u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_LIFETIME 8u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_RESET 16u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_TIMEOUT 32u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_FLUSH 64u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASE_BATCH 128u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_CASES_ALL 255u
+#define R4OS_KERNEL_BLOCK_QUEUE_CHECK_STAGE_CLEANUP 9u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2775,6 +2794,7 @@ typedef struct R4ProgramKernelHeapCheck R4ProgramKernelHeapCheck;
 typedef struct R4ProgramKernelSchedulerCheck R4ProgramKernelSchedulerCheck;
 typedef struct R4ProgramKernelSmpCheck R4ProgramKernelSmpCheck;
 typedef struct R4ProgramSmpTlbSnapshot R4ProgramSmpTlbSnapshot;
+typedef struct R4ProgramKernelBlockQueueCheck R4ProgramKernelBlockQueueCheck;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8642,6 +8662,45 @@ typedef struct R4ProgramSmpTlbSnapshot {
     uint64_t tlb_generation;
 } R4ProgramSmpTlbSnapshot;
 
+typedef struct R4ProgramKernelBlockQueueCheck {
+    uint32_t version;
+    uint32_t size;
+    uint32_t status;
+    uint32_t flags;
+    uint32_t selected_cases;
+    uint32_t passed_cases;
+    uint32_t failed_cases;
+    uint32_t attempted_cases;
+    uint32_t unavailable_cases;
+    uint32_t fail_stage;
+    uint32_t cleanup_errors;
+    uint32_t duplicate_disposition;
+    uint64_t run_id;
+    uint64_t tasks_created;
+    uint64_t tasks_reaped;
+    uint64_t retained_task_count;
+    uint64_t controllers_registered;
+    uint64_t controllers_unregistered;
+    uint64_t retained_controller_count;
+    uint64_t async_submissions;
+    uint64_t async_completions;
+    uint64_t completion_receipts;
+    uint64_t duplicate_rejections;
+    uint64_t late_rejections;
+    uint64_t cancel_requests;
+    uint64_t timeout_cancels;
+    uint64_t reset_cancels;
+    uint64_t resets;
+    uint64_t read_ops;
+    uint64_t write_ops;
+    uint64_t flush_ops;
+    uint64_t queue_high_water;
+    uint64_t in_flight_high_water;
+    uint64_t parallel_active_max;
+    uint64_t retained_request_count;
+    uint64_t retained_buffer_count;
+} R4ProgramKernelBlockQueueCheck;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9554,6 +9613,7 @@ typedef int32_t (*R4DevMemoryKernelHeapCheckFn)(R4ProgramKernelHeapCheck * out);
 typedef int32_t (*R4DevSchedulerKernelCheckFn)(uint32_t selection, R4ProgramKernelSchedulerCheck * out);
 typedef int32_t (*R4DevSmpKernelCheckFn)(R4ProgramKernelSmpCheck * out);
 typedef int32_t (*R4DevPerformanceSmpTlbFn)(R4ProgramSmpTlbSnapshot * out);
+typedef int32_t (*R4DevStorageBlockQueueCheckFn)(R4ProgramKernelBlockQueueCheck * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9612,6 +9672,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t scheduler_kernel_check;
     uintptr_t smp_kernel_check;
     uintptr_t performance_smp_tlb;
+    uintptr_t storage_block_queue_check;
 } R4XStartR4Dev;
 
 
@@ -14893,6 +14954,43 @@ _Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_local_page_flushes) == 152u
 _Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_local_full_reloads) == 160u, "ProgramSmpTlbSnapshot.tlb_local_full_reloads offset mismatch");
 _Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_max_wait_spins) == 168u, "ProgramSmpTlbSnapshot.tlb_max_wait_spins offset mismatch");
 _Static_assert(offsetof(R4ProgramSmpTlbSnapshot, tlb_generation) == 176u, "ProgramSmpTlbSnapshot.tlb_generation offset mismatch");
+_Static_assert(sizeof(R4ProgramKernelBlockQueueCheck) == 240u, "ProgramKernelBlockQueueCheck size mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, version) == 0u, "ProgramKernelBlockQueueCheck.version offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, size) == 4u, "ProgramKernelBlockQueueCheck.size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, status) == 8u, "ProgramKernelBlockQueueCheck.status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, flags) == 12u, "ProgramKernelBlockQueueCheck.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, selected_cases) == 16u, "ProgramKernelBlockQueueCheck.selected_cases offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, passed_cases) == 20u, "ProgramKernelBlockQueueCheck.passed_cases offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, failed_cases) == 24u, "ProgramKernelBlockQueueCheck.failed_cases offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, attempted_cases) == 28u, "ProgramKernelBlockQueueCheck.attempted_cases offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, unavailable_cases) == 32u, "ProgramKernelBlockQueueCheck.unavailable_cases offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, fail_stage) == 36u, "ProgramKernelBlockQueueCheck.fail_stage offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, cleanup_errors) == 40u, "ProgramKernelBlockQueueCheck.cleanup_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, duplicate_disposition) == 44u, "ProgramKernelBlockQueueCheck.duplicate_disposition offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, run_id) == 48u, "ProgramKernelBlockQueueCheck.run_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, tasks_created) == 56u, "ProgramKernelBlockQueueCheck.tasks_created offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, tasks_reaped) == 64u, "ProgramKernelBlockQueueCheck.tasks_reaped offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, retained_task_count) == 72u, "ProgramKernelBlockQueueCheck.retained_task_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, controllers_registered) == 80u, "ProgramKernelBlockQueueCheck.controllers_registered offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, controllers_unregistered) == 88u, "ProgramKernelBlockQueueCheck.controllers_unregistered offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, retained_controller_count) == 96u, "ProgramKernelBlockQueueCheck.retained_controller_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, async_submissions) == 104u, "ProgramKernelBlockQueueCheck.async_submissions offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, async_completions) == 112u, "ProgramKernelBlockQueueCheck.async_completions offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, completion_receipts) == 120u, "ProgramKernelBlockQueueCheck.completion_receipts offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, duplicate_rejections) == 128u, "ProgramKernelBlockQueueCheck.duplicate_rejections offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, late_rejections) == 136u, "ProgramKernelBlockQueueCheck.late_rejections offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, cancel_requests) == 144u, "ProgramKernelBlockQueueCheck.cancel_requests offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, timeout_cancels) == 152u, "ProgramKernelBlockQueueCheck.timeout_cancels offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, reset_cancels) == 160u, "ProgramKernelBlockQueueCheck.reset_cancels offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, resets) == 168u, "ProgramKernelBlockQueueCheck.resets offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, read_ops) == 176u, "ProgramKernelBlockQueueCheck.read_ops offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, write_ops) == 184u, "ProgramKernelBlockQueueCheck.write_ops offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, flush_ops) == 192u, "ProgramKernelBlockQueueCheck.flush_ops offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, queue_high_water) == 200u, "ProgramKernelBlockQueueCheck.queue_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, in_flight_high_water) == 208u, "ProgramKernelBlockQueueCheck.in_flight_high_water offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, parallel_active_max) == 216u, "ProgramKernelBlockQueueCheck.parallel_active_max offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, retained_request_count) == 224u, "ProgramKernelBlockQueueCheck.retained_request_count offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelBlockQueueCheck, retained_buffer_count) == 232u, "ProgramKernelBlockQueueCheck.retained_buffer_count offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15674,7 +15772,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 432u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 440u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15777,6 +15875,8 @@ _Static_assert(offsetof(R4XStartR4Dev, smp_kernel_check) == 416u, "R4XStartR4Dev
 _Static_assert(sizeof(R4DevSmpKernelCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, performance_smp_tlb) == 424u, "R4XStartR4Dev.performance_smp_tlb offset mismatch");
 _Static_assert(sizeof(R4DevPerformanceSmpTlbFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, storage_block_queue_check) == 432u, "R4XStartR4Dev.storage_block_queue_check offset mismatch");
+_Static_assert(sizeof(R4DevStorageBlockQueueCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

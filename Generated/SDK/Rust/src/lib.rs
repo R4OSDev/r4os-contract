@@ -2013,6 +2013,25 @@ pub const smp_tlb_snapshot_flag_clock_available: u32 = 1;
 pub const smp_tlb_snapshot_flag_tlb_registered: u32 = 2;
 pub const smp_tlb_snapshot_flag_isolated_injection: u32 = 4;
 pub const kernel_smp_check_flag_partial_snapshot: u32 = 4;
+pub const kernel_block_queue_check_version: u32 = 1;
+pub const kernel_block_queue_check_status_unavailable: u32 = 0;
+pub const kernel_block_queue_check_status_passed: u32 = 1;
+pub const kernel_block_queue_check_status_failed: u32 = 2;
+pub const kernel_block_queue_check_status_busy: u32 = 3;
+pub const kernel_block_queue_check_status_cancelled: u32 = 4;
+pub const kernel_block_queue_check_flag_work_complete: u32 = 1;
+pub const kernel_block_queue_check_flag_cleanup_complete: u32 = 2;
+pub const kernel_block_queue_check_flag_partial_snapshot: u32 = 4;
+pub const kernel_block_queue_check_case_parallel: u32 = 1;
+pub const kernel_block_queue_check_case_queue: u32 = 2;
+pub const kernel_block_queue_check_case_reordered: u32 = 4;
+pub const kernel_block_queue_check_case_lifetime: u32 = 8;
+pub const kernel_block_queue_check_case_reset: u32 = 16;
+pub const kernel_block_queue_check_case_timeout: u32 = 32;
+pub const kernel_block_queue_check_case_flush: u32 = 64;
+pub const kernel_block_queue_check_case_batch: u32 = 128;
+pub const kernel_block_queue_check_cases_all: u32 = 255;
+pub const kernel_block_queue_check_stage_cleanup: u32 = 9;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -16104,6 +16123,90 @@ impl Default for ProgramSmpTlbSnapshot {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelBlockQueueCheck {
+    pub version: u32,
+    pub size: u32,
+    pub status: u32,
+    pub flags: u32,
+    pub selected_cases: u32,
+    pub passed_cases: u32,
+    pub failed_cases: u32,
+    pub attempted_cases: u32,
+    pub unavailable_cases: u32,
+    pub fail_stage: u32,
+    pub cleanup_errors: u32,
+    pub duplicate_disposition: u32,
+    pub run_id: u64,
+    pub tasks_created: u64,
+    pub tasks_reaped: u64,
+    pub retained_task_count: u64,
+    pub controllers_registered: u64,
+    pub controllers_unregistered: u64,
+    pub retained_controller_count: u64,
+    pub async_submissions: u64,
+    pub async_completions: u64,
+    pub completion_receipts: u64,
+    pub duplicate_rejections: u64,
+    pub late_rejections: u64,
+    pub cancel_requests: u64,
+    pub timeout_cancels: u64,
+    pub reset_cancels: u64,
+    pub resets: u64,
+    pub read_ops: u64,
+    pub write_ops: u64,
+    pub flush_ops: u64,
+    pub queue_high_water: u64,
+    pub in_flight_high_water: u64,
+    pub parallel_active_max: u64,
+    pub retained_request_count: u64,
+    pub retained_buffer_count: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelBlockQueueCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 240,
+            status: 0,
+            flags: 0,
+            selected_cases: 255,
+            passed_cases: 0,
+            failed_cases: 0,
+            attempted_cases: 0,
+            unavailable_cases: 0,
+            fail_stage: 0,
+            cleanup_errors: 0,
+            duplicate_disposition: 0,
+            run_id: 0,
+            tasks_created: 0,
+            tasks_reaped: 0,
+            retained_task_count: 0,
+            controllers_registered: 0,
+            controllers_unregistered: 0,
+            retained_controller_count: 0,
+            async_submissions: 0,
+            async_completions: 0,
+            completion_receipts: 0,
+            duplicate_rejections: 0,
+            late_rejections: 0,
+            cancel_requests: 0,
+            timeout_cancels: 0,
+            reset_cancels: 0,
+            resets: 0,
+            read_ops: 0,
+            write_ops: 0,
+            flush_ops: 0,
+            queue_high_water: 0,
+            in_flight_high_water: 0,
+            parallel_active_max: 0,
+            retained_request_count: 0,
+            retained_buffer_count: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17458,6 +17561,7 @@ pub mod R4DevFns {
     pub type scheduler_kernel_check = unsafe extern "C" fn(u32, *mut ProgramKernelSchedulerCheck) -> i32;
     pub type smp_kernel_check = unsafe extern "C" fn(*mut ProgramKernelSmpCheck) -> i32;
     pub type performance_smp_tlb = unsafe extern "C" fn(*mut ProgramSmpTlbSnapshot) -> i32;
+    pub type storage_block_queue_check = unsafe extern "C" fn(*mut ProgramKernelBlockQueueCheck) -> i32;
 }
 
 #[repr(C)]
@@ -17519,14 +17623,15 @@ pub struct R4XStartR4Dev {
     pub scheduler_kernel_check: usize,
     pub smp_kernel_check: usize,
     pub performance_smp_tlb: usize,
+    pub storage_block_queue_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 17,
-            size: 432,
+            abi_version: 18,
+            size: 440,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17580,6 +17685,7 @@ impl Default for R4XStartR4Dev {
             scheduler_kernel_check: 0,
             smp_kernel_check: 0,
             performance_smp_tlb: 0,
+            storage_block_queue_check: 0,
         }
     }
 }
@@ -27078,6 +27184,44 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramSmpTlbSnapshot, tlb_generation) == 176);
     assert!(core::mem::size_of::<ProgramSmpTlbSnapshot>() == 184);
     assert!(core::mem::align_of::<ProgramSmpTlbSnapshot>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, status) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, flags) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, selected_cases) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, passed_cases) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, failed_cases) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, attempted_cases) == 28);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, unavailable_cases) == 32);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, fail_stage) == 36);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, cleanup_errors) == 40);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, duplicate_disposition) == 44);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, run_id) == 48);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, tasks_created) == 56);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, tasks_reaped) == 64);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, retained_task_count) == 72);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, controllers_registered) == 80);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, controllers_unregistered) == 88);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, retained_controller_count) == 96);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, async_submissions) == 104);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, async_completions) == 112);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, completion_receipts) == 120);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, duplicate_rejections) == 128);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, late_rejections) == 136);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, cancel_requests) == 144);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, timeout_cancels) == 152);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, reset_cancels) == 160);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, resets) == 168);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, read_ops) == 176);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, write_ops) == 184);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, flush_ops) == 192);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, queue_high_water) == 200);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, in_flight_high_water) == 208);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, parallel_active_max) == 216);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, retained_request_count) == 224);
+    assert!(core::mem::offset_of!(ProgramKernelBlockQueueCheck, retained_buffer_count) == 232);
+    assert!(core::mem::size_of::<ProgramKernelBlockQueueCheck>() == 240);
+    assert!(core::mem::align_of::<ProgramKernelBlockQueueCheck>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -27557,7 +27701,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, scheduler_kernel_check) == 408);
     assert!(core::mem::offset_of!(R4XStartR4Dev, smp_kernel_check) == 416);
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_smp_tlb) == 424);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 432);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, storage_block_queue_check) == 432);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 440);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

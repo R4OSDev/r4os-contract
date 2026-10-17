@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 313 von 313 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 314 von 314 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2008; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 2027; Limits: 109
 
 ## App-Profile
 
@@ -334,6 +334,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramKernelSchedulerCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `ProgramKernelSmpCheck` | fixed_layout | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
 | `ProgramSmpTlbSnapshot` | fixed_layout | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
+| `ProgramKernelBlockQueueCheck` | fixed_layout | extern_struct | 240/8 | 240/8 | 240/8 | 240/8 |
 
 ## Typdetails
 
@@ -8386,6 +8387,52 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `tlb_max_wait_spins` | 168 | 8 | 8 | `u64` | - |
 | `tlb_generation` | 176 | 8 | 8 | `u64` | - |
 
+### `ProgramKernelBlockQueueCheck`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 240 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `status` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `selected_cases` | 16 | 4 | 4 | `u32` | - |
+| `passed_cases` | 20 | 4 | 4 | `u32` | - |
+| `failed_cases` | 24 | 4 | 4 | `u32` | - |
+| `attempted_cases` | 28 | 4 | 4 | `u32` | - |
+| `unavailable_cases` | 32 | 4 | 4 | `u32` | - |
+| `fail_stage` | 36 | 4 | 4 | `u32` | - |
+| `cleanup_errors` | 40 | 4 | 4 | `u32` | - |
+| `duplicate_disposition` | 44 | 4 | 4 | `u32` | - |
+| `run_id` | 48 | 8 | 8 | `u64` | - |
+| `tasks_created` | 56 | 8 | 8 | `u64` | - |
+| `tasks_reaped` | 64 | 8 | 8 | `u64` | - |
+| `retained_task_count` | 72 | 8 | 8 | `u64` | - |
+| `controllers_registered` | 80 | 8 | 8 | `u64` | - |
+| `controllers_unregistered` | 88 | 8 | 8 | `u64` | - |
+| `retained_controller_count` | 96 | 8 | 8 | `u64` | - |
+| `async_submissions` | 104 | 8 | 8 | `u64` | - |
+| `async_completions` | 112 | 8 | 8 | `u64` | - |
+| `completion_receipts` | 120 | 8 | 8 | `u64` | - |
+| `duplicate_rejections` | 128 | 8 | 8 | `u64` | - |
+| `late_rejections` | 136 | 8 | 8 | `u64` | - |
+| `cancel_requests` | 144 | 8 | 8 | `u64` | - |
+| `timeout_cancels` | 152 | 8 | 8 | `u64` | - |
+| `reset_cancels` | 160 | 8 | 8 | `u64` | - |
+| `resets` | 168 | 8 | 8 | `u64` | - |
+| `read_ops` | 176 | 8 | 8 | `u64` | - |
+| `write_ops` | 184 | 8 | 8 | `u64` | - |
+| `flush_ops` | 192 | 8 | 8 | `u64` | - |
+| `queue_high_water` | 200 | 8 | 8 | `u64` | - |
+| `in_flight_high_water` | 208 | 8 | 8 | `u64` | - |
+| `parallel_active_max` | 216 | 8 | 8 | `u64` | - |
+| `retained_request_count` | 224 | 8 | 8 | `u64` | - |
+| `retained_buffer_count` | 232 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11133,6 +11180,25 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `smp_tlb_snapshot_flag_tlb_registered` | `2` | `u32` | flag | bitmask | `smp_tlb_snapshot` | fixed_contract |
 | `smp_tlb_snapshot_flag_isolated_injection` | `4` | `u32` | flag | bitmask | `smp_tlb_snapshot` | fixed_contract |
 | `kernel_smp_check_flag_partial_snapshot` | `4` | `u32` | flag | bitmask | `kernel_smp_check` | fixed_contract |
+| `kernel_block_queue_check_version` | `1` | `u32` | version | number | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_status_unavailable` | `0` | `u32` | value | number | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_status_passed` | `1` | `u32` | value | number | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_status_failed` | `2` | `u32` | value | number | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_status_busy` | `3` | `u32` | value | number | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_status_cancelled` | `4` | `u32` | value | number | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_flag_work_complete` | `1` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_flag_cleanup_complete` | `2` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_flag_partial_snapshot` | `4` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_parallel` | `1` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_queue` | `2` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_reordered` | `4` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_lifetime` | `8` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_reset` | `16` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_timeout` | `32` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_flush` | `64` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_case_batch` | `128` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_cases_all` | `255` | `u32` | flag | bitmask | `kernel_block_queue_check` | fixed_contract |
+| `kernel_block_queue_check_stage_cleanup` | `9` | `u32` | value | number | `kernel_block_queue_check` | fixed_contract |
 
 ## Limits
 

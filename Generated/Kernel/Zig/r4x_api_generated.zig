@@ -2009,6 +2009,25 @@ pub const smp_tlb_snapshot_flag_clock_available: u32 = 1;
 pub const smp_tlb_snapshot_flag_tlb_registered: u32 = 2;
 pub const smp_tlb_snapshot_flag_isolated_injection: u32 = 4;
 pub const kernel_smp_check_flag_partial_snapshot: u32 = 4;
+pub const kernel_block_queue_check_version: u32 = 1;
+pub const kernel_block_queue_check_status_unavailable: u32 = 0;
+pub const kernel_block_queue_check_status_passed: u32 = 1;
+pub const kernel_block_queue_check_status_failed: u32 = 2;
+pub const kernel_block_queue_check_status_busy: u32 = 3;
+pub const kernel_block_queue_check_status_cancelled: u32 = 4;
+pub const kernel_block_queue_check_flag_work_complete: u32 = 1;
+pub const kernel_block_queue_check_flag_cleanup_complete: u32 = 2;
+pub const kernel_block_queue_check_flag_partial_snapshot: u32 = 4;
+pub const kernel_block_queue_check_case_parallel: u32 = 1;
+pub const kernel_block_queue_check_case_queue: u32 = 2;
+pub const kernel_block_queue_check_case_reordered: u32 = 4;
+pub const kernel_block_queue_check_case_lifetime: u32 = 8;
+pub const kernel_block_queue_check_case_reset: u32 = 16;
+pub const kernel_block_queue_check_case_timeout: u32 = 32;
+pub const kernel_block_queue_check_case_flush: u32 = 64;
+pub const kernel_block_queue_check_case_batch: u32 = 128;
+pub const kernel_block_queue_check_cases_all: u32 = 255;
+pub const kernel_block_queue_check_stage_cleanup: u32 = 9;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8385,6 +8404,45 @@ pub const ProgramSmpTlbSnapshot = extern struct {
     tlb_generation: u64 = 0,
 };
 
+pub const ProgramKernelBlockQueueCheck = extern struct {
+    version: u32 = 1,
+    size: u32 = 240,
+    status: u32 = 0,
+    flags: u32 = 0,
+    selected_cases: u32 = 255,
+    passed_cases: u32 = 0,
+    failed_cases: u32 = 0,
+    attempted_cases: u32 = 0,
+    unavailable_cases: u32 = 0,
+    fail_stage: u32 = 0,
+    cleanup_errors: u32 = 0,
+    duplicate_disposition: u32 = 0,
+    run_id: u64 = 0,
+    tasks_created: u64 = 0,
+    tasks_reaped: u64 = 0,
+    retained_task_count: u64 = 0,
+    controllers_registered: u64 = 0,
+    controllers_unregistered: u64 = 0,
+    retained_controller_count: u64 = 0,
+    async_submissions: u64 = 0,
+    async_completions: u64 = 0,
+    completion_receipts: u64 = 0,
+    duplicate_rejections: u64 = 0,
+    late_rejections: u64 = 0,
+    cancel_requests: u64 = 0,
+    timeout_cancels: u64 = 0,
+    reset_cancels: u64 = 0,
+    resets: u64 = 0,
+    read_ops: u64 = 0,
+    write_ops: u64 = 0,
+    flush_ops: u64 = 0,
+    queue_high_water: u64 = 0,
+    in_flight_high_water: u64 = 0,
+    parallel_active_max: u64 = 0,
+    retained_request_count: u64 = 0,
+    retained_buffer_count: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -9262,12 +9320,13 @@ pub const R4DevFns = struct {
     pub const scheduler_kernel_check = *const fn (u32, *ProgramKernelSchedulerCheck) callconv(.c) i32;
     pub const smp_kernel_check = *const fn (*ProgramKernelSmpCheck) callconv(.c) i32;
     pub const performance_smp_tlb = *const fn (*ProgramSmpTlbSnapshot) callconv(.c) i32;
+    pub const storage_block_queue_check = *const fn (*ProgramKernelBlockQueueCheck) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 17,
-    size: u32 = 432,
+    abi_version: u32 = 18,
+    size: u32 = 440,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9321,6 +9380,7 @@ pub const R4XStartR4Dev = extern struct {
     scheduler_kernel_check: usize = 0,
     smp_kernel_check: usize = 0,
     performance_smp_tlb: usize = 0,
+    storage_block_queue_check: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -9785,6 +9845,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 49, .offset = 408, .name = "scheduler_kernel_check", .state = .function, .required = false },
     .{ .number = 50, .offset = 416, .name = "smp_kernel_check", .state = .function, .required = false },
     .{ .number = 51, .offset = 424, .name = "performance_smp_tlb", .state = .function, .required = false },
+    .{ .number = 52, .offset = 432, .name = "storage_block_queue_check", .state = .function, .required = false },
 };
 
 comptime {
@@ -15374,6 +15435,44 @@ comptime {
     if (@offsetOf(ProgramSmpTlbSnapshot, "tlb_local_full_reloads") != 160) @compileError("generated ABI offset drift: ProgramSmpTlbSnapshot.tlb_local_full_reloads");
     if (@offsetOf(ProgramSmpTlbSnapshot, "tlb_max_wait_spins") != 168) @compileError("generated ABI offset drift: ProgramSmpTlbSnapshot.tlb_max_wait_spins");
     if (@offsetOf(ProgramSmpTlbSnapshot, "tlb_generation") != 176) @compileError("generated ABI offset drift: ProgramSmpTlbSnapshot.tlb_generation");
+    if (@sizeOf(ProgramKernelBlockQueueCheck) != 240) @compileError("generated ABI size drift: ProgramKernelBlockQueueCheck");
+    if (@alignOf(ProgramKernelBlockQueueCheck) != 8) @compileError("generated ABI alignment drift: ProgramKernelBlockQueueCheck");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "version") != 0) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.version");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "size") != 4) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.size");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "status") != 8) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.status");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "flags") != 12) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.flags");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "selected_cases") != 16) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.selected_cases");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "passed_cases") != 20) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.passed_cases");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "failed_cases") != 24) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.failed_cases");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "attempted_cases") != 28) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.attempted_cases");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "unavailable_cases") != 32) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.unavailable_cases");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "fail_stage") != 36) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.fail_stage");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "cleanup_errors") != 40) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.cleanup_errors");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "duplicate_disposition") != 44) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.duplicate_disposition");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "run_id") != 48) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.run_id");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "tasks_created") != 56) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.tasks_created");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "tasks_reaped") != 64) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.tasks_reaped");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "retained_task_count") != 72) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.retained_task_count");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "controllers_registered") != 80) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.controllers_registered");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "controllers_unregistered") != 88) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.controllers_unregistered");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "retained_controller_count") != 96) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.retained_controller_count");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "async_submissions") != 104) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.async_submissions");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "async_completions") != 112) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.async_completions");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "completion_receipts") != 120) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.completion_receipts");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "duplicate_rejections") != 128) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.duplicate_rejections");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "late_rejections") != 136) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.late_rejections");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "cancel_requests") != 144) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.cancel_requests");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "timeout_cancels") != 152) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.timeout_cancels");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "reset_cancels") != 160) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.reset_cancels");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "resets") != 168) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.resets");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "read_ops") != 176) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.read_ops");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "write_ops") != 184) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.write_ops");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "flush_ops") != 192) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.flush_ops");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "queue_high_water") != 200) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.queue_high_water");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "in_flight_high_water") != 208) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.in_flight_high_water");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "parallel_active_max") != 216) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.parallel_active_max");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "retained_request_count") != 224) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.retained_request_count");
+    if (@offsetOf(ProgramKernelBlockQueueCheck, "retained_buffer_count") != 232) @compileError("generated ABI offset drift: ProgramKernelBlockQueueCheck.retained_buffer_count");
     if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -15770,7 +15869,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 432) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 440) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -15823,6 +15922,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "scheduler_kernel_check") != 408) @compileError("generated ABI offset drift: R4XStartR4Dev.scheduler_kernel_check");
     if (@offsetOf(R4XStartR4Dev, "smp_kernel_check") != 416) @compileError("generated ABI offset drift: R4XStartR4Dev.smp_kernel_check");
     if (@offsetOf(R4XStartR4Dev, "performance_smp_tlb") != 424) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_smp_tlb");
+    if (@offsetOf(R4XStartR4Dev, "storage_block_queue_check") != 432) @compileError("generated ABI offset drift: R4XStartR4Dev.storage_block_queue_check");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -16713,13 +16813,14 @@ pub const R4DevProvider = struct {
     scheduler_kernel_check: ?R4DevFns.scheduler_kernel_check = null,
     smp_kernel_check: ?R4DevFns.smp_kernel_check = null,
     performance_smp_tlb: ?R4DevFns.performance_smp_tlb = null,
+    storage_block_queue_check: ?R4DevFns.storage_block_queue_check = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 17,
-        .size = 432,
+        .abi_version = 18,
+        .size = 440,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -16773,5 +16874,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .scheduler_kernel_check = if (provider.scheduler_kernel_check) |callback| @intFromPtr(callback) else 0,
         .smp_kernel_check = if (provider.smp_kernel_check) |callback| @intFromPtr(callback) else 0,
         .performance_smp_tlb = if (provider.performance_smp_tlb) |callback| @intFromPtr(callback) else 0,
+        .storage_block_queue_check = if (provider.storage_block_queue_check) |callback| @intFromPtr(callback) else 0,
     };
 }

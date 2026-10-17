@@ -98,3 +98,8 @@ Opaque color bytes carry the existing R4GFX
 description; they do not add kernel color or window-presentation policy.
 The service implementation is available; Desktop and Vulkan WSI consumers
 are still being integrated.
+
+R4DEV v18 appends `storage_block_queue_check` at offset432 after the unchanged
+432-byte prefix. `ProgramKernelBlockQueueCheck` v1 is fixed240bytes. It reports
+only its own synthetic cases, exact request/task/device receipts and retained
+resources; no global queue reset, physical test disk or separate score.
