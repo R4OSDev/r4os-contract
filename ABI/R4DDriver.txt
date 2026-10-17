@@ -1060,3 +1060,16 @@ before the existing callback/task/display/GPU quiescence checks. A retained
 task or unacknowledged hardware state still vetoes warm reset and backing
 release. This is a lifecycle semantic clarification; DriverApi36 remains
 656 bytes and adds no further slot or public payload.
+
+Reserved untyped audio/synth registration (Kernel0.1.305)
+-------------------------------------------------------
+DriverApi.register_audio_backend and register_synth_engine remain at their
+frozen96/120-byte offsets in the unchanged36/656-byte table. Both mandatory
+function pointers return-1 unconditionally, without reading either argument,
+registering/replacing records, allocating resources or invoking callbacks.
+These slots are reserved and must not be reused. Old helper success is no
+longer available; use register_audio_output_backend with AudioBackend v2/v3/v4
+or register_synth_engine_v2 with SynthEngine. No structured version is retired.
+Mixer registration, exact callback ownership, output selection, Idle versus
+physical Stop, closing and confirmed driver cleanup keep their existing rules.
+The SDK exposes only the structured synth helper registerSynthEngineEx.

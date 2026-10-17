@@ -4090,9 +4090,13 @@ pub const DriverApi = extern struct {
     request_irq: *const fn (u8, *const anyopaque) callconv(.c) i32,
     release_irq: *const fn (u8) callconv(.c) i32,
     get_option: *const fn ([*:0]const u8, [*:0]const u8) callconv(.c) [*:0]const u8,
+    // Reserved legacy slot since Kernel0.1.305: always-1, no reads or effects.
+    // Use register_audio_output_backend with its structured descriptor.
     register_audio_backend: *const fn ([*:0]const u8, *const anyopaque) callconv(.c) i32,
     register_storage_backend: *const fn ([*:0]const u8, *const anyopaque) callconv(.c) i32,
     register_input_backend: *const fn ([*:0]const u8, *const anyopaque) callconv(.c) i32,
+    // Reserved legacy slot since Kernel0.1.305: always-1, no reads or effects.
+    // Use register_synth_engine_v2 with its structured descriptor.
     register_synth_engine: *const fn ([*:0]const u8, *const anyopaque) callconv(.c) i32,
     register_mixer_backend: *const fn ([*:0]const u8, *const anyopaque) callconv(.c) i32,
     register_net_backend: *const fn ([*:0]const u8, *const anyopaque) callconv(.c) i32,
