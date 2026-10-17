@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 310 von 310 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 311 von 311 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1968; Limits: 109
+- Operationen: 0; Fehlerdomänen: 63; Konstanten: 1986; Limits: 109
 
 ## App-Profile
 
@@ -331,6 +331,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramStackPerformanceInfo` | extensible | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 | `ProgramStackFaultInfo` | extensible | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
 | `ProgramKernelHeapCheck` | fixed_layout | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
+| `ProgramKernelSchedulerCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 
 ## Typdetails
 
@@ -8268,6 +8269,38 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `vm_releases` | 152 | 8 | 8 | `u64` | - |
 | `vm_live_reservations` | 160 | 8 | 8 | `u64` | - |
 
+### `ProgramKernelSchedulerCheck`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `status` | 8 | 4 | 4 | `u32` | - |
+| `selected` | 12 | 4 | 4 | `u32` | - |
+| `passed` | 16 | 4 | 4 | `u32` | - |
+| `failed` | 20 | 4 | 4 | `u32` | - |
+| `unavailable` | 24 | 4 | 4 | `u32` | - |
+| `isolated` | 28 | 4 | 4 | `u32` | - |
+| `cleanup_errors` | 32 | 4 | 4 | `u32` | - |
+| `live_tasks` | 36 | 4 | 4 | `u32` | - |
+| `live_work` | 40 | 4 | 4 | `u32` | - |
+| `reserved0` | 44 | 4 | 4 | `u32` | - |
+| `run_id` | 48 | 8 | 8 | `u64` | - |
+| `tasks_created` | 56 | 8 | 8 | `u64` | - |
+| `tasks_reaped` | 64 | 8 | 8 | `u64` | - |
+| `work_submitted` | 72 | 8 | 8 | `u64` | - |
+| `work_released` | 80 | 8 | 8 | `u64` | - |
+| `event_iterations` | 88 | 8 | 8 | `u64` | - |
+| `if_checks` | 96 | 8 | 8 | `u64` | - |
+| `deadline_tasks` | 104 | 8 | 8 | `u64` | - |
+| `role_mask` | 112 | 8 | 8 | `u64` | - |
+| `unwind_checks` | 120 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -10975,6 +11008,24 @@ Geltung: `storage`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `kernel_heap_check_case_acceptance` | `6` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
 | `kernel_heap_check_case_resident_commit` | `7` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
 | `kernel_heap_check_case_cleanup` | `8` | `u32` | value | number | `kernel_heap_check` | fixed_contract |
+| `kernel_scheduler_check_version` | `1` | `u32` | version | number | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_status_unavailable` | `0` | `u32` | value | number | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_status_passed` | `1` | `u32` | value | number | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_status_failed` | `2` | `u32` | value | number | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_status_busy` | `3` | `u32` | value | number | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_status_cancelled` | `4` | `u32` | value | number | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_sync` | `1` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_unwind` | `2` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_directed` | `4` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_fairness` | `8` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_inheritance` | `16` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_deadlines` | `32` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_fpu` | `64` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_case_all` | `127` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_isolated_timer_reprogram` | `1` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_isolated_timeout_batch_64` | `2` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_isolated_reserve_oom` | `4` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
+| `kernel_scheduler_check_isolated_priority_boot` | `8` | `u32` | flag | bitmask | `kernel_scheduler_check` | fixed_contract |
 
 ## Limits
 

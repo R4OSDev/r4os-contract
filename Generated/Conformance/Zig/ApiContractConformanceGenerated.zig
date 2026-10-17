@@ -5191,6 +5191,29 @@ comptime {
     if (@offsetOf(abi.ProgramKernelHeapCheck, "vm_reservations") != 144) @compileError("ProgramKernelHeapCheck.vm_reservations offset");
     if (@offsetOf(abi.ProgramKernelHeapCheck, "vm_releases") != 152) @compileError("ProgramKernelHeapCheck.vm_releases offset");
     if (@offsetOf(abi.ProgramKernelHeapCheck, "vm_live_reservations") != 160) @compileError("ProgramKernelHeapCheck.vm_live_reservations offset");
+    if (@sizeOf(abi.ProgramKernelSchedulerCheck) != 128) @compileError("ProgramKernelSchedulerCheck size");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "version") != 0) @compileError("ProgramKernelSchedulerCheck.version offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "size") != 4) @compileError("ProgramKernelSchedulerCheck.size offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "status") != 8) @compileError("ProgramKernelSchedulerCheck.status offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "selected") != 12) @compileError("ProgramKernelSchedulerCheck.selected offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "passed") != 16) @compileError("ProgramKernelSchedulerCheck.passed offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "failed") != 20) @compileError("ProgramKernelSchedulerCheck.failed offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "unavailable") != 24) @compileError("ProgramKernelSchedulerCheck.unavailable offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "isolated") != 28) @compileError("ProgramKernelSchedulerCheck.isolated offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "cleanup_errors") != 32) @compileError("ProgramKernelSchedulerCheck.cleanup_errors offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "live_tasks") != 36) @compileError("ProgramKernelSchedulerCheck.live_tasks offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "live_work") != 40) @compileError("ProgramKernelSchedulerCheck.live_work offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "reserved0") != 44) @compileError("ProgramKernelSchedulerCheck.reserved0 offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "run_id") != 48) @compileError("ProgramKernelSchedulerCheck.run_id offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "tasks_created") != 56) @compileError("ProgramKernelSchedulerCheck.tasks_created offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "tasks_reaped") != 64) @compileError("ProgramKernelSchedulerCheck.tasks_reaped offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "work_submitted") != 72) @compileError("ProgramKernelSchedulerCheck.work_submitted offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "work_released") != 80) @compileError("ProgramKernelSchedulerCheck.work_released offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "event_iterations") != 88) @compileError("ProgramKernelSchedulerCheck.event_iterations offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "if_checks") != 96) @compileError("ProgramKernelSchedulerCheck.if_checks offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "deadline_tasks") != 104) @compileError("ProgramKernelSchedulerCheck.deadline_tasks offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "role_mask") != 112) @compileError("ProgramKernelSchedulerCheck.role_mask offset");
+    if (@offsetOf(abi.ProgramKernelSchedulerCheck, "unwind_checks") != 120) @compileError("ProgramKernelSchedulerCheck.unwind_checks offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1264) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -5972,7 +5995,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 408) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 416) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -6069,6 +6092,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.stack_fault) != 8) @compileError("R4DevFns.stack_fault signature");
     if (@offsetOf(abi.R4XStartR4Dev, "memory_kernel_heap_check") != 400) @compileError("R4XStartR4Dev.memory_kernel_heap_check offset");
     if (@sizeOf(abi.R4DevFns.memory_kernel_heap_check) != 8) @compileError("R4DevFns.memory_kernel_heap_check signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "scheduler_kernel_check") != 408) @compileError("R4XStartR4Dev.scheduler_kernel_check offset");
+    if (@sizeOf(abi.R4DevFns.scheduler_kernel_check) != 8) @compileError("R4DevFns.scheduler_kernel_check signature");
 }
 
 test "generated API contract compiles" {}

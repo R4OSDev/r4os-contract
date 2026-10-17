@@ -435,5 +435,6 @@ static R4DevPerformanceLockFn r4os_probe_r4dev_performance_lock = (R4DevPerforma
 static R4DevPerformanceStackFn r4os_probe_r4dev_performance_stack = (R4DevPerformanceStackFn)0;
 static R4DevStackFaultFn r4os_probe_r4dev_stack_fault = (R4DevStackFaultFn)0;
 static R4DevMemoryKernelHeapCheckFn r4os_probe_r4dev_memory_kernel_heap_check = (R4DevMemoryKernelHeapCheckFn)0;
+static R4DevSchedulerKernelCheckFn r4os_probe_r4dev_scheduler_kernel_check = (R4DevSchedulerKernelCheckFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

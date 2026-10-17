@@ -1973,6 +1973,24 @@ pub const kernel_heap_check_case_churn: u32 = 5;
 pub const kernel_heap_check_case_acceptance: u32 = 6;
 pub const kernel_heap_check_case_resident_commit: u32 = 7;
 pub const kernel_heap_check_case_cleanup: u32 = 8;
+pub const kernel_scheduler_check_version: u32 = 1;
+pub const kernel_scheduler_check_status_unavailable: u32 = 0;
+pub const kernel_scheduler_check_status_passed: u32 = 1;
+pub const kernel_scheduler_check_status_failed: u32 = 2;
+pub const kernel_scheduler_check_status_busy: u32 = 3;
+pub const kernel_scheduler_check_status_cancelled: u32 = 4;
+pub const kernel_scheduler_check_case_sync: u32 = 1;
+pub const kernel_scheduler_check_case_unwind: u32 = 2;
+pub const kernel_scheduler_check_case_directed: u32 = 4;
+pub const kernel_scheduler_check_case_fairness: u32 = 8;
+pub const kernel_scheduler_check_case_inheritance: u32 = 16;
+pub const kernel_scheduler_check_case_deadlines: u32 = 32;
+pub const kernel_scheduler_check_case_fpu: u32 = 64;
+pub const kernel_scheduler_check_case_all: u32 = 127;
+pub const kernel_scheduler_check_isolated_timer_reprogram: u32 = 1;
+pub const kernel_scheduler_check_isolated_timeout_batch_64: u32 = 2;
+pub const kernel_scheduler_check_isolated_reserve_oom: u32 = 4;
+pub const kernel_scheduler_check_isolated_priority_boot: u32 = 8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -15858,6 +15876,62 @@ impl Default for ProgramKernelHeapCheck {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelSchedulerCheck {
+    pub version: u32,
+    pub size: u32,
+    pub status: u32,
+    pub selected: u32,
+    pub passed: u32,
+    pub failed: u32,
+    pub unavailable: u32,
+    pub isolated: u32,
+    pub cleanup_errors: u32,
+    pub live_tasks: u32,
+    pub live_work: u32,
+    pub reserved0: u32,
+    pub run_id: u64,
+    pub tasks_created: u64,
+    pub tasks_reaped: u64,
+    pub work_submitted: u64,
+    pub work_released: u64,
+    pub event_iterations: u64,
+    pub if_checks: u64,
+    pub deadline_tasks: u64,
+    pub role_mask: u64,
+    pub unwind_checks: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelSchedulerCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            status: 0,
+            selected: 0,
+            passed: 0,
+            failed: 0,
+            unavailable: 0,
+            isolated: 15,
+            cleanup_errors: 0,
+            live_tasks: 0,
+            live_work: 0,
+            reserved0: 0,
+            run_id: 0,
+            tasks_created: 0,
+            tasks_reaped: 0,
+            work_submitted: 0,
+            work_released: 0,
+            event_iterations: 0,
+            if_checks: 0,
+            deadline_tasks: 0,
+            role_mask: 0,
+            unwind_checks: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -17209,6 +17283,7 @@ pub mod R4DevFns {
     pub type performance_stack = unsafe extern "C" fn(u32, *mut ProgramStackPerformanceInfo) -> i32;
     pub type stack_fault = unsafe extern "C" fn(u32, *mut ProgramStackFaultInfo) -> i32;
     pub type memory_kernel_heap_check = unsafe extern "C" fn(*mut ProgramKernelHeapCheck) -> i32;
+    pub type scheduler_kernel_check = unsafe extern "C" fn(u32, *mut ProgramKernelSchedulerCheck) -> i32;
 }
 
 #[repr(C)]
@@ -17267,14 +17342,15 @@ pub struct R4XStartR4Dev {
     pub performance_stack: usize,
     pub stack_fault: usize,
     pub memory_kernel_heap_check: usize,
+    pub scheduler_kernel_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 15,
-            size: 408,
+            abi_version: 16,
+            size: 416,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -17325,6 +17401,7 @@ impl Default for R4XStartR4Dev {
             performance_stack: 0,
             stack_fault: 0,
             memory_kernel_heap_check: 0,
+            scheduler_kernel_check: 0,
         }
     }
 }
@@ -26732,6 +26809,30 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramKernelHeapCheck, vm_live_reservations) == 160);
     assert!(core::mem::size_of::<ProgramKernelHeapCheck>() == 168);
     assert!(core::mem::align_of::<ProgramKernelHeapCheck>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, status) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, selected) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, passed) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, failed) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, unavailable) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, isolated) == 28);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, cleanup_errors) == 32);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, live_tasks) == 36);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, live_work) == 40);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, reserved0) == 44);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, run_id) == 48);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, tasks_created) == 56);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, tasks_reaped) == 64);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, work_submitted) == 72);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, work_released) == 80);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, event_iterations) == 88);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, if_checks) == 96);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, deadline_tasks) == 104);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, role_mask) == 112);
+    assert!(core::mem::offset_of!(ProgramKernelSchedulerCheck, unwind_checks) == 120);
+    assert!(core::mem::size_of::<ProgramKernelSchedulerCheck>() == 128);
+    assert!(core::mem::align_of::<ProgramKernelSchedulerCheck>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -27208,7 +27309,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, performance_stack) == 384);
     assert!(core::mem::offset_of!(R4XStartR4Dev, stack_fault) == 392);
     assert!(core::mem::offset_of!(R4XStartR4Dev, memory_kernel_heap_check) == 400);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 408);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, scheduler_kernel_check) == 408);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 416);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

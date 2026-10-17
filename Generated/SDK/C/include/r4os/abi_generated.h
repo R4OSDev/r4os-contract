@@ -1981,6 +1981,24 @@ extern "C" {
 #define R4OS_KERNEL_HEAP_CHECK_CASE_ACCEPTANCE 6u
 #define R4OS_KERNEL_HEAP_CHECK_CASE_RESIDENT_COMMIT 7u
 #define R4OS_KERNEL_HEAP_CHECK_CASE_CLEANUP 8u
+#define R4OS_KERNEL_SCHEDULER_CHECK_VERSION 1u
+#define R4OS_KERNEL_SCHEDULER_CHECK_STATUS_UNAVAILABLE 0u
+#define R4OS_KERNEL_SCHEDULER_CHECK_STATUS_PASSED 1u
+#define R4OS_KERNEL_SCHEDULER_CHECK_STATUS_FAILED 2u
+#define R4OS_KERNEL_SCHEDULER_CHECK_STATUS_BUSY 3u
+#define R4OS_KERNEL_SCHEDULER_CHECK_STATUS_CANCELLED 4u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_SYNC 1u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_UNWIND 2u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_DIRECTED 4u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_FAIRNESS 8u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_INHERITANCE 16u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_DEADLINES 32u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_FPU 64u
+#define R4OS_KERNEL_SCHEDULER_CHECK_CASE_ALL 127u
+#define R4OS_KERNEL_SCHEDULER_CHECK_ISOLATED_TIMER_REPROGRAM 1u
+#define R4OS_KERNEL_SCHEDULER_CHECK_ISOLATED_TIMEOUT_BATCH_64 2u
+#define R4OS_KERNEL_SCHEDULER_CHECK_ISOLATED_RESERVE_OOM 4u
+#define R4OS_KERNEL_SCHEDULER_CHECK_ISOLATED_PRIORITY_BOOT 8u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2732,6 +2750,7 @@ typedef struct R4ProgramLockPerformanceInfo R4ProgramLockPerformanceInfo;
 typedef struct R4ProgramStackPerformanceInfo R4ProgramStackPerformanceInfo;
 typedef struct R4ProgramStackFaultInfo R4ProgramStackFaultInfo;
 typedef struct R4ProgramKernelHeapCheck R4ProgramKernelHeapCheck;
+typedef struct R4ProgramKernelSchedulerCheck R4ProgramKernelSchedulerCheck;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8505,6 +8524,31 @@ typedef struct R4ProgramKernelHeapCheck {
     uint64_t vm_live_reservations;
 } R4ProgramKernelHeapCheck;
 
+typedef struct R4ProgramKernelSchedulerCheck {
+    uint32_t version;
+    uint32_t size;
+    uint32_t status;
+    uint32_t selected;
+    uint32_t passed;
+    uint32_t failed;
+    uint32_t unavailable;
+    uint32_t isolated;
+    uint32_t cleanup_errors;
+    uint32_t live_tasks;
+    uint32_t live_work;
+    uint32_t reserved0;
+    uint64_t run_id;
+    uint64_t tasks_created;
+    uint64_t tasks_reaped;
+    uint64_t work_submitted;
+    uint64_t work_released;
+    uint64_t event_iterations;
+    uint64_t if_checks;
+    uint64_t deadline_tasks;
+    uint64_t role_mask;
+    uint64_t unwind_checks;
+} R4ProgramKernelSchedulerCheck;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9414,6 +9458,7 @@ typedef int32_t (*R4DevPerformanceLockFn)(uint32_t index, R4ProgramLockPerforman
 typedef int32_t (*R4DevPerformanceStackFn)(uint32_t index, R4ProgramStackPerformanceInfo * out);
 typedef int32_t (*R4DevStackFaultFn)(uint32_t index, R4ProgramStackFaultInfo * out);
 typedef int32_t (*R4DevMemoryKernelHeapCheckFn)(R4ProgramKernelHeapCheck * out);
+typedef int32_t (*R4DevSchedulerKernelCheckFn)(uint32_t selection, R4ProgramKernelSchedulerCheck * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9469,6 +9514,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t performance_stack;
     uintptr_t stack_fault;
     uintptr_t memory_kernel_heap_check;
+    uintptr_t scheduler_kernel_check;
 } R4XStartR4Dev;
 
 
@@ -14662,6 +14708,29 @@ _Static_assert(offsetof(R4ProgramKernelHeapCheck, expected_vm_errors) == 136u, "
 _Static_assert(offsetof(R4ProgramKernelHeapCheck, vm_reservations) == 144u, "ProgramKernelHeapCheck.vm_reservations offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelHeapCheck, vm_releases) == 152u, "ProgramKernelHeapCheck.vm_releases offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelHeapCheck, vm_live_reservations) == 160u, "ProgramKernelHeapCheck.vm_live_reservations offset mismatch");
+_Static_assert(sizeof(R4ProgramKernelSchedulerCheck) == 128u, "ProgramKernelSchedulerCheck size mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, version) == 0u, "ProgramKernelSchedulerCheck.version offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, size) == 4u, "ProgramKernelSchedulerCheck.size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, status) == 8u, "ProgramKernelSchedulerCheck.status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, selected) == 12u, "ProgramKernelSchedulerCheck.selected offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, passed) == 16u, "ProgramKernelSchedulerCheck.passed offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, failed) == 20u, "ProgramKernelSchedulerCheck.failed offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, unavailable) == 24u, "ProgramKernelSchedulerCheck.unavailable offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, isolated) == 28u, "ProgramKernelSchedulerCheck.isolated offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, cleanup_errors) == 32u, "ProgramKernelSchedulerCheck.cleanup_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, live_tasks) == 36u, "ProgramKernelSchedulerCheck.live_tasks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, live_work) == 40u, "ProgramKernelSchedulerCheck.live_work offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, reserved0) == 44u, "ProgramKernelSchedulerCheck.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, run_id) == 48u, "ProgramKernelSchedulerCheck.run_id offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, tasks_created) == 56u, "ProgramKernelSchedulerCheck.tasks_created offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, tasks_reaped) == 64u, "ProgramKernelSchedulerCheck.tasks_reaped offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, work_submitted) == 72u, "ProgramKernelSchedulerCheck.work_submitted offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, work_released) == 80u, "ProgramKernelSchedulerCheck.work_released offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, event_iterations) == 88u, "ProgramKernelSchedulerCheck.event_iterations offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, if_checks) == 96u, "ProgramKernelSchedulerCheck.if_checks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, deadline_tasks) == 104u, "ProgramKernelSchedulerCheck.deadline_tasks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, role_mask) == 112u, "ProgramKernelSchedulerCheck.role_mask offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelSchedulerCheck, unwind_checks) == 120u, "ProgramKernelSchedulerCheck.unwind_checks offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -15443,7 +15512,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 408u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 416u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -15540,6 +15609,8 @@ _Static_assert(offsetof(R4XStartR4Dev, stack_fault) == 392u, "R4XStartR4Dev.stac
 _Static_assert(sizeof(R4DevStackFaultFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, memory_kernel_heap_check) == 400u, "R4XStartR4Dev.memory_kernel_heap_check offset mismatch");
 _Static_assert(sizeof(R4DevMemoryKernelHeapCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, scheduler_kernel_check) == 408u, "R4XStartR4Dev.scheduler_kernel_check offset mismatch");
+_Static_assert(sizeof(R4DevSchedulerKernelCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

@@ -5,11 +5,11 @@ It contains the R4M0 container contract, shared layouts and error codes,
 platform API groups, generated bindings, conformance fixtures, and the
 contract generator.
 
-R4DEV v15 appends `memory_kernel_heap_check` after its preserved 400-byte
-layout prefix. The fixed 168-byte `ProgramKernelHeapCheck` reports explicit
-bounded work and exact own cleanup. It never interprets concurrent global
-heap usage as a leak or resets operational counters. Old payloads, slots and
-constants are preserved; the controlled baseline refresh adds only this API.
+R4DEV v16 appends `scheduler_kernel_check` after its preserved 408-byte
+prefix. `ProgramKernelSchedulerCheck` is a fixed 128-byte result for explicit
+native sync/scheduler/IRQ-FPU work, owned task generations and actual release
+receipts. Boot-only global timer and reserve injections remain isolated.
+Existing layouts, slots, constants and the preceding heap check are preserved.
 
 Optional Runtime-R4L APIs are intentionally not defined here; each independent
 library owns its own contract and bindings.

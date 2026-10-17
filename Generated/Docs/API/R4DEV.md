@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DEV (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DEV (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Dev` v15, 408 Bytes, 47 Funktionsfelder und 49 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Dev` v16, 416 Bytes, 48 Funktionsfelder und 50 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DevFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -58,4 +58,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 46 | 384 | function | `performance_stack` | `*const fn (u32, *ProgramStackPerformanceInfo) callconv(.c) i32` |
 | 47 | 392 | function | `stack_fault` | `*const fn (u32, *ProgramStackFaultInfo) callconv(.c) i32` |
 | 48 | 400 | function | `memory_kernel_heap_check` | `*const fn (*ProgramKernelHeapCheck) callconv(.c) i32` |
+| 49 | 408 | function | `scheduler_kernel_check` | `*const fn (u32, *ProgramKernelSchedulerCheck) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DEV -->

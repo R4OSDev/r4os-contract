@@ -1969,6 +1969,24 @@ pub const kernel_heap_check_case_churn: u32 = 5;
 pub const kernel_heap_check_case_acceptance: u32 = 6;
 pub const kernel_heap_check_case_resident_commit: u32 = 7;
 pub const kernel_heap_check_case_cleanup: u32 = 8;
+pub const kernel_scheduler_check_version: u32 = 1;
+pub const kernel_scheduler_check_status_unavailable: u32 = 0;
+pub const kernel_scheduler_check_status_passed: u32 = 1;
+pub const kernel_scheduler_check_status_failed: u32 = 2;
+pub const kernel_scheduler_check_status_busy: u32 = 3;
+pub const kernel_scheduler_check_status_cancelled: u32 = 4;
+pub const kernel_scheduler_check_case_sync: u32 = 1;
+pub const kernel_scheduler_check_case_unwind: u32 = 2;
+pub const kernel_scheduler_check_case_directed: u32 = 4;
+pub const kernel_scheduler_check_case_fairness: u32 = 8;
+pub const kernel_scheduler_check_case_inheritance: u32 = 16;
+pub const kernel_scheduler_check_case_deadlines: u32 = 32;
+pub const kernel_scheduler_check_case_fpu: u32 = 64;
+pub const kernel_scheduler_check_case_all: u32 = 127;
+pub const kernel_scheduler_check_isolated_timer_reprogram: u32 = 1;
+pub const kernel_scheduler_check_isolated_timeout_batch_64: u32 = 2;
+pub const kernel_scheduler_check_isolated_reserve_oom: u32 = 4;
+pub const kernel_scheduler_check_isolated_priority_boot: u32 = 8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8251,6 +8269,31 @@ pub const ProgramKernelHeapCheck = extern struct {
     vm_live_reservations: u64 = 0,
 };
 
+pub const ProgramKernelSchedulerCheck = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    status: u32 = 0,
+    selected: u32 = 0,
+    passed: u32 = 0,
+    failed: u32 = 0,
+    unavailable: u32 = 0,
+    isolated: u32 = 15,
+    cleanup_errors: u32 = 0,
+    live_tasks: u32 = 0,
+    live_work: u32 = 0,
+    reserved0: u32 = 0,
+    run_id: u64 = 0,
+    tasks_created: u64 = 0,
+    tasks_reaped: u64 = 0,
+    work_submitted: u64 = 0,
+    work_released: u64 = 0,
+    event_iterations: u64 = 0,
+    if_checks: u64 = 0,
+    deadline_tasks: u64 = 0,
+    role_mask: u64 = 0,
+    unwind_checks: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -9125,12 +9168,13 @@ pub const R4DevFns = struct {
     pub const performance_stack = *const fn (u32, *ProgramStackPerformanceInfo) callconv(.c) i32;
     pub const stack_fault = *const fn (u32, *ProgramStackFaultInfo) callconv(.c) i32;
     pub const memory_kernel_heap_check = *const fn (*ProgramKernelHeapCheck) callconv(.c) i32;
+    pub const scheduler_kernel_check = *const fn (u32, *ProgramKernelSchedulerCheck) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 15,
-    size: u32 = 408,
+    abi_version: u32 = 16,
+    size: u32 = 416,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9181,6 +9225,7 @@ pub const R4XStartR4Dev = extern struct {
     performance_stack: usize = 0,
     stack_fault: usize = 0,
     memory_kernel_heap_check: usize = 0,
+    scheduler_kernel_check: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -9642,6 +9687,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 46, .offset = 384, .name = "performance_stack", .state = .function, .required = false },
     .{ .number = 47, .offset = 392, .name = "stack_fault", .state = .function, .required = false },
     .{ .number = 48, .offset = 400, .name = "memory_kernel_heap_check", .state = .function, .required = false },
+    .{ .number = 49, .offset = 408, .name = "scheduler_kernel_check", .state = .function, .required = false },
 };
 
 comptime {
@@ -15140,6 +15186,30 @@ comptime {
     if (@offsetOf(ProgramKernelHeapCheck, "vm_reservations") != 144) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.vm_reservations");
     if (@offsetOf(ProgramKernelHeapCheck, "vm_releases") != 152) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.vm_releases");
     if (@offsetOf(ProgramKernelHeapCheck, "vm_live_reservations") != 160) @compileError("generated ABI offset drift: ProgramKernelHeapCheck.vm_live_reservations");
+    if (@sizeOf(ProgramKernelSchedulerCheck) != 128) @compileError("generated ABI size drift: ProgramKernelSchedulerCheck");
+    if (@alignOf(ProgramKernelSchedulerCheck) != 8) @compileError("generated ABI alignment drift: ProgramKernelSchedulerCheck");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "version") != 0) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.version");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "size") != 4) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.size");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "status") != 8) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.status");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "selected") != 12) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.selected");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "passed") != 16) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.passed");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "failed") != 20) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.failed");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "unavailable") != 24) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.unavailable");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "isolated") != 28) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.isolated");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "cleanup_errors") != 32) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.cleanup_errors");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "live_tasks") != 36) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.live_tasks");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "live_work") != 40) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.live_work");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "reserved0") != 44) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.reserved0");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "run_id") != 48) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.run_id");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "tasks_created") != 56) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.tasks_created");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "tasks_reaped") != 64) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.tasks_reaped");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "work_submitted") != 72) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.work_submitted");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "work_released") != 80) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.work_released");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "event_iterations") != 88) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.event_iterations");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "if_checks") != 96) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.if_checks");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "deadline_tasks") != 104) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.deadline_tasks");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "role_mask") != 112) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.role_mask");
+    if (@offsetOf(ProgramKernelSchedulerCheck, "unwind_checks") != 120) @compileError("generated ABI offset drift: ProgramKernelSchedulerCheck.unwind_checks");
     if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -15536,7 +15606,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 408) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 416) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -15586,6 +15656,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "performance_stack") != 384) @compileError("generated ABI offset drift: R4XStartR4Dev.performance_stack");
     if (@offsetOf(R4XStartR4Dev, "stack_fault") != 392) @compileError("generated ABI offset drift: R4XStartR4Dev.stack_fault");
     if (@offsetOf(R4XStartR4Dev, "memory_kernel_heap_check") != 400) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_kernel_heap_check");
+    if (@offsetOf(R4XStartR4Dev, "scheduler_kernel_check") != 408) @compileError("generated ABI offset drift: R4XStartR4Dev.scheduler_kernel_check");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -16473,13 +16544,14 @@ pub const R4DevProvider = struct {
     performance_stack: ?R4DevFns.performance_stack = null,
     stack_fault: ?R4DevFns.stack_fault = null,
     memory_kernel_heap_check: ?R4DevFns.memory_kernel_heap_check = null,
+    scheduler_kernel_check: ?R4DevFns.scheduler_kernel_check = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 15,
-        .size = 408,
+        .abi_version = 16,
+        .size = 416,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -16530,5 +16602,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .performance_stack = if (provider.performance_stack) |callback| @intFromPtr(callback) else 0,
         .stack_fault = if (provider.stack_fault) |callback| @intFromPtr(callback) else 0,
         .memory_kernel_heap_check = if (provider.memory_kernel_heap_check) |callback| @intFromPtr(callback) else 0,
+        .scheduler_kernel_check = if (provider.scheduler_kernel_check) |callback| @intFromPtr(callback) else 0,
     };
 }
