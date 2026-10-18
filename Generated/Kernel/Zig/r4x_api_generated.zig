@@ -2108,6 +2108,37 @@ pub const serial_parity_even: u32 = 2;
 pub const serial_parity_mark: u32 = 3;
 pub const serial_parity_space: u32 = 4;
 pub const driver_api_serial_version: u32 = 37;
+pub const cpu_topology_result_ok: i32 = 1;
+pub const cpu_topology_result_end: i32 = 0;
+pub const cpu_topology_result_invalid: i32 = -1;
+pub const cpu_topology_result_busy: i32 = -2;
+pub const cpu_topology_flag_captured: u32 = 1;
+pub const cpu_topology_flag_geometry: u32 = 2;
+pub const cpu_topology_flag_acpi_uid: u32 = 4;
+pub const cpu_topology_flag_online: u32 = 8;
+pub const cpu_topology_flag_schedulable: u32 = 16;
+pub const cpu_topology_flag_bsp: u32 = 32;
+pub const cpu_topology_flag_core_type: u32 = 64;
+pub const cpu_topology_flag_efficiency: u32 = 128;
+pub const cpu_topology_flag_heterogeneous: u32 = 256;
+pub const cpu_topology_flag_asymmetric: u32 = 512;
+pub const cpu_topology_flag_qualified: u32 = 1024;
+pub const cpu_topology_flag_acpi_conflict: u32 = 2048;
+pub const cpu_topology_geometry_unavailable: u32 = 0;
+pub const cpu_topology_geometry_known: u32 = 1;
+pub const cpu_topology_geometry_malformed: u32 = 2;
+pub const cpu_topology_geometry_identity: u32 = 3;
+pub const cpu_topology_geometry_legacy_model: u32 = 4;
+pub const cpu_topology_geometry_unqualified: u32 = 5;
+pub const cpu_topology_geometry_inconsistent: u32 = 6;
+pub const cpu_topology_geometry_starting: u32 = 7;
+pub const cpu_topology_cache_unavailable: u32 = 0;
+pub const cpu_topology_cache_complete: u32 = 1;
+pub const cpu_topology_cache_invalid: u32 = 2;
+pub const cpu_topology_cache_truncated: u32 = 3;
+pub const cpu_topology_cache_kind_data: u32 = 1;
+pub const cpu_topology_cache_kind_instruction: u32 = 2;
+pub const cpu_topology_cache_kind_unified: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8690,6 +8721,51 @@ pub const DriverSerialApi = extern struct {
     admission: u64 = 0,
 };
 
+pub const CpuTopologyInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    cpu_index: u32 = 0,
+    apic_id: u32 = 0,
+    acpi_uid: u32 = 4294967295,
+    flags: u32 = 0,
+    start_epoch: u64 = 0,
+    source_leaf: u32 = 0,
+    geometry_status: u32 = 0,
+    package_id: u32 = 4294967295,
+    core_id: u32 = 4294967295,
+    thread_id: u32 = 4294967295,
+    smt_shift: u32 = 0,
+    package_shift: u32 = 0,
+    threads_per_core_bound: u32 = 0,
+    logical_per_package_bound: u32 = 0,
+    core_type_source: u32 = 0,
+    core_type: u32 = 0,
+    native_model_id: u32 = 0,
+    efficiency_rank: u32 = 0,
+    cache_source_leaf: u32 = 0,
+    cache_count: u32 = 0,
+    cache_status: u32 = 0,
+    vendor_name: [12]u8 = .{0} ** 12,
+    configured_cpus: u32 = 0,
+};
+
+pub const CpuCacheTopologyInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    cpu_index: u32 = 0,
+    cache_index: u32 = 0,
+    start_epoch: u64 = 0,
+    source_leaf: u32 = 0,
+    kind: u32 = 0,
+    level: u32 = 0,
+    line_bytes: u32 = 0,
+    sharing_logical_bound: u32 = 0,
+    sharing_shift: u32 = 0,
+    cache_bytes: u64 = 0,
+    property_flags: u32 = 0,
+    reserved0: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -9580,12 +9656,14 @@ pub const R4DevFns = struct {
     pub const serial_status = *const fn (u64, *SerialStatus) callconv(.c) i32;
     pub const serial_cancel = *const fn (u64) callconv(.c) i32;
     pub const serial_close = *const fn (u64, u32, u64) callconv(.c) i32;
+    pub const cpu_topology = *const fn (u32, *CpuTopologyInfo) callconv(.c) i32;
+    pub const cpu_cache_topology = *const fn (u32, u32, *CpuCacheTopologyInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 21,
-    size: u32 = 536,
+    abi_version: u32 = 22,
+    size: u32 = 552,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9652,6 +9730,8 @@ pub const R4XStartR4Dev = extern struct {
     serial_status: usize = 0,
     serial_cancel: usize = 0,
     serial_close: usize = 0,
+    cpu_topology: usize = 0,
+    cpu_cache_topology: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -10129,6 +10209,8 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 62, .offset = 512, .name = "serial_status", .state = .function, .required = false },
     .{ .number = 63, .offset = 520, .name = "serial_cancel", .state = .function, .required = false },
     .{ .number = 64, .offset = 528, .name = "serial_close", .state = .function, .required = false },
+    .{ .number = 65, .offset = 536, .name = "cpu_topology", .state = .function, .required = false },
+    .{ .number = 66, .offset = 544, .name = "cpu_cache_topology", .state = .function, .required = false },
 };
 
 comptime {
@@ -15897,6 +15979,49 @@ comptime {
     if (@offsetOf(DriverSerialApi, "unregister_port") != 16) @compileError("generated ABI offset drift: DriverSerialApi.unregister_port");
     if (@offsetOf(DriverSerialApi, "notify") != 24) @compileError("generated ABI offset drift: DriverSerialApi.notify");
     if (@offsetOf(DriverSerialApi, "admission") != 32) @compileError("generated ABI offset drift: DriverSerialApi.admission");
+    if (@sizeOf(CpuTopologyInfo) != 112) @compileError("generated ABI size drift: CpuTopologyInfo");
+    if (@alignOf(CpuTopologyInfo) != 8) @compileError("generated ABI alignment drift: CpuTopologyInfo");
+    if (@offsetOf(CpuTopologyInfo, "version") != 0) @compileError("generated ABI offset drift: CpuTopologyInfo.version");
+    if (@offsetOf(CpuTopologyInfo, "size") != 4) @compileError("generated ABI offset drift: CpuTopologyInfo.size");
+    if (@offsetOf(CpuTopologyInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuTopologyInfo.cpu_index");
+    if (@offsetOf(CpuTopologyInfo, "apic_id") != 12) @compileError("generated ABI offset drift: CpuTopologyInfo.apic_id");
+    if (@offsetOf(CpuTopologyInfo, "acpi_uid") != 16) @compileError("generated ABI offset drift: CpuTopologyInfo.acpi_uid");
+    if (@offsetOf(CpuTopologyInfo, "flags") != 20) @compileError("generated ABI offset drift: CpuTopologyInfo.flags");
+    if (@offsetOf(CpuTopologyInfo, "start_epoch") != 24) @compileError("generated ABI offset drift: CpuTopologyInfo.start_epoch");
+    if (@offsetOf(CpuTopologyInfo, "source_leaf") != 32) @compileError("generated ABI offset drift: CpuTopologyInfo.source_leaf");
+    if (@offsetOf(CpuTopologyInfo, "geometry_status") != 36) @compileError("generated ABI offset drift: CpuTopologyInfo.geometry_status");
+    if (@offsetOf(CpuTopologyInfo, "package_id") != 40) @compileError("generated ABI offset drift: CpuTopologyInfo.package_id");
+    if (@offsetOf(CpuTopologyInfo, "core_id") != 44) @compileError("generated ABI offset drift: CpuTopologyInfo.core_id");
+    if (@offsetOf(CpuTopologyInfo, "thread_id") != 48) @compileError("generated ABI offset drift: CpuTopologyInfo.thread_id");
+    if (@offsetOf(CpuTopologyInfo, "smt_shift") != 52) @compileError("generated ABI offset drift: CpuTopologyInfo.smt_shift");
+    if (@offsetOf(CpuTopologyInfo, "package_shift") != 56) @compileError("generated ABI offset drift: CpuTopologyInfo.package_shift");
+    if (@offsetOf(CpuTopologyInfo, "threads_per_core_bound") != 60) @compileError("generated ABI offset drift: CpuTopologyInfo.threads_per_core_bound");
+    if (@offsetOf(CpuTopologyInfo, "logical_per_package_bound") != 64) @compileError("generated ABI offset drift: CpuTopologyInfo.logical_per_package_bound");
+    if (@offsetOf(CpuTopologyInfo, "core_type_source") != 68) @compileError("generated ABI offset drift: CpuTopologyInfo.core_type_source");
+    if (@offsetOf(CpuTopologyInfo, "core_type") != 72) @compileError("generated ABI offset drift: CpuTopologyInfo.core_type");
+    if (@offsetOf(CpuTopologyInfo, "native_model_id") != 76) @compileError("generated ABI offset drift: CpuTopologyInfo.native_model_id");
+    if (@offsetOf(CpuTopologyInfo, "efficiency_rank") != 80) @compileError("generated ABI offset drift: CpuTopologyInfo.efficiency_rank");
+    if (@offsetOf(CpuTopologyInfo, "cache_source_leaf") != 84) @compileError("generated ABI offset drift: CpuTopologyInfo.cache_source_leaf");
+    if (@offsetOf(CpuTopologyInfo, "cache_count") != 88) @compileError("generated ABI offset drift: CpuTopologyInfo.cache_count");
+    if (@offsetOf(CpuTopologyInfo, "cache_status") != 92) @compileError("generated ABI offset drift: CpuTopologyInfo.cache_status");
+    if (@offsetOf(CpuTopologyInfo, "vendor_name") != 96) @compileError("generated ABI offset drift: CpuTopologyInfo.vendor_name");
+    if (@offsetOf(CpuTopologyInfo, "configured_cpus") != 108) @compileError("generated ABI offset drift: CpuTopologyInfo.configured_cpus");
+    if (@sizeOf(CpuCacheTopologyInfo) != 64) @compileError("generated ABI size drift: CpuCacheTopologyInfo");
+    if (@alignOf(CpuCacheTopologyInfo) != 8) @compileError("generated ABI alignment drift: CpuCacheTopologyInfo");
+    if (@offsetOf(CpuCacheTopologyInfo, "version") != 0) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.version");
+    if (@offsetOf(CpuCacheTopologyInfo, "size") != 4) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.size");
+    if (@offsetOf(CpuCacheTopologyInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.cpu_index");
+    if (@offsetOf(CpuCacheTopologyInfo, "cache_index") != 12) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.cache_index");
+    if (@offsetOf(CpuCacheTopologyInfo, "start_epoch") != 16) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.start_epoch");
+    if (@offsetOf(CpuCacheTopologyInfo, "source_leaf") != 24) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.source_leaf");
+    if (@offsetOf(CpuCacheTopologyInfo, "kind") != 28) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.kind");
+    if (@offsetOf(CpuCacheTopologyInfo, "level") != 32) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.level");
+    if (@offsetOf(CpuCacheTopologyInfo, "line_bytes") != 36) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.line_bytes");
+    if (@offsetOf(CpuCacheTopologyInfo, "sharing_logical_bound") != 40) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.sharing_logical_bound");
+    if (@offsetOf(CpuCacheTopologyInfo, "sharing_shift") != 44) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.sharing_shift");
+    if (@offsetOf(CpuCacheTopologyInfo, "cache_bytes") != 48) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.cache_bytes");
+    if (@offsetOf(CpuCacheTopologyInfo, "property_flags") != 56) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.property_flags");
+    if (@offsetOf(CpuCacheTopologyInfo, "reserved0") != 60) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.reserved0");
     if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -16293,7 +16418,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 536) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 552) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -16359,6 +16484,8 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "serial_status") != 512) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_status");
     if (@offsetOf(R4XStartR4Dev, "serial_cancel") != 520) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_cancel");
     if (@offsetOf(R4XStartR4Dev, "serial_close") != 528) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_close");
+    if (@offsetOf(R4XStartR4Dev, "cpu_topology") != 536) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_topology");
+    if (@offsetOf(R4XStartR4Dev, "cpu_cache_topology") != 544) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_cache_topology");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -17262,13 +17389,15 @@ pub const R4DevProvider = struct {
     serial_status: ?R4DevFns.serial_status = null,
     serial_cancel: ?R4DevFns.serial_cancel = null,
     serial_close: ?R4DevFns.serial_close = null,
+    cpu_topology: ?R4DevFns.cpu_topology = null,
+    cpu_cache_topology: ?R4DevFns.cpu_cache_topology = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 21,
-        .size = 536,
+        .abi_version = 22,
+        .size = 552,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -17335,5 +17464,7 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .serial_status = if (provider.serial_status) |callback| @intFromPtr(callback) else 0,
         .serial_cancel = if (provider.serial_cancel) |callback| @intFromPtr(callback) else 0,
         .serial_close = if (provider.serial_close) |callback| @intFromPtr(callback) else 0,
+        .cpu_topology = if (provider.cpu_topology) |callback| @intFromPtr(callback) else 0,
+        .cpu_cache_topology = if (provider.cpu_cache_topology) |callback| @intFromPtr(callback) else 0,
     };
 }

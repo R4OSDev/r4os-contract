@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 448,
+    "group_function_signatures": 450,
     "sdk_operation_contracts": 0,
-    "parity_entries": 448,
+    "parity_entries": 450,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4040,6 +4040,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.serial_close",
       "c_contract": "R4DevSerialCloseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_topology",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_topology",
+      "c_contract": "R4DevCpuTopologyFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_cache_topology",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_cache_topology",
+      "c_contract": "R4DevCpuCacheTopologyFn",
       "coverage": "generated_signature"
     }
   ],

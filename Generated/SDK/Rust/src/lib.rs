@@ -2112,6 +2112,37 @@ pub const serial_parity_even: u32 = 2;
 pub const serial_parity_mark: u32 = 3;
 pub const serial_parity_space: u32 = 4;
 pub const driver_api_serial_version: u32 = 37;
+pub const cpu_topology_result_ok: i32 = 1;
+pub const cpu_topology_result_end: i32 = 0;
+pub const cpu_topology_result_invalid: i32 = -1;
+pub const cpu_topology_result_busy: i32 = -2;
+pub const cpu_topology_flag_captured: u32 = 1;
+pub const cpu_topology_flag_geometry: u32 = 2;
+pub const cpu_topology_flag_acpi_uid: u32 = 4;
+pub const cpu_topology_flag_online: u32 = 8;
+pub const cpu_topology_flag_schedulable: u32 = 16;
+pub const cpu_topology_flag_bsp: u32 = 32;
+pub const cpu_topology_flag_core_type: u32 = 64;
+pub const cpu_topology_flag_efficiency: u32 = 128;
+pub const cpu_topology_flag_heterogeneous: u32 = 256;
+pub const cpu_topology_flag_asymmetric: u32 = 512;
+pub const cpu_topology_flag_qualified: u32 = 1024;
+pub const cpu_topology_flag_acpi_conflict: u32 = 2048;
+pub const cpu_topology_geometry_unavailable: u32 = 0;
+pub const cpu_topology_geometry_known: u32 = 1;
+pub const cpu_topology_geometry_malformed: u32 = 2;
+pub const cpu_topology_geometry_identity: u32 = 3;
+pub const cpu_topology_geometry_legacy_model: u32 = 4;
+pub const cpu_topology_geometry_unqualified: u32 = 5;
+pub const cpu_topology_geometry_inconsistent: u32 = 6;
+pub const cpu_topology_geometry_starting: u32 = 7;
+pub const cpu_topology_cache_unavailable: u32 = 0;
+pub const cpu_topology_cache_complete: u32 = 1;
+pub const cpu_topology_cache_invalid: u32 = 2;
+pub const cpu_topology_cache_truncated: u32 = 3;
+pub const cpu_topology_cache_kind_data: u32 = 1;
+pub const cpu_topology_cache_kind_instruction: u32 = 2;
+pub const cpu_topology_cache_kind_unified: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -16651,6 +16682,108 @@ impl Default for DriverSerialApi {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuTopologyInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub apic_id: u32,
+    pub acpi_uid: u32,
+    pub flags: u32,
+    pub start_epoch: u64,
+    pub source_leaf: u32,
+    pub geometry_status: u32,
+    pub package_id: u32,
+    pub core_id: u32,
+    pub thread_id: u32,
+    pub smt_shift: u32,
+    pub package_shift: u32,
+    pub threads_per_core_bound: u32,
+    pub logical_per_package_bound: u32,
+    pub core_type_source: u32,
+    pub core_type: u32,
+    pub native_model_id: u32,
+    pub efficiency_rank: u32,
+    pub cache_source_leaf: u32,
+    pub cache_count: u32,
+    pub cache_status: u32,
+    pub vendor_name: [u8; 12],
+    pub configured_cpus: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuTopologyInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            cpu_index: 0,
+            apic_id: 0,
+            acpi_uid: 4294967295,
+            flags: 0,
+            start_epoch: 0,
+            source_leaf: 0,
+            geometry_status: 0,
+            package_id: 4294967295,
+            core_id: 4294967295,
+            thread_id: 4294967295,
+            smt_shift: 0,
+            package_shift: 0,
+            threads_per_core_bound: 0,
+            logical_per_package_bound: 0,
+            core_type_source: 0,
+            core_type: 0,
+            native_model_id: 0,
+            efficiency_rank: 0,
+            cache_source_leaf: 0,
+            cache_count: 0,
+            cache_status: 0,
+            vendor_name: [0; 12],
+            configured_cpus: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuCacheTopologyInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub cache_index: u32,
+    pub start_epoch: u64,
+    pub source_leaf: u32,
+    pub kind: u32,
+    pub level: u32,
+    pub line_bytes: u32,
+    pub sharing_logical_bound: u32,
+    pub sharing_shift: u32,
+    pub cache_bytes: u64,
+    pub property_flags: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuCacheTopologyInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            cpu_index: 0,
+            cache_index: 0,
+            start_epoch: 0,
+            source_leaf: 0,
+            kind: 0,
+            level: 0,
+            line_bytes: 0,
+            sharing_logical_bound: 0,
+            sharing_shift: 0,
+            cache_bytes: 0,
+            property_flags: 0,
+            reserved0: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -18018,6 +18151,8 @@ pub mod R4DevFns {
     pub type serial_status = unsafe extern "C" fn(u64, *mut SerialStatus) -> i32;
     pub type serial_cancel = unsafe extern "C" fn(u64) -> i32;
     pub type serial_close = unsafe extern "C" fn(u64, u32, u64) -> i32;
+    pub type cpu_topology = unsafe extern "C" fn(u32, *mut CpuTopologyInfo) -> i32;
+    pub type cpu_cache_topology = unsafe extern "C" fn(u32, u32, *mut CpuCacheTopologyInfo) -> i32;
 }
 
 #[repr(C)]
@@ -18092,14 +18227,16 @@ pub struct R4XStartR4Dev {
     pub serial_status: usize,
     pub serial_cancel: usize,
     pub serial_close: usize,
+    pub cpu_topology: usize,
+    pub cpu_cache_topology: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 21,
-            size: 536,
+            abi_version: 22,
+            size: 552,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -18166,6 +18303,8 @@ impl Default for R4XStartR4Dev {
             serial_status: 0,
             serial_cancel: 0,
             serial_close: 0,
+            cpu_topology: 0,
+            cpu_cache_topology: 0,
         }
     }
 }
@@ -27908,6 +28047,49 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverSerialApi, admission) == 32);
     assert!(core::mem::size_of::<DriverSerialApi>() == 40);
     assert!(core::mem::align_of::<DriverSerialApi>() == 8);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, apic_id) == 12);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, acpi_uid) == 16);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, flags) == 20);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, start_epoch) == 24);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, source_leaf) == 32);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, geometry_status) == 36);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, package_id) == 40);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, core_id) == 44);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, thread_id) == 48);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, smt_shift) == 52);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, package_shift) == 56);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, threads_per_core_bound) == 60);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, logical_per_package_bound) == 64);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, core_type_source) == 68);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, core_type) == 72);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, native_model_id) == 76);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, efficiency_rank) == 80);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, cache_source_leaf) == 84);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, cache_count) == 88);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, cache_status) == 92);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, vendor_name) == 96);
+    assert!(core::mem::offset_of!(CpuTopologyInfo, configured_cpus) == 108);
+    assert!(core::mem::size_of::<CpuTopologyInfo>() == 112);
+    assert!(core::mem::align_of::<CpuTopologyInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, cache_index) == 12);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, start_epoch) == 16);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, source_leaf) == 24);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, kind) == 28);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, level) == 32);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, line_bytes) == 36);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, sharing_logical_bound) == 40);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, sharing_shift) == 44);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, cache_bytes) == 48);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, property_flags) == 56);
+    assert!(core::mem::offset_of!(CpuCacheTopologyInfo, reserved0) == 60);
+    assert!(core::mem::size_of::<CpuCacheTopologyInfo>() == 64);
+    assert!(core::mem::align_of::<CpuCacheTopologyInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -28400,7 +28582,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, serial_status) == 512);
     assert!(core::mem::offset_of!(R4XStartR4Dev, serial_cancel) == 520);
     assert!(core::mem::offset_of!(R4XStartR4Dev, serial_close) == 528);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 536);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_topology) == 536);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_cache_topology) == 544);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 552);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

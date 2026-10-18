@@ -2120,6 +2120,37 @@ extern "C" {
 #define R4OS_SERIAL_PARITY_MARK 3u
 #define R4OS_SERIAL_PARITY_SPACE 4u
 #define R4OS_DRIVER_API_SERIAL_VERSION 37u
+#define R4OS_CPU_TOPOLOGY_RESULT_OK ((int32_t)1)
+#define R4OS_CPU_TOPOLOGY_RESULT_END ((int32_t)0)
+#define R4OS_CPU_TOPOLOGY_RESULT_INVALID ((int32_t)-1)
+#define R4OS_CPU_TOPOLOGY_RESULT_BUSY ((int32_t)-2)
+#define R4OS_CPU_TOPOLOGY_FLAG_CAPTURED 1u
+#define R4OS_CPU_TOPOLOGY_FLAG_GEOMETRY 2u
+#define R4OS_CPU_TOPOLOGY_FLAG_ACPI_UID 4u
+#define R4OS_CPU_TOPOLOGY_FLAG_ONLINE 8u
+#define R4OS_CPU_TOPOLOGY_FLAG_SCHEDULABLE 16u
+#define R4OS_CPU_TOPOLOGY_FLAG_BSP 32u
+#define R4OS_CPU_TOPOLOGY_FLAG_CORE_TYPE 64u
+#define R4OS_CPU_TOPOLOGY_FLAG_EFFICIENCY 128u
+#define R4OS_CPU_TOPOLOGY_FLAG_HETEROGENEOUS 256u
+#define R4OS_CPU_TOPOLOGY_FLAG_ASYMMETRIC 512u
+#define R4OS_CPU_TOPOLOGY_FLAG_QUALIFIED 1024u
+#define R4OS_CPU_TOPOLOGY_FLAG_ACPI_CONFLICT 2048u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_UNAVAILABLE 0u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_KNOWN 1u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_MALFORMED 2u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_IDENTITY 3u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_LEGACY_MODEL 4u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_UNQUALIFIED 5u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_INCONSISTENT 6u
+#define R4OS_CPU_TOPOLOGY_GEOMETRY_STARTING 7u
+#define R4OS_CPU_TOPOLOGY_CACHE_UNAVAILABLE 0u
+#define R4OS_CPU_TOPOLOGY_CACHE_COMPLETE 1u
+#define R4OS_CPU_TOPOLOGY_CACHE_INVALID 2u
+#define R4OS_CPU_TOPOLOGY_CACHE_TRUNCATED 3u
+#define R4OS_CPU_TOPOLOGY_CACHE_KIND_DATA 1u
+#define R4OS_CPU_TOPOLOGY_CACHE_KIND_INSTRUCTION 2u
+#define R4OS_CPU_TOPOLOGY_CACHE_KIND_UNIFIED 3u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2901,6 +2932,8 @@ typedef struct R4SerialTransfer R4SerialTransfer;
 typedef struct R4SerialStatus R4SerialStatus;
 typedef struct R4SerialBackend R4SerialBackend;
 typedef struct R4DriverSerialApi R4DriverSerialApi;
+typedef struct R4CpuTopologyInfo R4CpuTopologyInfo;
+typedef struct R4CpuCacheTopologyInfo R4CpuCacheTopologyInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -8956,6 +8989,51 @@ typedef struct R4DriverSerialApi {
     uint64_t admission;
 } R4DriverSerialApi;
 
+typedef struct R4CpuTopologyInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t apic_id;
+    uint32_t acpi_uid;
+    uint32_t flags;
+    uint64_t start_epoch;
+    uint32_t source_leaf;
+    uint32_t geometry_status;
+    uint32_t package_id;
+    uint32_t core_id;
+    uint32_t thread_id;
+    uint32_t smt_shift;
+    uint32_t package_shift;
+    uint32_t threads_per_core_bound;
+    uint32_t logical_per_package_bound;
+    uint32_t core_type_source;
+    uint32_t core_type;
+    uint32_t native_model_id;
+    uint32_t efficiency_rank;
+    uint32_t cache_source_leaf;
+    uint32_t cache_count;
+    uint32_t cache_status;
+    uint8_t vendor_name[12];
+    uint32_t configured_cpus;
+} R4CpuTopologyInfo;
+
+typedef struct R4CpuCacheTopologyInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t cache_index;
+    uint64_t start_epoch;
+    uint32_t source_leaf;
+    uint32_t kind;
+    uint32_t level;
+    uint32_t line_bytes;
+    uint32_t sharing_logical_bound;
+    uint32_t sharing_shift;
+    uint64_t cache_bytes;
+    uint32_t property_flags;
+    uint32_t reserved0;
+} R4CpuCacheTopologyInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9881,6 +9959,8 @@ typedef int32_t (*R4DevSerialDrainFn)(uint64_t handle, uint64_t timeout_ticks);
 typedef int32_t (*R4DevSerialStatusFn)(uint64_t handle, R4SerialStatus * out);
 typedef int32_t (*R4DevSerialCancelFn)(uint64_t handle);
 typedef int32_t (*R4DevSerialCloseFn)(uint64_t handle, uint32_t flags, uint64_t timeout_ticks);
+typedef int32_t (*R4DevCpuTopologyFn)(uint32_t cpu_index, R4CpuTopologyInfo * output);
+typedef int32_t (*R4DevCpuCacheTopologyFn)(uint32_t cpu_index, uint32_t cache_index, R4CpuCacheTopologyInfo * output);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -9952,6 +10032,8 @@ typedef struct R4XStartR4Dev {
     uintptr_t serial_status;
     uintptr_t serial_cancel;
     uintptr_t serial_close;
+    uintptr_t cpu_topology;
+    uintptr_t cpu_cache_topology;
 } R4XStartR4Dev;
 
 
@@ -15403,6 +15485,47 @@ _Static_assert(offsetof(R4DriverSerialApi, register_port) == 8u, "DriverSerialAp
 _Static_assert(offsetof(R4DriverSerialApi, unregister_port) == 16u, "DriverSerialApi.unregister_port offset mismatch");
 _Static_assert(offsetof(R4DriverSerialApi, notify) == 24u, "DriverSerialApi.notify offset mismatch");
 _Static_assert(offsetof(R4DriverSerialApi, admission) == 32u, "DriverSerialApi.admission offset mismatch");
+_Static_assert(sizeof(R4CpuTopologyInfo) == 112u, "CpuTopologyInfo size mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, version) == 0u, "CpuTopologyInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, size) == 4u, "CpuTopologyInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, cpu_index) == 8u, "CpuTopologyInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, apic_id) == 12u, "CpuTopologyInfo.apic_id offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, acpi_uid) == 16u, "CpuTopologyInfo.acpi_uid offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, flags) == 20u, "CpuTopologyInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, start_epoch) == 24u, "CpuTopologyInfo.start_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, source_leaf) == 32u, "CpuTopologyInfo.source_leaf offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, geometry_status) == 36u, "CpuTopologyInfo.geometry_status offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, package_id) == 40u, "CpuTopologyInfo.package_id offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, core_id) == 44u, "CpuTopologyInfo.core_id offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, thread_id) == 48u, "CpuTopologyInfo.thread_id offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, smt_shift) == 52u, "CpuTopologyInfo.smt_shift offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, package_shift) == 56u, "CpuTopologyInfo.package_shift offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, threads_per_core_bound) == 60u, "CpuTopologyInfo.threads_per_core_bound offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, logical_per_package_bound) == 64u, "CpuTopologyInfo.logical_per_package_bound offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, core_type_source) == 68u, "CpuTopologyInfo.core_type_source offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, core_type) == 72u, "CpuTopologyInfo.core_type offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, native_model_id) == 76u, "CpuTopologyInfo.native_model_id offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, efficiency_rank) == 80u, "CpuTopologyInfo.efficiency_rank offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, cache_source_leaf) == 84u, "CpuTopologyInfo.cache_source_leaf offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, cache_count) == 88u, "CpuTopologyInfo.cache_count offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, cache_status) == 92u, "CpuTopologyInfo.cache_status offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, vendor_name) == 96u, "CpuTopologyInfo.vendor_name offset mismatch");
+_Static_assert(offsetof(R4CpuTopologyInfo, configured_cpus) == 108u, "CpuTopologyInfo.configured_cpus offset mismatch");
+_Static_assert(sizeof(R4CpuCacheTopologyInfo) == 64u, "CpuCacheTopologyInfo size mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, version) == 0u, "CpuCacheTopologyInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, size) == 4u, "CpuCacheTopologyInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, cpu_index) == 8u, "CpuCacheTopologyInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, cache_index) == 12u, "CpuCacheTopologyInfo.cache_index offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, start_epoch) == 16u, "CpuCacheTopologyInfo.start_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, source_leaf) == 24u, "CpuCacheTopologyInfo.source_leaf offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, kind) == 28u, "CpuCacheTopologyInfo.kind offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, level) == 32u, "CpuCacheTopologyInfo.level offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, line_bytes) == 36u, "CpuCacheTopologyInfo.line_bytes offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, sharing_logical_bound) == 40u, "CpuCacheTopologyInfo.sharing_logical_bound offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, sharing_shift) == 44u, "CpuCacheTopologyInfo.sharing_shift offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, cache_bytes) == 48u, "CpuCacheTopologyInfo.cache_bytes offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, property_flags) == 56u, "CpuCacheTopologyInfo.property_flags offset mismatch");
+_Static_assert(offsetof(R4CpuCacheTopologyInfo, reserved0) == 60u, "CpuCacheTopologyInfo.reserved0 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -16184,7 +16307,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 536u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 552u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -16313,6 +16436,10 @@ _Static_assert(offsetof(R4XStartR4Dev, serial_cancel) == 520u, "R4XStartR4Dev.se
 _Static_assert(sizeof(R4DevSerialCancelFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, serial_close) == 528u, "R4XStartR4Dev.serial_close offset mismatch");
 _Static_assert(sizeof(R4DevSerialCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_topology) == 536u, "R4XStartR4Dev.cpu_topology offset mismatch");
+_Static_assert(sizeof(R4DevCpuTopologyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_cache_topology) == 544u, "R4XStartR4Dev.cpu_cache_topology offset mismatch");
+_Static_assert(sizeof(R4DevCpuCacheTopologyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

@@ -451,5 +451,7 @@ static R4DevSerialDrainFn r4os_probe_r4dev_serial_drain = (R4DevSerialDrainFn)0;
 static R4DevSerialStatusFn r4os_probe_r4dev_serial_status = (R4DevSerialStatusFn)0;
 static R4DevSerialCancelFn r4os_probe_r4dev_serial_cancel = (R4DevSerialCancelFn)0;
 static R4DevSerialCloseFn r4os_probe_r4dev_serial_close = (R4DevSerialCloseFn)0;
+static R4DevCpuTopologyFn r4os_probe_r4dev_cpu_topology = (R4DevCpuTopologyFn)0;
+static R4DevCpuCacheTopologyFn r4os_probe_r4dev_cpu_cache_topology = (R4DevCpuCacheTopologyFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

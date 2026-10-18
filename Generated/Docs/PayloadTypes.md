@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 322 von 322 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 324 von 324 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2107; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2138; Limits: 111
 
 ## App-Profile
 
@@ -343,6 +343,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `SerialStatus` | extensible | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
 | `SerialBackend` | extensible | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
 | `DriverSerialApi` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `CpuTopologyInfo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `CpuCacheTopologyInfo` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -8646,6 +8648,65 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `notify` | 24 | 8 | 8 | `u64` | - |
 | `admission` | 32 | 8 | 8 | `u64` | - |
 
+### `CpuTopologyInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `apic_id` | 12 | 4 | 4 | `u32` | - |
+| `acpi_uid` | 16 | 4 | 4 | `u32` | - |
+| `flags` | 20 | 4 | 4 | `u32` | - |
+| `start_epoch` | 24 | 8 | 8 | `u64` | - |
+| `source_leaf` | 32 | 4 | 4 | `u32` | - |
+| `geometry_status` | 36 | 4 | 4 | `u32` | - |
+| `package_id` | 40 | 4 | 4 | `u32` | - |
+| `core_id` | 44 | 4 | 4 | `u32` | - |
+| `thread_id` | 48 | 4 | 4 | `u32` | - |
+| `smt_shift` | 52 | 4 | 4 | `u32` | - |
+| `package_shift` | 56 | 4 | 4 | `u32` | - |
+| `threads_per_core_bound` | 60 | 4 | 4 | `u32` | - |
+| `logical_per_package_bound` | 64 | 4 | 4 | `u32` | - |
+| `core_type_source` | 68 | 4 | 4 | `u32` | - |
+| `core_type` | 72 | 4 | 4 | `u32` | - |
+| `native_model_id` | 76 | 4 | 4 | `u32` | - |
+| `efficiency_rank` | 80 | 4 | 4 | `u32` | - |
+| `cache_source_leaf` | 84 | 4 | 4 | `u32` | - |
+| `cache_count` | 88 | 4 | 4 | `u32` | - |
+| `cache_status` | 92 | 4 | 4 | `u32` | - |
+| `vendor_name` | 96 | 12 | 1 | `[12]u8` | - |
+| `configured_cpus` | 108 | 4 | 4 | `u32` | - |
+
+### `CpuCacheTopologyInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `cache_index` | 12 | 4 | 4 | `u32` | - |
+| `start_epoch` | 16 | 8 | 8 | `u64` | - |
+| `source_leaf` | 24 | 4 | 4 | `u32` | - |
+| `kind` | 28 | 4 | 4 | `u32` | - |
+| `level` | 32 | 4 | 4 | `u32` | - |
+| `line_bytes` | 36 | 4 | 4 | `u32` | - |
+| `sharing_logical_bound` | 40 | 4 | 4 | `u32` | - |
+| `sharing_shift` | 44 | 4 | 4 | `u32` | - |
+| `cache_bytes` | 48 | 8 | 8 | `u64` | - |
+| `property_flags` | 56 | 4 | 4 | `u32` | - |
+| `reserved0` | 60 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11514,6 +11575,37 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `serial_parity_mark` | `3` | `u32` | value | number | `serial` | fixed_contract |
 | `serial_parity_space` | `4` | `u32` | value | number | `serial` | fixed_contract |
 | `driver_api_serial_version` | `37` | `u32` | version | number | `serial` | fixed_contract |
+| `cpu_topology_result_ok` | `1` | `i32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_result_end` | `0` | `i32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_result_invalid` | `-1` | `i32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_result_busy` | `-2` | `i32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_captured` | `1` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_geometry` | `2` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_acpi_uid` | `4` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_online` | `8` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_schedulable` | `16` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_bsp` | `32` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_core_type` | `64` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_efficiency` | `128` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_heterogeneous` | `256` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_asymmetric` | `512` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_qualified` | `1024` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_flag_acpi_conflict` | `2048` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_unavailable` | `0` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_known` | `1` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_malformed` | `2` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_identity` | `3` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_legacy_model` | `4` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_unqualified` | `5` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_inconsistent` | `6` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_geometry_starting` | `7` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_cache_unavailable` | `0` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_cache_complete` | `1` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_cache_invalid` | `2` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_cache_truncated` | `3` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_cache_kind_data` | `1` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_cache_kind_instruction` | `2` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_topology_cache_kind_unified` | `3` | `u32` | value | number | `cpu_topology` | fixed_contract |
 
 ## Limits
 

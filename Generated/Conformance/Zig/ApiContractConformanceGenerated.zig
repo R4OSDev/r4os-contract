@@ -5449,6 +5449,47 @@ comptime {
     if (@offsetOf(abi.DriverSerialApi, "unregister_port") != 16) @compileError("DriverSerialApi.unregister_port offset");
     if (@offsetOf(abi.DriverSerialApi, "notify") != 24) @compileError("DriverSerialApi.notify offset");
     if (@offsetOf(abi.DriverSerialApi, "admission") != 32) @compileError("DriverSerialApi.admission offset");
+    if (@sizeOf(abi.CpuTopologyInfo) != 112) @compileError("CpuTopologyInfo size");
+    if (@offsetOf(abi.CpuTopologyInfo, "version") != 0) @compileError("CpuTopologyInfo.version offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "size") != 4) @compileError("CpuTopologyInfo.size offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "cpu_index") != 8) @compileError("CpuTopologyInfo.cpu_index offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "apic_id") != 12) @compileError("CpuTopologyInfo.apic_id offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "acpi_uid") != 16) @compileError("CpuTopologyInfo.acpi_uid offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "flags") != 20) @compileError("CpuTopologyInfo.flags offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "start_epoch") != 24) @compileError("CpuTopologyInfo.start_epoch offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "source_leaf") != 32) @compileError("CpuTopologyInfo.source_leaf offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "geometry_status") != 36) @compileError("CpuTopologyInfo.geometry_status offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "package_id") != 40) @compileError("CpuTopologyInfo.package_id offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "core_id") != 44) @compileError("CpuTopologyInfo.core_id offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "thread_id") != 48) @compileError("CpuTopologyInfo.thread_id offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "smt_shift") != 52) @compileError("CpuTopologyInfo.smt_shift offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "package_shift") != 56) @compileError("CpuTopologyInfo.package_shift offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "threads_per_core_bound") != 60) @compileError("CpuTopologyInfo.threads_per_core_bound offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "logical_per_package_bound") != 64) @compileError("CpuTopologyInfo.logical_per_package_bound offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "core_type_source") != 68) @compileError("CpuTopologyInfo.core_type_source offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "core_type") != 72) @compileError("CpuTopologyInfo.core_type offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "native_model_id") != 76) @compileError("CpuTopologyInfo.native_model_id offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "efficiency_rank") != 80) @compileError("CpuTopologyInfo.efficiency_rank offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "cache_source_leaf") != 84) @compileError("CpuTopologyInfo.cache_source_leaf offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "cache_count") != 88) @compileError("CpuTopologyInfo.cache_count offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "cache_status") != 92) @compileError("CpuTopologyInfo.cache_status offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "vendor_name") != 96) @compileError("CpuTopologyInfo.vendor_name offset");
+    if (@offsetOf(abi.CpuTopologyInfo, "configured_cpus") != 108) @compileError("CpuTopologyInfo.configured_cpus offset");
+    if (@sizeOf(abi.CpuCacheTopologyInfo) != 64) @compileError("CpuCacheTopologyInfo size");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "version") != 0) @compileError("CpuCacheTopologyInfo.version offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "size") != 4) @compileError("CpuCacheTopologyInfo.size offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "cpu_index") != 8) @compileError("CpuCacheTopologyInfo.cpu_index offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "cache_index") != 12) @compileError("CpuCacheTopologyInfo.cache_index offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "start_epoch") != 16) @compileError("CpuCacheTopologyInfo.start_epoch offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "source_leaf") != 24) @compileError("CpuCacheTopologyInfo.source_leaf offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "kind") != 28) @compileError("CpuCacheTopologyInfo.kind offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "level") != 32) @compileError("CpuCacheTopologyInfo.level offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "line_bytes") != 36) @compileError("CpuCacheTopologyInfo.line_bytes offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "sharing_logical_bound") != 40) @compileError("CpuCacheTopologyInfo.sharing_logical_bound offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "sharing_shift") != 44) @compileError("CpuCacheTopologyInfo.sharing_shift offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "cache_bytes") != 48) @compileError("CpuCacheTopologyInfo.cache_bytes offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "property_flags") != 56) @compileError("CpuCacheTopologyInfo.property_flags offset");
+    if (@offsetOf(abi.CpuCacheTopologyInfo, "reserved0") != 60) @compileError("CpuCacheTopologyInfo.reserved0 offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1264) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6230,7 +6271,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 536) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 552) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -6359,6 +6400,10 @@ comptime {
     if (@sizeOf(abi.R4DevFns.serial_cancel) != 8) @compileError("R4DevFns.serial_cancel signature");
     if (@offsetOf(abi.R4XStartR4Dev, "serial_close") != 528) @compileError("R4XStartR4Dev.serial_close offset");
     if (@sizeOf(abi.R4DevFns.serial_close) != 8) @compileError("R4DevFns.serial_close signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "cpu_topology") != 536) @compileError("R4XStartR4Dev.cpu_topology offset");
+    if (@sizeOf(abi.R4DevFns.cpu_topology) != 8) @compileError("R4DevFns.cpu_topology signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "cpu_cache_topology") != 544) @compileError("R4XStartR4Dev.cpu_cache_topology offset");
+    if (@sizeOf(abi.R4DevFns.cpu_cache_topology) != 8) @compileError("R4DevFns.cpu_cache_topology signature");
 }
 
 test "generated API contract compiles" {}
