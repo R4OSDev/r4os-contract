@@ -1,6 +1,7 @@
 const std = @import("std");
 
 pub const abi = @import("Generated/SDK/Zig/abi_exports.zig");
+pub const module_cpu = @import("Module/cpu_baseline.zig");
 
 pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});

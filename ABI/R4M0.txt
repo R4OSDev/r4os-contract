@@ -20,6 +20,26 @@ schreiben; Loader lehnen 5 und 6 fail-closed ab.
 
 Architektur 1 ist x86_64.
 
+CPU-Ausfuehrungsvertrag
+-----------------------
+
+Architektur 1 prueft das Containerformat, nicht die CPU-Mindestmerkmale.
+Der gemeinsame Modulbau verwendet Module/CpuBaseline.json als einzige
+maschinenlesbare Quelle fuer seine tatsaechlichen ISA-Voraussetzungen und
+die benoetigte XCR0-Maske. Der Contract-Buildhelfer module_cpu erzeugt daraus
+das SDK-Zig-/C-Ziel und prueft auch implizite Compilerabhaengigkeiten.
+Kernel/Build.ps1 uebernimmt dieselben CPUID-Deskriptoren und den Profilhash
+in seine unveraenderliche, ELF-gebundene Buildkonfiguration.
+
+Das vorhandene Profil r4os-avx2-v1 verlangt die x86_64-Basis, SSE bis SSE4.2,
+AVX/AVX2, AES-NI, PCLMULQDQ und XSAVE mit aktivem x87-/SSE-/YMM-Zustand.
+OSXSAVE wird nach der OS-Initialisierung geprueft, nicht von der Firmware
+vorausgesetzt. Ein FXSAVE-/SSE2-Backend allein laesst dieses Profil nicht zu.
+Vor dem ersten Modulaufruf muss der Kernel die vollstaendige CPU-/Zustands-
+baseline bestaetigen. Ein fehlendes Pflichtmerkmal fuehrt vorher zu einem
+benannten kontrollierten Fehler. Container-/Tabellenversionen und vorhandene
+Importnamen aendern sich durch diese Durchsetzung nicht.
+
 Header
 ------
 

@@ -8,6 +8,12 @@ The files in this directory define the binary boundaries between R4M0
 modules, programs, Runtime-R4Ls, and the kernel. The target is little-endian
 x86_64 with 8-byte pointers and the C calling convention.
 
+Module/CpuBaseline.json is the canonical common compiler/boot CPU profile.
+The exported module_cpu build helper derives the SDK Zig/C target from its
+CPUID descriptors; the kernel embeds the same requirements and verifies the
+enabled XSTATE before module execution. Container arch=1 alone is not a CPU
+feature admission check. See R4M0.txt.
+
 Contracts
 ---------
 
