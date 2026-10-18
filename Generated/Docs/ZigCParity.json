@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 450,
+    "group_function_signatures": 452,
     "sdk_operation_contracts": 0,
-    "parity_entries": 450,
+    "parity_entries": 452,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1385,6 +1385,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.directory_next",
       "c_contract": "R4SysDirectoryNextFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.thread_placement_get",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.thread_placement_get",
+      "c_contract": "R4SysThreadPlacementGetFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.thread_placement_set",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.thread_placement_set",
+      "c_contract": "R4SysThreadPlacementSetFn",
       "coverage": "generated_signature"
     },
     {

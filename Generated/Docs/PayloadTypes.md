@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 324 von 324 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 326 von 326 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2138; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2148; Limits: 111
 
 ## App-Profile
 
@@ -345,6 +345,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DriverSerialApi` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `CpuTopologyInfo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `CpuCacheTopologyInfo` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `ThreadPlacementRequest` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `ThreadPlacementInfo` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -8707,6 +8709,45 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `property_flags` | 56 | 4 | 4 | `u32` | - |
 | `reserved0` | 60 | 4 | 4 | `u32` | - |
 
+### `ThreadPlacementRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `work_class` | 12 | 4 | 4 | `u32` | - |
+| `preferred_cpu` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `reserved1` | 24 | 8 | 8 | `u64` | - |
+
+### `ThreadPlacementInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `work_class` | 12 | 4 | 4 | `u32` | - |
+| `preferred_cpu` | 16 | 4 | 4 | `u32` | - |
+| `home_cpu` | 20 | 4 | 4 | `u32` | - |
+| `running_cpu` | 24 | 4 | 4 | `u32` | - |
+| `cpu_word_count` | 28 | 4 | 4 | `u32` | - |
+| `request_revision` | 32 | 8 | 8 | `u64` | - |
+| `applied_revision` | 40 | 8 | 8 | `u64` | - |
+| `reserved0` | 48 | 8 | 8 | `u64` | - |
+| `reserved1` | 56 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11606,6 +11647,16 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_topology_cache_kind_data` | `1` | `u32` | value | number | `cpu_topology` | fixed_contract |
 | `cpu_topology_cache_kind_instruction` | `2` | `u32` | value | number | `cpu_topology` | fixed_contract |
 | `cpu_topology_cache_kind_unified` | `3` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `thread_placement_version` | `1` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_cpu_none` | `4294967295` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_flag_default_cpus` | `1` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_flag_pending` | `2` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_flag_parallel` | `4` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_flag_internal_fixed` | `8` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_class_interactive` | `0` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_class_batch` | `1` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_class_preferred` | `2` | `u32` | value | number | `thread_placement` | fixed_contract |
+| `thread_placement_error_capacity` | `-11` | `i32` | value | number | `thread_placement` | fixed_contract |
 
 ## Limits
 

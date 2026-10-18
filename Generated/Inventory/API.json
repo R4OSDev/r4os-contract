@@ -5,10 +5,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 450,
-    "group_slot_count": 450,
+    "function_count": 452,
+    "group_slot_count": 452,
     "sdk_only_count": 0,
-    "public_count": 337,
+    "public_count": 339,
     "advanced_count": 113
   },
   "functions": [
@@ -1843,6 +1843,30 @@
       "slot": 155,
       "exposure": "public",
       "description": "Resume owner-bound directory enumeration without prefix scans. Initialize DirectoryScanCursor to defaults. Returns 0 file, 1 directory, 2 bounded progress without an entry (retry), -5 complete EOF, -10 restart after directory mutation, history overflow, owner/path/mount change; other negatives are errors (-1 invalid, -3 missing mount, -7 output too small, -9 I/O). On restart/error discard all partial results; no truncated successful generation. Cursor and output are unchanged on errors; progress and EOF publish cursor only. Success copies a NUL-terminated absolute path. One call examines at most 256 physical directory entries, with a bounded NTFS ancestor stack. Internal state is opaque, must not be edited or used concurrently. No persistent kernel resource, allocation or mount pin; discarding/resetting cursor cancels/closes immediately. A call pins its mount and holds the filesystem request gate; an unmount between calls invalidates continuation. Old dir_entry ABI remains unchanged. A found entry also copies FileInfo metadata from the same enumeration record; no second name lookup. NTFS directory-index metadata has the same snapshot semantics as its index entry. On progress, EOF or failure metadata is unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.thread_placement_get",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 156,
+      "exposure": "public",
+      "description": "Get placement of the exact live thread/instance generations (including main). Returns thread_ok, thread_error_invalid/no_instance/not_found/busy or thread_placement_error_capacity. Validate info version1 and capacity>=64. word_capacity0 allows null cpus and returns metadata including required word count; otherwise capacity must suffice and cpus must be nonnull. Copy exactly cpu_word_count words and64 info bytes on success; all outputs and tails unchanged on errors. Caller buffers must not overlap. No allocation or retained caller pointer.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.thread_placement_set",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 157,
+      "exposure": "public",
+      "description": "Set placement of an exact live thread/instance generation (including main). Returns thread_ok, thread_error_invalid/no_instance/not_found/busy/unsupported or thread_placement_error_capacity. Reject unknown flags/class/reserved data, empty sets, unavailable or module-disallowed CPUs and hints outside the set, without state changes. Explicit input length must equal the discovered required word count; default-cpus requires word_count0. Running acceptance may remain pending until full outgoing RSP/FPU save; query revisions. No synchronous wait or realtime guarantee. Repeated equal requests do not renew preferred-class budgets; class toggles share one bounded activation budget. No retained caller pointer.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

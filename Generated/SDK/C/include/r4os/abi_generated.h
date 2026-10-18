@@ -2151,6 +2151,16 @@ extern "C" {
 #define R4OS_CPU_TOPOLOGY_CACHE_KIND_DATA 1u
 #define R4OS_CPU_TOPOLOGY_CACHE_KIND_INSTRUCTION 2u
 #define R4OS_CPU_TOPOLOGY_CACHE_KIND_UNIFIED 3u
+#define R4OS_THREAD_PLACEMENT_VERSION 1u
+#define R4OS_THREAD_PLACEMENT_CPU_NONE 4294967295u
+#define R4OS_THREAD_PLACEMENT_FLAG_DEFAULT_CPUS 1u
+#define R4OS_THREAD_PLACEMENT_FLAG_PENDING 2u
+#define R4OS_THREAD_PLACEMENT_FLAG_PARALLEL 4u
+#define R4OS_THREAD_PLACEMENT_FLAG_INTERNAL_FIXED 8u
+#define R4OS_THREAD_PLACEMENT_CLASS_INTERACTIVE 0u
+#define R4OS_THREAD_PLACEMENT_CLASS_BATCH 1u
+#define R4OS_THREAD_PLACEMENT_CLASS_PREFERRED 2u
+#define R4OS_THREAD_PLACEMENT_ERROR_CAPACITY ((int32_t)-11)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2934,6 +2944,8 @@ typedef struct R4SerialBackend R4SerialBackend;
 typedef struct R4DriverSerialApi R4DriverSerialApi;
 typedef struct R4CpuTopologyInfo R4CpuTopologyInfo;
 typedef struct R4CpuCacheTopologyInfo R4CpuCacheTopologyInfo;
+typedef struct R4ThreadPlacementRequest R4ThreadPlacementRequest;
+typedef struct R4ThreadPlacementInfo R4ThreadPlacementInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -9034,6 +9046,31 @@ typedef struct R4CpuCacheTopologyInfo {
     uint32_t reserved0;
 } R4CpuCacheTopologyInfo;
 
+typedef struct R4ThreadPlacementRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t work_class;
+    uint32_t preferred_cpu;
+    uint32_t reserved0;
+    uint64_t reserved1;
+} R4ThreadPlacementRequest;
+
+typedef struct R4ThreadPlacementInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t work_class;
+    uint32_t preferred_cpu;
+    uint32_t home_cpu;
+    uint32_t running_cpu;
+    uint32_t cpu_word_count;
+    uint64_t request_revision;
+    uint64_t applied_revision;
+    uint64_t reserved0;
+    uint64_t reserved1;
+} R4ThreadPlacementInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -9233,6 +9270,8 @@ typedef int32_t (*R4SysCpuCapacityFn)(R4CpuCapacity * output);
 typedef int32_t (*R4SysProgramExitFn)(int32_t exit_code, uint32_t reason);
 typedef int32_t (*R4SysPlatformInputSnapshotFn)(R4PlatformInputSnapshot * output);
 typedef int32_t (*R4SysDirectoryNextFn)(const uint8_t * arg0, R4DirectoryScanCursor * cursor, uint8_t * arg2, uint32_t arg3, R4FileInfo * info);
+typedef int32_t (*R4SysThreadPlacementGetFn)(const R4ProgramJoinHandle * handle, R4ThreadPlacementInfo * info, uint64_t * cpus, uint32_t word_capacity);
+typedef int32_t (*R4SysThreadPlacementSetFn)(const R4ProgramJoinHandle * handle, const R4ThreadPlacementRequest * request, const uint64_t * cpus, uint32_t word_count);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -9395,6 +9434,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_exit;
     uintptr_t platform_input_snapshot;
     uintptr_t directory_next;
+    uintptr_t thread_placement_get;
+    uintptr_t thread_placement_set;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -15526,7 +15567,28 @@ _Static_assert(offsetof(R4CpuCacheTopologyInfo, sharing_shift) == 44u, "CpuCache
 _Static_assert(offsetof(R4CpuCacheTopologyInfo, cache_bytes) == 48u, "CpuCacheTopologyInfo.cache_bytes offset mismatch");
 _Static_assert(offsetof(R4CpuCacheTopologyInfo, property_flags) == 56u, "CpuCacheTopologyInfo.property_flags offset mismatch");
 _Static_assert(offsetof(R4CpuCacheTopologyInfo, reserved0) == 60u, "CpuCacheTopologyInfo.reserved0 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1264u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4ThreadPlacementRequest) == 32u, "ThreadPlacementRequest size mismatch");
+_Static_assert(offsetof(R4ThreadPlacementRequest, version) == 0u, "ThreadPlacementRequest.version offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementRequest, size) == 4u, "ThreadPlacementRequest.size offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementRequest, flags) == 8u, "ThreadPlacementRequest.flags offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementRequest, work_class) == 12u, "ThreadPlacementRequest.work_class offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementRequest, preferred_cpu) == 16u, "ThreadPlacementRequest.preferred_cpu offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementRequest, reserved0) == 20u, "ThreadPlacementRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementRequest, reserved1) == 24u, "ThreadPlacementRequest.reserved1 offset mismatch");
+_Static_assert(sizeof(R4ThreadPlacementInfo) == 64u, "ThreadPlacementInfo size mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, version) == 0u, "ThreadPlacementInfo.version offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, size) == 4u, "ThreadPlacementInfo.size offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, flags) == 8u, "ThreadPlacementInfo.flags offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, work_class) == 12u, "ThreadPlacementInfo.work_class offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, preferred_cpu) == 16u, "ThreadPlacementInfo.preferred_cpu offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, home_cpu) == 20u, "ThreadPlacementInfo.home_cpu offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, running_cpu) == 24u, "ThreadPlacementInfo.running_cpu offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, cpu_word_count) == 28u, "ThreadPlacementInfo.cpu_word_count offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, request_revision) == 32u, "ThreadPlacementInfo.request_revision offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, applied_revision) == 40u, "ThreadPlacementInfo.applied_revision offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, reserved0) == 48u, "ThreadPlacementInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ThreadPlacementInfo, reserved1) == 56u, "ThreadPlacementInfo.reserved1 offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1280u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -15836,6 +15898,10 @@ _Static_assert(offsetof(R4XStartR4Sys, platform_input_snapshot) == 1248u, "R4XSt
 _Static_assert(sizeof(R4SysPlatformInputSnapshotFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, directory_next) == 1256u, "R4XStartR4Sys.directory_next offset mismatch");
 _Static_assert(sizeof(R4SysDirectoryNextFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, thread_placement_get) == 1264u, "R4XStartR4Sys.thread_placement_get offset mismatch");
+_Static_assert(sizeof(R4SysThreadPlacementGetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, thread_placement_set) == 1272u, "R4XStartR4Sys.thread_placement_set offset mismatch");
+_Static_assert(sizeof(R4SysThreadPlacementSetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

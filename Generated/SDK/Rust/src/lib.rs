@@ -2143,6 +2143,16 @@ pub const cpu_topology_cache_truncated: u32 = 3;
 pub const cpu_topology_cache_kind_data: u32 = 1;
 pub const cpu_topology_cache_kind_instruction: u32 = 2;
 pub const cpu_topology_cache_kind_unified: u32 = 3;
+pub const thread_placement_version: u32 = 1;
+pub const thread_placement_cpu_none: u32 = 4294967295;
+pub const thread_placement_flag_default_cpus: u32 = 1;
+pub const thread_placement_flag_pending: u32 = 2;
+pub const thread_placement_flag_parallel: u32 = 4;
+pub const thread_placement_flag_internal_fixed: u32 = 8;
+pub const thread_placement_class_interactive: u32 = 0;
+pub const thread_placement_class_batch: u32 = 1;
+pub const thread_placement_class_preferred: u32 = 2;
+pub const thread_placement_error_capacity: i32 = -11;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -16784,6 +16794,68 @@ impl Default for CpuCacheTopologyInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ThreadPlacementRequest {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub work_class: u32,
+    pub preferred_cpu: u32,
+    pub reserved0: u32,
+    pub reserved1: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ThreadPlacementRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            flags: 0,
+            work_class: 0,
+            preferred_cpu: 4294967295,
+            reserved0: 0,
+            reserved1: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ThreadPlacementInfo {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub work_class: u32,
+    pub preferred_cpu: u32,
+    pub home_cpu: u32,
+    pub running_cpu: u32,
+    pub cpu_word_count: u32,
+    pub request_revision: u64,
+    pub applied_revision: u64,
+    pub reserved0: u64,
+    pub reserved1: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ThreadPlacementInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            flags: 0,
+            work_class: 0,
+            preferred_cpu: 4294967295,
+            home_cpu: 4294967295,
+            running_cpu: 4294967295,
+            cpu_word_count: 0,
+            request_revision: 0,
+            applied_revision: 0,
+            reserved0: 0,
+            reserved1: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -16949,6 +17021,8 @@ pub mod R4SysFns {
     pub type program_exit = unsafe extern "C" fn(i32, u32) -> i32;
     pub type platform_input_snapshot = unsafe extern "C" fn(*mut PlatformInputSnapshot) -> i32;
     pub type directory_next = unsafe extern "C" fn(*const u8, *mut DirectoryScanCursor, *mut u8, u32, *mut FileInfo) -> i32;
+    pub type thread_placement_get = unsafe extern "C" fn(*const ProgramJoinHandle, *mut ThreadPlacementInfo, *mut u64, u32) -> i32;
+    pub type thread_placement_set = unsafe extern "C" fn(*const ProgramJoinHandle, *const ThreadPlacementRequest, *const u64, u32) -> i32;
 }
 
 #[repr(C)]
@@ -17114,14 +17188,16 @@ pub struct R4XStartR4Sys {
     pub program_exit: usize,
     pub platform_input_snapshot: usize,
     pub directory_next: usize,
+    pub thread_placement_get: usize,
+    pub thread_placement_set: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 25,
-            size: 1264,
+            abi_version: 26,
+            size: 1280,
             flags: 0,
             write: 0,
             putc: 0,
@@ -17279,6 +17355,8 @@ impl Default for R4XStartR4Sys {
             program_exit: 0,
             platform_input_snapshot: 0,
             directory_next: 0,
+            thread_placement_get: 0,
+            thread_placement_set: 0,
         }
     }
 }
@@ -28090,6 +28168,29 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuCacheTopologyInfo, reserved0) == 60);
     assert!(core::mem::size_of::<CpuCacheTopologyInfo>() == 64);
     assert!(core::mem::align_of::<CpuCacheTopologyInfo>() == 8);
+    assert!(core::mem::offset_of!(ThreadPlacementRequest, version) == 0);
+    assert!(core::mem::offset_of!(ThreadPlacementRequest, size) == 4);
+    assert!(core::mem::offset_of!(ThreadPlacementRequest, flags) == 8);
+    assert!(core::mem::offset_of!(ThreadPlacementRequest, work_class) == 12);
+    assert!(core::mem::offset_of!(ThreadPlacementRequest, preferred_cpu) == 16);
+    assert!(core::mem::offset_of!(ThreadPlacementRequest, reserved0) == 20);
+    assert!(core::mem::offset_of!(ThreadPlacementRequest, reserved1) == 24);
+    assert!(core::mem::size_of::<ThreadPlacementRequest>() == 32);
+    assert!(core::mem::align_of::<ThreadPlacementRequest>() == 8);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, version) == 0);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, size) == 4);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, flags) == 8);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, work_class) == 12);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, preferred_cpu) == 16);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, home_cpu) == 20);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, running_cpu) == 24);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, cpu_word_count) == 28);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, request_revision) == 32);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, applied_revision) == 40);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, reserved0) == 48);
+    assert!(core::mem::offset_of!(ThreadPlacementInfo, reserved1) == 56);
+    assert!(core::mem::size_of::<ThreadPlacementInfo>() == 64);
+    assert!(core::mem::align_of::<ThreadPlacementInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -28252,7 +28353,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_exit) == 1240);
     assert!(core::mem::offset_of!(R4XStartR4Sys, platform_input_snapshot) == 1248);
     assert!(core::mem::offset_of!(R4XStartR4Sys, directory_next) == 1256);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1264);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, thread_placement_get) == 1264);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, thread_placement_set) == 1272);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1280);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

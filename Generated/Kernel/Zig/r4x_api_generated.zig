@@ -2139,6 +2139,16 @@ pub const cpu_topology_cache_truncated: u32 = 3;
 pub const cpu_topology_cache_kind_data: u32 = 1;
 pub const cpu_topology_cache_kind_instruction: u32 = 2;
 pub const cpu_topology_cache_kind_unified: u32 = 3;
+pub const thread_placement_version: u32 = 1;
+pub const thread_placement_cpu_none: u32 = 4294967295;
+pub const thread_placement_flag_default_cpus: u32 = 1;
+pub const thread_placement_flag_pending: u32 = 2;
+pub const thread_placement_flag_parallel: u32 = 4;
+pub const thread_placement_flag_internal_fixed: u32 = 8;
+pub const thread_placement_class_interactive: u32 = 0;
+pub const thread_placement_class_batch: u32 = 1;
+pub const thread_placement_class_preferred: u32 = 2;
+pub const thread_placement_error_capacity: i32 = -11;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8766,6 +8776,31 @@ pub const CpuCacheTopologyInfo = extern struct {
     reserved0: u32 = 0,
 };
 
+pub const ThreadPlacementRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    flags: u32 = 0,
+    work_class: u32 = 0,
+    preferred_cpu: u32 = 4294967295,
+    reserved0: u32 = 0,
+    reserved1: u64 = 0,
+};
+
+pub const ThreadPlacementInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    flags: u32 = 0,
+    work_class: u32 = 0,
+    preferred_cpu: u32 = 4294967295,
+    home_cpu: u32 = 4294967295,
+    running_cpu: u32 = 4294967295,
+    cpu_word_count: u32 = 0,
+    request_revision: u64 = 0,
+    applied_revision: u64 = 0,
+    reserved0: u64 = 0,
+    reserved1: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -8920,12 +8955,14 @@ pub const R4SysFns = struct {
     pub const program_exit = *const fn (i32, u32) callconv(.c) i32;
     pub const platform_input_snapshot = *const fn (*PlatformInputSnapshot) callconv(.c) i32;
     pub const directory_next = *const fn ([*:0]const u8, *DirectoryScanCursor, [*]u8, u32, *FileInfo) callconv(.c) i32;
+    pub const thread_placement_get = *const fn (*const ProgramJoinHandle, *ThreadPlacementInfo, ?[*]u64, u32) callconv(.c) i32;
+    pub const thread_placement_set = *const fn (*const ProgramJoinHandle, *const ThreadPlacementRequest, ?[*]const u64, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 25,
-    size: u32 = 1264,
+    abi_version: u32 = 26,
+    size: u32 = 1280,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -9083,6 +9120,8 @@ pub const R4XStartR4Sys = extern struct {
     program_exit: usize = 0,
     platform_input_snapshot: usize = 0,
     directory_next: usize = 0,
+    thread_placement_get: usize = 0,
+    thread_placement_set: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -9894,6 +9933,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 153, .offset = 1240, .name = "program_exit", .state = .function, .required = false },
     .{ .number = 154, .offset = 1248, .name = "platform_input_snapshot", .state = .function, .required = false },
     .{ .number = 155, .offset = 1256, .name = "directory_next", .state = .function, .required = false },
+    .{ .number = 156, .offset = 1264, .name = "thread_placement_get", .state = .function, .required = false },
+    .{ .number = 157, .offset = 1272, .name = "thread_placement_set", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -16022,7 +16063,30 @@ comptime {
     if (@offsetOf(CpuCacheTopologyInfo, "cache_bytes") != 48) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.cache_bytes");
     if (@offsetOf(CpuCacheTopologyInfo, "property_flags") != 56) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.property_flags");
     if (@offsetOf(CpuCacheTopologyInfo, "reserved0") != 60) @compileError("generated ABI offset drift: CpuCacheTopologyInfo.reserved0");
-    if (@sizeOf(R4XStartR4Sys) != 1264) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(ThreadPlacementRequest) != 32) @compileError("generated ABI size drift: ThreadPlacementRequest");
+    if (@alignOf(ThreadPlacementRequest) != 8) @compileError("generated ABI alignment drift: ThreadPlacementRequest");
+    if (@offsetOf(ThreadPlacementRequest, "version") != 0) @compileError("generated ABI offset drift: ThreadPlacementRequest.version");
+    if (@offsetOf(ThreadPlacementRequest, "size") != 4) @compileError("generated ABI offset drift: ThreadPlacementRequest.size");
+    if (@offsetOf(ThreadPlacementRequest, "flags") != 8) @compileError("generated ABI offset drift: ThreadPlacementRequest.flags");
+    if (@offsetOf(ThreadPlacementRequest, "work_class") != 12) @compileError("generated ABI offset drift: ThreadPlacementRequest.work_class");
+    if (@offsetOf(ThreadPlacementRequest, "preferred_cpu") != 16) @compileError("generated ABI offset drift: ThreadPlacementRequest.preferred_cpu");
+    if (@offsetOf(ThreadPlacementRequest, "reserved0") != 20) @compileError("generated ABI offset drift: ThreadPlacementRequest.reserved0");
+    if (@offsetOf(ThreadPlacementRequest, "reserved1") != 24) @compileError("generated ABI offset drift: ThreadPlacementRequest.reserved1");
+    if (@sizeOf(ThreadPlacementInfo) != 64) @compileError("generated ABI size drift: ThreadPlacementInfo");
+    if (@alignOf(ThreadPlacementInfo) != 8) @compileError("generated ABI alignment drift: ThreadPlacementInfo");
+    if (@offsetOf(ThreadPlacementInfo, "version") != 0) @compileError("generated ABI offset drift: ThreadPlacementInfo.version");
+    if (@offsetOf(ThreadPlacementInfo, "size") != 4) @compileError("generated ABI offset drift: ThreadPlacementInfo.size");
+    if (@offsetOf(ThreadPlacementInfo, "flags") != 8) @compileError("generated ABI offset drift: ThreadPlacementInfo.flags");
+    if (@offsetOf(ThreadPlacementInfo, "work_class") != 12) @compileError("generated ABI offset drift: ThreadPlacementInfo.work_class");
+    if (@offsetOf(ThreadPlacementInfo, "preferred_cpu") != 16) @compileError("generated ABI offset drift: ThreadPlacementInfo.preferred_cpu");
+    if (@offsetOf(ThreadPlacementInfo, "home_cpu") != 20) @compileError("generated ABI offset drift: ThreadPlacementInfo.home_cpu");
+    if (@offsetOf(ThreadPlacementInfo, "running_cpu") != 24) @compileError("generated ABI offset drift: ThreadPlacementInfo.running_cpu");
+    if (@offsetOf(ThreadPlacementInfo, "cpu_word_count") != 28) @compileError("generated ABI offset drift: ThreadPlacementInfo.cpu_word_count");
+    if (@offsetOf(ThreadPlacementInfo, "request_revision") != 32) @compileError("generated ABI offset drift: ThreadPlacementInfo.request_revision");
+    if (@offsetOf(ThreadPlacementInfo, "applied_revision") != 40) @compileError("generated ABI offset drift: ThreadPlacementInfo.applied_revision");
+    if (@offsetOf(ThreadPlacementInfo, "reserved0") != 48) @compileError("generated ABI offset drift: ThreadPlacementInfo.reserved0");
+    if (@offsetOf(ThreadPlacementInfo, "reserved1") != 56) @compileError("generated ABI offset drift: ThreadPlacementInfo.reserved1");
+    if (@sizeOf(R4XStartR4Sys) != 1280) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -16179,6 +16243,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_exit") != 1240) @compileError("generated ABI offset drift: R4XStartR4Sys.program_exit");
     if (@offsetOf(R4XStartR4Sys, "platform_input_snapshot") != 1248) @compileError("generated ABI offset drift: R4XStartR4Sys.platform_input_snapshot");
     if (@offsetOf(R4XStartR4Sys, "directory_next") != 1256) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_next");
+    if (@offsetOf(R4XStartR4Sys, "thread_placement_get") != 1264) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_placement_get");
+    if (@offsetOf(R4XStartR4Sys, "thread_placement_set") != 1272) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_placement_set");
     if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -16643,13 +16709,15 @@ pub const R4SysProvider = struct {
     program_exit: ?R4SysFns.program_exit = null,
     platform_input_snapshot: ?R4SysFns.platform_input_snapshot = null,
     directory_next: ?R4SysFns.directory_next = null,
+    thread_placement_get: ?R4SysFns.thread_placement_get = null,
+    thread_placement_set: ?R4SysFns.thread_placement_set = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 25,
-        .size = 1264,
+        .abi_version = 26,
+        .size = 1280,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -16807,6 +16875,8 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .program_exit = if (provider.program_exit) |callback| @intFromPtr(callback) else 0,
         .platform_input_snapshot = if (provider.platform_input_snapshot) |callback| @intFromPtr(callback) else 0,
         .directory_next = if (provider.directory_next) |callback| @intFromPtr(callback) else 0,
+        .thread_placement_get = if (provider.thread_placement_get) |callback| @intFromPtr(callback) else 0,
+        .thread_placement_set = if (provider.thread_placement_set) |callback| @intFromPtr(callback) else 0,
     };
 }
 
