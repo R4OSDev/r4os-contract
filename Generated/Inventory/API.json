@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 454,
-    "group_slot_count": 454,
+    "function_count": 458,
+    "group_slot_count": 458,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 115
+    "advanced_count": 119
   },
   "functions": [
     {
@@ -5455,6 +5455,54 @@
       "slot": 68,
       "exposure": "advanced",
       "description": "Explicit bounded native CPU lifecycle work on an admitted BSP task with IF on and no owners. Returns1 for a fixed report (including Busy/failure/unavailable),0 when caller context unavailable, -1 invalid header/capacity with unchanged output. Exact task retirement and true hardware receipts govern success; retained resources block reuse. Leaves tested CPU freshly online after a successful cycle; never runs implicitly from metrics or boot.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_capabilities",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 69,
+      "exposure": "advanced",
+      "description": "Passive CPU capture query. Returns cpu_capabilities_ok or error_invalid/index/busy. Any configured CPU including offline is observable; current lifecycle state is advisory. Only captured controls have validity flags. Unknown optional fields never block boot. Writes exactly272 bytes on success; every error leaves output and tail unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_feature",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 70,
+      "exposure": "advanced",
+      "description": "Passive indexed query within CpuCapabilitiesInfo.feature_count for the exact nonzero current epoch; returns end after enumeration, error_epoch across reuse, busy during capture. Writes exactly112 bytes on success. Hardware, OS activation and unknown actual use are independent; raw data only when flagged. No output/tail changes on end/error.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_register_read",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 71,
+      "exposure": "advanced",
+      "description": "Explicit named current-CPU read only. Returns cpu_capabilities_ok/error_invalid/index/busy/epoch/context/offline/unsupported/fault. Preserves caller IF and entire output/tail on failure. Caller routes through existing approved compute worker if needed; no general cross-CPU RPC or arbitrary MSR number. Architectural EFER/APIC_BASE/PAT/MTRRCAP require explicit capability; APERF/MPERF require exact Intel/AMD vendor and CPUID6.ECX0; Intel platform info limited to verified family6 models3C/45/46. Raw counters and nominal ratios are not current frequency. No public write. IF-on admitted task without held owners required at entry; refusal also preserves IF-off callers.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.kernel_cpu_register_check",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 72,
+      "exposure": "advanced",
+      "description": "Explicit bounded local native instruction/#GP/IF check. Returns cpu_capabilities_ok with passed/failed report, or exact admission/header errors with unchanged output. IF-on task/no-held-owner context required at entry. Own membership lease prevents concurrent logical offline through final restoration. Exactly four fixed reserved-ID read/write probes; unsupported feature refuses before instruction. Writes exactly128 bytes; never implicitly runs in metrics/boot.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

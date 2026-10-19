@@ -457,5 +457,9 @@ static R4DevCpuTopologyFn r4os_probe_r4dev_cpu_topology = (R4DevCpuTopologyFn)0;
 static R4DevCpuCacheTopologyFn r4os_probe_r4dev_cpu_cache_topology = (R4DevCpuCacheTopologyFn)0;
 static R4DevCpuLifecycleFn r4os_probe_r4dev_cpu_lifecycle = (R4DevCpuLifecycleFn)0;
 static R4DevKernelCpuLifecycleCheckFn r4os_probe_r4dev_kernel_cpu_lifecycle_check = (R4DevKernelCpuLifecycleCheckFn)0;
+static R4DevCpuCapabilitiesFn r4os_probe_r4dev_cpu_capabilities = (R4DevCpuCapabilitiesFn)0;
+static R4DevCpuFeatureFn r4os_probe_r4dev_cpu_feature = (R4DevCpuFeatureFn)0;
+static R4DevCpuRegisterReadFn r4os_probe_r4dev_cpu_register_read = (R4DevCpuRegisterReadFn)0;
+static R4DevKernelCpuRegisterCheckFn r4os_probe_r4dev_kernel_cpu_register_check = (R4DevKernelCpuRegisterCheckFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

@@ -2215,6 +2215,128 @@ pub const cpu_lifecycle_check_case_cycle: u32 = 8;
 pub const cpu_lifecycle_check_case_stale_epoch: u32 = 16;
 pub const cpu_lifecycle_check_case_runtime_tlb: u32 = 32;
 pub const cpu_lifecycle_check_case_all: u32 = 63;
+pub const cpu_capabilities_version: u32 = 1;
+pub const cpu_capabilities_ok: i32 = 0;
+pub const cpu_capabilities_end: i32 = 1;
+pub const cpu_capabilities_error_invalid: i32 = -1;
+pub const cpu_capabilities_error_busy: i32 = -2;
+pub const cpu_capabilities_error_index: i32 = -3;
+pub const cpu_capabilities_error_epoch: i32 = -4;
+pub const cpu_capabilities_error_context: i32 = -5;
+pub const cpu_capabilities_error_offline: i32 = -6;
+pub const cpu_capabilities_error_unsupported: i32 = -7;
+pub const cpu_capabilities_error_fault: i32 = -8;
+pub const cpu_capabilities_flag_captured: u32 = 1;
+pub const cpu_capabilities_flag_online: u32 = 2;
+pub const cpu_capabilities_flag_schedulable: u32 = 4;
+pub const cpu_capabilities_flag_signature: u32 = 8;
+pub const cpu_capabilities_flag_brand: u32 = 16;
+pub const cpu_capabilities_flag_hypervisor_present: u32 = 32;
+pub const cpu_capabilities_flag_hypervisor_valid: u32 = 64;
+pub const cpu_capabilities_flag_invalid_basic: u32 = 128;
+pub const cpu_capabilities_flag_invalid_extended: u32 = 256;
+pub const cpu_capabilities_flag_invalid_hypervisor: u32 = 512;
+pub const cpu_capabilities_flag_legacy_kvm_maximum: u32 = 1024;
+pub const cpu_capabilities_flag_nominal_frequency: u32 = 2048;
+pub const cpu_capabilities_flag_tsc_ratio: u32 = 4096;
+pub const cpu_capabilities_flag_pmu: u32 = 8192;
+pub const cpu_capabilities_os_cr0: u32 = 1;
+pub const cpu_capabilities_os_cr4: u32 = 2;
+pub const cpu_capabilities_os_xcr0: u32 = 4;
+pub const cpu_capabilities_os_efer: u32 = 8;
+pub const cpu_capabilities_os_pat: u32 = 16;
+pub const cpu_capabilities_os_mtrr_default: u32 = 32;
+pub const cpu_capabilities_os_msr_fault: u32 = 64;
+pub const cpu_feature_flag_raw: u32 = 1;
+pub const cpu_feature_flag_module_required: u32 = 2;
+pub const cpu_feature_flag_control: u32 = 4;
+pub const cpu_feature_hardware_unknown: u32 = 0;
+pub const cpu_feature_hardware_absent: u32 = 1;
+pub const cpu_feature_hardware_present: u32 = 2;
+pub const cpu_feature_os_unknown: u32 = 0;
+pub const cpu_feature_os_disabled: u32 = 1;
+pub const cpu_feature_os_enabled: u32 = 2;
+pub const cpu_feature_os_not_applicable: u32 = 3;
+pub const cpu_feature_use_unknown: u32 = 0;
+pub const cpu_feature_reason_no_owner: u32 = 0;
+pub const cpu_feature_reason_missing_leaf: u32 = 1;
+pub const cpu_feature_reason_vendor: u32 = 2;
+pub const cpu_feature_reason_absent: u32 = 3;
+pub const cpu_feature_reason_dependency: u32 = 4;
+pub const cpu_feature_reason_control_unknown: u32 = 5;
+pub const cpu_feature_reason_disabled: u32 = 6;
+pub const cpu_feature_reason_no_os_control: u32 = 7;
+pub const cpu_feature_id_x87: u32 = 1;
+pub const cpu_feature_id_msr: u32 = 2;
+pub const cpu_feature_id_fxsr: u32 = 3;
+pub const cpu_feature_id_sse: u32 = 4;
+pub const cpu_feature_id_sse2: u32 = 5;
+pub const cpu_feature_id_sse3: u32 = 6;
+pub const cpu_feature_id_ssse3: u32 = 7;
+pub const cpu_feature_id_sse41: u32 = 8;
+pub const cpu_feature_id_sse42: u32 = 9;
+pub const cpu_feature_id_xsave: u32 = 10;
+pub const cpu_feature_id_avx: u32 = 11;
+pub const cpu_feature_id_avx2: u32 = 12;
+pub const cpu_feature_id_avx512f: u32 = 13;
+pub const cpu_feature_id_amx_tile: u32 = 14;
+pub const cpu_feature_id_aes: u32 = 15;
+pub const cpu_feature_id_pclmulqdq: u32 = 16;
+pub const cpu_feature_id_vaes: u32 = 17;
+pub const cpu_feature_id_vpclmulqdq: u32 = 18;
+pub const cpu_feature_id_rdrand: u32 = 19;
+pub const cpu_feature_id_rdseed: u32 = 20;
+pub const cpu_feature_id_tsc: u32 = 21;
+pub const cpu_feature_id_invariant_tsc: u32 = 22;
+pub const cpu_feature_id_pat: u32 = 23;
+pub const cpu_feature_id_mtrr: u32 = 24;
+pub const cpu_feature_id_nx: u32 = 25;
+pub const cpu_feature_id_page1gb: u32 = 26;
+pub const cpu_feature_id_pcid: u32 = 27;
+pub const cpu_feature_id_invpcid: u32 = 28;
+pub const cpu_feature_id_fsgsbase: u32 = 29;
+pub const cpu_feature_id_smep: u32 = 30;
+pub const cpu_feature_id_smap: u32 = 31;
+pub const cpu_feature_id_la57: u32 = 32;
+pub const cpu_feature_id_clflush: u32 = 33;
+pub const cpu_feature_id_clflushopt: u32 = 34;
+pub const cpu_feature_id_clwb: u32 = 35;
+pub const cpu_feature_id_monitor_mwait: u32 = 36;
+pub const cpu_feature_id_arat: u32 = 37;
+pub const cpu_feature_id_aperf_mperf: u32 = 38;
+pub const cpu_feature_id_intel_dts: u32 = 39;
+pub const cpu_feature_id_intel_turbo: u32 = 40;
+pub const cpu_feature_id_intel_hwp: u32 = 41;
+pub const cpu_feature_id_intel_hwp_epp: u32 = 42;
+pub const cpu_feature_id_intel_hwp_package: u32 = 43;
+pub const cpu_feature_id_intel_hw_feedback: u32 = 44;
+pub const cpu_feature_id_intel_pmu: u32 = 45;
+pub const cpu_feature_id_amd_cpb: u32 = 46;
+pub const cpu_feature_id_amd_cppc: u32 = 47;
+pub const cpu_feature_id_amd_effective_frequency_ro: u32 = 48;
+pub const cpu_feature_id_amd_pmu: u32 = 49;
+pub const cpu_feature_id_x2apic: u32 = 50;
+pub const cpu_feature_id_tsc_deadline: u32 = 51;
+pub const cpu_register_id_efer: u32 = 1;
+pub const cpu_register_id_apic_base: u32 = 2;
+pub const cpu_register_id_pat: u32 = 3;
+pub const cpu_register_id_mtrr_cap: u32 = 4;
+pub const cpu_register_id_mperf: u32 = 5;
+pub const cpu_register_id_aperf: u32 = 6;
+pub const cpu_register_id_intel_platform_info: u32 = 7;
+pub const cpu_register_flag_raw: u32 = 1;
+pub const cpu_register_check_status_unavailable: u32 = 0;
+pub const cpu_register_check_status_passed: u32 = 1;
+pub const cpu_register_check_status_failed: u32 = 2;
+pub const cpu_register_check_case_read_on: u32 = 1;
+pub const cpu_register_check_case_write_on: u32 = 2;
+pub const cpu_register_check_case_read_off: u32 = 4;
+pub const cpu_register_check_case_write_off: u32 = 8;
+pub const cpu_register_check_case_all: u32 = 15;
+pub const cpu_feature_id_cx8: u32 = 52;
+pub const cpu_feature_id_cmov: u32 = 53;
+pub const cpu_feature_id_mmx: u32 = 54;
+pub const cpu_feature_id_long_mode: u32 = 55;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -17034,6 +17156,252 @@ impl Default for ProgramKernelCpuLifecycleCheck {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuCapabilitiesInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub state: u32,
+    pub flags: u32,
+    pub feature_count: u32,
+    pub max_basic_leaf: u32,
+    pub max_extended_leaf: u32,
+    pub max_hypervisor_leaf: u32,
+    pub max_leaf7_subleaf: u32,
+    pub family: u32,
+    pub model: u32,
+    pub stepping: u32,
+    pub apic_id: u32,
+    pub configured_cpus: u32,
+    pub os_read_flags: u32,
+    pub epoch: u64,
+    pub capture_sequence: u64,
+    pub cr0: u64,
+    pub cr4: u64,
+    pub xcr0: u64,
+    pub efer: u64,
+    pub pat: u64,
+    pub base_mhz: u32,
+    pub maximum_mhz: u32,
+    pub bus_mhz: u32,
+    pub crystal_hz: u32,
+    pub tsc_denominator: u32,
+    pub tsc_numerator: u32,
+    pub pmu_version: u32,
+    pub pmu_counters: u32,
+    pub pmu_counter_width: u32,
+    pub clflush_line_bytes: u32,
+    pub legacy_inventory_msr_faults: u32,
+    pub raw_hypervisor_maximum: u32,
+    pub vendor_name: [u8; 12],
+    pub hypervisor_name: [u8; 12],
+    pub brand_name: [u8; 48],
+    pub recovered_msr_faults: u64,
+    pub physical_address_bits: u32,
+    pub virtual_address_bits: u32,
+    pub supported_xcr0: u64,
+    pub enabled_xsave_bytes: u32,
+    pub maximum_xsave_bytes: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuCapabilitiesInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 272,
+            cpu_index: 0,
+            state: 0,
+            flags: 0,
+            feature_count: 0,
+            max_basic_leaf: 0,
+            max_extended_leaf: 0,
+            max_hypervisor_leaf: 0,
+            max_leaf7_subleaf: 0,
+            family: 0,
+            model: 0,
+            stepping: 0,
+            apic_id: 0,
+            configured_cpus: 0,
+            os_read_flags: 0,
+            epoch: 0,
+            capture_sequence: 0,
+            cr0: 0,
+            cr4: 0,
+            xcr0: 0,
+            efer: 0,
+            pat: 0,
+            base_mhz: 0,
+            maximum_mhz: 0,
+            bus_mhz: 0,
+            crystal_hz: 0,
+            tsc_denominator: 0,
+            tsc_numerator: 0,
+            pmu_version: 0,
+            pmu_counters: 0,
+            pmu_counter_width: 0,
+            clflush_line_bytes: 0,
+            legacy_inventory_msr_faults: 0,
+            raw_hypervisor_maximum: 0,
+            vendor_name: [0; 12],
+            hypervisor_name: [0; 12],
+            brand_name: [0; 48],
+            recovered_msr_faults: 0,
+            physical_address_bits: 0,
+            virtual_address_bits: 0,
+            supported_xcr0: 0,
+            enabled_xsave_bytes: 0,
+            maximum_xsave_bytes: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuFeatureInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub feature_index: u32,
+    pub feature_id: u32,
+    pub flags: u32,
+    pub hardware_state: u32,
+    pub os_state: u32,
+    pub use_state: u32,
+    pub reason: u32,
+    pub source_leaf: u32,
+    pub source_subleaf: u32,
+    pub source_register: u32,
+    pub source_bit: u32,
+    pub raw_value: u32,
+    pub reserved0: u32,
+    pub epoch: u64,
+    pub control_value: u64,
+    pub name: [u8; 24],
+    pub reserved1: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuFeatureInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            cpu_index: 0,
+            feature_index: 0,
+            feature_id: 0,
+            flags: 0,
+            hardware_state: 0,
+            os_state: 0,
+            use_state: 0,
+            reason: 0,
+            source_leaf: 0,
+            source_subleaf: 0,
+            source_register: 0,
+            source_bit: 0,
+            raw_value: 0,
+            reserved0: 0,
+            epoch: 0,
+            control_value: 0,
+            name: [0; 24],
+            reserved1: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuRegisterInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub register_id: u32,
+    pub flags: u32,
+    pub reserved0: u32,
+    pub epoch: u64,
+    pub value: u64,
+    pub capture_sequence: u64,
+    pub name: [u8; 24],
+    pub reserved1: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuRegisterInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 80,
+            cpu_index: 0,
+            register_id: 0,
+            flags: 0,
+            reserved0: 0,
+            epoch: 0,
+            value: 0,
+            capture_sequence: 0,
+            name: [0; 24],
+            reserved1: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelCpuRegisterCheck {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub status: u32,
+    pub passed: u32,
+    pub failed: u32,
+    pub if_checks: u32,
+    pub reads: u32,
+    pub writes: u32,
+    pub faults: u32,
+    pub cleanup_errors: u32,
+    pub reserved0: u32,
+    pub reserved1: u32,
+    pub reserved2: u32,
+    pub reserved3: u32,
+    pub reserved4: u32,
+    pub epoch: u64,
+    pub capture_sequence: u64,
+    pub faults_before: u64,
+    pub faults_after: u64,
+    pub flags_before: u64,
+    pub flags_after: u64,
+    pub reserved5: u64,
+    pub reserved6: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelCpuRegisterCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            cpu_index: 0,
+            status: 0,
+            passed: 0,
+            failed: 0,
+            if_checks: 0,
+            reads: 0,
+            writes: 0,
+            faults: 0,
+            cleanup_errors: 0,
+            reserved0: 0,
+            reserved1: 0,
+            reserved2: 0,
+            reserved3: 0,
+            reserved4: 0,
+            epoch: 0,
+            capture_sequence: 0,
+            faults_before: 0,
+            faults_after: 0,
+            flags_before: 0,
+            flags_after: 0,
+            reserved5: 0,
+            reserved6: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -18411,6 +18779,10 @@ pub mod R4DevFns {
     pub type cpu_cache_topology = unsafe extern "C" fn(u32, u32, *mut CpuCacheTopologyInfo) -> i32;
     pub type cpu_lifecycle = unsafe extern "C" fn(u32, u32, u64, *mut CpuLifecycleInfo) -> i32;
     pub type kernel_cpu_lifecycle_check = unsafe extern "C" fn(*mut ProgramKernelCpuLifecycleCheck) -> i32;
+    pub type cpu_capabilities = unsafe extern "C" fn(u32, *mut CpuCapabilitiesInfo) -> i32;
+    pub type cpu_feature = unsafe extern "C" fn(u32, u64, u32, *mut CpuFeatureInfo) -> i32;
+    pub type cpu_register_read = unsafe extern "C" fn(u32, u64, u32, *mut CpuRegisterInfo) -> i32;
+    pub type kernel_cpu_register_check = unsafe extern "C" fn(u32, u64, *mut ProgramKernelCpuRegisterCheck) -> i32;
 }
 
 #[repr(C)]
@@ -18489,14 +18861,18 @@ pub struct R4XStartR4Dev {
     pub cpu_cache_topology: usize,
     pub cpu_lifecycle: usize,
     pub kernel_cpu_lifecycle_check: usize,
+    pub cpu_capabilities: usize,
+    pub cpu_feature: usize,
+    pub cpu_register_read: usize,
+    pub kernel_cpu_register_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 23,
-            size: 568,
+            abi_version: 24,
+            size: 600,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -18567,6 +18943,10 @@ impl Default for R4XStartR4Dev {
             cpu_cache_topology: 0,
             cpu_lifecycle: 0,
             kernel_cpu_lifecycle_check: 0,
+            cpu_capabilities: 0,
+            cpu_feature: 0,
+            cpu_register_read: 0,
+            kernel_cpu_register_check: 0,
         }
     }
 }
@@ -28425,6 +28805,113 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, switch_serial) == 120);
     assert!(core::mem::size_of::<ProgramKernelCpuLifecycleCheck>() == 128);
     assert!(core::mem::align_of::<ProgramKernelCpuLifecycleCheck>() == 8);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, state) == 12);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, flags) == 16);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, feature_count) == 20);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, max_basic_leaf) == 24);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, max_extended_leaf) == 28);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, max_hypervisor_leaf) == 32);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, max_leaf7_subleaf) == 36);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, family) == 40);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, model) == 44);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, stepping) == 48);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, apic_id) == 52);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, configured_cpus) == 56);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, os_read_flags) == 60);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, epoch) == 64);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, capture_sequence) == 72);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, cr0) == 80);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, cr4) == 88);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, xcr0) == 96);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, efer) == 104);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, pat) == 112);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, base_mhz) == 120);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, maximum_mhz) == 124);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, bus_mhz) == 128);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, crystal_hz) == 132);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, tsc_denominator) == 136);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, tsc_numerator) == 140);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, pmu_version) == 144);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, pmu_counters) == 148);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, pmu_counter_width) == 152);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, clflush_line_bytes) == 156);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, legacy_inventory_msr_faults) == 160);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, raw_hypervisor_maximum) == 164);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, vendor_name) == 168);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, hypervisor_name) == 180);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, brand_name) == 192);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, recovered_msr_faults) == 240);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, physical_address_bits) == 248);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, virtual_address_bits) == 252);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, supported_xcr0) == 256);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, enabled_xsave_bytes) == 264);
+    assert!(core::mem::offset_of!(CpuCapabilitiesInfo, maximum_xsave_bytes) == 268);
+    assert!(core::mem::size_of::<CpuCapabilitiesInfo>() == 272);
+    assert!(core::mem::align_of::<CpuCapabilitiesInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, feature_index) == 12);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, feature_id) == 16);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, flags) == 20);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, hardware_state) == 24);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, os_state) == 28);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, use_state) == 32);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, reason) == 36);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, source_leaf) == 40);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, source_subleaf) == 44);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, source_register) == 48);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, source_bit) == 52);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, raw_value) == 56);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, reserved0) == 60);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, epoch) == 64);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, control_value) == 72);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, name) == 80);
+    assert!(core::mem::offset_of!(CpuFeatureInfo, reserved1) == 104);
+    assert!(core::mem::size_of::<CpuFeatureInfo>() == 112);
+    assert!(core::mem::align_of::<CpuFeatureInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, register_id) == 12);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, flags) == 16);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, reserved0) == 20);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, epoch) == 24);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, value) == 32);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, capture_sequence) == 40);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, name) == 48);
+    assert!(core::mem::offset_of!(CpuRegisterInfo, reserved1) == 72);
+    assert!(core::mem::size_of::<CpuRegisterInfo>() == 80);
+    assert!(core::mem::align_of::<CpuRegisterInfo>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, cpu_index) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, status) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, passed) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, failed) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, if_checks) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reads) == 28);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, writes) == 32);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, faults) == 36);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, cleanup_errors) == 40);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved0) == 44);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved1) == 48);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved2) == 52);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved3) == 56);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved4) == 60);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, epoch) == 64);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, capture_sequence) == 72);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, faults_before) == 80);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, faults_after) == 88);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, flags_before) == 96);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, flags_after) == 104);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved5) == 112);
+    assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved6) == 120);
+    assert!(core::mem::size_of::<ProgramKernelCpuRegisterCheck>() == 128);
+    assert!(core::mem::align_of::<ProgramKernelCpuRegisterCheck>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -28923,7 +29410,11 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_cache_topology) == 544);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_lifecycle) == 552);
     assert!(core::mem::offset_of!(R4XStartR4Dev, kernel_cpu_lifecycle_check) == 560);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 568);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_capabilities) == 568);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_feature) == 576);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_register_read) == 584);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, kernel_cpu_register_check) == 592);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 600);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

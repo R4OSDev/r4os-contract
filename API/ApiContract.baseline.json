@@ -28643,10 +28643,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 23,
+      "abi_version": 24,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 568,
+      "size": 600,
       "slots": [
         {
           "number": 0,
@@ -33272,6 +33272,305 @@
             "shutdown": "none",
             "close_rule": "none",
             "outputs": "valid_on_documented_error",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 69,
+          "offset": 568,
+          "name": "cpu_capabilities",
+          "state": "function",
+          "required": false,
+          "description": "Passive CPU capture query. Returns cpu_capabilities_ok or error_invalid/index/busy. Any configured CPU including offline is observable; current lifecycle state is advisory. Only captured controls have validity flags. Unknown optional fields never block boot. Writes exactly272 bytes on success; every error leaves output and tail unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuCapabilitiesInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 70,
+          "offset": 576,
+          "name": "cpu_feature",
+          "state": "function",
+          "required": false,
+          "description": "Passive indexed query within CpuCapabilitiesInfo.feature_count for the exact nonzero current epoch; returns end after enumeration, error_epoch across reuse, busy during capture. Writes exactly112 bytes on success. Hardware, OS activation and unknown actual use are independent; raw data only when flagged. No output/tail changes on end/error.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "expected_epoch",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "feature_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuFeatureInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 71,
+          "offset": 584,
+          "name": "cpu_register_read",
+          "state": "function",
+          "required": false,
+          "description": "Explicit named current-CPU read only. Returns cpu_capabilities_ok/error_invalid/index/busy/epoch/context/offline/unsupported/fault. Preserves caller IF and entire output/tail on failure. Caller routes through existing approved compute worker if needed; no general cross-CPU RPC or arbitrary MSR number. Architectural EFER/APIC_BASE/PAT/MTRRCAP require explicit capability; APERF/MPERF require exact Intel/AMD vendor and CPUID6.ECX0; Intel platform info limited to verified family6 models3C/45/46. Raw counters and nominal ratios are not current frequency. No public write. IF-on admitted task without held owners required at entry; refusal also preserves IF-off callers.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "expected_epoch",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "register_id",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuRegisterInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 72,
+          "offset": 592,
+          "name": "kernel_cpu_register_check",
+          "state": "function",
+          "required": false,
+          "description": "Explicit bounded local native instruction/#GP/IF check. Returns cpu_capabilities_ok with passed/failed report, or exact admission/header errors with unchanged output. IF-on task/no-held-owner context required at entry. Own membership lease prevents concurrent logical offline through final restoration. Exactly four fixed reserved-ID read/write probes; unsupported feature refuses before instruction. Writes exactly128 bytes; never implicitly runs in metrics/boot.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "expected_epoch",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramKernelCpuRegisterCheck"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
@@ -111297,6 +111596,1463 @@
       ],
       "values": [],
       "description": "Explicit bounded native logical-CPU cases, including fixed/unsafe-kernel/page-owner Busy, actual IF/owner/TLB progress and an offline/fresh-online/stale-epoch cycle. No physical hotplug or performance score. Userland module workers separately verify application FPU/wait migration."
+    },
+    {
+      "name": "CpuCapabilitiesInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 272,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets cpu_capabilities_version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; provider writes only the documented fixed record.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "272"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing dense CPU slot; topology API owns the full identity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current cpu_lifecycle_state_* observation, not a reservation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_capabilities_flag_*; missing fields are unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "feature_count",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bound for indexed cpu_feature enumeration; not a hardware bit count.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_basic_leaf",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Raw CPUID0.EAX; consult invalid-bound flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_extended_leaf",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Raw CPUID80000000.EAX; zero can mean absent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_hypervisor_leaf",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated hypervisor bound; KVM legacy0 normalized only for the exact signature.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_leaf7_subleaf",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Enumerated CPUID7.0.EAX, never an instruction scan limit.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "family",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded display family, valid with signature flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "model",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded display model, valid with signature flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stepping",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded stepping, valid with signature flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "apic_id",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Full APIC identity reused from confirmed topology owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "configured_cpus",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Configured topology slots; independent of current scheduling capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "os_read_flags",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_capabilities_os_* bits mark actually captured local controls.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact execution epoch. Offline data remain the last captured epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capture_sequence",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Even nonzero CPU-local publication sequence; not a global timestamp.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cr0",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual local CR0 at post-baseline capture.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cr4",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual local CR4 at post-baseline capture.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "xcr0",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual local XCR0 only with os_xcr0 flag.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "efer",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Checked local EFER only with os_efer flag.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pat",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Checked local PAT only with os_pat flag.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "base_mhz",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID16 low16 nominal base MHz; zero means not enumerated, never active frequency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "maximum_mhz",
+          "offset": 124,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID16 low16 nominal maximum MHz; not a current measurement.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bus_mhz",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID16 low16 nominal reference-bus MHz; zero unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "crystal_hz",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID15.ECX only, no guessed model-dependent crystal frequency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tsc_denominator",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID15.EAX; ratio valid only with nonzero numerator/denominator/crystal.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tsc_numerator",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID15.EBX; no active CPU clock inference.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pmu_version",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Intel CPUIDA low8 version, or2 only when AMD80000022.EAX bit0 advertises PerfMonV2; selected by exact vendor. Zero unknown/unadvertised, not proof of no legacy PMU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pmu_counters",
+          "offset": 148,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Advertised general-purpose PMU count; not OS-owned or enabled counters.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pmu_counter_width",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Intel architectural counter width; zero unknown on other namespaces.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clflush_line_bytes",
+          "offset": 156,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID1.EBX bits15:8 times8, only when CLFLUSH advertised.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "legacy_inventory_msr_faults",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Historical BSP inventory mask: PAT1/MTRRCAP2. Zero on AP; not a local current MSR result.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "raw_hypervisor_maximum",
+          "offset": 164,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original CPUID40000000.EAX, including KVM legacy0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vendor_name",
+          "offset": 168,
+          "type": {
+            "kind": "array",
+            "length": 12,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Exact CPUID vendor bytes EBX/EDX/ECX, no terminator.",
+          "size": 12,
+          "alignment": 1,
+          "source_type": "[12]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "hypervisor_name",
+          "offset": 180,
+          "type": {
+            "kind": "array",
+            "length": 12,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Exact hypervisor identity EBX/ECX/EDX only with present flag; no brand inference.",
+          "size": 12,
+          "alignment": 1,
+          "source_type": "[12]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "brand_name",
+          "offset": 192,
+          "type": {
+            "kind": "array",
+            "length": 48,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "All three extended brand leaves, only with brand flag; no terminator.",
+          "size": 48,
+          "alignment": 1,
+          "source_type": "[48]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "recovered_msr_faults",
+          "offset": 240,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "CPU-local operational number of exactly recovered #GPs, including explicit checks; never reset.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "physical_address_bits",
+          "offset": 248,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID80000008.EAX low8; zero unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "virtual_address_bits",
+          "offset": 252,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUID80000008.EAX bits15:8; zero unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "supported_xcr0",
+          "offset": 256,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "CPUIDD.0 EDX:EAX, advertised supported components, separate from active XCR0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "enabled_xsave_bytes",
+          "offset": 264,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUIDD.0.EBX for current XCR0 at capture; zero unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "maximum_xsave_bytes",
+          "offset": 268,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUIDD.0.ECX, advertised supported size; not allocated task storage.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Passive per-CPU finite CPUID/control capture after real baseline qualification. Hardware, OS activation and observed use are independent. No register access, CPU work, power policy or frequency measurement is triggered by this query. Mutable snapshot copy never replaces borrowed immutable topology. Flags distinguish missing, invalid, filtered and legacy hypervisor data."
+    },
+    {
+      "name": "CpuFeatureInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets cpu_capabilities_version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; provider writes only the documented fixed record.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact dense CPU slot.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "feature_index",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Stable enumeration ordinal for this provider revision.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "feature_id",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Append-only cpu_feature_id_*.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_feature_flag_*; module_required derives from canonical build CPU baseline.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hardware_state",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_feature_hardware_unknown/absent/present.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "os_state",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_feature_os_unknown/disabled/enabled/not_applicable; supported is not enabled.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "use_state",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_feature_use_unknown unless an actual owner can attest instruction/resource use.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_feature_reason_* for unknown or unavailable OS/use facts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_leaf",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact raw CPUID leaf; unavailable source remains unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_subleaf",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact finite subleaf.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_register",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0EAX/1EBX/2ECX/3EDX.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_bit",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Single bit, or32 when a version field is interpreted.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "raw_value",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete raw source register when raw flag set, zero otherwise.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Must equal the explicitly requested current epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "control_value",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Relevant captured CR0/CR4/XCR0/EFER/MTRR control only with control flag; not a new register read.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "name",
+          "offset": 80,
+          "type": {
+            "kind": "array",
+            "length": 24,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Stable ASCII feature label, zero-terminated within24 bytes.",
+          "size": 24,
+          "alignment": 1,
+          "source_type": "[24]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reserved1",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Passive indexed feature observation. Unknown leaf/vendor is not absence. Advertised crypto/RNG/PMU/energy/SIMD support never claims active use. A disabled XCR0 component cannot be enabled by a query. Every refusal/end leaves the whole output and tail unchanged."
+    },
+    {
+      "name": "CpuRegisterInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets cpu_capabilities_version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; provider writes only the documented fixed record.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be the currently executing CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "register_id",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Named cpu_register_id_* selector, never a caller-supplied MSR address.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_register_flag_*; value is a raw bounded read, not an active-frequency measurement.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact explicitly requested execution epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "value",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Raw successful local register read.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capture_sequence",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Catalogue qualification sequence used for whitelist admission.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "name",
+          "offset": 48,
+          "type": {
+            "kind": "array",
+            "length": 24,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Stable zero-terminated register name.",
+          "size": 24,
+          "alignment": 1,
+          "source_type": "[24]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reserved1",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit single named local MSR read. IF is preserved; exact CPU/epoch/lifecycle admission, opcode support, vendor/model and feature gates precede the instruction. Read-only public surface. No arbitrary ID, scan, policy write or automatic retry. Inaccessible optional MSRs return error_fault and preserve output."
+    },
+    {
+      "name": "ProgramKernelCpuRegisterCheck",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets cpu_capabilities_version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; provider writes only the documented fixed record.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact current CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_register_check_status_*.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "passed",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_register_check_case_* bitset.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "failed",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Failed selected case bits.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "if_checks",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual IF-on/off preservation checks.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reads",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Explicit fixed reserved-ID RDMSR attempts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "writes",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Explicit fixed reserved-ID zero WRMSR attempts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "faults",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual recovered #GP counter delta, never a fabricated success.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_errors",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Restoration or ownership errors prevent success.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved2",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved3",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved4",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact expected local execution epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capture_sequence",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Published qualification sequence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "faults_before",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "CPU operational counter before this explicit check.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "faults_after",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "CPU operational counter after this explicit check.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags_before",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual caller flags before work.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags_after",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual flags restored before report publication.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved5",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved6",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit bounded local #GP/IF check, only on admitted task without held owners. Four fixed reserved-ID read/write attempts exercise actual native instruction recovery with IF on and off. Never scans arbitrary IDs or modifies live valid registers. A hypervisor that silently accepts ignored MSRs cannot pass. Passive queries never run this check."
     }
   ],
   "operations": [],
@@ -135912,6 +137668,1226 @@
       "scope": "cpu_lifecycle",
       "stability": "fixed_contract",
       "description": "All six native cases."
+    },
+    {
+      "name": "cpu_capabilities_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities version."
+    },
+    {
+      "name": "cpu_capabilities_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities ok."
+    },
+    {
+      "name": "cpu_capabilities_end",
+      "value": "1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities end."
+    },
+    {
+      "name": "cpu_capabilities_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error invalid."
+    },
+    {
+      "name": "cpu_capabilities_error_busy",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error busy."
+    },
+    {
+      "name": "cpu_capabilities_error_index",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error index."
+    },
+    {
+      "name": "cpu_capabilities_error_epoch",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error epoch."
+    },
+    {
+      "name": "cpu_capabilities_error_context",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error context."
+    },
+    {
+      "name": "cpu_capabilities_error_offline",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error offline."
+    },
+    {
+      "name": "cpu_capabilities_error_unsupported",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error unsupported."
+    },
+    {
+      "name": "cpu_capabilities_error_fault",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities error fault."
+    },
+    {
+      "name": "cpu_capabilities_flag_captured",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag captured."
+    },
+    {
+      "name": "cpu_capabilities_flag_online",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag online."
+    },
+    {
+      "name": "cpu_capabilities_flag_schedulable",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag schedulable."
+    },
+    {
+      "name": "cpu_capabilities_flag_signature",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag signature."
+    },
+    {
+      "name": "cpu_capabilities_flag_brand",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag brand."
+    },
+    {
+      "name": "cpu_capabilities_flag_hypervisor_present",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag hypervisor present."
+    },
+    {
+      "name": "cpu_capabilities_flag_hypervisor_valid",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag hypervisor valid."
+    },
+    {
+      "name": "cpu_capabilities_flag_invalid_basic",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag invalid basic."
+    },
+    {
+      "name": "cpu_capabilities_flag_invalid_extended",
+      "value": "256",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag invalid extended."
+    },
+    {
+      "name": "cpu_capabilities_flag_invalid_hypervisor",
+      "value": "512",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag invalid hypervisor."
+    },
+    {
+      "name": "cpu_capabilities_flag_legacy_kvm_maximum",
+      "value": "1024",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag legacy kvm maximum."
+    },
+    {
+      "name": "cpu_capabilities_flag_nominal_frequency",
+      "value": "2048",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag nominal frequency."
+    },
+    {
+      "name": "cpu_capabilities_flag_tsc_ratio",
+      "value": "4096",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag tsc ratio."
+    },
+    {
+      "name": "cpu_capabilities_flag_pmu",
+      "value": "8192",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities flag pmu."
+    },
+    {
+      "name": "cpu_capabilities_os_cr0",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities os cr0."
+    },
+    {
+      "name": "cpu_capabilities_os_cr4",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities os cr4."
+    },
+    {
+      "name": "cpu_capabilities_os_xcr0",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities os xcr0."
+    },
+    {
+      "name": "cpu_capabilities_os_efer",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities os efer."
+    },
+    {
+      "name": "cpu_capabilities_os_pat",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities os pat."
+    },
+    {
+      "name": "cpu_capabilities_os_mtrr_default",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities os mtrr default."
+    },
+    {
+      "name": "cpu_capabilities_os_msr_fault",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu capabilities os msr fault."
+    },
+    {
+      "name": "cpu_feature_flag_raw",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature flag raw."
+    },
+    {
+      "name": "cpu_feature_flag_module_required",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature flag module required."
+    },
+    {
+      "name": "cpu_feature_flag_control",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature flag control."
+    },
+    {
+      "name": "cpu_feature_hardware_unknown",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature hardware unknown."
+    },
+    {
+      "name": "cpu_feature_hardware_absent",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature hardware absent."
+    },
+    {
+      "name": "cpu_feature_hardware_present",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature hardware present."
+    },
+    {
+      "name": "cpu_feature_os_unknown",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature os unknown."
+    },
+    {
+      "name": "cpu_feature_os_disabled",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature os disabled."
+    },
+    {
+      "name": "cpu_feature_os_enabled",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature os enabled."
+    },
+    {
+      "name": "cpu_feature_os_not_applicable",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature os not applicable."
+    },
+    {
+      "name": "cpu_feature_use_unknown",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature use unknown."
+    },
+    {
+      "name": "cpu_feature_reason_no_owner",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason no owner."
+    },
+    {
+      "name": "cpu_feature_reason_missing_leaf",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason missing leaf."
+    },
+    {
+      "name": "cpu_feature_reason_vendor",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason vendor."
+    },
+    {
+      "name": "cpu_feature_reason_absent",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason absent."
+    },
+    {
+      "name": "cpu_feature_reason_dependency",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason dependency."
+    },
+    {
+      "name": "cpu_feature_reason_control_unknown",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason control unknown."
+    },
+    {
+      "name": "cpu_feature_reason_disabled",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason disabled."
+    },
+    {
+      "name": "cpu_feature_reason_no_os_control",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature reason no os control."
+    },
+    {
+      "name": "cpu_feature_id_x87",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id x87."
+    },
+    {
+      "name": "cpu_feature_id_msr",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id msr."
+    },
+    {
+      "name": "cpu_feature_id_fxsr",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id fxsr."
+    },
+    {
+      "name": "cpu_feature_id_sse",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id sse."
+    },
+    {
+      "name": "cpu_feature_id_sse2",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id sse2."
+    },
+    {
+      "name": "cpu_feature_id_sse3",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id sse3."
+    },
+    {
+      "name": "cpu_feature_id_ssse3",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id ssse3."
+    },
+    {
+      "name": "cpu_feature_id_sse41",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id sse41."
+    },
+    {
+      "name": "cpu_feature_id_sse42",
+      "value": "9",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id sse42."
+    },
+    {
+      "name": "cpu_feature_id_xsave",
+      "value": "10",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id xsave."
+    },
+    {
+      "name": "cpu_feature_id_avx",
+      "value": "11",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id avx."
+    },
+    {
+      "name": "cpu_feature_id_avx2",
+      "value": "12",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id avx2."
+    },
+    {
+      "name": "cpu_feature_id_avx512f",
+      "value": "13",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id avx512f."
+    },
+    {
+      "name": "cpu_feature_id_amx_tile",
+      "value": "14",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id amx tile."
+    },
+    {
+      "name": "cpu_feature_id_aes",
+      "value": "15",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id aes."
+    },
+    {
+      "name": "cpu_feature_id_pclmulqdq",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id pclmulqdq."
+    },
+    {
+      "name": "cpu_feature_id_vaes",
+      "value": "17",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id vaes."
+    },
+    {
+      "name": "cpu_feature_id_vpclmulqdq",
+      "value": "18",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id vpclmulqdq."
+    },
+    {
+      "name": "cpu_feature_id_rdrand",
+      "value": "19",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id rdrand."
+    },
+    {
+      "name": "cpu_feature_id_rdseed",
+      "value": "20",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id rdseed."
+    },
+    {
+      "name": "cpu_feature_id_tsc",
+      "value": "21",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id tsc."
+    },
+    {
+      "name": "cpu_feature_id_invariant_tsc",
+      "value": "22",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id invariant tsc."
+    },
+    {
+      "name": "cpu_feature_id_pat",
+      "value": "23",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id pat."
+    },
+    {
+      "name": "cpu_feature_id_mtrr",
+      "value": "24",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id mtrr."
+    },
+    {
+      "name": "cpu_feature_id_nx",
+      "value": "25",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id nx."
+    },
+    {
+      "name": "cpu_feature_id_page1gb",
+      "value": "26",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id page1gb."
+    },
+    {
+      "name": "cpu_feature_id_pcid",
+      "value": "27",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id pcid."
+    },
+    {
+      "name": "cpu_feature_id_invpcid",
+      "value": "28",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id invpcid."
+    },
+    {
+      "name": "cpu_feature_id_fsgsbase",
+      "value": "29",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id fsgsbase."
+    },
+    {
+      "name": "cpu_feature_id_smep",
+      "value": "30",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id smep."
+    },
+    {
+      "name": "cpu_feature_id_smap",
+      "value": "31",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id smap."
+    },
+    {
+      "name": "cpu_feature_id_la57",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id la57."
+    },
+    {
+      "name": "cpu_feature_id_clflush",
+      "value": "33",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id clflush."
+    },
+    {
+      "name": "cpu_feature_id_clflushopt",
+      "value": "34",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id clflushopt."
+    },
+    {
+      "name": "cpu_feature_id_clwb",
+      "value": "35",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id clwb."
+    },
+    {
+      "name": "cpu_feature_id_monitor_mwait",
+      "value": "36",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id monitor mwait."
+    },
+    {
+      "name": "cpu_feature_id_arat",
+      "value": "37",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id arat."
+    },
+    {
+      "name": "cpu_feature_id_aperf_mperf",
+      "value": "38",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id aperf mperf."
+    },
+    {
+      "name": "cpu_feature_id_intel_dts",
+      "value": "39",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id intel dts."
+    },
+    {
+      "name": "cpu_feature_id_intel_turbo",
+      "value": "40",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id intel turbo."
+    },
+    {
+      "name": "cpu_feature_id_intel_hwp",
+      "value": "41",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id intel hwp."
+    },
+    {
+      "name": "cpu_feature_id_intel_hwp_epp",
+      "value": "42",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id intel hwp epp."
+    },
+    {
+      "name": "cpu_feature_id_intel_hwp_package",
+      "value": "43",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id intel hwp package."
+    },
+    {
+      "name": "cpu_feature_id_intel_hw_feedback",
+      "value": "44",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id intel hw feedback."
+    },
+    {
+      "name": "cpu_feature_id_intel_pmu",
+      "value": "45",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id intel pmu."
+    },
+    {
+      "name": "cpu_feature_id_amd_cpb",
+      "value": "46",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id amd cpb."
+    },
+    {
+      "name": "cpu_feature_id_amd_cppc",
+      "value": "47",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id amd cppc."
+    },
+    {
+      "name": "cpu_feature_id_amd_effective_frequency_ro",
+      "value": "48",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id amd effective frequency ro."
+    },
+    {
+      "name": "cpu_feature_id_amd_pmu",
+      "value": "49",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id amd pmu."
+    },
+    {
+      "name": "cpu_feature_id_x2apic",
+      "value": "50",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id x2apic."
+    },
+    {
+      "name": "cpu_feature_id_tsc_deadline",
+      "value": "51",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu feature id tsc deadline."
+    },
+    {
+      "name": "cpu_register_id_efer",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id efer."
+    },
+    {
+      "name": "cpu_register_id_apic_base",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id apic base."
+    },
+    {
+      "name": "cpu_register_id_pat",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id pat."
+    },
+    {
+      "name": "cpu_register_id_mtrr_cap",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id mtrr cap."
+    },
+    {
+      "name": "cpu_register_id_mperf",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id mperf."
+    },
+    {
+      "name": "cpu_register_id_aperf",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id aperf."
+    },
+    {
+      "name": "cpu_register_id_intel_platform_info",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id intel platform info."
+    },
+    {
+      "name": "cpu_register_flag_raw",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register flag raw."
+    },
+    {
+      "name": "cpu_register_check_status_unavailable",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check status unavailable."
+    },
+    {
+      "name": "cpu_register_check_status_passed",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check status passed."
+    },
+    {
+      "name": "cpu_register_check_status_failed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check status failed."
+    },
+    {
+      "name": "cpu_register_check_case_read_on",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check case read on."
+    },
+    {
+      "name": "cpu_register_check_case_write_on",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check case write on."
+    },
+    {
+      "name": "cpu_register_check_case_read_off",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check case read off."
+    },
+    {
+      "name": "cpu_register_check_case_write_off",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check case write off."
+    },
+    {
+      "name": "cpu_register_check_case_all",
+      "value": "15",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register check case all."
+    },
+    {
+      "name": "cpu_feature_id_cx8",
+      "value": "52",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "CPU catalogue feature cx8."
+    },
+    {
+      "name": "cpu_feature_id_cmov",
+      "value": "53",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "CPU catalogue feature cmov."
+    },
+    {
+      "name": "cpu_feature_id_mmx",
+      "value": "54",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "CPU catalogue feature mmx."
+    },
+    {
+      "name": "cpu_feature_id_long_mode",
+      "value": "55",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "CPU catalogue feature long_mode."
     }
   ],
   "limits": [

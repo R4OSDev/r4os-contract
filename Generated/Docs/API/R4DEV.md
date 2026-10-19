@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DEV (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DEV (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Dev` v23, 568 Bytes, 67 Funktionsfelder und 69 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Dev` v24, 600 Bytes, 71 Funktionsfelder und 73 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DevFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -78,4 +78,8 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 66 | 544 | function | `cpu_cache_topology` | `*const fn (u32, u32, *CpuCacheTopologyInfo) callconv(.c) i32` |
 | 67 | 552 | function | `cpu_lifecycle` | `*const fn (u32, u32, u64, *CpuLifecycleInfo) callconv(.c) i32` |
 | 68 | 560 | function | `kernel_cpu_lifecycle_check` | `*const fn (*ProgramKernelCpuLifecycleCheck) callconv(.c) i32` |
+| 69 | 568 | function | `cpu_capabilities` | `*const fn (u32, *CpuCapabilitiesInfo) callconv(.c) i32` |
+| 70 | 576 | function | `cpu_feature` | `*const fn (u32, u64, u32, *CpuFeatureInfo) callconv(.c) i32` |
+| 71 | 584 | function | `cpu_register_read` | `*const fn (u32, u64, u32, *CpuRegisterInfo) callconv(.c) i32` |
+| 72 | 592 | function | `kernel_cpu_register_check` | `*const fn (u32, u64, *ProgramKernelCpuRegisterCheck) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DEV -->

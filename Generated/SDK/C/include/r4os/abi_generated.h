@@ -2223,6 +2223,128 @@ extern "C" {
 #define R4OS_CPU_LIFECYCLE_CHECK_CASE_STALE_EPOCH 16u
 #define R4OS_CPU_LIFECYCLE_CHECK_CASE_RUNTIME_TLB 32u
 #define R4OS_CPU_LIFECYCLE_CHECK_CASE_ALL 63u
+#define R4OS_CPU_CAPABILITIES_VERSION 1u
+#define R4OS_CPU_CAPABILITIES_OK ((int32_t)0)
+#define R4OS_CPU_CAPABILITIES_END ((int32_t)1)
+#define R4OS_CPU_CAPABILITIES_ERROR_INVALID ((int32_t)-1)
+#define R4OS_CPU_CAPABILITIES_ERROR_BUSY ((int32_t)-2)
+#define R4OS_CPU_CAPABILITIES_ERROR_INDEX ((int32_t)-3)
+#define R4OS_CPU_CAPABILITIES_ERROR_EPOCH ((int32_t)-4)
+#define R4OS_CPU_CAPABILITIES_ERROR_CONTEXT ((int32_t)-5)
+#define R4OS_CPU_CAPABILITIES_ERROR_OFFLINE ((int32_t)-6)
+#define R4OS_CPU_CAPABILITIES_ERROR_UNSUPPORTED ((int32_t)-7)
+#define R4OS_CPU_CAPABILITIES_ERROR_FAULT ((int32_t)-8)
+#define R4OS_CPU_CAPABILITIES_FLAG_CAPTURED 1u
+#define R4OS_CPU_CAPABILITIES_FLAG_ONLINE 2u
+#define R4OS_CPU_CAPABILITIES_FLAG_SCHEDULABLE 4u
+#define R4OS_CPU_CAPABILITIES_FLAG_SIGNATURE 8u
+#define R4OS_CPU_CAPABILITIES_FLAG_BRAND 16u
+#define R4OS_CPU_CAPABILITIES_FLAG_HYPERVISOR_PRESENT 32u
+#define R4OS_CPU_CAPABILITIES_FLAG_HYPERVISOR_VALID 64u
+#define R4OS_CPU_CAPABILITIES_FLAG_INVALID_BASIC 128u
+#define R4OS_CPU_CAPABILITIES_FLAG_INVALID_EXTENDED 256u
+#define R4OS_CPU_CAPABILITIES_FLAG_INVALID_HYPERVISOR 512u
+#define R4OS_CPU_CAPABILITIES_FLAG_LEGACY_KVM_MAXIMUM 1024u
+#define R4OS_CPU_CAPABILITIES_FLAG_NOMINAL_FREQUENCY 2048u
+#define R4OS_CPU_CAPABILITIES_FLAG_TSC_RATIO 4096u
+#define R4OS_CPU_CAPABILITIES_FLAG_PMU 8192u
+#define R4OS_CPU_CAPABILITIES_OS_CR0 1u
+#define R4OS_CPU_CAPABILITIES_OS_CR4 2u
+#define R4OS_CPU_CAPABILITIES_OS_XCR0 4u
+#define R4OS_CPU_CAPABILITIES_OS_EFER 8u
+#define R4OS_CPU_CAPABILITIES_OS_PAT 16u
+#define R4OS_CPU_CAPABILITIES_OS_MTRR_DEFAULT 32u
+#define R4OS_CPU_CAPABILITIES_OS_MSR_FAULT 64u
+#define R4OS_CPU_FEATURE_FLAG_RAW 1u
+#define R4OS_CPU_FEATURE_FLAG_MODULE_REQUIRED 2u
+#define R4OS_CPU_FEATURE_FLAG_CONTROL 4u
+#define R4OS_CPU_FEATURE_HARDWARE_UNKNOWN 0u
+#define R4OS_CPU_FEATURE_HARDWARE_ABSENT 1u
+#define R4OS_CPU_FEATURE_HARDWARE_PRESENT 2u
+#define R4OS_CPU_FEATURE_OS_UNKNOWN 0u
+#define R4OS_CPU_FEATURE_OS_DISABLED 1u
+#define R4OS_CPU_FEATURE_OS_ENABLED 2u
+#define R4OS_CPU_FEATURE_OS_NOT_APPLICABLE 3u
+#define R4OS_CPU_FEATURE_USE_UNKNOWN 0u
+#define R4OS_CPU_FEATURE_REASON_NO_OWNER 0u
+#define R4OS_CPU_FEATURE_REASON_MISSING_LEAF 1u
+#define R4OS_CPU_FEATURE_REASON_VENDOR 2u
+#define R4OS_CPU_FEATURE_REASON_ABSENT 3u
+#define R4OS_CPU_FEATURE_REASON_DEPENDENCY 4u
+#define R4OS_CPU_FEATURE_REASON_CONTROL_UNKNOWN 5u
+#define R4OS_CPU_FEATURE_REASON_DISABLED 6u
+#define R4OS_CPU_FEATURE_REASON_NO_OS_CONTROL 7u
+#define R4OS_CPU_FEATURE_ID_X87 1u
+#define R4OS_CPU_FEATURE_ID_MSR 2u
+#define R4OS_CPU_FEATURE_ID_FXSR 3u
+#define R4OS_CPU_FEATURE_ID_SSE 4u
+#define R4OS_CPU_FEATURE_ID_SSE2 5u
+#define R4OS_CPU_FEATURE_ID_SSE3 6u
+#define R4OS_CPU_FEATURE_ID_SSSE3 7u
+#define R4OS_CPU_FEATURE_ID_SSE41 8u
+#define R4OS_CPU_FEATURE_ID_SSE42 9u
+#define R4OS_CPU_FEATURE_ID_XSAVE 10u
+#define R4OS_CPU_FEATURE_ID_AVX 11u
+#define R4OS_CPU_FEATURE_ID_AVX2 12u
+#define R4OS_CPU_FEATURE_ID_AVX512F 13u
+#define R4OS_CPU_FEATURE_ID_AMX_TILE 14u
+#define R4OS_CPU_FEATURE_ID_AES 15u
+#define R4OS_CPU_FEATURE_ID_PCLMULQDQ 16u
+#define R4OS_CPU_FEATURE_ID_VAES 17u
+#define R4OS_CPU_FEATURE_ID_VPCLMULQDQ 18u
+#define R4OS_CPU_FEATURE_ID_RDRAND 19u
+#define R4OS_CPU_FEATURE_ID_RDSEED 20u
+#define R4OS_CPU_FEATURE_ID_TSC 21u
+#define R4OS_CPU_FEATURE_ID_INVARIANT_TSC 22u
+#define R4OS_CPU_FEATURE_ID_PAT 23u
+#define R4OS_CPU_FEATURE_ID_MTRR 24u
+#define R4OS_CPU_FEATURE_ID_NX 25u
+#define R4OS_CPU_FEATURE_ID_PAGE1GB 26u
+#define R4OS_CPU_FEATURE_ID_PCID 27u
+#define R4OS_CPU_FEATURE_ID_INVPCID 28u
+#define R4OS_CPU_FEATURE_ID_FSGSBASE 29u
+#define R4OS_CPU_FEATURE_ID_SMEP 30u
+#define R4OS_CPU_FEATURE_ID_SMAP 31u
+#define R4OS_CPU_FEATURE_ID_LA57 32u
+#define R4OS_CPU_FEATURE_ID_CLFLUSH 33u
+#define R4OS_CPU_FEATURE_ID_CLFLUSHOPT 34u
+#define R4OS_CPU_FEATURE_ID_CLWB 35u
+#define R4OS_CPU_FEATURE_ID_MONITOR_MWAIT 36u
+#define R4OS_CPU_FEATURE_ID_ARAT 37u
+#define R4OS_CPU_FEATURE_ID_APERF_MPERF 38u
+#define R4OS_CPU_FEATURE_ID_INTEL_DTS 39u
+#define R4OS_CPU_FEATURE_ID_INTEL_TURBO 40u
+#define R4OS_CPU_FEATURE_ID_INTEL_HWP 41u
+#define R4OS_CPU_FEATURE_ID_INTEL_HWP_EPP 42u
+#define R4OS_CPU_FEATURE_ID_INTEL_HWP_PACKAGE 43u
+#define R4OS_CPU_FEATURE_ID_INTEL_HW_FEEDBACK 44u
+#define R4OS_CPU_FEATURE_ID_INTEL_PMU 45u
+#define R4OS_CPU_FEATURE_ID_AMD_CPB 46u
+#define R4OS_CPU_FEATURE_ID_AMD_CPPC 47u
+#define R4OS_CPU_FEATURE_ID_AMD_EFFECTIVE_FREQUENCY_RO 48u
+#define R4OS_CPU_FEATURE_ID_AMD_PMU 49u
+#define R4OS_CPU_FEATURE_ID_X2APIC 50u
+#define R4OS_CPU_FEATURE_ID_TSC_DEADLINE 51u
+#define R4OS_CPU_REGISTER_ID_EFER 1u
+#define R4OS_CPU_REGISTER_ID_APIC_BASE 2u
+#define R4OS_CPU_REGISTER_ID_PAT 3u
+#define R4OS_CPU_REGISTER_ID_MTRR_CAP 4u
+#define R4OS_CPU_REGISTER_ID_MPERF 5u
+#define R4OS_CPU_REGISTER_ID_APERF 6u
+#define R4OS_CPU_REGISTER_ID_INTEL_PLATFORM_INFO 7u
+#define R4OS_CPU_REGISTER_FLAG_RAW 1u
+#define R4OS_CPU_REGISTER_CHECK_STATUS_UNAVAILABLE 0u
+#define R4OS_CPU_REGISTER_CHECK_STATUS_PASSED 1u
+#define R4OS_CPU_REGISTER_CHECK_STATUS_FAILED 2u
+#define R4OS_CPU_REGISTER_CHECK_CASE_READ_ON 1u
+#define R4OS_CPU_REGISTER_CHECK_CASE_WRITE_ON 2u
+#define R4OS_CPU_REGISTER_CHECK_CASE_READ_OFF 4u
+#define R4OS_CPU_REGISTER_CHECK_CASE_WRITE_OFF 8u
+#define R4OS_CPU_REGISTER_CHECK_CASE_ALL 15u
+#define R4OS_CPU_FEATURE_ID_CX8 52u
+#define R4OS_CPU_FEATURE_ID_CMOV 53u
+#define R4OS_CPU_FEATURE_ID_MMX 54u
+#define R4OS_CPU_FEATURE_ID_LONG_MODE 55u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3010,6 +3132,10 @@ typedef struct R4ThreadPlacementRequest R4ThreadPlacementRequest;
 typedef struct R4ThreadPlacementInfo R4ThreadPlacementInfo;
 typedef struct R4CpuLifecycleInfo R4CpuLifecycleInfo;
 typedef struct R4ProgramKernelCpuLifecycleCheck R4ProgramKernelCpuLifecycleCheck;
+typedef struct R4CpuCapabilitiesInfo R4CpuCapabilitiesInfo;
+typedef struct R4CpuFeatureInfo R4CpuFeatureInfo;
+typedef struct R4CpuRegisterInfo R4CpuRegisterInfo;
+typedef struct R4ProgramKernelCpuRegisterCheck R4ProgramKernelCpuRegisterCheck;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -9187,6 +9313,117 @@ typedef struct R4ProgramKernelCpuLifecycleCheck {
     uint64_t switch_serial;
 } R4ProgramKernelCpuLifecycleCheck;
 
+typedef struct R4CpuCapabilitiesInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t state;
+    uint32_t flags;
+    uint32_t feature_count;
+    uint32_t max_basic_leaf;
+    uint32_t max_extended_leaf;
+    uint32_t max_hypervisor_leaf;
+    uint32_t max_leaf7_subleaf;
+    uint32_t family;
+    uint32_t model;
+    uint32_t stepping;
+    uint32_t apic_id;
+    uint32_t configured_cpus;
+    uint32_t os_read_flags;
+    uint64_t epoch;
+    uint64_t capture_sequence;
+    uint64_t cr0;
+    uint64_t cr4;
+    uint64_t xcr0;
+    uint64_t efer;
+    uint64_t pat;
+    uint32_t base_mhz;
+    uint32_t maximum_mhz;
+    uint32_t bus_mhz;
+    uint32_t crystal_hz;
+    uint32_t tsc_denominator;
+    uint32_t tsc_numerator;
+    uint32_t pmu_version;
+    uint32_t pmu_counters;
+    uint32_t pmu_counter_width;
+    uint32_t clflush_line_bytes;
+    uint32_t legacy_inventory_msr_faults;
+    uint32_t raw_hypervisor_maximum;
+    uint8_t vendor_name[12];
+    uint8_t hypervisor_name[12];
+    uint8_t brand_name[48];
+    uint64_t recovered_msr_faults;
+    uint32_t physical_address_bits;
+    uint32_t virtual_address_bits;
+    uint64_t supported_xcr0;
+    uint32_t enabled_xsave_bytes;
+    uint32_t maximum_xsave_bytes;
+} R4CpuCapabilitiesInfo;
+
+typedef struct R4CpuFeatureInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t feature_index;
+    uint32_t feature_id;
+    uint32_t flags;
+    uint32_t hardware_state;
+    uint32_t os_state;
+    uint32_t use_state;
+    uint32_t reason;
+    uint32_t source_leaf;
+    uint32_t source_subleaf;
+    uint32_t source_register;
+    uint32_t source_bit;
+    uint32_t raw_value;
+    uint32_t reserved0;
+    uint64_t epoch;
+    uint64_t control_value;
+    uint8_t name[24];
+    uint64_t reserved1;
+} R4CpuFeatureInfo;
+
+typedef struct R4CpuRegisterInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t register_id;
+    uint32_t flags;
+    uint32_t reserved0;
+    uint64_t epoch;
+    uint64_t value;
+    uint64_t capture_sequence;
+    uint8_t name[24];
+    uint64_t reserved1;
+} R4CpuRegisterInfo;
+
+typedef struct R4ProgramKernelCpuRegisterCheck {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t status;
+    uint32_t passed;
+    uint32_t failed;
+    uint32_t if_checks;
+    uint32_t reads;
+    uint32_t writes;
+    uint32_t faults;
+    uint32_t cleanup_errors;
+    uint32_t reserved0;
+    uint32_t reserved1;
+    uint32_t reserved2;
+    uint32_t reserved3;
+    uint32_t reserved4;
+    uint64_t epoch;
+    uint64_t capture_sequence;
+    uint64_t faults_before;
+    uint64_t faults_after;
+    uint64_t flags_before;
+    uint64_t flags_after;
+    uint64_t reserved5;
+    uint64_t reserved6;
+} R4ProgramKernelCpuRegisterCheck;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10120,6 +10357,10 @@ typedef int32_t (*R4DevCpuTopologyFn)(uint32_t cpu_index, R4CpuTopologyInfo * ou
 typedef int32_t (*R4DevCpuCacheTopologyFn)(uint32_t cpu_index, uint32_t cache_index, R4CpuCacheTopologyInfo * output);
 typedef int32_t (*R4DevCpuLifecycleFn)(uint32_t operation, uint32_t cpu_index, uint64_t expected_epoch, R4CpuLifecycleInfo * out);
 typedef int32_t (*R4DevKernelCpuLifecycleCheckFn)(R4ProgramKernelCpuLifecycleCheck * out);
+typedef int32_t (*R4DevCpuCapabilitiesFn)(uint32_t cpu_index, R4CpuCapabilitiesInfo * out);
+typedef int32_t (*R4DevCpuFeatureFn)(uint32_t cpu_index, uint64_t expected_epoch, uint32_t feature_index, R4CpuFeatureInfo * out);
+typedef int32_t (*R4DevCpuRegisterReadFn)(uint32_t cpu_index, uint64_t expected_epoch, uint32_t register_id, R4CpuRegisterInfo * out);
+typedef int32_t (*R4DevKernelCpuRegisterCheckFn)(uint32_t cpu_index, uint64_t expected_epoch, R4ProgramKernelCpuRegisterCheck * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -10195,6 +10436,10 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_cache_topology;
     uintptr_t cpu_lifecycle;
     uintptr_t kernel_cpu_lifecycle_check;
+    uintptr_t cpu_capabilities;
+    uintptr_t cpu_feature;
+    uintptr_t cpu_register_read;
+    uintptr_t kernel_cpu_register_check;
 } R4XStartR4Dev;
 
 
@@ -15756,6 +16001,109 @@ _Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, parked_epoch) == 96u, 
 _Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, stopped_epoch) == 104u, "ProgramKernelCpuLifecycleCheck.stopped_epoch offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, tlb_generation) == 112u, "ProgramKernelCpuLifecycleCheck.tlb_generation offset mismatch");
 _Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, switch_serial) == 120u, "ProgramKernelCpuLifecycleCheck.switch_serial offset mismatch");
+_Static_assert(sizeof(R4CpuCapabilitiesInfo) == 272u, "CpuCapabilitiesInfo size mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, version) == 0u, "CpuCapabilitiesInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, size) == 4u, "CpuCapabilitiesInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, cpu_index) == 8u, "CpuCapabilitiesInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, state) == 12u, "CpuCapabilitiesInfo.state offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, flags) == 16u, "CpuCapabilitiesInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, feature_count) == 20u, "CpuCapabilitiesInfo.feature_count offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, max_basic_leaf) == 24u, "CpuCapabilitiesInfo.max_basic_leaf offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, max_extended_leaf) == 28u, "CpuCapabilitiesInfo.max_extended_leaf offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, max_hypervisor_leaf) == 32u, "CpuCapabilitiesInfo.max_hypervisor_leaf offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, max_leaf7_subleaf) == 36u, "CpuCapabilitiesInfo.max_leaf7_subleaf offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, family) == 40u, "CpuCapabilitiesInfo.family offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, model) == 44u, "CpuCapabilitiesInfo.model offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, stepping) == 48u, "CpuCapabilitiesInfo.stepping offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, apic_id) == 52u, "CpuCapabilitiesInfo.apic_id offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, configured_cpus) == 56u, "CpuCapabilitiesInfo.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, os_read_flags) == 60u, "CpuCapabilitiesInfo.os_read_flags offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, epoch) == 64u, "CpuCapabilitiesInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, capture_sequence) == 72u, "CpuCapabilitiesInfo.capture_sequence offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, cr0) == 80u, "CpuCapabilitiesInfo.cr0 offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, cr4) == 88u, "CpuCapabilitiesInfo.cr4 offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, xcr0) == 96u, "CpuCapabilitiesInfo.xcr0 offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, efer) == 104u, "CpuCapabilitiesInfo.efer offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, pat) == 112u, "CpuCapabilitiesInfo.pat offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, base_mhz) == 120u, "CpuCapabilitiesInfo.base_mhz offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, maximum_mhz) == 124u, "CpuCapabilitiesInfo.maximum_mhz offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, bus_mhz) == 128u, "CpuCapabilitiesInfo.bus_mhz offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, crystal_hz) == 132u, "CpuCapabilitiesInfo.crystal_hz offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, tsc_denominator) == 136u, "CpuCapabilitiesInfo.tsc_denominator offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, tsc_numerator) == 140u, "CpuCapabilitiesInfo.tsc_numerator offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, pmu_version) == 144u, "CpuCapabilitiesInfo.pmu_version offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, pmu_counters) == 148u, "CpuCapabilitiesInfo.pmu_counters offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, pmu_counter_width) == 152u, "CpuCapabilitiesInfo.pmu_counter_width offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, clflush_line_bytes) == 156u, "CpuCapabilitiesInfo.clflush_line_bytes offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, legacy_inventory_msr_faults) == 160u, "CpuCapabilitiesInfo.legacy_inventory_msr_faults offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, raw_hypervisor_maximum) == 164u, "CpuCapabilitiesInfo.raw_hypervisor_maximum offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, vendor_name) == 168u, "CpuCapabilitiesInfo.vendor_name offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, hypervisor_name) == 180u, "CpuCapabilitiesInfo.hypervisor_name offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, brand_name) == 192u, "CpuCapabilitiesInfo.brand_name offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, recovered_msr_faults) == 240u, "CpuCapabilitiesInfo.recovered_msr_faults offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, physical_address_bits) == 248u, "CpuCapabilitiesInfo.physical_address_bits offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, virtual_address_bits) == 252u, "CpuCapabilitiesInfo.virtual_address_bits offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, supported_xcr0) == 256u, "CpuCapabilitiesInfo.supported_xcr0 offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, enabled_xsave_bytes) == 264u, "CpuCapabilitiesInfo.enabled_xsave_bytes offset mismatch");
+_Static_assert(offsetof(R4CpuCapabilitiesInfo, maximum_xsave_bytes) == 268u, "CpuCapabilitiesInfo.maximum_xsave_bytes offset mismatch");
+_Static_assert(sizeof(R4CpuFeatureInfo) == 112u, "CpuFeatureInfo size mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, version) == 0u, "CpuFeatureInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, size) == 4u, "CpuFeatureInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, cpu_index) == 8u, "CpuFeatureInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, feature_index) == 12u, "CpuFeatureInfo.feature_index offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, feature_id) == 16u, "CpuFeatureInfo.feature_id offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, flags) == 20u, "CpuFeatureInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, hardware_state) == 24u, "CpuFeatureInfo.hardware_state offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, os_state) == 28u, "CpuFeatureInfo.os_state offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, use_state) == 32u, "CpuFeatureInfo.use_state offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, reason) == 36u, "CpuFeatureInfo.reason offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, source_leaf) == 40u, "CpuFeatureInfo.source_leaf offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, source_subleaf) == 44u, "CpuFeatureInfo.source_subleaf offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, source_register) == 48u, "CpuFeatureInfo.source_register offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, source_bit) == 52u, "CpuFeatureInfo.source_bit offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, raw_value) == 56u, "CpuFeatureInfo.raw_value offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, reserved0) == 60u, "CpuFeatureInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, epoch) == 64u, "CpuFeatureInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, control_value) == 72u, "CpuFeatureInfo.control_value offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, name) == 80u, "CpuFeatureInfo.name offset mismatch");
+_Static_assert(offsetof(R4CpuFeatureInfo, reserved1) == 104u, "CpuFeatureInfo.reserved1 offset mismatch");
+_Static_assert(sizeof(R4CpuRegisterInfo) == 80u, "CpuRegisterInfo size mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, version) == 0u, "CpuRegisterInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, size) == 4u, "CpuRegisterInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, cpu_index) == 8u, "CpuRegisterInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, register_id) == 12u, "CpuRegisterInfo.register_id offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, flags) == 16u, "CpuRegisterInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, reserved0) == 20u, "CpuRegisterInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, epoch) == 24u, "CpuRegisterInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, value) == 32u, "CpuRegisterInfo.value offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, capture_sequence) == 40u, "CpuRegisterInfo.capture_sequence offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, name) == 48u, "CpuRegisterInfo.name offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterInfo, reserved1) == 72u, "CpuRegisterInfo.reserved1 offset mismatch");
+_Static_assert(sizeof(R4ProgramKernelCpuRegisterCheck) == 128u, "ProgramKernelCpuRegisterCheck size mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, version) == 0u, "ProgramKernelCpuRegisterCheck.version offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, size) == 4u, "ProgramKernelCpuRegisterCheck.size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, cpu_index) == 8u, "ProgramKernelCpuRegisterCheck.cpu_index offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, status) == 12u, "ProgramKernelCpuRegisterCheck.status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, passed) == 16u, "ProgramKernelCpuRegisterCheck.passed offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, failed) == 20u, "ProgramKernelCpuRegisterCheck.failed offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, if_checks) == 24u, "ProgramKernelCpuRegisterCheck.if_checks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reads) == 28u, "ProgramKernelCpuRegisterCheck.reads offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, writes) == 32u, "ProgramKernelCpuRegisterCheck.writes offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, faults) == 36u, "ProgramKernelCpuRegisterCheck.faults offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, cleanup_errors) == 40u, "ProgramKernelCpuRegisterCheck.cleanup_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reserved0) == 44u, "ProgramKernelCpuRegisterCheck.reserved0 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reserved1) == 48u, "ProgramKernelCpuRegisterCheck.reserved1 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reserved2) == 52u, "ProgramKernelCpuRegisterCheck.reserved2 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reserved3) == 56u, "ProgramKernelCpuRegisterCheck.reserved3 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reserved4) == 60u, "ProgramKernelCpuRegisterCheck.reserved4 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, epoch) == 64u, "ProgramKernelCpuRegisterCheck.epoch offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, capture_sequence) == 72u, "ProgramKernelCpuRegisterCheck.capture_sequence offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, faults_before) == 80u, "ProgramKernelCpuRegisterCheck.faults_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, faults_after) == 88u, "ProgramKernelCpuRegisterCheck.faults_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, flags_before) == 96u, "ProgramKernelCpuRegisterCheck.flags_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, flags_after) == 104u, "ProgramKernelCpuRegisterCheck.flags_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reserved5) == 112u, "ProgramKernelCpuRegisterCheck.reserved5 offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuRegisterCheck, reserved6) == 120u, "ProgramKernelCpuRegisterCheck.reserved6 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1280u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -16541,7 +16889,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 568u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 600u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -16678,6 +17026,14 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_lifecycle) == 552u, "R4XStartR4Dev.cp
 _Static_assert(sizeof(R4DevCpuLifecycleFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, kernel_cpu_lifecycle_check) == 560u, "R4XStartR4Dev.kernel_cpu_lifecycle_check offset mismatch");
 _Static_assert(sizeof(R4DevKernelCpuLifecycleCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_capabilities) == 568u, "R4XStartR4Dev.cpu_capabilities offset mismatch");
+_Static_assert(sizeof(R4DevCpuCapabilitiesFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_feature) == 576u, "R4XStartR4Dev.cpu_feature offset mismatch");
+_Static_assert(sizeof(R4DevCpuFeatureFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_register_read) == 584u, "R4XStartR4Dev.cpu_register_read offset mismatch");
+_Static_assert(sizeof(R4DevCpuRegisterReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, kernel_cpu_register_check) == 592u, "R4XStartR4Dev.kernel_cpu_register_check offset mismatch");
+_Static_assert(sizeof(R4DevKernelCpuRegisterCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }
