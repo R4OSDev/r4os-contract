@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 347 von 347 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 349 von 349 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2484; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2494; Limits: 111
 
 ## App-Profile
 
@@ -355,7 +355,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramKernelCpuRegisterCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuPowerInfo` | fixed_layout | extern_struct | 320/8 | 320/8 | 320/8 | 320/8 |
 | `CpuPowerBackend` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
-| `DriverCpuPowerApi` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `DriverCpuPowerApi` | extensible | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
 | `CpuPowerCounters` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `CpuPerformanceRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `CpuPerformanceInfo` | fixed_layout | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
@@ -368,6 +368,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `PowerProfileRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `PowerProfileInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `PowerCpuProfileInfo` | fixed_layout | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
+| `CpuFirmwareBackend` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `CpuFirmwareInfo` | fixed_layout | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
 
 ## Typdetails
 
@@ -9057,7 +9059,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 4 / 128 / 8
+- Version/Größe/Alignment: 5 / 168 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -9078,6 +9080,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `register_compare_write` | 104 | 8 | 8 | `u64` | - |
 | `register_cppc` | 112 | 8 | 8 | `u64` | - |
 | `rank_publish` | 120 | 8 | 8 | `u64` | - |
+| `firmware_register` | 128 | 8 | 8 | `u64` | - |
+| `firmware_unregister` | 136 | 8 | 8 | `u64` | - |
+| `firmware_execute` | 144 | 8 | 8 | `u64` | - |
+| `firmware_control` | 152 | 8 | 8 | `u64` | - |
+| `firmware_cpu_info` | 160 | 8 | 8 | `u64` | - |
 
 ### `CpuPowerCounters`
 
@@ -9406,6 +9413,68 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `worker_state` | 144 | 4 | 4 | `u32` | - |
 | `reserved1` | 148 | 4 | 4 | `u32` | - |
 | `service_generation` | 152 | 8 | 8 | `u64` | - |
+
+### `CpuFirmwareBackend`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `context` | 8 | 8 | 8 | `u64` | - |
+| `execute` | 16 | 8 | 8 | `u64` | - |
+| `flags` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+
+### `CpuFirmwareInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 192 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `state` | 12 | 4 | 4 | `u32` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `backend` | 20 | 4 | 4 | `u32` | - |
+| `valid_mask` | 24 | 4 | 4 | `u32` | - |
+| `coordination` | 28 | 4 | 4 | `u32` | - |
+| `epoch` | 32 | 8 | 8 | `u64` | - |
+| `provider_generation` | 40 | 8 | 8 | `u64` | - |
+| `firmware_generation` | 48 | 8 | 8 | `u64` | - |
+| `lease` | 56 | 8 | 8 | `u64` | - |
+| `revision` | 64 | 8 | 8 | `u64` | - |
+| `domain_mask` | 72 | 8 | 8 | `u64` | - |
+| `captured_ns` | 80 | 8 | 8 | `u64` | - |
+| `minimum` | 88 | 4 | 4 | `u32` | - |
+| `maximum` | 92 | 4 | 4 | `u32` | - |
+| `desired` | 96 | 4 | 4 | `u32` | - |
+| `epp` | 100 | 4 | 4 | `u32` | - |
+| `lowest` | 104 | 4 | 4 | `u32` | - |
+| `highest` | 108 | 4 | 4 | `u32` | - |
+| `efficient` | 112 | 4 | 4 | `u32` | - |
+| `nominal` | 116 | 4 | 4 | `u32` | - |
+| `baseline_request` | 120 | 8 | 8 | `u64` | - |
+| `last_written` | 128 | 8 | 8 | `u64` | - |
+| `observed_request` | 136 | 8 | 8 | `u64` | - |
+| `domain_id` | 144 | 4 | 4 | `u32` | - |
+| `domain_cpus` | 148 | 4 | 4 | `u32` | - |
+| `pstate_count` | 152 | 4 | 4 | `u32` | - |
+| `package_revision` | 156 | 4 | 4 | `u32` | - |
+| `last_error` | 160 | 4 | 4 | `i32` | - |
+| `transport_spaces` | 164 | 4 | 4 | `u32` | - |
+| `reserved0` | 168 | 4 | 4 | `u32` | - |
+| `reserved1` | 172 | 4 | 4 | `u32` | - |
+| `descriptor_identity` | 176 | 8 | 8 | `u64` | - |
+| `reserved2` | 184 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 
@@ -12652,6 +12721,16 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `power_transition_error_context` | `-2` | `i32` | value | number | `power_transition` | fixed_contract |
 | `power_transition_error_busy` | `-3` | `i32` | value | number | `power_transition` | fixed_contract |
 | `power_transition_error_retained` | `-4` | `i32` | value | number | `power_transition` | fixed_contract |
+| `cpu_firmware_backend_none` | `0` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `cpu_firmware_backend_cppc` | `1` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `cpu_firmware_backend_pss` | `2` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `cpu_firmware_valid_range` | `1` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `cpu_firmware_valid_request` | `2` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `cpu_firmware_valid_time` | `4` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `cpu_firmware_valid_epp` | `8` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `cpu_firmware_valid_domain` | `16` | `u32` | value | number | `cpu_firmware` | fixed_contract |
+| `power_profile_backend_acpi_cppc` | `3` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_backend_acpi_pss` | `4` | `u32` | value | number | `power_profiles` | fixed_contract |
 
 ## Limits
 

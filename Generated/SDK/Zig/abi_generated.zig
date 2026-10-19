@@ -2485,6 +2485,16 @@ pub const power_transition_error_invalid: i32 = -1;
 pub const power_transition_error_context: i32 = -2;
 pub const power_transition_error_busy: i32 = -3;
 pub const power_transition_error_retained: i32 = -4;
+pub const cpu_firmware_backend_none: u32 = 0;
+pub const cpu_firmware_backend_cppc: u32 = 1;
+pub const cpu_firmware_backend_pss: u32 = 2;
+pub const cpu_firmware_valid_range: u32 = 1;
+pub const cpu_firmware_valid_request: u32 = 2;
+pub const cpu_firmware_valid_time: u32 = 4;
+pub const cpu_firmware_valid_epp: u32 = 8;
+pub const cpu_firmware_valid_domain: u32 = 16;
+pub const power_profile_backend_acpi_cppc: u32 = 3;
+pub const power_profile_backend_acpi_pss: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -9366,7 +9376,7 @@ pub const CpuPowerBackend = extern struct {
 
 pub const DriverCpuPowerApi = extern struct {
     version: u32 = 1,
-    size: u32 = 128,
+    size: u32 = 168,
     register_backend: u64 = 0,
     unregister_backend: u64 = 0,
     current_cpu: u64 = 0,
@@ -9382,6 +9392,11 @@ pub const DriverCpuPowerApi = extern struct {
     register_compare_write: u64 = 0,
     register_cppc: u64 = 0,
     rank_publish: u64 = 0,
+    firmware_register: u64 = 0,
+    firmware_unregister: u64 = 0,
+    firmware_execute: u64 = 0,
+    firmware_control: u64 = 0,
+    firmware_cpu_info: u64 = 0,
 };
 
 pub const CpuPowerCounters = extern struct {
@@ -9626,6 +9641,54 @@ pub const PowerCpuProfileInfo = extern struct {
     worker_state: u32 = 0,
     reserved1: u32 = 0,
     service_generation: u64 = 0,
+};
+
+pub const CpuFirmwareBackend = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    context: u64 = 0,
+    execute: u64 = 0,
+    flags: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const CpuFirmwareInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 192,
+    cpu_index: u32 = 0,
+    state: u32 = 0,
+    flags: u32 = 0,
+    backend: u32 = 0,
+    valid_mask: u32 = 0,
+    coordination: u32 = 0,
+    epoch: u64 = 0,
+    provider_generation: u64 = 0,
+    firmware_generation: u64 = 0,
+    lease: u64 = 0,
+    revision: u64 = 0,
+    domain_mask: u64 = 0,
+    captured_ns: u64 = 0,
+    minimum: u32 = 0,
+    maximum: u32 = 0,
+    desired: u32 = 0,
+    epp: u32 = 0,
+    lowest: u32 = 0,
+    highest: u32 = 0,
+    efficient: u32 = 0,
+    nominal: u32 = 0,
+    baseline_request: u64 = 0,
+    last_written: u64 = 0,
+    observed_request: u64 = 0,
+    domain_id: u32 = 0,
+    domain_cpus: u32 = 0,
+    pstate_count: u32 = 0,
+    package_revision: u32 = 0,
+    last_error: i32 = 0,
+    transport_spaces: u32 = 0,
+    reserved0: u32 = 0,
+    reserved1: u32 = 0,
+    descriptor_identity: u64 = 0,
+    reserved2: u64 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -10537,12 +10600,13 @@ pub const R4DevFns = struct {
     pub const cpu_performance = *const fn (*const CpuPerformanceRequest, *CpuPerformanceInfo) callconv(.c) i32;
     pub const cpu_cppc = *const fn (*const CpuPerformanceRequest, *CpuCppcInfo) callconv(.c) i32;
     pub const cpu_performance_hint = *const fn (u32, u64, *CpuPerformanceHintInfo) callconv(.c) i32;
+    pub const cpu_firmware_performance = *const fn (*const CpuPerformanceRequest, *CpuFirmwareInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 27,
-    size: u32 = 640,
+    abi_version: u32 = 28,
+    size: u32 = 648,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -10622,6 +10686,7 @@ pub const R4XStartR4Dev = extern struct {
     cpu_performance: usize = 0,
     cpu_cppc: usize = 0,
     cpu_performance_hint: usize = 0,
+    cpu_firmware_performance: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -11115,6 +11180,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 75, .offset = 616, .name = "cpu_performance", .state = .function, .required = false },
     .{ .number = 76, .offset = 624, .name = "cpu_cppc", .state = .function, .required = false },
     .{ .number = 77, .offset = 632, .name = "cpu_performance_hint", .state = .function, .required = false },
+    .{ .number = 78, .offset = 640, .name = "cpu_firmware_performance", .state = .function, .required = false },
 };
 
 comptime {
@@ -17168,7 +17234,7 @@ comptime {
     if (@offsetOf(CpuPowerBackend, "capture") != 24) @compileError("generated ABI offset drift: CpuPowerBackend.capture");
     if (@offsetOf(CpuPowerBackend, "flags") != 32) @compileError("generated ABI offset drift: CpuPowerBackend.flags");
     if (@offsetOf(CpuPowerBackend, "reserved0") != 36) @compileError("generated ABI offset drift: CpuPowerBackend.reserved0");
-    if (@sizeOf(DriverCpuPowerApi) != 128) @compileError("generated ABI size drift: DriverCpuPowerApi");
+    if (@sizeOf(DriverCpuPowerApi) != 168) @compileError("generated ABI size drift: DriverCpuPowerApi");
     if (@alignOf(DriverCpuPowerApi) != 8) @compileError("generated ABI alignment drift: DriverCpuPowerApi");
     if (@offsetOf(DriverCpuPowerApi, "version") != 0) @compileError("generated ABI offset drift: DriverCpuPowerApi.version");
     if (@offsetOf(DriverCpuPowerApi, "size") != 4) @compileError("generated ABI offset drift: DriverCpuPowerApi.size");
@@ -17187,6 +17253,11 @@ comptime {
     if (@offsetOf(DriverCpuPowerApi, "register_compare_write") != 104) @compileError("generated ABI offset drift: DriverCpuPowerApi.register_compare_write");
     if (@offsetOf(DriverCpuPowerApi, "register_cppc") != 112) @compileError("generated ABI offset drift: DriverCpuPowerApi.register_cppc");
     if (@offsetOf(DriverCpuPowerApi, "rank_publish") != 120) @compileError("generated ABI offset drift: DriverCpuPowerApi.rank_publish");
+    if (@offsetOf(DriverCpuPowerApi, "firmware_register") != 128) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_register");
+    if (@offsetOf(DriverCpuPowerApi, "firmware_unregister") != 136) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_unregister");
+    if (@offsetOf(DriverCpuPowerApi, "firmware_execute") != 144) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_execute");
+    if (@offsetOf(DriverCpuPowerApi, "firmware_control") != 152) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_control");
+    if (@offsetOf(DriverCpuPowerApi, "firmware_cpu_info") != 160) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_cpu_info");
     if (@sizeOf(CpuPowerCounters) != 64) @compileError("generated ABI size drift: CpuPowerCounters");
     if (@alignOf(CpuPowerCounters) != 8) @compileError("generated ABI alignment drift: CpuPowerCounters");
     if (@offsetOf(CpuPowerCounters, "version") != 0) @compileError("generated ABI offset drift: CpuPowerCounters.version");
@@ -17419,6 +17490,52 @@ comptime {
     if (@offsetOf(PowerCpuProfileInfo, "worker_state") != 144) @compileError("generated ABI offset drift: PowerCpuProfileInfo.worker_state");
     if (@offsetOf(PowerCpuProfileInfo, "reserved1") != 148) @compileError("generated ABI offset drift: PowerCpuProfileInfo.reserved1");
     if (@offsetOf(PowerCpuProfileInfo, "service_generation") != 152) @compileError("generated ABI offset drift: PowerCpuProfileInfo.service_generation");
+    if (@sizeOf(CpuFirmwareBackend) != 32) @compileError("generated ABI size drift: CpuFirmwareBackend");
+    if (@alignOf(CpuFirmwareBackend) != 8) @compileError("generated ABI alignment drift: CpuFirmwareBackend");
+    if (@offsetOf(CpuFirmwareBackend, "version") != 0) @compileError("generated ABI offset drift: CpuFirmwareBackend.version");
+    if (@offsetOf(CpuFirmwareBackend, "size") != 4) @compileError("generated ABI offset drift: CpuFirmwareBackend.size");
+    if (@offsetOf(CpuFirmwareBackend, "context") != 8) @compileError("generated ABI offset drift: CpuFirmwareBackend.context");
+    if (@offsetOf(CpuFirmwareBackend, "execute") != 16) @compileError("generated ABI offset drift: CpuFirmwareBackend.execute");
+    if (@offsetOf(CpuFirmwareBackend, "flags") != 24) @compileError("generated ABI offset drift: CpuFirmwareBackend.flags");
+    if (@offsetOf(CpuFirmwareBackend, "reserved0") != 28) @compileError("generated ABI offset drift: CpuFirmwareBackend.reserved0");
+    if (@sizeOf(CpuFirmwareInfo) != 192) @compileError("generated ABI size drift: CpuFirmwareInfo");
+    if (@alignOf(CpuFirmwareInfo) != 8) @compileError("generated ABI alignment drift: CpuFirmwareInfo");
+    if (@offsetOf(CpuFirmwareInfo, "version") != 0) @compileError("generated ABI offset drift: CpuFirmwareInfo.version");
+    if (@offsetOf(CpuFirmwareInfo, "size") != 4) @compileError("generated ABI offset drift: CpuFirmwareInfo.size");
+    if (@offsetOf(CpuFirmwareInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuFirmwareInfo.cpu_index");
+    if (@offsetOf(CpuFirmwareInfo, "state") != 12) @compileError("generated ABI offset drift: CpuFirmwareInfo.state");
+    if (@offsetOf(CpuFirmwareInfo, "flags") != 16) @compileError("generated ABI offset drift: CpuFirmwareInfo.flags");
+    if (@offsetOf(CpuFirmwareInfo, "backend") != 20) @compileError("generated ABI offset drift: CpuFirmwareInfo.backend");
+    if (@offsetOf(CpuFirmwareInfo, "valid_mask") != 24) @compileError("generated ABI offset drift: CpuFirmwareInfo.valid_mask");
+    if (@offsetOf(CpuFirmwareInfo, "coordination") != 28) @compileError("generated ABI offset drift: CpuFirmwareInfo.coordination");
+    if (@offsetOf(CpuFirmwareInfo, "epoch") != 32) @compileError("generated ABI offset drift: CpuFirmwareInfo.epoch");
+    if (@offsetOf(CpuFirmwareInfo, "provider_generation") != 40) @compileError("generated ABI offset drift: CpuFirmwareInfo.provider_generation");
+    if (@offsetOf(CpuFirmwareInfo, "firmware_generation") != 48) @compileError("generated ABI offset drift: CpuFirmwareInfo.firmware_generation");
+    if (@offsetOf(CpuFirmwareInfo, "lease") != 56) @compileError("generated ABI offset drift: CpuFirmwareInfo.lease");
+    if (@offsetOf(CpuFirmwareInfo, "revision") != 64) @compileError("generated ABI offset drift: CpuFirmwareInfo.revision");
+    if (@offsetOf(CpuFirmwareInfo, "domain_mask") != 72) @compileError("generated ABI offset drift: CpuFirmwareInfo.domain_mask");
+    if (@offsetOf(CpuFirmwareInfo, "captured_ns") != 80) @compileError("generated ABI offset drift: CpuFirmwareInfo.captured_ns");
+    if (@offsetOf(CpuFirmwareInfo, "minimum") != 88) @compileError("generated ABI offset drift: CpuFirmwareInfo.minimum");
+    if (@offsetOf(CpuFirmwareInfo, "maximum") != 92) @compileError("generated ABI offset drift: CpuFirmwareInfo.maximum");
+    if (@offsetOf(CpuFirmwareInfo, "desired") != 96) @compileError("generated ABI offset drift: CpuFirmwareInfo.desired");
+    if (@offsetOf(CpuFirmwareInfo, "epp") != 100) @compileError("generated ABI offset drift: CpuFirmwareInfo.epp");
+    if (@offsetOf(CpuFirmwareInfo, "lowest") != 104) @compileError("generated ABI offset drift: CpuFirmwareInfo.lowest");
+    if (@offsetOf(CpuFirmwareInfo, "highest") != 108) @compileError("generated ABI offset drift: CpuFirmwareInfo.highest");
+    if (@offsetOf(CpuFirmwareInfo, "efficient") != 112) @compileError("generated ABI offset drift: CpuFirmwareInfo.efficient");
+    if (@offsetOf(CpuFirmwareInfo, "nominal") != 116) @compileError("generated ABI offset drift: CpuFirmwareInfo.nominal");
+    if (@offsetOf(CpuFirmwareInfo, "baseline_request") != 120) @compileError("generated ABI offset drift: CpuFirmwareInfo.baseline_request");
+    if (@offsetOf(CpuFirmwareInfo, "last_written") != 128) @compileError("generated ABI offset drift: CpuFirmwareInfo.last_written");
+    if (@offsetOf(CpuFirmwareInfo, "observed_request") != 136) @compileError("generated ABI offset drift: CpuFirmwareInfo.observed_request");
+    if (@offsetOf(CpuFirmwareInfo, "domain_id") != 144) @compileError("generated ABI offset drift: CpuFirmwareInfo.domain_id");
+    if (@offsetOf(CpuFirmwareInfo, "domain_cpus") != 148) @compileError("generated ABI offset drift: CpuFirmwareInfo.domain_cpus");
+    if (@offsetOf(CpuFirmwareInfo, "pstate_count") != 152) @compileError("generated ABI offset drift: CpuFirmwareInfo.pstate_count");
+    if (@offsetOf(CpuFirmwareInfo, "package_revision") != 156) @compileError("generated ABI offset drift: CpuFirmwareInfo.package_revision");
+    if (@offsetOf(CpuFirmwareInfo, "last_error") != 160) @compileError("generated ABI offset drift: CpuFirmwareInfo.last_error");
+    if (@offsetOf(CpuFirmwareInfo, "transport_spaces") != 164) @compileError("generated ABI offset drift: CpuFirmwareInfo.transport_spaces");
+    if (@offsetOf(CpuFirmwareInfo, "reserved0") != 168) @compileError("generated ABI offset drift: CpuFirmwareInfo.reserved0");
+    if (@offsetOf(CpuFirmwareInfo, "reserved1") != 172) @compileError("generated ABI offset drift: CpuFirmwareInfo.reserved1");
+    if (@offsetOf(CpuFirmwareInfo, "descriptor_identity") != 176) @compileError("generated ABI offset drift: CpuFirmwareInfo.descriptor_identity");
+    if (@offsetOf(CpuFirmwareInfo, "reserved2") != 184) @compileError("generated ABI offset drift: CpuFirmwareInfo.reserved2");
     if (@sizeOf(R4XStartR4Sys) != 1288) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -17818,7 +17935,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 640) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 648) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -17897,4 +18014,5 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_performance") != 616) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_performance");
     if (@offsetOf(R4XStartR4Dev, "cpu_cppc") != 624) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_cppc");
     if (@offsetOf(R4XStartR4Dev, "cpu_performance_hint") != 632) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_performance_hint");
+    if (@offsetOf(R4XStartR4Dev, "cpu_firmware_performance") != 640) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_firmware_performance");
 }

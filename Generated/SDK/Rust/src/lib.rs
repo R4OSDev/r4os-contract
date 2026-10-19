@@ -2489,6 +2489,16 @@ pub const power_transition_error_invalid: i32 = -1;
 pub const power_transition_error_context: i32 = -2;
 pub const power_transition_error_busy: i32 = -3;
 pub const power_transition_error_retained: i32 = -4;
+pub const cpu_firmware_backend_none: u32 = 0;
+pub const cpu_firmware_backend_cppc: u32 = 1;
+pub const cpu_firmware_backend_pss: u32 = 2;
+pub const cpu_firmware_valid_range: u32 = 1;
+pub const cpu_firmware_valid_request: u32 = 2;
+pub const cpu_firmware_valid_time: u32 = 4;
+pub const cpu_firmware_valid_epp: u32 = 8;
+pub const cpu_firmware_valid_domain: u32 = 16;
+pub const power_profile_backend_acpi_cppc: u32 = 3;
+pub const power_profile_backend_acpi_pss: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -17714,13 +17724,18 @@ pub struct DriverCpuPowerApi {
     pub register_compare_write: u64,
     pub register_cppc: u64,
     pub rank_publish: u64,
+    pub firmware_register: u64,
+    pub firmware_unregister: u64,
+    pub firmware_execute: u64,
+    pub firmware_control: u64,
+    pub firmware_cpu_info: u64,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for DriverCpuPowerApi {
     fn default() -> Self {
         Self {
             version: 1,
-            size: 128,
+            size: 168,
             register_backend: 0,
             unregister_backend: 0,
             current_cpu: 0,
@@ -17736,6 +17751,11 @@ impl Default for DriverCpuPowerApi {
             register_compare_write: 0,
             register_cppc: 0,
             rank_publish: 0,
+            firmware_register: 0,
+            firmware_unregister: 0,
+            firmware_execute: 0,
+            firmware_control: 0,
+            firmware_cpu_info: 0,
         }
     }
 }
@@ -18296,6 +18316,114 @@ impl Default for PowerCpuProfileInfo {
             worker_state: 0,
             reserved1: 0,
             service_generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuFirmwareBackend {
+    pub version: u32,
+    pub size: u32,
+    pub context: u64,
+    pub execute: u64,
+    pub flags: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuFirmwareBackend {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            context: 0,
+            execute: 0,
+            flags: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuFirmwareInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub state: u32,
+    pub flags: u32,
+    pub backend: u32,
+    pub valid_mask: u32,
+    pub coordination: u32,
+    pub epoch: u64,
+    pub provider_generation: u64,
+    pub firmware_generation: u64,
+    pub lease: u64,
+    pub revision: u64,
+    pub domain_mask: u64,
+    pub captured_ns: u64,
+    pub minimum: u32,
+    pub maximum: u32,
+    pub desired: u32,
+    pub epp: u32,
+    pub lowest: u32,
+    pub highest: u32,
+    pub efficient: u32,
+    pub nominal: u32,
+    pub baseline_request: u64,
+    pub last_written: u64,
+    pub observed_request: u64,
+    pub domain_id: u32,
+    pub domain_cpus: u32,
+    pub pstate_count: u32,
+    pub package_revision: u32,
+    pub last_error: i32,
+    pub transport_spaces: u32,
+    pub reserved0: u32,
+    pub reserved1: u32,
+    pub descriptor_identity: u64,
+    pub reserved2: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuFirmwareInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 192,
+            cpu_index: 0,
+            state: 0,
+            flags: 0,
+            backend: 0,
+            valid_mask: 0,
+            coordination: 0,
+            epoch: 0,
+            provider_generation: 0,
+            firmware_generation: 0,
+            lease: 0,
+            revision: 0,
+            domain_mask: 0,
+            captured_ns: 0,
+            minimum: 0,
+            maximum: 0,
+            desired: 0,
+            epp: 0,
+            lowest: 0,
+            highest: 0,
+            efficient: 0,
+            nominal: 0,
+            baseline_request: 0,
+            last_written: 0,
+            observed_request: 0,
+            domain_id: 0,
+            domain_cpus: 0,
+            pstate_count: 0,
+            package_revision: 0,
+            last_error: 0,
+            transport_spaces: 0,
+            reserved0: 0,
+            reserved1: 0,
+            descriptor_identity: 0,
+            reserved2: 0,
         }
     }
 }
@@ -19689,6 +19817,7 @@ pub mod R4DevFns {
     pub type cpu_performance = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuPerformanceInfo) -> i32;
     pub type cpu_cppc = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuCppcInfo) -> i32;
     pub type cpu_performance_hint = unsafe extern "C" fn(u32, u64, *mut CpuPerformanceHintInfo) -> i32;
+    pub type cpu_firmware_performance = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuFirmwareInfo) -> i32;
 }
 
 #[repr(C)]
@@ -19776,14 +19905,15 @@ pub struct R4XStartR4Dev {
     pub cpu_performance: usize,
     pub cpu_cppc: usize,
     pub cpu_performance_hint: usize,
+    pub cpu_firmware_performance: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 27,
-            size: 640,
+            abi_version: 28,
+            size: 648,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -19863,6 +19993,7 @@ impl Default for R4XStartR4Dev {
             cpu_performance: 0,
             cpu_cppc: 0,
             cpu_performance_hint: 0,
+            cpu_firmware_performance: 0,
         }
     }
 }
@@ -29907,7 +30038,12 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverCpuPowerApi, register_compare_write) == 104);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, register_cppc) == 112);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, rank_publish) == 120);
-    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 128);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_register) == 128);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_unregister) == 136);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_execute) == 144);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_control) == 152);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_cpu_info) == 160);
+    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 168);
     assert!(core::mem::align_of::<DriverCpuPowerApi>() == 8);
     assert!(core::mem::offset_of!(CpuPowerCounters, version) == 0);
     assert!(core::mem::offset_of!(CpuPowerCounters, size) == 4);
@@ -30141,6 +30277,52 @@ const _: () = {
     assert!(core::mem::offset_of!(PowerCpuProfileInfo, service_generation) == 152);
     assert!(core::mem::size_of::<PowerCpuProfileInfo>() == 160);
     assert!(core::mem::align_of::<PowerCpuProfileInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuFirmwareBackend, version) == 0);
+    assert!(core::mem::offset_of!(CpuFirmwareBackend, size) == 4);
+    assert!(core::mem::offset_of!(CpuFirmwareBackend, context) == 8);
+    assert!(core::mem::offset_of!(CpuFirmwareBackend, execute) == 16);
+    assert!(core::mem::offset_of!(CpuFirmwareBackend, flags) == 24);
+    assert!(core::mem::offset_of!(CpuFirmwareBackend, reserved0) == 28);
+    assert!(core::mem::size_of::<CpuFirmwareBackend>() == 32);
+    assert!(core::mem::align_of::<CpuFirmwareBackend>() == 8);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, state) == 12);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, flags) == 16);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, backend) == 20);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, valid_mask) == 24);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, coordination) == 28);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, epoch) == 32);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, provider_generation) == 40);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, firmware_generation) == 48);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, lease) == 56);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, revision) == 64);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, domain_mask) == 72);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, captured_ns) == 80);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, minimum) == 88);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, maximum) == 92);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, desired) == 96);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, epp) == 100);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, lowest) == 104);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, highest) == 108);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, efficient) == 112);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, nominal) == 116);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, baseline_request) == 120);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, last_written) == 128);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, observed_request) == 136);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, domain_id) == 144);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, domain_cpus) == 148);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, pstate_count) == 152);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, package_revision) == 156);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, last_error) == 160);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, transport_spaces) == 164);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, reserved0) == 168);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, reserved1) == 172);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, descriptor_identity) == 176);
+    assert!(core::mem::offset_of!(CpuFirmwareInfo, reserved2) == 184);
+    assert!(core::mem::size_of::<CpuFirmwareInfo>() == 192);
+    assert!(core::mem::align_of::<CpuFirmwareInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -30649,7 +30831,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_performance) == 616);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_cppc) == 624);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_performance_hint) == 632);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 640);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_firmware_performance) == 640);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 648);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);
