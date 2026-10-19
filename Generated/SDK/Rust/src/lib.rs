@@ -2482,6 +2482,13 @@ pub const power_profile_worker_active: u32 = 4;
 pub const power_profile_worker_returning: u32 = 5;
 pub const power_profile_worker_held: u32 = 6;
 pub const power_profile_worker_complete: u32 = 7;
+pub const power_transition_action_halt: u32 = 0;
+pub const power_transition_action_reboot: u32 = 1;
+pub const power_transition_action_poweroff: u32 = 2;
+pub const power_transition_error_invalid: i32 = -1;
+pub const power_transition_error_context: i32 = -2;
+pub const power_transition_error_busy: i32 = -3;
+pub const power_transition_error_retained: i32 = -4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -18460,6 +18467,7 @@ pub mod R4SysFns {
     pub type directory_next = unsafe extern "C" fn(*const u8, *mut DirectoryScanCursor, *mut u8, u32, *mut FileInfo) -> i32;
     pub type thread_placement_get = unsafe extern "C" fn(*const ProgramJoinHandle, *mut ThreadPlacementInfo, *mut u64, u32) -> i32;
     pub type thread_placement_set = unsafe extern "C" fn(*const ProgramJoinHandle, *const ThreadPlacementRequest, *const u64, u32) -> i32;
+    pub type system_power_transition = unsafe extern "C" fn(u32, u64) -> i32;
 }
 
 #[repr(C)]
@@ -18627,14 +18635,15 @@ pub struct R4XStartR4Sys {
     pub directory_next: usize,
     pub thread_placement_get: usize,
     pub thread_placement_set: usize,
+    pub system_power_transition: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 26,
-            size: 1280,
+            abi_version: 27,
+            size: 1288,
             flags: 0,
             write: 0,
             putc: 0,
@@ -18794,6 +18803,7 @@ impl Default for R4XStartR4Sys {
             directory_next: 0,
             thread_placement_get: 0,
             thread_placement_set: 0,
+            system_power_transition: 0,
         }
     }
 }
@@ -30295,7 +30305,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, directory_next) == 1256);
     assert!(core::mem::offset_of!(R4XStartR4Sys, thread_placement_get) == 1264);
     assert!(core::mem::offset_of!(R4XStartR4Sys, thread_placement_set) == 1272);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1280);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, system_power_transition) == 1280);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1288);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 347 von 347 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2477; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2484; Limits: 111
 
 ## App-Profile
 
@@ -12645,6 +12645,13 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `power_profile_worker_returning` | `5` | `u32` | value | number | `power_profiles` | fixed_contract |
 | `power_profile_worker_held` | `6` | `u32` | value | number | `power_profiles` | fixed_contract |
 | `power_profile_worker_complete` | `7` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_transition_action_halt` | `0` | `u32` | value | number | `power_transition` | fixed_contract |
+| `power_transition_action_reboot` | `1` | `u32` | value | number | `power_transition` | fixed_contract |
+| `power_transition_action_poweroff` | `2` | `u32` | value | number | `power_transition` | fixed_contract |
+| `power_transition_error_invalid` | `-1` | `i32` | value | number | `power_transition` | fixed_contract |
+| `power_transition_error_context` | `-2` | `i32` | value | number | `power_transition` | fixed_contract |
+| `power_transition_error_busy` | `-3` | `i32` | value | number | `power_transition` | fixed_contract |
+| `power_transition_error_retained` | `-4` | `i32` | value | number | `power_transition` | fixed_contract |
 
 ## Limits
 

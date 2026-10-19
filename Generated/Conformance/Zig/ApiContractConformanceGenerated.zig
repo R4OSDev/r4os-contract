@@ -5960,7 +5960,7 @@ comptime {
     if (@offsetOf(abi.PowerCpuProfileInfo, "worker_state") != 144) @compileError("PowerCpuProfileInfo.worker_state offset");
     if (@offsetOf(abi.PowerCpuProfileInfo, "reserved1") != 148) @compileError("PowerCpuProfileInfo.reserved1 offset");
     if (@offsetOf(abi.PowerCpuProfileInfo, "service_generation") != 152) @compileError("PowerCpuProfileInfo.service_generation offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1280) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1288) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -6274,6 +6274,8 @@ comptime {
     if (@sizeOf(abi.R4SysFns.thread_placement_get) != 8) @compileError("R4SysFns.thread_placement_get signature");
     if (@offsetOf(abi.R4XStartR4Sys, "thread_placement_set") != 1272) @compileError("R4XStartR4Sys.thread_placement_set offset");
     if (@sizeOf(abi.R4SysFns.thread_placement_set) != 8) @compileError("R4SysFns.thread_placement_set signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "system_power_transition") != 1280) @compileError("R4XStartR4Sys.system_power_transition offset");
+    if (@sizeOf(abi.R4SysFns.system_power_transition) != 8) @compileError("R4SysFns.system_power_transition signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 536) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

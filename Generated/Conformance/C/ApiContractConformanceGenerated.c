@@ -158,6 +158,7 @@ static R4SysPlatformInputSnapshotFn r4os_probe_r4sys_platform_input_snapshot = (
 static R4SysDirectoryNextFn r4os_probe_r4sys_directory_next = (R4SysDirectoryNextFn)0;
 static R4SysThreadPlacementGetFn r4os_probe_r4sys_thread_placement_get = (R4SysThreadPlacementGetFn)0;
 static R4SysThreadPlacementSetFn r4os_probe_r4sys_thread_placement_set = (R4SysThreadPlacementSetFn)0;
+static R4SysSystemPowerTransitionFn r4os_probe_r4sys_system_power_transition = (R4SysSystemPowerTransitionFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;

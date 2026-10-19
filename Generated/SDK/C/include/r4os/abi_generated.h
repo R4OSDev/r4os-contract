@@ -2490,6 +2490,13 @@ extern "C" {
 #define R4OS_POWER_PROFILE_WORKER_RETURNING 5u
 #define R4OS_POWER_PROFILE_WORKER_HELD 6u
 #define R4OS_POWER_PROFILE_WORKER_COMPLETE 7u
+#define R4OS_POWER_TRANSITION_ACTION_HALT 0u
+#define R4OS_POWER_TRANSITION_ACTION_REBOOT 1u
+#define R4OS_POWER_TRANSITION_ACTION_POWEROFF 2u
+#define R4OS_POWER_TRANSITION_ERROR_INVALID ((int32_t)-1)
+#define R4OS_POWER_TRANSITION_ERROR_CONTEXT ((int32_t)-2)
+#define R4OS_POWER_TRANSITION_ERROR_BUSY ((int32_t)-3)
+#define R4OS_POWER_TRANSITION_ERROR_RETAINED ((int32_t)-4)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -10113,6 +10120,7 @@ typedef int32_t (*R4SysPlatformInputSnapshotFn)(R4PlatformInputSnapshot * output
 typedef int32_t (*R4SysDirectoryNextFn)(const uint8_t * arg0, R4DirectoryScanCursor * cursor, uint8_t * arg2, uint32_t arg3, R4FileInfo * info);
 typedef int32_t (*R4SysThreadPlacementGetFn)(const R4ProgramJoinHandle * handle, R4ThreadPlacementInfo * info, uint64_t * cpus, uint32_t word_capacity);
 typedef int32_t (*R4SysThreadPlacementSetFn)(const R4ProgramJoinHandle * handle, const R4ThreadPlacementRequest * request, const uint64_t * cpus, uint32_t word_count);
+typedef int32_t (*R4SysSystemPowerTransitionFn)(uint32_t action, uint64_t timeout_ticks);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -10277,6 +10285,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t directory_next;
     uintptr_t thread_placement_get;
     uintptr_t thread_placement_set;
+    uintptr_t system_power_transition;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -16900,7 +16909,7 @@ _Static_assert(offsetof(R4PowerCpuProfileInfo, reserved0) == 140u, "PowerCpuProf
 _Static_assert(offsetof(R4PowerCpuProfileInfo, worker_state) == 144u, "PowerCpuProfileInfo.worker_state offset mismatch");
 _Static_assert(offsetof(R4PowerCpuProfileInfo, reserved1) == 148u, "PowerCpuProfileInfo.reserved1 offset mismatch");
 _Static_assert(offsetof(R4PowerCpuProfileInfo, service_generation) == 152u, "PowerCpuProfileInfo.service_generation offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1280u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1288u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -17214,6 +17223,8 @@ _Static_assert(offsetof(R4XStartR4Sys, thread_placement_get) == 1264u, "R4XStart
 _Static_assert(sizeof(R4SysThreadPlacementGetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, thread_placement_set) == 1272u, "R4XStartR4Sys.thread_placement_set offset mismatch");
 _Static_assert(sizeof(R4SysThreadPlacementSetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, system_power_transition) == 1280u, "R4XStartR4Sys.system_power_transition offset mismatch");
+_Static_assert(sizeof(R4SysSystemPowerTransitionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

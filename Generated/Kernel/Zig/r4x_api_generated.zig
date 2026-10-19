@@ -2478,6 +2478,13 @@ pub const power_profile_worker_active: u32 = 4;
 pub const power_profile_worker_returning: u32 = 5;
 pub const power_profile_worker_held: u32 = 6;
 pub const power_profile_worker_complete: u32 = 7;
+pub const power_transition_action_halt: u32 = 0;
+pub const power_transition_action_reboot: u32 = 1;
+pub const power_transition_action_poweroff: u32 = 2;
+pub const power_transition_error_invalid: i32 = -1;
+pub const power_transition_error_context: i32 = -2;
+pub const power_transition_error_busy: i32 = -3;
+pub const power_transition_error_retained: i32 = -4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -9777,12 +9784,13 @@ pub const R4SysFns = struct {
     pub const directory_next = *const fn ([*:0]const u8, *DirectoryScanCursor, [*]u8, u32, *FileInfo) callconv(.c) i32;
     pub const thread_placement_get = *const fn (*const ProgramJoinHandle, *ThreadPlacementInfo, ?[*]u64, u32) callconv(.c) i32;
     pub const thread_placement_set = *const fn (*const ProgramJoinHandle, *const ThreadPlacementRequest, ?[*]const u64, u32) callconv(.c) i32;
+    pub const system_power_transition = *const fn (u32, u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 26,
-    size: u32 = 1280,
+    abi_version: u32 = 27,
+    size: u32 = 1288,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -9942,6 +9950,7 @@ pub const R4XStartR4Sys = extern struct {
     directory_next: usize = 0,
     thread_placement_get: usize = 0,
     thread_placement_set: usize = 0,
+    system_power_transition: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -10777,6 +10786,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 155, .offset = 1256, .name = "directory_next", .state = .function, .required = false },
     .{ .number = 156, .offset = 1264, .name = "thread_placement_get", .state = .function, .required = false },
     .{ .number = 157, .offset = 1272, .name = "thread_placement_set", .state = .function, .required = false },
+    .{ .number = 158, .offset = 1280, .name = "system_power_transition", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -17409,7 +17419,7 @@ comptime {
     if (@offsetOf(PowerCpuProfileInfo, "worker_state") != 144) @compileError("generated ABI offset drift: PowerCpuProfileInfo.worker_state");
     if (@offsetOf(PowerCpuProfileInfo, "reserved1") != 148) @compileError("generated ABI offset drift: PowerCpuProfileInfo.reserved1");
     if (@offsetOf(PowerCpuProfileInfo, "service_generation") != 152) @compileError("generated ABI offset drift: PowerCpuProfileInfo.service_generation");
-    if (@sizeOf(R4XStartR4Sys) != 1280) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1288) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -17568,6 +17578,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "directory_next") != 1256) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_next");
     if (@offsetOf(R4XStartR4Sys, "thread_placement_get") != 1264) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_placement_get");
     if (@offsetOf(R4XStartR4Sys, "thread_placement_set") != 1272) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_placement_set");
+    if (@offsetOf(R4XStartR4Sys, "system_power_transition") != 1280) @compileError("generated ABI offset drift: R4XStartR4Sys.system_power_transition");
     if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -18045,13 +18056,14 @@ pub const R4SysProvider = struct {
     directory_next: ?R4SysFns.directory_next = null,
     thread_placement_get: ?R4SysFns.thread_placement_get = null,
     thread_placement_set: ?R4SysFns.thread_placement_set = null,
+    system_power_transition: ?R4SysFns.system_power_transition = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 26,
-        .size = 1280,
+        .abi_version = 27,
+        .size = 1288,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -18211,6 +18223,7 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .directory_next = if (provider.directory_next) |callback| @intFromPtr(callback) else 0,
         .thread_placement_get = if (provider.thread_placement_get) |callback| @intFromPtr(callback) else 0,
         .thread_placement_set = if (provider.thread_placement_set) |callback| @intFromPtr(callback) else 0,
+        .system_power_transition = if (provider.system_power_transition) |callback| @intFromPtr(callback) else 0,
     };
 }
 

@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 26,
+      "abi_version": 27,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1280,
+      "size": 1288,
       "slots": [
         {
           "number": 0,
@@ -12611,6 +12611,62 @@
             "side_effects": "atomic_on_success",
             "retry": "idempotent",
             "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 158,
+          "offset": 1280,
+          "name": "system_power_transition",
+          "state": "function",
+          "required": false,
+          "description": "Explicit bounded blocking orderly system transition: power_transition_action_halt/reboot/poweroff. Closes new CPU control ownership and pins current CPU membership before cooperative POWERSVC stop and real same-CPU request return. No Runtime owner over waits. Refusal returns a negative power_transition_error_* and retains real resources without stopping APs; CPU ownership reopens. Accepted transition becomes terminal and does not return. Missing/disabled provider stays functional. Existing nonblocking raw system_halt/reboot/poweroff slots retain their signatures/meanings; with held requests they refuse immediately rather than waiting or falsely acknowledging return. Profiles/parameter policy stay external. timeout_ticks is an explicit wait budget, clamped to5 seconds;0 requests only a bounded poll. Timeout/refusal may follow an already requested cooperative service stop; query status rather than automatic retry. The immediate legacy slots never perform this new service wait.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "action",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "system",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "blocking_wait",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -144888,6 +144944,76 @@
       "scope": "power_profiles",
       "stability": "fixed_contract",
       "description": "power profile worker complete."
+    },
+    {
+      "name": "power_transition_action_halt",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_transition",
+      "stability": "fixed_contract",
+      "description": "Explicit orderly system transition action halt."
+    },
+    {
+      "name": "power_transition_action_reboot",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_transition",
+      "stability": "fixed_contract",
+      "description": "Explicit orderly system transition action reboot."
+    },
+    {
+      "name": "power_transition_action_poweroff",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_transition",
+      "stability": "fixed_contract",
+      "description": "Explicit orderly system transition action poweroff."
+    },
+    {
+      "name": "power_transition_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_transition",
+      "stability": "fixed_contract",
+      "description": "System transition refused: invalid; no terminal CPU stop, real resources retained."
+    },
+    {
+      "name": "power_transition_error_context",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_transition",
+      "stability": "fixed_contract",
+      "description": "System transition refused: context; no terminal CPU stop, real resources retained."
+    },
+    {
+      "name": "power_transition_error_busy",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_transition",
+      "stability": "fixed_contract",
+      "description": "System transition refused: busy; no terminal CPU stop, real resources retained."
+    },
+    {
+      "name": "power_transition_error_retained",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_transition",
+      "stability": "fixed_contract",
+      "description": "System transition refused: retained; no terminal CPU stop, real resources retained."
     }
   ],
   "limits": [
