@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 458,
-    "group_slot_count": 458,
+    "function_count": 460,
+    "group_slot_count": 460,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 119
+    "advanced_count": 121
   },
   "functions": [
     {
@@ -5490,7 +5490,7 @@
       "kind": "group_slot",
       "slot": 71,
       "exposure": "advanced",
-      "description": "Explicit named current-CPU read only. Returns cpu_capabilities_ok/error_invalid/index/busy/epoch/context/offline/unsupported/fault. Preserves caller IF and entire output/tail on failure. Caller routes through existing approved compute worker if needed; no general cross-CPU RPC or arbitrary MSR number. Architectural EFER/APIC_BASE/PAT/MTRRCAP require explicit capability; APERF/MPERF require exact Intel/AMD vendor and CPUID6.ECX0; Intel platform info limited to verified family6 models3C/45/46. Raw counters and nominal ratios are not current frequency. No public write. IF-on admitted task without held owners required at entry; refusal also preserves IF-off callers.",
+      "description": "Explicit named current-CPU read only. Returns cpu_capabilities_ok/error_invalid/index/busy/epoch/context/offline/unsupported/fault. Preserves caller IF and entire output/tail on failure. Caller routes through existing approved compute worker if needed; no general cross-CPU RPC or arbitrary MSR number. Architectural EFER/APIC_BASE/PAT/MTRRCAP require explicit capability; APERF/MPERF require exact Intel/AMD vendor and CPUID6.ECX0; Intel platform info limited to verified family6 models3C/45/46. Raw counters and nominal ratios are not current frequency. No public write. IF-on admitted task without held owners required at entry; refusal also preserves IF-off callers. Append-only CPUPOWER named IDs add proven Intel6:3C/45/46 sensor/energy reads and AMD19h:01h:B1 PPR reads. Named Intel microcode capture performs only the architectural zero-preload/CPUID1 latch; AMD patch8B never receives that write. No caller-controlled write or power request.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -5503,6 +5503,30 @@
       "slot": 72,
       "exposure": "advanced",
       "description": "Explicit bounded local native instruction/#GP/IF check. Returns cpu_capabilities_ok with passed/failed report, or exact admission/header errors with unchanged output. IF-on task/no-held-owner context required at entry. Own membership lease prevents concurrent logical offline through final restoration. Exactly four fixed reserved-ID read/write probes; unsupported feature refuses before instruction. Writes exactly128 bytes; never implicitly runs in metrics/boot.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_power_info",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 73,
+      "exposure": "advanced",
+      "description": "Passive cached external CPUPOWER observation. No register access, sampling worker, wait or policy write. Exact requested CPU epoch and provider instance; stale clock/CPU data lose valid bits. Returns cpu_capabilities_ok with explicit missing/unknown states, or exact header/index/epoch/busy errors preserving all output/tail.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_power_capture",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 74,
+      "exposure": "advanced",
+      "description": "Explicit bounded local passive CPUPOWER capture. IF-on admitted task with no held owners, exact current CPU/start epoch and stable clock required. Caller routes via existing approved compute workers; no remote RPC or implicit wait. Reads never alter power requests/limits. Intel microcode signature may use its exact zero-preload/CPUID1 latch, AMD patch level is read only. Optional inaccessible values are reported unknown with raw/fault context. Returns cpu_capabilities_ok or exact errors with output/tail unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

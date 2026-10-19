@@ -461,5 +461,7 @@ static R4DevCpuCapabilitiesFn r4os_probe_r4dev_cpu_capabilities = (R4DevCpuCapab
 static R4DevCpuFeatureFn r4os_probe_r4dev_cpu_feature = (R4DevCpuFeatureFn)0;
 static R4DevCpuRegisterReadFn r4os_probe_r4dev_cpu_register_read = (R4DevCpuRegisterReadFn)0;
 static R4DevKernelCpuRegisterCheckFn r4os_probe_r4dev_kernel_cpu_register_check = (R4DevKernelCpuRegisterCheckFn)0;
+static R4DevCpuPowerInfoFn r4os_probe_r4dev_cpu_power_info = (R4DevCpuPowerInfoFn)0;
+static R4DevCpuPowerCaptureFn r4os_probe_r4dev_cpu_power_capture = (R4DevCpuPowerCaptureFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

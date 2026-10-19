@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 332 von 332 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 335 von 335 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2332; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2374; Limits: 111
 
 ## App-Profile
 
@@ -227,7 +227,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxDriverDisplayApi` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverFirmwareTableInfo` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `DriverResourceApi` | extensible | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `DriverResourceApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `DriverHeapStats` | extensible | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
 | `DriverHeapApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -353,6 +353,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuFeatureInfo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `CpuRegisterInfo` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 | `ProgramKernelCpuRegisterCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `CpuPowerInfo` | fixed_layout | extern_struct | 320/8 | 320/8 | 320/8 | 320/8 |
+| `CpuPowerBackend` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `DriverCpuPowerApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -6221,7 +6224,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 2 / 56 / 8
+- Version/Größe/Alignment: 3 / 64 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6233,6 +6236,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `acpi_stat` | 32 | 8 | 8 | `u64` | - |
 | `acpi_read_at` | 40 | 8 | 8 | `u64` | - |
 | `platform_query` | 48 | 8 | 8 | `u64` | - |
+| `cpu_power_query` | 56 | 8 | 8 | `u64` | - |
 
 ### `DriverHeapAllocation`
 
@@ -8958,6 +8962,102 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `flags_after` | 104 | 8 | 8 | `u64` | - |
 | `reserved5` | 112 | 8 | 8 | `u64` | - |
 | `reserved6` | 120 | 8 | 8 | `u64` | - |
+
+### `CpuPowerInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 320 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `state` | 12 | 4 | 4 | `u32` | - |
+| `profile` | 16 | 4 | 4 | `u32` | - |
+| `flags` | 20 | 4 | 4 | `u32` | - |
+| `valid_mask` | 24 | 4 | 4 | `u32` | - |
+| `fault_mask` | 28 | 4 | 4 | `u32` | - |
+| `unsupported_mask` | 32 | 4 | 4 | `u32` | - |
+| `clock_generation` | 36 | 4 | 4 | `u32` | - |
+| `clock_source` | 40 | 4 | 4 | `u32` | - |
+| `reserved0` | 44 | 4 | 4 | `u32` | - |
+| `epoch` | 48 | 8 | 8 | `u64` | - |
+| `provider_generation` | 56 | 8 | 8 | `u64` | - |
+| `sequence` | 64 | 8 | 8 | `u64` | - |
+| `captured_ns` | 72 | 8 | 8 | `u64` | - |
+| `previous_ns` | 80 | 8 | 8 | `u64` | - |
+| `interval_ns` | 88 | 8 | 8 | `u64` | - |
+| `active_hz` | 96 | 8 | 8 | `u64` | - |
+| `reference_hz` | 104 | 8 | 8 | `u64` | - |
+| `aperf` | 112 | 8 | 8 | `u64` | - |
+| `mperf` | 120 | 8 | 8 | `u64` | - |
+| `package_energy_raw` | 128 | 8 | 8 | `u64` | - |
+| `core_energy_raw` | 136 | 8 | 8 | `u64` | - |
+| `package_energy_uj` | 144 | 8 | 8 | `u64` | - |
+| `core_energy_uj` | 152 | 8 | 8 | `u64` | - |
+| `package_mask` | 160 | 8 | 8 | `u64` | - |
+| `core_mask` | 168 | 8 | 8 | `u64` | - |
+| `raw_microcode` | 176 | 8 | 8 | `u64` | - |
+| `raw_thermal_status` | 184 | 8 | 8 | `u64` | - |
+| `raw_temperature_target` | 192 | 8 | 8 | `u64` | - |
+| `raw_energy_unit` | 200 | 8 | 8 | `u64` | - |
+| `raw_reference` | 208 | 8 | 8 | `u64` | - |
+| `microcode_revision` | 216 | 4 | 4 | `u32` | - |
+| `package_energy_bits` | 220 | 4 | 4 | `u32` | - |
+| `core_energy_bits` | 224 | 4 | 4 | `u32` | - |
+| `energy_exponent` | 228 | 4 | 4 | `u32` | - |
+| `thermal_current` | 232 | 4 | 4 | `u32` | - |
+| `thermal_history` | 236 | 4 | 4 | `u32` | - |
+| `package_leader` | 240 | 4 | 4 | `u32` | - |
+| `core_leader` | 244 | 4 | 4 | `u32` | - |
+| `temperature_millic` | 248 | 4 | 4 | `i32` | - |
+| `reserved1` | 252 | 4 | 4 | `u32` | - |
+| `vendor_name` | 256 | 12 | 1 | `[12]u8` | - |
+| `profile_name` | 268 | 32 | 1 | `[32]u8` | - |
+| `reserved2` | 300 | 4 | 4 | `u32` | - |
+| `family` | 304 | 4 | 4 | `u32` | - |
+| `model` | 308 | 4 | 4 | `u32` | - |
+| `stepping` | 312 | 4 | 4 | `u32` | - |
+| `reserved3` | 316 | 4 | 4 | `u32` | - |
+
+### `CpuPowerBackend`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `context` | 8 | 8 | 8 | `u64` | - |
+| `snapshot` | 16 | 8 | 8 | `u64` | - |
+| `capture` | 24 | 8 | 8 | `u64` | - |
+| `flags` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+
+### `DriverCpuPowerApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `register_backend` | 8 | 8 | 8 | `u64` | - |
+| `unregister_backend` | 16 | 8 | 8 | `u64` | - |
+| `current_cpu` | 24 | 8 | 8 | `u64` | - |
+| `capabilities` | 32 | 8 | 8 | `u64` | - |
+| `topology` | 40 | 8 | 8 | `u64` | - |
+| `register_read` | 48 | 8 | 8 | `u64` | - |
+| `clock` | 56 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 
@@ -12052,6 +12152,48 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_feature_id_cmov` | `53` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 | `cpu_feature_id_mmx` | `54` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 | `cpu_feature_id_long_mode` | `55` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_power_version` | `1` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_cpu_none` | `4294967295` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_state_no_provider` | `0` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_state_no_sample` | `1` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_state_observed` | `2` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_state_stale` | `3` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_state_unsupported` | `4` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_state_virtual` | `5` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_profile_unsupported` | `0` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_profile_virtual` | `1` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_profile_intel_haswell` | `2` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_profile_amd_milan_b1` | `3` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_installed` | `1` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_sampled` | `2` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_virtual` | `4` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_stale` | `8` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_energy_discontinuity` | `16` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_package_shared` | `32` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_core_shared` | `64` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_active_hz` | `1` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_reference_hz` | `2` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_aperf` | `4` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_mperf` | `8` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_temperature` | `16` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_microcode` | `32` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_energy_unit` | `64` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_package_energy` | `128` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_core_energy` | `256` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_package_scope` | `512` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_core_scope` | `1024` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_valid_thermal_status` | `2048` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_backend_flag_parallel` | `1` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_register_id_microcode` | `8` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_intel_temperature_target` | `9` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_intel_thermal_status` | `10` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_intel_energy_unit` | `11` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_intel_package_energy` | `12` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_intel_core_energy` | `13` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_pstate0` | `14` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_energy_unit` | `15` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_package_energy` | `16` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_core_energy` | `17` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 
 ## Limits
 

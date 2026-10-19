@@ -2337,6 +2337,48 @@ pub const cpu_feature_id_cx8: u32 = 52;
 pub const cpu_feature_id_cmov: u32 = 53;
 pub const cpu_feature_id_mmx: u32 = 54;
 pub const cpu_feature_id_long_mode: u32 = 55;
+pub const cpu_power_version: u32 = 1;
+pub const cpu_power_cpu_none: u32 = 4294967295;
+pub const cpu_power_state_no_provider: u32 = 0;
+pub const cpu_power_state_no_sample: u32 = 1;
+pub const cpu_power_state_observed: u32 = 2;
+pub const cpu_power_state_stale: u32 = 3;
+pub const cpu_power_state_unsupported: u32 = 4;
+pub const cpu_power_state_virtual: u32 = 5;
+pub const cpu_power_profile_unsupported: u32 = 0;
+pub const cpu_power_profile_virtual: u32 = 1;
+pub const cpu_power_profile_intel_haswell: u32 = 2;
+pub const cpu_power_profile_amd_milan_b1: u32 = 3;
+pub const cpu_power_flag_installed: u32 = 1;
+pub const cpu_power_flag_sampled: u32 = 2;
+pub const cpu_power_flag_virtual: u32 = 4;
+pub const cpu_power_flag_stale: u32 = 8;
+pub const cpu_power_flag_energy_discontinuity: u32 = 16;
+pub const cpu_power_flag_package_shared: u32 = 32;
+pub const cpu_power_flag_core_shared: u32 = 64;
+pub const cpu_power_valid_active_hz: u32 = 1;
+pub const cpu_power_valid_reference_hz: u32 = 2;
+pub const cpu_power_valid_aperf: u32 = 4;
+pub const cpu_power_valid_mperf: u32 = 8;
+pub const cpu_power_valid_temperature: u32 = 16;
+pub const cpu_power_valid_microcode: u32 = 32;
+pub const cpu_power_valid_energy_unit: u32 = 64;
+pub const cpu_power_valid_package_energy: u32 = 128;
+pub const cpu_power_valid_core_energy: u32 = 256;
+pub const cpu_power_valid_package_scope: u32 = 512;
+pub const cpu_power_valid_core_scope: u32 = 1024;
+pub const cpu_power_valid_thermal_status: u32 = 2048;
+pub const cpu_power_backend_flag_parallel: u32 = 1;
+pub const cpu_register_id_microcode: u32 = 8;
+pub const cpu_register_id_intel_temperature_target: u32 = 9;
+pub const cpu_register_id_intel_thermal_status: u32 = 10;
+pub const cpu_register_id_intel_energy_unit: u32 = 11;
+pub const cpu_register_id_intel_package_energy: u32 = 12;
+pub const cpu_register_id_intel_core_energy: u32 = 13;
+pub const cpu_register_id_amd_pstate0: u32 = 14;
+pub const cpu_register_id_amd_energy_unit: u32 = 15;
+pub const cpu_register_id_amd_package_energy: u32 = 16;
+pub const cpu_register_id_amd_core_energy: u32 = 17;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -12947,19 +12989,21 @@ pub struct DriverResourceApi {
     pub acpi_stat: u64,
     pub acpi_read_at: u64,
     pub platform_query: u64,
+    pub cpu_power_query: u64,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for DriverResourceApi {
     fn default() -> Self {
         Self {
             version: 1,
-            size: 56,
+            size: 64,
             stat: 0,
             read_at: 0,
             now_ns: 0,
             acpi_stat: 0,
             acpi_read_at: 0,
             platform_query: 0,
+            cpu_power_query: 0,
         }
     }
 }
@@ -17402,6 +17446,174 @@ impl Default for ProgramKernelCpuRegisterCheck {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuPowerInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub state: u32,
+    pub profile: u32,
+    pub flags: u32,
+    pub valid_mask: u32,
+    pub fault_mask: u32,
+    pub unsupported_mask: u32,
+    pub clock_generation: u32,
+    pub clock_source: u32,
+    pub reserved0: u32,
+    pub epoch: u64,
+    pub provider_generation: u64,
+    pub sequence: u64,
+    pub captured_ns: u64,
+    pub previous_ns: u64,
+    pub interval_ns: u64,
+    pub active_hz: u64,
+    pub reference_hz: u64,
+    pub aperf: u64,
+    pub mperf: u64,
+    pub package_energy_raw: u64,
+    pub core_energy_raw: u64,
+    pub package_energy_uj: u64,
+    pub core_energy_uj: u64,
+    pub package_mask: u64,
+    pub core_mask: u64,
+    pub raw_microcode: u64,
+    pub raw_thermal_status: u64,
+    pub raw_temperature_target: u64,
+    pub raw_energy_unit: u64,
+    pub raw_reference: u64,
+    pub microcode_revision: u32,
+    pub package_energy_bits: u32,
+    pub core_energy_bits: u32,
+    pub energy_exponent: u32,
+    pub thermal_current: u32,
+    pub thermal_history: u32,
+    pub package_leader: u32,
+    pub core_leader: u32,
+    pub temperature_millic: i32,
+    pub reserved1: u32,
+    pub vendor_name: [u8; 12],
+    pub profile_name: [u8; 32],
+    pub reserved2: u32,
+    pub family: u32,
+    pub model: u32,
+    pub stepping: u32,
+    pub reserved3: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuPowerInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 320,
+            cpu_index: 0,
+            state: 0,
+            profile: 0,
+            flags: 0,
+            valid_mask: 0,
+            fault_mask: 0,
+            unsupported_mask: 0,
+            clock_generation: 0,
+            clock_source: 0,
+            reserved0: 0,
+            epoch: 0,
+            provider_generation: 0,
+            sequence: 0,
+            captured_ns: 0,
+            previous_ns: 0,
+            interval_ns: 0,
+            active_hz: 0,
+            reference_hz: 0,
+            aperf: 0,
+            mperf: 0,
+            package_energy_raw: 0,
+            core_energy_raw: 0,
+            package_energy_uj: 0,
+            core_energy_uj: 0,
+            package_mask: 0,
+            core_mask: 0,
+            raw_microcode: 0,
+            raw_thermal_status: 0,
+            raw_temperature_target: 0,
+            raw_energy_unit: 0,
+            raw_reference: 0,
+            microcode_revision: 0,
+            package_energy_bits: 0,
+            core_energy_bits: 0,
+            energy_exponent: 0,
+            thermal_current: 0,
+            thermal_history: 0,
+            package_leader: 0,
+            core_leader: 0,
+            temperature_millic: 0,
+            reserved1: 0,
+            vendor_name: [0; 12],
+            profile_name: [0; 32],
+            reserved2: 0,
+            family: 0,
+            model: 0,
+            stepping: 0,
+            reserved3: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuPowerBackend {
+    pub version: u32,
+    pub size: u32,
+    pub context: u64,
+    pub snapshot: u64,
+    pub capture: u64,
+    pub flags: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuPowerBackend {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            context: 0,
+            snapshot: 0,
+            capture: 0,
+            flags: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DriverCpuPowerApi {
+    pub version: u32,
+    pub size: u32,
+    pub register_backend: u64,
+    pub unregister_backend: u64,
+    pub current_cpu: u64,
+    pub capabilities: u64,
+    pub topology: u64,
+    pub register_read: u64,
+    pub clock: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DriverCpuPowerApi {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            register_backend: 0,
+            unregister_backend: 0,
+            current_cpu: 0,
+            capabilities: 0,
+            topology: 0,
+            register_read: 0,
+            clock: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -18783,6 +18995,8 @@ pub mod R4DevFns {
     pub type cpu_feature = unsafe extern "C" fn(u32, u64, u32, *mut CpuFeatureInfo) -> i32;
     pub type cpu_register_read = unsafe extern "C" fn(u32, u64, u32, *mut CpuRegisterInfo) -> i32;
     pub type kernel_cpu_register_check = unsafe extern "C" fn(u32, u64, *mut ProgramKernelCpuRegisterCheck) -> i32;
+    pub type cpu_power_info = unsafe extern "C" fn(u32, u64, *mut CpuPowerInfo) -> i32;
+    pub type cpu_power_capture = unsafe extern "C" fn(u32, u64, *mut CpuPowerInfo) -> i32;
 }
 
 #[repr(C)]
@@ -18865,14 +19079,16 @@ pub struct R4XStartR4Dev {
     pub cpu_feature: usize,
     pub cpu_register_read: usize,
     pub kernel_cpu_register_check: usize,
+    pub cpu_power_info: usize,
+    pub cpu_power_capture: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 24,
-            size: 600,
+            abi_version: 25,
+            size: 616,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -18947,6 +19163,8 @@ impl Default for R4XStartR4Dev {
             cpu_feature: 0,
             cpu_register_read: 0,
             kernel_cpu_register_check: 0,
+            cpu_power_info: 0,
+            cpu_power_capture: 0,
         }
     }
 }
@@ -27185,7 +27403,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverResourceApi, acpi_stat) == 32);
     assert!(core::mem::offset_of!(DriverResourceApi, acpi_read_at) == 40);
     assert!(core::mem::offset_of!(DriverResourceApi, platform_query) == 48);
-    assert!(core::mem::size_of::<DriverResourceApi>() == 56);
+    assert!(core::mem::offset_of!(DriverResourceApi, cpu_power_query) == 56);
+    assert!(core::mem::size_of::<DriverResourceApi>() == 64);
     assert!(core::mem::align_of::<DriverResourceApi>() == 8);
     assert!(core::mem::offset_of!(DriverHeapAllocation, version) == 0);
     assert!(core::mem::offset_of!(DriverHeapAllocation, size) == 4);
@@ -28912,6 +29131,78 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramKernelCpuRegisterCheck, reserved6) == 120);
     assert!(core::mem::size_of::<ProgramKernelCpuRegisterCheck>() == 128);
     assert!(core::mem::align_of::<ProgramKernelCpuRegisterCheck>() == 8);
+    assert!(core::mem::offset_of!(CpuPowerInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuPowerInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuPowerInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuPowerInfo, state) == 12);
+    assert!(core::mem::offset_of!(CpuPowerInfo, profile) == 16);
+    assert!(core::mem::offset_of!(CpuPowerInfo, flags) == 20);
+    assert!(core::mem::offset_of!(CpuPowerInfo, valid_mask) == 24);
+    assert!(core::mem::offset_of!(CpuPowerInfo, fault_mask) == 28);
+    assert!(core::mem::offset_of!(CpuPowerInfo, unsupported_mask) == 32);
+    assert!(core::mem::offset_of!(CpuPowerInfo, clock_generation) == 36);
+    assert!(core::mem::offset_of!(CpuPowerInfo, clock_source) == 40);
+    assert!(core::mem::offset_of!(CpuPowerInfo, reserved0) == 44);
+    assert!(core::mem::offset_of!(CpuPowerInfo, epoch) == 48);
+    assert!(core::mem::offset_of!(CpuPowerInfo, provider_generation) == 56);
+    assert!(core::mem::offset_of!(CpuPowerInfo, sequence) == 64);
+    assert!(core::mem::offset_of!(CpuPowerInfo, captured_ns) == 72);
+    assert!(core::mem::offset_of!(CpuPowerInfo, previous_ns) == 80);
+    assert!(core::mem::offset_of!(CpuPowerInfo, interval_ns) == 88);
+    assert!(core::mem::offset_of!(CpuPowerInfo, active_hz) == 96);
+    assert!(core::mem::offset_of!(CpuPowerInfo, reference_hz) == 104);
+    assert!(core::mem::offset_of!(CpuPowerInfo, aperf) == 112);
+    assert!(core::mem::offset_of!(CpuPowerInfo, mperf) == 120);
+    assert!(core::mem::offset_of!(CpuPowerInfo, package_energy_raw) == 128);
+    assert!(core::mem::offset_of!(CpuPowerInfo, core_energy_raw) == 136);
+    assert!(core::mem::offset_of!(CpuPowerInfo, package_energy_uj) == 144);
+    assert!(core::mem::offset_of!(CpuPowerInfo, core_energy_uj) == 152);
+    assert!(core::mem::offset_of!(CpuPowerInfo, package_mask) == 160);
+    assert!(core::mem::offset_of!(CpuPowerInfo, core_mask) == 168);
+    assert!(core::mem::offset_of!(CpuPowerInfo, raw_microcode) == 176);
+    assert!(core::mem::offset_of!(CpuPowerInfo, raw_thermal_status) == 184);
+    assert!(core::mem::offset_of!(CpuPowerInfo, raw_temperature_target) == 192);
+    assert!(core::mem::offset_of!(CpuPowerInfo, raw_energy_unit) == 200);
+    assert!(core::mem::offset_of!(CpuPowerInfo, raw_reference) == 208);
+    assert!(core::mem::offset_of!(CpuPowerInfo, microcode_revision) == 216);
+    assert!(core::mem::offset_of!(CpuPowerInfo, package_energy_bits) == 220);
+    assert!(core::mem::offset_of!(CpuPowerInfo, core_energy_bits) == 224);
+    assert!(core::mem::offset_of!(CpuPowerInfo, energy_exponent) == 228);
+    assert!(core::mem::offset_of!(CpuPowerInfo, thermal_current) == 232);
+    assert!(core::mem::offset_of!(CpuPowerInfo, thermal_history) == 236);
+    assert!(core::mem::offset_of!(CpuPowerInfo, package_leader) == 240);
+    assert!(core::mem::offset_of!(CpuPowerInfo, core_leader) == 244);
+    assert!(core::mem::offset_of!(CpuPowerInfo, temperature_millic) == 248);
+    assert!(core::mem::offset_of!(CpuPowerInfo, reserved1) == 252);
+    assert!(core::mem::offset_of!(CpuPowerInfo, vendor_name) == 256);
+    assert!(core::mem::offset_of!(CpuPowerInfo, profile_name) == 268);
+    assert!(core::mem::offset_of!(CpuPowerInfo, reserved2) == 300);
+    assert!(core::mem::offset_of!(CpuPowerInfo, family) == 304);
+    assert!(core::mem::offset_of!(CpuPowerInfo, model) == 308);
+    assert!(core::mem::offset_of!(CpuPowerInfo, stepping) == 312);
+    assert!(core::mem::offset_of!(CpuPowerInfo, reserved3) == 316);
+    assert!(core::mem::size_of::<CpuPowerInfo>() == 320);
+    assert!(core::mem::align_of::<CpuPowerInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuPowerBackend, version) == 0);
+    assert!(core::mem::offset_of!(CpuPowerBackend, size) == 4);
+    assert!(core::mem::offset_of!(CpuPowerBackend, context) == 8);
+    assert!(core::mem::offset_of!(CpuPowerBackend, snapshot) == 16);
+    assert!(core::mem::offset_of!(CpuPowerBackend, capture) == 24);
+    assert!(core::mem::offset_of!(CpuPowerBackend, flags) == 32);
+    assert!(core::mem::offset_of!(CpuPowerBackend, reserved0) == 36);
+    assert!(core::mem::size_of::<CpuPowerBackend>() == 40);
+    assert!(core::mem::align_of::<CpuPowerBackend>() == 8);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, version) == 0);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, size) == 4);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, register_backend) == 8);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, unregister_backend) == 16);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, current_cpu) == 24);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, capabilities) == 32);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, topology) == 40);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, register_read) == 48);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, clock) == 56);
+    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 64);
+    assert!(core::mem::align_of::<DriverCpuPowerApi>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -29414,7 +29705,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_feature) == 576);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_register_read) == 584);
     assert!(core::mem::offset_of!(R4XStartR4Dev, kernel_cpu_register_check) == 592);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 600);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_power_info) == 600);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_power_capture) == 608);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 616);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);
