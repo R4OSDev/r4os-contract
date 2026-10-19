@@ -2568,6 +2568,60 @@ pub const cpu_microcode_status_revision_mismatch: u32 = 10;
 pub const cpu_microcode_status_restart_verified: u32 = 11;
 pub const cpu_microcode_status_restart_requires_update: u32 = 12;
 pub const cpu_microcode_status_identity_changed: u32 = 13;
+pub const cpu_pmu_flag_exposed: u32 = 1;
+pub const cpu_pmu_flag_virtual: u32 = 2;
+pub const cpu_pmu_flag_qualified: u32 = 4;
+pub const cpu_pmu_flag_online: u32 = 8;
+pub const cpu_pmu_flag_busy: u32 = 16;
+pub const cpu_pmu_flag_quarantined: u32 = 32;
+pub const cpu_pmu_flag_last_result: u32 = 64;
+pub const cpu_pmu_flag_modulo_only: u32 = 128;
+pub const cpu_pmu_result_flag_raw_before: u32 = 1;
+pub const cpu_pmu_result_flag_raw_after: u32 = 2;
+pub const cpu_pmu_result_flag_callback_started: u32 = 4;
+pub const cpu_pmu_result_flag_callback_returned: u32 = 8;
+pub const cpu_pmu_result_flag_restored: u32 = 16;
+pub const cpu_pmu_result_flag_absolute_count: u32 = 32;
+pub const cpu_pmu_result_flag_modulo_delta: u32 = 64;
+pub const cpu_pmu_result_flag_overflow: u32 = 128;
+pub const cpu_pmu_result_flag_identity_valid: u32 = 256;
+pub const cpu_pmu_result_flag_snapshot_valid: u32 = 512;
+pub const cpu_pmu_result_flag_if_preserved: u32 = 1024;
+pub const cpu_pmu_result_flag_untouched: u32 = 2048;
+pub const cpu_pmu_result_flag_full_width: u32 = 4096;
+pub const cpu_pmu_result_flag_within_budget: u32 = 8192;
+pub const cpu_pmu_profile_unknown: u32 = 0;
+pub const cpu_pmu_profile_intel_arch: u32 = 1;
+pub const cpu_pmu_profile_amd_milan_b1: u32 = 2;
+pub const cpu_pmu_reason_none: u32 = 0;
+pub const cpu_pmu_reason_no_pmu: u32 = 1;
+pub const cpu_pmu_reason_virtual_cpu: u32 = 2;
+pub const cpu_pmu_reason_unsupported_layout: u32 = 3;
+pub const cpu_pmu_reason_unsupported_model: u32 = 4;
+pub const cpu_pmu_reason_malformed: u32 = 5;
+pub const cpu_pmu_reason_no_msr: u32 = 6;
+pub const cpu_pmu_reason_offline: u32 = 7;
+pub const cpu_pmu_reason_quarantined: u32 = 8;
+pub const cpu_pmu_state_idle: u32 = 0;
+pub const cpu_pmu_state_active: u32 = 1;
+pub const cpu_pmu_state_quarantined: u32 = 2;
+pub const cpu_pmu_status_completed: u32 = 0;
+pub const cpu_pmu_status_busy: u32 = 1;
+pub const cpu_pmu_status_read_failed: u32 = 2;
+pub const cpu_pmu_status_write_failed: u32 = 3;
+pub const cpu_pmu_status_overflow: u32 = 4;
+pub const cpu_pmu_status_callback_aborted: u32 = 5;
+pub const cpu_pmu_status_identity_changed: u32 = 6;
+pub const cpu_pmu_status_restore_failed: u32 = 7;
+pub const cpu_pmu_status_clock_invalid: u32 = 8;
+pub const cpu_pmu_event_cycles: u32 = 0;
+pub const cpu_pmu_event_instructions: u32 = 1;
+pub const cpu_pmu_event_branches: u32 = 2;
+pub const cpu_pmu_event_branch_misses: u32 = 3;
+pub const cpu_pmu_event_cache_references: u32 = 4;
+pub const cpu_pmu_event_cache_misses: u32 = 5;
+pub const cpu_pmu_max_iterations: u32 = 4096;
+pub const cpu_pmu_max_window_ns: u64 = 2000000;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -18833,6 +18887,152 @@ impl Default for CpuMicrocodeInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuPmuInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub last_generation: u64,
+    pub last_epoch: u64,
+    pub profile: u32,
+    pub reason: u32,
+    pub pmu_version: u32,
+    pub counter_count: u32,
+    pub counter_width: u32,
+    pub fixed_count: u32,
+    pub fixed_width: u32,
+    pub event_mask: u32,
+    pub architectural_event_mask: u32,
+    pub signature: u32,
+    pub configured_cpus: u32,
+    pub state: u32,
+    pub inflight_generation: u64,
+    pub inflight_epoch: u64,
+    pub last_sequence: u64,
+    pub reserved0: [u64; 2],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuPmuInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            last_generation: 0,
+            last_epoch: 0,
+            profile: 0,
+            reason: 0,
+            pmu_version: 0,
+            counter_count: 0,
+            counter_width: 0,
+            fixed_count: 0,
+            fixed_width: 0,
+            event_mask: 0,
+            architectural_event_mask: 0,
+            signature: 0,
+            configured_cpus: 0,
+            state: 0,
+            inflight_generation: 0,
+            inflight_epoch: 0,
+            last_sequence: 0,
+            reserved0: [0; 2],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuPmuResult {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub generation: u64,
+    pub sequence: u64,
+    pub event_id: u32,
+    pub profile: u32,
+    pub status: u32,
+    pub callback_result: i32,
+    pub counter_width: u32,
+    pub iterations: u32,
+    pub read_faults: u32,
+    pub write_attempts: u32,
+    pub raw_before: u64,
+    pub raw_after: u64,
+    pub delta_modulo: u64,
+    pub counter_mask: u64,
+    pub saved_control: u64,
+    pub saved_counter: u64,
+    pub saved_global: u64,
+    pub saved_status: u64,
+    pub observed_control: u64,
+    pub observed_counter: u64,
+    pub observed_global: u64,
+    pub observed_status: u64,
+    pub original_if: u64,
+    pub final_if: u64,
+    pub begin_ns: u64,
+    pub end_ns: u64,
+    pub signature: u32,
+    pub configured_cpus: u32,
+    pub counter_index: u32,
+    pub reserved0: u32,
+    pub event_select: u64,
+    pub reserved1: [u64; 4],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuPmuResult {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 256,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            generation: 0,
+            sequence: 0,
+            event_id: 0,
+            profile: 0,
+            status: 0,
+            callback_result: 0,
+            counter_width: 0,
+            iterations: 0,
+            read_faults: 0,
+            write_attempts: 0,
+            raw_before: 0,
+            raw_after: 0,
+            delta_modulo: 0,
+            counter_mask: 0,
+            saved_control: 0,
+            saved_counter: 0,
+            saved_global: 0,
+            saved_status: 0,
+            observed_control: 0,
+            observed_counter: 0,
+            observed_global: 0,
+            observed_status: 0,
+            original_if: 0,
+            final_if: 0,
+            begin_ns: 0,
+            end_ns: 0,
+            signature: 0,
+            configured_cpus: 0,
+            counter_index: 0,
+            reserved0: 0,
+            event_select: 0,
+            reserved1: [0; 4],
+        }
+    }
+}
+
+pub type PmuWorkFn = unsafe extern "C" fn(u64, u32) -> i32;
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20227,6 +20427,9 @@ pub mod R4DevFns {
     pub type cpu_machine_info = unsafe extern "C" fn(u32, *mut CpuMachineInfo) -> i32;
     pub type cpu_machine_bank = unsafe extern "C" fn(u32, u64, u64, u32, *mut CpuMachineBank) -> i32;
     pub type cpu_microcode_info = unsafe extern "C" fn(u32, *mut CpuMicrocodeInfo) -> i32;
+    pub type cpu_pmu_info = unsafe extern "C" fn(u32, *mut CpuPmuInfo) -> i32;
+    pub type cpu_pmu_measure = unsafe extern "C" fn(u32, u64, u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuPmuResult) -> i32;
+    pub type cpu_pmu_result = unsafe extern "C" fn(u32, u64, u64, *mut CpuPmuResult) -> i32;
 }
 
 #[repr(C)]
@@ -20319,14 +20522,17 @@ pub struct R4XStartR4Dev {
     pub cpu_machine_info: usize,
     pub cpu_machine_bank: usize,
     pub cpu_microcode_info: usize,
+    pub cpu_pmu_info: usize,
+    pub cpu_pmu_measure: usize,
+    pub cpu_pmu_result: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 31,
-            size: 680,
+            abi_version: 32,
+            size: 704,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -20411,6 +20617,9 @@ impl Default for R4XStartR4Dev {
             cpu_machine_info: 0,
             cpu_machine_bank: 0,
             cpu_microcode_info: 0,
+            cpu_pmu_info: 0,
+            cpu_pmu_measure: 0,
+            cpu_pmu_result: 0,
         }
     }
 }
@@ -30884,6 +31093,72 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuMicrocodeInfo, reserved0) == 140);
     assert!(core::mem::size_of::<CpuMicrocodeInfo>() == 144);
     assert!(core::mem::align_of::<CpuMicrocodeInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuPmuInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuPmuInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuPmuInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuPmuInfo, flags) == 12);
+    assert!(core::mem::offset_of!(CpuPmuInfo, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuPmuInfo, last_generation) == 24);
+    assert!(core::mem::offset_of!(CpuPmuInfo, last_epoch) == 32);
+    assert!(core::mem::offset_of!(CpuPmuInfo, profile) == 40);
+    assert!(core::mem::offset_of!(CpuPmuInfo, reason) == 44);
+    assert!(core::mem::offset_of!(CpuPmuInfo, pmu_version) == 48);
+    assert!(core::mem::offset_of!(CpuPmuInfo, counter_count) == 52);
+    assert!(core::mem::offset_of!(CpuPmuInfo, counter_width) == 56);
+    assert!(core::mem::offset_of!(CpuPmuInfo, fixed_count) == 60);
+    assert!(core::mem::offset_of!(CpuPmuInfo, fixed_width) == 64);
+    assert!(core::mem::offset_of!(CpuPmuInfo, event_mask) == 68);
+    assert!(core::mem::offset_of!(CpuPmuInfo, architectural_event_mask) == 72);
+    assert!(core::mem::offset_of!(CpuPmuInfo, signature) == 76);
+    assert!(core::mem::offset_of!(CpuPmuInfo, configured_cpus) == 80);
+    assert!(core::mem::offset_of!(CpuPmuInfo, state) == 84);
+    assert!(core::mem::offset_of!(CpuPmuInfo, inflight_generation) == 88);
+    assert!(core::mem::offset_of!(CpuPmuInfo, inflight_epoch) == 96);
+    assert!(core::mem::offset_of!(CpuPmuInfo, last_sequence) == 104);
+    assert!(core::mem::offset_of!(CpuPmuInfo, reserved0) == 112);
+    assert!(core::mem::size_of::<CpuPmuInfo>() == 128);
+    assert!(core::mem::align_of::<CpuPmuInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuPmuResult, version) == 0);
+    assert!(core::mem::offset_of!(CpuPmuResult, size) == 4);
+    assert!(core::mem::offset_of!(CpuPmuResult, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuPmuResult, flags) == 12);
+    assert!(core::mem::offset_of!(CpuPmuResult, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuPmuResult, generation) == 24);
+    assert!(core::mem::offset_of!(CpuPmuResult, sequence) == 32);
+    assert!(core::mem::offset_of!(CpuPmuResult, event_id) == 40);
+    assert!(core::mem::offset_of!(CpuPmuResult, profile) == 44);
+    assert!(core::mem::offset_of!(CpuPmuResult, status) == 48);
+    assert!(core::mem::offset_of!(CpuPmuResult, callback_result) == 52);
+    assert!(core::mem::offset_of!(CpuPmuResult, counter_width) == 56);
+    assert!(core::mem::offset_of!(CpuPmuResult, iterations) == 60);
+    assert!(core::mem::offset_of!(CpuPmuResult, read_faults) == 64);
+    assert!(core::mem::offset_of!(CpuPmuResult, write_attempts) == 68);
+    assert!(core::mem::offset_of!(CpuPmuResult, raw_before) == 72);
+    assert!(core::mem::offset_of!(CpuPmuResult, raw_after) == 80);
+    assert!(core::mem::offset_of!(CpuPmuResult, delta_modulo) == 88);
+    assert!(core::mem::offset_of!(CpuPmuResult, counter_mask) == 96);
+    assert!(core::mem::offset_of!(CpuPmuResult, saved_control) == 104);
+    assert!(core::mem::offset_of!(CpuPmuResult, saved_counter) == 112);
+    assert!(core::mem::offset_of!(CpuPmuResult, saved_global) == 120);
+    assert!(core::mem::offset_of!(CpuPmuResult, saved_status) == 128);
+    assert!(core::mem::offset_of!(CpuPmuResult, observed_control) == 136);
+    assert!(core::mem::offset_of!(CpuPmuResult, observed_counter) == 144);
+    assert!(core::mem::offset_of!(CpuPmuResult, observed_global) == 152);
+    assert!(core::mem::offset_of!(CpuPmuResult, observed_status) == 160);
+    assert!(core::mem::offset_of!(CpuPmuResult, original_if) == 168);
+    assert!(core::mem::offset_of!(CpuPmuResult, final_if) == 176);
+    assert!(core::mem::offset_of!(CpuPmuResult, begin_ns) == 184);
+    assert!(core::mem::offset_of!(CpuPmuResult, end_ns) == 192);
+    assert!(core::mem::offset_of!(CpuPmuResult, signature) == 200);
+    assert!(core::mem::offset_of!(CpuPmuResult, configured_cpus) == 204);
+    assert!(core::mem::offset_of!(CpuPmuResult, counter_index) == 208);
+    assert!(core::mem::offset_of!(CpuPmuResult, reserved0) == 212);
+    assert!(core::mem::offset_of!(CpuPmuResult, event_select) == 216);
+    assert!(core::mem::offset_of!(CpuPmuResult, reserved1) == 224);
+    assert!(core::mem::size_of::<CpuPmuResult>() == 256);
+    assert!(core::mem::align_of::<CpuPmuResult>() == 8);
+    assert!(core::mem::size_of::<PmuWorkFn>() == 8);
+    assert!(core::mem::align_of::<PmuWorkFn>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31397,7 +31672,10 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_machine_info) == 656);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_machine_bank) == 664);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_microcode_info) == 672);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 680);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_pmu_info) == 680);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_pmu_measure) == 688);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_pmu_result) == 696);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 704);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

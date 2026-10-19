@@ -2576,6 +2576,60 @@ extern "C" {
 #define R4OS_CPU_MICROCODE_STATUS_RESTART_VERIFIED 11u
 #define R4OS_CPU_MICROCODE_STATUS_RESTART_REQUIRES_UPDATE 12u
 #define R4OS_CPU_MICROCODE_STATUS_IDENTITY_CHANGED 13u
+#define R4OS_CPU_PMU_FLAG_EXPOSED 1u
+#define R4OS_CPU_PMU_FLAG_VIRTUAL 2u
+#define R4OS_CPU_PMU_FLAG_QUALIFIED 4u
+#define R4OS_CPU_PMU_FLAG_ONLINE 8u
+#define R4OS_CPU_PMU_FLAG_BUSY 16u
+#define R4OS_CPU_PMU_FLAG_QUARANTINED 32u
+#define R4OS_CPU_PMU_FLAG_LAST_RESULT 64u
+#define R4OS_CPU_PMU_FLAG_MODULO_ONLY 128u
+#define R4OS_CPU_PMU_RESULT_FLAG_RAW_BEFORE 1u
+#define R4OS_CPU_PMU_RESULT_FLAG_RAW_AFTER 2u
+#define R4OS_CPU_PMU_RESULT_FLAG_CALLBACK_STARTED 4u
+#define R4OS_CPU_PMU_RESULT_FLAG_CALLBACK_RETURNED 8u
+#define R4OS_CPU_PMU_RESULT_FLAG_RESTORED 16u
+#define R4OS_CPU_PMU_RESULT_FLAG_ABSOLUTE_COUNT 32u
+#define R4OS_CPU_PMU_RESULT_FLAG_MODULO_DELTA 64u
+#define R4OS_CPU_PMU_RESULT_FLAG_OVERFLOW 128u
+#define R4OS_CPU_PMU_RESULT_FLAG_IDENTITY_VALID 256u
+#define R4OS_CPU_PMU_RESULT_FLAG_SNAPSHOT_VALID 512u
+#define R4OS_CPU_PMU_RESULT_FLAG_IF_PRESERVED 1024u
+#define R4OS_CPU_PMU_RESULT_FLAG_UNTOUCHED 2048u
+#define R4OS_CPU_PMU_RESULT_FLAG_FULL_WIDTH 4096u
+#define R4OS_CPU_PMU_RESULT_FLAG_WITHIN_BUDGET 8192u
+#define R4OS_CPU_PMU_PROFILE_UNKNOWN 0u
+#define R4OS_CPU_PMU_PROFILE_INTEL_ARCH 1u
+#define R4OS_CPU_PMU_PROFILE_AMD_MILAN_B1 2u
+#define R4OS_CPU_PMU_REASON_NONE 0u
+#define R4OS_CPU_PMU_REASON_NO_PMU 1u
+#define R4OS_CPU_PMU_REASON_VIRTUAL_CPU 2u
+#define R4OS_CPU_PMU_REASON_UNSUPPORTED_LAYOUT 3u
+#define R4OS_CPU_PMU_REASON_UNSUPPORTED_MODEL 4u
+#define R4OS_CPU_PMU_REASON_MALFORMED 5u
+#define R4OS_CPU_PMU_REASON_NO_MSR 6u
+#define R4OS_CPU_PMU_REASON_OFFLINE 7u
+#define R4OS_CPU_PMU_REASON_QUARANTINED 8u
+#define R4OS_CPU_PMU_STATE_IDLE 0u
+#define R4OS_CPU_PMU_STATE_ACTIVE 1u
+#define R4OS_CPU_PMU_STATE_QUARANTINED 2u
+#define R4OS_CPU_PMU_STATUS_COMPLETED 0u
+#define R4OS_CPU_PMU_STATUS_BUSY 1u
+#define R4OS_CPU_PMU_STATUS_READ_FAILED 2u
+#define R4OS_CPU_PMU_STATUS_WRITE_FAILED 3u
+#define R4OS_CPU_PMU_STATUS_OVERFLOW 4u
+#define R4OS_CPU_PMU_STATUS_CALLBACK_ABORTED 5u
+#define R4OS_CPU_PMU_STATUS_IDENTITY_CHANGED 6u
+#define R4OS_CPU_PMU_STATUS_RESTORE_FAILED 7u
+#define R4OS_CPU_PMU_STATUS_CLOCK_INVALID 8u
+#define R4OS_CPU_PMU_EVENT_CYCLES 0u
+#define R4OS_CPU_PMU_EVENT_INSTRUCTIONS 1u
+#define R4OS_CPU_PMU_EVENT_BRANCHES 2u
+#define R4OS_CPU_PMU_EVENT_BRANCH_MISSES 3u
+#define R4OS_CPU_PMU_EVENT_CACHE_REFERENCES 4u
+#define R4OS_CPU_PMU_EVENT_CACHE_MISSES 5u
+#define R4OS_CPU_PMU_MAX_ITERATIONS 4096u
+#define R4OS_CPU_PMU_MAX_WINDOW_NS 2000000ull
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3390,6 +3444,8 @@ typedef struct R4CpuIdleInfo R4CpuIdleInfo;
 typedef struct R4CpuMachineInfo R4CpuMachineInfo;
 typedef struct R4CpuMachineBank R4CpuMachineBank;
 typedef struct R4CpuMicrocodeInfo R4CpuMicrocodeInfo;
+typedef struct R4CpuPmuInfo R4CpuPmuInfo;
+typedef struct R4CpuPmuResult R4CpuPmuResult;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -3398,6 +3454,8 @@ typedef int32_t (*R4AudioOutputQueryFn)(uint64_t context, uint32_t index, R4Audi
 typedef int32_t (*R4AudioOutputSelectFn)(uint64_t context, uint32_t index);
 
 typedef int32_t (*R4AudioOutputActiveFn)(uint64_t context);
+
+typedef int32_t (*R4PmuWorkFn)(uint64_t context, uint32_t iterations);
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -10209,6 +10267,72 @@ typedef struct R4CpuMicrocodeInfo {
     uint32_t reserved0;
 } R4CpuMicrocodeInfo;
 
+typedef struct R4CpuPmuInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t flags;
+    uint64_t epoch;
+    uint64_t last_generation;
+    uint64_t last_epoch;
+    uint32_t profile;
+    uint32_t reason;
+    uint32_t pmu_version;
+    uint32_t counter_count;
+    uint32_t counter_width;
+    uint32_t fixed_count;
+    uint32_t fixed_width;
+    uint32_t event_mask;
+    uint32_t architectural_event_mask;
+    uint32_t signature;
+    uint32_t configured_cpus;
+    uint32_t state;
+    uint64_t inflight_generation;
+    uint64_t inflight_epoch;
+    uint64_t last_sequence;
+    uint64_t reserved0[2];
+} R4CpuPmuInfo;
+
+typedef struct R4CpuPmuResult {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t flags;
+    uint64_t epoch;
+    uint64_t generation;
+    uint64_t sequence;
+    uint32_t event_id;
+    uint32_t profile;
+    uint32_t status;
+    int32_t callback_result;
+    uint32_t counter_width;
+    uint32_t iterations;
+    uint32_t read_faults;
+    uint32_t write_attempts;
+    uint64_t raw_before;
+    uint64_t raw_after;
+    uint64_t delta_modulo;
+    uint64_t counter_mask;
+    uint64_t saved_control;
+    uint64_t saved_counter;
+    uint64_t saved_global;
+    uint64_t saved_status;
+    uint64_t observed_control;
+    uint64_t observed_counter;
+    uint64_t observed_global;
+    uint64_t observed_status;
+    uint64_t original_if;
+    uint64_t final_if;
+    uint64_t begin_ns;
+    uint64_t end_ns;
+    uint32_t signature;
+    uint32_t configured_cpus;
+    uint32_t counter_index;
+    uint32_t reserved0;
+    uint64_t event_select;
+    uint64_t reserved1[4];
+} R4CpuPmuResult;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11158,6 +11282,9 @@ typedef int32_t (*R4DevCpuIdleInfoFn)(uint32_t cpu_index, R4CpuIdleInfo * out);
 typedef int32_t (*R4DevCpuMachineInfoFn)(uint32_t cpu_index, R4CpuMachineInfo * out);
 typedef int32_t (*R4DevCpuMachineBankFn)(uint32_t cpu_index, uint64_t epoch, uint64_t sequence, uint32_t bank_index, R4CpuMachineBank * out);
 typedef int32_t (*R4DevCpuMicrocodeInfoFn)(uint32_t cpu_index, R4CpuMicrocodeInfo * out);
+typedef int32_t (*R4DevCpuPmuInfoFn)(uint32_t cpu_index, R4CpuPmuInfo * out);
+typedef int32_t (*R4DevCpuPmuMeasureFn)(uint32_t cpu_index, uint64_t epoch, uint32_t event_id, uint32_t iterations, const R4PmuWorkFn * work, uint64_t context, R4CpuPmuResult * out);
+typedef int32_t (*R4DevCpuPmuResultFn)(uint32_t cpu_index, uint64_t epoch, uint64_t generation, R4CpuPmuResult * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -11247,6 +11374,9 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_machine_info;
     uintptr_t cpu_machine_bank;
     uintptr_t cpu_microcode_info;
+    uintptr_t cpu_pmu_info;
+    uintptr_t cpu_pmu_measure;
+    uintptr_t cpu_pmu_result;
 } R4XStartR4Dev;
 
 
@@ -17396,6 +17526,68 @@ _Static_assert(offsetof(R4CpuMicrocodeInfo, admitted_features_hash) == 96u, "Cpu
 _Static_assert(offsetof(R4CpuMicrocodeInfo, package_sha256) == 104u, "CpuMicrocodeInfo.package_sha256 offset mismatch");
 _Static_assert(offsetof(R4CpuMicrocodeInfo, configured_cpus) == 136u, "CpuMicrocodeInfo.configured_cpus offset mismatch");
 _Static_assert(offsetof(R4CpuMicrocodeInfo, reserved0) == 140u, "CpuMicrocodeInfo.reserved0 offset mismatch");
+_Static_assert(sizeof(R4CpuPmuInfo) == 128u, "CpuPmuInfo size mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, version) == 0u, "CpuPmuInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, size) == 4u, "CpuPmuInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, cpu_index) == 8u, "CpuPmuInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, flags) == 12u, "CpuPmuInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, epoch) == 16u, "CpuPmuInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, last_generation) == 24u, "CpuPmuInfo.last_generation offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, last_epoch) == 32u, "CpuPmuInfo.last_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, profile) == 40u, "CpuPmuInfo.profile offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, reason) == 44u, "CpuPmuInfo.reason offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, pmu_version) == 48u, "CpuPmuInfo.pmu_version offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, counter_count) == 52u, "CpuPmuInfo.counter_count offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, counter_width) == 56u, "CpuPmuInfo.counter_width offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, fixed_count) == 60u, "CpuPmuInfo.fixed_count offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, fixed_width) == 64u, "CpuPmuInfo.fixed_width offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, event_mask) == 68u, "CpuPmuInfo.event_mask offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, architectural_event_mask) == 72u, "CpuPmuInfo.architectural_event_mask offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, signature) == 76u, "CpuPmuInfo.signature offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, configured_cpus) == 80u, "CpuPmuInfo.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, state) == 84u, "CpuPmuInfo.state offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, inflight_generation) == 88u, "CpuPmuInfo.inflight_generation offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, inflight_epoch) == 96u, "CpuPmuInfo.inflight_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, last_sequence) == 104u, "CpuPmuInfo.last_sequence offset mismatch");
+_Static_assert(offsetof(R4CpuPmuInfo, reserved0) == 112u, "CpuPmuInfo.reserved0 offset mismatch");
+_Static_assert(sizeof(R4CpuPmuResult) == 256u, "CpuPmuResult size mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, version) == 0u, "CpuPmuResult.version offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, size) == 4u, "CpuPmuResult.size offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, cpu_index) == 8u, "CpuPmuResult.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, flags) == 12u, "CpuPmuResult.flags offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, epoch) == 16u, "CpuPmuResult.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, generation) == 24u, "CpuPmuResult.generation offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, sequence) == 32u, "CpuPmuResult.sequence offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, event_id) == 40u, "CpuPmuResult.event_id offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, profile) == 44u, "CpuPmuResult.profile offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, status) == 48u, "CpuPmuResult.status offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, callback_result) == 52u, "CpuPmuResult.callback_result offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, counter_width) == 56u, "CpuPmuResult.counter_width offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, iterations) == 60u, "CpuPmuResult.iterations offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, read_faults) == 64u, "CpuPmuResult.read_faults offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, write_attempts) == 68u, "CpuPmuResult.write_attempts offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, raw_before) == 72u, "CpuPmuResult.raw_before offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, raw_after) == 80u, "CpuPmuResult.raw_after offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, delta_modulo) == 88u, "CpuPmuResult.delta_modulo offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, counter_mask) == 96u, "CpuPmuResult.counter_mask offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, saved_control) == 104u, "CpuPmuResult.saved_control offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, saved_counter) == 112u, "CpuPmuResult.saved_counter offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, saved_global) == 120u, "CpuPmuResult.saved_global offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, saved_status) == 128u, "CpuPmuResult.saved_status offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, observed_control) == 136u, "CpuPmuResult.observed_control offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, observed_counter) == 144u, "CpuPmuResult.observed_counter offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, observed_global) == 152u, "CpuPmuResult.observed_global offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, observed_status) == 160u, "CpuPmuResult.observed_status offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, original_if) == 168u, "CpuPmuResult.original_if offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, final_if) == 176u, "CpuPmuResult.final_if offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, begin_ns) == 184u, "CpuPmuResult.begin_ns offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, end_ns) == 192u, "CpuPmuResult.end_ns offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, signature) == 200u, "CpuPmuResult.signature offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, configured_cpus) == 204u, "CpuPmuResult.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, counter_index) == 208u, "CpuPmuResult.counter_index offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, reserved0) == 212u, "CpuPmuResult.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, event_select) == 216u, "CpuPmuResult.event_select offset mismatch");
+_Static_assert(offsetof(R4CpuPmuResult, reserved1) == 224u, "CpuPmuResult.reserved1 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1288u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -18183,7 +18375,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 680u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 704u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -18348,6 +18540,12 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_machine_bank) == 664u, "R4XStartR4Dev
 _Static_assert(sizeof(R4DevCpuMachineBankFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_microcode_info) == 672u, "R4XStartR4Dev.cpu_microcode_info offset mismatch");
 _Static_assert(sizeof(R4DevCpuMicrocodeInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_pmu_info) == 680u, "R4XStartR4Dev.cpu_pmu_info offset mismatch");
+_Static_assert(sizeof(R4DevCpuPmuInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_pmu_measure) == 688u, "R4XStartR4Dev.cpu_pmu_measure offset mismatch");
+_Static_assert(sizeof(R4DevCpuPmuMeasureFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_pmu_result) == 696u, "R4XStartR4Dev.cpu_pmu_result offset mismatch");
+_Static_assert(sizeof(R4DevCpuPmuResultFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

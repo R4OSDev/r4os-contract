@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 469,
+    "group_function_signatures": 472,
     "sdk_operation_contracts": 0,
-    "parity_entries": 469,
+    "parity_entries": 472,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4229,6 +4229,33 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.cpu_microcode_info",
       "c_contract": "R4DevCpuMicrocodeInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_pmu_info",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_pmu_info",
+      "c_contract": "R4DevCpuPmuInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_pmu_measure",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_pmu_measure",
+      "c_contract": "R4DevCpuPmuMeasureFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_pmu_result",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_pmu_result",
+      "c_contract": "R4DevCpuPmuResultFn",
       "coverage": "generated_signature"
     }
   ],

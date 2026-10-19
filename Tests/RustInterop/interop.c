@@ -16,3 +16,8 @@ int32_t r4os_c_rust_call(R4SysWriteFn callback, const uint8_t *data, uint32_t si
     if (floating != 5.0) return -2;
     return result;
 }
+
+/* Typed pure callback transport only, no actual PMU or hardware probe. */
+int32_t r4os_c_pmu_work(uint64_t context, uint32_t iterations) {
+    return context == UINT64_C(0x8123456789abcdef) && iterations == 4096 ? -30005 : -1;
+}

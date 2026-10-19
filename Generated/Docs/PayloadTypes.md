@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 355 von 355 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 358 von 358 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2563; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2617; Limits: 111
 
 ## App-Profile
 
@@ -376,6 +376,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuMachineInfo` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 | `CpuMachineBank` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `CpuMicrocodeInfo` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
+| `CpuPmuInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `CpuPmuResult` | fixed_layout | extern_struct | 256/8 | 256/8 | 256/8 | 256/8 |
+| `PmuWorkFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 
 ## Typdetails
 
@@ -9674,6 +9677,93 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `configured_cpus` | 136 | 4 | 4 | `u32` | - |
 | `reserved0` | 140 | 4 | 4 | `u32` | - |
 
+### `CpuPmuInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `last_generation` | 24 | 8 | 8 | `u64` | - |
+| `last_epoch` | 32 | 8 | 8 | `u64` | - |
+| `profile` | 40 | 4 | 4 | `u32` | - |
+| `reason` | 44 | 4 | 4 | `u32` | - |
+| `pmu_version` | 48 | 4 | 4 | `u32` | - |
+| `counter_count` | 52 | 4 | 4 | `u32` | - |
+| `counter_width` | 56 | 4 | 4 | `u32` | - |
+| `fixed_count` | 60 | 4 | 4 | `u32` | - |
+| `fixed_width` | 64 | 4 | 4 | `u32` | - |
+| `event_mask` | 68 | 4 | 4 | `u32` | - |
+| `architectural_event_mask` | 72 | 4 | 4 | `u32` | - |
+| `signature` | 76 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 80 | 4 | 4 | `u32` | - |
+| `state` | 84 | 4 | 4 | `u32` | - |
+| `inflight_generation` | 88 | 8 | 8 | `u64` | - |
+| `inflight_epoch` | 96 | 8 | 8 | `u64` | - |
+| `last_sequence` | 104 | 8 | 8 | `u64` | - |
+| `reserved0` | 112 | 16 | 8 | `[2]u64` | - |
+
+### `CpuPmuResult`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 256 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `sequence` | 32 | 8 | 8 | `u64` | - |
+| `event_id` | 40 | 4 | 4 | `u32` | - |
+| `profile` | 44 | 4 | 4 | `u32` | - |
+| `status` | 48 | 4 | 4 | `u32` | - |
+| `callback_result` | 52 | 4 | 4 | `i32` | - |
+| `counter_width` | 56 | 4 | 4 | `u32` | - |
+| `iterations` | 60 | 4 | 4 | `u32` | - |
+| `read_faults` | 64 | 4 | 4 | `u32` | - |
+| `write_attempts` | 68 | 4 | 4 | `u32` | - |
+| `raw_before` | 72 | 8 | 8 | `u64` | - |
+| `raw_after` | 80 | 8 | 8 | `u64` | - |
+| `delta_modulo` | 88 | 8 | 8 | `u64` | - |
+| `counter_mask` | 96 | 8 | 8 | `u64` | - |
+| `saved_control` | 104 | 8 | 8 | `u64` | - |
+| `saved_counter` | 112 | 8 | 8 | `u64` | - |
+| `saved_global` | 120 | 8 | 8 | `u64` | - |
+| `saved_status` | 128 | 8 | 8 | `u64` | - |
+| `observed_control` | 136 | 8 | 8 | `u64` | - |
+| `observed_counter` | 144 | 8 | 8 | `u64` | - |
+| `observed_global` | 152 | 8 | 8 | `u64` | - |
+| `observed_status` | 160 | 8 | 8 | `u64` | - |
+| `original_if` | 168 | 8 | 8 | `u64` | - |
+| `final_if` | 176 | 8 | 8 | `u64` | - |
+| `begin_ns` | 184 | 8 | 8 | `u64` | - |
+| `end_ns` | 192 | 8 | 8 | `u64` | - |
+| `signature` | 200 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 204 | 4 | 4 | `u32` | - |
+| `counter_index` | 208 | 4 | 4 | `u32` | - |
+| `reserved0` | 212 | 4 | 4 | `u32` | - |
+| `event_select` | 216 | 8 | 8 | `u64` | - |
+| `reserved1` | 224 | 32 | 8 | `[4]u64` | - |
+
+### `PmuWorkFn`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `callback`
+- Repräsentation: `c_callback`
+- Version/Größe/Alignment: 1 / 8 / 8
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12998,6 +13088,60 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_microcode_status_restart_verified` | `11` | `u32` | value | number | `cpu_microcode` | fixed_contract |
 | `cpu_microcode_status_restart_requires_update` | `12` | `u32` | value | number | `cpu_microcode` | fixed_contract |
 | `cpu_microcode_status_identity_changed` | `13` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_pmu_flag_exposed` | `1` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_flag_virtual` | `2` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_flag_qualified` | `4` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_flag_online` | `8` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_flag_busy` | `16` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_flag_quarantined` | `32` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_flag_last_result` | `64` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_flag_modulo_only` | `128` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_raw_before` | `1` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_raw_after` | `2` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_callback_started` | `4` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_callback_returned` | `8` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_restored` | `16` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_absolute_count` | `32` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_modulo_delta` | `64` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_overflow` | `128` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_identity_valid` | `256` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_snapshot_valid` | `512` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_if_preserved` | `1024` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_untouched` | `2048` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_full_width` | `4096` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_result_flag_within_budget` | `8192` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_profile_unknown` | `0` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_profile_intel_arch` | `1` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_profile_amd_milan_b1` | `2` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_none` | `0` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_no_pmu` | `1` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_virtual_cpu` | `2` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_unsupported_layout` | `3` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_unsupported_model` | `4` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_malformed` | `5` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_no_msr` | `6` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_offline` | `7` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_reason_quarantined` | `8` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_state_idle` | `0` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_state_active` | `1` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_state_quarantined` | `2` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_completed` | `0` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_busy` | `1` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_read_failed` | `2` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_write_failed` | `3` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_overflow` | `4` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_callback_aborted` | `5` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_identity_changed` | `6` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_restore_failed` | `7` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_status_clock_invalid` | `8` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_event_cycles` | `0` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_event_instructions` | `1` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_event_branches` | `2` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_event_branch_misses` | `3` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_event_cache_references` | `4` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_event_cache_misses` | `5` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_max_iterations` | `4096` | `u32` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_pmu_max_window_ns` | `2000000` | `u64` | value | number | `cpu_pmu` | fixed_contract |
 
 ## Limits
 

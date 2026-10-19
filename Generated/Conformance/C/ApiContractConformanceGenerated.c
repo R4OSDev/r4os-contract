@@ -472,5 +472,8 @@ static R4DevCpuIdleInfoFn r4os_probe_r4dev_cpu_idle_info = (R4DevCpuIdleInfoFn)0
 static R4DevCpuMachineInfoFn r4os_probe_r4dev_cpu_machine_info = (R4DevCpuMachineInfoFn)0;
 static R4DevCpuMachineBankFn r4os_probe_r4dev_cpu_machine_bank = (R4DevCpuMachineBankFn)0;
 static R4DevCpuMicrocodeInfoFn r4os_probe_r4dev_cpu_microcode_info = (R4DevCpuMicrocodeInfoFn)0;
+static R4DevCpuPmuInfoFn r4os_probe_r4dev_cpu_pmu_info = (R4DevCpuPmuInfoFn)0;
+static R4DevCpuPmuMeasureFn r4os_probe_r4dev_cpu_pmu_measure = (R4DevCpuPmuMeasureFn)0;
+static R4DevCpuPmuResultFn r4os_probe_r4dev_cpu_pmu_result = (R4DevCpuPmuResultFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

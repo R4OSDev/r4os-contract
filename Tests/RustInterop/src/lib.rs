@@ -130,3 +130,55 @@ pub unsafe extern "C" fn r4os_rust_default_header(output: *mut abi::ServiceMessa
     // SAFETY: caller exclusively owns the output fixture.
     unsafe { output.write(abi::ServiceMessageHeader::default()) };
 }
+
+// Only ABI transport peers: no CPU/register operation or hardware counter.
+unsafe extern "C" fn pmu_measure(
+    cpu: u32,
+    epoch: u64,
+    event: u32,
+    iterations: u32,
+    work: *const abi::PmuWorkFn,
+    context: u64,
+    output: *mut abi::CpuPmuResult,
+) -> i32 {
+    assert_eq!(cpu, 0xfedc_ba98);
+    assert_eq!(epoch, 0xfedc_ba98_7654_3210);
+    assert_eq!(event, abi::cpu_pmu_event_branch_misses);
+    assert_eq!(iterations, abi::cpu_pmu_max_iterations);
+    if work.is_null() || !work.is_aligned() || output.is_null() || !output.is_aligned() {
+        return abi::cpu_capabilities_error_invalid;
+    }
+    // SAFETY: the fixture retains the borrowed function slot and exclusive
+    // output. Check zero bits before materializing a nonnull Rust function.
+    let result = unsafe {
+        if work.cast::<u64>().read() == 0
+            || (*output).version != 1
+            || (*output).size < core::mem::size_of::<abi::CpuPmuResult>() as u32
+        {
+            return abi::cpu_capabilities_error_invalid;
+        }
+        work.read()(context, iterations)
+    };
+    // SAFETY: only the fixed256-byte result is copied; caller tail remains.
+    unsafe {
+        output.write(abi::CpuPmuResult {
+            cpu_index: cpu,
+            epoch,
+            generation: 0x8123_4567_89ab_cdef,
+            event_id: event,
+            iterations,
+            callback_result: result,
+            status: abi::cpu_pmu_status_callback_aborted,
+            // No physical data is invented by an ABI-only fixture.
+            flags: abi::cpu_pmu_result_flag_callback_started
+                | abi::cpu_pmu_result_flag_callback_returned,
+            ..Default::default()
+        });
+    }
+    0
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn r4os_rust_pmu_measure() -> abi::R4DevFns::cpu_pmu_measure {
+    pmu_measure
+}

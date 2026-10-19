@@ -9,6 +9,8 @@ extern fn r4os_rust_protocol_buffer(*const abi.ProtocolBuffer, *abi.ProtocolBuff
 extern fn r4os_rust_enum(abi.DriverType) callconv(.c) abi.DriverType;
 extern fn r4os_rust_default_header(*abi.ServiceMessageHeader) callconv(.c) void;
 extern fn r4os_c_rust_call(abi.R4SysFns.write, [*]const u8, u32) callconv(.c) i32;
+extern fn r4os_rust_pmu_measure() callconv(.c) abi.R4DevFns.cpu_pmu_measure;
+extern fn r4os_c_pmu_work(u64, u32) callconv(.c) i32;
 
 fn zigWrite(data: [*]const u8, size: u32) callconv(.c) i32 {
     if (size != 9 or !std.mem.eql(u8, data[0..size], "R4OS-Rust")) return -1;
@@ -16,6 +18,10 @@ fn zigWrite(data: [*]const u8, size: u32) callconv(.c) i32 {
 }
 fn work(context: usize) callconv(.c) i32 {
     return if (context == 0x8123_4567_89ab_cdef) -32768 else -1;
+}
+
+fn pmuWork(context: u64, iterations: u32) callconv(.c) i32 {
+    return if (context == 0x8123_4567_89ab_cdef and iterations == 4096) -30007 else -1;
 }
 
 test "canonical Rust/Zig/C callbacks, nullability, stack arguments and SIMD consumer" {
@@ -56,4 +62,27 @@ test "canonical Rust/Zig/C callbacks, nullability, stack arguments and SIMD cons
     const original_header: abi.ServiceMessageHeader = .{};
     try std.testing.expectEqual(original_header.magic, header.magic);
     try std.testing.expectEqual(@as(i32, 0), header.status);
+}
+
+test "PMU typed borrowed callback slot and seven-argument C ABI preserve result tail" {
+    const measure = r4os_rust_pmu_measure();
+    const sentinel: u64 = 0xfedc_ba98_7654_3210;
+    var guarded: extern struct { result: abi.CpuPmuResult = .{}, tail: u64 = sentinel } = .{};
+    const callbacks = [_]abi.PmuWorkFn{ pmuWork, r4os_c_pmu_work };
+    for (callbacks, [_]i32{ -30007, -30005 }) |callback, expected| {
+        guarded.result.size = @sizeOf(@TypeOf(guarded));
+        try std.testing.expectEqual(@as(i32, 0), measure(0xfedc_ba98, sentinel, abi.cpu_pmu_event_branch_misses, 4096, &callback, 0x8123_4567_89ab_cdef, &guarded.result));
+        try std.testing.expectEqual(sentinel, guarded.tail);
+        try std.testing.expectEqual(sentinel, guarded.result.epoch);
+        try std.testing.expectEqual(@as(u64, 0x8123_4567_89ab_cdef), guarded.result.generation);
+        try std.testing.expectEqual(expected, guarded.result.callback_result);
+        try std.testing.expectEqual(@as(u32, 256), guarded.result.size);
+        try std.testing.expectEqual(abi.cpu_pmu_result_flag_callback_started | abi.cpu_pmu_result_flag_callback_returned, guarded.result.flags);
+    }
+    const original = guarded;
+    var zero: u64 = 0;
+    for ([_]?*const abi.PmuWorkFn{ null, @ptrCast(&zero) }) |callback_slot| {
+        try std.testing.expectEqual(abi.cpu_capabilities_error_invalid, measure(0xfedc_ba98, sentinel, abi.cpu_pmu_event_branch_misses, 4096, callback_slot, 0x8123_4567_89ab_cdef, &guarded.result));
+        try std.testing.expectEqualSlices(u8, std.mem.asBytes(&original), std.mem.asBytes(&guarded));
+    }
 }

@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 469,
-    "group_slot_count": 469,
+    "function_count": 472,
+    "group_slot_count": 472,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 130
+    "advanced_count": 133
   },
   "functions": [
     {
@@ -5635,6 +5635,42 @@
       "slot": 82,
       "exposure": "advanced",
       "description": "Passive fixed early microcode receipt. Exact CPU/execution epoch, real revision-read validity, loaded/supplied/virtual/prerequisite/failure states and post-baseline capture stay distinct. No update operation, hardware access or callback. Error preserves full output/tail.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_pmu_info",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 83,
+      "exposure": "advanced",
+      "description": "Passive cached interface/model/current epoch and exact retained measurement ownership. No hardware access or callback.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_pmu_measure",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 84,
+      "exposure": "advanced",
+      "description": "Explicit synchronous private CPU-counter scope, exact CPU/epoch/nonreused generation. Native supported named event only, virtual/unknown refused before MSR/work.1..4096 pure resident callback iterations, no allocation/fault/block/yield/API/placement call, IF0 only during short owned transaction then original IF. Original register state and exact readbacks before release; uncertain restoration retains quarantined PMU and lifecycle lease. Return0 means a complete receipt, not count validity; inspect status/flags. No arbitrary MSR/event/firmware interface. Work is a borrowed nullable pointer to one typed callback slot; null slot/address is invalid. SDK convenience facades pass a copied local function slot. No host-dependent optional-by-value callback enters the ABI.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_pmu_result",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 85,
+      "exposure": "advanced",
+      "description": "Passive latest retained result copy for exact original CPU/epoch/generation. Offline/restart never relabel data; stale identity/error leaves all output/tail unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
