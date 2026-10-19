@@ -2444,6 +2444,52 @@ extern "C" {
 #define R4OS_CPU_REGISTER_ID_AMD_CPPC_CAPABILITIES2 24u
 #define R4OS_CPU_REGISTER_ID_AMD_CPPC_REQUEST 25u
 #define R4OS_CPU_REGISTER_ID_AMD_CPPC_STATUS 26u
+#define R4OS_POWER_PROFILE_FIRMWARE 0u
+#define R4OS_POWER_PROFILE_BALANCED 1u
+#define R4OS_POWER_PROFILE_PERFORMANCE 2u
+#define R4OS_POWER_PROFILE_SAVING 3u
+#define R4OS_POWER_PROFILE_OP_STATUS 1u
+#define R4OS_POWER_PROFILE_OP_SELECT 2u
+#define R4OS_POWER_PROFILE_OP_CPU 3u
+#define R4OS_POWER_PROFILE_OP_QUIESCE 4u
+#define R4OS_POWER_PROFILE_OP_RESUME 5u
+#define R4OS_POWER_PROFILE_OP_RELOAD 6u
+#define R4OS_POWER_PROFILE_REQUEST_FLAG_STICKY_ENABLE 1u
+#define R4OS_POWER_PROFILE_STATE_FIRMWARE 0u
+#define R4OS_POWER_PROFILE_STATE_UNSUPPORTED 1u
+#define R4OS_POWER_PROFILE_STATE_DISABLED 2u
+#define R4OS_POWER_PROFILE_STATE_APPLYING 3u
+#define R4OS_POWER_PROFILE_STATE_APPLIED 4u
+#define R4OS_POWER_PROFILE_STATE_RETURNING 5u
+#define R4OS_POWER_PROFILE_STATE_RETAINED 6u
+#define R4OS_POWER_PROFILE_STATE_PARTIAL 7u
+#define R4OS_POWER_PROFILE_STATE_QUIESCED 8u
+#define R4OS_POWER_PROFILE_BACKEND_NONE 0u
+#define R4OS_POWER_PROFILE_BACKEND_HWP 1u
+#define R4OS_POWER_PROFILE_BACKEND_CPPC 2u
+#define R4OS_POWER_PROFILE_FLAG_PROVIDER 1u
+#define R4OS_POWER_PROFILE_FLAG_APPLIED_COMPLETE 2u
+#define R4OS_POWER_PROFILE_FLAG_PENDING_RETURN 4u
+#define R4OS_POWER_PROFILE_FLAG_QUIESCED 8u
+#define R4OS_POWER_PROFILE_FLAG_CONFIG_VALID 16u
+#define R4OS_POWER_PROFILE_FLAG_STICKY_ENABLED 32u
+#define R4OS_POWER_PROFILE_CPU_FLAG_OWNED 1u
+#define R4OS_POWER_PROFILE_CPU_FLAG_CONFIRMED 2u
+#define R4OS_POWER_PROFILE_CPU_FLAG_STICKY_ENABLED 4u
+#define R4OS_POWER_PROFILE_CPU_FLAG_FOREIGN_CONTROL 8u
+#define R4OS_POWER_PROFILE_CPU_FLAG_WORKER_RETAINED 16u
+#define R4OS_POWER_PROFILE_CPU_VALID_REQUEST 1u
+#define R4OS_POWER_PROFILE_CPU_VALID_RANGE 2u
+#define R4OS_POWER_PROFILE_CPU_VALID_TIME 4u
+#define R4OS_POWER_PROFILE_CPU_VALID_EPP 8u
+#define R4OS_POWER_PROFILE_WORKER_ABSENT 0u
+#define R4OS_POWER_PROFILE_WORKER_STARTING 1u
+#define R4OS_POWER_PROFILE_WORKER_IDLE 2u
+#define R4OS_POWER_PROFILE_WORKER_APPLYING 3u
+#define R4OS_POWER_PROFILE_WORKER_ACTIVE 4u
+#define R4OS_POWER_PROFILE_WORKER_RETURNING 5u
+#define R4OS_POWER_PROFILE_WORKER_HELD 6u
+#define R4OS_POWER_PROFILE_WORKER_COMPLETE 7u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3247,6 +3293,9 @@ typedef struct R4CpuCppcInfo R4CpuCppcInfo;
 typedef struct R4CpuCppcBackend R4CpuCppcBackend;
 typedef struct R4CpuPerformanceHint R4CpuPerformanceHint;
 typedef struct R4CpuPerformanceHintInfo R4CpuPerformanceHintInfo;
+typedef struct R4PowerProfileRequest R4PowerProfileRequest;
+typedef struct R4PowerProfileInfo R4PowerProfileInfo;
+typedef struct R4PowerCpuProfileInfo R4PowerCpuProfileInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -9788,6 +9837,80 @@ typedef struct R4CpuPerformanceHintInfo {
     uint32_t rank;
     uint32_t scale;
 } R4CpuPerformanceHintInfo;
+
+typedef struct R4PowerProfileRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t profile;
+    uint32_t flags;
+    uint64_t expected_service_generation;
+    uint64_t expected_revision;
+    uint32_t cpu_index;
+    uint32_t reserved0;
+    uint64_t reserved1;
+    uint64_t reserved2;
+    uint64_t reserved3;
+} R4PowerProfileRequest;
+
+typedef struct R4PowerProfileInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t state;
+    uint32_t selected_profile;
+    uint32_t flags;
+    uint32_t configured_cpus;
+    uint32_t online_cpus;
+    uint32_t backend_cpus;
+    uint64_t service_generation;
+    uint64_t revision;
+    uint64_t applied_revision;
+    uint64_t provider_generation;
+    uint64_t owned_mask;
+    uint64_t applied_mask;
+    uint64_t pending_mask;
+    uint64_t supported_mask;
+    int32_t last_error;
+    uint32_t last_cpu;
+    uint32_t config_revision;
+    int32_t config_error;
+    uint32_t service_instance_id;
+    uint32_t worker_count;
+    uint32_t sticky_count;
+    uint32_t reserved0;
+} R4PowerProfileInfo;
+
+typedef struct R4PowerCpuProfileInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t backend;
+    uint32_t state;
+    uint32_t flags;
+    uint32_t profile;
+    int32_t last_error;
+    uint64_t cpu_epoch;
+    uint64_t provider_generation;
+    uint64_t lease;
+    uint64_t revision;
+    uint64_t applied_revision;
+    uint64_t captured_ns;
+    uint32_t minimum;
+    uint32_t maximum;
+    uint32_t desired;
+    uint32_t epp;
+    uint32_t lowest;
+    uint32_t highest;
+    uint32_t efficient;
+    uint32_t nominal;
+    uint64_t baseline_request;
+    uint64_t last_written;
+    uint64_t observed_request;
+    uint32_t valid_mask;
+    uint32_t reserved0;
+    uint32_t worker_state;
+    uint32_t reserved1;
+    uint64_t service_generation;
+} R4PowerCpuProfileInfo;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -16709,6 +16832,74 @@ _Static_assert(offsetof(R4CpuPerformanceHintInfo, scope_mask) == 72u, "CpuPerfor
 _Static_assert(offsetof(R4CpuPerformanceHintInfo, core_mask) == 80u, "CpuPerformanceHintInfo.core_mask offset mismatch");
 _Static_assert(offsetof(R4CpuPerformanceHintInfo, rank) == 88u, "CpuPerformanceHintInfo.rank offset mismatch");
 _Static_assert(offsetof(R4CpuPerformanceHintInfo, scale) == 92u, "CpuPerformanceHintInfo.scale offset mismatch");
+_Static_assert(sizeof(R4PowerProfileRequest) == 64u, "PowerProfileRequest size mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, version) == 0u, "PowerProfileRequest.version offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, size) == 4u, "PowerProfileRequest.size offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, profile) == 8u, "PowerProfileRequest.profile offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, flags) == 12u, "PowerProfileRequest.flags offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, expected_service_generation) == 16u, "PowerProfileRequest.expected_service_generation offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, expected_revision) == 24u, "PowerProfileRequest.expected_revision offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, cpu_index) == 32u, "PowerProfileRequest.cpu_index offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, reserved0) == 36u, "PowerProfileRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, reserved1) == 40u, "PowerProfileRequest.reserved1 offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, reserved2) == 48u, "PowerProfileRequest.reserved2 offset mismatch");
+_Static_assert(offsetof(R4PowerProfileRequest, reserved3) == 56u, "PowerProfileRequest.reserved3 offset mismatch");
+_Static_assert(sizeof(R4PowerProfileInfo) == 128u, "PowerProfileInfo size mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, version) == 0u, "PowerProfileInfo.version offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, size) == 4u, "PowerProfileInfo.size offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, state) == 8u, "PowerProfileInfo.state offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, selected_profile) == 12u, "PowerProfileInfo.selected_profile offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, flags) == 16u, "PowerProfileInfo.flags offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, configured_cpus) == 20u, "PowerProfileInfo.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, online_cpus) == 24u, "PowerProfileInfo.online_cpus offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, backend_cpus) == 28u, "PowerProfileInfo.backend_cpus offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, service_generation) == 32u, "PowerProfileInfo.service_generation offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, revision) == 40u, "PowerProfileInfo.revision offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, applied_revision) == 48u, "PowerProfileInfo.applied_revision offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, provider_generation) == 56u, "PowerProfileInfo.provider_generation offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, owned_mask) == 64u, "PowerProfileInfo.owned_mask offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, applied_mask) == 72u, "PowerProfileInfo.applied_mask offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, pending_mask) == 80u, "PowerProfileInfo.pending_mask offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, supported_mask) == 88u, "PowerProfileInfo.supported_mask offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, last_error) == 96u, "PowerProfileInfo.last_error offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, last_cpu) == 100u, "PowerProfileInfo.last_cpu offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, config_revision) == 104u, "PowerProfileInfo.config_revision offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, config_error) == 108u, "PowerProfileInfo.config_error offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, service_instance_id) == 112u, "PowerProfileInfo.service_instance_id offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, worker_count) == 116u, "PowerProfileInfo.worker_count offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, sticky_count) == 120u, "PowerProfileInfo.sticky_count offset mismatch");
+_Static_assert(offsetof(R4PowerProfileInfo, reserved0) == 124u, "PowerProfileInfo.reserved0 offset mismatch");
+_Static_assert(sizeof(R4PowerCpuProfileInfo) == 160u, "PowerCpuProfileInfo size mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, version) == 0u, "PowerCpuProfileInfo.version offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, size) == 4u, "PowerCpuProfileInfo.size offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, cpu_index) == 8u, "PowerCpuProfileInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, backend) == 12u, "PowerCpuProfileInfo.backend offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, state) == 16u, "PowerCpuProfileInfo.state offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, flags) == 20u, "PowerCpuProfileInfo.flags offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, profile) == 24u, "PowerCpuProfileInfo.profile offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, last_error) == 28u, "PowerCpuProfileInfo.last_error offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, cpu_epoch) == 32u, "PowerCpuProfileInfo.cpu_epoch offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, provider_generation) == 40u, "PowerCpuProfileInfo.provider_generation offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, lease) == 48u, "PowerCpuProfileInfo.lease offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, revision) == 56u, "PowerCpuProfileInfo.revision offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, applied_revision) == 64u, "PowerCpuProfileInfo.applied_revision offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, captured_ns) == 72u, "PowerCpuProfileInfo.captured_ns offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, minimum) == 80u, "PowerCpuProfileInfo.minimum offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, maximum) == 84u, "PowerCpuProfileInfo.maximum offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, desired) == 88u, "PowerCpuProfileInfo.desired offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, epp) == 92u, "PowerCpuProfileInfo.epp offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, lowest) == 96u, "PowerCpuProfileInfo.lowest offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, highest) == 100u, "PowerCpuProfileInfo.highest offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, efficient) == 104u, "PowerCpuProfileInfo.efficient offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, nominal) == 108u, "PowerCpuProfileInfo.nominal offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, baseline_request) == 112u, "PowerCpuProfileInfo.baseline_request offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, last_written) == 120u, "PowerCpuProfileInfo.last_written offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, observed_request) == 128u, "PowerCpuProfileInfo.observed_request offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, valid_mask) == 136u, "PowerCpuProfileInfo.valid_mask offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, reserved0) == 140u, "PowerCpuProfileInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, worker_state) == 144u, "PowerCpuProfileInfo.worker_state offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, reserved1) == 148u, "PowerCpuProfileInfo.reserved1 offset mismatch");
+_Static_assert(offsetof(R4PowerCpuProfileInfo, service_generation) == 152u, "PowerCpuProfileInfo.service_generation offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1280u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

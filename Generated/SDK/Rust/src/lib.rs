@@ -2436,6 +2436,52 @@ pub const cpu_register_id_amd_cppc_enable: u32 = 23;
 pub const cpu_register_id_amd_cppc_capabilities2: u32 = 24;
 pub const cpu_register_id_amd_cppc_request: u32 = 25;
 pub const cpu_register_id_amd_cppc_status: u32 = 26;
+pub const power_profile_firmware: u32 = 0;
+pub const power_profile_balanced: u32 = 1;
+pub const power_profile_performance: u32 = 2;
+pub const power_profile_saving: u32 = 3;
+pub const power_profile_op_status: u16 = 1;
+pub const power_profile_op_select: u16 = 2;
+pub const power_profile_op_cpu: u16 = 3;
+pub const power_profile_op_quiesce: u16 = 4;
+pub const power_profile_op_resume: u16 = 5;
+pub const power_profile_op_reload: u16 = 6;
+pub const power_profile_request_flag_sticky_enable: u32 = 1;
+pub const power_profile_state_firmware: u32 = 0;
+pub const power_profile_state_unsupported: u32 = 1;
+pub const power_profile_state_disabled: u32 = 2;
+pub const power_profile_state_applying: u32 = 3;
+pub const power_profile_state_applied: u32 = 4;
+pub const power_profile_state_returning: u32 = 5;
+pub const power_profile_state_retained: u32 = 6;
+pub const power_profile_state_partial: u32 = 7;
+pub const power_profile_state_quiesced: u32 = 8;
+pub const power_profile_backend_none: u32 = 0;
+pub const power_profile_backend_hwp: u32 = 1;
+pub const power_profile_backend_cppc: u32 = 2;
+pub const power_profile_flag_provider: u32 = 1;
+pub const power_profile_flag_applied_complete: u32 = 2;
+pub const power_profile_flag_pending_return: u32 = 4;
+pub const power_profile_flag_quiesced: u32 = 8;
+pub const power_profile_flag_config_valid: u32 = 16;
+pub const power_profile_flag_sticky_enabled: u32 = 32;
+pub const power_profile_cpu_flag_owned: u32 = 1;
+pub const power_profile_cpu_flag_confirmed: u32 = 2;
+pub const power_profile_cpu_flag_sticky_enabled: u32 = 4;
+pub const power_profile_cpu_flag_foreign_control: u32 = 8;
+pub const power_profile_cpu_flag_worker_retained: u32 = 16;
+pub const power_profile_cpu_valid_request: u32 = 1;
+pub const power_profile_cpu_valid_range: u32 = 2;
+pub const power_profile_cpu_valid_time: u32 = 4;
+pub const power_profile_cpu_valid_epp: u32 = 8;
+pub const power_profile_worker_absent: u32 = 0;
+pub const power_profile_worker_starting: u32 = 1;
+pub const power_profile_worker_idle: u32 = 2;
+pub const power_profile_worker_applying: u32 = 3;
+pub const power_profile_worker_active: u32 = 4;
+pub const power_profile_worker_returning: u32 = 5;
+pub const power_profile_worker_held: u32 = 6;
+pub const power_profile_worker_complete: u32 = 7;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -18081,6 +18127,172 @@ impl Default for CpuPerformanceHintInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct PowerProfileRequest {
+    pub version: u32,
+    pub size: u32,
+    pub profile: u32,
+    pub flags: u32,
+    pub expected_service_generation: u64,
+    pub expected_revision: u64,
+    pub cpu_index: u32,
+    pub reserved0: u32,
+    pub reserved1: u64,
+    pub reserved2: u64,
+    pub reserved3: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for PowerProfileRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            profile: 0,
+            flags: 0,
+            expected_service_generation: 0,
+            expected_revision: 0,
+            cpu_index: 0,
+            reserved0: 0,
+            reserved1: 0,
+            reserved2: 0,
+            reserved3: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct PowerProfileInfo {
+    pub version: u32,
+    pub size: u32,
+    pub state: u32,
+    pub selected_profile: u32,
+    pub flags: u32,
+    pub configured_cpus: u32,
+    pub online_cpus: u32,
+    pub backend_cpus: u32,
+    pub service_generation: u64,
+    pub revision: u64,
+    pub applied_revision: u64,
+    pub provider_generation: u64,
+    pub owned_mask: u64,
+    pub applied_mask: u64,
+    pub pending_mask: u64,
+    pub supported_mask: u64,
+    pub last_error: i32,
+    pub last_cpu: u32,
+    pub config_revision: u32,
+    pub config_error: i32,
+    pub service_instance_id: u32,
+    pub worker_count: u32,
+    pub sticky_count: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for PowerProfileInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            state: 0,
+            selected_profile: 0,
+            flags: 0,
+            configured_cpus: 0,
+            online_cpus: 0,
+            backend_cpus: 0,
+            service_generation: 0,
+            revision: 0,
+            applied_revision: 0,
+            provider_generation: 0,
+            owned_mask: 0,
+            applied_mask: 0,
+            pending_mask: 0,
+            supported_mask: 0,
+            last_error: 0,
+            last_cpu: 0,
+            config_revision: 0,
+            config_error: 0,
+            service_instance_id: 0,
+            worker_count: 0,
+            sticky_count: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct PowerCpuProfileInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub backend: u32,
+    pub state: u32,
+    pub flags: u32,
+    pub profile: u32,
+    pub last_error: i32,
+    pub cpu_epoch: u64,
+    pub provider_generation: u64,
+    pub lease: u64,
+    pub revision: u64,
+    pub applied_revision: u64,
+    pub captured_ns: u64,
+    pub minimum: u32,
+    pub maximum: u32,
+    pub desired: u32,
+    pub epp: u32,
+    pub lowest: u32,
+    pub highest: u32,
+    pub efficient: u32,
+    pub nominal: u32,
+    pub baseline_request: u64,
+    pub last_written: u64,
+    pub observed_request: u64,
+    pub valid_mask: u32,
+    pub reserved0: u32,
+    pub worker_state: u32,
+    pub reserved1: u32,
+    pub service_generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for PowerCpuProfileInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 160,
+            cpu_index: 0,
+            backend: 0,
+            state: 0,
+            flags: 0,
+            profile: 0,
+            last_error: 0,
+            cpu_epoch: 0,
+            provider_generation: 0,
+            lease: 0,
+            revision: 0,
+            applied_revision: 0,
+            captured_ns: 0,
+            minimum: 0,
+            maximum: 0,
+            desired: 0,
+            epp: 0,
+            lowest: 0,
+            highest: 0,
+            efficient: 0,
+            nominal: 0,
+            baseline_request: 0,
+            last_written: 0,
+            observed_request: 0,
+            valid_mask: 0,
+            reserved0: 0,
+            worker_state: 0,
+            reserved1: 0,
+            service_generation: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -29848,6 +30060,77 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuPerformanceHintInfo, scale) == 92);
     assert!(core::mem::size_of::<CpuPerformanceHintInfo>() == 96);
     assert!(core::mem::align_of::<CpuPerformanceHintInfo>() == 8);
+    assert!(core::mem::offset_of!(PowerProfileRequest, version) == 0);
+    assert!(core::mem::offset_of!(PowerProfileRequest, size) == 4);
+    assert!(core::mem::offset_of!(PowerProfileRequest, profile) == 8);
+    assert!(core::mem::offset_of!(PowerProfileRequest, flags) == 12);
+    assert!(core::mem::offset_of!(PowerProfileRequest, expected_service_generation) == 16);
+    assert!(core::mem::offset_of!(PowerProfileRequest, expected_revision) == 24);
+    assert!(core::mem::offset_of!(PowerProfileRequest, cpu_index) == 32);
+    assert!(core::mem::offset_of!(PowerProfileRequest, reserved0) == 36);
+    assert!(core::mem::offset_of!(PowerProfileRequest, reserved1) == 40);
+    assert!(core::mem::offset_of!(PowerProfileRequest, reserved2) == 48);
+    assert!(core::mem::offset_of!(PowerProfileRequest, reserved3) == 56);
+    assert!(core::mem::size_of::<PowerProfileRequest>() == 64);
+    assert!(core::mem::align_of::<PowerProfileRequest>() == 8);
+    assert!(core::mem::offset_of!(PowerProfileInfo, version) == 0);
+    assert!(core::mem::offset_of!(PowerProfileInfo, size) == 4);
+    assert!(core::mem::offset_of!(PowerProfileInfo, state) == 8);
+    assert!(core::mem::offset_of!(PowerProfileInfo, selected_profile) == 12);
+    assert!(core::mem::offset_of!(PowerProfileInfo, flags) == 16);
+    assert!(core::mem::offset_of!(PowerProfileInfo, configured_cpus) == 20);
+    assert!(core::mem::offset_of!(PowerProfileInfo, online_cpus) == 24);
+    assert!(core::mem::offset_of!(PowerProfileInfo, backend_cpus) == 28);
+    assert!(core::mem::offset_of!(PowerProfileInfo, service_generation) == 32);
+    assert!(core::mem::offset_of!(PowerProfileInfo, revision) == 40);
+    assert!(core::mem::offset_of!(PowerProfileInfo, applied_revision) == 48);
+    assert!(core::mem::offset_of!(PowerProfileInfo, provider_generation) == 56);
+    assert!(core::mem::offset_of!(PowerProfileInfo, owned_mask) == 64);
+    assert!(core::mem::offset_of!(PowerProfileInfo, applied_mask) == 72);
+    assert!(core::mem::offset_of!(PowerProfileInfo, pending_mask) == 80);
+    assert!(core::mem::offset_of!(PowerProfileInfo, supported_mask) == 88);
+    assert!(core::mem::offset_of!(PowerProfileInfo, last_error) == 96);
+    assert!(core::mem::offset_of!(PowerProfileInfo, last_cpu) == 100);
+    assert!(core::mem::offset_of!(PowerProfileInfo, config_revision) == 104);
+    assert!(core::mem::offset_of!(PowerProfileInfo, config_error) == 108);
+    assert!(core::mem::offset_of!(PowerProfileInfo, service_instance_id) == 112);
+    assert!(core::mem::offset_of!(PowerProfileInfo, worker_count) == 116);
+    assert!(core::mem::offset_of!(PowerProfileInfo, sticky_count) == 120);
+    assert!(core::mem::offset_of!(PowerProfileInfo, reserved0) == 124);
+    assert!(core::mem::size_of::<PowerProfileInfo>() == 128);
+    assert!(core::mem::align_of::<PowerProfileInfo>() == 8);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, version) == 0);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, size) == 4);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, backend) == 12);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, state) == 16);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, flags) == 20);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, profile) == 24);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, last_error) == 28);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, cpu_epoch) == 32);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, provider_generation) == 40);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, lease) == 48);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, revision) == 56);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, applied_revision) == 64);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, captured_ns) == 72);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, minimum) == 80);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, maximum) == 84);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, desired) == 88);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, epp) == 92);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, lowest) == 96);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, highest) == 100);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, efficient) == 104);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, nominal) == 108);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, baseline_request) == 112);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, last_written) == 120);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, observed_request) == 128);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, valid_mask) == 136);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, reserved0) == 140);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, worker_state) == 144);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, reserved1) == 148);
+    assert!(core::mem::offset_of!(PowerCpuProfileInfo, service_generation) == 152);
+    assert!(core::mem::size_of::<PowerCpuProfileInfo>() == 160);
+    assert!(core::mem::align_of::<PowerCpuProfileInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);

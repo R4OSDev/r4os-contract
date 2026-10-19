@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 344 von 344 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 347 von 347 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2431; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2477; Limits: 111
 
 ## App-Profile
 
@@ -365,6 +365,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuCppcBackend` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `CpuPerformanceHint` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `CpuPerformanceHintInfo` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `PowerProfileRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `PowerProfileInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `PowerCpuProfileInfo` | fixed_layout | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 
 ## Typdetails
 
@@ -9309,6 +9312,101 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `rank` | 88 | 4 | 4 | `u32` | - |
 | `scale` | 92 | 4 | 4 | `u32` | - |
 
+### `PowerProfileRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `profile` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `expected_service_generation` | 16 | 8 | 8 | `u64` | - |
+| `expected_revision` | 24 | 8 | 8 | `u64` | - |
+| `cpu_index` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+| `reserved1` | 40 | 8 | 8 | `u64` | - |
+| `reserved2` | 48 | 8 | 8 | `u64` | - |
+| `reserved3` | 56 | 8 | 8 | `u64` | - |
+
+### `PowerProfileInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `state` | 8 | 4 | 4 | `u32` | - |
+| `selected_profile` | 12 | 4 | 4 | `u32` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 20 | 4 | 4 | `u32` | - |
+| `online_cpus` | 24 | 4 | 4 | `u32` | - |
+| `backend_cpus` | 28 | 4 | 4 | `u32` | - |
+| `service_generation` | 32 | 8 | 8 | `u64` | - |
+| `revision` | 40 | 8 | 8 | `u64` | - |
+| `applied_revision` | 48 | 8 | 8 | `u64` | - |
+| `provider_generation` | 56 | 8 | 8 | `u64` | - |
+| `owned_mask` | 64 | 8 | 8 | `u64` | - |
+| `applied_mask` | 72 | 8 | 8 | `u64` | - |
+| `pending_mask` | 80 | 8 | 8 | `u64` | - |
+| `supported_mask` | 88 | 8 | 8 | `u64` | - |
+| `last_error` | 96 | 4 | 4 | `i32` | - |
+| `last_cpu` | 100 | 4 | 4 | `u32` | - |
+| `config_revision` | 104 | 4 | 4 | `u32` | - |
+| `config_error` | 108 | 4 | 4 | `i32` | - |
+| `service_instance_id` | 112 | 4 | 4 | `u32` | - |
+| `worker_count` | 116 | 4 | 4 | `u32` | - |
+| `sticky_count` | 120 | 4 | 4 | `u32` | - |
+| `reserved0` | 124 | 4 | 4 | `u32` | - |
+
+### `PowerCpuProfileInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 160 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `backend` | 12 | 4 | 4 | `u32` | - |
+| `state` | 16 | 4 | 4 | `u32` | - |
+| `flags` | 20 | 4 | 4 | `u32` | - |
+| `profile` | 24 | 4 | 4 | `u32` | - |
+| `last_error` | 28 | 4 | 4 | `i32` | - |
+| `cpu_epoch` | 32 | 8 | 8 | `u64` | - |
+| `provider_generation` | 40 | 8 | 8 | `u64` | - |
+| `lease` | 48 | 8 | 8 | `u64` | - |
+| `revision` | 56 | 8 | 8 | `u64` | - |
+| `applied_revision` | 64 | 8 | 8 | `u64` | - |
+| `captured_ns` | 72 | 8 | 8 | `u64` | - |
+| `minimum` | 80 | 4 | 4 | `u32` | - |
+| `maximum` | 84 | 4 | 4 | `u32` | - |
+| `desired` | 88 | 4 | 4 | `u32` | - |
+| `epp` | 92 | 4 | 4 | `u32` | - |
+| `lowest` | 96 | 4 | 4 | `u32` | - |
+| `highest` | 100 | 4 | 4 | `u32` | - |
+| `efficient` | 104 | 4 | 4 | `u32` | - |
+| `nominal` | 108 | 4 | 4 | `u32` | - |
+| `baseline_request` | 112 | 8 | 8 | `u64` | - |
+| `last_written` | 120 | 8 | 8 | `u64` | - |
+| `observed_request` | 128 | 8 | 8 | `u64` | - |
+| `valid_mask` | 136 | 4 | 4 | `u32` | - |
+| `reserved0` | 140 | 4 | 4 | `u32` | - |
+| `worker_state` | 144 | 4 | 4 | `u32` | - |
+| `reserved1` | 148 | 4 | 4 | `u32` | - |
+| `service_generation` | 152 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12501,6 +12599,52 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_register_id_amd_cppc_capabilities2` | `24` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 | `cpu_register_id_amd_cppc_request` | `25` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 | `cpu_register_id_amd_cppc_status` | `26` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `power_profile_firmware` | `0` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_balanced` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_performance` | `2` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_saving` | `3` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_op_status` | `1` | `u16` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_op_select` | `2` | `u16` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_op_cpu` | `3` | `u16` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_op_quiesce` | `4` | `u16` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_op_resume` | `5` | `u16` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_op_reload` | `6` | `u16` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_request_flag_sticky_enable` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_firmware` | `0` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_unsupported` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_disabled` | `2` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_applying` | `3` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_applied` | `4` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_returning` | `5` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_retained` | `6` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_partial` | `7` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_state_quiesced` | `8` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_backend_none` | `0` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_backend_hwp` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_backend_cppc` | `2` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_flag_provider` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_flag_applied_complete` | `2` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_flag_pending_return` | `4` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_flag_quiesced` | `8` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_flag_config_valid` | `16` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_flag_sticky_enabled` | `32` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_flag_owned` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_flag_confirmed` | `2` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_flag_sticky_enabled` | `4` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_flag_foreign_control` | `8` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_flag_worker_retained` | `16` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_valid_request` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_valid_range` | `2` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_valid_time` | `4` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_cpu_valid_epp` | `8` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_absent` | `0` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_starting` | `1` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_idle` | `2` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_applying` | `3` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_active` | `4` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_returning` | `5` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_held` | `6` | `u32` | value | number | `power_profiles` | fixed_contract |
+| `power_profile_worker_complete` | `7` | `u32` | value | number | `power_profiles` | fixed_contract |
 
 ## Limits
 

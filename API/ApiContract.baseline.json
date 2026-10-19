@@ -116651,6 +116651,958 @@
       ],
       "values": [],
       "description": "Passive typed CPU catalogue rank query; performs no model-register read, provider callback, worker or power-policy write. Missing/stale/mixed/incoherent data are unknown and retain the old flat scheduler path. Optional scheduler use is limited to a tie after hard masks, true load/core occupancy, user preference, static class and NUMA; no efficiency inversion or running-stack migration. Freshness is bounded sampling, not an atomic live hardware fact. All refused calls preserve output/tail."
+    },
+    {
+      "name": "PowerProfileRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed wire record size; oversized/short IPC payload rejected, not a byte stream.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "profile",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_*; only SELECT accepts a nonzero requested profile.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_request_flag_*; sticky-enable consent only on SELECT, never implicit in status or invalid input.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "expected_service_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact live PowerService program-handle generation for mutating operations;0 permitted only for passive initial status/CPU query.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "expected_revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact nonreused service request revision for mutation; stale/refused requests cause no hardware/config work.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Dense CPU index for CPU query;0 for other operations.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved2",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved3",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Typed external POWERSVC IPC input. Existing HWP/CPPC64 requests and their control ownership meanings remain unchanged. Every operation validates the complete fixed payload, reserved fields, operation-specific fields, exact live service generation and expected revision before side effects. SELECT stores user intent independently of actual backend application. Firmware selection/QUIESCE/STOP require true same-CPU parameter return; unknown/disabled/missing backends remain in firmware state. Explicit irreversible interface activation consent is never inferred from a profile name. No frequency/boost/energy guarantee."
+    },
+    {
+      "name": "PowerProfileInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed wire record size; oversized/short IPC payload rejected, not a byte stream.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "state",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_state_*; selected intent, actual application and pending return are independent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selected_profile",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Persisted/requested power_profile_* intent, not evidence of application.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_flag_* actual observations only.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "configured_cpus",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current catalogue bound, never a promise every CPU is available.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "online_cpus",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual schedulable count in this observation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "backend_cpus",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPUs with a qualified usable HWP/CPPC backend, not vendor/CPUID guesses.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact live PowerService ProgramProcessHandle generation, not a timestamp or instance ID alone.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonreused accepted command revision; never wraps. Query after timeout instead of automatic mutation retry.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "applied_revision",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Latest fully acknowledged profile command;0 when unknown/none. Masks remain authoritative for partial/retained state.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider_generation",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact common CPUPOWER registration cookie;0 absent/unknown/mixed, never redirected across instances.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owned_mask",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual own resident control tokens awaiting verified return; not a general CPU affinity set.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "applied_mask",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "CPUs with confirmed own matching request readback for the selected command.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pending_mask",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Own unacknowledged/uncertain/conflicting control or worker return; never treated as stopped.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "supported_mask",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual qualified backend observations in current CPU epochs.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_error",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Last real command/provider/config/cleanup failure,0 if none.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_cpu",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "CPU associated with last_error;UINT32_MAX for non-CPU or unknown errors.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "config_revision",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Service configuration revision, not a hardware epoch.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "config_error",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Last configuration persistence/load error separately from actual hardware state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_instance_id",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual program instance ID; compare service_generation as well.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_count",
+          "offset": 116,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual created but not yet joined workers; retain buffers/instance until genuine completion.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sticky_count",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Observed reset-only interface activations; returning parameters does not disable them.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 124,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Typed external POWERSVC summary for STATUS/SELECT/QUIESCE/RESUME/RELOAD. Return0/service reply success only means this complete receipt is available; read state/errors/masks for actual outcome. Missing/virtual/disabled backends preserve firmware parameters. Partial failure, timeout, provider/CPU change and return uncertainty keep exact resources and expose pending state, never successful cleanup. New instance never silently adopts or overwrites foreign owned controls. CPUPOWER remains hardware owner; profiles/config/client policy stay external. Mask widths follow the current bounded CPU catalogue and are not the extensible public thread-affinity vector contract."
+    },
+    {
+      "name": "PowerCpuProfileInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 160,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed wire record size; oversized/short IPC payload rejected, not a byte stream.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "160"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Dense exact CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "backend",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_backend_*;0 unknown/unsupported.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_state_* exact per-CPU status.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_cpu_flag_* actual observations only.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "profile",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Requested power_profile_* for this CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_error",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Actual signed operation/readback/return error.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cpu_epoch",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact CPU start epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider_generation",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact CPUPOWER cookie for this local control.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lease",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual own resident hardware token;0 if none, never a guessed caller ownership claim.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual hardware control revision for the next explicit operation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "applied_revision",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Service command revision actually confirmed on this CPU.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "captured_ns",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual last observation start when valid, not query time.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "minimum",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed abstract request minimum only with request validity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "maximum",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed abstract request maximum.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "desired",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed abstract desired;0 autonomous.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epp",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Confirmed preference0..255, only when supported/valid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lowest",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Qualified abstract lower capability.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "highest",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Qualified abstract upper capability, not MHz/capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "efficient",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "HWP efficient or CPPC lowest-nonlinear abstract threshold;0 unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "nominal",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "HWP guaranteed or CPPC nominal abstract capability;0 unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "baseline_request",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact own original raw request retained until true return, including reset0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_written",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact last own intended request including uncertainty.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_request",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual raw readback only with request validity; not achieved performance.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "valid_mask",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_cpu_valid_*; raw zero is never an availability indication.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "worker_state",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "power_profile_worker_*; real command/return/terminal handshake state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 148,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "service_generation",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact owning live service program generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Typed passive external POWERSVC per-CPU query, no model-register access or new worker from the query itself. HWP and CPPC raw/decoded values are normalized only after their independently typed contracts establish validity and byte order. Status snapshots use bounded synchronized copies; changing rows return Busy rather than racing a worker. Actual local tokens/baselines remain until real callback/worker/resource return; a stale service/CPU/provider generation never authorizes replacement writes."
     }
   ],
   "operations": [],
@@ -143476,6 +144428,466 @@
       "scope": "cpu_capabilities",
       "stability": "fixed_contract",
       "description": "cpu register id amd cppc status."
+    },
+    {
+      "name": "power_profile_firmware",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile firmware."
+    },
+    {
+      "name": "power_profile_balanced",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile balanced."
+    },
+    {
+      "name": "power_profile_performance",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile performance."
+    },
+    {
+      "name": "power_profile_saving",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile saving."
+    },
+    {
+      "name": "power_profile_op_status",
+      "value": "1",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile op status."
+    },
+    {
+      "name": "power_profile_op_select",
+      "value": "2",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile op select."
+    },
+    {
+      "name": "power_profile_op_cpu",
+      "value": "3",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile op cpu."
+    },
+    {
+      "name": "power_profile_op_quiesce",
+      "value": "4",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile op quiesce."
+    },
+    {
+      "name": "power_profile_op_resume",
+      "value": "5",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile op resume."
+    },
+    {
+      "name": "power_profile_op_reload",
+      "value": "6",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile op reload."
+    },
+    {
+      "name": "power_profile_request_flag_sticky_enable",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile request flag sticky enable."
+    },
+    {
+      "name": "power_profile_state_firmware",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state firmware."
+    },
+    {
+      "name": "power_profile_state_unsupported",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state unsupported."
+    },
+    {
+      "name": "power_profile_state_disabled",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state disabled."
+    },
+    {
+      "name": "power_profile_state_applying",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state applying."
+    },
+    {
+      "name": "power_profile_state_applied",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state applied."
+    },
+    {
+      "name": "power_profile_state_returning",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state returning."
+    },
+    {
+      "name": "power_profile_state_retained",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state retained."
+    },
+    {
+      "name": "power_profile_state_partial",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state partial."
+    },
+    {
+      "name": "power_profile_state_quiesced",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile state quiesced."
+    },
+    {
+      "name": "power_profile_backend_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile backend none."
+    },
+    {
+      "name": "power_profile_backend_hwp",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile backend hwp."
+    },
+    {
+      "name": "power_profile_backend_cppc",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile backend cppc."
+    },
+    {
+      "name": "power_profile_flag_provider",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile flag provider."
+    },
+    {
+      "name": "power_profile_flag_applied_complete",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile flag applied complete."
+    },
+    {
+      "name": "power_profile_flag_pending_return",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile flag pending return."
+    },
+    {
+      "name": "power_profile_flag_quiesced",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile flag quiesced."
+    },
+    {
+      "name": "power_profile_flag_config_valid",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile flag config valid."
+    },
+    {
+      "name": "power_profile_flag_sticky_enabled",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile flag sticky enabled."
+    },
+    {
+      "name": "power_profile_cpu_flag_owned",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu flag owned."
+    },
+    {
+      "name": "power_profile_cpu_flag_confirmed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu flag confirmed."
+    },
+    {
+      "name": "power_profile_cpu_flag_sticky_enabled",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu flag sticky enabled."
+    },
+    {
+      "name": "power_profile_cpu_flag_foreign_control",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu flag foreign control."
+    },
+    {
+      "name": "power_profile_cpu_flag_worker_retained",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu flag worker retained."
+    },
+    {
+      "name": "power_profile_cpu_valid_request",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu valid request."
+    },
+    {
+      "name": "power_profile_cpu_valid_range",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu valid range."
+    },
+    {
+      "name": "power_profile_cpu_valid_time",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu valid time."
+    },
+    {
+      "name": "power_profile_cpu_valid_epp",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile cpu valid epp."
+    },
+    {
+      "name": "power_profile_worker_absent",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker absent."
+    },
+    {
+      "name": "power_profile_worker_starting",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker starting."
+    },
+    {
+      "name": "power_profile_worker_idle",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker idle."
+    },
+    {
+      "name": "power_profile_worker_applying",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker applying."
+    },
+    {
+      "name": "power_profile_worker_active",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker active."
+    },
+    {
+      "name": "power_profile_worker_returning",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker returning."
+    },
+    {
+      "name": "power_profile_worker_held",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker held."
+    },
+    {
+      "name": "power_profile_worker_complete",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "power_profiles",
+      "stability": "fixed_contract",
+      "description": "power profile worker complete."
     }
   ],
   "limits": [
