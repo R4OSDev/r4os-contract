@@ -2410,6 +2410,32 @@ pub const cpu_register_id_intel_hwp_enable: u32 = 18;
 pub const cpu_register_id_intel_hwp_capabilities: u32 = 19;
 pub const cpu_register_id_intel_hwp_request: u32 = 20;
 pub const cpu_register_id_intel_hwp_package: u32 = 21;
+pub const cpu_cppc_flag_rank_published: u32 = 16;
+pub const cpu_cppc_valid_range: u32 = 1;
+pub const cpu_cppc_valid_request: u32 = 2;
+pub const cpu_cppc_valid_enable: u32 = 4;
+pub const cpu_cppc_valid_status: u32 = 8;
+pub const cpu_cppc_valid_current_limit: u32 = 16;
+pub const cpu_cppc_valid_scope: u32 = 32;
+pub const cpu_cppc_valid_time: u32 = 64;
+pub const cpu_cppc_valid_rank: u32 = 128;
+pub const cpu_cppc_raw_enable: u32 = 1;
+pub const cpu_cppc_raw_capability1: u32 = 2;
+pub const cpu_cppc_raw_capability2: u32 = 4;
+pub const cpu_cppc_raw_request: u32 = 8;
+pub const cpu_cppc_raw_status: u32 = 16;
+pub const cpu_performance_hint_state_unknown: u32 = 0;
+pub const cpu_performance_hint_state_current: u32 = 1;
+pub const cpu_performance_hint_state_stale: u32 = 2;
+pub const cpu_performance_hint_flag_valid: u32 = 1;
+pub const cpu_performance_hint_flag_group_ready: u32 = 2;
+pub const cpu_performance_hint_source_cppc: u32 = 1;
+pub const cpu_performance_hint_max_age_ns: u64 = 1000000000;
+pub const cpu_register_id_amd_cppc_capabilities1: u32 = 22;
+pub const cpu_register_id_amd_cppc_enable: u32 = 23;
+pub const cpu_register_id_amd_cppc_capabilities2: u32 = 24;
+pub const cpu_register_id_amd_cppc_request: u32 = 25;
+pub const cpu_register_id_amd_cppc_status: u32 = 26;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -17633,13 +17659,15 @@ pub struct DriverCpuPowerApi {
     pub control_acquire: u64,
     pub control_release: u64,
     pub register_compare_write: u64,
+    pub register_cppc: u64,
+    pub rank_publish: u64,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for DriverCpuPowerApi {
     fn default() -> Self {
         Self {
             version: 1,
-            size: 112,
+            size: 128,
             register_backend: 0,
             unregister_backend: 0,
             current_cpu: 0,
@@ -17653,6 +17681,8 @@ impl Default for DriverCpuPowerApi {
             control_acquire: 0,
             control_release: 0,
             register_compare_write: 0,
+            register_cppc: 0,
+            rank_publish: 0,
         }
     }
 }
@@ -17861,6 +17891,192 @@ impl Default for CpuRegisterWriteInfo {
             observed_after: 0,
             flags: 0,
             last_error: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuCppcInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub state: u32,
+    pub flags: u32,
+    pub features: u32,
+    pub valid_mask: u32,
+    pub raw_valid_mask: u32,
+    pub epoch: u64,
+    pub provider_generation: u64,
+    pub lease: u64,
+    pub revision: u64,
+    pub raw_enable: u64,
+    pub raw_capability1: u64,
+    pub raw_capability2: u64,
+    pub raw_request: u64,
+    pub raw_status: u64,
+    pub baseline_request: u64,
+    pub last_written: u64,
+    pub qualified_mask: u64,
+    pub captured_ns: u64,
+    pub minimum: u32,
+    pub maximum: u32,
+    pub desired: u32,
+    pub epp: u32,
+    pub highest: u32,
+    pub nominal: u32,
+    pub lowest_nonlinear: u32,
+    pub lowest: u32,
+    pub last_error: i32,
+    pub attempted_id: u32,
+    pub hint_sequence: u64,
+    pub clock_generation: u32,
+    pub clock_source: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuCppcInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 192,
+            cpu_index: 0,
+            state: 0,
+            flags: 0,
+            features: 0,
+            valid_mask: 0,
+            raw_valid_mask: 0,
+            epoch: 0,
+            provider_generation: 0,
+            lease: 0,
+            revision: 0,
+            raw_enable: 0,
+            raw_capability1: 0,
+            raw_capability2: 0,
+            raw_request: 0,
+            raw_status: 0,
+            baseline_request: 0,
+            last_written: 0,
+            qualified_mask: 0,
+            captured_ns: 0,
+            minimum: 0,
+            maximum: 0,
+            desired: 0,
+            epp: 0,
+            highest: 0,
+            nominal: 0,
+            lowest_nonlinear: 0,
+            lowest: 0,
+            last_error: 0,
+            attempted_id: 0,
+            hint_sequence: 0,
+            clock_generation: 0,
+            clock_source: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuCppcBackend {
+    pub version: u32,
+    pub size: u32,
+    pub context: u64,
+    pub execute: u64,
+    pub flags: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuCppcBackend {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            context: 0,
+            execute: 0,
+            flags: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuPerformanceHint {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub captured_ns: u64,
+    pub scope_mask: u64,
+    pub core_mask: u64,
+    pub rank: u32,
+    pub scale: u32,
+    pub clock_generation: u32,
+    pub clock_source: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuPerformanceHint {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            captured_ns: 0,
+            scope_mask: 0,
+            core_mask: 0,
+            rank: 0,
+            scale: 0,
+            clock_generation: 0,
+            clock_source: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuPerformanceHintInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub state: u32,
+    pub flags: u32,
+    pub source: u32,
+    pub clock_generation: u32,
+    pub clock_source: u32,
+    pub epoch: u64,
+    pub provider_generation: u64,
+    pub sequence: u64,
+    pub captured_ns: u64,
+    pub expires_ns: u64,
+    pub scope_mask: u64,
+    pub core_mask: u64,
+    pub rank: u32,
+    pub scale: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuPerformanceHintInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 96,
+            cpu_index: 0,
+            state: 0,
+            flags: 0,
+            source: 0,
+            clock_generation: 0,
+            clock_source: 0,
+            epoch: 0,
+            provider_generation: 0,
+            sequence: 0,
+            captured_ns: 0,
+            expires_ns: 0,
+            scope_mask: 0,
+            core_mask: 0,
+            rank: 0,
+            scale: 0,
         }
     }
 }
@@ -19249,6 +19465,8 @@ pub mod R4DevFns {
     pub type cpu_power_info = unsafe extern "C" fn(u32, u64, *mut CpuPowerInfo) -> i32;
     pub type cpu_power_capture = unsafe extern "C" fn(u32, u64, *mut CpuPowerInfo) -> i32;
     pub type cpu_performance = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuPerformanceInfo) -> i32;
+    pub type cpu_cppc = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuCppcInfo) -> i32;
+    pub type cpu_performance_hint = unsafe extern "C" fn(u32, u64, *mut CpuPerformanceHintInfo) -> i32;
 }
 
 #[repr(C)]
@@ -19334,14 +19552,16 @@ pub struct R4XStartR4Dev {
     pub cpu_power_info: usize,
     pub cpu_power_capture: usize,
     pub cpu_performance: usize,
+    pub cpu_cppc: usize,
+    pub cpu_performance_hint: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 26,
-            size: 624,
+            abi_version: 27,
+            size: 640,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -19419,6 +19639,8 @@ impl Default for R4XStartR4Dev {
             cpu_power_info: 0,
             cpu_power_capture: 0,
             cpu_performance: 0,
+            cpu_cppc: 0,
+            cpu_performance_hint: 0,
         }
     }
 }
@@ -29461,7 +29683,9 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverCpuPowerApi, control_acquire) == 88);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, control_release) == 96);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, register_compare_write) == 104);
-    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 112);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, register_cppc) == 112);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, rank_publish) == 120);
+    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 128);
     assert!(core::mem::align_of::<DriverCpuPowerApi>() == 8);
     assert!(core::mem::offset_of!(CpuPowerCounters, version) == 0);
     assert!(core::mem::offset_of!(CpuPowerCounters, size) == 4);
@@ -29547,6 +29771,83 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuRegisterWriteInfo, last_error) == 68);
     assert!(core::mem::size_of::<CpuRegisterWriteInfo>() == 72);
     assert!(core::mem::align_of::<CpuRegisterWriteInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuCppcInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuCppcInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuCppcInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuCppcInfo, state) == 12);
+    assert!(core::mem::offset_of!(CpuCppcInfo, flags) == 16);
+    assert!(core::mem::offset_of!(CpuCppcInfo, features) == 20);
+    assert!(core::mem::offset_of!(CpuCppcInfo, valid_mask) == 24);
+    assert!(core::mem::offset_of!(CpuCppcInfo, raw_valid_mask) == 28);
+    assert!(core::mem::offset_of!(CpuCppcInfo, epoch) == 32);
+    assert!(core::mem::offset_of!(CpuCppcInfo, provider_generation) == 40);
+    assert!(core::mem::offset_of!(CpuCppcInfo, lease) == 48);
+    assert!(core::mem::offset_of!(CpuCppcInfo, revision) == 56);
+    assert!(core::mem::offset_of!(CpuCppcInfo, raw_enable) == 64);
+    assert!(core::mem::offset_of!(CpuCppcInfo, raw_capability1) == 72);
+    assert!(core::mem::offset_of!(CpuCppcInfo, raw_capability2) == 80);
+    assert!(core::mem::offset_of!(CpuCppcInfo, raw_request) == 88);
+    assert!(core::mem::offset_of!(CpuCppcInfo, raw_status) == 96);
+    assert!(core::mem::offset_of!(CpuCppcInfo, baseline_request) == 104);
+    assert!(core::mem::offset_of!(CpuCppcInfo, last_written) == 112);
+    assert!(core::mem::offset_of!(CpuCppcInfo, qualified_mask) == 120);
+    assert!(core::mem::offset_of!(CpuCppcInfo, captured_ns) == 128);
+    assert!(core::mem::offset_of!(CpuCppcInfo, minimum) == 136);
+    assert!(core::mem::offset_of!(CpuCppcInfo, maximum) == 140);
+    assert!(core::mem::offset_of!(CpuCppcInfo, desired) == 144);
+    assert!(core::mem::offset_of!(CpuCppcInfo, epp) == 148);
+    assert!(core::mem::offset_of!(CpuCppcInfo, highest) == 152);
+    assert!(core::mem::offset_of!(CpuCppcInfo, nominal) == 156);
+    assert!(core::mem::offset_of!(CpuCppcInfo, lowest_nonlinear) == 160);
+    assert!(core::mem::offset_of!(CpuCppcInfo, lowest) == 164);
+    assert!(core::mem::offset_of!(CpuCppcInfo, last_error) == 168);
+    assert!(core::mem::offset_of!(CpuCppcInfo, attempted_id) == 172);
+    assert!(core::mem::offset_of!(CpuCppcInfo, hint_sequence) == 176);
+    assert!(core::mem::offset_of!(CpuCppcInfo, clock_generation) == 184);
+    assert!(core::mem::offset_of!(CpuCppcInfo, clock_source) == 188);
+    assert!(core::mem::size_of::<CpuCppcInfo>() == 192);
+    assert!(core::mem::align_of::<CpuCppcInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuCppcBackend, version) == 0);
+    assert!(core::mem::offset_of!(CpuCppcBackend, size) == 4);
+    assert!(core::mem::offset_of!(CpuCppcBackend, context) == 8);
+    assert!(core::mem::offset_of!(CpuCppcBackend, execute) == 16);
+    assert!(core::mem::offset_of!(CpuCppcBackend, flags) == 24);
+    assert!(core::mem::offset_of!(CpuCppcBackend, reserved0) == 28);
+    assert!(core::mem::size_of::<CpuCppcBackend>() == 32);
+    assert!(core::mem::align_of::<CpuCppcBackend>() == 8);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, version) == 0);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, size) == 4);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, flags) == 12);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, captured_ns) == 24);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, scope_mask) == 32);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, core_mask) == 40);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, rank) == 48);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, scale) == 52);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, clock_generation) == 56);
+    assert!(core::mem::offset_of!(CpuPerformanceHint, clock_source) == 60);
+    assert!(core::mem::size_of::<CpuPerformanceHint>() == 64);
+    assert!(core::mem::align_of::<CpuPerformanceHint>() == 8);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, state) == 12);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, flags) == 16);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, source) == 20);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, clock_generation) == 24);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, clock_source) == 28);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, epoch) == 32);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, provider_generation) == 40);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, sequence) == 48);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, captured_ns) == 56);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, expires_ns) == 64);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, scope_mask) == 72);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, core_mask) == 80);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, rank) == 88);
+    assert!(core::mem::offset_of!(CpuPerformanceHintInfo, scale) == 92);
+    assert!(core::mem::size_of::<CpuPerformanceHintInfo>() == 96);
+    assert!(core::mem::align_of::<CpuPerformanceHintInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -30052,7 +30353,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_power_info) == 600);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_power_capture) == 608);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_performance) == 616);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 624);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_cppc) == 624);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_performance_hint) == 632);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 640);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

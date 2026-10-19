@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 340 von 340 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 344 von 344 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2405; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2431; Limits: 111
 
 ## App-Profile
 
@@ -355,12 +355,16 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramKernelCpuRegisterCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuPowerInfo` | fixed_layout | extern_struct | 320/8 | 320/8 | 320/8 | 320/8 |
 | `CpuPowerBackend` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
-| `DriverCpuPowerApi` | extensible | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `DriverCpuPowerApi` | extensible | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuPowerCounters` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `CpuPerformanceRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `CpuPerformanceInfo` | fixed_layout | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
 | `CpuPerformanceBackend` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `CpuRegisterWriteInfo` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
+| `CpuCppcInfo` | fixed_layout | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
+| `CpuCppcBackend` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `CpuPerformanceHint` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `CpuPerformanceHintInfo` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 
 ## Typdetails
 
@@ -9050,7 +9054,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 3 / 112 / 8
+- Version/Größe/Alignment: 4 / 128 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -9069,6 +9073,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `control_acquire` | 88 | 8 | 8 | `u64` | - |
 | `control_release` | 96 | 8 | 8 | `u64` | - |
 | `register_compare_write` | 104 | 8 | 8 | `u64` | - |
+| `register_cppc` | 112 | 8 | 8 | `u64` | - |
+| `rank_publish` | 120 | 8 | 8 | `u64` | - |
 
 ### `CpuPowerCounters`
 
@@ -9193,6 +9199,115 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `observed_after` | 56 | 8 | 8 | `u64` | - |
 | `flags` | 64 | 4 | 4 | `u32` | - |
 | `last_error` | 68 | 4 | 4 | `i32` | - |
+
+### `CpuCppcInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 192 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `state` | 12 | 4 | 4 | `u32` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `features` | 20 | 4 | 4 | `u32` | - |
+| `valid_mask` | 24 | 4 | 4 | `u32` | - |
+| `raw_valid_mask` | 28 | 4 | 4 | `u32` | - |
+| `epoch` | 32 | 8 | 8 | `u64` | - |
+| `provider_generation` | 40 | 8 | 8 | `u64` | - |
+| `lease` | 48 | 8 | 8 | `u64` | - |
+| `revision` | 56 | 8 | 8 | `u64` | - |
+| `raw_enable` | 64 | 8 | 8 | `u64` | - |
+| `raw_capability1` | 72 | 8 | 8 | `u64` | - |
+| `raw_capability2` | 80 | 8 | 8 | `u64` | - |
+| `raw_request` | 88 | 8 | 8 | `u64` | - |
+| `raw_status` | 96 | 8 | 8 | `u64` | - |
+| `baseline_request` | 104 | 8 | 8 | `u64` | - |
+| `last_written` | 112 | 8 | 8 | `u64` | - |
+| `qualified_mask` | 120 | 8 | 8 | `u64` | - |
+| `captured_ns` | 128 | 8 | 8 | `u64` | - |
+| `minimum` | 136 | 4 | 4 | `u32` | - |
+| `maximum` | 140 | 4 | 4 | `u32` | - |
+| `desired` | 144 | 4 | 4 | `u32` | - |
+| `epp` | 148 | 4 | 4 | `u32` | - |
+| `highest` | 152 | 4 | 4 | `u32` | - |
+| `nominal` | 156 | 4 | 4 | `u32` | - |
+| `lowest_nonlinear` | 160 | 4 | 4 | `u32` | - |
+| `lowest` | 164 | 4 | 4 | `u32` | - |
+| `last_error` | 168 | 4 | 4 | `i32` | - |
+| `attempted_id` | 172 | 4 | 4 | `u32` | - |
+| `hint_sequence` | 176 | 8 | 8 | `u64` | - |
+| `clock_generation` | 184 | 4 | 4 | `u32` | - |
+| `clock_source` | 188 | 4 | 4 | `u32` | - |
+
+### `CpuCppcBackend`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `context` | 8 | 8 | 8 | `u64` | - |
+| `execute` | 16 | 8 | 8 | `u64` | - |
+| `flags` | 24 | 4 | 4 | `u32` | - |
+| `reserved0` | 28 | 4 | 4 | `u32` | - |
+
+### `CpuPerformanceHint`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `captured_ns` | 24 | 8 | 8 | `u64` | - |
+| `scope_mask` | 32 | 8 | 8 | `u64` | - |
+| `core_mask` | 40 | 8 | 8 | `u64` | - |
+| `rank` | 48 | 4 | 4 | `u32` | - |
+| `scale` | 52 | 4 | 4 | `u32` | - |
+| `clock_generation` | 56 | 4 | 4 | `u32` | - |
+| `clock_source` | 60 | 4 | 4 | `u32` | - |
+
+### `CpuPerformanceHintInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `state` | 12 | 4 | 4 | `u32` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `source` | 20 | 4 | 4 | `u32` | - |
+| `clock_generation` | 24 | 4 | 4 | `u32` | - |
+| `clock_source` | 28 | 4 | 4 | `u32` | - |
+| `epoch` | 32 | 8 | 8 | `u64` | - |
+| `provider_generation` | 40 | 8 | 8 | `u64` | - |
+| `sequence` | 48 | 8 | 8 | `u64` | - |
+| `captured_ns` | 56 | 8 | 8 | `u64` | - |
+| `expires_ns` | 64 | 8 | 8 | `u64` | - |
+| `scope_mask` | 72 | 8 | 8 | `u64` | - |
+| `core_mask` | 80 | 8 | 8 | `u64` | - |
+| `rank` | 88 | 4 | 4 | `u32` | - |
+| `scale` | 92 | 4 | 4 | `u32` | - |
 
 ## Fehlerdomänen
 
@@ -12360,6 +12475,32 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_register_id_intel_hwp_capabilities` | `19` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 | `cpu_register_id_intel_hwp_request` | `20` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 | `cpu_register_id_intel_hwp_package` | `21` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_cppc_flag_rank_published` | `16` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_range` | `1` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_request` | `2` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_enable` | `4` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_status` | `8` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_current_limit` | `16` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_scope` | `32` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_time` | `64` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_valid_rank` | `128` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_raw_enable` | `1` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_raw_capability1` | `2` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_raw_capability2` | `4` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_raw_request` | `8` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_cppc_raw_status` | `16` | `u32` | value | number | `cpu_cppc` | fixed_contract |
+| `cpu_performance_hint_state_unknown` | `0` | `u32` | value | number | `cpu_performance_hint` | fixed_contract |
+| `cpu_performance_hint_state_current` | `1` | `u32` | value | number | `cpu_performance_hint` | fixed_contract |
+| `cpu_performance_hint_state_stale` | `2` | `u32` | value | number | `cpu_performance_hint` | fixed_contract |
+| `cpu_performance_hint_flag_valid` | `1` | `u32` | value | number | `cpu_performance_hint` | fixed_contract |
+| `cpu_performance_hint_flag_group_ready` | `2` | `u32` | value | number | `cpu_performance_hint` | fixed_contract |
+| `cpu_performance_hint_source_cppc` | `1` | `u32` | value | number | `cpu_performance_hint` | fixed_contract |
+| `cpu_performance_hint_max_age_ns` | `1000000000` | `u64` | value | number | `cpu_performance_hint` | fixed_contract |
+| `cpu_register_id_amd_cppc_capabilities1` | `22` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_cppc_enable` | `23` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_cppc_capabilities2` | `24` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_cppc_request` | `25` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_register_id_amd_cppc_status` | `26` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
 
 ## Limits
 
