@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 466,
+    "group_function_signatures": 468,
     "sdk_operation_contracts": 0,
-    "parity_entries": 466,
+    "parity_entries": 468,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4202,6 +4202,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.cpu_idle_info",
       "c_contract": "R4DevCpuIdleInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_machine_info",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_machine_info",
+      "c_contract": "R4DevCpuMachineInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_machine_bank",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_machine_bank",
+      "c_contract": "R4DevCpuMachineBankFn",
       "coverage": "generated_signature"
     }
   ],

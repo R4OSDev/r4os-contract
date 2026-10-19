@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 466,
-    "group_slot_count": 466,
+    "function_count": 468,
+    "group_slot_count": 468,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 127
+    "advanced_count": 129
   },
   "functions": [
     {
@@ -5599,6 +5599,30 @@
       "slot": 79,
       "exposure": "advanced",
       "description": "Passive copy of independent idle declaration, local qualification and software counters. Hardware residency, wake latency and energy remain unavailable without own readback; never execute CPUID/MSR/MONITOR on this query.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_machine_info",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 80,
+      "exposure": "advanced",
+      "description": "Passive copy of bounded resident MCA boot/terminal receipt. No hardware work, lock, module callback or automatic retry. Error preserves output/tail.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_machine_bank",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 81,
+      "exposure": "advanced",
+      "description": "Passive bank copy bound to exact CPU/original epoch/complete capture sequence. End or stale/busy/index/header error preserves all output/tail. Never arbitrary MSR access.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 352 von 352 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 354 von 354 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2513; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2538; Limits: 111
 
 ## App-Profile
 
@@ -373,6 +373,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuIdleDescriptor` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `CpuIdlePolicy` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `CpuIdleInfo` | fixed_layout | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
+| `CpuMachineInfo` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
+| `CpuMachineBank` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 
 ## Typdetails
 
@@ -9573,6 +9575,70 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `wake_latency_ns` | 176 | 8 | 8 | `u64` | - |
 | `energy_uj` | 184 | 8 | 8 | `u64` | - |
 
+### `CpuMachineInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 144 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `sequence` | 24 | 8 | 8 | `u64` | - |
+| `mcg_cap` | 32 | 8 | 8 | `u64` | - |
+| `mcg_status` | 40 | 8 | 8 | `u64` | - |
+| `rip` | 48 | 8 | 8 | `u64` | - |
+| `rsp` | 56 | 8 | 8 | `u64` | - |
+| `rflags` | 64 | 8 | 8 | `u64` | - |
+| `origin` | 72 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 76 | 4 | 4 | `u32` | - |
+| `apic_id` | 80 | 4 | 4 | `u32` | - |
+| `family` | 84 | 4 | 4 | `u32` | - |
+| `model` | 88 | 4 | 4 | `u32` | - |
+| `stepping` | 92 | 4 | 4 | `u32` | - |
+| `profile` | 96 | 4 | 4 | `u32` | - |
+| `bank_count` | 100 | 4 | 4 | `u32` | - |
+| `stored_banks` | 104 | 4 | 4 | `u32` | - |
+| `valid_banks` | 108 | 4 | 4 | `u32` | - |
+| `read_faults` | 112 | 4 | 4 | `u32` | - |
+| `bank_limit` | 116 | 4 | 4 | `u32` | - |
+| `vendor_name` | 120 | 12 | 1 | `[12]u8` | - |
+| `nested_errors` | 132 | 4 | 4 | `u32` | - |
+| `reserved0` | 136 | 8 | 8 | `u64` | - |
+
+### `CpuMachineBank`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `bank_index` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `sequence` | 24 | 8 | 8 | `u64` | - |
+| `flags` | 32 | 4 | 4 | `u32` | - |
+| `format` | 36 | 4 | 4 | `u32` | - |
+| `status_msr` | 40 | 4 | 4 | `u32` | - |
+| `reserved0` | 44 | 4 | 4 | `u32` | - |
+| `status` | 48 | 8 | 8 | `u64` | - |
+| `address` | 56 | 8 | 8 | `u64` | - |
+| `misc` | 64 | 8 | 8 | `u64` | - |
+| `config` | 72 | 8 | 8 | `u64` | - |
+| `ipid` | 80 | 8 | 8 | `u64` | - |
+| `syndrome` | 88 | 8 | 8 | `u64` | - |
+| `status_after` | 96 | 8 | 8 | `u64` | - |
+| `reserved1` | 104 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12847,6 +12913,31 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_idle_reason_epoch` | `16` | `u32` | value | number | `cpu_idle` | fixed_contract |
 | `cpu_idle_reason_policy` | `17` | `u32` | value | number | `cpu_idle` | fixed_contract |
 | `cpu_idle_reason_short_budget` | `18` | `u32` | value | number | `cpu_idle` | fixed_contract |
+| `cpu_machine_flag_mce` | `1` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_mca` | `2` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_msr` | `4` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_mce_enabled` | `8` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_cap_valid` | `16` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_status_valid` | `32` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_truncated` | `64` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_read_fault` | `128` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_smca_advertised` | `256` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_virtual` | `512` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_unsupported` | `1024` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_flag_prepared` | `2048` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_status_read` | `1` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_status_valid` | `2` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_address_read` | `4` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_misc_read` | `8` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_config_read` | `16` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_ipid_read` | `32` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_syndrome_read` | `64` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_unstable` | `128` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_read_fault` | `256` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_status_after_read` | `512` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_machine_bank_limit` | `64` | `u32` | value | number | `cpu_machine` | fixed_contract |
+| `cpu_power_flag_mca_model` | `128` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_power_flag_smca_model` | `256` | `u32` | value | number | `cpu_power` | fixed_contract |
 
 ## Limits
 

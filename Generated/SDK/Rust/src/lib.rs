@@ -2518,6 +2518,31 @@ pub const cpu_idle_reason_timer: u32 = 15;
 pub const cpu_idle_reason_epoch: u32 = 16;
 pub const cpu_idle_reason_policy: u32 = 17;
 pub const cpu_idle_reason_short_budget: u32 = 18;
+pub const cpu_machine_flag_mce: u32 = 1;
+pub const cpu_machine_flag_mca: u32 = 2;
+pub const cpu_machine_flag_msr: u32 = 4;
+pub const cpu_machine_flag_mce_enabled: u32 = 8;
+pub const cpu_machine_flag_cap_valid: u32 = 16;
+pub const cpu_machine_flag_status_valid: u32 = 32;
+pub const cpu_machine_flag_truncated: u32 = 64;
+pub const cpu_machine_flag_read_fault: u32 = 128;
+pub const cpu_machine_flag_smca_advertised: u32 = 256;
+pub const cpu_machine_flag_virtual: u32 = 512;
+pub const cpu_machine_flag_unsupported: u32 = 1024;
+pub const cpu_machine_flag_prepared: u32 = 2048;
+pub const cpu_machine_bank_status_read: u32 = 1;
+pub const cpu_machine_bank_status_valid: u32 = 2;
+pub const cpu_machine_bank_address_read: u32 = 4;
+pub const cpu_machine_bank_misc_read: u32 = 8;
+pub const cpu_machine_bank_config_read: u32 = 16;
+pub const cpu_machine_bank_ipid_read: u32 = 32;
+pub const cpu_machine_bank_syndrome_read: u32 = 64;
+pub const cpu_machine_bank_unstable: u32 = 128;
+pub const cpu_machine_bank_read_fault: u32 = 256;
+pub const cpu_machine_bank_status_after_read: u32 = 512;
+pub const cpu_machine_bank_limit: u32 = 64;
+pub const cpu_power_flag_mca_model: u32 = 128;
+pub const cpu_power_flag_smca_model: u32 = 256;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -18611,6 +18636,118 @@ impl Default for CpuIdleInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuMachineInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub sequence: u64,
+    pub mcg_cap: u64,
+    pub mcg_status: u64,
+    pub rip: u64,
+    pub rsp: u64,
+    pub rflags: u64,
+    pub origin: u32,
+    pub configured_cpus: u32,
+    pub apic_id: u32,
+    pub family: u32,
+    pub model: u32,
+    pub stepping: u32,
+    pub profile: u32,
+    pub bank_count: u32,
+    pub stored_banks: u32,
+    pub valid_banks: u32,
+    pub read_faults: u32,
+    pub bank_limit: u32,
+    pub vendor_name: [u8; 12],
+    pub nested_errors: u32,
+    pub reserved0: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuMachineInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 144,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            sequence: 0,
+            mcg_cap: 0,
+            mcg_status: 0,
+            rip: 0,
+            rsp: 0,
+            rflags: 0,
+            origin: 0,
+            configured_cpus: 0,
+            apic_id: 0,
+            family: 0,
+            model: 0,
+            stepping: 0,
+            profile: 0,
+            bank_count: 0,
+            stored_banks: 0,
+            valid_banks: 0,
+            read_faults: 0,
+            bank_limit: 0,
+            vendor_name: [0; 12],
+            nested_errors: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuMachineBank {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub bank_index: u32,
+    pub epoch: u64,
+    pub sequence: u64,
+    pub flags: u32,
+    pub format: u32,
+    pub status_msr: u32,
+    pub reserved0: u32,
+    pub status: u64,
+    pub address: u64,
+    pub misc: u64,
+    pub config: u64,
+    pub ipid: u64,
+    pub syndrome: u64,
+    pub status_after: u64,
+    pub reserved1: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuMachineBank {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            cpu_index: 0,
+            bank_index: 0,
+            epoch: 0,
+            sequence: 0,
+            flags: 0,
+            format: 0,
+            status_msr: 0,
+            reserved0: 0,
+            status: 0,
+            address: 0,
+            misc: 0,
+            config: 0,
+            ipid: 0,
+            syndrome: 0,
+            status_after: 0,
+            reserved1: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20002,6 +20139,8 @@ pub mod R4DevFns {
     pub type cpu_performance_hint = unsafe extern "C" fn(u32, u64, *mut CpuPerformanceHintInfo) -> i32;
     pub type cpu_firmware_performance = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuFirmwareInfo) -> i32;
     pub type cpu_idle_info = unsafe extern "C" fn(u32, *mut CpuIdleInfo) -> i32;
+    pub type cpu_machine_info = unsafe extern "C" fn(u32, *mut CpuMachineInfo) -> i32;
+    pub type cpu_machine_bank = unsafe extern "C" fn(u32, u64, u64, u32, *mut CpuMachineBank) -> i32;
 }
 
 #[repr(C)]
@@ -20091,14 +20230,16 @@ pub struct R4XStartR4Dev {
     pub cpu_performance_hint: usize,
     pub cpu_firmware_performance: usize,
     pub cpu_idle_info: usize,
+    pub cpu_machine_info: usize,
+    pub cpu_machine_bank: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 29,
-            size: 656,
+            abi_version: 30,
+            size: 672,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -20180,6 +20321,8 @@ impl Default for R4XStartR4Dev {
             cpu_performance_hint: 0,
             cpu_firmware_performance: 0,
             cpu_idle_info: 0,
+            cpu_machine_info: 0,
+            cpu_machine_bank: 0,
         }
     }
 }
@@ -30579,6 +30722,54 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuIdleInfo, energy_uj) == 184);
     assert!(core::mem::size_of::<CpuIdleInfo>() == 192);
     assert!(core::mem::align_of::<CpuIdleInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuMachineInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuMachineInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuMachineInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuMachineInfo, flags) == 12);
+    assert!(core::mem::offset_of!(CpuMachineInfo, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuMachineInfo, sequence) == 24);
+    assert!(core::mem::offset_of!(CpuMachineInfo, mcg_cap) == 32);
+    assert!(core::mem::offset_of!(CpuMachineInfo, mcg_status) == 40);
+    assert!(core::mem::offset_of!(CpuMachineInfo, rip) == 48);
+    assert!(core::mem::offset_of!(CpuMachineInfo, rsp) == 56);
+    assert!(core::mem::offset_of!(CpuMachineInfo, rflags) == 64);
+    assert!(core::mem::offset_of!(CpuMachineInfo, origin) == 72);
+    assert!(core::mem::offset_of!(CpuMachineInfo, configured_cpus) == 76);
+    assert!(core::mem::offset_of!(CpuMachineInfo, apic_id) == 80);
+    assert!(core::mem::offset_of!(CpuMachineInfo, family) == 84);
+    assert!(core::mem::offset_of!(CpuMachineInfo, model) == 88);
+    assert!(core::mem::offset_of!(CpuMachineInfo, stepping) == 92);
+    assert!(core::mem::offset_of!(CpuMachineInfo, profile) == 96);
+    assert!(core::mem::offset_of!(CpuMachineInfo, bank_count) == 100);
+    assert!(core::mem::offset_of!(CpuMachineInfo, stored_banks) == 104);
+    assert!(core::mem::offset_of!(CpuMachineInfo, valid_banks) == 108);
+    assert!(core::mem::offset_of!(CpuMachineInfo, read_faults) == 112);
+    assert!(core::mem::offset_of!(CpuMachineInfo, bank_limit) == 116);
+    assert!(core::mem::offset_of!(CpuMachineInfo, vendor_name) == 120);
+    assert!(core::mem::offset_of!(CpuMachineInfo, nested_errors) == 132);
+    assert!(core::mem::offset_of!(CpuMachineInfo, reserved0) == 136);
+    assert!(core::mem::size_of::<CpuMachineInfo>() == 144);
+    assert!(core::mem::align_of::<CpuMachineInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuMachineBank, version) == 0);
+    assert!(core::mem::offset_of!(CpuMachineBank, size) == 4);
+    assert!(core::mem::offset_of!(CpuMachineBank, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuMachineBank, bank_index) == 12);
+    assert!(core::mem::offset_of!(CpuMachineBank, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuMachineBank, sequence) == 24);
+    assert!(core::mem::offset_of!(CpuMachineBank, flags) == 32);
+    assert!(core::mem::offset_of!(CpuMachineBank, format) == 36);
+    assert!(core::mem::offset_of!(CpuMachineBank, status_msr) == 40);
+    assert!(core::mem::offset_of!(CpuMachineBank, reserved0) == 44);
+    assert!(core::mem::offset_of!(CpuMachineBank, status) == 48);
+    assert!(core::mem::offset_of!(CpuMachineBank, address) == 56);
+    assert!(core::mem::offset_of!(CpuMachineBank, misc) == 64);
+    assert!(core::mem::offset_of!(CpuMachineBank, config) == 72);
+    assert!(core::mem::offset_of!(CpuMachineBank, ipid) == 80);
+    assert!(core::mem::offset_of!(CpuMachineBank, syndrome) == 88);
+    assert!(core::mem::offset_of!(CpuMachineBank, status_after) == 96);
+    assert!(core::mem::offset_of!(CpuMachineBank, reserved1) == 104);
+    assert!(core::mem::size_of::<CpuMachineBank>() == 112);
+    assert!(core::mem::align_of::<CpuMachineBank>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31089,7 +31280,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_performance_hint) == 632);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_firmware_performance) == 640);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_idle_info) == 648);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 656);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_machine_info) == 656);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_machine_bank) == 664);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 672);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

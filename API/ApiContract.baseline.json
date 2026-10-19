@@ -28699,10 +28699,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 29,
+      "abi_version": 30,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 656,
+      "size": 672,
       "slots": [
         {
           "number": 0,
@@ -34106,6 +34106,159 @@
                   "child": {
                     "kind": "named",
                     "name": "CpuIdleInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 80,
+          "offset": 656,
+          "name": "cpu_machine_info",
+          "state": "function",
+          "required": false,
+          "description": "Passive copy of bounded resident MCA boot/terminal receipt. No hardware work, lock, module callback or automatic retry. Error preserves output/tail.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuMachineInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 81,
+          "offset": 664,
+          "name": "cpu_machine_bank",
+          "state": "function",
+          "required": false,
+          "description": "Passive bank copy bound to exact CPU/original epoch/complete capture sequence. End or stale/busy/index/header error preserves all output/tail. Never arbitrary MSR access.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "epoch",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "sequence",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "bank_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuMachineBank"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -119425,6 +119578,653 @@
       ],
       "values": [],
       "description": "Passive independent fixed idle receipt. Declared ACPI properties, local eligibility, software attempts/fallback/elapsed and unmeasured hardware quantities remain explicitly separate. No hardware instruction on query. Counters survive withdrawal but carry current descriptor/epoch identity. No broadcast/timer-stop or C3 context contract is implied."
+    },
+    {
+      "name": "CpuMachineInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 144,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized capacity; fixed output and extension tail unchanged on refusal.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "144"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact detected dense CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_machine_flag_*; captured controls are separate from CPUID advertisement.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original exact CPU start epoch of this retained snapshot; never relabelled after restart.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonreused even resident publication sequence; bank queries require this identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mcg_cap",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual read IA32_MCG_CAP; valid only with cap flag.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mcg_status",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual read IA32_MCG_STATUS; valid only with status flag. No write or clear.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rip",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Interrupted RIP for terminal origin2 only; valid/restartable semantics remain MCG_STATUS dependent.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rsp",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Interrupted resident frame RSP for terminal origin2 only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rflags",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Interrupted flags for terminal origin2 only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "origin",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 unavailable,1 local boot-passive scan,2 delivered terminal Machine Check. Boot scan is never current health.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "configured_cpus",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current detected CPU count for enumeration, not an atomic multi-CPU snapshot.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "apic_id",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual boot-captured APIC identity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "family",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded CPUID family.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "model",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded CPUID model.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stepping",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded CPUID stepping.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "profile",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 unsupported,1 Intel architectural MCA,2 AMD legacy architectural MCA,3 AMD19h/01h/B1 SMCA.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bank_count",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual MCG_CAP low8 only if cap valid; never inferred from model.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stored_banks",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bank records from this scan, at most64; count0 can mean unsupported register layout.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "valid_banks",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Records whose first STATUS read has VAL; stable validity still requires the per-bank flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "read_faults",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bounded number of failed protected reads in this scan.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bank_limit",
+          "offset": 116,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fixed resident bank capacity64, independent of actual bank_count.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vendor_name",
+          "offset": 120,
+          "type": {
+            "kind": "array",
+            "length": 12,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Exact CPUID vendor bytes, no terminator.",
+          "size": 12,
+          "alignment": 1,
+          "source_type": "[12]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "nested_errors",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Rejected repeated terminal capture claims; saturated, no overwrite of first capture.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Independent fixed raw hardware-error receipt. Copy-only queries never execute CPU instructions or callbacks. Captured boot-passive data and terminal #MC records are explicitly distinguished; unknown, faulted and truncated data never imply a healthy CPU. No generic correction, memory-owner attribution, physical sensor or persist-across-reboot guarantee."
+    },
+    {
+      "name": "CpuMachineBank",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized capacity; fixed output and extension tail unchanged on refusal.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact detected dense CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bank_index",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact actual bank ordinal below stored_banks; no fixed ordinal-to-block assumption.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact original snapshot CPU epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact complete publication sequence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_machine_bank_* mark actual reads and stable/invalid/fault context; read is not itself validity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "1 architectural legacy layout,2 documented AMD SMCA layout.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status_msr",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact STATUS MSR address, not a caller-selected register.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "First raw STATUS; decode only if read/VAL/stability are proved.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "address",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Raw ADDR read only after STATUS.VAL and ADDRV; do not infer physical address format.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "misc",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Raw MISC read only after STATUS.VAL and MISCV.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "config",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Raw AMD MCA_CONFIG, only documented SMCA profile. No McaxEn change.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ipid",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Raw AMD MCA_IPID, read only after CONFIG.McaX. HardwareID/type are independent of ordinal.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "syndrome",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Raw AMD MCA_SYND, read only after CONFIG.McaX and STATUS.SyndV. Matching error priority and model-specific payload remain decoder obligations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status_after",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual second STATUS; changed or unread status is unstable and prohibits mixed-data validity claims.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact bounded bank readback, no write/clear. A complete record may carry invalid or faulted STATUS; flags distinguish unavailable auxiliary registers from a measured zero. VAL, ADDRV, MISCV and SMCA SyndV are independent from read completion. Unknown vendor/model data stays raw."
     }
   ],
   "operations": [],
@@ -147070,6 +147870,256 @@
       "scope": "cpu_idle",
       "stability": "fixed_contract",
       "description": "cpu idle reason short budget."
+    },
+    {
+      "name": "cpu_machine_flag_mce",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context mce."
+    },
+    {
+      "name": "cpu_machine_flag_mca",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context mca."
+    },
+    {
+      "name": "cpu_machine_flag_msr",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context msr."
+    },
+    {
+      "name": "cpu_machine_flag_mce_enabled",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context mce_enabled."
+    },
+    {
+      "name": "cpu_machine_flag_cap_valid",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context cap_valid."
+    },
+    {
+      "name": "cpu_machine_flag_status_valid",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context status_valid."
+    },
+    {
+      "name": "cpu_machine_flag_truncated",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context truncated."
+    },
+    {
+      "name": "cpu_machine_flag_read_fault",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context read_fault."
+    },
+    {
+      "name": "cpu_machine_flag_smca_advertised",
+      "value": "256",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context smca_advertised."
+    },
+    {
+      "name": "cpu_machine_flag_virtual",
+      "value": "512",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context virtual."
+    },
+    {
+      "name": "cpu_machine_flag_unsupported",
+      "value": "1024",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context unsupported."
+    },
+    {
+      "name": "cpu_machine_flag_prepared",
+      "value": "2048",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA context prepared."
+    },
+    {
+      "name": "cpu_machine_bank_status_read",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank status_read. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_status_valid",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank status_valid. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_address_read",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank address_read. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_misc_read",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank misc_read. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_config_read",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank config_read. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_ipid_read",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank ipid_read. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_syndrome_read",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank syndrome_read. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_unstable",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank unstable. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_read_fault",
+      "value": "256",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank read_fault. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_status_after_read",
+      "value": "512",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "MCA bank status_after_read. Read completion is separate from hardware validity."
+    },
+    {
+      "name": "cpu_machine_bank_limit",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_machine",
+      "stability": "fixed_contract",
+      "description": "Fixed resident capture bound; real count comes only from MCG_CAP."
+    },
+    {
+      "name": "cpu_power_flag_mca_model",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_power",
+      "stability": "fixed_contract",
+      "description": "Passive CPUPOWER model has a documented MCA profile; not actual bank presence, enabled reporting or current error health."
+    },
+    {
+      "name": "cpu_power_flag_smca_model",
+      "value": "256",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_power",
+      "stability": "fixed_contract",
+      "description": "Passive CPUPOWER model has documented AMD SMCA decode support; no hardware activation or bank-count claim."
     }
   ],
   "limits": [

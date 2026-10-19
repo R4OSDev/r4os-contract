@@ -131,3 +131,16 @@ buffer, UART, loader or work queue. SerialLink runtime/modules/SDK facades are
 removed. A table pointer does not imply that the retired transport is available.
 Only the five descriptions changed in the controlled documentation baseline;
 all other schema values and generated Zig/C/Rust bindings are byte-identical.
+
+Machine Check receipts (0.64.34 / 0.85.32)
+----------------------------------------
+R4DEV30 appends passive `cpu_machine_info` and `cpu_machine_bank` after its
+unchanged656-byte prefix (complete table672bytes). Independent fixed144-byte
+`CpuMachineInfo` and112-byte `CpuMachineBank` distinguish retained boot-passive
+scans from terminal #MC captures. Bank copies require exact CPU/original epoch/
+capture sequence; refusal/end leaves output and tails unchanged. Actual bank
+count, read faults, truncation, status validity and changed readbacks remain
+explicit. No query runs CPU instructions, callbacks, recovery or status clears.
+Existing CrashReport, DriverApi37, DriverCpuPowerApi184 and R4SYS27 stay fixed.
+CPUPOWER's appended model-support flags describe documented decode profiles,
+without claiming actual bank presence, enabled reporting or current health.

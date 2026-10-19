@@ -2526,6 +2526,31 @@ extern "C" {
 #define R4OS_CPU_IDLE_REASON_EPOCH 16u
 #define R4OS_CPU_IDLE_REASON_POLICY 17u
 #define R4OS_CPU_IDLE_REASON_SHORT_BUDGET 18u
+#define R4OS_CPU_MACHINE_FLAG_MCE 1u
+#define R4OS_CPU_MACHINE_FLAG_MCA 2u
+#define R4OS_CPU_MACHINE_FLAG_MSR 4u
+#define R4OS_CPU_MACHINE_FLAG_MCE_ENABLED 8u
+#define R4OS_CPU_MACHINE_FLAG_CAP_VALID 16u
+#define R4OS_CPU_MACHINE_FLAG_STATUS_VALID 32u
+#define R4OS_CPU_MACHINE_FLAG_TRUNCATED 64u
+#define R4OS_CPU_MACHINE_FLAG_READ_FAULT 128u
+#define R4OS_CPU_MACHINE_FLAG_SMCA_ADVERTISED 256u
+#define R4OS_CPU_MACHINE_FLAG_VIRTUAL 512u
+#define R4OS_CPU_MACHINE_FLAG_UNSUPPORTED 1024u
+#define R4OS_CPU_MACHINE_FLAG_PREPARED 2048u
+#define R4OS_CPU_MACHINE_BANK_STATUS_READ 1u
+#define R4OS_CPU_MACHINE_BANK_STATUS_VALID 2u
+#define R4OS_CPU_MACHINE_BANK_ADDRESS_READ 4u
+#define R4OS_CPU_MACHINE_BANK_MISC_READ 8u
+#define R4OS_CPU_MACHINE_BANK_CONFIG_READ 16u
+#define R4OS_CPU_MACHINE_BANK_IPID_READ 32u
+#define R4OS_CPU_MACHINE_BANK_SYNDROME_READ 64u
+#define R4OS_CPU_MACHINE_BANK_UNSTABLE 128u
+#define R4OS_CPU_MACHINE_BANK_READ_FAULT 256u
+#define R4OS_CPU_MACHINE_BANK_STATUS_AFTER_READ 512u
+#define R4OS_CPU_MACHINE_BANK_LIMIT 64u
+#define R4OS_CPU_POWER_FLAG_MCA_MODEL 128u
+#define R4OS_CPU_POWER_FLAG_SMCA_MODEL 256u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3337,6 +3362,8 @@ typedef struct R4CpuFirmwareInfo R4CpuFirmwareInfo;
 typedef struct R4CpuIdleDescriptor R4CpuIdleDescriptor;
 typedef struct R4CpuIdlePolicy R4CpuIdlePolicy;
 typedef struct R4CpuIdleInfo R4CpuIdleInfo;
+typedef struct R4CpuMachineInfo R4CpuMachineInfo;
+typedef struct R4CpuMachineBank R4CpuMachineBank;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10079,6 +10106,56 @@ typedef struct R4CpuIdleInfo {
     uint64_t energy_uj;
 } R4CpuIdleInfo;
 
+typedef struct R4CpuMachineInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t flags;
+    uint64_t epoch;
+    uint64_t sequence;
+    uint64_t mcg_cap;
+    uint64_t mcg_status;
+    uint64_t rip;
+    uint64_t rsp;
+    uint64_t rflags;
+    uint32_t origin;
+    uint32_t configured_cpus;
+    uint32_t apic_id;
+    uint32_t family;
+    uint32_t model;
+    uint32_t stepping;
+    uint32_t profile;
+    uint32_t bank_count;
+    uint32_t stored_banks;
+    uint32_t valid_banks;
+    uint32_t read_faults;
+    uint32_t bank_limit;
+    uint8_t vendor_name[12];
+    uint32_t nested_errors;
+    uint64_t reserved0;
+} R4CpuMachineInfo;
+
+typedef struct R4CpuMachineBank {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t bank_index;
+    uint64_t epoch;
+    uint64_t sequence;
+    uint32_t flags;
+    uint32_t format;
+    uint32_t status_msr;
+    uint32_t reserved0;
+    uint64_t status;
+    uint64_t address;
+    uint64_t misc;
+    uint64_t config;
+    uint64_t ipid;
+    uint64_t syndrome;
+    uint64_t status_after;
+    uint64_t reserved1;
+} R4CpuMachineBank;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11025,6 +11102,8 @@ typedef int32_t (*R4DevCpuCppcFn)(const R4CpuPerformanceRequest * request, R4Cpu
 typedef int32_t (*R4DevCpuPerformanceHintFn)(uint32_t cpu_index, uint64_t expected_epoch, R4CpuPerformanceHintInfo * out);
 typedef int32_t (*R4DevCpuFirmwarePerformanceFn)(const R4CpuPerformanceRequest * request, R4CpuFirmwareInfo * out);
 typedef int32_t (*R4DevCpuIdleInfoFn)(uint32_t cpu_index, R4CpuIdleInfo * out);
+typedef int32_t (*R4DevCpuMachineInfoFn)(uint32_t cpu_index, R4CpuMachineInfo * out);
+typedef int32_t (*R4DevCpuMachineBankFn)(uint32_t cpu_index, uint64_t epoch, uint64_t sequence, uint32_t bank_index, R4CpuMachineBank * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -11111,6 +11190,8 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_performance_hint;
     uintptr_t cpu_firmware_performance;
     uintptr_t cpu_idle_info;
+    uintptr_t cpu_machine_info;
+    uintptr_t cpu_machine_bank;
 } R4XStartR4Dev;
 
 
@@ -17189,6 +17270,52 @@ _Static_assert(offsetof(R4CpuIdleInfo, descriptor_revision) == 160u, "CpuIdleInf
 _Static_assert(offsetof(R4CpuIdleInfo, residency_ns) == 168u, "CpuIdleInfo.residency_ns offset mismatch");
 _Static_assert(offsetof(R4CpuIdleInfo, wake_latency_ns) == 176u, "CpuIdleInfo.wake_latency_ns offset mismatch");
 _Static_assert(offsetof(R4CpuIdleInfo, energy_uj) == 184u, "CpuIdleInfo.energy_uj offset mismatch");
+_Static_assert(sizeof(R4CpuMachineInfo) == 144u, "CpuMachineInfo size mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, version) == 0u, "CpuMachineInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, size) == 4u, "CpuMachineInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, cpu_index) == 8u, "CpuMachineInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, flags) == 12u, "CpuMachineInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, epoch) == 16u, "CpuMachineInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, sequence) == 24u, "CpuMachineInfo.sequence offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, mcg_cap) == 32u, "CpuMachineInfo.mcg_cap offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, mcg_status) == 40u, "CpuMachineInfo.mcg_status offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, rip) == 48u, "CpuMachineInfo.rip offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, rsp) == 56u, "CpuMachineInfo.rsp offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, rflags) == 64u, "CpuMachineInfo.rflags offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, origin) == 72u, "CpuMachineInfo.origin offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, configured_cpus) == 76u, "CpuMachineInfo.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, apic_id) == 80u, "CpuMachineInfo.apic_id offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, family) == 84u, "CpuMachineInfo.family offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, model) == 88u, "CpuMachineInfo.model offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, stepping) == 92u, "CpuMachineInfo.stepping offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, profile) == 96u, "CpuMachineInfo.profile offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, bank_count) == 100u, "CpuMachineInfo.bank_count offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, stored_banks) == 104u, "CpuMachineInfo.stored_banks offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, valid_banks) == 108u, "CpuMachineInfo.valid_banks offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, read_faults) == 112u, "CpuMachineInfo.read_faults offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, bank_limit) == 116u, "CpuMachineInfo.bank_limit offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, vendor_name) == 120u, "CpuMachineInfo.vendor_name offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, nested_errors) == 132u, "CpuMachineInfo.nested_errors offset mismatch");
+_Static_assert(offsetof(R4CpuMachineInfo, reserved0) == 136u, "CpuMachineInfo.reserved0 offset mismatch");
+_Static_assert(sizeof(R4CpuMachineBank) == 112u, "CpuMachineBank size mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, version) == 0u, "CpuMachineBank.version offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, size) == 4u, "CpuMachineBank.size offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, cpu_index) == 8u, "CpuMachineBank.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, bank_index) == 12u, "CpuMachineBank.bank_index offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, epoch) == 16u, "CpuMachineBank.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, sequence) == 24u, "CpuMachineBank.sequence offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, flags) == 32u, "CpuMachineBank.flags offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, format) == 36u, "CpuMachineBank.format offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, status_msr) == 40u, "CpuMachineBank.status_msr offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, reserved0) == 44u, "CpuMachineBank.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, status) == 48u, "CpuMachineBank.status offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, address) == 56u, "CpuMachineBank.address offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, misc) == 64u, "CpuMachineBank.misc offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, config) == 72u, "CpuMachineBank.config offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, ipid) == 80u, "CpuMachineBank.ipid offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, syndrome) == 88u, "CpuMachineBank.syndrome offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, status_after) == 96u, "CpuMachineBank.status_after offset mismatch");
+_Static_assert(offsetof(R4CpuMachineBank, reserved1) == 104u, "CpuMachineBank.reserved1 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1288u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -17976,7 +18103,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 656u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 672u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -18135,6 +18262,10 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_firmware_performance) == 640u, "R4XSt
 _Static_assert(sizeof(R4DevCpuFirmwarePerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_idle_info) == 648u, "R4XStartR4Dev.cpu_idle_info offset mismatch");
 _Static_assert(sizeof(R4DevCpuIdleInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_machine_info) == 656u, "R4XStartR4Dev.cpu_machine_info offset mismatch");
+_Static_assert(sizeof(R4DevCpuMachineInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_machine_bank) == 664u, "R4XStartR4Dev.cpu_machine_bank offset mismatch");
+_Static_assert(sizeof(R4DevCpuMachineBankFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

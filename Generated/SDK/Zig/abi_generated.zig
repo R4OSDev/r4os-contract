@@ -2514,6 +2514,31 @@ pub const cpu_idle_reason_timer: u32 = 15;
 pub const cpu_idle_reason_epoch: u32 = 16;
 pub const cpu_idle_reason_policy: u32 = 17;
 pub const cpu_idle_reason_short_budget: u32 = 18;
+pub const cpu_machine_flag_mce: u32 = 1;
+pub const cpu_machine_flag_mca: u32 = 2;
+pub const cpu_machine_flag_msr: u32 = 4;
+pub const cpu_machine_flag_mce_enabled: u32 = 8;
+pub const cpu_machine_flag_cap_valid: u32 = 16;
+pub const cpu_machine_flag_status_valid: u32 = 32;
+pub const cpu_machine_flag_truncated: u32 = 64;
+pub const cpu_machine_flag_read_fault: u32 = 128;
+pub const cpu_machine_flag_smca_advertised: u32 = 256;
+pub const cpu_machine_flag_virtual: u32 = 512;
+pub const cpu_machine_flag_unsupported: u32 = 1024;
+pub const cpu_machine_flag_prepared: u32 = 2048;
+pub const cpu_machine_bank_status_read: u32 = 1;
+pub const cpu_machine_bank_status_valid: u32 = 2;
+pub const cpu_machine_bank_address_read: u32 = 4;
+pub const cpu_machine_bank_misc_read: u32 = 8;
+pub const cpu_machine_bank_config_read: u32 = 16;
+pub const cpu_machine_bank_ipid_read: u32 = 32;
+pub const cpu_machine_bank_syndrome_read: u32 = 64;
+pub const cpu_machine_bank_unstable: u32 = 128;
+pub const cpu_machine_bank_read_fault: u32 = 256;
+pub const cpu_machine_bank_status_after_read: u32 = 512;
+pub const cpu_machine_bank_limit: u32 = 64;
+pub const cpu_power_flag_mca_model: u32 = 128;
+pub const cpu_power_flag_smca_model: u32 = 256;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -9783,6 +9808,56 @@ pub const CpuIdleInfo = extern struct {
     energy_uj: u64 = 0,
 };
 
+pub const CpuMachineInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 144,
+    cpu_index: u32 = 0,
+    flags: u32 = 0,
+    epoch: u64 = 0,
+    sequence: u64 = 0,
+    mcg_cap: u64 = 0,
+    mcg_status: u64 = 0,
+    rip: u64 = 0,
+    rsp: u64 = 0,
+    rflags: u64 = 0,
+    origin: u32 = 0,
+    configured_cpus: u32 = 0,
+    apic_id: u32 = 0,
+    family: u32 = 0,
+    model: u32 = 0,
+    stepping: u32 = 0,
+    profile: u32 = 0,
+    bank_count: u32 = 0,
+    stored_banks: u32 = 0,
+    valid_banks: u32 = 0,
+    read_faults: u32 = 0,
+    bank_limit: u32 = 0,
+    vendor_name: [12]u8 = .{0} ** 12,
+    nested_errors: u32 = 0,
+    reserved0: u64 = 0,
+};
+
+pub const CpuMachineBank = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    cpu_index: u32 = 0,
+    bank_index: u32 = 0,
+    epoch: u64 = 0,
+    sequence: u64 = 0,
+    flags: u32 = 0,
+    format: u32 = 0,
+    status_msr: u32 = 0,
+    reserved0: u32 = 0,
+    status: u64 = 0,
+    address: u64 = 0,
+    misc: u64 = 0,
+    config: u64 = 0,
+    ipid: u64 = 0,
+    syndrome: u64 = 0,
+    status_after: u64 = 0,
+    reserved1: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10694,12 +10769,14 @@ pub const R4DevFns = struct {
     pub const cpu_performance_hint = *const fn (u32, u64, *CpuPerformanceHintInfo) callconv(.c) i32;
     pub const cpu_firmware_performance = *const fn (*const CpuPerformanceRequest, *CpuFirmwareInfo) callconv(.c) i32;
     pub const cpu_idle_info = *const fn (u32, *CpuIdleInfo) callconv(.c) i32;
+    pub const cpu_machine_info = *const fn (u32, *CpuMachineInfo) callconv(.c) i32;
+    pub const cpu_machine_bank = *const fn (u32, u64, u64, u32, *CpuMachineBank) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 29,
-    size: u32 = 656,
+    abi_version: u32 = 30,
+    size: u32 = 672,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -10781,6 +10858,8 @@ pub const R4XStartR4Dev = extern struct {
     cpu_performance_hint: usize = 0,
     cpu_firmware_performance: usize = 0,
     cpu_idle_info: usize = 0,
+    cpu_machine_info: usize = 0,
+    cpu_machine_bank: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -11276,6 +11355,8 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 77, .offset = 632, .name = "cpu_performance_hint", .state = .function, .required = false },
     .{ .number = 78, .offset = 640, .name = "cpu_firmware_performance", .state = .function, .required = false },
     .{ .number = 79, .offset = 648, .name = "cpu_idle_info", .state = .function, .required = false },
+    .{ .number = 80, .offset = 656, .name = "cpu_machine_info", .state = .function, .required = false },
+    .{ .number = 81, .offset = 664, .name = "cpu_machine_bank", .state = .function, .required = false },
 };
 
 comptime {
@@ -17701,6 +17782,54 @@ comptime {
     if (@offsetOf(CpuIdleInfo, "residency_ns") != 168) @compileError("generated ABI offset drift: CpuIdleInfo.residency_ns");
     if (@offsetOf(CpuIdleInfo, "wake_latency_ns") != 176) @compileError("generated ABI offset drift: CpuIdleInfo.wake_latency_ns");
     if (@offsetOf(CpuIdleInfo, "energy_uj") != 184) @compileError("generated ABI offset drift: CpuIdleInfo.energy_uj");
+    if (@sizeOf(CpuMachineInfo) != 144) @compileError("generated ABI size drift: CpuMachineInfo");
+    if (@alignOf(CpuMachineInfo) != 8) @compileError("generated ABI alignment drift: CpuMachineInfo");
+    if (@offsetOf(CpuMachineInfo, "version") != 0) @compileError("generated ABI offset drift: CpuMachineInfo.version");
+    if (@offsetOf(CpuMachineInfo, "size") != 4) @compileError("generated ABI offset drift: CpuMachineInfo.size");
+    if (@offsetOf(CpuMachineInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuMachineInfo.cpu_index");
+    if (@offsetOf(CpuMachineInfo, "flags") != 12) @compileError("generated ABI offset drift: CpuMachineInfo.flags");
+    if (@offsetOf(CpuMachineInfo, "epoch") != 16) @compileError("generated ABI offset drift: CpuMachineInfo.epoch");
+    if (@offsetOf(CpuMachineInfo, "sequence") != 24) @compileError("generated ABI offset drift: CpuMachineInfo.sequence");
+    if (@offsetOf(CpuMachineInfo, "mcg_cap") != 32) @compileError("generated ABI offset drift: CpuMachineInfo.mcg_cap");
+    if (@offsetOf(CpuMachineInfo, "mcg_status") != 40) @compileError("generated ABI offset drift: CpuMachineInfo.mcg_status");
+    if (@offsetOf(CpuMachineInfo, "rip") != 48) @compileError("generated ABI offset drift: CpuMachineInfo.rip");
+    if (@offsetOf(CpuMachineInfo, "rsp") != 56) @compileError("generated ABI offset drift: CpuMachineInfo.rsp");
+    if (@offsetOf(CpuMachineInfo, "rflags") != 64) @compileError("generated ABI offset drift: CpuMachineInfo.rflags");
+    if (@offsetOf(CpuMachineInfo, "origin") != 72) @compileError("generated ABI offset drift: CpuMachineInfo.origin");
+    if (@offsetOf(CpuMachineInfo, "configured_cpus") != 76) @compileError("generated ABI offset drift: CpuMachineInfo.configured_cpus");
+    if (@offsetOf(CpuMachineInfo, "apic_id") != 80) @compileError("generated ABI offset drift: CpuMachineInfo.apic_id");
+    if (@offsetOf(CpuMachineInfo, "family") != 84) @compileError("generated ABI offset drift: CpuMachineInfo.family");
+    if (@offsetOf(CpuMachineInfo, "model") != 88) @compileError("generated ABI offset drift: CpuMachineInfo.model");
+    if (@offsetOf(CpuMachineInfo, "stepping") != 92) @compileError("generated ABI offset drift: CpuMachineInfo.stepping");
+    if (@offsetOf(CpuMachineInfo, "profile") != 96) @compileError("generated ABI offset drift: CpuMachineInfo.profile");
+    if (@offsetOf(CpuMachineInfo, "bank_count") != 100) @compileError("generated ABI offset drift: CpuMachineInfo.bank_count");
+    if (@offsetOf(CpuMachineInfo, "stored_banks") != 104) @compileError("generated ABI offset drift: CpuMachineInfo.stored_banks");
+    if (@offsetOf(CpuMachineInfo, "valid_banks") != 108) @compileError("generated ABI offset drift: CpuMachineInfo.valid_banks");
+    if (@offsetOf(CpuMachineInfo, "read_faults") != 112) @compileError("generated ABI offset drift: CpuMachineInfo.read_faults");
+    if (@offsetOf(CpuMachineInfo, "bank_limit") != 116) @compileError("generated ABI offset drift: CpuMachineInfo.bank_limit");
+    if (@offsetOf(CpuMachineInfo, "vendor_name") != 120) @compileError("generated ABI offset drift: CpuMachineInfo.vendor_name");
+    if (@offsetOf(CpuMachineInfo, "nested_errors") != 132) @compileError("generated ABI offset drift: CpuMachineInfo.nested_errors");
+    if (@offsetOf(CpuMachineInfo, "reserved0") != 136) @compileError("generated ABI offset drift: CpuMachineInfo.reserved0");
+    if (@sizeOf(CpuMachineBank) != 112) @compileError("generated ABI size drift: CpuMachineBank");
+    if (@alignOf(CpuMachineBank) != 8) @compileError("generated ABI alignment drift: CpuMachineBank");
+    if (@offsetOf(CpuMachineBank, "version") != 0) @compileError("generated ABI offset drift: CpuMachineBank.version");
+    if (@offsetOf(CpuMachineBank, "size") != 4) @compileError("generated ABI offset drift: CpuMachineBank.size");
+    if (@offsetOf(CpuMachineBank, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuMachineBank.cpu_index");
+    if (@offsetOf(CpuMachineBank, "bank_index") != 12) @compileError("generated ABI offset drift: CpuMachineBank.bank_index");
+    if (@offsetOf(CpuMachineBank, "epoch") != 16) @compileError("generated ABI offset drift: CpuMachineBank.epoch");
+    if (@offsetOf(CpuMachineBank, "sequence") != 24) @compileError("generated ABI offset drift: CpuMachineBank.sequence");
+    if (@offsetOf(CpuMachineBank, "flags") != 32) @compileError("generated ABI offset drift: CpuMachineBank.flags");
+    if (@offsetOf(CpuMachineBank, "format") != 36) @compileError("generated ABI offset drift: CpuMachineBank.format");
+    if (@offsetOf(CpuMachineBank, "status_msr") != 40) @compileError("generated ABI offset drift: CpuMachineBank.status_msr");
+    if (@offsetOf(CpuMachineBank, "reserved0") != 44) @compileError("generated ABI offset drift: CpuMachineBank.reserved0");
+    if (@offsetOf(CpuMachineBank, "status") != 48) @compileError("generated ABI offset drift: CpuMachineBank.status");
+    if (@offsetOf(CpuMachineBank, "address") != 56) @compileError("generated ABI offset drift: CpuMachineBank.address");
+    if (@offsetOf(CpuMachineBank, "misc") != 64) @compileError("generated ABI offset drift: CpuMachineBank.misc");
+    if (@offsetOf(CpuMachineBank, "config") != 72) @compileError("generated ABI offset drift: CpuMachineBank.config");
+    if (@offsetOf(CpuMachineBank, "ipid") != 80) @compileError("generated ABI offset drift: CpuMachineBank.ipid");
+    if (@offsetOf(CpuMachineBank, "syndrome") != 88) @compileError("generated ABI offset drift: CpuMachineBank.syndrome");
+    if (@offsetOf(CpuMachineBank, "status_after") != 96) @compileError("generated ABI offset drift: CpuMachineBank.status_after");
+    if (@offsetOf(CpuMachineBank, "reserved1") != 104) @compileError("generated ABI offset drift: CpuMachineBank.reserved1");
     if (@sizeOf(R4XStartR4Sys) != 1288) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -18100,7 +18229,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 656) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 672) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -18181,4 +18310,6 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_performance_hint") != 632) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_performance_hint");
     if (@offsetOf(R4XStartR4Dev, "cpu_firmware_performance") != 640) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_firmware_performance");
     if (@offsetOf(R4XStartR4Dev, "cpu_idle_info") != 648) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_idle_info");
+    if (@offsetOf(R4XStartR4Dev, "cpu_machine_info") != 656) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_machine_info");
+    if (@offsetOf(R4XStartR4Dev, "cpu_machine_bank") != 664) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_machine_bank");
 }
