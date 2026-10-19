@@ -2507,6 +2507,25 @@ extern "C" {
 #define R4OS_CPU_FIRMWARE_VALID_DOMAIN 16u
 #define R4OS_POWER_PROFILE_BACKEND_ACPI_CPPC 3u
 #define R4OS_POWER_PROFILE_BACKEND_ACPI_PSS 4u
+#define R4OS_CPU_IDLE_REASON_NONE 0u
+#define R4OS_CPU_IDLE_REASON_ABSENT 1u
+#define R4OS_CPU_IDLE_REASON_MALFORMED 2u
+#define R4OS_CPU_IDLE_REASON_COORDINATION 3u
+#define R4OS_CPU_IDLE_REASON_LPI_CONTEXT 4u
+#define R4OS_CPU_IDLE_REASON_ENTRY_METHOD 5u
+#define R4OS_CPU_IDLE_REASON_WITHDRAWN 6u
+#define R4OS_CPU_IDLE_REASON_HYPERVISOR 7u
+#define R4OS_CPU_IDLE_REASON_VENDOR 8u
+#define R4OS_CPU_IDLE_REASON_MONITOR 9u
+#define R4OS_CPU_IDLE_REASON_ARAT 10u
+#define R4OS_CPU_IDLE_REASON_INVARIANT_TSC 11u
+#define R4OS_CPU_IDLE_REASON_SUBSTATE 12u
+#define R4OS_CPU_IDLE_REASON_MONITOR_FSM 13u
+#define R4OS_CPU_IDLE_REASON_CLOCK 14u
+#define R4OS_CPU_IDLE_REASON_TIMER 15u
+#define R4OS_CPU_IDLE_REASON_EPOCH 16u
+#define R4OS_CPU_IDLE_REASON_POLICY 17u
+#define R4OS_CPU_IDLE_REASON_SHORT_BUDGET 18u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3315,6 +3334,9 @@ typedef struct R4PowerProfileInfo R4PowerProfileInfo;
 typedef struct R4PowerCpuProfileInfo R4PowerCpuProfileInfo;
 typedef struct R4CpuFirmwareBackend R4CpuFirmwareBackend;
 typedef struct R4CpuFirmwareInfo R4CpuFirmwareInfo;
+typedef struct R4CpuIdleDescriptor R4CpuIdleDescriptor;
+typedef struct R4CpuIdlePolicy R4CpuIdlePolicy;
+typedef struct R4CpuIdleInfo R4CpuIdleInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -9690,6 +9712,8 @@ typedef struct R4DriverCpuPowerApi {
     uint64_t firmware_execute;
     uint64_t firmware_control;
     uint64_t firmware_cpu_info;
+    uint64_t idle_publish;
+    uint64_t idle_policy;
 } R4DriverCpuPowerApi;
 
 typedef struct R4CpuPowerCounters {
@@ -9983,6 +10007,77 @@ typedef struct R4CpuFirmwareInfo {
     uint64_t descriptor_identity;
     uint64_t reserved2;
 } R4CpuFirmwareInfo;
+
+typedef struct R4CpuIdleDescriptor {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t flags;
+    uint64_t epoch;
+    uint64_t firmware_generation;
+    uint64_t descriptor_identity;
+    uint32_t source;
+    uint32_t state_count;
+    uint32_t selected_index;
+    uint32_t cstate_type;
+    uint32_t entry_method;
+    uint32_t entry_hint;
+    uint32_t latency_us;
+    uint32_t min_residency_us;
+    uint32_t coordination;
+    uint32_t context_loss;
+    uint32_t declared_power_mw;
+    uint32_t reason;
+    uint32_t lpi_state_count;
+    uint32_t reserved0;
+} R4CpuIdleDescriptor;
+
+typedef struct R4CpuIdlePolicy {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider_generation;
+    uint32_t enabled;
+    uint32_t maximum_latency_us;
+    uint32_t residency_factor;
+    uint32_t reserved0;
+} R4CpuIdlePolicy;
+
+typedef struct R4CpuIdleInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t state;
+    uint64_t epoch;
+    uint64_t firmware_generation;
+    uint64_t policy_generation;
+    uint64_t descriptor_identity;
+    uint32_t source;
+    uint32_t state_count;
+    uint32_t selected_index;
+    uint32_t cstate_type;
+    uint32_t entry_method;
+    uint32_t entry_hint;
+    uint32_t latency_us;
+    uint32_t min_residency_us;
+    uint32_t coordination;
+    uint32_t context_loss;
+    uint32_t declared_power_mw;
+    uint32_t reason;
+    uint32_t lpi_state_count;
+    uint32_t capability_flags;
+    uint32_t reserved0;
+    uint32_t reserved1;
+    uint64_t entry_attempts;
+    uint64_t hlt_fallbacks;
+    uint64_t cancelled_entries;
+    uint64_t elapsed_ns;
+    uint64_t last_elapsed_ns;
+    uint64_t active_entries;
+    uint64_t descriptor_revision;
+    uint64_t residency_ns;
+    uint64_t wake_latency_ns;
+    uint64_t energy_uj;
+} R4CpuIdleInfo;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -10929,6 +11024,7 @@ typedef int32_t (*R4DevCpuPerformanceFn)(const R4CpuPerformanceRequest * request
 typedef int32_t (*R4DevCpuCppcFn)(const R4CpuPerformanceRequest * request, R4CpuCppcInfo * out);
 typedef int32_t (*R4DevCpuPerformanceHintFn)(uint32_t cpu_index, uint64_t expected_epoch, R4CpuPerformanceHintInfo * out);
 typedef int32_t (*R4DevCpuFirmwarePerformanceFn)(const R4CpuPerformanceRequest * request, R4CpuFirmwareInfo * out);
+typedef int32_t (*R4DevCpuIdleInfoFn)(uint32_t cpu_index, R4CpuIdleInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -11014,6 +11110,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_cppc;
     uintptr_t cpu_performance_hint;
     uintptr_t cpu_firmware_performance;
+    uintptr_t cpu_idle_info;
 } R4XStartR4Dev;
 
 
@@ -16738,7 +16835,7 @@ _Static_assert(offsetof(R4CpuPowerBackend, snapshot) == 16u, "CpuPowerBackend.sn
 _Static_assert(offsetof(R4CpuPowerBackend, capture) == 24u, "CpuPowerBackend.capture offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, flags) == 32u, "CpuPowerBackend.flags offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, reserved0) == 36u, "CpuPowerBackend.reserved0 offset mismatch");
-_Static_assert(sizeof(R4DriverCpuPowerApi) == 168u, "DriverCpuPowerApi size mismatch");
+_Static_assert(sizeof(R4DriverCpuPowerApi) == 184u, "DriverCpuPowerApi size mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, version) == 0u, "DriverCpuPowerApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, size) == 4u, "DriverCpuPowerApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, register_backend) == 8u, "DriverCpuPowerApi.register_backend offset mismatch");
@@ -16761,6 +16858,8 @@ _Static_assert(offsetof(R4DriverCpuPowerApi, firmware_unregister) == 136u, "Driv
 _Static_assert(offsetof(R4DriverCpuPowerApi, firmware_execute) == 144u, "DriverCpuPowerApi.firmware_execute offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, firmware_control) == 152u, "DriverCpuPowerApi.firmware_control offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, firmware_cpu_info) == 160u, "DriverCpuPowerApi.firmware_cpu_info offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, idle_publish) == 168u, "DriverCpuPowerApi.idle_publish offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, idle_policy) == 176u, "DriverCpuPowerApi.idle_policy offset mismatch");
 _Static_assert(sizeof(R4CpuPowerCounters) == 64u, "CpuPowerCounters size mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, version) == 0u, "CpuPowerCounters.version offset mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, size) == 4u, "CpuPowerCounters.size offset mismatch");
@@ -17025,6 +17124,71 @@ _Static_assert(offsetof(R4CpuFirmwareInfo, reserved0) == 168u, "CpuFirmwareInfo.
 _Static_assert(offsetof(R4CpuFirmwareInfo, reserved1) == 172u, "CpuFirmwareInfo.reserved1 offset mismatch");
 _Static_assert(offsetof(R4CpuFirmwareInfo, descriptor_identity) == 176u, "CpuFirmwareInfo.descriptor_identity offset mismatch");
 _Static_assert(offsetof(R4CpuFirmwareInfo, reserved2) == 184u, "CpuFirmwareInfo.reserved2 offset mismatch");
+_Static_assert(sizeof(R4CpuIdleDescriptor) == 96u, "CpuIdleDescriptor size mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, version) == 0u, "CpuIdleDescriptor.version offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, size) == 4u, "CpuIdleDescriptor.size offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, cpu_index) == 8u, "CpuIdleDescriptor.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, flags) == 12u, "CpuIdleDescriptor.flags offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, epoch) == 16u, "CpuIdleDescriptor.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, firmware_generation) == 24u, "CpuIdleDescriptor.firmware_generation offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, descriptor_identity) == 32u, "CpuIdleDescriptor.descriptor_identity offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, source) == 40u, "CpuIdleDescriptor.source offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, state_count) == 44u, "CpuIdleDescriptor.state_count offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, selected_index) == 48u, "CpuIdleDescriptor.selected_index offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, cstate_type) == 52u, "CpuIdleDescriptor.cstate_type offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, entry_method) == 56u, "CpuIdleDescriptor.entry_method offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, entry_hint) == 60u, "CpuIdleDescriptor.entry_hint offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, latency_us) == 64u, "CpuIdleDescriptor.latency_us offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, min_residency_us) == 68u, "CpuIdleDescriptor.min_residency_us offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, coordination) == 72u, "CpuIdleDescriptor.coordination offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, context_loss) == 76u, "CpuIdleDescriptor.context_loss offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, declared_power_mw) == 80u, "CpuIdleDescriptor.declared_power_mw offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, reason) == 84u, "CpuIdleDescriptor.reason offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, lpi_state_count) == 88u, "CpuIdleDescriptor.lpi_state_count offset mismatch");
+_Static_assert(offsetof(R4CpuIdleDescriptor, reserved0) == 92u, "CpuIdleDescriptor.reserved0 offset mismatch");
+_Static_assert(sizeof(R4CpuIdlePolicy) == 32u, "CpuIdlePolicy size mismatch");
+_Static_assert(offsetof(R4CpuIdlePolicy, version) == 0u, "CpuIdlePolicy.version offset mismatch");
+_Static_assert(offsetof(R4CpuIdlePolicy, size) == 4u, "CpuIdlePolicy.size offset mismatch");
+_Static_assert(offsetof(R4CpuIdlePolicy, provider_generation) == 8u, "CpuIdlePolicy.provider_generation offset mismatch");
+_Static_assert(offsetof(R4CpuIdlePolicy, enabled) == 16u, "CpuIdlePolicy.enabled offset mismatch");
+_Static_assert(offsetof(R4CpuIdlePolicy, maximum_latency_us) == 20u, "CpuIdlePolicy.maximum_latency_us offset mismatch");
+_Static_assert(offsetof(R4CpuIdlePolicy, residency_factor) == 24u, "CpuIdlePolicy.residency_factor offset mismatch");
+_Static_assert(offsetof(R4CpuIdlePolicy, reserved0) == 28u, "CpuIdlePolicy.reserved0 offset mismatch");
+_Static_assert(sizeof(R4CpuIdleInfo) == 192u, "CpuIdleInfo size mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, version) == 0u, "CpuIdleInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, size) == 4u, "CpuIdleInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, cpu_index) == 8u, "CpuIdleInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, state) == 12u, "CpuIdleInfo.state offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, epoch) == 16u, "CpuIdleInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, firmware_generation) == 24u, "CpuIdleInfo.firmware_generation offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, policy_generation) == 32u, "CpuIdleInfo.policy_generation offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, descriptor_identity) == 40u, "CpuIdleInfo.descriptor_identity offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, source) == 48u, "CpuIdleInfo.source offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, state_count) == 52u, "CpuIdleInfo.state_count offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, selected_index) == 56u, "CpuIdleInfo.selected_index offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, cstate_type) == 60u, "CpuIdleInfo.cstate_type offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, entry_method) == 64u, "CpuIdleInfo.entry_method offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, entry_hint) == 68u, "CpuIdleInfo.entry_hint offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, latency_us) == 72u, "CpuIdleInfo.latency_us offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, min_residency_us) == 76u, "CpuIdleInfo.min_residency_us offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, coordination) == 80u, "CpuIdleInfo.coordination offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, context_loss) == 84u, "CpuIdleInfo.context_loss offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, declared_power_mw) == 88u, "CpuIdleInfo.declared_power_mw offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, reason) == 92u, "CpuIdleInfo.reason offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, lpi_state_count) == 96u, "CpuIdleInfo.lpi_state_count offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, capability_flags) == 100u, "CpuIdleInfo.capability_flags offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, reserved0) == 104u, "CpuIdleInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, reserved1) == 108u, "CpuIdleInfo.reserved1 offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, entry_attempts) == 112u, "CpuIdleInfo.entry_attempts offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, hlt_fallbacks) == 120u, "CpuIdleInfo.hlt_fallbacks offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, cancelled_entries) == 128u, "CpuIdleInfo.cancelled_entries offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, elapsed_ns) == 136u, "CpuIdleInfo.elapsed_ns offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, last_elapsed_ns) == 144u, "CpuIdleInfo.last_elapsed_ns offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, active_entries) == 152u, "CpuIdleInfo.active_entries offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, descriptor_revision) == 160u, "CpuIdleInfo.descriptor_revision offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, residency_ns) == 168u, "CpuIdleInfo.residency_ns offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, wake_latency_ns) == 176u, "CpuIdleInfo.wake_latency_ns offset mismatch");
+_Static_assert(offsetof(R4CpuIdleInfo, energy_uj) == 184u, "CpuIdleInfo.energy_uj offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1288u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -17812,7 +17976,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 648u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 656u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -17969,6 +18133,8 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_performance_hint) == 632u, "R4XStartR
 _Static_assert(sizeof(R4DevCpuPerformanceHintFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_firmware_performance) == 640u, "R4XStartR4Dev.cpu_firmware_performance offset mismatch");
 _Static_assert(sizeof(R4DevCpuFirmwarePerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_idle_info) == 648u, "R4XStartR4Dev.cpu_idle_info offset mismatch");
+_Static_assert(sizeof(R4DevCpuIdleInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

@@ -468,5 +468,6 @@ static R4DevCpuPerformanceFn r4os_probe_r4dev_cpu_performance = (R4DevCpuPerform
 static R4DevCpuCppcFn r4os_probe_r4dev_cpu_cppc = (R4DevCpuCppcFn)0;
 static R4DevCpuPerformanceHintFn r4os_probe_r4dev_cpu_performance_hint = (R4DevCpuPerformanceHintFn)0;
 static R4DevCpuFirmwarePerformanceFn r4os_probe_r4dev_cpu_firmware_performance = (R4DevCpuFirmwarePerformanceFn)0;
+static R4DevCpuIdleInfoFn r4os_probe_r4dev_cpu_idle_info = (R4DevCpuIdleInfoFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

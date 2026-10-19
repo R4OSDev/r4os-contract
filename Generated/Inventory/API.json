@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 465,
-    "group_slot_count": 465,
+    "function_count": 466,
+    "group_slot_count": 466,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 126
+    "advanced_count": 127
   },
   "functions": [
     {
@@ -5587,6 +5587,18 @@
       "slot": 78,
       "exposure": "advanced",
       "description": "Explicit CPUPOWER firmware performance request, separately typed from local HWP/CPPC. May wait for actual external ACPIPLAT worker completion. Task/CPU/provider identities remain pinned; no Runtime/local-register owner spans the call. Refusal preserves output; complete receipt may report uncertain hardware and retained resources. No arbitrary model register, governor, automatic mutation retry or physical energy/clock claim.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_idle_info",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 79,
+      "exposure": "advanced",
+      "description": "Passive copy of independent idle declaration, local qualification and software counters. Hardware residency, wake latency and energy remain unavailable without own readback; never execute CPUID/MSR/MONITOR on this query.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

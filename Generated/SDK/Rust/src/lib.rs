@@ -2499,6 +2499,25 @@ pub const cpu_firmware_valid_epp: u32 = 8;
 pub const cpu_firmware_valid_domain: u32 = 16;
 pub const power_profile_backend_acpi_cppc: u32 = 3;
 pub const power_profile_backend_acpi_pss: u32 = 4;
+pub const cpu_idle_reason_none: u32 = 0;
+pub const cpu_idle_reason_absent: u32 = 1;
+pub const cpu_idle_reason_malformed: u32 = 2;
+pub const cpu_idle_reason_coordination: u32 = 3;
+pub const cpu_idle_reason_lpi_context: u32 = 4;
+pub const cpu_idle_reason_entry_method: u32 = 5;
+pub const cpu_idle_reason_withdrawn: u32 = 6;
+pub const cpu_idle_reason_hypervisor: u32 = 7;
+pub const cpu_idle_reason_vendor: u32 = 8;
+pub const cpu_idle_reason_monitor: u32 = 9;
+pub const cpu_idle_reason_arat: u32 = 10;
+pub const cpu_idle_reason_invariant_tsc: u32 = 11;
+pub const cpu_idle_reason_substate: u32 = 12;
+pub const cpu_idle_reason_monitor_fsm: u32 = 13;
+pub const cpu_idle_reason_clock: u32 = 14;
+pub const cpu_idle_reason_timer: u32 = 15;
+pub const cpu_idle_reason_epoch: u32 = 16;
+pub const cpu_idle_reason_policy: u32 = 17;
+pub const cpu_idle_reason_short_budget: u32 = 18;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -17729,13 +17748,15 @@ pub struct DriverCpuPowerApi {
     pub firmware_execute: u64,
     pub firmware_control: u64,
     pub firmware_cpu_info: u64,
+    pub idle_publish: u64,
+    pub idle_policy: u64,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for DriverCpuPowerApi {
     fn default() -> Self {
         Self {
             version: 1,
-            size: 168,
+            size: 184,
             register_backend: 0,
             unregister_backend: 0,
             current_cpu: 0,
@@ -17756,6 +17777,8 @@ impl Default for DriverCpuPowerApi {
             firmware_execute: 0,
             firmware_control: 0,
             firmware_cpu_info: 0,
+            idle_publish: 0,
+            idle_policy: 0,
         }
     }
 }
@@ -18424,6 +18447,166 @@ impl Default for CpuFirmwareInfo {
             reserved1: 0,
             descriptor_identity: 0,
             reserved2: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuIdleDescriptor {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub firmware_generation: u64,
+    pub descriptor_identity: u64,
+    pub source: u32,
+    pub state_count: u32,
+    pub selected_index: u32,
+    pub cstate_type: u32,
+    pub entry_method: u32,
+    pub entry_hint: u32,
+    pub latency_us: u32,
+    pub min_residency_us: u32,
+    pub coordination: u32,
+    pub context_loss: u32,
+    pub declared_power_mw: u32,
+    pub reason: u32,
+    pub lpi_state_count: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuIdleDescriptor {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 96,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            firmware_generation: 0,
+            descriptor_identity: 0,
+            source: 0,
+            state_count: 0,
+            selected_index: 0,
+            cstate_type: 0,
+            entry_method: 0,
+            entry_hint: 0,
+            latency_us: 0,
+            min_residency_us: 0,
+            coordination: 0,
+            context_loss: 0,
+            declared_power_mw: 0,
+            reason: 0,
+            lpi_state_count: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuIdlePolicy {
+    pub version: u32,
+    pub size: u32,
+    pub provider_generation: u64,
+    pub enabled: u32,
+    pub maximum_latency_us: u32,
+    pub residency_factor: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuIdlePolicy {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            provider_generation: 0,
+            enabled: 0,
+            maximum_latency_us: 0,
+            residency_factor: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuIdleInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub state: u32,
+    pub epoch: u64,
+    pub firmware_generation: u64,
+    pub policy_generation: u64,
+    pub descriptor_identity: u64,
+    pub source: u32,
+    pub state_count: u32,
+    pub selected_index: u32,
+    pub cstate_type: u32,
+    pub entry_method: u32,
+    pub entry_hint: u32,
+    pub latency_us: u32,
+    pub min_residency_us: u32,
+    pub coordination: u32,
+    pub context_loss: u32,
+    pub declared_power_mw: u32,
+    pub reason: u32,
+    pub lpi_state_count: u32,
+    pub capability_flags: u32,
+    pub reserved0: u32,
+    pub reserved1: u32,
+    pub entry_attempts: u64,
+    pub hlt_fallbacks: u64,
+    pub cancelled_entries: u64,
+    pub elapsed_ns: u64,
+    pub last_elapsed_ns: u64,
+    pub active_entries: u64,
+    pub descriptor_revision: u64,
+    pub residency_ns: u64,
+    pub wake_latency_ns: u64,
+    pub energy_uj: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuIdleInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 192,
+            cpu_index: 0,
+            state: 0,
+            epoch: 0,
+            firmware_generation: 0,
+            policy_generation: 0,
+            descriptor_identity: 0,
+            source: 0,
+            state_count: 0,
+            selected_index: 0,
+            cstate_type: 0,
+            entry_method: 0,
+            entry_hint: 0,
+            latency_us: 0,
+            min_residency_us: 0,
+            coordination: 0,
+            context_loss: 0,
+            declared_power_mw: 0,
+            reason: 0,
+            lpi_state_count: 0,
+            capability_flags: 0,
+            reserved0: 0,
+            reserved1: 0,
+            entry_attempts: 0,
+            hlt_fallbacks: 0,
+            cancelled_entries: 0,
+            elapsed_ns: 0,
+            last_elapsed_ns: 0,
+            active_entries: 0,
+            descriptor_revision: 0,
+            residency_ns: 0,
+            wake_latency_ns: 0,
+            energy_uj: 0,
         }
     }
 }
@@ -19818,6 +20001,7 @@ pub mod R4DevFns {
     pub type cpu_cppc = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuCppcInfo) -> i32;
     pub type cpu_performance_hint = unsafe extern "C" fn(u32, u64, *mut CpuPerformanceHintInfo) -> i32;
     pub type cpu_firmware_performance = unsafe extern "C" fn(*const CpuPerformanceRequest, *mut CpuFirmwareInfo) -> i32;
+    pub type cpu_idle_info = unsafe extern "C" fn(u32, *mut CpuIdleInfo) -> i32;
 }
 
 #[repr(C)]
@@ -19906,14 +20090,15 @@ pub struct R4XStartR4Dev {
     pub cpu_cppc: usize,
     pub cpu_performance_hint: usize,
     pub cpu_firmware_performance: usize,
+    pub cpu_idle_info: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 28,
-            size: 648,
+            abi_version: 29,
+            size: 656,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -19994,6 +20179,7 @@ impl Default for R4XStartR4Dev {
             cpu_cppc: 0,
             cpu_performance_hint: 0,
             cpu_firmware_performance: 0,
+            cpu_idle_info: 0,
         }
     }
 }
@@ -30043,7 +30229,9 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_execute) == 144);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_control) == 152);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_cpu_info) == 160);
-    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 168);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, idle_publish) == 168);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, idle_policy) == 176);
+    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 184);
     assert!(core::mem::align_of::<DriverCpuPowerApi>() == 8);
     assert!(core::mem::offset_of!(CpuPowerCounters, version) == 0);
     assert!(core::mem::offset_of!(CpuPowerCounters, size) == 4);
@@ -30323,6 +30511,74 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuFirmwareInfo, reserved2) == 184);
     assert!(core::mem::size_of::<CpuFirmwareInfo>() == 192);
     assert!(core::mem::align_of::<CpuFirmwareInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, version) == 0);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, size) == 4);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, flags) == 12);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, firmware_generation) == 24);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, descriptor_identity) == 32);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, source) == 40);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, state_count) == 44);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, selected_index) == 48);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, cstate_type) == 52);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, entry_method) == 56);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, entry_hint) == 60);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, latency_us) == 64);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, min_residency_us) == 68);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, coordination) == 72);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, context_loss) == 76);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, declared_power_mw) == 80);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, reason) == 84);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, lpi_state_count) == 88);
+    assert!(core::mem::offset_of!(CpuIdleDescriptor, reserved0) == 92);
+    assert!(core::mem::size_of::<CpuIdleDescriptor>() == 96);
+    assert!(core::mem::align_of::<CpuIdleDescriptor>() == 8);
+    assert!(core::mem::offset_of!(CpuIdlePolicy, version) == 0);
+    assert!(core::mem::offset_of!(CpuIdlePolicy, size) == 4);
+    assert!(core::mem::offset_of!(CpuIdlePolicy, provider_generation) == 8);
+    assert!(core::mem::offset_of!(CpuIdlePolicy, enabled) == 16);
+    assert!(core::mem::offset_of!(CpuIdlePolicy, maximum_latency_us) == 20);
+    assert!(core::mem::offset_of!(CpuIdlePolicy, residency_factor) == 24);
+    assert!(core::mem::offset_of!(CpuIdlePolicy, reserved0) == 28);
+    assert!(core::mem::size_of::<CpuIdlePolicy>() == 32);
+    assert!(core::mem::align_of::<CpuIdlePolicy>() == 8);
+    assert!(core::mem::offset_of!(CpuIdleInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuIdleInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuIdleInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuIdleInfo, state) == 12);
+    assert!(core::mem::offset_of!(CpuIdleInfo, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuIdleInfo, firmware_generation) == 24);
+    assert!(core::mem::offset_of!(CpuIdleInfo, policy_generation) == 32);
+    assert!(core::mem::offset_of!(CpuIdleInfo, descriptor_identity) == 40);
+    assert!(core::mem::offset_of!(CpuIdleInfo, source) == 48);
+    assert!(core::mem::offset_of!(CpuIdleInfo, state_count) == 52);
+    assert!(core::mem::offset_of!(CpuIdleInfo, selected_index) == 56);
+    assert!(core::mem::offset_of!(CpuIdleInfo, cstate_type) == 60);
+    assert!(core::mem::offset_of!(CpuIdleInfo, entry_method) == 64);
+    assert!(core::mem::offset_of!(CpuIdleInfo, entry_hint) == 68);
+    assert!(core::mem::offset_of!(CpuIdleInfo, latency_us) == 72);
+    assert!(core::mem::offset_of!(CpuIdleInfo, min_residency_us) == 76);
+    assert!(core::mem::offset_of!(CpuIdleInfo, coordination) == 80);
+    assert!(core::mem::offset_of!(CpuIdleInfo, context_loss) == 84);
+    assert!(core::mem::offset_of!(CpuIdleInfo, declared_power_mw) == 88);
+    assert!(core::mem::offset_of!(CpuIdleInfo, reason) == 92);
+    assert!(core::mem::offset_of!(CpuIdleInfo, lpi_state_count) == 96);
+    assert!(core::mem::offset_of!(CpuIdleInfo, capability_flags) == 100);
+    assert!(core::mem::offset_of!(CpuIdleInfo, reserved0) == 104);
+    assert!(core::mem::offset_of!(CpuIdleInfo, reserved1) == 108);
+    assert!(core::mem::offset_of!(CpuIdleInfo, entry_attempts) == 112);
+    assert!(core::mem::offset_of!(CpuIdleInfo, hlt_fallbacks) == 120);
+    assert!(core::mem::offset_of!(CpuIdleInfo, cancelled_entries) == 128);
+    assert!(core::mem::offset_of!(CpuIdleInfo, elapsed_ns) == 136);
+    assert!(core::mem::offset_of!(CpuIdleInfo, last_elapsed_ns) == 144);
+    assert!(core::mem::offset_of!(CpuIdleInfo, active_entries) == 152);
+    assert!(core::mem::offset_of!(CpuIdleInfo, descriptor_revision) == 160);
+    assert!(core::mem::offset_of!(CpuIdleInfo, residency_ns) == 168);
+    assert!(core::mem::offset_of!(CpuIdleInfo, wake_latency_ns) == 176);
+    assert!(core::mem::offset_of!(CpuIdleInfo, energy_uj) == 184);
+    assert!(core::mem::size_of::<CpuIdleInfo>() == 192);
+    assert!(core::mem::align_of::<CpuIdleInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -30832,7 +31088,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_cppc) == 624);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_performance_hint) == 632);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_firmware_performance) == 640);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 648);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_idle_info) == 648);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 656);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

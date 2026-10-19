@@ -15,6 +15,12 @@ constants are preserved.
 Optional Runtime-R4L APIs are intentionally not defined here; each independent
 library owns its own contract and bindings.
 
+R4DEV v29 appends the passive 192-byte `CpuIdleInfo` receipt. Separate
+`CpuIdleDescriptor` and `CpuIdlePolicy` records extend the optional driver CPU
+mechanism to184 bytes. ACPI declarations and software entry attempts are
+distinct from unavailable physical residency, wake-latency and energy data.
+Every previous fixed record, table prefix and callback meaning is preserved.
+
 ## Build and validation
 
 Use the repository starter with the workspace toolchain:

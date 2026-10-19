@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 473; Funktionen: 465; reserviert/Tombstone: 8
-- Sichtbarkeit: public=339, advanced=126, internal=8
+- Physische Gruppenslots: 474; Funktionen: 466; reserviert/Tombstone: 8
+- Sichtbarkeit: public=339, advanced=127, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -508,3 +508,4 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DEV | 76 | `cpu_cppc` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 77 | `cpu_performance_hint` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 78 | `cpu_firmware_performance` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | may_block | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DEV | 79 | `cpu_idle_info` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |

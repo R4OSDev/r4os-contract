@@ -2495,6 +2495,25 @@ pub const cpu_firmware_valid_epp: u32 = 8;
 pub const cpu_firmware_valid_domain: u32 = 16;
 pub const power_profile_backend_acpi_cppc: u32 = 3;
 pub const power_profile_backend_acpi_pss: u32 = 4;
+pub const cpu_idle_reason_none: u32 = 0;
+pub const cpu_idle_reason_absent: u32 = 1;
+pub const cpu_idle_reason_malformed: u32 = 2;
+pub const cpu_idle_reason_coordination: u32 = 3;
+pub const cpu_idle_reason_lpi_context: u32 = 4;
+pub const cpu_idle_reason_entry_method: u32 = 5;
+pub const cpu_idle_reason_withdrawn: u32 = 6;
+pub const cpu_idle_reason_hypervisor: u32 = 7;
+pub const cpu_idle_reason_vendor: u32 = 8;
+pub const cpu_idle_reason_monitor: u32 = 9;
+pub const cpu_idle_reason_arat: u32 = 10;
+pub const cpu_idle_reason_invariant_tsc: u32 = 11;
+pub const cpu_idle_reason_substate: u32 = 12;
+pub const cpu_idle_reason_monitor_fsm: u32 = 13;
+pub const cpu_idle_reason_clock: u32 = 14;
+pub const cpu_idle_reason_timer: u32 = 15;
+pub const cpu_idle_reason_epoch: u32 = 16;
+pub const cpu_idle_reason_policy: u32 = 17;
+pub const cpu_idle_reason_short_budget: u32 = 18;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -9376,7 +9395,7 @@ pub const CpuPowerBackend = extern struct {
 
 pub const DriverCpuPowerApi = extern struct {
     version: u32 = 1,
-    size: u32 = 168,
+    size: u32 = 184,
     register_backend: u64 = 0,
     unregister_backend: u64 = 0,
     current_cpu: u64 = 0,
@@ -9397,6 +9416,8 @@ pub const DriverCpuPowerApi = extern struct {
     firmware_execute: u64 = 0,
     firmware_control: u64 = 0,
     firmware_cpu_info: u64 = 0,
+    idle_publish: u64 = 0,
+    idle_policy: u64 = 0,
 };
 
 pub const CpuPowerCounters = extern struct {
@@ -9689,6 +9710,77 @@ pub const CpuFirmwareInfo = extern struct {
     reserved1: u32 = 0,
     descriptor_identity: u64 = 0,
     reserved2: u64 = 0,
+};
+
+pub const CpuIdleDescriptor = extern struct {
+    version: u32 = 1,
+    size: u32 = 96,
+    cpu_index: u32 = 0,
+    flags: u32 = 0,
+    epoch: u64 = 0,
+    firmware_generation: u64 = 0,
+    descriptor_identity: u64 = 0,
+    source: u32 = 0,
+    state_count: u32 = 0,
+    selected_index: u32 = 0,
+    cstate_type: u32 = 0,
+    entry_method: u32 = 0,
+    entry_hint: u32 = 0,
+    latency_us: u32 = 0,
+    min_residency_us: u32 = 0,
+    coordination: u32 = 0,
+    context_loss: u32 = 0,
+    declared_power_mw: u32 = 0,
+    reason: u32 = 0,
+    lpi_state_count: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const CpuIdlePolicy = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    provider_generation: u64 = 0,
+    enabled: u32 = 0,
+    maximum_latency_us: u32 = 0,
+    residency_factor: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const CpuIdleInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 192,
+    cpu_index: u32 = 0,
+    state: u32 = 0,
+    epoch: u64 = 0,
+    firmware_generation: u64 = 0,
+    policy_generation: u64 = 0,
+    descriptor_identity: u64 = 0,
+    source: u32 = 0,
+    state_count: u32 = 0,
+    selected_index: u32 = 0,
+    cstate_type: u32 = 0,
+    entry_method: u32 = 0,
+    entry_hint: u32 = 0,
+    latency_us: u32 = 0,
+    min_residency_us: u32 = 0,
+    coordination: u32 = 0,
+    context_loss: u32 = 0,
+    declared_power_mw: u32 = 0,
+    reason: u32 = 0,
+    lpi_state_count: u32 = 0,
+    capability_flags: u32 = 0,
+    reserved0: u32 = 0,
+    reserved1: u32 = 0,
+    entry_attempts: u64 = 0,
+    hlt_fallbacks: u64 = 0,
+    cancelled_entries: u64 = 0,
+    elapsed_ns: u64 = 0,
+    last_elapsed_ns: u64 = 0,
+    active_entries: u64 = 0,
+    descriptor_revision: u64 = 0,
+    residency_ns: u64 = 0,
+    wake_latency_ns: u64 = 0,
+    energy_uj: u64 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -10601,12 +10693,13 @@ pub const R4DevFns = struct {
     pub const cpu_cppc = *const fn (*const CpuPerformanceRequest, *CpuCppcInfo) callconv(.c) i32;
     pub const cpu_performance_hint = *const fn (u32, u64, *CpuPerformanceHintInfo) callconv(.c) i32;
     pub const cpu_firmware_performance = *const fn (*const CpuPerformanceRequest, *CpuFirmwareInfo) callconv(.c) i32;
+    pub const cpu_idle_info = *const fn (u32, *CpuIdleInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 28,
-    size: u32 = 648,
+    abi_version: u32 = 29,
+    size: u32 = 656,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -10687,6 +10780,7 @@ pub const R4XStartR4Dev = extern struct {
     cpu_cppc: usize = 0,
     cpu_performance_hint: usize = 0,
     cpu_firmware_performance: usize = 0,
+    cpu_idle_info: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -11181,6 +11275,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 76, .offset = 624, .name = "cpu_cppc", .state = .function, .required = false },
     .{ .number = 77, .offset = 632, .name = "cpu_performance_hint", .state = .function, .required = false },
     .{ .number = 78, .offset = 640, .name = "cpu_firmware_performance", .state = .function, .required = false },
+    .{ .number = 79, .offset = 648, .name = "cpu_idle_info", .state = .function, .required = false },
 };
 
 comptime {
@@ -17234,7 +17329,7 @@ comptime {
     if (@offsetOf(CpuPowerBackend, "capture") != 24) @compileError("generated ABI offset drift: CpuPowerBackend.capture");
     if (@offsetOf(CpuPowerBackend, "flags") != 32) @compileError("generated ABI offset drift: CpuPowerBackend.flags");
     if (@offsetOf(CpuPowerBackend, "reserved0") != 36) @compileError("generated ABI offset drift: CpuPowerBackend.reserved0");
-    if (@sizeOf(DriverCpuPowerApi) != 168) @compileError("generated ABI size drift: DriverCpuPowerApi");
+    if (@sizeOf(DriverCpuPowerApi) != 184) @compileError("generated ABI size drift: DriverCpuPowerApi");
     if (@alignOf(DriverCpuPowerApi) != 8) @compileError("generated ABI alignment drift: DriverCpuPowerApi");
     if (@offsetOf(DriverCpuPowerApi, "version") != 0) @compileError("generated ABI offset drift: DriverCpuPowerApi.version");
     if (@offsetOf(DriverCpuPowerApi, "size") != 4) @compileError("generated ABI offset drift: DriverCpuPowerApi.size");
@@ -17258,6 +17353,8 @@ comptime {
     if (@offsetOf(DriverCpuPowerApi, "firmware_execute") != 144) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_execute");
     if (@offsetOf(DriverCpuPowerApi, "firmware_control") != 152) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_control");
     if (@offsetOf(DriverCpuPowerApi, "firmware_cpu_info") != 160) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_cpu_info");
+    if (@offsetOf(DriverCpuPowerApi, "idle_publish") != 168) @compileError("generated ABI offset drift: DriverCpuPowerApi.idle_publish");
+    if (@offsetOf(DriverCpuPowerApi, "idle_policy") != 176) @compileError("generated ABI offset drift: DriverCpuPowerApi.idle_policy");
     if (@sizeOf(CpuPowerCounters) != 64) @compileError("generated ABI size drift: CpuPowerCounters");
     if (@alignOf(CpuPowerCounters) != 8) @compileError("generated ABI alignment drift: CpuPowerCounters");
     if (@offsetOf(CpuPowerCounters, "version") != 0) @compileError("generated ABI offset drift: CpuPowerCounters.version");
@@ -17536,6 +17633,74 @@ comptime {
     if (@offsetOf(CpuFirmwareInfo, "reserved1") != 172) @compileError("generated ABI offset drift: CpuFirmwareInfo.reserved1");
     if (@offsetOf(CpuFirmwareInfo, "descriptor_identity") != 176) @compileError("generated ABI offset drift: CpuFirmwareInfo.descriptor_identity");
     if (@offsetOf(CpuFirmwareInfo, "reserved2") != 184) @compileError("generated ABI offset drift: CpuFirmwareInfo.reserved2");
+    if (@sizeOf(CpuIdleDescriptor) != 96) @compileError("generated ABI size drift: CpuIdleDescriptor");
+    if (@alignOf(CpuIdleDescriptor) != 8) @compileError("generated ABI alignment drift: CpuIdleDescriptor");
+    if (@offsetOf(CpuIdleDescriptor, "version") != 0) @compileError("generated ABI offset drift: CpuIdleDescriptor.version");
+    if (@offsetOf(CpuIdleDescriptor, "size") != 4) @compileError("generated ABI offset drift: CpuIdleDescriptor.size");
+    if (@offsetOf(CpuIdleDescriptor, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuIdleDescriptor.cpu_index");
+    if (@offsetOf(CpuIdleDescriptor, "flags") != 12) @compileError("generated ABI offset drift: CpuIdleDescriptor.flags");
+    if (@offsetOf(CpuIdleDescriptor, "epoch") != 16) @compileError("generated ABI offset drift: CpuIdleDescriptor.epoch");
+    if (@offsetOf(CpuIdleDescriptor, "firmware_generation") != 24) @compileError("generated ABI offset drift: CpuIdleDescriptor.firmware_generation");
+    if (@offsetOf(CpuIdleDescriptor, "descriptor_identity") != 32) @compileError("generated ABI offset drift: CpuIdleDescriptor.descriptor_identity");
+    if (@offsetOf(CpuIdleDescriptor, "source") != 40) @compileError("generated ABI offset drift: CpuIdleDescriptor.source");
+    if (@offsetOf(CpuIdleDescriptor, "state_count") != 44) @compileError("generated ABI offset drift: CpuIdleDescriptor.state_count");
+    if (@offsetOf(CpuIdleDescriptor, "selected_index") != 48) @compileError("generated ABI offset drift: CpuIdleDescriptor.selected_index");
+    if (@offsetOf(CpuIdleDescriptor, "cstate_type") != 52) @compileError("generated ABI offset drift: CpuIdleDescriptor.cstate_type");
+    if (@offsetOf(CpuIdleDescriptor, "entry_method") != 56) @compileError("generated ABI offset drift: CpuIdleDescriptor.entry_method");
+    if (@offsetOf(CpuIdleDescriptor, "entry_hint") != 60) @compileError("generated ABI offset drift: CpuIdleDescriptor.entry_hint");
+    if (@offsetOf(CpuIdleDescriptor, "latency_us") != 64) @compileError("generated ABI offset drift: CpuIdleDescriptor.latency_us");
+    if (@offsetOf(CpuIdleDescriptor, "min_residency_us") != 68) @compileError("generated ABI offset drift: CpuIdleDescriptor.min_residency_us");
+    if (@offsetOf(CpuIdleDescriptor, "coordination") != 72) @compileError("generated ABI offset drift: CpuIdleDescriptor.coordination");
+    if (@offsetOf(CpuIdleDescriptor, "context_loss") != 76) @compileError("generated ABI offset drift: CpuIdleDescriptor.context_loss");
+    if (@offsetOf(CpuIdleDescriptor, "declared_power_mw") != 80) @compileError("generated ABI offset drift: CpuIdleDescriptor.declared_power_mw");
+    if (@offsetOf(CpuIdleDescriptor, "reason") != 84) @compileError("generated ABI offset drift: CpuIdleDescriptor.reason");
+    if (@offsetOf(CpuIdleDescriptor, "lpi_state_count") != 88) @compileError("generated ABI offset drift: CpuIdleDescriptor.lpi_state_count");
+    if (@offsetOf(CpuIdleDescriptor, "reserved0") != 92) @compileError("generated ABI offset drift: CpuIdleDescriptor.reserved0");
+    if (@sizeOf(CpuIdlePolicy) != 32) @compileError("generated ABI size drift: CpuIdlePolicy");
+    if (@alignOf(CpuIdlePolicy) != 8) @compileError("generated ABI alignment drift: CpuIdlePolicy");
+    if (@offsetOf(CpuIdlePolicy, "version") != 0) @compileError("generated ABI offset drift: CpuIdlePolicy.version");
+    if (@offsetOf(CpuIdlePolicy, "size") != 4) @compileError("generated ABI offset drift: CpuIdlePolicy.size");
+    if (@offsetOf(CpuIdlePolicy, "provider_generation") != 8) @compileError("generated ABI offset drift: CpuIdlePolicy.provider_generation");
+    if (@offsetOf(CpuIdlePolicy, "enabled") != 16) @compileError("generated ABI offset drift: CpuIdlePolicy.enabled");
+    if (@offsetOf(CpuIdlePolicy, "maximum_latency_us") != 20) @compileError("generated ABI offset drift: CpuIdlePolicy.maximum_latency_us");
+    if (@offsetOf(CpuIdlePolicy, "residency_factor") != 24) @compileError("generated ABI offset drift: CpuIdlePolicy.residency_factor");
+    if (@offsetOf(CpuIdlePolicy, "reserved0") != 28) @compileError("generated ABI offset drift: CpuIdlePolicy.reserved0");
+    if (@sizeOf(CpuIdleInfo) != 192) @compileError("generated ABI size drift: CpuIdleInfo");
+    if (@alignOf(CpuIdleInfo) != 8) @compileError("generated ABI alignment drift: CpuIdleInfo");
+    if (@offsetOf(CpuIdleInfo, "version") != 0) @compileError("generated ABI offset drift: CpuIdleInfo.version");
+    if (@offsetOf(CpuIdleInfo, "size") != 4) @compileError("generated ABI offset drift: CpuIdleInfo.size");
+    if (@offsetOf(CpuIdleInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuIdleInfo.cpu_index");
+    if (@offsetOf(CpuIdleInfo, "state") != 12) @compileError("generated ABI offset drift: CpuIdleInfo.state");
+    if (@offsetOf(CpuIdleInfo, "epoch") != 16) @compileError("generated ABI offset drift: CpuIdleInfo.epoch");
+    if (@offsetOf(CpuIdleInfo, "firmware_generation") != 24) @compileError("generated ABI offset drift: CpuIdleInfo.firmware_generation");
+    if (@offsetOf(CpuIdleInfo, "policy_generation") != 32) @compileError("generated ABI offset drift: CpuIdleInfo.policy_generation");
+    if (@offsetOf(CpuIdleInfo, "descriptor_identity") != 40) @compileError("generated ABI offset drift: CpuIdleInfo.descriptor_identity");
+    if (@offsetOf(CpuIdleInfo, "source") != 48) @compileError("generated ABI offset drift: CpuIdleInfo.source");
+    if (@offsetOf(CpuIdleInfo, "state_count") != 52) @compileError("generated ABI offset drift: CpuIdleInfo.state_count");
+    if (@offsetOf(CpuIdleInfo, "selected_index") != 56) @compileError("generated ABI offset drift: CpuIdleInfo.selected_index");
+    if (@offsetOf(CpuIdleInfo, "cstate_type") != 60) @compileError("generated ABI offset drift: CpuIdleInfo.cstate_type");
+    if (@offsetOf(CpuIdleInfo, "entry_method") != 64) @compileError("generated ABI offset drift: CpuIdleInfo.entry_method");
+    if (@offsetOf(CpuIdleInfo, "entry_hint") != 68) @compileError("generated ABI offset drift: CpuIdleInfo.entry_hint");
+    if (@offsetOf(CpuIdleInfo, "latency_us") != 72) @compileError("generated ABI offset drift: CpuIdleInfo.latency_us");
+    if (@offsetOf(CpuIdleInfo, "min_residency_us") != 76) @compileError("generated ABI offset drift: CpuIdleInfo.min_residency_us");
+    if (@offsetOf(CpuIdleInfo, "coordination") != 80) @compileError("generated ABI offset drift: CpuIdleInfo.coordination");
+    if (@offsetOf(CpuIdleInfo, "context_loss") != 84) @compileError("generated ABI offset drift: CpuIdleInfo.context_loss");
+    if (@offsetOf(CpuIdleInfo, "declared_power_mw") != 88) @compileError("generated ABI offset drift: CpuIdleInfo.declared_power_mw");
+    if (@offsetOf(CpuIdleInfo, "reason") != 92) @compileError("generated ABI offset drift: CpuIdleInfo.reason");
+    if (@offsetOf(CpuIdleInfo, "lpi_state_count") != 96) @compileError("generated ABI offset drift: CpuIdleInfo.lpi_state_count");
+    if (@offsetOf(CpuIdleInfo, "capability_flags") != 100) @compileError("generated ABI offset drift: CpuIdleInfo.capability_flags");
+    if (@offsetOf(CpuIdleInfo, "reserved0") != 104) @compileError("generated ABI offset drift: CpuIdleInfo.reserved0");
+    if (@offsetOf(CpuIdleInfo, "reserved1") != 108) @compileError("generated ABI offset drift: CpuIdleInfo.reserved1");
+    if (@offsetOf(CpuIdleInfo, "entry_attempts") != 112) @compileError("generated ABI offset drift: CpuIdleInfo.entry_attempts");
+    if (@offsetOf(CpuIdleInfo, "hlt_fallbacks") != 120) @compileError("generated ABI offset drift: CpuIdleInfo.hlt_fallbacks");
+    if (@offsetOf(CpuIdleInfo, "cancelled_entries") != 128) @compileError("generated ABI offset drift: CpuIdleInfo.cancelled_entries");
+    if (@offsetOf(CpuIdleInfo, "elapsed_ns") != 136) @compileError("generated ABI offset drift: CpuIdleInfo.elapsed_ns");
+    if (@offsetOf(CpuIdleInfo, "last_elapsed_ns") != 144) @compileError("generated ABI offset drift: CpuIdleInfo.last_elapsed_ns");
+    if (@offsetOf(CpuIdleInfo, "active_entries") != 152) @compileError("generated ABI offset drift: CpuIdleInfo.active_entries");
+    if (@offsetOf(CpuIdleInfo, "descriptor_revision") != 160) @compileError("generated ABI offset drift: CpuIdleInfo.descriptor_revision");
+    if (@offsetOf(CpuIdleInfo, "residency_ns") != 168) @compileError("generated ABI offset drift: CpuIdleInfo.residency_ns");
+    if (@offsetOf(CpuIdleInfo, "wake_latency_ns") != 176) @compileError("generated ABI offset drift: CpuIdleInfo.wake_latency_ns");
+    if (@offsetOf(CpuIdleInfo, "energy_uj") != 184) @compileError("generated ABI offset drift: CpuIdleInfo.energy_uj");
     if (@sizeOf(R4XStartR4Sys) != 1288) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -17935,7 +18100,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 648) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 656) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -18015,6 +18180,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_cppc") != 624) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_cppc");
     if (@offsetOf(R4XStartR4Dev, "cpu_performance_hint") != 632) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_performance_hint");
     if (@offsetOf(R4XStartR4Dev, "cpu_firmware_performance") != 640) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_firmware_performance");
+    if (@offsetOf(R4XStartR4Dev, "cpu_idle_info") != 648) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_idle_info");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -18938,13 +19104,14 @@ pub const R4DevProvider = struct {
     cpu_cppc: ?R4DevFns.cpu_cppc = null,
     cpu_performance_hint: ?R4DevFns.cpu_performance_hint = null,
     cpu_firmware_performance: ?R4DevFns.cpu_firmware_performance = null,
+    cpu_idle_info: ?R4DevFns.cpu_idle_info = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 28,
-        .size = 648,
+        .abi_version = 29,
+        .size = 656,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -19025,5 +19192,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .cpu_cppc = if (provider.cpu_cppc) |callback| @intFromPtr(callback) else 0,
         .cpu_performance_hint = if (provider.cpu_performance_hint) |callback| @intFromPtr(callback) else 0,
         .cpu_firmware_performance = if (provider.cpu_firmware_performance) |callback| @intFromPtr(callback) else 0,
+        .cpu_idle_info = if (provider.cpu_idle_info) |callback| @intFromPtr(callback) else 0,
     };
 }

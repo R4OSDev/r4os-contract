@@ -28699,10 +28699,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 28,
+      "abi_version": 29,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 648,
+      "size": 656,
       "slots": [
         {
           "number": 0,
@@ -34075,6 +34075,72 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 79,
+          "offset": 648,
+          "name": "cpu_idle_info",
+          "state": "function",
+          "required": false,
+          "description": "Passive copy of independent idle declaration, local qualification and software counters. Hardware residency, wake latency and energy remain unavailable without own readback; never execute CPUID/MSR/MONITOR on this query.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuIdleInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
@@ -114408,8 +114474,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 5,
-      "size": 168,
+      "version": 6,
+      "size": 184,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -114440,7 +114506,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "168"
+          "default_value": "184"
         },
         {
           "name": "register_backend",
@@ -114721,10 +114787,38 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "idle_publish",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(*const CpuIdleDescriptor): authenticated ACPIPLAT resident immutable copy or withdrawal. No callback or hardware access. May return Busy after closing admission until exact previous entry exits; retry withdrawal only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "idle_policy",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(*const CpuIdlePolicy): authenticated CPUPOWER bounded intent. Disable closes admission and requires exact active-entry exits; no frequency profile mutation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Owner-bound optional CPUPOWER service queried through the append-only DriverResourceApi tail. Query and registration authenticate real init/shutdown. Copied function table stays usable for exact unregister; raw/cached operations authenticate actual driver callback execution. No R4D threads or permanent CPU pins are required. Optional72byte tail adds the interrupt-free APERF/MPERF pair; original64byte prefix/callbacks and wire version1 remain intact. Optional112byte tail adds explicit bounded hardware control and separate fixed performance backend. Wire version remains1; original64/72byte prefixes are byte compatible. Persistent control leases are opt-in and absent for passive observations. Optional128byte tail adds separately typed CPPC backend registration and cached rank publication. Original64/72/112byte prefixes, fixed records and wire version1 retain their meanings. Optional168byte firmware tail; every prior64/72/112/128byte prefix and wire version1 unchanged. Firmware calls are separately typed and may wait; never reuse local-register callbacks for AML."
+      "description": "Owner-bound optional CPUPOWER service queried through the append-only DriverResourceApi tail. Query and registration authenticate real init/shutdown. Copied function table stays usable for exact unregister; raw/cached operations authenticate actual driver callback execution. No R4D threads or permanent CPU pins are required. Optional72byte tail adds the interrupt-free APERF/MPERF pair; original64byte prefix/callbacks and wire version1 remain intact. Optional112byte tail adds explicit bounded hardware control and separate fixed performance backend. Wire version remains1; original64/72byte prefixes are byte compatible. Persistent control leases are opt-in and absent for passive observations. Optional128byte tail adds separately typed CPPC backend registration and cached rank publication. Original64/72/112byte prefixes, fixed records and wire version1 retain their meanings. Optional168byte firmware tail; every prior64/72/112/128byte prefix and wire version1 unchanged. Firmware calls are separately typed and may wait; never reuse local-register callbacks for AML. Optional184byte idle declaration/policy tail; every old prefix, slot meaning and wire version1 remains unchanged."
     },
     {
       "name": "CpuPowerCounters",
@@ -118421,6 +118515,916 @@
       ],
       "values": [],
       "description": "Separately typed firmware performance receipt. Missing/invalid methods do not permit hardware access. _CPC supersedes legacy PSS; no mixed-mode or guessed CPU mapping. Only validated complete coordination domains can acquire ownership, excluding direct HWP/CPPC tokens. All AML executes at ACPIPLAT external worker, outside IRQ/scheduler/memory owners. Fixed existing HWP/CPPC records unchanged. PSS ranks are declared ordering, never measured capacity or frequency. Firmware shutdown/stop requires true return, not a timed-out caller. Firmware is not physical actuation/energy evidence."
+    },
+    {
+      "name": "CpuIdleDescriptor",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized capacity; output and extension tail preserved on refusal.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact mapped dense CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact schedulable CPU execution epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "firmware_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Authenticated ACPIPLAT transport cookie.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "descriptor_identity",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Immutable firmware descriptor identity, nonzero for a valid source.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 absent,1 _CST,2 _LPI.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state_count",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated declared state count, not measured states.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selected_index",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original zero-based declared state index.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cstate_type",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "ACPI C-state entry semantics, not hardware residency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "entry_method",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 none,1 Intel MONITOR/MWAIT with masked-interrupt break.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "entry_hint",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated Intel MWAIT EAX hint.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "latency_us",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Firmware declared worst-case entry plus exit latency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_residency_us",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Declared _LPI minimum;0 for _CST where no such value is defined.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "coordination",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Intel FFH Arg1; hardware-coordinated and no bus-master avoidance required.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "context_loss",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Declared _LPI architectural context-loss flags; unsupported entry remains blocked.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "declared_power_mw",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Firmware _CST declared average power, never measured consumption.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_idle_reason_*; nonzero firmware reason blocks entry.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lpi_state_count",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated _LPI declared count,0 absent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Independent immutable idle declaration copied from external ACPIPLAT. No AML, callback or module pointer at scheduler idle. Publication does not authorize an instruction or prove actual residency. Withdraw with reason withdrawn and source0 before catalogue changes; actual active exit receipts precede teardown."
+    },
+    {
+      "name": "CpuIdlePolicy",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized capacity; output and extension tail preserved on refusal.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "provider_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact registered CPUPOWER cookie, not a process-supplied profile revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "enabled",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 disables;1 permits locally qualified candidates.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "maximum_latency_us",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bounded allowed firmware entry/exit latency in microseconds,1..1000 while enabled.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "residency_factor",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Conservative integer multiplier1..16 of declared latency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Initial bounded external CPUPOWER idle intent, independent of PowerService frequency profiles. Provider withdrawal restores HLT and waits for in-flight entries; no MSR enabling write or measured energy promise."
+    },
+    {
+      "name": "CpuIdleInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 192,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized capacity; output and extension tail preserved on refusal.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "192"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact dense CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 unsupported,1 declared blocked,2 eligible,3 withdrawn.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current exact CPU epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "firmware_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Authenticated declaration owner cookie.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "policy_generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact CPUPOWER policy cookie.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "descriptor_identity",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact immutable declared descriptor identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 absent,1 _CST,2 _LPI.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state_count",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated declared state count, not measured states.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "selected_index",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original zero-based declared state index.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cstate_type",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "ACPI C-state entry semantics, not hardware residency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "entry_method",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 none,1 Intel MONITOR/MWAIT with masked-interrupt break.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "entry_hint",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated Intel MWAIT EAX hint.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "latency_us",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Firmware declared worst-case entry plus exit latency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_residency_us",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Declared _LPI minimum;0 for _CST where no such value is defined.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "coordination",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Intel FFH Arg1; hardware-coordinated and no bus-master avoidance required.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "context_loss",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Declared _LPI architectural context-loss flags; unsupported entry remains blocked.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "declared_power_mw",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Firmware _CST declared average power, never measured consumption.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_idle_reason_*; nonzero firmware reason blocks entry.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lpi_state_count",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Validated _LPI declared count,0 absent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capability_flags",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Observed local qualification flags; not hardware residency validity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "entry_attempts",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Software MWAIT instruction attempts; not successful hardware residency.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hlt_fallbacks",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual scheduler sti;hlt fallback entries.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cancelled_entries",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Admission cancelled after MONITOR before MWAIT.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "elapsed_ns",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Software elapsed idle-call time; not hardware residency or wake latency.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_elapsed_ns",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last software elapsed idle-call time.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "active_entries",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact current outstanding local idle entry pin count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "descriptor_revision",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonreused resident publication revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "residency_ns",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unavailable0: no hardware residency readback.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "wake_latency_ns",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unavailable0: no hardware wake-latency readback.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "energy_uj",
+          "offset": 184,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unavailable0: no physical energy readback.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Passive independent fixed idle receipt. Declared ACPI properties, local eligibility, software attempts/fallback/elapsed and unmeasured hardware quantities remain explicitly separate. No hardware instruction on query. Counters survive withdrawal but carry current descriptor/epoch identity. No broadcast/timer-stop or C3 context contract is implied."
     }
   ],
   "operations": [],
@@ -145876,6 +146880,196 @@
       "scope": "power_profiles",
       "stability": "fixed_contract",
       "description": "power profile backend acpi pss."
+    },
+    {
+      "name": "cpu_idle_reason_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason none."
+    },
+    {
+      "name": "cpu_idle_reason_absent",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason absent."
+    },
+    {
+      "name": "cpu_idle_reason_malformed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason malformed."
+    },
+    {
+      "name": "cpu_idle_reason_coordination",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason coordination."
+    },
+    {
+      "name": "cpu_idle_reason_lpi_context",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason lpi context."
+    },
+    {
+      "name": "cpu_idle_reason_entry_method",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason entry method."
+    },
+    {
+      "name": "cpu_idle_reason_withdrawn",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason withdrawn."
+    },
+    {
+      "name": "cpu_idle_reason_hypervisor",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason hypervisor."
+    },
+    {
+      "name": "cpu_idle_reason_vendor",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason vendor."
+    },
+    {
+      "name": "cpu_idle_reason_monitor",
+      "value": "9",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason monitor."
+    },
+    {
+      "name": "cpu_idle_reason_arat",
+      "value": "10",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason arat."
+    },
+    {
+      "name": "cpu_idle_reason_invariant_tsc",
+      "value": "11",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason invariant tsc."
+    },
+    {
+      "name": "cpu_idle_reason_substate",
+      "value": "12",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason substate."
+    },
+    {
+      "name": "cpu_idle_reason_monitor_fsm",
+      "value": "13",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason monitor fsm."
+    },
+    {
+      "name": "cpu_idle_reason_clock",
+      "value": "14",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason clock."
+    },
+    {
+      "name": "cpu_idle_reason_timer",
+      "value": "15",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason timer."
+    },
+    {
+      "name": "cpu_idle_reason_epoch",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason epoch."
+    },
+    {
+      "name": "cpu_idle_reason_policy",
+      "value": "17",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason policy."
+    },
+    {
+      "name": "cpu_idle_reason_short_budget",
+      "value": "18",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_idle",
+      "stability": "fixed_contract",
+      "description": "cpu idle reason short budget."
     }
   ],
   "limits": [
