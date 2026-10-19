@@ -28643,10 +28643,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 25,
+      "abi_version": 26,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 616,
+      "size": 624,
       "slots": [
         {
           "number": 0,
@@ -33683,6 +33683,82 @@
                   "child": {
                     "kind": "named",
                     "name": "CpuPowerInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 75,
+          "offset": 616,
+          "name": "cpu_performance",
+          "state": "function",
+          "required": false,
+          "description": "Explicit local external performance provider operation with exact CPU/start/provider/ownership epochs. No governor or remote dispatch. Bad/unsupported requests preserve output and never write. Return0 provides the complete fixed receipt, including real fault/uncertain/conflict and reset-only activation; examine state/last_error and retain hardware until actual explicit release. Caller tail preserved. Request readback never claims physical delivered performance.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "request",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuPerformanceRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuPerformanceInfo"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -114051,8 +114127,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 2,
-      "size": 72,
+      "version": 3,
+      "size": 112,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -114083,7 +114159,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "72"
+          "default_value": "112"
         },
         {
           "name": "register_backend",
@@ -114196,10 +114272,80 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "feature",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(u32 cpu,u64 epoch,u32 ordinal,*CpuFeatureInfo): exact canonical cached feature projection; ordinal is not feature_id.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "register_performance",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(u64 cookie,*const CpuPerformanceBackend): init-only attach to exact registered passive provider.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "control_acquire",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(u32 cpu,u64 epoch,*u64 token): exact provider/heap/CPU persistent membership; no hardware write.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "control_release",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(u32 cpu,u64 epoch,u64 token): no active transaction; external owner must first prove actual return. No register write.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "register_compare_write",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(u32 cpu,u64 epoch,u64 token,u32 named_id,u64 expected,u64 requested,*CpuRegisterWriteInfo): bounded compare/write/read receipt. No arbitrary MSR.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Owner-bound optional CPUPOWER service queried through the append-only DriverResourceApi tail. Query and registration authenticate real init/shutdown. Copied function table stays usable for exact unregister; raw/cached operations authenticate actual driver callback execution. No R4D threads or permanent CPU pins are required. Optional72byte tail adds the interrupt-free APERF/MPERF pair; original64byte prefix/callbacks and wire version1 remain intact."
+      "description": "Owner-bound optional CPUPOWER service queried through the append-only DriverResourceApi tail. Query and registration authenticate real init/shutdown. Copied function table stays usable for exact unregister; raw/cached operations authenticate actual driver callback execution. No R4D threads or permanent CPU pins are required. Optional72byte tail adds the interrupt-free APERF/MPERF pair; original64byte prefix/callbacks and wire version1 remain intact. Optional112byte tail adds explicit bounded hardware control and separate fixed performance backend. Wire version remains1; original64/72byte prefixes are byte compatible. Persistent control leases are opt-in and absent for passive observations."
     },
     {
       "name": "CpuPowerCounters",
@@ -114368,6 +114514,944 @@
       ],
       "values": [],
       "description": "Named APERF/MPERF read pair on the exact admitted current CPU/start epoch. Both feature-gated recoverable reads execute with local interrupts disabled across the pair and preserve original IF. No counter reset/write, wait, remote dispatch or arbitrary MSR. Raw values and real clock context only; no +/-50MHz accuracy guarantee. Every refusal/fault preserves the entire caller output/tail."
+    },
+    {
+      "name": "CpuPerformanceRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; only fixed record written, caller tail preserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact local dense CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "operation",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_performance_op_* explicit operation; inspect reads hardware, never an implicit policy change.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact nonzero CPU start epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lease",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonreused provider-owned control token;0 on first apply/enable, required for subsequent apply/release.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "minimum",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Abstract minimum performance hint; not MHz.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "maximum",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Abstract maximum performance hint; not a hard cap.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "desired",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 selects autonomous operation; otherwise must be within requested bounds.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epp",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 performance preference through255 efficiency; only used with flag_epp.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_performance_request_flag_*; unknown flags rejected.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "expected_revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "0 for first apply/enable; exact nonwrapping resident revision for an owned apply/release.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit external provider performance operation. Bad header, reserved/flags, CPU epoch, unsupported combination, bounds, token or revision is rejected before any write and preserves output/tail. inspect is an explicit local read. apply may retain hardware ownership until exact local release; caller cancellation never releases hardware implicitly. enable requires separate irreversible-package consent and no parameter fields. A completed write attempt returns0 with a receipt even on fault/conflict; inspect/release can recover retained uncertain ownership. No automatic retry, remote dispatch or governor."
+    },
+    {
+      "name": "CpuPerformanceInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 176,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; only fixed record written, caller tail preserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "176"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Observed local CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_performance_state_*; uncertain/conflict never means returned.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_performance_flag_* actual ownership/activation/return context.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "features",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact canonical CPUID6.EAX feature word; no host CPUID probe.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "valid_mask",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_performance_valid_*; zero without validity is unknown.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact CPU start epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider_generation",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact external provider registration cookie.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lease",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Live nonreused local ownership token;0 when none.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Resident revision for next explicit operation, never wraps.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "raw_enable",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact770 value if valid; bit0 activation is package wide and reset-only.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "raw_capabilities",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact771 if HWP enabled and read succeeded.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "raw_request",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact774 last read; stored hints, not achieved performance.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "raw_package",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact772 only when supported/enabled; never written by this version.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "baseline_request",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact local774 before this owner first attempted a parameter write.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_written",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact most recent intended774 write, including uncertain attempts.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "package_mask",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Complete known compatible online package,0 unknown.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "captured_ns",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Functional clock instant when available; no timing/accuracy guarantee.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "minimum",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded stored request minimum if request valid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "maximum",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded stored request maximum.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "desired",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded stored request desired,0 autonomous.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epp",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Decoded stored EPP only when feature supported.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "highest",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Local abstract highest capability.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "guaranteed",
+          "offset": 148,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Dynamic guaranteed capability, not fixed frequency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "efficient",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Dynamic most efficient capability.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lowest",
+          "offset": 156,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Local lowest allowed performance hint.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_error",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Actual operation/readback error or0; faults remain distinguishable from unsupported/invalid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "attempted_id",
+          "offset": 164,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Named register ID of last possible write;0 means none.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "package_leader",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "First member of valid package mask; otherwise cpu_power_cpu_none.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 172,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "External HWP request/ownership receipt.0 return means this complete receipt is available; state/last_error determine whether writing or restoration succeeded. Only parameters_restored with verified baseline readback proves local return. sticky_enabled means package activation cannot be undone without RESET, even after local release. Hardware may exceed/fall below hints; request readback does not prove actual operating frequency, physical savings, thermal freedom or hard limits. Busy retained hardware prevents CPU offline and driver unload; explicit same-CPU release must precede them."
+    },
+    {
+      "name": "CpuPerformanceBackend",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; only fixed record written, caller tail preserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "context",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Resident external provider context; no caller pointer retained.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "execute",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "C i32(context:usize,*const CpuPerformanceRequest,*CpuPerformanceInfo) bounded synchronous callback, parallel across CPUs.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_power_backend_flag_parallel required.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Optional performance callback attached to the exact already registered CpuPowerBackend cookie in R4D init. Original fixed passive backend remains unchanged. The same callback/module lifetime protects both, plus independent exact hardware-control leases until real release."
+    },
+    {
+      "name": "CpuRegisterWriteInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 72,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; only fixed record written, caller tail preserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "72"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact current admitted CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "register_id",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Named control register only; never a caller supplied MSR address.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact CPU start epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "lease",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact current provider/heap/CPU ownership token.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "expected",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Required raw value before writing.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "requested",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact requested replacement.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_before",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual read before comparison.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_after",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual readback after write if valid.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_register_write_flag_* distinguishes actual reads, write attempted and successful WRMSR. A write-success bit alone never proves readback.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_error",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Actual fault if instruction/readback failed; mismatch uses error_busy.0 if compare/write/readback completed.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Named current-CPU compare/write/read transaction. Acquire membership with IF on, disable local IRQs only across exact recoverable instructions, preserve original IF. Nonzero function result means refused before a write attempt and preserves output. Return0 provides actual receipt including before-only mismatch or write/readback fault. Only7700->1 or validated774 min/max/desired/optionalEPP bit changes allowed on native verified Intel6:4E/5E with feature gates. No package request, activity/valid/polarity edits, arbitrary MSR or counter reset. Provider retains uncertain hardware until real release; no automatic retry."
     }
   ],
   "operations": [],
@@ -140623,6 +141707,316 @@
       "scope": "cpu_capabilities",
       "stability": "fixed_contract",
       "description": "cpu register id amd core energy."
+    },
+    {
+      "name": "cpu_performance_op_inspect",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance op inspect."
+    },
+    {
+      "name": "cpu_performance_op_apply",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance op apply."
+    },
+    {
+      "name": "cpu_performance_op_release",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance op release."
+    },
+    {
+      "name": "cpu_performance_op_enable",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance op enable."
+    },
+    {
+      "name": "cpu_performance_state_unsupported",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance state unsupported."
+    },
+    {
+      "name": "cpu_performance_state_disabled",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance state disabled."
+    },
+    {
+      "name": "cpu_performance_state_ready",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance state ready."
+    },
+    {
+      "name": "cpu_performance_state_owned",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance state owned."
+    },
+    {
+      "name": "cpu_performance_state_restored",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance state restored."
+    },
+    {
+      "name": "cpu_performance_state_uncertain",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance state uncertain."
+    },
+    {
+      "name": "cpu_performance_state_conflict",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance state conflict."
+    },
+    {
+      "name": "cpu_performance_request_flag_epp",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance request flag epp."
+    },
+    {
+      "name": "cpu_performance_request_flag_sticky_enable",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance request flag sticky enable."
+    },
+    {
+      "name": "cpu_performance_flag_epp",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance flag epp."
+    },
+    {
+      "name": "cpu_performance_flag_sticky_enabled",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance flag sticky enabled."
+    },
+    {
+      "name": "cpu_performance_flag_parameters_restored",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance flag parameters restored."
+    },
+    {
+      "name": "cpu_performance_flag_virtual",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance flag virtual."
+    },
+    {
+      "name": "cpu_performance_valid_enable",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance valid enable."
+    },
+    {
+      "name": "cpu_performance_valid_capabilities",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance valid capabilities."
+    },
+    {
+      "name": "cpu_performance_valid_request",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance valid request."
+    },
+    {
+      "name": "cpu_performance_valid_package",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance valid package."
+    },
+    {
+      "name": "cpu_performance_valid_scope",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance valid scope."
+    },
+    {
+      "name": "cpu_performance_valid_time",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_performance",
+      "stability": "fixed_contract",
+      "description": "cpu performance valid time."
+    },
+    {
+      "name": "cpu_register_write_flag_before",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register write flag before."
+    },
+    {
+      "name": "cpu_register_write_flag_attempted",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register write flag attempted."
+    },
+    {
+      "name": "cpu_register_write_flag_after",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register write flag after."
+    },
+    {
+      "name": "cpu_register_write_flag_written",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register write flag written."
+    },
+    {
+      "name": "cpu_register_id_intel_hwp_enable",
+      "value": "18",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id intel hwp enable."
+    },
+    {
+      "name": "cpu_register_id_intel_hwp_capabilities",
+      "value": "19",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id intel hwp capabilities."
+    },
+    {
+      "name": "cpu_register_id_intel_hwp_request",
+      "value": "20",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id intel hwp request."
+    },
+    {
+      "name": "cpu_register_id_intel_hwp_package",
+      "value": "21",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "cpu register id intel hwp package."
     }
   ],
   "limits": [

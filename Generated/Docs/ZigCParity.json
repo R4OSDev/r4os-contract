@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 460,
+    "group_function_signatures": 461,
     "sdk_operation_contracts": 0,
-    "parity_entries": 460,
+    "parity_entries": 461,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4148,6 +4148,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.cpu_power_capture",
       "c_contract": "R4DevCpuPowerCaptureFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_performance",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.cpu_performance",
+      "c_contract": "R4DevCpuPerformanceFn",
       "coverage": "generated_signature"
     }
   ],

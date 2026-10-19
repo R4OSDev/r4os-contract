@@ -2387,6 +2387,37 @@ extern "C" {
 #define R4OS_CPU_REGISTER_ID_AMD_ENERGY_UNIT 15u
 #define R4OS_CPU_REGISTER_ID_AMD_PACKAGE_ENERGY 16u
 #define R4OS_CPU_REGISTER_ID_AMD_CORE_ENERGY 17u
+#define R4OS_CPU_PERFORMANCE_OP_INSPECT 0u
+#define R4OS_CPU_PERFORMANCE_OP_APPLY 1u
+#define R4OS_CPU_PERFORMANCE_OP_RELEASE 2u
+#define R4OS_CPU_PERFORMANCE_OP_ENABLE 3u
+#define R4OS_CPU_PERFORMANCE_STATE_UNSUPPORTED 0u
+#define R4OS_CPU_PERFORMANCE_STATE_DISABLED 1u
+#define R4OS_CPU_PERFORMANCE_STATE_READY 2u
+#define R4OS_CPU_PERFORMANCE_STATE_OWNED 3u
+#define R4OS_CPU_PERFORMANCE_STATE_RESTORED 4u
+#define R4OS_CPU_PERFORMANCE_STATE_UNCERTAIN 5u
+#define R4OS_CPU_PERFORMANCE_STATE_CONFLICT 6u
+#define R4OS_CPU_PERFORMANCE_REQUEST_FLAG_EPP 1u
+#define R4OS_CPU_PERFORMANCE_REQUEST_FLAG_STICKY_ENABLE 2u
+#define R4OS_CPU_PERFORMANCE_FLAG_EPP 1u
+#define R4OS_CPU_PERFORMANCE_FLAG_STICKY_ENABLED 2u
+#define R4OS_CPU_PERFORMANCE_FLAG_PARAMETERS_RESTORED 4u
+#define R4OS_CPU_PERFORMANCE_FLAG_VIRTUAL 8u
+#define R4OS_CPU_PERFORMANCE_VALID_ENABLE 1u
+#define R4OS_CPU_PERFORMANCE_VALID_CAPABILITIES 2u
+#define R4OS_CPU_PERFORMANCE_VALID_REQUEST 4u
+#define R4OS_CPU_PERFORMANCE_VALID_PACKAGE 8u
+#define R4OS_CPU_PERFORMANCE_VALID_SCOPE 16u
+#define R4OS_CPU_PERFORMANCE_VALID_TIME 32u
+#define R4OS_CPU_REGISTER_WRITE_FLAG_BEFORE 1u
+#define R4OS_CPU_REGISTER_WRITE_FLAG_ATTEMPTED 2u
+#define R4OS_CPU_REGISTER_WRITE_FLAG_AFTER 4u
+#define R4OS_CPU_REGISTER_WRITE_FLAG_WRITTEN 8u
+#define R4OS_CPU_REGISTER_ID_INTEL_HWP_ENABLE 18u
+#define R4OS_CPU_REGISTER_ID_INTEL_HWP_CAPABILITIES 19u
+#define R4OS_CPU_REGISTER_ID_INTEL_HWP_REQUEST 20u
+#define R4OS_CPU_REGISTER_ID_INTEL_HWP_PACKAGE 21u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3182,6 +3213,10 @@ typedef struct R4CpuPowerInfo R4CpuPowerInfo;
 typedef struct R4CpuPowerBackend R4CpuPowerBackend;
 typedef struct R4DriverCpuPowerApi R4DriverCpuPowerApi;
 typedef struct R4CpuPowerCounters R4CpuPowerCounters;
+typedef struct R4CpuPerformanceRequest R4CpuPerformanceRequest;
+typedef struct R4CpuPerformanceInfo R4CpuPerformanceInfo;
+typedef struct R4CpuPerformanceBackend R4CpuPerformanceBackend;
+typedef struct R4CpuRegisterWriteInfo R4CpuRegisterWriteInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -9545,6 +9580,11 @@ typedef struct R4DriverCpuPowerApi {
     uint64_t register_read;
     uint64_t clock;
     uint64_t counters_read;
+    uint64_t feature;
+    uint64_t register_performance;
+    uint64_t control_acquire;
+    uint64_t control_release;
+    uint64_t register_compare_write;
 } R4DriverCpuPowerApi;
 
 typedef struct R4CpuPowerCounters {
@@ -9560,6 +9600,81 @@ typedef struct R4CpuPowerCounters {
     uint32_t clock_source;
     uint64_t capture_sequence;
 } R4CpuPowerCounters;
+
+typedef struct R4CpuPerformanceRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t operation;
+    uint64_t epoch;
+    uint64_t lease;
+    uint32_t minimum;
+    uint32_t maximum;
+    uint32_t desired;
+    uint32_t epp;
+    uint32_t flags;
+    uint32_t reserved0;
+    uint64_t expected_revision;
+} R4CpuPerformanceRequest;
+
+typedef struct R4CpuPerformanceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t state;
+    uint32_t flags;
+    uint32_t features;
+    uint32_t valid_mask;
+    uint32_t reserved0;
+    uint64_t epoch;
+    uint64_t provider_generation;
+    uint64_t lease;
+    uint64_t revision;
+    uint64_t raw_enable;
+    uint64_t raw_capabilities;
+    uint64_t raw_request;
+    uint64_t raw_package;
+    uint64_t baseline_request;
+    uint64_t last_written;
+    uint64_t package_mask;
+    uint64_t captured_ns;
+    uint32_t minimum;
+    uint32_t maximum;
+    uint32_t desired;
+    uint32_t epp;
+    uint32_t highest;
+    uint32_t guaranteed;
+    uint32_t efficient;
+    uint32_t lowest;
+    int32_t last_error;
+    uint32_t attempted_id;
+    uint32_t package_leader;
+    uint32_t reserved1;
+} R4CpuPerformanceInfo;
+
+typedef struct R4CpuPerformanceBackend {
+    uint32_t version;
+    uint32_t size;
+    uint64_t context;
+    uint64_t execute;
+    uint32_t flags;
+    uint32_t reserved0;
+} R4CpuPerformanceBackend;
+
+typedef struct R4CpuRegisterWriteInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t register_id;
+    uint64_t epoch;
+    uint64_t lease;
+    uint64_t expected;
+    uint64_t requested;
+    uint64_t observed_before;
+    uint64_t observed_after;
+    uint32_t flags;
+    int32_t last_error;
+} R4CpuRegisterWriteInfo;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -10500,6 +10615,7 @@ typedef int32_t (*R4DevCpuRegisterReadFn)(uint32_t cpu_index, uint64_t expected_
 typedef int32_t (*R4DevKernelCpuRegisterCheckFn)(uint32_t cpu_index, uint64_t expected_epoch, R4ProgramKernelCpuRegisterCheck * out);
 typedef int32_t (*R4DevCpuPowerInfoFn)(uint32_t cpu_index, uint64_t expected_epoch, R4CpuPowerInfo * out);
 typedef int32_t (*R4DevCpuPowerCaptureFn)(uint32_t cpu_index, uint64_t expected_epoch, R4CpuPowerInfo * out);
+typedef int32_t (*R4DevCpuPerformanceFn)(const R4CpuPerformanceRequest * request, R4CpuPerformanceInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -10581,6 +10697,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t kernel_cpu_register_check;
     uintptr_t cpu_power_info;
     uintptr_t cpu_power_capture;
+    uintptr_t cpu_performance;
 } R4XStartR4Dev;
 
 
@@ -16305,7 +16422,7 @@ _Static_assert(offsetof(R4CpuPowerBackend, snapshot) == 16u, "CpuPowerBackend.sn
 _Static_assert(offsetof(R4CpuPowerBackend, capture) == 24u, "CpuPowerBackend.capture offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, flags) == 32u, "CpuPowerBackend.flags offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, reserved0) == 36u, "CpuPowerBackend.reserved0 offset mismatch");
-_Static_assert(sizeof(R4DriverCpuPowerApi) == 72u, "DriverCpuPowerApi size mismatch");
+_Static_assert(sizeof(R4DriverCpuPowerApi) == 112u, "DriverCpuPowerApi size mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, version) == 0u, "DriverCpuPowerApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, size) == 4u, "DriverCpuPowerApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, register_backend) == 8u, "DriverCpuPowerApi.register_backend offset mismatch");
@@ -16316,6 +16433,11 @@ _Static_assert(offsetof(R4DriverCpuPowerApi, topology) == 40u, "DriverCpuPowerAp
 _Static_assert(offsetof(R4DriverCpuPowerApi, register_read) == 48u, "DriverCpuPowerApi.register_read offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, clock) == 56u, "DriverCpuPowerApi.clock offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, counters_read) == 64u, "DriverCpuPowerApi.counters_read offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, feature) == 72u, "DriverCpuPowerApi.feature offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, register_performance) == 80u, "DriverCpuPowerApi.register_performance offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, control_acquire) == 88u, "DriverCpuPowerApi.control_acquire offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, control_release) == 96u, "DriverCpuPowerApi.control_release offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, register_compare_write) == 104u, "DriverCpuPowerApi.register_compare_write offset mismatch");
 _Static_assert(sizeof(R4CpuPowerCounters) == 64u, "CpuPowerCounters size mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, version) == 0u, "CpuPowerCounters.version offset mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, size) == 4u, "CpuPowerCounters.size offset mismatch");
@@ -16328,6 +16450,73 @@ _Static_assert(offsetof(R4CpuPowerCounters, captured_ns) == 40u, "CpuPowerCounte
 _Static_assert(offsetof(R4CpuPowerCounters, clock_generation) == 48u, "CpuPowerCounters.clock_generation offset mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, clock_source) == 52u, "CpuPowerCounters.clock_source offset mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, capture_sequence) == 56u, "CpuPowerCounters.capture_sequence offset mismatch");
+_Static_assert(sizeof(R4CpuPerformanceRequest) == 64u, "CpuPerformanceRequest size mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, version) == 0u, "CpuPerformanceRequest.version offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, size) == 4u, "CpuPerformanceRequest.size offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, cpu_index) == 8u, "CpuPerformanceRequest.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, operation) == 12u, "CpuPerformanceRequest.operation offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, epoch) == 16u, "CpuPerformanceRequest.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, lease) == 24u, "CpuPerformanceRequest.lease offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, minimum) == 32u, "CpuPerformanceRequest.minimum offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, maximum) == 36u, "CpuPerformanceRequest.maximum offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, desired) == 40u, "CpuPerformanceRequest.desired offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, epp) == 44u, "CpuPerformanceRequest.epp offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, flags) == 48u, "CpuPerformanceRequest.flags offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, reserved0) == 52u, "CpuPerformanceRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceRequest, expected_revision) == 56u, "CpuPerformanceRequest.expected_revision offset mismatch");
+_Static_assert(sizeof(R4CpuPerformanceInfo) == 176u, "CpuPerformanceInfo size mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, version) == 0u, "CpuPerformanceInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, size) == 4u, "CpuPerformanceInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, cpu_index) == 8u, "CpuPerformanceInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, state) == 12u, "CpuPerformanceInfo.state offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, flags) == 16u, "CpuPerformanceInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, features) == 20u, "CpuPerformanceInfo.features offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, valid_mask) == 24u, "CpuPerformanceInfo.valid_mask offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, reserved0) == 28u, "CpuPerformanceInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, epoch) == 32u, "CpuPerformanceInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, provider_generation) == 40u, "CpuPerformanceInfo.provider_generation offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, lease) == 48u, "CpuPerformanceInfo.lease offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, revision) == 56u, "CpuPerformanceInfo.revision offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, raw_enable) == 64u, "CpuPerformanceInfo.raw_enable offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, raw_capabilities) == 72u, "CpuPerformanceInfo.raw_capabilities offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, raw_request) == 80u, "CpuPerformanceInfo.raw_request offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, raw_package) == 88u, "CpuPerformanceInfo.raw_package offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, baseline_request) == 96u, "CpuPerformanceInfo.baseline_request offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, last_written) == 104u, "CpuPerformanceInfo.last_written offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, package_mask) == 112u, "CpuPerformanceInfo.package_mask offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, captured_ns) == 120u, "CpuPerformanceInfo.captured_ns offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, minimum) == 128u, "CpuPerformanceInfo.minimum offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, maximum) == 132u, "CpuPerformanceInfo.maximum offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, desired) == 136u, "CpuPerformanceInfo.desired offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, epp) == 140u, "CpuPerformanceInfo.epp offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, highest) == 144u, "CpuPerformanceInfo.highest offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, guaranteed) == 148u, "CpuPerformanceInfo.guaranteed offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, efficient) == 152u, "CpuPerformanceInfo.efficient offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, lowest) == 156u, "CpuPerformanceInfo.lowest offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, last_error) == 160u, "CpuPerformanceInfo.last_error offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, attempted_id) == 164u, "CpuPerformanceInfo.attempted_id offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, package_leader) == 168u, "CpuPerformanceInfo.package_leader offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceInfo, reserved1) == 172u, "CpuPerformanceInfo.reserved1 offset mismatch");
+_Static_assert(sizeof(R4CpuPerformanceBackend) == 32u, "CpuPerformanceBackend size mismatch");
+_Static_assert(offsetof(R4CpuPerformanceBackend, version) == 0u, "CpuPerformanceBackend.version offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceBackend, size) == 4u, "CpuPerformanceBackend.size offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceBackend, context) == 8u, "CpuPerformanceBackend.context offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceBackend, execute) == 16u, "CpuPerformanceBackend.execute offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceBackend, flags) == 24u, "CpuPerformanceBackend.flags offset mismatch");
+_Static_assert(offsetof(R4CpuPerformanceBackend, reserved0) == 28u, "CpuPerformanceBackend.reserved0 offset mismatch");
+_Static_assert(sizeof(R4CpuRegisterWriteInfo) == 72u, "CpuRegisterWriteInfo size mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, version) == 0u, "CpuRegisterWriteInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, size) == 4u, "CpuRegisterWriteInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, cpu_index) == 8u, "CpuRegisterWriteInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, register_id) == 12u, "CpuRegisterWriteInfo.register_id offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, epoch) == 16u, "CpuRegisterWriteInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, lease) == 24u, "CpuRegisterWriteInfo.lease offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, expected) == 32u, "CpuRegisterWriteInfo.expected offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, requested) == 40u, "CpuRegisterWriteInfo.requested offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, observed_before) == 48u, "CpuRegisterWriteInfo.observed_before offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, observed_after) == 56u, "CpuRegisterWriteInfo.observed_after offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, flags) == 64u, "CpuRegisterWriteInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuRegisterWriteInfo, last_error) == 68u, "CpuRegisterWriteInfo.last_error offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1280u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -17113,7 +17302,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 616u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 624u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -17262,6 +17451,8 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_power_info) == 600u, "R4XStartR4Dev.c
 _Static_assert(sizeof(R4DevCpuPowerInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_power_capture) == 608u, "R4XStartR4Dev.cpu_power_capture offset mismatch");
 _Static_assert(sizeof(R4DevCpuPowerCaptureFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_performance) == 616u, "R4XStartR4Dev.cpu_performance offset mismatch");
+_Static_assert(sizeof(R4DevCpuPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

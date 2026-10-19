@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 460,
-    "group_slot_count": 460,
+    "function_count": 461,
+    "group_slot_count": 461,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 121
+    "advanced_count": 122
   },
   "functions": [
     {
@@ -5527,6 +5527,18 @@
       "slot": 74,
       "exposure": "advanced",
       "description": "Explicit bounded local passive CPUPOWER capture. IF-on admitted task with no held owners, exact current CPU/start epoch and stable clock required. Caller routes via existing approved compute workers; no remote RPC or implicit wait. Reads never alter power requests/limits. Intel microcode signature may use its exact zero-preload/CPUID1 latch, AMD patch level is read only. Optional inaccessible values are reported unknown with raw/fault context. Returns cpu_capabilities_ok or exact errors with output/tail unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_performance",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 75,
+      "exposure": "advanced",
+      "description": "Explicit local external performance provider operation with exact CPU/start/provider/ownership epochs. No governor or remote dispatch. Bad/unsupported requests preserve output and never write. Return0 provides the complete fixed receipt, including real fault/uncertain/conflict and reset-only activation; examine state/last_error and retain hardware until actual explicit release. Caller tail preserved. Request readback never claims physical delivered performance.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
