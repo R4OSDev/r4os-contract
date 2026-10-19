@@ -113329,7 +113329,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Named register-ID bitmask of optional real recovered MSR faults.",
+          "description": "cpu_power_valid_* field bitmask of optional real recovered MSR faults; not a register-ID bitmap.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -113343,7 +113343,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Named register-ID bitmask refused before instruction.",
+          "description": "cpu_power_valid_* field bitmask refused before instruction; not a register-ID bitmap.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -114051,8 +114051,8 @@
       "source": "API/ApiContract.json",
       "classification": "extensible",
       "representation": "extern_struct",
-      "version": 1,
-      "size": 64,
+      "version": 2,
+      "size": 72,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -114083,7 +114083,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "64"
+          "default_value": "72"
         },
         {
           "name": "register_backend",
@@ -114182,10 +114182,192 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "counters_read",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(u32 cpu,u64 expected_epoch,*CpuPowerCounters): bounded interrupt-free named counter pair, original IF preserved. Negotiate72byte table and nonzero tail slot.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Owner-bound optional CPUPOWER service queried through the append-only DriverResourceApi tail. Query and registration authenticate real init/shutdown. Copied function table stays usable for exact unregister; raw/cached operations authenticate actual driver callback execution. No R4D threads or permanent CPU pins are required."
+      "description": "Owner-bound optional CPUPOWER service queried through the append-only DriverResourceApi tail. Query and registration authenticate real init/shutdown. Copied function table stays usable for exact unregister; raw/cached operations authenticate actual driver callback execution. No R4D threads or permanent CPU pins are required. Optional72byte tail adds the interrupt-free APERF/MPERF pair; original64byte prefix/callbacks and wire version1 remain intact."
+    },
+    {
+      "name": "CpuPowerCounters",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; only fixed64byte record is written; tail preserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Observed cpu_index.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_register_flag_raw means both named local counter reads succeeded.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact CPU start epoch retained for the complete interrupt-free read pair.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "aperf",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Observed aperf.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mperf",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Observed mperf.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "captured_ns",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic instant after both reads, not caller query time.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Same valid nonexhausted monotonic generation across the pair.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Same monotonic source across the pair.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capture_sequence",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact cached CPU capability capture sequence; not a counter value.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Named APERF/MPERF read pair on the exact admitted current CPU/start epoch. Both feature-gated recoverable reads execute with local interrupts disabled across the pair and preserve original IF. No counter reset/write, wait, remote dispatch or arbitrary MSR. Raw values and real clock context only; no +/-50MHz accuracy guarantee. Every refusal/fault preserves the entire caller output/tail."
     }
   ],
   "operations": [],

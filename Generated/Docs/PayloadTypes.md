@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 335 von 335 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 336 von 336 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 64; Konstanten: 2374; Limits: 111
 
@@ -355,7 +355,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramKernelCpuRegisterCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuPowerInfo` | fixed_layout | extern_struct | 320/8 | 320/8 | 320/8 | 320/8 |
 | `CpuPowerBackend` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
-| `DriverCpuPowerApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `DriverCpuPowerApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
+| `CpuPowerCounters` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -9045,7 +9046,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 64 / 8
+- Version/Größe/Alignment: 2 / 72 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -9058,6 +9059,28 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `topology` | 40 | 8 | 8 | `u64` | - |
 | `register_read` | 48 | 8 | 8 | `u64` | - |
 | `clock` | 56 | 8 | 8 | `u64` | - |
+| `counters_read` | 64 | 8 | 8 | `u64` | - |
+
+### `CpuPowerCounters`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `aperf` | 24 | 8 | 8 | `u64` | - |
+| `mperf` | 32 | 8 | 8 | `u64` | - |
+| `captured_ns` | 40 | 8 | 8 | `u64` | - |
+| `clock_generation` | 48 | 4 | 4 | `u32` | - |
+| `clock_source` | 52 | 4 | 4 | `u32` | - |
+| `capture_sequence` | 56 | 8 | 8 | `u64` | - |
 
 ## Fehlerdomänen
 

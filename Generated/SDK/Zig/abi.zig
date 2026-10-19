@@ -3141,6 +3141,7 @@ pub const ProgramKernelCpuRegisterCheck = generated.ProgramKernelCpuRegisterChec
 pub const CpuPowerInfo = generated.CpuPowerInfo;
 pub const CpuPowerBackend = generated.CpuPowerBackend;
 pub const DriverCpuPowerApi = generated.DriverCpuPowerApi;
+pub const CpuPowerCounters = generated.CpuPowerCounters;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

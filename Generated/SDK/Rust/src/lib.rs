@@ -17596,13 +17596,14 @@ pub struct DriverCpuPowerApi {
     pub topology: u64,
     pub register_read: u64,
     pub clock: u64,
+    pub counters_read: u64,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for DriverCpuPowerApi {
     fn default() -> Self {
         Self {
             version: 1,
-            size: 64,
+            size: 72,
             register_backend: 0,
             unregister_backend: 0,
             current_cpu: 0,
@@ -17610,6 +17611,41 @@ impl Default for DriverCpuPowerApi {
             topology: 0,
             register_read: 0,
             clock: 0,
+            counters_read: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuPowerCounters {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub aperf: u64,
+    pub mperf: u64,
+    pub captured_ns: u64,
+    pub clock_generation: u32,
+    pub clock_source: u32,
+    pub capture_sequence: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuPowerCounters {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            aperf: 0,
+            mperf: 0,
+            captured_ns: 0,
+            clock_generation: 0,
+            clock_source: 0,
+            capture_sequence: 0,
         }
     }
 }
@@ -29201,8 +29237,22 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverCpuPowerApi, topology) == 40);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, register_read) == 48);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, clock) == 56);
-    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 64);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, counters_read) == 64);
+    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 72);
     assert!(core::mem::align_of::<DriverCpuPowerApi>() == 8);
+    assert!(core::mem::offset_of!(CpuPowerCounters, version) == 0);
+    assert!(core::mem::offset_of!(CpuPowerCounters, size) == 4);
+    assert!(core::mem::offset_of!(CpuPowerCounters, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuPowerCounters, flags) == 12);
+    assert!(core::mem::offset_of!(CpuPowerCounters, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuPowerCounters, aperf) == 24);
+    assert!(core::mem::offset_of!(CpuPowerCounters, mperf) == 32);
+    assert!(core::mem::offset_of!(CpuPowerCounters, captured_ns) == 40);
+    assert!(core::mem::offset_of!(CpuPowerCounters, clock_generation) == 48);
+    assert!(core::mem::offset_of!(CpuPowerCounters, clock_source) == 52);
+    assert!(core::mem::offset_of!(CpuPowerCounters, capture_sequence) == 56);
+    assert!(core::mem::size_of::<CpuPowerCounters>() == 64);
+    assert!(core::mem::align_of::<CpuPowerCounters>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);

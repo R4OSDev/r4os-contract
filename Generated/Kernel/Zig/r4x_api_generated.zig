@@ -9256,7 +9256,7 @@ pub const CpuPowerBackend = extern struct {
 
 pub const DriverCpuPowerApi = extern struct {
     version: u32 = 1,
-    size: u32 = 64,
+    size: u32 = 72,
     register_backend: u64 = 0,
     unregister_backend: u64 = 0,
     current_cpu: u64 = 0,
@@ -9264,6 +9264,21 @@ pub const DriverCpuPowerApi = extern struct {
     topology: u64 = 0,
     register_read: u64 = 0,
     clock: u64 = 0,
+    counters_read: u64 = 0,
+};
+
+pub const CpuPowerCounters = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    cpu_index: u32 = 0,
+    flags: u32 = 0,
+    epoch: u64 = 0,
+    aperf: u64 = 0,
+    mperf: u64 = 0,
+    captured_ns: u64 = 0,
+    clock_generation: u32 = 0,
+    clock_source: u32 = 0,
+    capture_sequence: u64 = 0,
 };
 
 pub const R4SysFns = struct {
@@ -16794,7 +16809,7 @@ comptime {
     if (@offsetOf(CpuPowerBackend, "capture") != 24) @compileError("generated ABI offset drift: CpuPowerBackend.capture");
     if (@offsetOf(CpuPowerBackend, "flags") != 32) @compileError("generated ABI offset drift: CpuPowerBackend.flags");
     if (@offsetOf(CpuPowerBackend, "reserved0") != 36) @compileError("generated ABI offset drift: CpuPowerBackend.reserved0");
-    if (@sizeOf(DriverCpuPowerApi) != 64) @compileError("generated ABI size drift: DriverCpuPowerApi");
+    if (@sizeOf(DriverCpuPowerApi) != 72) @compileError("generated ABI size drift: DriverCpuPowerApi");
     if (@alignOf(DriverCpuPowerApi) != 8) @compileError("generated ABI alignment drift: DriverCpuPowerApi");
     if (@offsetOf(DriverCpuPowerApi, "version") != 0) @compileError("generated ABI offset drift: DriverCpuPowerApi.version");
     if (@offsetOf(DriverCpuPowerApi, "size") != 4) @compileError("generated ABI offset drift: DriverCpuPowerApi.size");
@@ -16805,6 +16820,20 @@ comptime {
     if (@offsetOf(DriverCpuPowerApi, "topology") != 40) @compileError("generated ABI offset drift: DriverCpuPowerApi.topology");
     if (@offsetOf(DriverCpuPowerApi, "register_read") != 48) @compileError("generated ABI offset drift: DriverCpuPowerApi.register_read");
     if (@offsetOf(DriverCpuPowerApi, "clock") != 56) @compileError("generated ABI offset drift: DriverCpuPowerApi.clock");
+    if (@offsetOf(DriverCpuPowerApi, "counters_read") != 64) @compileError("generated ABI offset drift: DriverCpuPowerApi.counters_read");
+    if (@sizeOf(CpuPowerCounters) != 64) @compileError("generated ABI size drift: CpuPowerCounters");
+    if (@alignOf(CpuPowerCounters) != 8) @compileError("generated ABI alignment drift: CpuPowerCounters");
+    if (@offsetOf(CpuPowerCounters, "version") != 0) @compileError("generated ABI offset drift: CpuPowerCounters.version");
+    if (@offsetOf(CpuPowerCounters, "size") != 4) @compileError("generated ABI offset drift: CpuPowerCounters.size");
+    if (@offsetOf(CpuPowerCounters, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuPowerCounters.cpu_index");
+    if (@offsetOf(CpuPowerCounters, "flags") != 12) @compileError("generated ABI offset drift: CpuPowerCounters.flags");
+    if (@offsetOf(CpuPowerCounters, "epoch") != 16) @compileError("generated ABI offset drift: CpuPowerCounters.epoch");
+    if (@offsetOf(CpuPowerCounters, "aperf") != 24) @compileError("generated ABI offset drift: CpuPowerCounters.aperf");
+    if (@offsetOf(CpuPowerCounters, "mperf") != 32) @compileError("generated ABI offset drift: CpuPowerCounters.mperf");
+    if (@offsetOf(CpuPowerCounters, "captured_ns") != 40) @compileError("generated ABI offset drift: CpuPowerCounters.captured_ns");
+    if (@offsetOf(CpuPowerCounters, "clock_generation") != 48) @compileError("generated ABI offset drift: CpuPowerCounters.clock_generation");
+    if (@offsetOf(CpuPowerCounters, "clock_source") != 52) @compileError("generated ABI offset drift: CpuPowerCounters.clock_source");
+    if (@offsetOf(CpuPowerCounters, "capture_sequence") != 56) @compileError("generated ABI offset drift: CpuPowerCounters.capture_sequence");
     if (@sizeOf(R4XStartR4Sys) != 1280) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");

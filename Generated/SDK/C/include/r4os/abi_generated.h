@@ -3181,6 +3181,7 @@ typedef struct R4ProgramKernelCpuRegisterCheck R4ProgramKernelCpuRegisterCheck;
 typedef struct R4CpuPowerInfo R4CpuPowerInfo;
 typedef struct R4CpuPowerBackend R4CpuPowerBackend;
 typedef struct R4DriverCpuPowerApi R4DriverCpuPowerApi;
+typedef struct R4CpuPowerCounters R4CpuPowerCounters;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -9543,7 +9544,22 @@ typedef struct R4DriverCpuPowerApi {
     uint64_t topology;
     uint64_t register_read;
     uint64_t clock;
+    uint64_t counters_read;
 } R4DriverCpuPowerApi;
+
+typedef struct R4CpuPowerCounters {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t flags;
+    uint64_t epoch;
+    uint64_t aperf;
+    uint64_t mperf;
+    uint64_t captured_ns;
+    uint32_t clock_generation;
+    uint32_t clock_source;
+    uint64_t capture_sequence;
+} R4CpuPowerCounters;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -16289,7 +16305,7 @@ _Static_assert(offsetof(R4CpuPowerBackend, snapshot) == 16u, "CpuPowerBackend.sn
 _Static_assert(offsetof(R4CpuPowerBackend, capture) == 24u, "CpuPowerBackend.capture offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, flags) == 32u, "CpuPowerBackend.flags offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, reserved0) == 36u, "CpuPowerBackend.reserved0 offset mismatch");
-_Static_assert(sizeof(R4DriverCpuPowerApi) == 64u, "DriverCpuPowerApi size mismatch");
+_Static_assert(sizeof(R4DriverCpuPowerApi) == 72u, "DriverCpuPowerApi size mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, version) == 0u, "DriverCpuPowerApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, size) == 4u, "DriverCpuPowerApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, register_backend) == 8u, "DriverCpuPowerApi.register_backend offset mismatch");
@@ -16299,6 +16315,19 @@ _Static_assert(offsetof(R4DriverCpuPowerApi, capabilities) == 32u, "DriverCpuPow
 _Static_assert(offsetof(R4DriverCpuPowerApi, topology) == 40u, "DriverCpuPowerApi.topology offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, register_read) == 48u, "DriverCpuPowerApi.register_read offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, clock) == 56u, "DriverCpuPowerApi.clock offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, counters_read) == 64u, "DriverCpuPowerApi.counters_read offset mismatch");
+_Static_assert(sizeof(R4CpuPowerCounters) == 64u, "CpuPowerCounters size mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, version) == 0u, "CpuPowerCounters.version offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, size) == 4u, "CpuPowerCounters.size offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, cpu_index) == 8u, "CpuPowerCounters.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, flags) == 12u, "CpuPowerCounters.flags offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, epoch) == 16u, "CpuPowerCounters.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, aperf) == 24u, "CpuPowerCounters.aperf offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, mperf) == 32u, "CpuPowerCounters.mperf offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, captured_ns) == 40u, "CpuPowerCounters.captured_ns offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, clock_generation) == 48u, "CpuPowerCounters.clock_generation offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, clock_source) == 52u, "CpuPowerCounters.clock_source offset mismatch");
+_Static_assert(offsetof(R4CpuPowerCounters, capture_sequence) == 56u, "CpuPowerCounters.capture_sequence offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1280u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
