@@ -2759,7 +2759,7 @@
           "name": "thread_create",
           "state": "function",
           "required": false,
-          "description": "Creates a program thread from an entry callback.",
+          "description": "Creates a program thread from an entry callback. Flags accept zero or thread_create_flag_compute_worker; unknown bits or missing runtime.workers=owned-v1 return thread_error_unsupported. A compute caller passes its compute role to descendants even with zero flags. Foreground main scheduling and console ownership are unchanged; compute workers retain exact instance VM/resource and join/exit ownership.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -8364,7 +8364,7 @@
           "name": "thread_create_handle",
           "state": "function",
           "required": false,
-          "description": "R4SYS creates a joinable thread and returns its exact generation-safe identity.",
+          "description": "R4SYS creates a joinable thread and returns its exact generation-safe identity. Flags accept zero or thread_create_flag_compute_worker; unknown bits or missing runtime.workers=owned-v1 return thread_error_unsupported. A compute caller passes its compute role to descendants even with zero flags. Foreground main scheduling and console ownership are unchanged; compute workers retain exact instance VM/resource and join/exit ownership.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -134481,6 +134481,26 @@
       "scope": "thread_placement",
       "stability": "fixed_contract",
       "description": "CPU vector length/capacity does not match the discovered requirement."
+    },
+    {
+      "name": "thread_create_flag_compute_worker",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "thread_create",
+      "stability": "fixed_contract",
+      "description": "Explicit reviewed compute-worker creation. Requires runtime.workers=owned-v1; otherwise unsupported. Compute descendants inherit this role, including on BSP/UP. No console input/output, foreground launch or GUI producer ownership. Flags zero from a main thread retain legacy behavior."
+    },
+    {
+      "name": "thread_flag_compute_worker",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "thread",
+      "stability": "fixed_contract",
+      "description": "Thread is an explicitly admitted compute worker or its descendant. Informational lifecycle flag, separate from creation flags and placement. Main thread never receives it."
     }
   ],
   "limits": [

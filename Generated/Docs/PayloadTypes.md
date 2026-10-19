@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 326 von 326 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2148; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2150; Limits: 111
 
 ## App-Profile
 
@@ -11657,6 +11657,8 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `thread_placement_class_batch` | `1` | `u32` | value | number | `thread_placement` | fixed_contract |
 | `thread_placement_class_preferred` | `2` | `u32` | value | number | `thread_placement` | fixed_contract |
 | `thread_placement_error_capacity` | `-11` | `i32` | value | number | `thread_placement` | fixed_contract |
+| `thread_create_flag_compute_worker` | `1` | `u32` | flag | bitmask | `thread_create` | fixed_contract |
+| `thread_flag_compute_worker` | `8` | `u32` | flag | bitmask | `thread` | fixed_contract |
 
 ## Limits
 

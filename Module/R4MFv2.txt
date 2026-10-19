@@ -386,6 +386,26 @@ or unknown values are invalid. Foreground/shell execution remains BSP;
 background child threads inherit the instance declaration, not a pathname.
 This is an ownership declaration, not a sandbox or user affinity setting.
 owned-v1 GUI drawing has one main-thread producer; other threads may use
-audited compute/IPC paths. VM pages stay non-evictable within existing limits
-until the parallel pager has its own complete ownership proof. Library and
+audited compute/IPC paths. AP VM/page-in/reclaim and per-volume I/O use the
+exact instance/task ownership established in 0.85.15. Library and
 driver callback reentrancy is never implied by merely importing an API.
+
+Optional compute workers (0.85.18)
+---------------------------------
+META=runtime.workers=owned-v1 independently declares audited compute-worker
+entry points and their reachable library/API state. Absent or bsp retains
+legacy thread admission. Duplicate or unknown values reject the module.
+The main thread does not become parallel through this declaration: foreground
+execution, shell, console input/output and prompt retain their original owner.
+thread_create and thread_create_handle accept the separate creation flag
+thread_create_flag_compute_worker. Without the declaration, or on an older
+provider, that request returns thread_error_unsupported; unknown bits do too.
+Zero flags from a main thread keep the previous scheduling contract.
+Compute descendants inherit the compute role even when created with zero
+flags; they never gain a console or GUI producer by running on the BSP.
+Their ThreadInfo.flags exposes thread_flag_compute_worker. Console reads are
+empty, writes are refused/suppressed and foreground/host/GUI producer requests
+are refused. This is an execution/ownership contract, not a security boundary.
+All workers retain the exact process generation, VM, resource, FPU and join/
+retirement owners. UP executes admitted work on its available BSP. No affinity,
+speedup, library reentrancy or device callback guarantee follows from this key.

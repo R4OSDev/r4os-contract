@@ -366,7 +366,7 @@
       "kind": "group_slot",
       "slot": 31,
       "exposure": "public",
-      "description": "Creates a program thread from an entry callback.",
+      "description": "Creates a program thread from an entry callback. Flags accept zero or thread_create_flag_compute_worker; unknown bits or missing runtime.workers=owned-v1 return thread_error_unsupported. A compute caller passes its compute role to descendants even with zero flags. Foreground main scheduling and console ownership are unchanged; compute workers retain exact instance VM/resource and join/exit ownership.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -1242,7 +1242,7 @@
       "kind": "group_slot",
       "slot": 105,
       "exposure": "public",
-      "description": "R4SYS creates a joinable thread and returns its exact generation-safe identity.",
+      "description": "R4SYS creates a joinable thread and returns its exact generation-safe identity. Flags accept zero or thread_create_flag_compute_worker; unknown bits or missing runtime.workers=owned-v1 return thread_error_unsupported. A compute caller passes its compute role to descendants even with zero flags. Foreground main scheduling and console ownership are unchanged; compute workers retain exact instance VM/resource and join/exit ownership.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
