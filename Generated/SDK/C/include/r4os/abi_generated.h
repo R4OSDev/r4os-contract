@@ -2551,6 +2551,31 @@ extern "C" {
 #define R4OS_CPU_MACHINE_BANK_LIMIT 64u
 #define R4OS_CPU_POWER_FLAG_MCA_MODEL 128u
 #define R4OS_CPU_POWER_FLAG_SMCA_MODEL 256u
+#define R4OS_CPU_MICROCODE_FLAG_BEFORE_VALID 1u
+#define R4OS_CPU_MICROCODE_FLAG_AFTER_VALID 2u
+#define R4OS_CPU_MICROCODE_FLAG_BUNDLE_VALID 4u
+#define R4OS_CPU_MICROCODE_FLAG_MATCHED 8u
+#define R4OS_CPU_MICROCODE_FLAG_PAYLOAD_VERIFIED 16u
+#define R4OS_CPU_MICROCODE_FLAG_VIRTUAL 32u
+#define R4OS_CPU_MICROCODE_FLAG_UPDATE_ATTEMPT 64u
+#define R4OS_CPU_MICROCODE_FLAG_POST_FEATURES_FRESH 128u
+#define R4OS_CPU_MICROCODE_FLAG_FEATURES_CHANGED 256u
+#define R4OS_CPU_MICROCODE_FLAG_POST_BASELINE 512u
+#define R4OS_CPU_MICROCODE_FLAG_INITIAL_BOOT 1024u
+#define R4OS_CPU_MICROCODE_STATUS_NOT_PREPARED 0u
+#define R4OS_CPU_MICROCODE_STATUS_PACKAGE_MISSING 1u
+#define R4OS_CPU_MICROCODE_STATUS_UNSUPPORTED_CPU 2u
+#define R4OS_CPU_MICROCODE_STATUS_VIRTUAL_CPU 3u
+#define R4OS_CPU_MICROCODE_STATUS_ALREADY_CURRENT 4u
+#define R4OS_CPU_MICROCODE_STATUS_UPDATED 5u
+#define R4OS_CPU_MICROCODE_STATUS_FIRMWARE_PREREQUISITE 6u
+#define R4OS_CPU_MICROCODE_STATUS_PACKAGE_REJECTED 7u
+#define R4OS_CPU_MICROCODE_STATUS_REVISION_UNAVAILABLE 8u
+#define R4OS_CPU_MICROCODE_STATUS_LOAD_FAILED 9u
+#define R4OS_CPU_MICROCODE_STATUS_REVISION_MISMATCH 10u
+#define R4OS_CPU_MICROCODE_STATUS_RESTART_VERIFIED 11u
+#define R4OS_CPU_MICROCODE_STATUS_RESTART_REQUIRES_UPDATE 12u
+#define R4OS_CPU_MICROCODE_STATUS_IDENTITY_CHANGED 13u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3364,6 +3389,7 @@ typedef struct R4CpuIdlePolicy R4CpuIdlePolicy;
 typedef struct R4CpuIdleInfo R4CpuIdleInfo;
 typedef struct R4CpuMachineInfo R4CpuMachineInfo;
 typedef struct R4CpuMachineBank R4CpuMachineBank;
+typedef struct R4CpuMicrocodeInfo R4CpuMicrocodeInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10156,6 +10182,33 @@ typedef struct R4CpuMachineBank {
     uint64_t reserved1;
 } R4CpuMachineBank;
 
+typedef struct R4CpuMicrocodeInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t flags;
+    uint64_t epoch;
+    uint64_t sequence;
+    uint32_t status;
+    uint32_t vendor;
+    uint32_t signature;
+    uint32_t platform_mask;
+    uint32_t before_revision;
+    uint32_t after_revision;
+    uint32_t target_revision;
+    uint32_t minimum_revision;
+    uint32_t package_id;
+    uint32_t package_bytes;
+    uint32_t read_faults;
+    uint32_t write_attempts;
+    uint64_t before_features_hash;
+    uint64_t after_features_hash;
+    uint64_t admitted_features_hash;
+    uint8_t package_sha256[32];
+    uint32_t configured_cpus;
+    uint32_t reserved0;
+} R4CpuMicrocodeInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11104,6 +11157,7 @@ typedef int32_t (*R4DevCpuFirmwarePerformanceFn)(const R4CpuPerformanceRequest *
 typedef int32_t (*R4DevCpuIdleInfoFn)(uint32_t cpu_index, R4CpuIdleInfo * out);
 typedef int32_t (*R4DevCpuMachineInfoFn)(uint32_t cpu_index, R4CpuMachineInfo * out);
 typedef int32_t (*R4DevCpuMachineBankFn)(uint32_t cpu_index, uint64_t epoch, uint64_t sequence, uint32_t bank_index, R4CpuMachineBank * out);
+typedef int32_t (*R4DevCpuMicrocodeInfoFn)(uint32_t cpu_index, R4CpuMicrocodeInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -11192,6 +11246,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_idle_info;
     uintptr_t cpu_machine_info;
     uintptr_t cpu_machine_bank;
+    uintptr_t cpu_microcode_info;
 } R4XStartR4Dev;
 
 
@@ -17316,6 +17371,31 @@ _Static_assert(offsetof(R4CpuMachineBank, ipid) == 80u, "CpuMachineBank.ipid off
 _Static_assert(offsetof(R4CpuMachineBank, syndrome) == 88u, "CpuMachineBank.syndrome offset mismatch");
 _Static_assert(offsetof(R4CpuMachineBank, status_after) == 96u, "CpuMachineBank.status_after offset mismatch");
 _Static_assert(offsetof(R4CpuMachineBank, reserved1) == 104u, "CpuMachineBank.reserved1 offset mismatch");
+_Static_assert(sizeof(R4CpuMicrocodeInfo) == 144u, "CpuMicrocodeInfo size mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, version) == 0u, "CpuMicrocodeInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, size) == 4u, "CpuMicrocodeInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, cpu_index) == 8u, "CpuMicrocodeInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, flags) == 12u, "CpuMicrocodeInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, epoch) == 16u, "CpuMicrocodeInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, sequence) == 24u, "CpuMicrocodeInfo.sequence offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, status) == 32u, "CpuMicrocodeInfo.status offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, vendor) == 36u, "CpuMicrocodeInfo.vendor offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, signature) == 40u, "CpuMicrocodeInfo.signature offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, platform_mask) == 44u, "CpuMicrocodeInfo.platform_mask offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, before_revision) == 48u, "CpuMicrocodeInfo.before_revision offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, after_revision) == 52u, "CpuMicrocodeInfo.after_revision offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, target_revision) == 56u, "CpuMicrocodeInfo.target_revision offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, minimum_revision) == 60u, "CpuMicrocodeInfo.minimum_revision offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, package_id) == 64u, "CpuMicrocodeInfo.package_id offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, package_bytes) == 68u, "CpuMicrocodeInfo.package_bytes offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, read_faults) == 72u, "CpuMicrocodeInfo.read_faults offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, write_attempts) == 76u, "CpuMicrocodeInfo.write_attempts offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, before_features_hash) == 80u, "CpuMicrocodeInfo.before_features_hash offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, after_features_hash) == 88u, "CpuMicrocodeInfo.after_features_hash offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, admitted_features_hash) == 96u, "CpuMicrocodeInfo.admitted_features_hash offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, package_sha256) == 104u, "CpuMicrocodeInfo.package_sha256 offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, configured_cpus) == 136u, "CpuMicrocodeInfo.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuMicrocodeInfo, reserved0) == 140u, "CpuMicrocodeInfo.reserved0 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1288u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -18103,7 +18183,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 672u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 680u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -18266,6 +18346,8 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_machine_info) == 656u, "R4XStartR4Dev
 _Static_assert(sizeof(R4DevCpuMachineInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_machine_bank) == 664u, "R4XStartR4Dev.cpu_machine_bank offset mismatch");
 _Static_assert(sizeof(R4DevCpuMachineBankFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_microcode_info) == 672u, "R4XStartR4Dev.cpu_microcode_info offset mismatch");
+_Static_assert(sizeof(R4DevCpuMicrocodeInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

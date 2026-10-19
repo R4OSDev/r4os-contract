@@ -2539,6 +2539,31 @@ pub const cpu_machine_bank_status_after_read: u32 = 512;
 pub const cpu_machine_bank_limit: u32 = 64;
 pub const cpu_power_flag_mca_model: u32 = 128;
 pub const cpu_power_flag_smca_model: u32 = 256;
+pub const cpu_microcode_flag_before_valid: u32 = 1;
+pub const cpu_microcode_flag_after_valid: u32 = 2;
+pub const cpu_microcode_flag_bundle_valid: u32 = 4;
+pub const cpu_microcode_flag_matched: u32 = 8;
+pub const cpu_microcode_flag_payload_verified: u32 = 16;
+pub const cpu_microcode_flag_virtual: u32 = 32;
+pub const cpu_microcode_flag_update_attempt: u32 = 64;
+pub const cpu_microcode_flag_post_features_fresh: u32 = 128;
+pub const cpu_microcode_flag_features_changed: u32 = 256;
+pub const cpu_microcode_flag_post_baseline: u32 = 512;
+pub const cpu_microcode_flag_initial_boot: u32 = 1024;
+pub const cpu_microcode_status_not_prepared: u32 = 0;
+pub const cpu_microcode_status_package_missing: u32 = 1;
+pub const cpu_microcode_status_unsupported_cpu: u32 = 2;
+pub const cpu_microcode_status_virtual_cpu: u32 = 3;
+pub const cpu_microcode_status_already_current: u32 = 4;
+pub const cpu_microcode_status_updated: u32 = 5;
+pub const cpu_microcode_status_firmware_prerequisite: u32 = 6;
+pub const cpu_microcode_status_package_rejected: u32 = 7;
+pub const cpu_microcode_status_revision_unavailable: u32 = 8;
+pub const cpu_microcode_status_load_failed: u32 = 9;
+pub const cpu_microcode_status_revision_mismatch: u32 = 10;
+pub const cpu_microcode_status_restart_verified: u32 = 11;
+pub const cpu_microcode_status_restart_requires_update: u32 = 12;
+pub const cpu_microcode_status_identity_changed: u32 = 13;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -9858,6 +9883,33 @@ pub const CpuMachineBank = extern struct {
     reserved1: u64 = 0,
 };
 
+pub const CpuMicrocodeInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 144,
+    cpu_index: u32 = 0,
+    flags: u32 = 0,
+    epoch: u64 = 0,
+    sequence: u64 = 0,
+    status: u32 = 0,
+    vendor: u32 = 0,
+    signature: u32 = 0,
+    platform_mask: u32 = 0,
+    before_revision: u32 = 0,
+    after_revision: u32 = 0,
+    target_revision: u32 = 0,
+    minimum_revision: u32 = 0,
+    package_id: u32 = 0,
+    package_bytes: u32 = 0,
+    read_faults: u32 = 0,
+    write_attempts: u32 = 0,
+    before_features_hash: u64 = 0,
+    after_features_hash: u64 = 0,
+    admitted_features_hash: u64 = 0,
+    package_sha256: [32]u8 = .{0} ** 32,
+    configured_cpus: u32 = 0,
+    reserved0: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10771,12 +10823,13 @@ pub const R4DevFns = struct {
     pub const cpu_idle_info = *const fn (u32, *CpuIdleInfo) callconv(.c) i32;
     pub const cpu_machine_info = *const fn (u32, *CpuMachineInfo) callconv(.c) i32;
     pub const cpu_machine_bank = *const fn (u32, u64, u64, u32, *CpuMachineBank) callconv(.c) i32;
+    pub const cpu_microcode_info = *const fn (u32, *CpuMicrocodeInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 30,
-    size: u32 = 672,
+    abi_version: u32 = 31,
+    size: u32 = 680,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -10860,6 +10913,7 @@ pub const R4XStartR4Dev = extern struct {
     cpu_idle_info: usize = 0,
     cpu_machine_info: usize = 0,
     cpu_machine_bank: usize = 0,
+    cpu_microcode_info: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -11357,6 +11411,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 79, .offset = 648, .name = "cpu_idle_info", .state = .function, .required = false },
     .{ .number = 80, .offset = 656, .name = "cpu_machine_info", .state = .function, .required = false },
     .{ .number = 81, .offset = 664, .name = "cpu_machine_bank", .state = .function, .required = false },
+    .{ .number = 82, .offset = 672, .name = "cpu_microcode_info", .state = .function, .required = false },
 };
 
 comptime {
@@ -17830,6 +17885,32 @@ comptime {
     if (@offsetOf(CpuMachineBank, "syndrome") != 88) @compileError("generated ABI offset drift: CpuMachineBank.syndrome");
     if (@offsetOf(CpuMachineBank, "status_after") != 96) @compileError("generated ABI offset drift: CpuMachineBank.status_after");
     if (@offsetOf(CpuMachineBank, "reserved1") != 104) @compileError("generated ABI offset drift: CpuMachineBank.reserved1");
+    if (@sizeOf(CpuMicrocodeInfo) != 144) @compileError("generated ABI size drift: CpuMicrocodeInfo");
+    if (@alignOf(CpuMicrocodeInfo) != 8) @compileError("generated ABI alignment drift: CpuMicrocodeInfo");
+    if (@offsetOf(CpuMicrocodeInfo, "version") != 0) @compileError("generated ABI offset drift: CpuMicrocodeInfo.version");
+    if (@offsetOf(CpuMicrocodeInfo, "size") != 4) @compileError("generated ABI offset drift: CpuMicrocodeInfo.size");
+    if (@offsetOf(CpuMicrocodeInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuMicrocodeInfo.cpu_index");
+    if (@offsetOf(CpuMicrocodeInfo, "flags") != 12) @compileError("generated ABI offset drift: CpuMicrocodeInfo.flags");
+    if (@offsetOf(CpuMicrocodeInfo, "epoch") != 16) @compileError("generated ABI offset drift: CpuMicrocodeInfo.epoch");
+    if (@offsetOf(CpuMicrocodeInfo, "sequence") != 24) @compileError("generated ABI offset drift: CpuMicrocodeInfo.sequence");
+    if (@offsetOf(CpuMicrocodeInfo, "status") != 32) @compileError("generated ABI offset drift: CpuMicrocodeInfo.status");
+    if (@offsetOf(CpuMicrocodeInfo, "vendor") != 36) @compileError("generated ABI offset drift: CpuMicrocodeInfo.vendor");
+    if (@offsetOf(CpuMicrocodeInfo, "signature") != 40) @compileError("generated ABI offset drift: CpuMicrocodeInfo.signature");
+    if (@offsetOf(CpuMicrocodeInfo, "platform_mask") != 44) @compileError("generated ABI offset drift: CpuMicrocodeInfo.platform_mask");
+    if (@offsetOf(CpuMicrocodeInfo, "before_revision") != 48) @compileError("generated ABI offset drift: CpuMicrocodeInfo.before_revision");
+    if (@offsetOf(CpuMicrocodeInfo, "after_revision") != 52) @compileError("generated ABI offset drift: CpuMicrocodeInfo.after_revision");
+    if (@offsetOf(CpuMicrocodeInfo, "target_revision") != 56) @compileError("generated ABI offset drift: CpuMicrocodeInfo.target_revision");
+    if (@offsetOf(CpuMicrocodeInfo, "minimum_revision") != 60) @compileError("generated ABI offset drift: CpuMicrocodeInfo.minimum_revision");
+    if (@offsetOf(CpuMicrocodeInfo, "package_id") != 64) @compileError("generated ABI offset drift: CpuMicrocodeInfo.package_id");
+    if (@offsetOf(CpuMicrocodeInfo, "package_bytes") != 68) @compileError("generated ABI offset drift: CpuMicrocodeInfo.package_bytes");
+    if (@offsetOf(CpuMicrocodeInfo, "read_faults") != 72) @compileError("generated ABI offset drift: CpuMicrocodeInfo.read_faults");
+    if (@offsetOf(CpuMicrocodeInfo, "write_attempts") != 76) @compileError("generated ABI offset drift: CpuMicrocodeInfo.write_attempts");
+    if (@offsetOf(CpuMicrocodeInfo, "before_features_hash") != 80) @compileError("generated ABI offset drift: CpuMicrocodeInfo.before_features_hash");
+    if (@offsetOf(CpuMicrocodeInfo, "after_features_hash") != 88) @compileError("generated ABI offset drift: CpuMicrocodeInfo.after_features_hash");
+    if (@offsetOf(CpuMicrocodeInfo, "admitted_features_hash") != 96) @compileError("generated ABI offset drift: CpuMicrocodeInfo.admitted_features_hash");
+    if (@offsetOf(CpuMicrocodeInfo, "package_sha256") != 104) @compileError("generated ABI offset drift: CpuMicrocodeInfo.package_sha256");
+    if (@offsetOf(CpuMicrocodeInfo, "configured_cpus") != 136) @compileError("generated ABI offset drift: CpuMicrocodeInfo.configured_cpus");
+    if (@offsetOf(CpuMicrocodeInfo, "reserved0") != 140) @compileError("generated ABI offset drift: CpuMicrocodeInfo.reserved0");
     if (@sizeOf(R4XStartR4Sys) != 1288) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -18229,7 +18310,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 672) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 680) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -18312,6 +18393,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_idle_info") != 648) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_idle_info");
     if (@offsetOf(R4XStartR4Dev, "cpu_machine_info") != 656) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_machine_info");
     if (@offsetOf(R4XStartR4Dev, "cpu_machine_bank") != 664) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_machine_bank");
+    if (@offsetOf(R4XStartR4Dev, "cpu_microcode_info") != 672) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_microcode_info");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -19238,13 +19320,14 @@ pub const R4DevProvider = struct {
     cpu_idle_info: ?R4DevFns.cpu_idle_info = null,
     cpu_machine_info: ?R4DevFns.cpu_machine_info = null,
     cpu_machine_bank: ?R4DevFns.cpu_machine_bank = null,
+    cpu_microcode_info: ?R4DevFns.cpu_microcode_info = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 30,
-        .size = 672,
+        .abi_version = 31,
+        .size = 680,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -19328,5 +19411,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .cpu_idle_info = if (provider.cpu_idle_info) |callback| @intFromPtr(callback) else 0,
         .cpu_machine_info = if (provider.cpu_machine_info) |callback| @intFromPtr(callback) else 0,
         .cpu_machine_bank = if (provider.cpu_machine_bank) |callback| @intFromPtr(callback) else 0,
+        .cpu_microcode_info = if (provider.cpu_microcode_info) |callback| @intFromPtr(callback) else 0,
     };
 }

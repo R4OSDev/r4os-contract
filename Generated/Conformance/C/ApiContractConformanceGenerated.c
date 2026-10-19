@@ -471,5 +471,6 @@ static R4DevCpuFirmwarePerformanceFn r4os_probe_r4dev_cpu_firmware_performance =
 static R4DevCpuIdleInfoFn r4os_probe_r4dev_cpu_idle_info = (R4DevCpuIdleInfoFn)0;
 static R4DevCpuMachineInfoFn r4os_probe_r4dev_cpu_machine_info = (R4DevCpuMachineInfoFn)0;
 static R4DevCpuMachineBankFn r4os_probe_r4dev_cpu_machine_bank = (R4DevCpuMachineBankFn)0;
+static R4DevCpuMicrocodeInfoFn r4os_probe_r4dev_cpu_microcode_info = (R4DevCpuMicrocodeInfoFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

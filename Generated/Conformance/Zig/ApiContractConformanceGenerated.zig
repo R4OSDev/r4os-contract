@@ -6122,6 +6122,31 @@ comptime {
     if (@offsetOf(abi.CpuMachineBank, "syndrome") != 88) @compileError("CpuMachineBank.syndrome offset");
     if (@offsetOf(abi.CpuMachineBank, "status_after") != 96) @compileError("CpuMachineBank.status_after offset");
     if (@offsetOf(abi.CpuMachineBank, "reserved1") != 104) @compileError("CpuMachineBank.reserved1 offset");
+    if (@sizeOf(abi.CpuMicrocodeInfo) != 144) @compileError("CpuMicrocodeInfo size");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "version") != 0) @compileError("CpuMicrocodeInfo.version offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "size") != 4) @compileError("CpuMicrocodeInfo.size offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "cpu_index") != 8) @compileError("CpuMicrocodeInfo.cpu_index offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "flags") != 12) @compileError("CpuMicrocodeInfo.flags offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "epoch") != 16) @compileError("CpuMicrocodeInfo.epoch offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "sequence") != 24) @compileError("CpuMicrocodeInfo.sequence offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "status") != 32) @compileError("CpuMicrocodeInfo.status offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "vendor") != 36) @compileError("CpuMicrocodeInfo.vendor offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "signature") != 40) @compileError("CpuMicrocodeInfo.signature offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "platform_mask") != 44) @compileError("CpuMicrocodeInfo.platform_mask offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "before_revision") != 48) @compileError("CpuMicrocodeInfo.before_revision offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "after_revision") != 52) @compileError("CpuMicrocodeInfo.after_revision offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "target_revision") != 56) @compileError("CpuMicrocodeInfo.target_revision offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "minimum_revision") != 60) @compileError("CpuMicrocodeInfo.minimum_revision offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "package_id") != 64) @compileError("CpuMicrocodeInfo.package_id offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "package_bytes") != 68) @compileError("CpuMicrocodeInfo.package_bytes offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "read_faults") != 72) @compileError("CpuMicrocodeInfo.read_faults offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "write_attempts") != 76) @compileError("CpuMicrocodeInfo.write_attempts offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "before_features_hash") != 80) @compileError("CpuMicrocodeInfo.before_features_hash offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "after_features_hash") != 88) @compileError("CpuMicrocodeInfo.after_features_hash offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "admitted_features_hash") != 96) @compileError("CpuMicrocodeInfo.admitted_features_hash offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "package_sha256") != 104) @compileError("CpuMicrocodeInfo.package_sha256 offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "configured_cpus") != 136) @compileError("CpuMicrocodeInfo.configured_cpus offset");
+    if (@offsetOf(abi.CpuMicrocodeInfo, "reserved0") != 140) @compileError("CpuMicrocodeInfo.reserved0 offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1288) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6909,7 +6934,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 672) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 680) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -7072,6 +7097,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.cpu_machine_info) != 8) @compileError("R4DevFns.cpu_machine_info signature");
     if (@offsetOf(abi.R4XStartR4Dev, "cpu_machine_bank") != 664) @compileError("R4XStartR4Dev.cpu_machine_bank offset");
     if (@sizeOf(abi.R4DevFns.cpu_machine_bank) != 8) @compileError("R4DevFns.cpu_machine_bank signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "cpu_microcode_info") != 672) @compileError("R4XStartR4Dev.cpu_microcode_info offset");
+    if (@sizeOf(abi.R4DevFns.cpu_microcode_info) != 8) @compileError("R4DevFns.cpu_microcode_info signature");
 }
 
 test "generated API contract compiles" {}

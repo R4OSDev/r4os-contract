@@ -144,3 +144,15 @@ explicit. No query runs CPU instructions, callbacks, recovery or status clears.
 Existing CrashReport, DriverApi37, DriverCpuPowerApi184 and R4SYS27 stay fixed.
 CPUPOWER's appended model-support flags describe documented decode profiles,
 without claiming actual bank presence, enabled reporting or current health.
+
+Early microcode receipt (0.64.35 / 0.85.33)
+------------------------------------------
+R4DEV31 appends copy-only `cpu_microcode_info` at slot82/offset672, complete
+table680bytes. Independent fixed144-byte `CpuMicrocodeInfo` keeps actual
+revision read validity, exact initial CPU/platform/package identity, virtual
+origin, firmware prerequisites and update/readback failure distinct. Initial
+boot loading remains an internal necessary CPU owner operation; no public
+reload or arbitrary data/register endpoint is added. Logical CPU restart
+requalifies without applying updates while consumers exist. Diagnostic finite
+CPUID fingerprints do not replace feature or PAT/FPU admission. All preceding
+fixed records/constants/slots, DriverApi37, CPUPOWER184 and R4SYS27 are unchanged.

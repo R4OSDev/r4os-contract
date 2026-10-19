@@ -28699,10 +28699,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 30,
+      "abi_version": 31,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 672,
+      "size": 680,
       "slots": [
         {
           "number": 0,
@@ -34259,6 +34259,72 @@
                   "child": {
                     "kind": "named",
                     "name": "CpuMachineBank"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 82,
+          "offset": 672,
+          "name": "cpu_microcode_info",
+          "state": "function",
+          "required": false,
+          "description": "Passive fixed early microcode receipt. Exact CPU/execution epoch, real revision-read validity, loaded/supplied/virtual/prerequisite/failure states and post-baseline capture stay distinct. No update operation, hardware access or callback. Error preserves full output/tail.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuMicrocodeInfo"
                   },
                   "direction": "inout",
                   "nullable": false,
@@ -120225,6 +120291,359 @@
       ],
       "values": [],
       "description": "Exact bounded bank readback, no write/clear. A complete record may carry invalid or faulted STATUS; flags distinguish unavailable auxiliary registers from a measured zero. VAL, ADDRV, MISCV and SMCA SyndV are independent from read completion. Unknown vendor/model data stays raw."
+    },
+    {
+      "name": "CpuMicrocodeInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 144,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized capacity; failed output/tail is preserved.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "144"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact dense CPU.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_microcode_flag_*; actual reads, origin and admission are independent.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact execution epoch, never relabelled after restart.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sequence",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonreused even local publication sequence.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_microcode_status_*; virtual/supplied data is not physical update success.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vendor",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0 unknown,1 GenuineIntel,2 AuthenticAMD.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "signature",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual CPUID1 EAX used for exact native identity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "platform_mask",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual one-hot IA32_PLATFORM_ID for an Intel load profile; otherwise unavailable.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "before_revision",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual local initial revision only with before_valid; virtual flag labels guest-only values.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "after_revision",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual post-decision/readback revision only with after_valid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target_revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact approved profile target, not an observed revision.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "minimum_revision",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Vendor prerequisite; missing base never bypassed by an older signing-vulnerable fallback.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "package_id",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact immutable kernel/distribution origin profile,0 unavailable.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "package_bytes",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Whole original vendor file bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "read_faults",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Recovered MSR instruction refusals during this local preparation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "write_attempts",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual update trigger submissions; excludes documented Intel revision-query zero preload.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "before_features_hash",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Diagnostic FNV fingerprint of the finite tentative raw CPUID capture; never an admission or collision-free identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "after_features_hash",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Diagnostic fingerprint of fresh raw CPUID immediately after update decision; never OS-control or module admission proof.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "admitted_features_hash",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fresh finite raw CPUID after actual common PAT/FPU/baseline qualification; valid only with post_baseline.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "package_sha256",
+          "offset": 104,
+          "type": {
+            "kind": "array",
+            "length": 32,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Exact whole original vendor file origin, only with payload_verified.",
+          "size": 32,
+          "alignment": 1,
+          "source_type": "[32]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "configured_cpus",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current detected CPU count for enumeration, not a simultaneous multi-CPU snapshot.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Independent fixed passive early microcode receipt. Exactly pinned vendor data and CPU/platform/revision/base qualification precede a native initial-boot-only update. Failed readback is terminal for that CPU. Logical restart never loads an update; virtual values are guest-only. Hashes are diagnostic finite raw CPUID fingerprints; common post-baseline admission remains the original owner. Queries never execute CPUID/MSR or callbacks."
     }
   ],
   "operations": [],
@@ -148120,6 +148539,256 @@
       "scope": "cpu_power",
       "stability": "fixed_contract",
       "description": "Passive CPUPOWER model has documented AMD SMCA decode support; no hardware activation or bank-count claim."
+    },
+    {
+      "name": "cpu_microcode_flag_before_valid",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_before_valid. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_after_valid",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_after_valid. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_bundle_valid",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_bundle_valid. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_matched",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_matched. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_payload_verified",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_payload_verified. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_virtual",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_virtual. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_update_attempt",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_update_attempt. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_post_features_fresh",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_post_features_fresh. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_features_changed",
+      "value": "256",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_features_changed. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_post_baseline",
+      "value": "512",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_post_baseline. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_flag_initial_boot",
+      "value": "1024",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_flag_initial_boot. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_not_prepared",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_not_prepared. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_package_missing",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_package_missing. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_unsupported_cpu",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_unsupported_cpu. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_virtual_cpu",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_virtual_cpu. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_already_current",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_already_current. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_updated",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_updated. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_firmware_prerequisite",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_firmware_prerequisite. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_package_rejected",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_package_rejected. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_revision_unavailable",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_revision_unavailable. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_load_failed",
+      "value": "9",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_load_failed. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_revision_mismatch",
+      "value": "10",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_revision_mismatch. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_restart_verified",
+      "value": "11",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_restart_verified. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_restart_requires_update",
+      "value": "12",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_restart_requires_update. No public reload operation or inference of physical success from supplied/virtual data."
+    },
+    {
+      "name": "cpu_microcode_status_identity_changed",
+      "value": "13",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_microcode",
+      "stability": "fixed_contract",
+      "description": "Early microcode receipt cpu_microcode_status_identity_changed. No public reload operation or inference of physical success from supplied/virtual data."
     }
   ],
   "limits": [

@@ -2543,6 +2543,31 @@ pub const cpu_machine_bank_status_after_read: u32 = 512;
 pub const cpu_machine_bank_limit: u32 = 64;
 pub const cpu_power_flag_mca_model: u32 = 128;
 pub const cpu_power_flag_smca_model: u32 = 256;
+pub const cpu_microcode_flag_before_valid: u32 = 1;
+pub const cpu_microcode_flag_after_valid: u32 = 2;
+pub const cpu_microcode_flag_bundle_valid: u32 = 4;
+pub const cpu_microcode_flag_matched: u32 = 8;
+pub const cpu_microcode_flag_payload_verified: u32 = 16;
+pub const cpu_microcode_flag_virtual: u32 = 32;
+pub const cpu_microcode_flag_update_attempt: u32 = 64;
+pub const cpu_microcode_flag_post_features_fresh: u32 = 128;
+pub const cpu_microcode_flag_features_changed: u32 = 256;
+pub const cpu_microcode_flag_post_baseline: u32 = 512;
+pub const cpu_microcode_flag_initial_boot: u32 = 1024;
+pub const cpu_microcode_status_not_prepared: u32 = 0;
+pub const cpu_microcode_status_package_missing: u32 = 1;
+pub const cpu_microcode_status_unsupported_cpu: u32 = 2;
+pub const cpu_microcode_status_virtual_cpu: u32 = 3;
+pub const cpu_microcode_status_already_current: u32 = 4;
+pub const cpu_microcode_status_updated: u32 = 5;
+pub const cpu_microcode_status_firmware_prerequisite: u32 = 6;
+pub const cpu_microcode_status_package_rejected: u32 = 7;
+pub const cpu_microcode_status_revision_unavailable: u32 = 8;
+pub const cpu_microcode_status_load_failed: u32 = 9;
+pub const cpu_microcode_status_revision_mismatch: u32 = 10;
+pub const cpu_microcode_status_restart_verified: u32 = 11;
+pub const cpu_microcode_status_restart_requires_update: u32 = 12;
+pub const cpu_microcode_status_identity_changed: u32 = 13;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -18748,6 +18773,66 @@ impl Default for CpuMachineBank {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuMicrocodeInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub sequence: u64,
+    pub status: u32,
+    pub vendor: u32,
+    pub signature: u32,
+    pub platform_mask: u32,
+    pub before_revision: u32,
+    pub after_revision: u32,
+    pub target_revision: u32,
+    pub minimum_revision: u32,
+    pub package_id: u32,
+    pub package_bytes: u32,
+    pub read_faults: u32,
+    pub write_attempts: u32,
+    pub before_features_hash: u64,
+    pub after_features_hash: u64,
+    pub admitted_features_hash: u64,
+    pub package_sha256: [u8; 32],
+    pub configured_cpus: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuMicrocodeInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 144,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            sequence: 0,
+            status: 0,
+            vendor: 0,
+            signature: 0,
+            platform_mask: 0,
+            before_revision: 0,
+            after_revision: 0,
+            target_revision: 0,
+            minimum_revision: 0,
+            package_id: 0,
+            package_bytes: 0,
+            read_faults: 0,
+            write_attempts: 0,
+            before_features_hash: 0,
+            after_features_hash: 0,
+            admitted_features_hash: 0,
+            package_sha256: [0; 32],
+            configured_cpus: 0,
+            reserved0: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20141,6 +20226,7 @@ pub mod R4DevFns {
     pub type cpu_idle_info = unsafe extern "C" fn(u32, *mut CpuIdleInfo) -> i32;
     pub type cpu_machine_info = unsafe extern "C" fn(u32, *mut CpuMachineInfo) -> i32;
     pub type cpu_machine_bank = unsafe extern "C" fn(u32, u64, u64, u32, *mut CpuMachineBank) -> i32;
+    pub type cpu_microcode_info = unsafe extern "C" fn(u32, *mut CpuMicrocodeInfo) -> i32;
 }
 
 #[repr(C)]
@@ -20232,14 +20318,15 @@ pub struct R4XStartR4Dev {
     pub cpu_idle_info: usize,
     pub cpu_machine_info: usize,
     pub cpu_machine_bank: usize,
+    pub cpu_microcode_info: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 30,
-            size: 672,
+            abi_version: 31,
+            size: 680,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -20323,6 +20410,7 @@ impl Default for R4XStartR4Dev {
             cpu_idle_info: 0,
             cpu_machine_info: 0,
             cpu_machine_bank: 0,
+            cpu_microcode_info: 0,
         }
     }
 }
@@ -30770,6 +30858,32 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuMachineBank, reserved1) == 104);
     assert!(core::mem::size_of::<CpuMachineBank>() == 112);
     assert!(core::mem::align_of::<CpuMachineBank>() == 8);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, flags) == 12);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, sequence) == 24);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, status) == 32);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, vendor) == 36);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, signature) == 40);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, platform_mask) == 44);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, before_revision) == 48);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, after_revision) == 52);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, target_revision) == 56);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, minimum_revision) == 60);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, package_id) == 64);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, package_bytes) == 68);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, read_faults) == 72);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, write_attempts) == 76);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, before_features_hash) == 80);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, after_features_hash) == 88);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, admitted_features_hash) == 96);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, package_sha256) == 104);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, configured_cpus) == 136);
+    assert!(core::mem::offset_of!(CpuMicrocodeInfo, reserved0) == 140);
+    assert!(core::mem::size_of::<CpuMicrocodeInfo>() == 144);
+    assert!(core::mem::align_of::<CpuMicrocodeInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31282,7 +31396,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_idle_info) == 648);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_machine_info) == 656);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_machine_bank) == 664);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 672);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_microcode_info) == 672);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 680);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

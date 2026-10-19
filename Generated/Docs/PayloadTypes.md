@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 354 von 354 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 355 von 355 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2538; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2563; Limits: 111
 
 ## App-Profile
 
@@ -375,6 +375,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuIdleInfo` | fixed_layout | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
 | `CpuMachineInfo` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 | `CpuMachineBank` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `CpuMicrocodeInfo` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 
 ## Typdetails
 
@@ -9639,6 +9640,40 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `status_after` | 96 | 8 | 8 | `u64` | - |
 | `reserved1` | 104 | 8 | 8 | `u64` | - |
 
+### `CpuMicrocodeInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 144 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `sequence` | 24 | 8 | 8 | `u64` | - |
+| `status` | 32 | 4 | 4 | `u32` | - |
+| `vendor` | 36 | 4 | 4 | `u32` | - |
+| `signature` | 40 | 4 | 4 | `u32` | - |
+| `platform_mask` | 44 | 4 | 4 | `u32` | - |
+| `before_revision` | 48 | 4 | 4 | `u32` | - |
+| `after_revision` | 52 | 4 | 4 | `u32` | - |
+| `target_revision` | 56 | 4 | 4 | `u32` | - |
+| `minimum_revision` | 60 | 4 | 4 | `u32` | - |
+| `package_id` | 64 | 4 | 4 | `u32` | - |
+| `package_bytes` | 68 | 4 | 4 | `u32` | - |
+| `read_faults` | 72 | 4 | 4 | `u32` | - |
+| `write_attempts` | 76 | 4 | 4 | `u32` | - |
+| `before_features_hash` | 80 | 8 | 8 | `u64` | - |
+| `after_features_hash` | 88 | 8 | 8 | `u64` | - |
+| `admitted_features_hash` | 96 | 8 | 8 | `u64` | - |
+| `package_sha256` | 104 | 32 | 1 | `[32]u8` | - |
+| `configured_cpus` | 136 | 4 | 4 | `u32` | - |
+| `reserved0` | 140 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12938,6 +12973,31 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_machine_bank_limit` | `64` | `u32` | value | number | `cpu_machine` | fixed_contract |
 | `cpu_power_flag_mca_model` | `128` | `u32` | value | number | `cpu_power` | fixed_contract |
 | `cpu_power_flag_smca_model` | `256` | `u32` | value | number | `cpu_power` | fixed_contract |
+| `cpu_microcode_flag_before_valid` | `1` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_after_valid` | `2` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_bundle_valid` | `4` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_matched` | `8` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_payload_verified` | `16` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_virtual` | `32` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_update_attempt` | `64` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_post_features_fresh` | `128` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_features_changed` | `256` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_post_baseline` | `512` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_flag_initial_boot` | `1024` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_not_prepared` | `0` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_package_missing` | `1` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_unsupported_cpu` | `2` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_virtual_cpu` | `3` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_already_current` | `4` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_updated` | `5` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_firmware_prerequisite` | `6` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_package_rejected` | `7` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_revision_unavailable` | `8` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_load_failed` | `9` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_revision_mismatch` | `10` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_restart_verified` | `11` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_restart_requires_update` | `12` | `u32` | value | number | `cpu_microcode` | fixed_contract |
+| `cpu_microcode_status_identity_changed` | `13` | `u32` | value | number | `cpu_microcode` | fixed_contract |
 
 ## Limits
 
