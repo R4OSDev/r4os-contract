@@ -2155,6 +2155,66 @@ pub const thread_placement_class_preferred: u32 = 2;
 pub const thread_placement_error_capacity: i32 = -11;
 pub const thread_create_flag_compute_worker: u32 = 1;
 pub const thread_flag_compute_worker: u32 = 8;
+pub const cpu_lifecycle_version: u32 = 1;
+pub const cpu_lifecycle_op_query: u32 = 0;
+pub const cpu_lifecycle_op_offline: u32 = 1;
+pub const cpu_lifecycle_op_online: u32 = 2;
+pub const cpu_lifecycle_ok: i32 = 0;
+pub const cpu_lifecycle_error_invalid: i32 = -1;
+pub const cpu_lifecycle_error_busy: i32 = -2;
+pub const cpu_lifecycle_error_index: i32 = -3;
+pub const cpu_lifecycle_error_epoch: i32 = -4;
+pub const cpu_lifecycle_error_context: i32 = -5;
+pub const cpu_lifecycle_error_qualification: i32 = -6;
+pub const cpu_lifecycle_error_state: i32 = -7;
+pub const cpu_lifecycle_state_absent: u32 = 0;
+pub const cpu_lifecycle_state_detected: u32 = 1;
+pub const cpu_lifecycle_state_starting: u32 = 2;
+pub const cpu_lifecycle_state_entered: u32 = 3;
+pub const cpu_lifecycle_state_online: u32 = 4;
+pub const cpu_lifecycle_state_terminal_pending: u32 = 5;
+pub const cpu_lifecycle_state_terminal: u32 = 6;
+pub const cpu_lifecycle_state_failed: u32 = 7;
+pub const cpu_lifecycle_state_qualified: u32 = 8;
+pub const cpu_lifecycle_state_draining: u32 = 9;
+pub const cpu_lifecycle_state_parked: u32 = 10;
+pub const cpu_lifecycle_state_offline: u32 = 11;
+pub const cpu_lifecycle_state_stop_pending: u32 = 12;
+pub const cpu_lifecycle_reason_none: u32 = 0;
+pub const cpu_lifecycle_reason_fixed: u32 = 1;
+pub const cpu_lifecycle_reason_kernel_context: u32 = 2;
+pub const cpu_lifecycle_reason_resources: u32 = 3;
+pub const cpu_lifecycle_reason_task_budget: u32 = 4;
+pub const cpu_lifecycle_reason_page_owner: u32 = 5;
+pub const cpu_lifecycle_reason_tlb: u32 = 6;
+pub const cpu_lifecycle_reason_irq: u32 = 7;
+pub const cpu_lifecycle_reason_timer: u32 = 8;
+pub const cpu_lifecycle_reason_timeout: u32 = 9;
+pub const cpu_lifecycle_reason_qualification: u32 = 10;
+pub const cpu_lifecycle_reason_busy: u32 = 11;
+pub const cpu_lifecycle_reason_caller: u32 = 12;
+pub const cpu_lifecycle_reason_index: u32 = 13;
+pub const cpu_lifecycle_reason_epoch: u32 = 14;
+pub const cpu_lifecycle_reason_state: u32 = 15;
+pub const cpu_lifecycle_reason_terminal: u32 = 16;
+pub const cpu_lifecycle_flag_online: u32 = 1;
+pub const cpu_lifecycle_flag_schedulable: u32 = 2;
+pub const cpu_lifecycle_flag_parked: u32 = 4;
+pub const cpu_lifecycle_flag_tlb_enrolled: u32 = 8;
+pub const cpu_lifecycle_flag_reusable: u32 = 16;
+pub const cpu_lifecycle_flag_current_receipt: u32 = 32;
+pub const cpu_lifecycle_flag_terminal: u32 = 64;
+pub const cpu_lifecycle_check_status_unavailable: u32 = 0;
+pub const cpu_lifecycle_check_status_passed: u32 = 1;
+pub const cpu_lifecycle_check_status_failed: u32 = 2;
+pub const cpu_lifecycle_check_status_busy: u32 = 3;
+pub const cpu_lifecycle_check_case_fixed: u32 = 1;
+pub const cpu_lifecycle_check_case_kernel: u32 = 2;
+pub const cpu_lifecycle_check_case_page_owner: u32 = 4;
+pub const cpu_lifecycle_check_case_cycle: u32 = 8;
+pub const cpu_lifecycle_check_case_stale_epoch: u32 = 16;
+pub const cpu_lifecycle_check_case_runtime_tlb: u32 = 32;
+pub const cpu_lifecycle_check_case_all: u32 = 63;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -16858,6 +16918,122 @@ impl Default for ThreadPlacementInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuLifecycleInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub state: u32,
+    pub flags: u32,
+    pub reason: u32,
+    pub configured_cpus: u32,
+    pub available_cpus: u32,
+    pub epoch: u64,
+    pub installed_epoch: u64,
+    pub capacity_generation: u64,
+    pub parked_epoch: u64,
+    pub withdrawn_epoch: u64,
+    pub stopped_epoch: u64,
+    pub tlb_generation: u64,
+    pub switch_serial: u64,
+    pub offline_cycles: u64,
+    pub tasks_migrated: u32,
+    pub irq_retargets: u32,
+    pub reserved0: u32,
+    pub reserved1: u32,
+    pub irq_epoch: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuLifecycleInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            cpu_index: 0,
+            state: 0,
+            flags: 0,
+            reason: 0,
+            configured_cpus: 0,
+            available_cpus: 0,
+            epoch: 0,
+            installed_epoch: 0,
+            capacity_generation: 0,
+            parked_epoch: 0,
+            withdrawn_epoch: 0,
+            stopped_epoch: 0,
+            tlb_generation: 0,
+            switch_serial: 0,
+            offline_cycles: 0,
+            tasks_migrated: 0,
+            irq_retargets: 0,
+            reserved0: 0,
+            reserved1: 0,
+            irq_epoch: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramKernelCpuLifecycleCheck {
+    pub version: u32,
+    pub size: u32,
+    pub status: u32,
+    pub selected: u32,
+    pub passed: u32,
+    pub failed: u32,
+    pub cpu_index: u32,
+    pub reason: u32,
+    pub configured_cpus: u32,
+    pub available_before: u32,
+    pub available_offline: u32,
+    pub available_after: u32,
+    pub tasks_created: u32,
+    pub tasks_reaped: u32,
+    pub cleanup_errors: u32,
+    pub if_checks: u32,
+    pub old_epoch: u64,
+    pub new_epoch: u64,
+    pub capacity_before: u64,
+    pub capacity_after: u64,
+    pub parked_epoch: u64,
+    pub stopped_epoch: u64,
+    pub tlb_generation: u64,
+    pub switch_serial: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramKernelCpuLifecycleCheck {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            status: 0,
+            selected: 0,
+            passed: 0,
+            failed: 0,
+            cpu_index: 0,
+            reason: 0,
+            configured_cpus: 0,
+            available_before: 0,
+            available_offline: 0,
+            available_after: 0,
+            tasks_created: 0,
+            tasks_reaped: 0,
+            cleanup_errors: 0,
+            if_checks: 0,
+            old_epoch: 0,
+            new_epoch: 0,
+            capacity_before: 0,
+            capacity_after: 0,
+            parked_epoch: 0,
+            stopped_epoch: 0,
+            tlb_generation: 0,
+            switch_serial: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -18233,6 +18409,8 @@ pub mod R4DevFns {
     pub type serial_close = unsafe extern "C" fn(u64, u32, u64) -> i32;
     pub type cpu_topology = unsafe extern "C" fn(u32, *mut CpuTopologyInfo) -> i32;
     pub type cpu_cache_topology = unsafe extern "C" fn(u32, u32, *mut CpuCacheTopologyInfo) -> i32;
+    pub type cpu_lifecycle = unsafe extern "C" fn(u32, u32, u64, *mut CpuLifecycleInfo) -> i32;
+    pub type kernel_cpu_lifecycle_check = unsafe extern "C" fn(*mut ProgramKernelCpuLifecycleCheck) -> i32;
 }
 
 #[repr(C)]
@@ -18309,14 +18487,16 @@ pub struct R4XStartR4Dev {
     pub serial_close: usize,
     pub cpu_topology: usize,
     pub cpu_cache_topology: usize,
+    pub cpu_lifecycle: usize,
+    pub kernel_cpu_lifecycle_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 22,
-            size: 552,
+            abi_version: 23,
+            size: 568,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -18385,6 +18565,8 @@ impl Default for R4XStartR4Dev {
             serial_close: 0,
             cpu_topology: 0,
             cpu_cache_topology: 0,
+            cpu_lifecycle: 0,
+            kernel_cpu_lifecycle_check: 0,
         }
     }
 }
@@ -28193,6 +28375,56 @@ const _: () = {
     assert!(core::mem::offset_of!(ThreadPlacementInfo, reserved1) == 56);
     assert!(core::mem::size_of::<ThreadPlacementInfo>() == 64);
     assert!(core::mem::align_of::<ThreadPlacementInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, state) == 12);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, flags) == 16);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, reason) == 20);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, configured_cpus) == 24);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, available_cpus) == 28);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, epoch) == 32);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, installed_epoch) == 40);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, capacity_generation) == 48);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, parked_epoch) == 56);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, withdrawn_epoch) == 64);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, stopped_epoch) == 72);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, tlb_generation) == 80);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, switch_serial) == 88);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, offline_cycles) == 96);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, tasks_migrated) == 104);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, irq_retargets) == 108);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, reserved0) == 112);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, reserved1) == 116);
+    assert!(core::mem::offset_of!(CpuLifecycleInfo, irq_epoch) == 120);
+    assert!(core::mem::size_of::<CpuLifecycleInfo>() == 128);
+    assert!(core::mem::align_of::<CpuLifecycleInfo>() == 8);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, version) == 0);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, size) == 4);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, status) == 8);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, selected) == 12);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, passed) == 16);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, failed) == 20);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, cpu_index) == 24);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, reason) == 28);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, configured_cpus) == 32);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, available_before) == 36);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, available_offline) == 40);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, available_after) == 44);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, tasks_created) == 48);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, tasks_reaped) == 52);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, cleanup_errors) == 56);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, if_checks) == 60);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, old_epoch) == 64);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, new_epoch) == 72);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, capacity_before) == 80);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, capacity_after) == 88);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, parked_epoch) == 96);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, stopped_epoch) == 104);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, tlb_generation) == 112);
+    assert!(core::mem::offset_of!(ProgramKernelCpuLifecycleCheck, switch_serial) == 120);
+    assert!(core::mem::size_of::<ProgramKernelCpuLifecycleCheck>() == 128);
+    assert!(core::mem::align_of::<ProgramKernelCpuLifecycleCheck>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -28689,7 +28921,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, serial_close) == 528);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_topology) == 536);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_cache_topology) == 544);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 552);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_lifecycle) == 552);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, kernel_cpu_lifecycle_check) == 560);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 568);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 460; Funktionen: 452; reserviert/Tombstone: 8
-- Sichtbarkeit: public=339, advanced=113, internal=8
+- Physische Gruppenslots: 462; Funktionen: 454; reserviert/Tombstone: 8
+- Sichtbarkeit: public=339, advanced=115, internal=8
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -495,3 +495,5 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DEV | 64 | `serial_close` | function | public | R4DEV | ja | `serial` | consumes_owned_handle | call | may_block | thread_safe | invalidates_on_success | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | wait_budget | cooperative_stop | outcome_unknown | reentrant | none | call | cancel_wake_join_cleanup |
 | R4DEV | 65 | `cpu_topology` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 66 | `cpu_cache_topology` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DEV | 67 | `cpu_lifecycle` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | may_block | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | serialized | none | call | none |
+| R4DEV | 68 | `kernel_cpu_lifecycle_check` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | may_block | thread_safe | none | valid_on_documented_error | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | serialized | none | call | none |

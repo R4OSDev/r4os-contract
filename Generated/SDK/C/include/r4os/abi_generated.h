@@ -2163,6 +2163,66 @@ extern "C" {
 #define R4OS_THREAD_PLACEMENT_ERROR_CAPACITY ((int32_t)-11)
 #define R4OS_THREAD_CREATE_FLAG_COMPUTE_WORKER 1u
 #define R4OS_THREAD_FLAG_COMPUTE_WORKER 8u
+#define R4OS_CPU_LIFECYCLE_VERSION 1u
+#define R4OS_CPU_LIFECYCLE_OP_QUERY 0u
+#define R4OS_CPU_LIFECYCLE_OP_OFFLINE 1u
+#define R4OS_CPU_LIFECYCLE_OP_ONLINE 2u
+#define R4OS_CPU_LIFECYCLE_OK ((int32_t)0)
+#define R4OS_CPU_LIFECYCLE_ERROR_INVALID ((int32_t)-1)
+#define R4OS_CPU_LIFECYCLE_ERROR_BUSY ((int32_t)-2)
+#define R4OS_CPU_LIFECYCLE_ERROR_INDEX ((int32_t)-3)
+#define R4OS_CPU_LIFECYCLE_ERROR_EPOCH ((int32_t)-4)
+#define R4OS_CPU_LIFECYCLE_ERROR_CONTEXT ((int32_t)-5)
+#define R4OS_CPU_LIFECYCLE_ERROR_QUALIFICATION ((int32_t)-6)
+#define R4OS_CPU_LIFECYCLE_ERROR_STATE ((int32_t)-7)
+#define R4OS_CPU_LIFECYCLE_STATE_ABSENT 0u
+#define R4OS_CPU_LIFECYCLE_STATE_DETECTED 1u
+#define R4OS_CPU_LIFECYCLE_STATE_STARTING 2u
+#define R4OS_CPU_LIFECYCLE_STATE_ENTERED 3u
+#define R4OS_CPU_LIFECYCLE_STATE_ONLINE 4u
+#define R4OS_CPU_LIFECYCLE_STATE_TERMINAL_PENDING 5u
+#define R4OS_CPU_LIFECYCLE_STATE_TERMINAL 6u
+#define R4OS_CPU_LIFECYCLE_STATE_FAILED 7u
+#define R4OS_CPU_LIFECYCLE_STATE_QUALIFIED 8u
+#define R4OS_CPU_LIFECYCLE_STATE_DRAINING 9u
+#define R4OS_CPU_LIFECYCLE_STATE_PARKED 10u
+#define R4OS_CPU_LIFECYCLE_STATE_OFFLINE 11u
+#define R4OS_CPU_LIFECYCLE_STATE_STOP_PENDING 12u
+#define R4OS_CPU_LIFECYCLE_REASON_NONE 0u
+#define R4OS_CPU_LIFECYCLE_REASON_FIXED 1u
+#define R4OS_CPU_LIFECYCLE_REASON_KERNEL_CONTEXT 2u
+#define R4OS_CPU_LIFECYCLE_REASON_RESOURCES 3u
+#define R4OS_CPU_LIFECYCLE_REASON_TASK_BUDGET 4u
+#define R4OS_CPU_LIFECYCLE_REASON_PAGE_OWNER 5u
+#define R4OS_CPU_LIFECYCLE_REASON_TLB 6u
+#define R4OS_CPU_LIFECYCLE_REASON_IRQ 7u
+#define R4OS_CPU_LIFECYCLE_REASON_TIMER 8u
+#define R4OS_CPU_LIFECYCLE_REASON_TIMEOUT 9u
+#define R4OS_CPU_LIFECYCLE_REASON_QUALIFICATION 10u
+#define R4OS_CPU_LIFECYCLE_REASON_BUSY 11u
+#define R4OS_CPU_LIFECYCLE_REASON_CALLER 12u
+#define R4OS_CPU_LIFECYCLE_REASON_INDEX 13u
+#define R4OS_CPU_LIFECYCLE_REASON_EPOCH 14u
+#define R4OS_CPU_LIFECYCLE_REASON_STATE 15u
+#define R4OS_CPU_LIFECYCLE_REASON_TERMINAL 16u
+#define R4OS_CPU_LIFECYCLE_FLAG_ONLINE 1u
+#define R4OS_CPU_LIFECYCLE_FLAG_SCHEDULABLE 2u
+#define R4OS_CPU_LIFECYCLE_FLAG_PARKED 4u
+#define R4OS_CPU_LIFECYCLE_FLAG_TLB_ENROLLED 8u
+#define R4OS_CPU_LIFECYCLE_FLAG_REUSABLE 16u
+#define R4OS_CPU_LIFECYCLE_FLAG_CURRENT_RECEIPT 32u
+#define R4OS_CPU_LIFECYCLE_FLAG_TERMINAL 64u
+#define R4OS_CPU_LIFECYCLE_CHECK_STATUS_UNAVAILABLE 0u
+#define R4OS_CPU_LIFECYCLE_CHECK_STATUS_PASSED 1u
+#define R4OS_CPU_LIFECYCLE_CHECK_STATUS_FAILED 2u
+#define R4OS_CPU_LIFECYCLE_CHECK_STATUS_BUSY 3u
+#define R4OS_CPU_LIFECYCLE_CHECK_CASE_FIXED 1u
+#define R4OS_CPU_LIFECYCLE_CHECK_CASE_KERNEL 2u
+#define R4OS_CPU_LIFECYCLE_CHECK_CASE_PAGE_OWNER 4u
+#define R4OS_CPU_LIFECYCLE_CHECK_CASE_CYCLE 8u
+#define R4OS_CPU_LIFECYCLE_CHECK_CASE_STALE_EPOCH 16u
+#define R4OS_CPU_LIFECYCLE_CHECK_CASE_RUNTIME_TLB 32u
+#define R4OS_CPU_LIFECYCLE_CHECK_CASE_ALL 63u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2948,6 +3008,8 @@ typedef struct R4CpuTopologyInfo R4CpuTopologyInfo;
 typedef struct R4CpuCacheTopologyInfo R4CpuCacheTopologyInfo;
 typedef struct R4ThreadPlacementRequest R4ThreadPlacementRequest;
 typedef struct R4ThreadPlacementInfo R4ThreadPlacementInfo;
+typedef struct R4CpuLifecycleInfo R4CpuLifecycleInfo;
+typedef struct R4ProgramKernelCpuLifecycleCheck R4ProgramKernelCpuLifecycleCheck;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -9073,6 +9135,58 @@ typedef struct R4ThreadPlacementInfo {
     uint64_t reserved1;
 } R4ThreadPlacementInfo;
 
+typedef struct R4CpuLifecycleInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t state;
+    uint32_t flags;
+    uint32_t reason;
+    uint32_t configured_cpus;
+    uint32_t available_cpus;
+    uint64_t epoch;
+    uint64_t installed_epoch;
+    uint64_t capacity_generation;
+    uint64_t parked_epoch;
+    uint64_t withdrawn_epoch;
+    uint64_t stopped_epoch;
+    uint64_t tlb_generation;
+    uint64_t switch_serial;
+    uint64_t offline_cycles;
+    uint32_t tasks_migrated;
+    uint32_t irq_retargets;
+    uint32_t reserved0;
+    uint32_t reserved1;
+    uint64_t irq_epoch;
+} R4CpuLifecycleInfo;
+
+typedef struct R4ProgramKernelCpuLifecycleCheck {
+    uint32_t version;
+    uint32_t size;
+    uint32_t status;
+    uint32_t selected;
+    uint32_t passed;
+    uint32_t failed;
+    uint32_t cpu_index;
+    uint32_t reason;
+    uint32_t configured_cpus;
+    uint32_t available_before;
+    uint32_t available_offline;
+    uint32_t available_after;
+    uint32_t tasks_created;
+    uint32_t tasks_reaped;
+    uint32_t cleanup_errors;
+    uint32_t if_checks;
+    uint64_t old_epoch;
+    uint64_t new_epoch;
+    uint64_t capacity_before;
+    uint64_t capacity_after;
+    uint64_t parked_epoch;
+    uint64_t stopped_epoch;
+    uint64_t tlb_generation;
+    uint64_t switch_serial;
+} R4ProgramKernelCpuLifecycleCheck;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10004,6 +10118,8 @@ typedef int32_t (*R4DevSerialCancelFn)(uint64_t handle);
 typedef int32_t (*R4DevSerialCloseFn)(uint64_t handle, uint32_t flags, uint64_t timeout_ticks);
 typedef int32_t (*R4DevCpuTopologyFn)(uint32_t cpu_index, R4CpuTopologyInfo * output);
 typedef int32_t (*R4DevCpuCacheTopologyFn)(uint32_t cpu_index, uint32_t cache_index, R4CpuCacheTopologyInfo * output);
+typedef int32_t (*R4DevCpuLifecycleFn)(uint32_t operation, uint32_t cpu_index, uint64_t expected_epoch, R4CpuLifecycleInfo * out);
+typedef int32_t (*R4DevKernelCpuLifecycleCheckFn)(R4ProgramKernelCpuLifecycleCheck * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -10077,6 +10193,8 @@ typedef struct R4XStartR4Dev {
     uintptr_t serial_close;
     uintptr_t cpu_topology;
     uintptr_t cpu_cache_topology;
+    uintptr_t cpu_lifecycle;
+    uintptr_t kernel_cpu_lifecycle_check;
 } R4XStartR4Dev;
 
 
@@ -15590,6 +15708,54 @@ _Static_assert(offsetof(R4ThreadPlacementInfo, request_revision) == 32u, "Thread
 _Static_assert(offsetof(R4ThreadPlacementInfo, applied_revision) == 40u, "ThreadPlacementInfo.applied_revision offset mismatch");
 _Static_assert(offsetof(R4ThreadPlacementInfo, reserved0) == 48u, "ThreadPlacementInfo.reserved0 offset mismatch");
 _Static_assert(offsetof(R4ThreadPlacementInfo, reserved1) == 56u, "ThreadPlacementInfo.reserved1 offset mismatch");
+_Static_assert(sizeof(R4CpuLifecycleInfo) == 128u, "CpuLifecycleInfo size mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, version) == 0u, "CpuLifecycleInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, size) == 4u, "CpuLifecycleInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, cpu_index) == 8u, "CpuLifecycleInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, state) == 12u, "CpuLifecycleInfo.state offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, flags) == 16u, "CpuLifecycleInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, reason) == 20u, "CpuLifecycleInfo.reason offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, configured_cpus) == 24u, "CpuLifecycleInfo.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, available_cpus) == 28u, "CpuLifecycleInfo.available_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, epoch) == 32u, "CpuLifecycleInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, installed_epoch) == 40u, "CpuLifecycleInfo.installed_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, capacity_generation) == 48u, "CpuLifecycleInfo.capacity_generation offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, parked_epoch) == 56u, "CpuLifecycleInfo.parked_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, withdrawn_epoch) == 64u, "CpuLifecycleInfo.withdrawn_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, stopped_epoch) == 72u, "CpuLifecycleInfo.stopped_epoch offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, tlb_generation) == 80u, "CpuLifecycleInfo.tlb_generation offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, switch_serial) == 88u, "CpuLifecycleInfo.switch_serial offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, offline_cycles) == 96u, "CpuLifecycleInfo.offline_cycles offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, tasks_migrated) == 104u, "CpuLifecycleInfo.tasks_migrated offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, irq_retargets) == 108u, "CpuLifecycleInfo.irq_retargets offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, reserved0) == 112u, "CpuLifecycleInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, reserved1) == 116u, "CpuLifecycleInfo.reserved1 offset mismatch");
+_Static_assert(offsetof(R4CpuLifecycleInfo, irq_epoch) == 120u, "CpuLifecycleInfo.irq_epoch offset mismatch");
+_Static_assert(sizeof(R4ProgramKernelCpuLifecycleCheck) == 128u, "ProgramKernelCpuLifecycleCheck size mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, version) == 0u, "ProgramKernelCpuLifecycleCheck.version offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, size) == 4u, "ProgramKernelCpuLifecycleCheck.size offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, status) == 8u, "ProgramKernelCpuLifecycleCheck.status offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, selected) == 12u, "ProgramKernelCpuLifecycleCheck.selected offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, passed) == 16u, "ProgramKernelCpuLifecycleCheck.passed offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, failed) == 20u, "ProgramKernelCpuLifecycleCheck.failed offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, cpu_index) == 24u, "ProgramKernelCpuLifecycleCheck.cpu_index offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, reason) == 28u, "ProgramKernelCpuLifecycleCheck.reason offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, configured_cpus) == 32u, "ProgramKernelCpuLifecycleCheck.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, available_before) == 36u, "ProgramKernelCpuLifecycleCheck.available_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, available_offline) == 40u, "ProgramKernelCpuLifecycleCheck.available_offline offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, available_after) == 44u, "ProgramKernelCpuLifecycleCheck.available_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, tasks_created) == 48u, "ProgramKernelCpuLifecycleCheck.tasks_created offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, tasks_reaped) == 52u, "ProgramKernelCpuLifecycleCheck.tasks_reaped offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, cleanup_errors) == 56u, "ProgramKernelCpuLifecycleCheck.cleanup_errors offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, if_checks) == 60u, "ProgramKernelCpuLifecycleCheck.if_checks offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, old_epoch) == 64u, "ProgramKernelCpuLifecycleCheck.old_epoch offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, new_epoch) == 72u, "ProgramKernelCpuLifecycleCheck.new_epoch offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, capacity_before) == 80u, "ProgramKernelCpuLifecycleCheck.capacity_before offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, capacity_after) == 88u, "ProgramKernelCpuLifecycleCheck.capacity_after offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, parked_epoch) == 96u, "ProgramKernelCpuLifecycleCheck.parked_epoch offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, stopped_epoch) == 104u, "ProgramKernelCpuLifecycleCheck.stopped_epoch offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, tlb_generation) == 112u, "ProgramKernelCpuLifecycleCheck.tlb_generation offset mismatch");
+_Static_assert(offsetof(R4ProgramKernelCpuLifecycleCheck, switch_serial) == 120u, "ProgramKernelCpuLifecycleCheck.switch_serial offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1280u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -16375,7 +16541,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 552u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 568u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -16508,6 +16674,10 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_topology) == 536u, "R4XStartR4Dev.cpu
 _Static_assert(sizeof(R4DevCpuTopologyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_cache_topology) == 544u, "R4XStartR4Dev.cpu_cache_topology offset mismatch");
 _Static_assert(sizeof(R4DevCpuCacheTopologyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_lifecycle) == 552u, "R4XStartR4Dev.cpu_lifecycle offset mismatch");
+_Static_assert(sizeof(R4DevCpuLifecycleFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, kernel_cpu_lifecycle_check) == 560u, "R4XStartR4Dev.kernel_cpu_lifecycle_check offset mismatch");
+_Static_assert(sizeof(R4DevKernelCpuLifecycleCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }

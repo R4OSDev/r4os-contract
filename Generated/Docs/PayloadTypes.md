@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 326 von 326 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 328 von 328 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2150; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2210; Limits: 111
 
 ## App-Profile
 
@@ -347,6 +347,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuCacheTopologyInfo` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `ThreadPlacementRequest` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `ThreadPlacementInfo` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `CpuLifecycleInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `ProgramKernelCpuLifecycleCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 
 ## Typdetails
 
@@ -8748,6 +8750,72 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved0` | 48 | 8 | 8 | `u64` | - |
 | `reserved1` | 56 | 8 | 8 | `u64` | - |
 
+### `CpuLifecycleInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `state` | 12 | 4 | 4 | `u32` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `reason` | 20 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 24 | 4 | 4 | `u32` | - |
+| `available_cpus` | 28 | 4 | 4 | `u32` | - |
+| `epoch` | 32 | 8 | 8 | `u64` | - |
+| `installed_epoch` | 40 | 8 | 8 | `u64` | - |
+| `capacity_generation` | 48 | 8 | 8 | `u64` | - |
+| `parked_epoch` | 56 | 8 | 8 | `u64` | - |
+| `withdrawn_epoch` | 64 | 8 | 8 | `u64` | - |
+| `stopped_epoch` | 72 | 8 | 8 | `u64` | - |
+| `tlb_generation` | 80 | 8 | 8 | `u64` | - |
+| `switch_serial` | 88 | 8 | 8 | `u64` | - |
+| `offline_cycles` | 96 | 8 | 8 | `u64` | - |
+| `tasks_migrated` | 104 | 4 | 4 | `u32` | - |
+| `irq_retargets` | 108 | 4 | 4 | `u32` | - |
+| `reserved0` | 112 | 4 | 4 | `u32` | - |
+| `reserved1` | 116 | 4 | 4 | `u32` | - |
+| `irq_epoch` | 120 | 8 | 8 | `u64` | - |
+
+### `ProgramKernelCpuLifecycleCheck`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `status` | 8 | 4 | 4 | `u32` | - |
+| `selected` | 12 | 4 | 4 | `u32` | - |
+| `passed` | 16 | 4 | 4 | `u32` | - |
+| `failed` | 20 | 4 | 4 | `u32` | - |
+| `cpu_index` | 24 | 4 | 4 | `u32` | - |
+| `reason` | 28 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 32 | 4 | 4 | `u32` | - |
+| `available_before` | 36 | 4 | 4 | `u32` | - |
+| `available_offline` | 40 | 4 | 4 | `u32` | - |
+| `available_after` | 44 | 4 | 4 | `u32` | - |
+| `tasks_created` | 48 | 4 | 4 | `u32` | - |
+| `tasks_reaped` | 52 | 4 | 4 | `u32` | - |
+| `cleanup_errors` | 56 | 4 | 4 | `u32` | - |
+| `if_checks` | 60 | 4 | 4 | `u32` | - |
+| `old_epoch` | 64 | 8 | 8 | `u64` | - |
+| `new_epoch` | 72 | 8 | 8 | `u64` | - |
+| `capacity_before` | 80 | 8 | 8 | `u64` | - |
+| `capacity_after` | 88 | 8 | 8 | `u64` | - |
+| `parked_epoch` | 96 | 8 | 8 | `u64` | - |
+| `stopped_epoch` | 104 | 8 | 8 | `u64` | - |
+| `tlb_generation` | 112 | 8 | 8 | `u64` | - |
+| `switch_serial` | 120 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11659,6 +11727,66 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `thread_placement_error_capacity` | `-11` | `i32` | value | number | `thread_placement` | fixed_contract |
 | `thread_create_flag_compute_worker` | `1` | `u32` | flag | bitmask | `thread_create` | fixed_contract |
 | `thread_flag_compute_worker` | `8` | `u32` | flag | bitmask | `thread` | fixed_contract |
+| `cpu_lifecycle_version` | `1` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_op_query` | `0` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_op_offline` | `1` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_op_online` | `2` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_ok` | `0` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_error_invalid` | `-1` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_error_busy` | `-2` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_error_index` | `-3` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_error_epoch` | `-4` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_error_context` | `-5` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_error_qualification` | `-6` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_error_state` | `-7` | `i32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_absent` | `0` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_detected` | `1` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_starting` | `2` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_entered` | `3` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_online` | `4` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_terminal_pending` | `5` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_terminal` | `6` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_failed` | `7` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_qualified` | `8` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_draining` | `9` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_parked` | `10` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_offline` | `11` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_state_stop_pending` | `12` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_none` | `0` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_fixed` | `1` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_kernel_context` | `2` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_resources` | `3` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_task_budget` | `4` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_page_owner` | `5` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_tlb` | `6` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_irq` | `7` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_timer` | `8` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_timeout` | `9` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_qualification` | `10` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_busy` | `11` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_caller` | `12` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_index` | `13` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_epoch` | `14` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_state` | `15` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_reason_terminal` | `16` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_flag_online` | `1` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_flag_schedulable` | `2` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_flag_parked` | `4` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_flag_tlb_enrolled` | `8` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_flag_reusable` | `16` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_flag_current_receipt` | `32` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_flag_terminal` | `64` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_status_unavailable` | `0` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_status_passed` | `1` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_status_failed` | `2` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_status_busy` | `3` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_case_fixed` | `1` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_case_kernel` | `2` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_case_page_owner` | `4` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_case_cycle` | `8` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_case_stale_epoch` | `16` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_case_runtime_tlb` | `32` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
+| `cpu_lifecycle_check_case_all` | `63` | `u32` | value | number | `cpu_lifecycle` | fixed_contract |
 
 ## Limits
 

@@ -2151,6 +2151,66 @@ pub const thread_placement_class_preferred: u32 = 2;
 pub const thread_placement_error_capacity: i32 = -11;
 pub const thread_create_flag_compute_worker: u32 = 1;
 pub const thread_flag_compute_worker: u32 = 8;
+pub const cpu_lifecycle_version: u32 = 1;
+pub const cpu_lifecycle_op_query: u32 = 0;
+pub const cpu_lifecycle_op_offline: u32 = 1;
+pub const cpu_lifecycle_op_online: u32 = 2;
+pub const cpu_lifecycle_ok: i32 = 0;
+pub const cpu_lifecycle_error_invalid: i32 = -1;
+pub const cpu_lifecycle_error_busy: i32 = -2;
+pub const cpu_lifecycle_error_index: i32 = -3;
+pub const cpu_lifecycle_error_epoch: i32 = -4;
+pub const cpu_lifecycle_error_context: i32 = -5;
+pub const cpu_lifecycle_error_qualification: i32 = -6;
+pub const cpu_lifecycle_error_state: i32 = -7;
+pub const cpu_lifecycle_state_absent: u32 = 0;
+pub const cpu_lifecycle_state_detected: u32 = 1;
+pub const cpu_lifecycle_state_starting: u32 = 2;
+pub const cpu_lifecycle_state_entered: u32 = 3;
+pub const cpu_lifecycle_state_online: u32 = 4;
+pub const cpu_lifecycle_state_terminal_pending: u32 = 5;
+pub const cpu_lifecycle_state_terminal: u32 = 6;
+pub const cpu_lifecycle_state_failed: u32 = 7;
+pub const cpu_lifecycle_state_qualified: u32 = 8;
+pub const cpu_lifecycle_state_draining: u32 = 9;
+pub const cpu_lifecycle_state_parked: u32 = 10;
+pub const cpu_lifecycle_state_offline: u32 = 11;
+pub const cpu_lifecycle_state_stop_pending: u32 = 12;
+pub const cpu_lifecycle_reason_none: u32 = 0;
+pub const cpu_lifecycle_reason_fixed: u32 = 1;
+pub const cpu_lifecycle_reason_kernel_context: u32 = 2;
+pub const cpu_lifecycle_reason_resources: u32 = 3;
+pub const cpu_lifecycle_reason_task_budget: u32 = 4;
+pub const cpu_lifecycle_reason_page_owner: u32 = 5;
+pub const cpu_lifecycle_reason_tlb: u32 = 6;
+pub const cpu_lifecycle_reason_irq: u32 = 7;
+pub const cpu_lifecycle_reason_timer: u32 = 8;
+pub const cpu_lifecycle_reason_timeout: u32 = 9;
+pub const cpu_lifecycle_reason_qualification: u32 = 10;
+pub const cpu_lifecycle_reason_busy: u32 = 11;
+pub const cpu_lifecycle_reason_caller: u32 = 12;
+pub const cpu_lifecycle_reason_index: u32 = 13;
+pub const cpu_lifecycle_reason_epoch: u32 = 14;
+pub const cpu_lifecycle_reason_state: u32 = 15;
+pub const cpu_lifecycle_reason_terminal: u32 = 16;
+pub const cpu_lifecycle_flag_online: u32 = 1;
+pub const cpu_lifecycle_flag_schedulable: u32 = 2;
+pub const cpu_lifecycle_flag_parked: u32 = 4;
+pub const cpu_lifecycle_flag_tlb_enrolled: u32 = 8;
+pub const cpu_lifecycle_flag_reusable: u32 = 16;
+pub const cpu_lifecycle_flag_current_receipt: u32 = 32;
+pub const cpu_lifecycle_flag_terminal: u32 = 64;
+pub const cpu_lifecycle_check_status_unavailable: u32 = 0;
+pub const cpu_lifecycle_check_status_passed: u32 = 1;
+pub const cpu_lifecycle_check_status_failed: u32 = 2;
+pub const cpu_lifecycle_check_status_busy: u32 = 3;
+pub const cpu_lifecycle_check_case_fixed: u32 = 1;
+pub const cpu_lifecycle_check_case_kernel: u32 = 2;
+pub const cpu_lifecycle_check_case_page_owner: u32 = 4;
+pub const cpu_lifecycle_check_case_cycle: u32 = 8;
+pub const cpu_lifecycle_check_case_stale_epoch: u32 = 16;
+pub const cpu_lifecycle_check_case_runtime_tlb: u32 = 32;
+pub const cpu_lifecycle_check_case_all: u32 = 63;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -8803,6 +8863,58 @@ pub const ThreadPlacementInfo = extern struct {
     reserved1: u64 = 0,
 };
 
+pub const CpuLifecycleInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    cpu_index: u32 = 0,
+    state: u32 = 0,
+    flags: u32 = 0,
+    reason: u32 = 0,
+    configured_cpus: u32 = 0,
+    available_cpus: u32 = 0,
+    epoch: u64 = 0,
+    installed_epoch: u64 = 0,
+    capacity_generation: u64 = 0,
+    parked_epoch: u64 = 0,
+    withdrawn_epoch: u64 = 0,
+    stopped_epoch: u64 = 0,
+    tlb_generation: u64 = 0,
+    switch_serial: u64 = 0,
+    offline_cycles: u64 = 0,
+    tasks_migrated: u32 = 0,
+    irq_retargets: u32 = 0,
+    reserved0: u32 = 0,
+    reserved1: u32 = 0,
+    irq_epoch: u64 = 0,
+};
+
+pub const ProgramKernelCpuLifecycleCheck = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    status: u32 = 0,
+    selected: u32 = 0,
+    passed: u32 = 0,
+    failed: u32 = 0,
+    cpu_index: u32 = 0,
+    reason: u32 = 0,
+    configured_cpus: u32 = 0,
+    available_before: u32 = 0,
+    available_offline: u32 = 0,
+    available_after: u32 = 0,
+    tasks_created: u32 = 0,
+    tasks_reaped: u32 = 0,
+    cleanup_errors: u32 = 0,
+    if_checks: u32 = 0,
+    old_epoch: u64 = 0,
+    new_epoch: u64 = 0,
+    capacity_before: u64 = 0,
+    capacity_after: u64 = 0,
+    parked_epoch: u64 = 0,
+    stopped_epoch: u64 = 0,
+    tlb_generation: u64 = 0,
+    switch_serial: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -9699,12 +9811,14 @@ pub const R4DevFns = struct {
     pub const serial_close = *const fn (u64, u32, u64) callconv(.c) i32;
     pub const cpu_topology = *const fn (u32, *CpuTopologyInfo) callconv(.c) i32;
     pub const cpu_cache_topology = *const fn (u32, u32, *CpuCacheTopologyInfo) callconv(.c) i32;
+    pub const cpu_lifecycle = *const fn (u32, u32, u64, *CpuLifecycleInfo) callconv(.c) i32;
+    pub const kernel_cpu_lifecycle_check = *const fn (*ProgramKernelCpuLifecycleCheck) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 22,
-    size: u32 = 552,
+    abi_version: u32 = 23,
+    size: u32 = 568,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -9773,6 +9887,8 @@ pub const R4XStartR4Dev = extern struct {
     serial_close: usize = 0,
     cpu_topology: usize = 0,
     cpu_cache_topology: usize = 0,
+    cpu_lifecycle: usize = 0,
+    kernel_cpu_lifecycle_check: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -10254,6 +10370,8 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 64, .offset = 528, .name = "serial_close", .state = .function, .required = false },
     .{ .number = 65, .offset = 536, .name = "cpu_topology", .state = .function, .required = false },
     .{ .number = 66, .offset = 544, .name = "cpu_cache_topology", .state = .function, .required = false },
+    .{ .number = 67, .offset = 552, .name = "cpu_lifecycle", .state = .function, .required = false },
+    .{ .number = 68, .offset = 560, .name = "kernel_cpu_lifecycle_check", .state = .function, .required = false },
 };
 
 comptime {
@@ -16088,6 +16206,56 @@ comptime {
     if (@offsetOf(ThreadPlacementInfo, "applied_revision") != 40) @compileError("generated ABI offset drift: ThreadPlacementInfo.applied_revision");
     if (@offsetOf(ThreadPlacementInfo, "reserved0") != 48) @compileError("generated ABI offset drift: ThreadPlacementInfo.reserved0");
     if (@offsetOf(ThreadPlacementInfo, "reserved1") != 56) @compileError("generated ABI offset drift: ThreadPlacementInfo.reserved1");
+    if (@sizeOf(CpuLifecycleInfo) != 128) @compileError("generated ABI size drift: CpuLifecycleInfo");
+    if (@alignOf(CpuLifecycleInfo) != 8) @compileError("generated ABI alignment drift: CpuLifecycleInfo");
+    if (@offsetOf(CpuLifecycleInfo, "version") != 0) @compileError("generated ABI offset drift: CpuLifecycleInfo.version");
+    if (@offsetOf(CpuLifecycleInfo, "size") != 4) @compileError("generated ABI offset drift: CpuLifecycleInfo.size");
+    if (@offsetOf(CpuLifecycleInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuLifecycleInfo.cpu_index");
+    if (@offsetOf(CpuLifecycleInfo, "state") != 12) @compileError("generated ABI offset drift: CpuLifecycleInfo.state");
+    if (@offsetOf(CpuLifecycleInfo, "flags") != 16) @compileError("generated ABI offset drift: CpuLifecycleInfo.flags");
+    if (@offsetOf(CpuLifecycleInfo, "reason") != 20) @compileError("generated ABI offset drift: CpuLifecycleInfo.reason");
+    if (@offsetOf(CpuLifecycleInfo, "configured_cpus") != 24) @compileError("generated ABI offset drift: CpuLifecycleInfo.configured_cpus");
+    if (@offsetOf(CpuLifecycleInfo, "available_cpus") != 28) @compileError("generated ABI offset drift: CpuLifecycleInfo.available_cpus");
+    if (@offsetOf(CpuLifecycleInfo, "epoch") != 32) @compileError("generated ABI offset drift: CpuLifecycleInfo.epoch");
+    if (@offsetOf(CpuLifecycleInfo, "installed_epoch") != 40) @compileError("generated ABI offset drift: CpuLifecycleInfo.installed_epoch");
+    if (@offsetOf(CpuLifecycleInfo, "capacity_generation") != 48) @compileError("generated ABI offset drift: CpuLifecycleInfo.capacity_generation");
+    if (@offsetOf(CpuLifecycleInfo, "parked_epoch") != 56) @compileError("generated ABI offset drift: CpuLifecycleInfo.parked_epoch");
+    if (@offsetOf(CpuLifecycleInfo, "withdrawn_epoch") != 64) @compileError("generated ABI offset drift: CpuLifecycleInfo.withdrawn_epoch");
+    if (@offsetOf(CpuLifecycleInfo, "stopped_epoch") != 72) @compileError("generated ABI offset drift: CpuLifecycleInfo.stopped_epoch");
+    if (@offsetOf(CpuLifecycleInfo, "tlb_generation") != 80) @compileError("generated ABI offset drift: CpuLifecycleInfo.tlb_generation");
+    if (@offsetOf(CpuLifecycleInfo, "switch_serial") != 88) @compileError("generated ABI offset drift: CpuLifecycleInfo.switch_serial");
+    if (@offsetOf(CpuLifecycleInfo, "offline_cycles") != 96) @compileError("generated ABI offset drift: CpuLifecycleInfo.offline_cycles");
+    if (@offsetOf(CpuLifecycleInfo, "tasks_migrated") != 104) @compileError("generated ABI offset drift: CpuLifecycleInfo.tasks_migrated");
+    if (@offsetOf(CpuLifecycleInfo, "irq_retargets") != 108) @compileError("generated ABI offset drift: CpuLifecycleInfo.irq_retargets");
+    if (@offsetOf(CpuLifecycleInfo, "reserved0") != 112) @compileError("generated ABI offset drift: CpuLifecycleInfo.reserved0");
+    if (@offsetOf(CpuLifecycleInfo, "reserved1") != 116) @compileError("generated ABI offset drift: CpuLifecycleInfo.reserved1");
+    if (@offsetOf(CpuLifecycleInfo, "irq_epoch") != 120) @compileError("generated ABI offset drift: CpuLifecycleInfo.irq_epoch");
+    if (@sizeOf(ProgramKernelCpuLifecycleCheck) != 128) @compileError("generated ABI size drift: ProgramKernelCpuLifecycleCheck");
+    if (@alignOf(ProgramKernelCpuLifecycleCheck) != 8) @compileError("generated ABI alignment drift: ProgramKernelCpuLifecycleCheck");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "version") != 0) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.version");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "size") != 4) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.size");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "status") != 8) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.status");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "selected") != 12) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.selected");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "passed") != 16) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.passed");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "failed") != 20) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.failed");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "cpu_index") != 24) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.cpu_index");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "reason") != 28) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.reason");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "configured_cpus") != 32) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.configured_cpus");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "available_before") != 36) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.available_before");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "available_offline") != 40) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.available_offline");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "available_after") != 44) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.available_after");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "tasks_created") != 48) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.tasks_created");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "tasks_reaped") != 52) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.tasks_reaped");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "cleanup_errors") != 56) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.cleanup_errors");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "if_checks") != 60) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.if_checks");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "old_epoch") != 64) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.old_epoch");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "new_epoch") != 72) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.new_epoch");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "capacity_before") != 80) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.capacity_before");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "capacity_after") != 88) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.capacity_after");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "parked_epoch") != 96) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.parked_epoch");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "stopped_epoch") != 104) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.stopped_epoch");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "tlb_generation") != 112) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.tlb_generation");
+    if (@offsetOf(ProgramKernelCpuLifecycleCheck, "switch_serial") != 120) @compileError("generated ABI offset drift: ProgramKernelCpuLifecycleCheck.switch_serial");
     if (@sizeOf(R4XStartR4Sys) != 1280) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -16486,7 +16654,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 552) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 568) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -16554,6 +16722,8 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "serial_close") != 528) @compileError("generated ABI offset drift: R4XStartR4Dev.serial_close");
     if (@offsetOf(R4XStartR4Dev, "cpu_topology") != 536) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_topology");
     if (@offsetOf(R4XStartR4Dev, "cpu_cache_topology") != 544) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_cache_topology");
+    if (@offsetOf(R4XStartR4Dev, "cpu_lifecycle") != 552) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_lifecycle");
+    if (@offsetOf(R4XStartR4Dev, "kernel_cpu_lifecycle_check") != 560) @compileError("generated ABI offset drift: R4XStartR4Dev.kernel_cpu_lifecycle_check");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -17463,13 +17633,15 @@ pub const R4DevProvider = struct {
     serial_close: ?R4DevFns.serial_close = null,
     cpu_topology: ?R4DevFns.cpu_topology = null,
     cpu_cache_topology: ?R4DevFns.cpu_cache_topology = null,
+    cpu_lifecycle: ?R4DevFns.cpu_lifecycle = null,
+    kernel_cpu_lifecycle_check: ?R4DevFns.kernel_cpu_lifecycle_check = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 22,
-        .size = 552,
+        .abi_version = 23,
+        .size = 568,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -17538,5 +17710,7 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .serial_close = if (provider.serial_close) |callback| @intFromPtr(callback) else 0,
         .cpu_topology = if (provider.cpu_topology) |callback| @intFromPtr(callback) else 0,
         .cpu_cache_topology = if (provider.cpu_cache_topology) |callback| @intFromPtr(callback) else 0,
+        .cpu_lifecycle = if (provider.cpu_lifecycle) |callback| @intFromPtr(callback) else 0,
+        .kernel_cpu_lifecycle_check = if (provider.kernel_cpu_lifecycle_check) |callback| @intFromPtr(callback) else 0,
     };
 }

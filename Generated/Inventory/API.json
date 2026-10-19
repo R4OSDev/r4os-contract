@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 452,
-    "group_slot_count": 452,
+    "function_count": 454,
+    "group_slot_count": 454,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 113
+    "advanced_count": 115
   },
   "functions": [
     {
@@ -5431,6 +5431,30 @@
       "slot": 66,
       "exposure": "advanced",
       "description": "Copy one passive local cache descriptor for an exact boot CPU. Returns cpu_topology_result_ok, _end, _invalid or _busy; errors/end leave output and tail unchanged. Read CpuTopologyInfo cache_status to distinguish unavailable/invalid/truncated catalogs. No CPUID or new scan during this query.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_lifecycle",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 67,
+      "exposure": "advanced",
+      "description": "Query0 is passive and requires expected_epoch0; any configured CPU including BSP is queryable. Offline1/online2 require the exact current nonzero epoch, BSP caller with IF on and no held owners, an admitted task, no concurrent CPU-sensitive probe, and a configured non-BSP target. Returns cpu_lifecycle_ok0, error_invalid/busy/index/epoch/context/qualification/state. Success writes exactly128 bytes and preserves caller tail. Every error leaves output unchanged; Busy may have moved safe saved tasks or IRQs and must be followed by query, never automatic retry. Before TLB withdrawal a rejected drain restores scheduling only after exact AP cancellation; after withdrawal uncertainty remains quarantined. Confirmed stop and fresh module baseline, CPUID, xstate, PAT, tables, LAPIC, clock and scheduler qualification are mandatory for reuse. No retained caller pointer, forced kernel-context migration, physical hotplug or CPU reservation.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.kernel_cpu_lifecycle_check",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 68,
+      "exposure": "advanced",
+      "description": "Explicit bounded native CPU lifecycle work on an admitted BSP task with IF on and no owners. Returns1 for a fixed report (including Busy/failure/unavailable),0 when caller context unavailable, -1 invalid header/capacity with unchanged output. Exact task retirement and true hardware receipts govern success; retained resources block reuse. Leaves tested CPU freshly online after a successful cycle; never runs implicitly from metrics or boot.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
