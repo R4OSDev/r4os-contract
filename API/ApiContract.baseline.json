@@ -29115,10 +29115,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 33,
+      "abi_version": 34,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 720,
+      "size": 728,
       "slots": [
         {
           "number": 0,
@@ -35184,6 +35184,82 @@
             "timeout_outcome": "none",
             "reentrancy": "serialized",
             "callback_context": "caller_thread",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 88,
+          "offset": 720,
+          "name": "fpu_observation",
+          "state": "function",
+          "required": false,
+          "description": "Explicitly begin/end one current native task-generation/token/RIP-window observation. Scope records actual qualified local timer delivery, actual task switches and actual registered R4D hardware IRQ callbacks. No normal SysV call may be assumed to preserve XMM/YMM data. Direct IRQ guard calls do not count. Caller owns audited register-live bounds inside its retained module image. No caller pointer, lock or runtime borrow spans userland work; task retirement discards metadata, no hardware cleanup. Every failure preserves output and any existing observation. Zero events are unavailable hardware coverage.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "request",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "FpuObservationRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "FpuObservationInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
             "buffer_completion": "call",
             "shutdown": "none",
             "close_rule": "none",
@@ -124125,6 +124201,426 @@
       ],
       "values": [],
       "description": "Explicit producer encoding and canonical UTF8 transcript metadata, separate from unchanged ConsoleState64 and font charset. One scalar is one monospaced cell; grapheme/shaping/full-width behavior is outside this contract. Malformed UTF8 producesU+FFFD and retries the offending byte; nonempty pending prefixes close with one replacement each. Console output copies begin/end on complete scalar boundaries; byte-oriented process completion reads remain raw offset/count streams."
+    },
+    {
+      "name": "FpuObservationRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fixed48-byte request.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "operation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "0passive capability,1begin own task/RIP window,2end exact token/generation/window.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "token",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero on begin; exact returned observation token on end.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero on begin; exact native task generation returned on end.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rip_begin",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Inclusive live-register instruction window inside own retained module image.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rip_end",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exclusive window end; maximum65536bytes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit diagnostic observation only, no FPU instruction/register or hardware-control execution. One observation per current native task. Caller retains no pointer beyond the call; no runtime owner spans the observed userland work. The caller must establish the live-register interval from audited code, with no normal SysV call in that interval."
+    },
+    {
+      "name": "FpuObservationInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wire version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Fixed128-byte record.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Available1, active2, closed4; zero counters never imply an IRQ/preemption.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_id",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact native task identifier.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "task_generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact immutable native task incarnation; distinct from other handle namespaces.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "token",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic per-incarnation observation token; never wraps.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rip_begin",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Registered inclusive instruction interval.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rip_end",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Registered exclusive instruction interval.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timer_irqs",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual qualified local timer IRQs whose saved RIP lies in this task window.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timer_preemptions",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual switches to another native task from those timer windows; decisions without switching do not count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "external_handlers",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actually invoked registered external R4D callbacks from a hardware IRQ whose saved RIP lies in this task window; direct guard calls never count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_cpus",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Dense admitted CPU bits0..63 on which a qualified event was observed.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_rip",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last actual qualifying interrupted RIP; no invented address.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_handler",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last actual external callback address, zero if none.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_irq",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last external IRQ number, FFFFFFFF if none.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4294967295"
+        },
+        {
+          "name": "last_owner",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last actual external registering module identifier, zero if none; not a CPU or task generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_cpu",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last actual observed dense CPU index, FFFFFFFF if none.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4294967295"
+        },
+        {
+          "name": "reserved0",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reserved zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved2",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reserved zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Task-generation/token/instruction-bound observations of real timer IRQs, actual timer task switches and actual registered R4D hardware IRQ callbacks. Guard-only roundtrips and global counter deltas are separate evidence. Zero observed events must be reported as unavailable coverage, even when arithmetic/register roundtrips pass."
     }
   ],
   "operations": [],
@@ -153640,6 +154136,136 @@
       "scope": "console_text",
       "stability": "fixed_contract",
       "description": "Output closed; no new producer writes admitted."
+    },
+    {
+      "name": "fpu_observation_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation version. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_capabilities",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation capabilities. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_begin",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation begin. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_end",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation end. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_flag_available",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation flag available. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_flag_active",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation flag active. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_flag_closed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation flag closed. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_max_window_bytes",
+      "value": "65536",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation max window bytes. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation error invalid. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_error_unavailable",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation error unavailable. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_error_busy",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation error busy. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_error_stale",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation error stale. No-event coverage is unavailable, never an inferred IRQ success."
+    },
+    {
+      "name": "fpu_observation_error_exhausted",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "fpu_observation",
+      "stability": "fixed_contract",
+      "description": "fpu observation error exhausted. No-event coverage is unavailable, never an inferred IRQ success."
     }
   ],
   "limits": [

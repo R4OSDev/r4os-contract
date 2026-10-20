@@ -2701,6 +2701,19 @@ pub const console_text_utf8: u32 = 65001;
 pub const console_text_cp437: u32 = 437;
 pub const console_text_windows1252: u32 = 1252;
 pub const console_text_closed: u32 = 1;
+pub const fpu_observation_version: u32 = 1;
+pub const fpu_observation_capabilities: u32 = 0;
+pub const fpu_observation_begin: u32 = 1;
+pub const fpu_observation_end: u32 = 2;
+pub const fpu_observation_flag_available: u32 = 1;
+pub const fpu_observation_flag_active: u32 = 2;
+pub const fpu_observation_flag_closed: u32 = 4;
+pub const fpu_observation_max_window_bytes: u64 = 65536;
+pub const fpu_observation_error_invalid: i32 = -1;
+pub const fpu_observation_error_unavailable: i32 = -2;
+pub const fpu_observation_error_busy: i32 = -3;
+pub const fpu_observation_error_stale: i32 = -4;
+pub const fpu_observation_error_exhausted: i32 = -5;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10251,6 +10264,40 @@ pub const ConsoleTextInfo = extern struct {
     flags: u32 = 0,
 };
 
+pub const FpuObservationRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    operation: u32 = 0,
+    flags: u32 = 0,
+    token: u64 = 0,
+    task_generation: u64 = 0,
+    rip_begin: u64 = 0,
+    rip_end: u64 = 0,
+};
+
+pub const FpuObservationInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    flags: u32 = 0,
+    task_id: u32 = 0,
+    task_generation: u64 = 0,
+    token: u64 = 0,
+    rip_begin: u64 = 0,
+    rip_end: u64 = 0,
+    timer_irqs: u64 = 0,
+    timer_preemptions: u64 = 0,
+    external_handlers: u64 = 0,
+    observed_cpus: u64 = 0,
+    last_rip: u64 = 0,
+    last_handler: u64 = 0,
+    last_irq: u32 = 4294967295,
+    last_owner: u32 = 0,
+    last_cpu: u32 = 4294967295,
+    reserved0: u32 = 0,
+    reserved1: u64 = 0,
+    reserved2: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11182,12 +11229,13 @@ pub const R4DevFns = struct {
     pub const cpu_pmu_result = *const fn (u32, u64, u64, *CpuPmuResult) callconv(.c) i32;
     pub const cpu_acceleration_info = *const fn (*CpuAccelerationInfo) callconv(.c) i32;
     pub const cpu_acceleration_work = *const fn (u32, u32, ?*const CpuPureWorkFn, u64, *CpuAccelerationWork) callconv(.c) i32;
+    pub const fpu_observation = *const fn (*const FpuObservationRequest, *FpuObservationInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 33,
-    size: u32 = 720,
+    abi_version: u32 = 34,
+    size: u32 = 728,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -11277,6 +11325,7 @@ pub const R4XStartR4Dev = extern struct {
     cpu_pmu_result: usize = 0,
     cpu_acceleration_info: usize = 0,
     cpu_acceleration_work: usize = 0,
+    fpu_observation: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -11786,6 +11835,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 85, .offset = 696, .name = "cpu_pmu_result", .state = .function, .required = false },
     .{ .number = 86, .offset = 704, .name = "cpu_acceleration_info", .state = .function, .required = false },
     .{ .number = 87, .offset = 712, .name = "cpu_acceleration_work", .state = .function, .required = false },
+    .{ .number = 88, .offset = 720, .name = "fpu_observation", .state = .function, .required = false },
 };
 
 comptime {
@@ -18473,6 +18523,38 @@ comptime {
     if (@offsetOf(ConsoleTextInfo, "decode_errors") != 20) @compileError("generated ABI offset drift: ConsoleTextInfo.decode_errors");
     if (@offsetOf(ConsoleTextInfo, "truncated_sequences") != 24) @compileError("generated ABI offset drift: ConsoleTextInfo.truncated_sequences");
     if (@offsetOf(ConsoleTextInfo, "flags") != 28) @compileError("generated ABI offset drift: ConsoleTextInfo.flags");
+    if (@sizeOf(FpuObservationRequest) != 48) @compileError("generated ABI size drift: FpuObservationRequest");
+    if (@alignOf(FpuObservationRequest) != 8) @compileError("generated ABI alignment drift: FpuObservationRequest");
+    if (@offsetOf(FpuObservationRequest, "version") != 0) @compileError("generated ABI offset drift: FpuObservationRequest.version");
+    if (@offsetOf(FpuObservationRequest, "size") != 4) @compileError("generated ABI offset drift: FpuObservationRequest.size");
+    if (@offsetOf(FpuObservationRequest, "operation") != 8) @compileError("generated ABI offset drift: FpuObservationRequest.operation");
+    if (@offsetOf(FpuObservationRequest, "flags") != 12) @compileError("generated ABI offset drift: FpuObservationRequest.flags");
+    if (@offsetOf(FpuObservationRequest, "token") != 16) @compileError("generated ABI offset drift: FpuObservationRequest.token");
+    if (@offsetOf(FpuObservationRequest, "task_generation") != 24) @compileError("generated ABI offset drift: FpuObservationRequest.task_generation");
+    if (@offsetOf(FpuObservationRequest, "rip_begin") != 32) @compileError("generated ABI offset drift: FpuObservationRequest.rip_begin");
+    if (@offsetOf(FpuObservationRequest, "rip_end") != 40) @compileError("generated ABI offset drift: FpuObservationRequest.rip_end");
+    if (@sizeOf(FpuObservationInfo) != 128) @compileError("generated ABI size drift: FpuObservationInfo");
+    if (@alignOf(FpuObservationInfo) != 8) @compileError("generated ABI alignment drift: FpuObservationInfo");
+    if (@offsetOf(FpuObservationInfo, "version") != 0) @compileError("generated ABI offset drift: FpuObservationInfo.version");
+    if (@offsetOf(FpuObservationInfo, "size") != 4) @compileError("generated ABI offset drift: FpuObservationInfo.size");
+    if (@offsetOf(FpuObservationInfo, "flags") != 8) @compileError("generated ABI offset drift: FpuObservationInfo.flags");
+    if (@offsetOf(FpuObservationInfo, "task_id") != 12) @compileError("generated ABI offset drift: FpuObservationInfo.task_id");
+    if (@offsetOf(FpuObservationInfo, "task_generation") != 16) @compileError("generated ABI offset drift: FpuObservationInfo.task_generation");
+    if (@offsetOf(FpuObservationInfo, "token") != 24) @compileError("generated ABI offset drift: FpuObservationInfo.token");
+    if (@offsetOf(FpuObservationInfo, "rip_begin") != 32) @compileError("generated ABI offset drift: FpuObservationInfo.rip_begin");
+    if (@offsetOf(FpuObservationInfo, "rip_end") != 40) @compileError("generated ABI offset drift: FpuObservationInfo.rip_end");
+    if (@offsetOf(FpuObservationInfo, "timer_irqs") != 48) @compileError("generated ABI offset drift: FpuObservationInfo.timer_irqs");
+    if (@offsetOf(FpuObservationInfo, "timer_preemptions") != 56) @compileError("generated ABI offset drift: FpuObservationInfo.timer_preemptions");
+    if (@offsetOf(FpuObservationInfo, "external_handlers") != 64) @compileError("generated ABI offset drift: FpuObservationInfo.external_handlers");
+    if (@offsetOf(FpuObservationInfo, "observed_cpus") != 72) @compileError("generated ABI offset drift: FpuObservationInfo.observed_cpus");
+    if (@offsetOf(FpuObservationInfo, "last_rip") != 80) @compileError("generated ABI offset drift: FpuObservationInfo.last_rip");
+    if (@offsetOf(FpuObservationInfo, "last_handler") != 88) @compileError("generated ABI offset drift: FpuObservationInfo.last_handler");
+    if (@offsetOf(FpuObservationInfo, "last_irq") != 96) @compileError("generated ABI offset drift: FpuObservationInfo.last_irq");
+    if (@offsetOf(FpuObservationInfo, "last_owner") != 100) @compileError("generated ABI offset drift: FpuObservationInfo.last_owner");
+    if (@offsetOf(FpuObservationInfo, "last_cpu") != 104) @compileError("generated ABI offset drift: FpuObservationInfo.last_cpu");
+    if (@offsetOf(FpuObservationInfo, "reserved0") != 108) @compileError("generated ABI offset drift: FpuObservationInfo.reserved0");
+    if (@offsetOf(FpuObservationInfo, "reserved1") != 112) @compileError("generated ABI offset drift: FpuObservationInfo.reserved1");
+    if (@offsetOf(FpuObservationInfo, "reserved2") != 120) @compileError("generated ABI offset drift: FpuObservationInfo.reserved2");
     if (@sizeOf(R4XStartR4Sys) != 1304) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -18878,7 +18960,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 720) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 728) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -18967,6 +19049,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_pmu_result") != 696) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_pmu_result");
     if (@offsetOf(R4XStartR4Dev, "cpu_acceleration_info") != 704) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_acceleration_info");
     if (@offsetOf(R4XStartR4Dev, "cpu_acceleration_work") != 712) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_acceleration_work");
+    if (@offsetOf(R4XStartR4Dev, "fpu_observation") != 720) @compileError("generated ABI offset drift: R4XStartR4Dev.fpu_observation");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -19911,13 +19994,14 @@ pub const R4DevProvider = struct {
     cpu_pmu_result: ?R4DevFns.cpu_pmu_result = null,
     cpu_acceleration_info: ?R4DevFns.cpu_acceleration_info = null,
     cpu_acceleration_work: ?R4DevFns.cpu_acceleration_work = null,
+    fpu_observation: ?R4DevFns.fpu_observation = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 33,
-        .size = 720,
+        .abi_version = 34,
+        .size = 728,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -20007,5 +20091,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .cpu_pmu_result = if (provider.cpu_pmu_result) |callback| @intFromPtr(callback) else 0,
         .cpu_acceleration_info = if (provider.cpu_acceleration_info) |callback| @intFromPtr(callback) else 0,
         .cpu_acceleration_work = if (provider.cpu_acceleration_work) |callback| @intFromPtr(callback) else 0,
+        .fpu_observation = if (provider.fpu_observation) |callback| @intFromPtr(callback) else 0,
     };
 }

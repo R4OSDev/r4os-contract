@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 368 von 368 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 370 von 370 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2700; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2713; Limits: 111
 
 ## App-Profile
 
@@ -389,6 +389,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `EntropyReadFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 | `ConsoleInputEvent` | fixed_layout | extern_struct | 16/4 | 16/4 | 16/4 | 16/4 |
 | `ConsoleTextInfo` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `FpuObservationRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `FpuObservationInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 
 ## Typdetails
 
@@ -9976,6 +9978,54 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `truncated_sequences` | 24 | 4 | 4 | `u32` | - |
 | `flags` | 28 | 4 | 4 | `u32` | - |
 
+### `FpuObservationRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `operation` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `token` | 16 | 8 | 8 | `u64` | - |
+| `task_generation` | 24 | 8 | 8 | `u64` | - |
+| `rip_begin` | 32 | 8 | 8 | `u64` | - |
+| `rip_end` | 40 | 8 | 8 | `u64` | - |
+
+### `FpuObservationInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `task_id` | 12 | 4 | 4 | `u32` | - |
+| `task_generation` | 16 | 8 | 8 | `u64` | - |
+| `token` | 24 | 8 | 8 | `u64` | - |
+| `rip_begin` | 32 | 8 | 8 | `u64` | - |
+| `rip_end` | 40 | 8 | 8 | `u64` | - |
+| `timer_irqs` | 48 | 8 | 8 | `u64` | - |
+| `timer_preemptions` | 56 | 8 | 8 | `u64` | - |
+| `external_handlers` | 64 | 8 | 8 | `u64` | - |
+| `observed_cpus` | 72 | 8 | 8 | `u64` | - |
+| `last_rip` | 80 | 8 | 8 | `u64` | - |
+| `last_handler` | 88 | 8 | 8 | `u64` | - |
+| `last_irq` | 96 | 4 | 4 | `u32` | - |
+| `last_owner` | 100 | 4 | 4 | `u32` | - |
+| `last_cpu` | 104 | 4 | 4 | `u32` | - |
+| `reserved0` | 108 | 4 | 4 | `u32` | - |
+| `reserved1` | 112 | 8 | 8 | `u64` | - |
+| `reserved2` | 120 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13437,6 +13487,19 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `console_text_cp437` | `437` | `u32` | value | number | `console_text` | fixed_contract |
 | `console_text_windows1252` | `1252` | `u32` | value | number | `console_text` | fixed_contract |
 | `console_text_closed` | `1` | `u32` | value | number | `console_text` | fixed_contract |
+| `fpu_observation_version` | `1` | `u32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_capabilities` | `0` | `u32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_begin` | `1` | `u32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_end` | `2` | `u32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_flag_available` | `1` | `u32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_flag_active` | `2` | `u32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_flag_closed` | `4` | `u32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_max_window_bytes` | `65536` | `u64` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_error_invalid` | `-1` | `i32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_error_unavailable` | `-2` | `i32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_error_busy` | `-3` | `i32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_error_stale` | `-4` | `i32` | value | number | `fpu_observation` | fixed_contract |
+| `fpu_observation_error_exhausted` | `-5` | `i32` | value | number | `fpu_observation` | fixed_contract |
 
 ## Limits
 

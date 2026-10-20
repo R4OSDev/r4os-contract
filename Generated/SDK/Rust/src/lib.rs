@@ -2705,6 +2705,19 @@ pub const console_text_utf8: u32 = 65001;
 pub const console_text_cp437: u32 = 437;
 pub const console_text_windows1252: u32 = 1252;
 pub const console_text_closed: u32 = 1;
+pub const fpu_observation_version: u32 = 1;
+pub const fpu_observation_capabilities: u32 = 0;
+pub const fpu_observation_begin: u32 = 1;
+pub const fpu_observation_end: u32 = 2;
+pub const fpu_observation_flag_available: u32 = 1;
+pub const fpu_observation_flag_active: u32 = 2;
+pub const fpu_observation_flag_closed: u32 = 4;
+pub const fpu_observation_max_window_bytes: u64 = 65536;
+pub const fpu_observation_error_invalid: i32 = -1;
+pub const fpu_observation_error_unavailable: i32 = -2;
+pub const fpu_observation_error_busy: i32 = -3;
+pub const fpu_observation_error_stale: i32 = -4;
+pub const fpu_observation_error_exhausted: i32 = -5;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19432,6 +19445,86 @@ impl Default for ConsoleTextInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FpuObservationRequest {
+    pub version: u32,
+    pub size: u32,
+    pub operation: u32,
+    pub flags: u32,
+    pub token: u64,
+    pub task_generation: u64,
+    pub rip_begin: u64,
+    pub rip_end: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FpuObservationRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            operation: 0,
+            flags: 0,
+            token: 0,
+            task_generation: 0,
+            rip_begin: 0,
+            rip_end: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FpuObservationInfo {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub task_id: u32,
+    pub task_generation: u64,
+    pub token: u64,
+    pub rip_begin: u64,
+    pub rip_end: u64,
+    pub timer_irqs: u64,
+    pub timer_preemptions: u64,
+    pub external_handlers: u64,
+    pub observed_cpus: u64,
+    pub last_rip: u64,
+    pub last_handler: u64,
+    pub last_irq: u32,
+    pub last_owner: u32,
+    pub last_cpu: u32,
+    pub reserved0: u32,
+    pub reserved1: u64,
+    pub reserved2: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FpuObservationInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            flags: 0,
+            task_id: 0,
+            task_generation: 0,
+            token: 0,
+            rip_begin: 0,
+            rip_end: 0,
+            timer_irqs: 0,
+            timer_preemptions: 0,
+            external_handlers: 0,
+            observed_cpus: 0,
+            last_rip: 0,
+            last_handler: 0,
+            last_irq: 4294967295,
+            last_owner: 0,
+            last_cpu: 4294967295,
+            reserved0: 0,
+            reserved1: 0,
+            reserved2: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20849,6 +20942,7 @@ pub mod R4DevFns {
     pub type cpu_pmu_result = unsafe extern "C" fn(u32, u64, u64, *mut CpuPmuResult) -> i32;
     pub type cpu_acceleration_info = unsafe extern "C" fn(*mut CpuAccelerationInfo) -> i32;
     pub type cpu_acceleration_work = unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32;
+    pub type fpu_observation = unsafe extern "C" fn(*const FpuObservationRequest, *mut FpuObservationInfo) -> i32;
 }
 
 #[repr(C)]
@@ -20946,14 +21040,15 @@ pub struct R4XStartR4Dev {
     pub cpu_pmu_result: usize,
     pub cpu_acceleration_info: usize,
     pub cpu_acceleration_work: usize,
+    pub fpu_observation: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 33,
-            size: 720,
+            abi_version: 34,
+            size: 728,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -21043,6 +21138,7 @@ impl Default for R4XStartR4Dev {
             cpu_pmu_result: 0,
             cpu_acceleration_info: 0,
             cpu_acceleration_work: 0,
+            fpu_observation: 0,
         }
     }
 }
@@ -31714,6 +31810,38 @@ const _: () = {
     assert!(core::mem::offset_of!(ConsoleTextInfo, flags) == 28);
     assert!(core::mem::size_of::<ConsoleTextInfo>() == 32);
     assert!(core::mem::align_of::<ConsoleTextInfo>() == 4);
+    assert!(core::mem::offset_of!(FpuObservationRequest, version) == 0);
+    assert!(core::mem::offset_of!(FpuObservationRequest, size) == 4);
+    assert!(core::mem::offset_of!(FpuObservationRequest, operation) == 8);
+    assert!(core::mem::offset_of!(FpuObservationRequest, flags) == 12);
+    assert!(core::mem::offset_of!(FpuObservationRequest, token) == 16);
+    assert!(core::mem::offset_of!(FpuObservationRequest, task_generation) == 24);
+    assert!(core::mem::offset_of!(FpuObservationRequest, rip_begin) == 32);
+    assert!(core::mem::offset_of!(FpuObservationRequest, rip_end) == 40);
+    assert!(core::mem::size_of::<FpuObservationRequest>() == 48);
+    assert!(core::mem::align_of::<FpuObservationRequest>() == 8);
+    assert!(core::mem::offset_of!(FpuObservationInfo, version) == 0);
+    assert!(core::mem::offset_of!(FpuObservationInfo, size) == 4);
+    assert!(core::mem::offset_of!(FpuObservationInfo, flags) == 8);
+    assert!(core::mem::offset_of!(FpuObservationInfo, task_id) == 12);
+    assert!(core::mem::offset_of!(FpuObservationInfo, task_generation) == 16);
+    assert!(core::mem::offset_of!(FpuObservationInfo, token) == 24);
+    assert!(core::mem::offset_of!(FpuObservationInfo, rip_begin) == 32);
+    assert!(core::mem::offset_of!(FpuObservationInfo, rip_end) == 40);
+    assert!(core::mem::offset_of!(FpuObservationInfo, timer_irqs) == 48);
+    assert!(core::mem::offset_of!(FpuObservationInfo, timer_preemptions) == 56);
+    assert!(core::mem::offset_of!(FpuObservationInfo, external_handlers) == 64);
+    assert!(core::mem::offset_of!(FpuObservationInfo, observed_cpus) == 72);
+    assert!(core::mem::offset_of!(FpuObservationInfo, last_rip) == 80);
+    assert!(core::mem::offset_of!(FpuObservationInfo, last_handler) == 88);
+    assert!(core::mem::offset_of!(FpuObservationInfo, last_irq) == 96);
+    assert!(core::mem::offset_of!(FpuObservationInfo, last_owner) == 100);
+    assert!(core::mem::offset_of!(FpuObservationInfo, last_cpu) == 104);
+    assert!(core::mem::offset_of!(FpuObservationInfo, reserved0) == 108);
+    assert!(core::mem::offset_of!(FpuObservationInfo, reserved1) == 112);
+    assert!(core::mem::offset_of!(FpuObservationInfo, reserved2) == 120);
+    assert!(core::mem::size_of::<FpuObservationInfo>() == 128);
+    assert!(core::mem::align_of::<FpuObservationInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -32238,7 +32366,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_pmu_result) == 696);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_acceleration_info) == 704);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_acceleration_work) == 712);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 720);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, fpu_observation) == 720);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 728);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

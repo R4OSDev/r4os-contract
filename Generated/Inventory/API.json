@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 480,
-    "group_slot_count": 480,
+    "function_count": 481,
+    "group_slot_count": 481,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 141
+    "advanced_count": 142
   },
   "functions": [
     {
@@ -5767,6 +5767,18 @@
       "slot": 87,
       "exposure": "advanced",
       "description": "Explicit synchronous pure resident baseline/SHA execution window. Exact TaskAdmission/lifecycle lease through output, original actual IF immediately before CLI, exact physical CPU/epoch/feature/OS revalidation. Virtual exposed ISA allowed, never PMU or physical qualification.1..64iterations,2ms accepted hardware clock. No allocation/fault/wait/yield/API/placement change; no Runtime owner across callback. No arbitrary feature mask/registers. Receipt0 alone not accepted: inspect flags/status/callback/identity/IF/clock. Refusal before work preserves output/tail; no automatic retry.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.fpu_observation",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 88,
+      "exposure": "advanced",
+      "description": "Explicitly begin/end one current native task-generation/token/RIP-window observation. Scope records actual qualified local timer delivery, actual task switches and actual registered R4D hardware IRQ callbacks. No normal SysV call may be assumed to preserve XMM/YMM data. Direct IRQ guard calls do not count. Caller owns audited register-live bounds inside its retained module image. No caller pointer, lock or runtime borrow spans userland work; task retirement discards metadata, no hardware cleanup. Every failure preserves output and any existing observation. Zero events are unavailable hardware coverage.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

@@ -6325,6 +6325,36 @@ comptime {
     if (@offsetOf(abi.ConsoleTextInfo, "decode_errors") != 20) @compileError("ConsoleTextInfo.decode_errors offset");
     if (@offsetOf(abi.ConsoleTextInfo, "truncated_sequences") != 24) @compileError("ConsoleTextInfo.truncated_sequences offset");
     if (@offsetOf(abi.ConsoleTextInfo, "flags") != 28) @compileError("ConsoleTextInfo.flags offset");
+    if (@sizeOf(abi.FpuObservationRequest) != 48) @compileError("FpuObservationRequest size");
+    if (@offsetOf(abi.FpuObservationRequest, "version") != 0) @compileError("FpuObservationRequest.version offset");
+    if (@offsetOf(abi.FpuObservationRequest, "size") != 4) @compileError("FpuObservationRequest.size offset");
+    if (@offsetOf(abi.FpuObservationRequest, "operation") != 8) @compileError("FpuObservationRequest.operation offset");
+    if (@offsetOf(abi.FpuObservationRequest, "flags") != 12) @compileError("FpuObservationRequest.flags offset");
+    if (@offsetOf(abi.FpuObservationRequest, "token") != 16) @compileError("FpuObservationRequest.token offset");
+    if (@offsetOf(abi.FpuObservationRequest, "task_generation") != 24) @compileError("FpuObservationRequest.task_generation offset");
+    if (@offsetOf(abi.FpuObservationRequest, "rip_begin") != 32) @compileError("FpuObservationRequest.rip_begin offset");
+    if (@offsetOf(abi.FpuObservationRequest, "rip_end") != 40) @compileError("FpuObservationRequest.rip_end offset");
+    if (@sizeOf(abi.FpuObservationInfo) != 128) @compileError("FpuObservationInfo size");
+    if (@offsetOf(abi.FpuObservationInfo, "version") != 0) @compileError("FpuObservationInfo.version offset");
+    if (@offsetOf(abi.FpuObservationInfo, "size") != 4) @compileError("FpuObservationInfo.size offset");
+    if (@offsetOf(abi.FpuObservationInfo, "flags") != 8) @compileError("FpuObservationInfo.flags offset");
+    if (@offsetOf(abi.FpuObservationInfo, "task_id") != 12) @compileError("FpuObservationInfo.task_id offset");
+    if (@offsetOf(abi.FpuObservationInfo, "task_generation") != 16) @compileError("FpuObservationInfo.task_generation offset");
+    if (@offsetOf(abi.FpuObservationInfo, "token") != 24) @compileError("FpuObservationInfo.token offset");
+    if (@offsetOf(abi.FpuObservationInfo, "rip_begin") != 32) @compileError("FpuObservationInfo.rip_begin offset");
+    if (@offsetOf(abi.FpuObservationInfo, "rip_end") != 40) @compileError("FpuObservationInfo.rip_end offset");
+    if (@offsetOf(abi.FpuObservationInfo, "timer_irqs") != 48) @compileError("FpuObservationInfo.timer_irqs offset");
+    if (@offsetOf(abi.FpuObservationInfo, "timer_preemptions") != 56) @compileError("FpuObservationInfo.timer_preemptions offset");
+    if (@offsetOf(abi.FpuObservationInfo, "external_handlers") != 64) @compileError("FpuObservationInfo.external_handlers offset");
+    if (@offsetOf(abi.FpuObservationInfo, "observed_cpus") != 72) @compileError("FpuObservationInfo.observed_cpus offset");
+    if (@offsetOf(abi.FpuObservationInfo, "last_rip") != 80) @compileError("FpuObservationInfo.last_rip offset");
+    if (@offsetOf(abi.FpuObservationInfo, "last_handler") != 88) @compileError("FpuObservationInfo.last_handler offset");
+    if (@offsetOf(abi.FpuObservationInfo, "last_irq") != 96) @compileError("FpuObservationInfo.last_irq offset");
+    if (@offsetOf(abi.FpuObservationInfo, "last_owner") != 100) @compileError("FpuObservationInfo.last_owner offset");
+    if (@offsetOf(abi.FpuObservationInfo, "last_cpu") != 104) @compileError("FpuObservationInfo.last_cpu offset");
+    if (@offsetOf(abi.FpuObservationInfo, "reserved0") != 108) @compileError("FpuObservationInfo.reserved0 offset");
+    if (@offsetOf(abi.FpuObservationInfo, "reserved1") != 112) @compileError("FpuObservationInfo.reserved1 offset");
+    if (@offsetOf(abi.FpuObservationInfo, "reserved2") != 120) @compileError("FpuObservationInfo.reserved2 offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1304) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -7124,7 +7154,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 720) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 728) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -7299,6 +7329,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.cpu_acceleration_info) != 8) @compileError("R4DevFns.cpu_acceleration_info signature");
     if (@offsetOf(abi.R4XStartR4Dev, "cpu_acceleration_work") != 712) @compileError("R4XStartR4Dev.cpu_acceleration_work offset");
     if (@sizeOf(abi.R4DevFns.cpu_acceleration_work) != 8) @compileError("R4DevFns.cpu_acceleration_work signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "fpu_observation") != 720) @compileError("R4XStartR4Dev.fpu_observation offset");
+    if (@sizeOf(abi.R4DevFns.fpu_observation) != 8) @compileError("R4DevFns.fpu_observation signature");
 }
 
 test "generated API contract compiles" {}

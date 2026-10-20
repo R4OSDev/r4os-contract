@@ -2713,6 +2713,19 @@ extern "C" {
 #define R4OS_CONSOLE_TEXT_CP437 437u
 #define R4OS_CONSOLE_TEXT_WINDOWS1252 1252u
 #define R4OS_CONSOLE_TEXT_CLOSED 1u
+#define R4OS_FPU_OBSERVATION_VERSION 1u
+#define R4OS_FPU_OBSERVATION_CAPABILITIES 0u
+#define R4OS_FPU_OBSERVATION_BEGIN 1u
+#define R4OS_FPU_OBSERVATION_END 2u
+#define R4OS_FPU_OBSERVATION_FLAG_AVAILABLE 1u
+#define R4OS_FPU_OBSERVATION_FLAG_ACTIVE 2u
+#define R4OS_FPU_OBSERVATION_FLAG_CLOSED 4u
+#define R4OS_FPU_OBSERVATION_MAX_WINDOW_BYTES 65536ull
+#define R4OS_FPU_OBSERVATION_ERROR_INVALID ((int32_t)-1)
+#define R4OS_FPU_OBSERVATION_ERROR_UNAVAILABLE ((int32_t)-2)
+#define R4OS_FPU_OBSERVATION_ERROR_BUSY ((int32_t)-3)
+#define R4OS_FPU_OBSERVATION_ERROR_STALE ((int32_t)-4)
+#define R4OS_FPU_OBSERVATION_ERROR_EXHAUSTED ((int32_t)-5)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3537,6 +3550,8 @@ typedef struct R4EntropyBackend R4EntropyBackend;
 typedef struct R4DriverEntropyApi R4DriverEntropyApi;
 typedef struct R4ConsoleInputEvent R4ConsoleInputEvent;
 typedef struct R4ConsoleTextInfo R4ConsoleTextInfo;
+typedef struct R4FpuObservationRequest R4FpuObservationRequest;
+typedef struct R4FpuObservationInfo R4FpuObservationInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10560,6 +10575,40 @@ typedef struct R4ConsoleTextInfo {
     uint32_t flags;
 } R4ConsoleTextInfo;
 
+typedef struct R4FpuObservationRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t operation;
+    uint32_t flags;
+    uint64_t token;
+    uint64_t task_generation;
+    uint64_t rip_begin;
+    uint64_t rip_end;
+} R4FpuObservationRequest;
+
+typedef struct R4FpuObservationInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t task_id;
+    uint64_t task_generation;
+    uint64_t token;
+    uint64_t rip_begin;
+    uint64_t rip_end;
+    uint64_t timer_irqs;
+    uint64_t timer_preemptions;
+    uint64_t external_handlers;
+    uint64_t observed_cpus;
+    uint64_t last_rip;
+    uint64_t last_handler;
+    uint32_t last_irq;
+    uint32_t last_owner;
+    uint32_t last_cpu;
+    uint32_t reserved0;
+    uint64_t reserved1;
+    uint64_t reserved2;
+} R4FpuObservationInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11526,6 +11575,7 @@ typedef int32_t (*R4DevCpuPmuMeasureFn)(uint32_t cpu_index, uint64_t epoch, uint
 typedef int32_t (*R4DevCpuPmuResultFn)(uint32_t cpu_index, uint64_t epoch, uint64_t generation, R4CpuPmuResult * out);
 typedef int32_t (*R4DevCpuAccelerationInfoFn)(R4CpuAccelerationInfo * out);
 typedef int32_t (*R4DevCpuAccelerationWorkFn)(uint32_t work_kind, uint32_t iterations, const R4CpuPureWorkFn * work, uint64_t context, R4CpuAccelerationWork * out);
+typedef int32_t (*R4DevFpuObservationFn)(const R4FpuObservationRequest * request, R4FpuObservationInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -11620,6 +11670,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_pmu_result;
     uintptr_t cpu_acceleration_info;
     uintptr_t cpu_acceleration_work;
+    uintptr_t fpu_observation;
 } R4XStartR4Dev;
 
 
@@ -17947,6 +17998,36 @@ _Static_assert(offsetof(R4ConsoleTextInfo, pending_bytes) == 16u, "ConsoleTextIn
 _Static_assert(offsetof(R4ConsoleTextInfo, decode_errors) == 20u, "ConsoleTextInfo.decode_errors offset mismatch");
 _Static_assert(offsetof(R4ConsoleTextInfo, truncated_sequences) == 24u, "ConsoleTextInfo.truncated_sequences offset mismatch");
 _Static_assert(offsetof(R4ConsoleTextInfo, flags) == 28u, "ConsoleTextInfo.flags offset mismatch");
+_Static_assert(sizeof(R4FpuObservationRequest) == 48u, "FpuObservationRequest size mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, version) == 0u, "FpuObservationRequest.version offset mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, size) == 4u, "FpuObservationRequest.size offset mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, operation) == 8u, "FpuObservationRequest.operation offset mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, flags) == 12u, "FpuObservationRequest.flags offset mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, token) == 16u, "FpuObservationRequest.token offset mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, task_generation) == 24u, "FpuObservationRequest.task_generation offset mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, rip_begin) == 32u, "FpuObservationRequest.rip_begin offset mismatch");
+_Static_assert(offsetof(R4FpuObservationRequest, rip_end) == 40u, "FpuObservationRequest.rip_end offset mismatch");
+_Static_assert(sizeof(R4FpuObservationInfo) == 128u, "FpuObservationInfo size mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, version) == 0u, "FpuObservationInfo.version offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, size) == 4u, "FpuObservationInfo.size offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, flags) == 8u, "FpuObservationInfo.flags offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, task_id) == 12u, "FpuObservationInfo.task_id offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, task_generation) == 16u, "FpuObservationInfo.task_generation offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, token) == 24u, "FpuObservationInfo.token offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, rip_begin) == 32u, "FpuObservationInfo.rip_begin offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, rip_end) == 40u, "FpuObservationInfo.rip_end offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, timer_irqs) == 48u, "FpuObservationInfo.timer_irqs offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, timer_preemptions) == 56u, "FpuObservationInfo.timer_preemptions offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, external_handlers) == 64u, "FpuObservationInfo.external_handlers offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, observed_cpus) == 72u, "FpuObservationInfo.observed_cpus offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, last_rip) == 80u, "FpuObservationInfo.last_rip offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, last_handler) == 88u, "FpuObservationInfo.last_handler offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, last_irq) == 96u, "FpuObservationInfo.last_irq offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, last_owner) == 100u, "FpuObservationInfo.last_owner offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, last_cpu) == 104u, "FpuObservationInfo.last_cpu offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, reserved0) == 108u, "FpuObservationInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, reserved1) == 112u, "FpuObservationInfo.reserved1 offset mismatch");
+_Static_assert(offsetof(R4FpuObservationInfo, reserved2) == 120u, "FpuObservationInfo.reserved2 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1304u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -18746,7 +18827,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 720u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 728u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -18921,6 +19002,8 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_acceleration_info) == 704u, "R4XStart
 _Static_assert(sizeof(R4DevCpuAccelerationInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_acceleration_work) == 712u, "R4XStartR4Dev.cpu_acceleration_work offset mismatch");
 _Static_assert(sizeof(R4DevCpuAccelerationWorkFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, fpu_observation) == 720u, "R4XStartR4Dev.fpu_observation offset mismatch");
+_Static_assert(sizeof(R4DevFpuObservationFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #ifdef __cplusplus
 }
