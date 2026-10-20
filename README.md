@@ -172,3 +172,18 @@ old size/null providers retain their fallback. Six optional feature IDs append
 after the existing55; the common AVX2 compiler baseline stays unchanged.
 No memory/hash algorithm, SIMD instruction, PMU programming or arbitrary
 feature-mask interface is added to the kernel contract.
+
+0.64.38 appends the optional registered-device entropy contract. R4SYS28/1304
+retains its complete1288-byte prefix. DriverResourceApi1/72 retains every
+32/48/56/64-byte prefix and outer DriverApi37; its source table is cached
+before shutdown. ProtocolApi1/120 retains104 bytes and its original88-byte
+prefix, with independently size-checked typed nullable source functions.
+Fixed128-byte source/completion receipts, a64-byte backend and32-byte driver
+table distinguish registration, exact module/driver epoch, real used bytes,
+bounded work and retained DMA. No random-value or timing-quality estimate.
+RDRAND is a new named pure CPU-window kind2/mask64; existing payloads, kinds,
+feature IDs, AVX2 baseline and XSTATE stay unchanged. Fresh exact local CPU/OS
+admission and CF checks remain mandatory. The SDK owns source choice; the
+external driver owns transport/completion/reset. No Runtime or Rust mutable
+registry borrow spans callbacks; release the driver owner before a paged
+caller copy while retaining the exact task. Old/missing sources fail safely.

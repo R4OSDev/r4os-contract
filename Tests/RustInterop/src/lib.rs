@@ -246,3 +246,63 @@ pub extern "C" fn r4os_rust_acceleration_info() -> abi::R4DevFns::cpu_accelerati
 pub extern "C" fn r4os_rust_acceleration_work() -> abi::R4DevFns::cpu_acceleration_work {
     acceleration_work
 }
+
+// ABI transport peers only, not an actual random source or device receipt.
+unsafe extern "C" fn entropy_source_info(output: *mut abi::EntropySourceInfo) -> i32 {
+    if output.is_null() || !output.is_aligned() {
+        return abi::entropy_error_invalid;
+    }
+    unsafe {
+        if (*output).version != 1 || (*output).size < 128 {
+            return abi::entropy_error_invalid;
+        }
+        output.write(abi::EntropySourceInfo {
+            state: abi::entropy_state_retained,
+            flags: abi::entropy_source_flag_device | abi::entropy_source_flag_virtual,
+            generation: 0x8123_4567_89ab_cdef,
+            owner_epoch: 0xfedc_ba98_7654_3210,
+            owner: 0xfedc_ba98,
+            vendor_id: 0x1af4,
+            device_id: 0x1044,
+            last_result: -30021,
+            ..Default::default()
+        });
+    }
+    0
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn r4os_rust_entropy_info() -> abi::R4SysFns::entropy_source_info {
+    entropy_source_info
+}
+
+#[unsafe(no_mangle)]
+/// # Safety
+/// Fixture supplies resident canonical descriptor, seventeen writable bytes
+/// and an exclusive initialized versioned receipt for this synchronous call.
+pub unsafe extern "C" fn r4os_rust_entropy_callback(
+    backend: *const abi::EntropyBackend,
+    data: *mut u8,
+    bytes: u32,
+    output: *mut abi::EntropyDeviceReceipt,
+) -> i32 {
+    if backend.is_null()
+        || !backend.is_aligned()
+        || data.is_null()
+        || output.is_null()
+        || !output.is_aligned()
+    {
+        return abi::entropy_error_invalid;
+    }
+    let descriptor = unsafe { backend.read() };
+    if descriptor.version != 1 || descriptor.size < 64 || descriptor.read == 0 || bytes != 17 {
+        return abi::entropy_error_invalid;
+    }
+    if unsafe { (*output).version != 1 || (*output).size < 128 } {
+        return abi::entropy_error_invalid;
+    }
+    // The canonical descriptor transports pointer bits, like existing R4D
+    // backend tables. Validate nonzero before materializing the typed value.
+    let callback: abi::EntropyReadFn = unsafe { core::mem::transmute(descriptor.read) };
+    unsafe { callback(descriptor.context, data, bytes, output) }
+}

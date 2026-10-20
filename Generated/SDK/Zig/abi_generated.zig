@@ -2652,6 +2652,44 @@ pub const cpu_accel_work_status_clock_regressed: u32 = 4;
 pub const cpu_accel_work_status_over_budget: u32 = 5;
 pub const cpu_accel_max_iterations: u32 = 64;
 pub const cpu_accel_max_window_ns: u64 = 2000000;
+pub const cpu_accel_feature_rdrand: u32 = 64;
+pub const cpu_accel_work_kind_rdrand: u32 = 2;
+pub const entropy_max_request_bytes: u32 = 4096;
+pub const entropy_max_window_ns: u64 = 250000000;
+pub const entropy_state_unavailable: u32 = 0;
+pub const entropy_state_ready: u32 = 1;
+pub const entropy_state_closed: u32 = 2;
+pub const entropy_state_retained: u32 = 3;
+pub const entropy_state_removed: u32 = 4;
+pub const entropy_source_flag_registered: u32 = 1;
+pub const entropy_source_flag_virtual: u32 = 2;
+pub const entropy_source_flag_device: u32 = 4;
+pub const entropy_source_flag_verified_receipt: u32 = 8;
+pub const entropy_source_flag_quiesced: u32 = 16;
+pub const entropy_receipt_flag_started: u32 = 1;
+pub const entropy_receipt_flag_used: u32 = 2;
+pub const entropy_receipt_flag_length_verified: u32 = 4;
+pub const entropy_receipt_flag_within_budget: u32 = 8;
+pub const entropy_receipt_flag_quiesced: u32 = 16;
+pub const entropy_receipt_flag_cancelled: u32 = 32;
+pub const entropy_receipt_flag_retained: u32 = 64;
+pub const entropy_receipt_flag_virtual: u32 = 128;
+pub const entropy_device_status_completed: u32 = 0;
+pub const entropy_device_status_unavailable: u32 = 1;
+pub const entropy_device_status_timeout: u32 = 2;
+pub const entropy_device_status_bad_completion: u32 = 3;
+pub const entropy_device_status_stopping: u32 = 4;
+pub const entropy_device_status_lost: u32 = 5;
+pub const entropy_device_status_retained: u32 = 6;
+pub const entropy_error_invalid: i32 = -1;
+pub const entropy_error_busy: i32 = -2;
+pub const entropy_error_unavailable: i32 = -3;
+pub const entropy_error_stale: i32 = -4;
+pub const entropy_error_timeout: i32 = -5;
+pub const entropy_error_context: i32 = -6;
+pub const entropy_error_device: i32 = -7;
+pub const entropy_error_cancelled: i32 = -8;
+pub const entropy_error_retained: i32 = -9;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -7608,7 +7646,7 @@ pub const DriverFirmwareTableInfo = extern struct {
 
 pub const DriverResourceApi = extern struct {
     version: u32 = 1,
-    size: u32 = 64,
+    size: u32 = 72,
     stat: u64 = 0,
     read_at: u64 = 0,
     now_ns: u64 = 0,
@@ -7616,6 +7654,7 @@ pub const DriverResourceApi = extern struct {
     acpi_read_at: u64 = 0,
     platform_query: u64 = 0,
     cpu_power_query: u64 = 0,
+    entropy_query: u64 = 0,
 };
 
 pub const DriverHeapAllocation = extern struct {
@@ -10108,6 +10147,81 @@ pub const CpuAccelerationWork = extern struct {
 
 pub const CpuPureWorkFn = *const fn (u64, u32) callconv(.c) i32;
 
+pub const EntropySourceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    state: u32 = 0,
+    flags: u32 = 0,
+    generation: u64 = 0,
+    owner_epoch: u64 = 0,
+    owner: u32 = 0,
+    module_generation: u32 = 0,
+    pci_address: u32 = 0,
+    vendor_id: u16 = 0,
+    device_id: u16 = 0,
+    max_request_bytes: u32 = 0,
+    last_result: i32 = 0,
+    requests: u64 = 0,
+    completed_requests: u64 = 0,
+    completed_bytes: u64 = 0,
+    dma_submitted: u64 = 0,
+    dma_completed: u64 = 0,
+    short_completions: u64 = 0,
+    failed_requests: u64 = 0,
+    last_device_flags: u32 = 0,
+    reserved0: u32 = 0,
+    reserved1: u64 = 0,
+};
+
+pub const EntropyDeviceReceipt = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    flags: u32 = 0,
+    status: u32 = 0,
+    requested_bytes: u32 = 0,
+    completed_bytes: u32 = 0,
+    last_used_length: u32 = 0,
+    last_descriptor: u32 = 0,
+    dma_submitted: u64 = 0,
+    dma_completed: u64 = 0,
+    short_completions: u64 = 0,
+    begin_ns: u64 = 0,
+    end_ns: u64 = 0,
+    request_generation: u64 = 0,
+    available_index_before: u32 = 0,
+    available_index_after: u32 = 0,
+    used_index_before: u32 = 0,
+    used_index_after: u32 = 0,
+    device_status: u32 = 0,
+    pci_command: u32 = 0,
+    clock_generation: u32 = 0,
+    clock_source: u32 = 0,
+    reserved0: [2]u64 = .{0} ** 2,
+};
+
+pub const EntropyBackend = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    flags: u32 = 0,
+    max_request_bytes: u32 = 0,
+    context: u64 = 0,
+    pci_address: u32 = 0,
+    vendor_id: u16 = 0,
+    device_id: u16 = 0,
+    read: u64 = 0,
+    reserved0: [3]u64 = .{0} ** 3,
+};
+
+pub const DriverEntropyApi = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    register_backend: u64 = 0,
+    unregister_backend: u64 = 0,
+    reserved0: u64 = 0,
+};
+
+pub const EntropyReadFn = *const fn (u64, [*]u8, u32, *EntropyDeviceReceipt) callconv(.c) i32;
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10265,12 +10379,14 @@ pub const R4SysFns = struct {
     pub const thread_placement_get = *const fn (*const ProgramJoinHandle, *ThreadPlacementInfo, ?[*]u64, u32) callconv(.c) i32;
     pub const thread_placement_set = *const fn (*const ProgramJoinHandle, *const ThreadPlacementRequest, ?[*]const u64, u32) callconv(.c) i32;
     pub const system_power_transition = *const fn (u32, u64) callconv(.c) i32;
+    pub const entropy_source_info = *const fn (*EntropySourceInfo) callconv(.c) i32;
+    pub const entropy_fill = *const fn ([*]u8, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 27,
-    size: u32 = 1288,
+    abi_version: u32 = 28,
+    size: u32 = 1304,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -10431,6 +10547,8 @@ pub const R4XStartR4Sys = extern struct {
     thread_placement_get: usize = 0,
     thread_placement_set: usize = 0,
     system_power_transition: usize = 0,
+    entropy_source_info: usize = 0,
+    entropy_fill: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -11287,6 +11405,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 156, .offset = 1264, .name = "thread_placement_get", .state = .function, .required = false },
     .{ .number = 157, .offset = 1272, .name = "thread_placement_set", .state = .function, .required = false },
     .{ .number = 158, .offset = 1280, .name = "system_power_transition", .state = .function, .required = false },
+    .{ .number = 159, .offset = 1288, .name = "entropy_source_info", .state = .function, .required = false },
+    .{ .number = 160, .offset = 1296, .name = "entropy_fill", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -15881,7 +16001,7 @@ comptime {
     if (@offsetOf(DriverFirmwareTableInfo, "revision") != 36) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.revision");
     if (@offsetOf(DriverFirmwareTableInfo, "flags") != 40) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.flags");
     if (@offsetOf(DriverFirmwareTableInfo, "reserved") != 44) @compileError("generated ABI offset drift: DriverFirmwareTableInfo.reserved");
-    if (@sizeOf(DriverResourceApi) != 64) @compileError("generated ABI size drift: DriverResourceApi");
+    if (@sizeOf(DriverResourceApi) != 72) @compileError("generated ABI size drift: DriverResourceApi");
     if (@alignOf(DriverResourceApi) != 8) @compileError("generated ABI alignment drift: DriverResourceApi");
     if (@offsetOf(DriverResourceApi, "version") != 0) @compileError("generated ABI offset drift: DriverResourceApi.version");
     if (@offsetOf(DriverResourceApi, "size") != 4) @compileError("generated ABI offset drift: DriverResourceApi.size");
@@ -15892,6 +16012,7 @@ comptime {
     if (@offsetOf(DriverResourceApi, "acpi_read_at") != 40) @compileError("generated ABI offset drift: DriverResourceApi.acpi_read_at");
     if (@offsetOf(DriverResourceApi, "platform_query") != 48) @compileError("generated ABI offset drift: DriverResourceApi.platform_query");
     if (@offsetOf(DriverResourceApi, "cpu_power_query") != 56) @compileError("generated ABI offset drift: DriverResourceApi.cpu_power_query");
+    if (@offsetOf(DriverResourceApi, "entropy_query") != 64) @compileError("generated ABI offset drift: DriverResourceApi.entropy_query");
     if (@sizeOf(DriverHeapAllocation) != 40) @compileError("generated ABI size drift: DriverHeapAllocation");
     if (@alignOf(DriverHeapAllocation) != 8) @compileError("generated ABI alignment drift: DriverHeapAllocation");
     if (@offsetOf(DriverHeapAllocation, "version") != 0) @compileError("generated ABI offset drift: DriverHeapAllocation.version");
@@ -18226,7 +18347,76 @@ comptime {
     if (@offsetOf(CpuAccelerationWork, "clock_source") != 96) @compileError("generated ABI offset drift: CpuAccelerationWork.clock_source");
     if (@offsetOf(CpuAccelerationWork, "clock_generation") != 100) @compileError("generated ABI offset drift: CpuAccelerationWork.clock_generation");
     if (@offsetOf(CpuAccelerationWork, "reserved0") != 104) @compileError("generated ABI offset drift: CpuAccelerationWork.reserved0");
-    if (@sizeOf(R4XStartR4Sys) != 1288) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(EntropySourceInfo) != 128) @compileError("generated ABI size drift: EntropySourceInfo");
+    if (@alignOf(EntropySourceInfo) != 8) @compileError("generated ABI alignment drift: EntropySourceInfo");
+    if (@offsetOf(EntropySourceInfo, "version") != 0) @compileError("generated ABI offset drift: EntropySourceInfo.version");
+    if (@offsetOf(EntropySourceInfo, "size") != 4) @compileError("generated ABI offset drift: EntropySourceInfo.size");
+    if (@offsetOf(EntropySourceInfo, "state") != 8) @compileError("generated ABI offset drift: EntropySourceInfo.state");
+    if (@offsetOf(EntropySourceInfo, "flags") != 12) @compileError("generated ABI offset drift: EntropySourceInfo.flags");
+    if (@offsetOf(EntropySourceInfo, "generation") != 16) @compileError("generated ABI offset drift: EntropySourceInfo.generation");
+    if (@offsetOf(EntropySourceInfo, "owner_epoch") != 24) @compileError("generated ABI offset drift: EntropySourceInfo.owner_epoch");
+    if (@offsetOf(EntropySourceInfo, "owner") != 32) @compileError("generated ABI offset drift: EntropySourceInfo.owner");
+    if (@offsetOf(EntropySourceInfo, "module_generation") != 36) @compileError("generated ABI offset drift: EntropySourceInfo.module_generation");
+    if (@offsetOf(EntropySourceInfo, "pci_address") != 40) @compileError("generated ABI offset drift: EntropySourceInfo.pci_address");
+    if (@offsetOf(EntropySourceInfo, "vendor_id") != 44) @compileError("generated ABI offset drift: EntropySourceInfo.vendor_id");
+    if (@offsetOf(EntropySourceInfo, "device_id") != 46) @compileError("generated ABI offset drift: EntropySourceInfo.device_id");
+    if (@offsetOf(EntropySourceInfo, "max_request_bytes") != 48) @compileError("generated ABI offset drift: EntropySourceInfo.max_request_bytes");
+    if (@offsetOf(EntropySourceInfo, "last_result") != 52) @compileError("generated ABI offset drift: EntropySourceInfo.last_result");
+    if (@offsetOf(EntropySourceInfo, "requests") != 56) @compileError("generated ABI offset drift: EntropySourceInfo.requests");
+    if (@offsetOf(EntropySourceInfo, "completed_requests") != 64) @compileError("generated ABI offset drift: EntropySourceInfo.completed_requests");
+    if (@offsetOf(EntropySourceInfo, "completed_bytes") != 72) @compileError("generated ABI offset drift: EntropySourceInfo.completed_bytes");
+    if (@offsetOf(EntropySourceInfo, "dma_submitted") != 80) @compileError("generated ABI offset drift: EntropySourceInfo.dma_submitted");
+    if (@offsetOf(EntropySourceInfo, "dma_completed") != 88) @compileError("generated ABI offset drift: EntropySourceInfo.dma_completed");
+    if (@offsetOf(EntropySourceInfo, "short_completions") != 96) @compileError("generated ABI offset drift: EntropySourceInfo.short_completions");
+    if (@offsetOf(EntropySourceInfo, "failed_requests") != 104) @compileError("generated ABI offset drift: EntropySourceInfo.failed_requests");
+    if (@offsetOf(EntropySourceInfo, "last_device_flags") != 112) @compileError("generated ABI offset drift: EntropySourceInfo.last_device_flags");
+    if (@offsetOf(EntropySourceInfo, "reserved0") != 116) @compileError("generated ABI offset drift: EntropySourceInfo.reserved0");
+    if (@offsetOf(EntropySourceInfo, "reserved1") != 120) @compileError("generated ABI offset drift: EntropySourceInfo.reserved1");
+    if (@sizeOf(EntropyDeviceReceipt) != 128) @compileError("generated ABI size drift: EntropyDeviceReceipt");
+    if (@alignOf(EntropyDeviceReceipt) != 8) @compileError("generated ABI alignment drift: EntropyDeviceReceipt");
+    if (@offsetOf(EntropyDeviceReceipt, "version") != 0) @compileError("generated ABI offset drift: EntropyDeviceReceipt.version");
+    if (@offsetOf(EntropyDeviceReceipt, "size") != 4) @compileError("generated ABI offset drift: EntropyDeviceReceipt.size");
+    if (@offsetOf(EntropyDeviceReceipt, "flags") != 8) @compileError("generated ABI offset drift: EntropyDeviceReceipt.flags");
+    if (@offsetOf(EntropyDeviceReceipt, "status") != 12) @compileError("generated ABI offset drift: EntropyDeviceReceipt.status");
+    if (@offsetOf(EntropyDeviceReceipt, "requested_bytes") != 16) @compileError("generated ABI offset drift: EntropyDeviceReceipt.requested_bytes");
+    if (@offsetOf(EntropyDeviceReceipt, "completed_bytes") != 20) @compileError("generated ABI offset drift: EntropyDeviceReceipt.completed_bytes");
+    if (@offsetOf(EntropyDeviceReceipt, "last_used_length") != 24) @compileError("generated ABI offset drift: EntropyDeviceReceipt.last_used_length");
+    if (@offsetOf(EntropyDeviceReceipt, "last_descriptor") != 28) @compileError("generated ABI offset drift: EntropyDeviceReceipt.last_descriptor");
+    if (@offsetOf(EntropyDeviceReceipt, "dma_submitted") != 32) @compileError("generated ABI offset drift: EntropyDeviceReceipt.dma_submitted");
+    if (@offsetOf(EntropyDeviceReceipt, "dma_completed") != 40) @compileError("generated ABI offset drift: EntropyDeviceReceipt.dma_completed");
+    if (@offsetOf(EntropyDeviceReceipt, "short_completions") != 48) @compileError("generated ABI offset drift: EntropyDeviceReceipt.short_completions");
+    if (@offsetOf(EntropyDeviceReceipt, "begin_ns") != 56) @compileError("generated ABI offset drift: EntropyDeviceReceipt.begin_ns");
+    if (@offsetOf(EntropyDeviceReceipt, "end_ns") != 64) @compileError("generated ABI offset drift: EntropyDeviceReceipt.end_ns");
+    if (@offsetOf(EntropyDeviceReceipt, "request_generation") != 72) @compileError("generated ABI offset drift: EntropyDeviceReceipt.request_generation");
+    if (@offsetOf(EntropyDeviceReceipt, "available_index_before") != 80) @compileError("generated ABI offset drift: EntropyDeviceReceipt.available_index_before");
+    if (@offsetOf(EntropyDeviceReceipt, "available_index_after") != 84) @compileError("generated ABI offset drift: EntropyDeviceReceipt.available_index_after");
+    if (@offsetOf(EntropyDeviceReceipt, "used_index_before") != 88) @compileError("generated ABI offset drift: EntropyDeviceReceipt.used_index_before");
+    if (@offsetOf(EntropyDeviceReceipt, "used_index_after") != 92) @compileError("generated ABI offset drift: EntropyDeviceReceipt.used_index_after");
+    if (@offsetOf(EntropyDeviceReceipt, "device_status") != 96) @compileError("generated ABI offset drift: EntropyDeviceReceipt.device_status");
+    if (@offsetOf(EntropyDeviceReceipt, "pci_command") != 100) @compileError("generated ABI offset drift: EntropyDeviceReceipt.pci_command");
+    if (@offsetOf(EntropyDeviceReceipt, "clock_generation") != 104) @compileError("generated ABI offset drift: EntropyDeviceReceipt.clock_generation");
+    if (@offsetOf(EntropyDeviceReceipt, "clock_source") != 108) @compileError("generated ABI offset drift: EntropyDeviceReceipt.clock_source");
+    if (@offsetOf(EntropyDeviceReceipt, "reserved0") != 112) @compileError("generated ABI offset drift: EntropyDeviceReceipt.reserved0");
+    if (@sizeOf(EntropyBackend) != 64) @compileError("generated ABI size drift: EntropyBackend");
+    if (@alignOf(EntropyBackend) != 8) @compileError("generated ABI alignment drift: EntropyBackend");
+    if (@offsetOf(EntropyBackend, "version") != 0) @compileError("generated ABI offset drift: EntropyBackend.version");
+    if (@offsetOf(EntropyBackend, "size") != 4) @compileError("generated ABI offset drift: EntropyBackend.size");
+    if (@offsetOf(EntropyBackend, "flags") != 8) @compileError("generated ABI offset drift: EntropyBackend.flags");
+    if (@offsetOf(EntropyBackend, "max_request_bytes") != 12) @compileError("generated ABI offset drift: EntropyBackend.max_request_bytes");
+    if (@offsetOf(EntropyBackend, "context") != 16) @compileError("generated ABI offset drift: EntropyBackend.context");
+    if (@offsetOf(EntropyBackend, "pci_address") != 24) @compileError("generated ABI offset drift: EntropyBackend.pci_address");
+    if (@offsetOf(EntropyBackend, "vendor_id") != 28) @compileError("generated ABI offset drift: EntropyBackend.vendor_id");
+    if (@offsetOf(EntropyBackend, "device_id") != 30) @compileError("generated ABI offset drift: EntropyBackend.device_id");
+    if (@offsetOf(EntropyBackend, "read") != 32) @compileError("generated ABI offset drift: EntropyBackend.read");
+    if (@offsetOf(EntropyBackend, "reserved0") != 40) @compileError("generated ABI offset drift: EntropyBackend.reserved0");
+    if (@sizeOf(DriverEntropyApi) != 32) @compileError("generated ABI size drift: DriverEntropyApi");
+    if (@alignOf(DriverEntropyApi) != 8) @compileError("generated ABI alignment drift: DriverEntropyApi");
+    if (@offsetOf(DriverEntropyApi, "version") != 0) @compileError("generated ABI offset drift: DriverEntropyApi.version");
+    if (@offsetOf(DriverEntropyApi, "size") != 4) @compileError("generated ABI offset drift: DriverEntropyApi.size");
+    if (@offsetOf(DriverEntropyApi, "register_backend") != 8) @compileError("generated ABI offset drift: DriverEntropyApi.register_backend");
+    if (@offsetOf(DriverEntropyApi, "unregister_backend") != 16) @compileError("generated ABI offset drift: DriverEntropyApi.unregister_backend");
+    if (@offsetOf(DriverEntropyApi, "reserved0") != 24) @compileError("generated ABI offset drift: DriverEntropyApi.reserved0");
+    if (@sizeOf(R4XStartR4Sys) != 1304) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -18386,6 +18576,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "thread_placement_get") != 1264) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_placement_get");
     if (@offsetOf(R4XStartR4Sys, "thread_placement_set") != 1272) @compileError("generated ABI offset drift: R4XStartR4Sys.thread_placement_set");
     if (@offsetOf(R4XStartR4Sys, "system_power_transition") != 1280) @compileError("generated ABI offset drift: R4XStartR4Sys.system_power_transition");
+    if (@offsetOf(R4XStartR4Sys, "entropy_source_info") != 1288) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_source_info");
+    if (@offsetOf(R4XStartR4Sys, "entropy_fill") != 1296) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_fill");
     if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

@@ -2656,6 +2656,44 @@ pub const cpu_accel_work_status_clock_regressed: u32 = 4;
 pub const cpu_accel_work_status_over_budget: u32 = 5;
 pub const cpu_accel_max_iterations: u32 = 64;
 pub const cpu_accel_max_window_ns: u64 = 2000000;
+pub const cpu_accel_feature_rdrand: u32 = 64;
+pub const cpu_accel_work_kind_rdrand: u32 = 2;
+pub const entropy_max_request_bytes: u32 = 4096;
+pub const entropy_max_window_ns: u64 = 250000000;
+pub const entropy_state_unavailable: u32 = 0;
+pub const entropy_state_ready: u32 = 1;
+pub const entropy_state_closed: u32 = 2;
+pub const entropy_state_retained: u32 = 3;
+pub const entropy_state_removed: u32 = 4;
+pub const entropy_source_flag_registered: u32 = 1;
+pub const entropy_source_flag_virtual: u32 = 2;
+pub const entropy_source_flag_device: u32 = 4;
+pub const entropy_source_flag_verified_receipt: u32 = 8;
+pub const entropy_source_flag_quiesced: u32 = 16;
+pub const entropy_receipt_flag_started: u32 = 1;
+pub const entropy_receipt_flag_used: u32 = 2;
+pub const entropy_receipt_flag_length_verified: u32 = 4;
+pub const entropy_receipt_flag_within_budget: u32 = 8;
+pub const entropy_receipt_flag_quiesced: u32 = 16;
+pub const entropy_receipt_flag_cancelled: u32 = 32;
+pub const entropy_receipt_flag_retained: u32 = 64;
+pub const entropy_receipt_flag_virtual: u32 = 128;
+pub const entropy_device_status_completed: u32 = 0;
+pub const entropy_device_status_unavailable: u32 = 1;
+pub const entropy_device_status_timeout: u32 = 2;
+pub const entropy_device_status_bad_completion: u32 = 3;
+pub const entropy_device_status_stopping: u32 = 4;
+pub const entropy_device_status_lost: u32 = 5;
+pub const entropy_device_status_retained: u32 = 6;
+pub const entropy_error_invalid: i32 = -1;
+pub const entropy_error_busy: i32 = -2;
+pub const entropy_error_unavailable: i32 = -3;
+pub const entropy_error_stale: i32 = -4;
+pub const entropy_error_timeout: i32 = -5;
+pub const entropy_error_context: i32 = -6;
+pub const entropy_error_device: i32 = -7;
+pub const entropy_error_cancelled: i32 = -8;
+pub const entropy_error_retained: i32 = -9;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -13267,13 +13305,14 @@ pub struct DriverResourceApi {
     pub acpi_read_at: u64,
     pub platform_query: u64,
     pub cpu_power_query: u64,
+    pub entropy_query: u64,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for DriverResourceApi {
     fn default() -> Self {
         Self {
             version: 1,
-            size: 64,
+            size: 72,
             stat: 0,
             read_at: 0,
             now_ns: 0,
@@ -13281,6 +13320,7 @@ impl Default for DriverResourceApi {
             acpi_read_at: 0,
             platform_query: 0,
             cpu_power_query: 0,
+            entropy_query: 0,
         }
     }
 }
@@ -19161,6 +19201,178 @@ impl Default for CpuAccelerationWork {
 
 pub type CpuPureWorkFn = unsafe extern "C" fn(u64, u32) -> i32;
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EntropySourceInfo {
+    pub version: u32,
+    pub size: u32,
+    pub state: u32,
+    pub flags: u32,
+    pub generation: u64,
+    pub owner_epoch: u64,
+    pub owner: u32,
+    pub module_generation: u32,
+    pub pci_address: u32,
+    pub vendor_id: u16,
+    pub device_id: u16,
+    pub max_request_bytes: u32,
+    pub last_result: i32,
+    pub requests: u64,
+    pub completed_requests: u64,
+    pub completed_bytes: u64,
+    pub dma_submitted: u64,
+    pub dma_completed: u64,
+    pub short_completions: u64,
+    pub failed_requests: u64,
+    pub last_device_flags: u32,
+    pub reserved0: u32,
+    pub reserved1: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for EntropySourceInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            state: 0,
+            flags: 0,
+            generation: 0,
+            owner_epoch: 0,
+            owner: 0,
+            module_generation: 0,
+            pci_address: 0,
+            vendor_id: 0,
+            device_id: 0,
+            max_request_bytes: 0,
+            last_result: 0,
+            requests: 0,
+            completed_requests: 0,
+            completed_bytes: 0,
+            dma_submitted: 0,
+            dma_completed: 0,
+            short_completions: 0,
+            failed_requests: 0,
+            last_device_flags: 0,
+            reserved0: 0,
+            reserved1: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EntropyDeviceReceipt {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub status: u32,
+    pub requested_bytes: u32,
+    pub completed_bytes: u32,
+    pub last_used_length: u32,
+    pub last_descriptor: u32,
+    pub dma_submitted: u64,
+    pub dma_completed: u64,
+    pub short_completions: u64,
+    pub begin_ns: u64,
+    pub end_ns: u64,
+    pub request_generation: u64,
+    pub available_index_before: u32,
+    pub available_index_after: u32,
+    pub used_index_before: u32,
+    pub used_index_after: u32,
+    pub device_status: u32,
+    pub pci_command: u32,
+    pub clock_generation: u32,
+    pub clock_source: u32,
+    pub reserved0: [u64; 2],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for EntropyDeviceReceipt {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            flags: 0,
+            status: 0,
+            requested_bytes: 0,
+            completed_bytes: 0,
+            last_used_length: 0,
+            last_descriptor: 0,
+            dma_submitted: 0,
+            dma_completed: 0,
+            short_completions: 0,
+            begin_ns: 0,
+            end_ns: 0,
+            request_generation: 0,
+            available_index_before: 0,
+            available_index_after: 0,
+            used_index_before: 0,
+            used_index_after: 0,
+            device_status: 0,
+            pci_command: 0,
+            clock_generation: 0,
+            clock_source: 0,
+            reserved0: [0; 2],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct EntropyBackend {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub max_request_bytes: u32,
+    pub context: u64,
+    pub pci_address: u32,
+    pub vendor_id: u16,
+    pub device_id: u16,
+    pub read: u64,
+    pub reserved0: [u64; 3],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for EntropyBackend {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            flags: 0,
+            max_request_bytes: 0,
+            context: 0,
+            pci_address: 0,
+            vendor_id: 0,
+            device_id: 0,
+            read: 0,
+            reserved0: [0; 3],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DriverEntropyApi {
+    pub version: u32,
+    pub size: u32,
+    pub register_backend: u64,
+    pub unregister_backend: u64,
+    pub reserved0: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DriverEntropyApi {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            register_backend: 0,
+            unregister_backend: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+pub type EntropyReadFn = unsafe extern "C" fn(u64, *mut u8, u32, *mut EntropyDeviceReceipt) -> i32;
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -19329,6 +19541,8 @@ pub mod R4SysFns {
     pub type thread_placement_get = unsafe extern "C" fn(*const ProgramJoinHandle, *mut ThreadPlacementInfo, *mut u64, u32) -> i32;
     pub type thread_placement_set = unsafe extern "C" fn(*const ProgramJoinHandle, *const ThreadPlacementRequest, *const u64, u32) -> i32;
     pub type system_power_transition = unsafe extern "C" fn(u32, u64) -> i32;
+    pub type entropy_source_info = unsafe extern "C" fn(*mut EntropySourceInfo) -> i32;
+    pub type entropy_fill = unsafe extern "C" fn(*mut u8, u32) -> i32;
 }
 
 #[repr(C)]
@@ -19497,14 +19711,16 @@ pub struct R4XStartR4Sys {
     pub thread_placement_get: usize,
     pub thread_placement_set: usize,
     pub system_power_transition: usize,
+    pub entropy_source_info: usize,
+    pub entropy_fill: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 27,
-            size: 1288,
+            abi_version: 28,
+            size: 1304,
             flags: 0,
             write: 0,
             putc: 0,
@@ -19665,6 +19881,8 @@ impl Default for R4XStartR4Sys {
             thread_placement_get: 0,
             thread_placement_set: 0,
             system_power_transition: 0,
+            entropy_source_info: 0,
+            entropy_fill: 0,
         }
     }
 }
@@ -23559,6 +23777,8 @@ pub struct ProtocolApi {
     pub file_read: unsafe extern "C" fn(*const u8, *mut u8, u32) -> i32,
     pub cpu_acceleration_info: Option<unsafe extern "C" fn(*mut CpuAccelerationInfo) -> i32>,
     pub cpu_acceleration_work: Option<unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32>,
+    pub entropy_source_info: Option<unsafe extern "C" fn(*mut EntropySourceInfo) -> i32>,
+    pub entropy_fill: Option<unsafe extern "C" fn(*mut u8, u32) -> i32>,
 }
 
 #[repr(C)]
@@ -28995,7 +29215,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverResourceApi, acpi_read_at) == 40);
     assert!(core::mem::offset_of!(DriverResourceApi, platform_query) == 48);
     assert!(core::mem::offset_of!(DriverResourceApi, cpu_power_query) == 56);
-    assert!(core::mem::size_of::<DriverResourceApi>() == 64);
+    assert!(core::mem::offset_of!(DriverResourceApi, entropy_query) == 64);
+    assert!(core::mem::size_of::<DriverResourceApi>() == 72);
     assert!(core::mem::align_of::<DriverResourceApi>() == 8);
     assert!(core::mem::offset_of!(DriverHeapAllocation, version) == 0);
     assert!(core::mem::offset_of!(DriverHeapAllocation, size) == 4);
@@ -31335,6 +31556,77 @@ const _: () = {
     assert!(core::mem::align_of::<CpuAccelerationWork>() == 8);
     assert!(core::mem::size_of::<CpuPureWorkFn>() == 8);
     assert!(core::mem::align_of::<CpuPureWorkFn>() == 8);
+    assert!(core::mem::offset_of!(EntropySourceInfo, version) == 0);
+    assert!(core::mem::offset_of!(EntropySourceInfo, size) == 4);
+    assert!(core::mem::offset_of!(EntropySourceInfo, state) == 8);
+    assert!(core::mem::offset_of!(EntropySourceInfo, flags) == 12);
+    assert!(core::mem::offset_of!(EntropySourceInfo, generation) == 16);
+    assert!(core::mem::offset_of!(EntropySourceInfo, owner_epoch) == 24);
+    assert!(core::mem::offset_of!(EntropySourceInfo, owner) == 32);
+    assert!(core::mem::offset_of!(EntropySourceInfo, module_generation) == 36);
+    assert!(core::mem::offset_of!(EntropySourceInfo, pci_address) == 40);
+    assert!(core::mem::offset_of!(EntropySourceInfo, vendor_id) == 44);
+    assert!(core::mem::offset_of!(EntropySourceInfo, device_id) == 46);
+    assert!(core::mem::offset_of!(EntropySourceInfo, max_request_bytes) == 48);
+    assert!(core::mem::offset_of!(EntropySourceInfo, last_result) == 52);
+    assert!(core::mem::offset_of!(EntropySourceInfo, requests) == 56);
+    assert!(core::mem::offset_of!(EntropySourceInfo, completed_requests) == 64);
+    assert!(core::mem::offset_of!(EntropySourceInfo, completed_bytes) == 72);
+    assert!(core::mem::offset_of!(EntropySourceInfo, dma_submitted) == 80);
+    assert!(core::mem::offset_of!(EntropySourceInfo, dma_completed) == 88);
+    assert!(core::mem::offset_of!(EntropySourceInfo, short_completions) == 96);
+    assert!(core::mem::offset_of!(EntropySourceInfo, failed_requests) == 104);
+    assert!(core::mem::offset_of!(EntropySourceInfo, last_device_flags) == 112);
+    assert!(core::mem::offset_of!(EntropySourceInfo, reserved0) == 116);
+    assert!(core::mem::offset_of!(EntropySourceInfo, reserved1) == 120);
+    assert!(core::mem::size_of::<EntropySourceInfo>() == 128);
+    assert!(core::mem::align_of::<EntropySourceInfo>() == 8);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, version) == 0);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, size) == 4);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, flags) == 8);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, status) == 12);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, requested_bytes) == 16);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, completed_bytes) == 20);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, last_used_length) == 24);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, last_descriptor) == 28);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, dma_submitted) == 32);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, dma_completed) == 40);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, short_completions) == 48);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, begin_ns) == 56);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, end_ns) == 64);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, request_generation) == 72);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, available_index_before) == 80);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, available_index_after) == 84);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, used_index_before) == 88);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, used_index_after) == 92);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, device_status) == 96);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, pci_command) == 100);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, clock_generation) == 104);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, clock_source) == 108);
+    assert!(core::mem::offset_of!(EntropyDeviceReceipt, reserved0) == 112);
+    assert!(core::mem::size_of::<EntropyDeviceReceipt>() == 128);
+    assert!(core::mem::align_of::<EntropyDeviceReceipt>() == 8);
+    assert!(core::mem::offset_of!(EntropyBackend, version) == 0);
+    assert!(core::mem::offset_of!(EntropyBackend, size) == 4);
+    assert!(core::mem::offset_of!(EntropyBackend, flags) == 8);
+    assert!(core::mem::offset_of!(EntropyBackend, max_request_bytes) == 12);
+    assert!(core::mem::offset_of!(EntropyBackend, context) == 16);
+    assert!(core::mem::offset_of!(EntropyBackend, pci_address) == 24);
+    assert!(core::mem::offset_of!(EntropyBackend, vendor_id) == 28);
+    assert!(core::mem::offset_of!(EntropyBackend, device_id) == 30);
+    assert!(core::mem::offset_of!(EntropyBackend, read) == 32);
+    assert!(core::mem::offset_of!(EntropyBackend, reserved0) == 40);
+    assert!(core::mem::size_of::<EntropyBackend>() == 64);
+    assert!(core::mem::align_of::<EntropyBackend>() == 8);
+    assert!(core::mem::offset_of!(DriverEntropyApi, version) == 0);
+    assert!(core::mem::offset_of!(DriverEntropyApi, size) == 4);
+    assert!(core::mem::offset_of!(DriverEntropyApi, register_backend) == 8);
+    assert!(core::mem::offset_of!(DriverEntropyApi, unregister_backend) == 16);
+    assert!(core::mem::offset_of!(DriverEntropyApi, reserved0) == 24);
+    assert!(core::mem::size_of::<DriverEntropyApi>() == 32);
+    assert!(core::mem::align_of::<DriverEntropyApi>() == 8);
+    assert!(core::mem::size_of::<EntropyReadFn>() == 8);
+    assert!(core::mem::align_of::<EntropyReadFn>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31500,7 +31792,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, thread_placement_get) == 1264);
     assert!(core::mem::offset_of!(R4XStartR4Sys, thread_placement_set) == 1272);
     assert!(core::mem::offset_of!(R4XStartR4Sys, system_power_transition) == 1280);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1288);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, entropy_source_info) == 1288);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, entropy_fill) == 1296);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1304);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);
@@ -33022,7 +33316,9 @@ const _: () = {
     assert!(core::mem::offset_of!(ProtocolApi, file_read) == 80);
     assert!(core::mem::offset_of!(ProtocolApi, cpu_acceleration_info) == 88);
     assert!(core::mem::offset_of!(ProtocolApi, cpu_acceleration_work) == 96);
-    assert!(core::mem::size_of::<ProtocolApi>() == 104);
+    assert!(core::mem::offset_of!(ProtocolApi, entropy_source_info) == 104);
+    assert!(core::mem::offset_of!(ProtocolApi, entropy_fill) == 112);
+    assert!(core::mem::size_of::<ProtocolApi>() == 120);
     assert!(core::mem::align_of::<ProtocolApi>() == 8);
     assert!(core::mem::offset_of!(DmaBuffer, phys_addr) == 0);
     assert!(core::mem::offset_of!(DmaBuffer, virt_addr) == 8);

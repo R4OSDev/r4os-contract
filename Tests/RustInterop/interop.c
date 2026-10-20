@@ -26,3 +26,19 @@ int32_t r4os_c_pmu_work(uint64_t context, uint32_t iterations) {
 int32_t r4os_c_pure_work(uint64_t context, uint32_t iterations) {
     return context == UINT64_C(0x8123456789abcdef) && iterations == 64 ? -30015 : -1;
 }
+
+/* Integer/pointer transport fixture, not a device or random-value test. */
+int32_t r4os_c_entropy_read(uint64_t context, uint8_t *data, uint32_t bytes, R4EntropyDeviceReceipt *out) {
+    if (context != UINT64_C(0xfedcba9876543210) || bytes != 17) return -1;
+    static const uint8_t marker[17] = "entropy-fixture!!";
+    for (uint32_t i = 0; i < bytes; ++i) data[i] = marker[i];
+    R4EntropyDeviceReceipt value = {0};
+    value.version = 1; value.size = sizeof(value);
+    value.requested_bytes = bytes; value.completed_bytes = bytes;
+    value.status = R4OS_ENTROPY_DEVICE_STATUS_BAD_COMPLETION;
+    value.flags = R4OS_ENTROPY_RECEIPT_FLAG_RETAINED;
+    value.request_generation = context;
+    value.available_index_before = 65534; value.available_index_after = 3;
+    *out = value;
+    return -30027;
+}

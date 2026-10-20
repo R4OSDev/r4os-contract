@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 474,
-    "group_slot_count": 474,
+    "function_count": 476,
+    "group_slot_count": 476,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 135
+    "advanced_count": 137
   },
   "functions": [
     {
@@ -1879,6 +1879,30 @@
       "slot": 158,
       "exposure": "advanced",
       "description": "Explicit bounded blocking orderly system transition: power_transition_action_halt/reboot/poweroff. Closes new CPU control ownership and pins current CPU membership before cooperative POWERSVC stop and real same-CPU request return. No Runtime owner over waits. Refusal returns a negative power_transition_error_* and retains real resources without stopping APs; CPU ownership reopens. Accepted transition becomes terminal and does not return. Missing/disabled provider stays functional. Existing nonblocking raw system_halt/reboot/poweroff slots retain their signatures/meanings; with held requests they refuse immediately rather than waiting or falsely acknowledging return. Profiles/parameter policy stay external. timeout_ticks is an explicit wait budget, clamped to5 seconds;0 requests only a bounded poll. Timeout/refusal may follow an already requested cooperative service stop; query status rather than automatic retry. The immediate legacy slots never perform this new service wait.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.entropy_source_info",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 159,
+      "exposure": "advanced",
+      "description": "Purely cached registered-device source observation. Original source/driver epoch and module generation retained after close. No callback/device/CPU instruction, I/O or entropy consumption.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.entropy_fill",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 160,
+      "exposure": "advanced",
+      "description": "Explicit bounded registered-device source read,1..4096bytes. Ordinary task with IF on, exact task admission through output, exact driver instance/lifecycle lease through resident callback/staging, no Runtime owner over wait. Release driver owner before potentially paged caller copy. Positive exact count only with confirmed full receipt; failure discards/clears valid caller range, never initial/partial entropy. No RNG pool or clock/ID substitute; SDK owns RDRAND-first/source choice.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

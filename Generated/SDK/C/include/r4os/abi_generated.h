@@ -2664,6 +2664,44 @@ extern "C" {
 #define R4OS_CPU_ACCEL_WORK_STATUS_OVER_BUDGET 5u
 #define R4OS_CPU_ACCEL_MAX_ITERATIONS 64u
 #define R4OS_CPU_ACCEL_MAX_WINDOW_NS 2000000ull
+#define R4OS_CPU_ACCEL_FEATURE_RDRAND 64u
+#define R4OS_CPU_ACCEL_WORK_KIND_RDRAND 2u
+#define R4OS_ENTROPY_MAX_REQUEST_BYTES 4096u
+#define R4OS_ENTROPY_MAX_WINDOW_NS 250000000ull
+#define R4OS_ENTROPY_STATE_UNAVAILABLE 0u
+#define R4OS_ENTROPY_STATE_READY 1u
+#define R4OS_ENTROPY_STATE_CLOSED 2u
+#define R4OS_ENTROPY_STATE_RETAINED 3u
+#define R4OS_ENTROPY_STATE_REMOVED 4u
+#define R4OS_ENTROPY_SOURCE_FLAG_REGISTERED 1u
+#define R4OS_ENTROPY_SOURCE_FLAG_VIRTUAL 2u
+#define R4OS_ENTROPY_SOURCE_FLAG_DEVICE 4u
+#define R4OS_ENTROPY_SOURCE_FLAG_VERIFIED_RECEIPT 8u
+#define R4OS_ENTROPY_SOURCE_FLAG_QUIESCED 16u
+#define R4OS_ENTROPY_RECEIPT_FLAG_STARTED 1u
+#define R4OS_ENTROPY_RECEIPT_FLAG_USED 2u
+#define R4OS_ENTROPY_RECEIPT_FLAG_LENGTH_VERIFIED 4u
+#define R4OS_ENTROPY_RECEIPT_FLAG_WITHIN_BUDGET 8u
+#define R4OS_ENTROPY_RECEIPT_FLAG_QUIESCED 16u
+#define R4OS_ENTROPY_RECEIPT_FLAG_CANCELLED 32u
+#define R4OS_ENTROPY_RECEIPT_FLAG_RETAINED 64u
+#define R4OS_ENTROPY_RECEIPT_FLAG_VIRTUAL 128u
+#define R4OS_ENTROPY_DEVICE_STATUS_COMPLETED 0u
+#define R4OS_ENTROPY_DEVICE_STATUS_UNAVAILABLE 1u
+#define R4OS_ENTROPY_DEVICE_STATUS_TIMEOUT 2u
+#define R4OS_ENTROPY_DEVICE_STATUS_BAD_COMPLETION 3u
+#define R4OS_ENTROPY_DEVICE_STATUS_STOPPING 4u
+#define R4OS_ENTROPY_DEVICE_STATUS_LOST 5u
+#define R4OS_ENTROPY_DEVICE_STATUS_RETAINED 6u
+#define R4OS_ENTROPY_ERROR_INVALID ((int32_t)-1)
+#define R4OS_ENTROPY_ERROR_BUSY ((int32_t)-2)
+#define R4OS_ENTROPY_ERROR_UNAVAILABLE ((int32_t)-3)
+#define R4OS_ENTROPY_ERROR_STALE ((int32_t)-4)
+#define R4OS_ENTROPY_ERROR_TIMEOUT ((int32_t)-5)
+#define R4OS_ENTROPY_ERROR_CONTEXT ((int32_t)-6)
+#define R4OS_ENTROPY_ERROR_DEVICE ((int32_t)-7)
+#define R4OS_ENTROPY_ERROR_CANCELLED ((int32_t)-8)
+#define R4OS_ENTROPY_ERROR_RETAINED ((int32_t)-9)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3482,6 +3520,10 @@ typedef struct R4CpuPmuInfo R4CpuPmuInfo;
 typedef struct R4CpuPmuResult R4CpuPmuResult;
 typedef struct R4CpuAccelerationInfo R4CpuAccelerationInfo;
 typedef struct R4CpuAccelerationWork R4CpuAccelerationWork;
+typedef struct R4EntropySourceInfo R4EntropySourceInfo;
+typedef struct R4EntropyDeviceReceipt R4EntropyDeviceReceipt;
+typedef struct R4EntropyBackend R4EntropyBackend;
+typedef struct R4DriverEntropyApi R4DriverEntropyApi;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -3494,6 +3536,8 @@ typedef int32_t (*R4AudioOutputActiveFn)(uint64_t context);
 typedef int32_t (*R4PmuWorkFn)(uint64_t context, uint32_t iterations);
 
 typedef int32_t (*R4CpuPureWorkFn)(uint64_t context, uint32_t iterations);
+
+typedef int32_t (*R4EntropyReadFn)(uint64_t context, uint8_t * data, uint32_t bytes, R4EntropyDeviceReceipt * receipt);
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -7955,6 +7999,7 @@ typedef struct R4DriverResourceApi {
     uint64_t acpi_read_at;
     uint64_t platform_query;
     uint64_t cpu_power_query;
+    uint64_t entropy_query;
 } R4DriverResourceApi;
 
 typedef struct R4DriverHeapAllocation {
@@ -10411,6 +10456,79 @@ typedef struct R4CpuAccelerationWork {
     uint64_t reserved0[3];
 } R4CpuAccelerationWork;
 
+typedef struct R4EntropySourceInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t state;
+    uint32_t flags;
+    uint64_t generation;
+    uint64_t owner_epoch;
+    uint32_t owner;
+    uint32_t module_generation;
+    uint32_t pci_address;
+    uint16_t vendor_id;
+    uint16_t device_id;
+    uint32_t max_request_bytes;
+    int32_t last_result;
+    uint64_t requests;
+    uint64_t completed_requests;
+    uint64_t completed_bytes;
+    uint64_t dma_submitted;
+    uint64_t dma_completed;
+    uint64_t short_completions;
+    uint64_t failed_requests;
+    uint32_t last_device_flags;
+    uint32_t reserved0;
+    uint64_t reserved1;
+} R4EntropySourceInfo;
+
+typedef struct R4EntropyDeviceReceipt {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t status;
+    uint32_t requested_bytes;
+    uint32_t completed_bytes;
+    uint32_t last_used_length;
+    uint32_t last_descriptor;
+    uint64_t dma_submitted;
+    uint64_t dma_completed;
+    uint64_t short_completions;
+    uint64_t begin_ns;
+    uint64_t end_ns;
+    uint64_t request_generation;
+    uint32_t available_index_before;
+    uint32_t available_index_after;
+    uint32_t used_index_before;
+    uint32_t used_index_after;
+    uint32_t device_status;
+    uint32_t pci_command;
+    uint32_t clock_generation;
+    uint32_t clock_source;
+    uint64_t reserved0[2];
+} R4EntropyDeviceReceipt;
+
+typedef struct R4EntropyBackend {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t max_request_bytes;
+    uint64_t context;
+    uint32_t pci_address;
+    uint16_t vendor_id;
+    uint16_t device_id;
+    uint64_t read;
+    uint64_t reserved0[3];
+} R4EntropyBackend;
+
+typedef struct R4DriverEntropyApi {
+    uint32_t version;
+    uint32_t size;
+    uint64_t register_backend;
+    uint64_t unregister_backend;
+    uint64_t reserved0;
+} R4DriverEntropyApi;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10613,6 +10731,8 @@ typedef int32_t (*R4SysDirectoryNextFn)(const uint8_t * arg0, R4DirectoryScanCur
 typedef int32_t (*R4SysThreadPlacementGetFn)(const R4ProgramJoinHandle * handle, R4ThreadPlacementInfo * info, uint64_t * cpus, uint32_t word_capacity);
 typedef int32_t (*R4SysThreadPlacementSetFn)(const R4ProgramJoinHandle * handle, const R4ThreadPlacementRequest * request, const uint64_t * cpus, uint32_t word_count);
 typedef int32_t (*R4SysSystemPowerTransitionFn)(uint32_t action, uint64_t timeout_ticks);
+typedef int32_t (*R4SysEntropySourceInfoFn)(R4EntropySourceInfo * out);
+typedef int32_t (*R4SysEntropyFillFn)(uint8_t * out, uint32_t bytes);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -10778,6 +10898,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t thread_placement_get;
     uintptr_t thread_placement_set;
     uintptr_t system_power_transition;
+    uintptr_t entropy_source_info;
+    uintptr_t entropy_fill;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -15514,7 +15636,7 @@ _Static_assert(offsetof(R4DriverFirmwareTableInfo, signature) == 32u, "DriverFir
 _Static_assert(offsetof(R4DriverFirmwareTableInfo, revision) == 36u, "DriverFirmwareTableInfo.revision offset mismatch");
 _Static_assert(offsetof(R4DriverFirmwareTableInfo, flags) == 40u, "DriverFirmwareTableInfo.flags offset mismatch");
 _Static_assert(offsetof(R4DriverFirmwareTableInfo, reserved) == 44u, "DriverFirmwareTableInfo.reserved offset mismatch");
-_Static_assert(sizeof(R4DriverResourceApi) == 64u, "DriverResourceApi size mismatch");
+_Static_assert(sizeof(R4DriverResourceApi) == 72u, "DriverResourceApi size mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, version) == 0u, "DriverResourceApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, size) == 4u, "DriverResourceApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, stat) == 8u, "DriverResourceApi.stat offset mismatch");
@@ -15524,6 +15646,7 @@ _Static_assert(offsetof(R4DriverResourceApi, acpi_stat) == 32u, "DriverResourceA
 _Static_assert(offsetof(R4DriverResourceApi, acpi_read_at) == 40u, "DriverResourceApi.acpi_read_at offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, platform_query) == 48u, "DriverResourceApi.platform_query offset mismatch");
 _Static_assert(offsetof(R4DriverResourceApi, cpu_power_query) == 56u, "DriverResourceApi.cpu_power_query offset mismatch");
+_Static_assert(offsetof(R4DriverResourceApi, entropy_query) == 64u, "DriverResourceApi.entropy_query offset mismatch");
 _Static_assert(sizeof(R4DriverHeapAllocation) == 40u, "DriverHeapAllocation size mismatch");
 _Static_assert(offsetof(R4DriverHeapAllocation, version) == 0u, "DriverHeapAllocation.version offset mismatch");
 _Static_assert(offsetof(R4DriverHeapAllocation, size) == 4u, "DriverHeapAllocation.size offset mismatch");
@@ -17706,7 +17829,72 @@ _Static_assert(offsetof(R4CpuAccelerationWork, xcr0) == 88u, "CpuAccelerationWor
 _Static_assert(offsetof(R4CpuAccelerationWork, clock_source) == 96u, "CpuAccelerationWork.clock_source offset mismatch");
 _Static_assert(offsetof(R4CpuAccelerationWork, clock_generation) == 100u, "CpuAccelerationWork.clock_generation offset mismatch");
 _Static_assert(offsetof(R4CpuAccelerationWork, reserved0) == 104u, "CpuAccelerationWork.reserved0 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1288u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4EntropySourceInfo) == 128u, "EntropySourceInfo size mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, version) == 0u, "EntropySourceInfo.version offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, size) == 4u, "EntropySourceInfo.size offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, state) == 8u, "EntropySourceInfo.state offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, flags) == 12u, "EntropySourceInfo.flags offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, generation) == 16u, "EntropySourceInfo.generation offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, owner_epoch) == 24u, "EntropySourceInfo.owner_epoch offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, owner) == 32u, "EntropySourceInfo.owner offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, module_generation) == 36u, "EntropySourceInfo.module_generation offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, pci_address) == 40u, "EntropySourceInfo.pci_address offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, vendor_id) == 44u, "EntropySourceInfo.vendor_id offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, device_id) == 46u, "EntropySourceInfo.device_id offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, max_request_bytes) == 48u, "EntropySourceInfo.max_request_bytes offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, last_result) == 52u, "EntropySourceInfo.last_result offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, requests) == 56u, "EntropySourceInfo.requests offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, completed_requests) == 64u, "EntropySourceInfo.completed_requests offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, completed_bytes) == 72u, "EntropySourceInfo.completed_bytes offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, dma_submitted) == 80u, "EntropySourceInfo.dma_submitted offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, dma_completed) == 88u, "EntropySourceInfo.dma_completed offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, short_completions) == 96u, "EntropySourceInfo.short_completions offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, failed_requests) == 104u, "EntropySourceInfo.failed_requests offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, last_device_flags) == 112u, "EntropySourceInfo.last_device_flags offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, reserved0) == 116u, "EntropySourceInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4EntropySourceInfo, reserved1) == 120u, "EntropySourceInfo.reserved1 offset mismatch");
+_Static_assert(sizeof(R4EntropyDeviceReceipt) == 128u, "EntropyDeviceReceipt size mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, version) == 0u, "EntropyDeviceReceipt.version offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, size) == 4u, "EntropyDeviceReceipt.size offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, flags) == 8u, "EntropyDeviceReceipt.flags offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, status) == 12u, "EntropyDeviceReceipt.status offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, requested_bytes) == 16u, "EntropyDeviceReceipt.requested_bytes offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, completed_bytes) == 20u, "EntropyDeviceReceipt.completed_bytes offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, last_used_length) == 24u, "EntropyDeviceReceipt.last_used_length offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, last_descriptor) == 28u, "EntropyDeviceReceipt.last_descriptor offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, dma_submitted) == 32u, "EntropyDeviceReceipt.dma_submitted offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, dma_completed) == 40u, "EntropyDeviceReceipt.dma_completed offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, short_completions) == 48u, "EntropyDeviceReceipt.short_completions offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, begin_ns) == 56u, "EntropyDeviceReceipt.begin_ns offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, end_ns) == 64u, "EntropyDeviceReceipt.end_ns offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, request_generation) == 72u, "EntropyDeviceReceipt.request_generation offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, available_index_before) == 80u, "EntropyDeviceReceipt.available_index_before offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, available_index_after) == 84u, "EntropyDeviceReceipt.available_index_after offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, used_index_before) == 88u, "EntropyDeviceReceipt.used_index_before offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, used_index_after) == 92u, "EntropyDeviceReceipt.used_index_after offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, device_status) == 96u, "EntropyDeviceReceipt.device_status offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, pci_command) == 100u, "EntropyDeviceReceipt.pci_command offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, clock_generation) == 104u, "EntropyDeviceReceipt.clock_generation offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, clock_source) == 108u, "EntropyDeviceReceipt.clock_source offset mismatch");
+_Static_assert(offsetof(R4EntropyDeviceReceipt, reserved0) == 112u, "EntropyDeviceReceipt.reserved0 offset mismatch");
+_Static_assert(sizeof(R4EntropyBackend) == 64u, "EntropyBackend size mismatch");
+_Static_assert(offsetof(R4EntropyBackend, version) == 0u, "EntropyBackend.version offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, size) == 4u, "EntropyBackend.size offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, flags) == 8u, "EntropyBackend.flags offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, max_request_bytes) == 12u, "EntropyBackend.max_request_bytes offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, context) == 16u, "EntropyBackend.context offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, pci_address) == 24u, "EntropyBackend.pci_address offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, vendor_id) == 28u, "EntropyBackend.vendor_id offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, device_id) == 30u, "EntropyBackend.device_id offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, read) == 32u, "EntropyBackend.read offset mismatch");
+_Static_assert(offsetof(R4EntropyBackend, reserved0) == 40u, "EntropyBackend.reserved0 offset mismatch");
+_Static_assert(sizeof(R4DriverEntropyApi) == 32u, "DriverEntropyApi size mismatch");
+_Static_assert(offsetof(R4DriverEntropyApi, version) == 0u, "DriverEntropyApi.version offset mismatch");
+_Static_assert(offsetof(R4DriverEntropyApi, size) == 4u, "DriverEntropyApi.size offset mismatch");
+_Static_assert(offsetof(R4DriverEntropyApi, register_backend) == 8u, "DriverEntropyApi.register_backend offset mismatch");
+_Static_assert(offsetof(R4DriverEntropyApi, unregister_backend) == 16u, "DriverEntropyApi.unregister_backend offset mismatch");
+_Static_assert(offsetof(R4DriverEntropyApi, reserved0) == 24u, "DriverEntropyApi.reserved0 offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1304u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -18022,6 +18210,10 @@ _Static_assert(offsetof(R4XStartR4Sys, thread_placement_set) == 1272u, "R4XStart
 _Static_assert(sizeof(R4SysThreadPlacementSetFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, system_power_transition) == 1280u, "R4XStartR4Sys.system_power_transition offset mismatch");
 _Static_assert(sizeof(R4SysSystemPowerTransitionFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, entropy_source_info) == 1288u, "R4XStartR4Sys.entropy_source_info offset mismatch");
+_Static_assert(sizeof(R4SysEntropySourceInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, entropy_fill) == 1296u, "R4XStartR4Sys.entropy_fill offset mismatch");
+_Static_assert(sizeof(R4SysEntropyFillFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

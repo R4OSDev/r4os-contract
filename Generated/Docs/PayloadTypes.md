@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 361 von 361 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 366 von 366 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2651; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2689; Limits: 111
 
 ## App-Profile
 
@@ -227,7 +227,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GfxDriverDisplayApi` | extensible | extern_struct | 152/8 | 152/8 | 152/8 | 152/8 |
 | `DriverResourceInfo` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DriverFirmwareTableInfo` | extensible | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
-| `DriverResourceApi` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `DriverResourceApi` | extensible | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `DriverHeapAllocation` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `DriverHeapStats` | extensible | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
 | `DriverHeapApi` | extensible | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
@@ -382,6 +382,11 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuAccelerationInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuAccelerationWork` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuPureWorkFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
+| `EntropySourceInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `EntropyDeviceReceipt` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `EntropyBackend` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
+| `DriverEntropyApi` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `EntropyReadFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 
 ## Typdetails
 
@@ -6250,7 +6255,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 3 / 64 / 8
+- Version/Größe/Alignment: 3 / 72 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -6263,6 +6268,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `acpi_read_at` | 40 | 8 | 8 | `u64` | - |
 | `platform_query` | 48 | 8 | 8 | `u64` | - |
 | `cpu_power_query` | 56 | 8 | 8 | `u64` | - |
+| `entropy_query` | 64 | 8 | 8 | `u64` | - |
 
 ### `DriverHeapAllocation`
 
@@ -9828,6 +9834,114 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Repräsentation: `c_callback`
 - Version/Größe/Alignment: 1 / 8 / 8
 
+### `EntropySourceInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `state` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `owner_epoch` | 24 | 8 | 8 | `u64` | - |
+| `owner` | 32 | 4 | 4 | `u32` | - |
+| `module_generation` | 36 | 4 | 4 | `u32` | - |
+| `pci_address` | 40 | 4 | 4 | `u32` | - |
+| `vendor_id` | 44 | 2 | 2 | `u16` | - |
+| `device_id` | 46 | 2 | 2 | `u16` | - |
+| `max_request_bytes` | 48 | 4 | 4 | `u32` | - |
+| `last_result` | 52 | 4 | 4 | `i32` | - |
+| `requests` | 56 | 8 | 8 | `u64` | - |
+| `completed_requests` | 64 | 8 | 8 | `u64` | - |
+| `completed_bytes` | 72 | 8 | 8 | `u64` | - |
+| `dma_submitted` | 80 | 8 | 8 | `u64` | - |
+| `dma_completed` | 88 | 8 | 8 | `u64` | - |
+| `short_completions` | 96 | 8 | 8 | `u64` | - |
+| `failed_requests` | 104 | 8 | 8 | `u64` | - |
+| `last_device_flags` | 112 | 4 | 4 | `u32` | - |
+| `reserved0` | 116 | 4 | 4 | `u32` | - |
+| `reserved1` | 120 | 8 | 8 | `u64` | - |
+
+### `EntropyDeviceReceipt`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `status` | 12 | 4 | 4 | `u32` | - |
+| `requested_bytes` | 16 | 4 | 4 | `u32` | - |
+| `completed_bytes` | 20 | 4 | 4 | `u32` | - |
+| `last_used_length` | 24 | 4 | 4 | `u32` | - |
+| `last_descriptor` | 28 | 4 | 4 | `u32` | - |
+| `dma_submitted` | 32 | 8 | 8 | `u64` | - |
+| `dma_completed` | 40 | 8 | 8 | `u64` | - |
+| `short_completions` | 48 | 8 | 8 | `u64` | - |
+| `begin_ns` | 56 | 8 | 8 | `u64` | - |
+| `end_ns` | 64 | 8 | 8 | `u64` | - |
+| `request_generation` | 72 | 8 | 8 | `u64` | - |
+| `available_index_before` | 80 | 4 | 4 | `u32` | - |
+| `available_index_after` | 84 | 4 | 4 | `u32` | - |
+| `used_index_before` | 88 | 4 | 4 | `u32` | - |
+| `used_index_after` | 92 | 4 | 4 | `u32` | - |
+| `device_status` | 96 | 4 | 4 | `u32` | - |
+| `pci_command` | 100 | 4 | 4 | `u32` | - |
+| `clock_generation` | 104 | 4 | 4 | `u32` | - |
+| `clock_source` | 108 | 4 | 4 | `u32` | - |
+| `reserved0` | 112 | 16 | 8 | `[2]u64` | - |
+
+### `EntropyBackend`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `max_request_bytes` | 12 | 4 | 4 | `u32` | - |
+| `context` | 16 | 8 | 8 | `u64` | - |
+| `pci_address` | 24 | 4 | 4 | `u32` | - |
+| `vendor_id` | 28 | 2 | 2 | `u16` | - |
+| `device_id` | 30 | 2 | 2 | `u16` | - |
+| `read` | 32 | 8 | 8 | `u64` | - |
+| `reserved0` | 40 | 24 | 8 | `[3]u64` | - |
+
+### `DriverEntropyApi`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `register_backend` | 8 | 8 | 8 | `u64` | - |
+| `unregister_backend` | 16 | 8 | 8 | `u64` | - |
+| `reserved0` | 24 | 8 | 8 | `u64` | - |
+
+### `EntropyReadFn`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `callback`
+- Repräsentation: `c_callback`
+- Version/Größe/Alignment: 1 / 8 / 8
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13240,6 +13354,44 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_accel_work_status_over_budget` | `5` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
 | `cpu_accel_max_iterations` | `64` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
 | `cpu_accel_max_window_ns` | `2000000` | `u64` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_feature_rdrand` | `64` | `u32` | value | number | `entropy` | fixed_contract |
+| `cpu_accel_work_kind_rdrand` | `2` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_max_request_bytes` | `4096` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_max_window_ns` | `250000000` | `u64` | value | number | `entropy` | fixed_contract |
+| `entropy_state_unavailable` | `0` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_state_ready` | `1` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_state_closed` | `2` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_state_retained` | `3` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_state_removed` | `4` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_source_flag_registered` | `1` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_source_flag_virtual` | `2` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_source_flag_device` | `4` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_source_flag_verified_receipt` | `8` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_source_flag_quiesced` | `16` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_started` | `1` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_used` | `2` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_length_verified` | `4` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_within_budget` | `8` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_quiesced` | `16` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_cancelled` | `32` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_retained` | `64` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_receipt_flag_virtual` | `128` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_device_status_completed` | `0` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_device_status_unavailable` | `1` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_device_status_timeout` | `2` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_device_status_bad_completion` | `3` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_device_status_stopping` | `4` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_device_status_lost` | `5` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_device_status_retained` | `6` | `u32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_invalid` | `-1` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_busy` | `-2` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_unavailable` | `-3` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_stale` | `-4` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_timeout` | `-5` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_context` | `-6` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_device` | `-7` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_cancelled` | `-8` | `i32` | value | number | `entropy` | fixed_contract |
+| `entropy_error_retained` | `-9` | `i32` | value | number | `entropy` | fixed_contract |
 
 ## Limits
 

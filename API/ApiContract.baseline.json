@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 27,
+      "abi_version": 28,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1288,
+      "size": 1304,
       "slots": [
         {
           "number": 0,
@@ -12664,6 +12664,131 @@
             "shutdown": "none",
             "close_rule": "none",
             "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 159,
+          "offset": 1288,
+          "name": "entropy_source_info",
+          "state": "function",
+          "required": false,
+          "description": "Purely cached registered-device source observation. Original source/driver epoch and module generation retained after close. No callback/device/CPU instruction, I/O or entropy consumption.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "EntropySourceInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "system",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 160,
+          "offset": 1296,
+          "name": "entropy_fill",
+          "state": "function",
+          "required": false,
+          "description": "Explicit bounded registered-device source read,1..4096bytes. Ordinary task with IF on, exact task admission through output, exact driver instance/lifecycle lease through resident callback/staging, no Runtime owner over wait. Release driver owner before potentially paged caller copy. Positive exact count only with confirmed full receipt; failure discards/clears valid caller range, never initial/partial entropy. No RNG pool or clock/ID substitute; SDK owns RDRAND-first/source choice.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "bytes",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "bytes",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "system",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "none",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "serialized",
+            "callback_context": "caller_thread",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "valid_on_documented_error",
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
             "buffer_too_small": "none",
@@ -91671,7 +91796,7 @@
       "classification": "extensible",
       "representation": "extern_struct",
       "version": 3,
-      "size": 64,
+      "size": 72,
       "alignment": 8,
       "source_layout": "extern",
       "size_field": "size",
@@ -91702,7 +91827,7 @@
           "alignment": 4,
           "source_type": "u32",
           "default_kind": "integer",
-          "default_value": "64"
+          "default_value": "72"
         },
         {
           "name": "stat",
@@ -91801,10 +91926,24 @@
           "source_type": "u64",
           "default_kind": "integer",
           "default_value": "0"
+        },
+        {
+          "name": "entropy_query",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional i32(*DriverEntropyApi). Negotiate complete72-byte resource prefix and nonzero query slot. External device source registration; no RNG policy or direct caller entropy read in DriverApi.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
         }
       ],
       "values": [],
-      "description": "Optional DriverApi v29. Stat/read authenticate init/task and driver-work owners; IRQ and storage callbacks are rejected. now_ns is a read-only clock. Per-call owner serialization and filesystem mount-generation admission, with no long-lived mount lease. Handles do not promise immutable storage: firmware consumers must verify pinned size/hash/ABI before use. Reads may modify a partial output on failure; discard it. Absolute nanosecond deadlines are checked before and after synchronous I/O; buffer reuse occurs only after I/O returns safely, so hardware cleanup can exceed the deadline. The optional 48-byte ACPI tail preserves every field in the original 32-byte prefix and outer DriverApi v29 query slot. It exposes read-only boot root tables independently from loaded module file resources. Consumers negotiate both callbacks before using ACPI. Root discovery failure or capacity exhaustion never appears as an empty catalog; corrupt and missing tables are distinct. The56-byte tail adds a separately negotiated DriverPlatformApi for external ACPI/EC execution; the copied boot-table operations retain their existing read-only semantics. The optional64byte resource tail adds a separately negotiated DriverCpuPowerApi for external passive CPU readback ownership. The original56byte prefix and all earlier callbacks retain their meanings; wire header version remains1."
+      "description": "Optional DriverApi v29. Stat/read authenticate init/task and driver-work owners; IRQ and storage callbacks are rejected. now_ns is a read-only clock. Per-call owner serialization and filesystem mount-generation admission, with no long-lived mount lease. Handles do not promise immutable storage: firmware consumers must verify pinned size/hash/ABI before use. Reads may modify a partial output on failure; discard it. Absolute nanosecond deadlines are checked before and after synchronous I/O; buffer reuse occurs only after I/O returns safely, so hardware cleanup can exceed the deadline. The optional 48-byte ACPI tail preserves every field in the original 32-byte prefix and outer DriverApi v29 query slot. It exposes read-only boot root tables independently from loaded module file resources. Consumers negotiate both callbacks before using ACPI. Root discovery failure or capacity exhaustion never appears as an empty catalog; corrupt and missing tables are distinct. The56-byte tail adds a separately negotiated DriverPlatformApi for external ACPI/EC execution; the copied boot-table operations retain their existing read-only semantics. The optional64byte resource tail adds a separately negotiated DriverCpuPowerApi for external passive CPU readback ownership. The original56byte prefix and all earlier callbacks retain their meanings; wire header version remains1. The optional72byte tail negotiates DriverEntropyApi; all original32/48/56/64byte prefixes and outer DriverApi37 remain supported, header version1 unchanged."
     },
     {
       "name": "DriverHeapAllocation",
@@ -122296,7 +122435,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Named baseline0 or sha2561 only; no arbitrary mask or register programming.",
+          "description": "Named baseline0, sha2561 or rdrand2 only; no arbitrary mask or register programming.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -122513,6 +122652,992 @@
         }
       },
       "description": "Trusted pure bounded resident work;1..64iterations on exact qualified local CPU with IF0. Code/data and sufficient taskstack resident before entry; no allocation, fault, wait, yield, API or placement change. Optional SHA must never execute even for warmup before its local grant. Callback kind promises only its named optional ISA beyond the common AVX2 baseline.0 success, nonzero abort. No Runtime owner across it; not a sandbox or forced interruption promise. ABI borrows a nullable pointer to one typed slot, never optional-by-value function."
+    },
+    {
+      "name": "EntropySourceInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized caller capacity. Failed metadata copy and excess tails remain unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "state",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Broker admission state, not continuous hardware health.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Independent source flags; absent fields are not entropy quality or fresh hardware proof.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Non-reused source registration identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_epoch",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original exact R4D resource instance epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original R4D owner.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "module_generation",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original exact loaded module generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pci_address",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Opaque BDF: bus<<16|device<<8|function; zero is not absence.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vendor_id",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Registered source device vendor.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_id",
+          "offset": 46,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Registered source PCI device.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_request_bytes",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bounded whole-source request limit, at most4096.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_result",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Last source call status; zero alone does not prove a fresh read.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "requests",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Explicit attempted registered-device reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed_requests",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Whole completed source reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed_bytes",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bytes accepted from confirmed full reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dma_submitted",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Recorded submitted device descriptors.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dma_completed",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Recorded real used descriptors.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "short_completions",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Recorded short device completions, never unfilled output.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "failed_requests",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Source requests not accepted.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_device_flags",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Flags of the last copied device receipt.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 116,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Passive cached registered-device source metadata. One generic device source, no entropy pool, mixing, timing/ID fallback or quality estimate. Exact source/driver epoch and module generation survive close/removal; state distinguishes unavailable/ready/closed/retained/removed. Counters are device provenance, not random-value statistics. RDRAND availability belongs to the independent CPU catalogue/window."
+    },
+    {
+      "name": "EntropyDeviceReceipt",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized caller capacity. Failed metadata copy and excess tails remain unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Independent completion/length/budget/quiescence/retention flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Device operation status, separate from callback return.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "requested_bytes",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact bounded requested source length.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completed_bytes",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bytes actually received after validating used length.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_used_length",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last actual used-ring length.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_descriptor",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last actual used descriptor ID.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dma_submitted",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Descriptor submissions during this call.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dma_completed",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated descriptor completions during this call.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "short_completions",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Validated completions smaller than requested descriptor length.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "begin_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Functional monotonic observation before request.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "end_ns",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Separate observation after completion or bounded cleanup, not entropy data.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "request_generation",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact non-reused driver request identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "available_index_before",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original16-bit available cursor.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "available_index_after",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Final16-bit available cursor.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "used_index_before",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original16-bit used cursor.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "used_index_after",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Final16-bit used cursor.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_status",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last actual Virtio status read.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pci_command",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Last actual PCI command readback.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original functional clock generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Functional clock source, not entropy provenance itself.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 112,
+          "type": {
+            "kind": "array",
+            "length": 2,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Zero.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "[2]u64",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Synchronous exact device-completion receipt into resident broker staging. Full success needs requested==completed, real descriptor/used-length/index accounting, coherent bounded clock and nonzero request generation. Short device completions are legal and only actual written bytes may be consumed. DMA always targets retained driver-owned buffers; uncertain stop retains resources. Physical cleanup may exceed accepted work budget; never abandon live DMA or claim filled bytes from initial zeros."
+    },
+    {
+      "name": "EntropyBackend",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized caller capacity. Failed metadata copy and excess tails remain unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Named device/virtual source flags, no quality certification.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_request_bytes",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Nonzero at most4096.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "context",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Resident source-owned context until exact unregister/cleanup.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "pci_address",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Opaque registered bus<<16|device<<8|function.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "vendor_id",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Actual source PCI vendor.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "device_id",
+          "offset": 30,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Actual source PCI device.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "read",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonzero EntropyReadFn pointer bits, materialized only after validation. No optional-by-value callback argument.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Zero.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "[3]u64",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Generic external R4D source descriptor, copied under exact current owned init/task scope and resource epoch/module generation. read(context,data,bytes,receipt) may wait boundedly under existing driver lifecycle admission, never Runtime/ranked metadata. Caller task/module live through return; data is resident broker staging, never a DMA target. Return exact requested count only after device receipt; all failures discard staged data. Closing provider rejects new calls before shutdown; no callback/context is used after exact unregister."
+    },
+    {
+      "name": "DriverEntropyApi",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Initialized caller capacity. Failed metadata copy and excess tails remain unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "register_backend",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(*const EntropyBackend,*u64 registration). Authenticated exact current R4D resource owner; failed registration preserves caller output.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "unregister_backend",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "i32(u64 registration). Exact original owner/epoch only; usable from cached table after admission closes. Closes source calls, not a physical DMA-stop acknowledgement.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Independent optional source registration service behind the72-byte DriverResourceApi tail. Original32/48/56/64 resource prefixes and outer DriverApi37 remain valid. Cache the negotiated function table during init; queries may close before terminal unregister. Device teardown/quiescence remains external driver work; retained or unacknowledged resources prevent module release."
+    },
+    {
+      "name": "EntropyReadFn",
+      "source": "API/ApiContract.json",
+      "classification": "callback",
+      "representation": "c_callback",
+      "version": 1,
+      "size": 8,
+      "alignment": 8,
+      "source_layout": "pointer",
+      "fields": [],
+      "values": [],
+      "callback": {
+        "calling_convention": "c",
+        "parameters": [
+          {
+            "name": "context",
+            "type": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          {
+            "name": "data",
+            "type": {
+              "kind": "pointer",
+              "pointer_kind": "many",
+              "is_const": false,
+              "child": {
+                "kind": "scalar",
+                "name": "u8"
+              },
+              "direction": "output",
+              "nullable": false,
+              "length_by": "bytes",
+              "ownership": "borrowed",
+              "lifetime": "call"
+            }
+          },
+          {
+            "name": "bytes",
+            "type": {
+              "kind": "scalar",
+              "name": "u32"
+            }
+          },
+          {
+            "name": "receipt",
+            "type": {
+              "kind": "pointer",
+              "pointer_kind": "single",
+              "is_const": false,
+              "child": {
+                "kind": "named",
+                "name": "EntropyDeviceReceipt"
+              },
+              "direction": "inout",
+              "nullable": false,
+              "length_by": "none",
+              "ownership": "borrowed",
+              "lifetime": "call"
+            }
+          }
+        ],
+        "returns": {
+          "kind": "scalar",
+          "name": "i32"
+        }
+      },
+      "description": "Trusted bounded device source read under exact driver instance and task admission. May sleep using existing driver wait service, holds no Runtime/ranked owner or Rust mutable registry borrow. Returns positive exact length with confirmed receipt or negative entropy error. Descriptor/context and all DMA buffers survive pending completion and uncertain stop. Broker owns resident output staging and never exposes unconfirmed or partial caller bytes."
     }
   ],
   "operations": [],
@@ -151538,6 +152663,386 @@
       "scope": "cpu_acceleration",
       "stability": "fixed_contract",
       "description": "Bounded pure resident iteration/window acceptance limit; time never hardware event count."
+    },
+    {
+      "name": "cpu_accel_feature_rdrand",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Existing optional RDRAND hardware/OS fact; no extra SIMD state or global module baseline."
+    },
+    {
+      "name": "cpu_accel_work_kind_rdrand",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Exact local CPU/epoch/OS/IF grant for staged pure GPR RDRAND CF-checked work;1..64words,10 CF attempts per word. No CPUID-to-instruction migration gap."
+    },
+    {
+      "name": "entropy_max_request_bytes",
+      "value": "4096",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Maximum registered-device request and resident broker stage."
+    },
+    {
+      "name": "entropy_max_window_ns",
+      "value": "250000000",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Accepted normal source-read budget. Exact physical cleanup must still complete or remain retained, never abandoned."
+    },
+    {
+      "name": "entropy_state_unavailable",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy state unavailable. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_state_ready",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy state ready. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_state_closed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy state closed. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_state_retained",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy state retained. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_state_removed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy state removed. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_source_flag_registered",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy source_flag registered. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_source_flag_virtual",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy source_flag virtual. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_source_flag_device",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy source_flag device. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_source_flag_verified_receipt",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy source_flag verified_receipt. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_source_flag_quiesced",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy source_flag quiesced. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_started",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag started. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_used",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag used. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_length_verified",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag length_verified. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_within_budget",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag within_budget. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_quiesced",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag quiesced. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_cancelled",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag cancelled. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_retained",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag retained. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_receipt_flag_virtual",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy receipt_flag virtual. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_device_status_completed",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy device_status completed. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_device_status_unavailable",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy device_status unavailable. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_device_status_timeout",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy device_status timeout. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_device_status_bad_completion",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy device_status bad_completion. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_device_status_stopping",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy device_status stopping. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_device_status_lost",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy device_status lost. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_device_status_retained",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy device_status retained. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error invalid. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_busy",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error busy. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_unavailable",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error unavailable. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_stale",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error stale. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_timeout",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error timeout. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_context",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error context. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_device",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error device. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_cancelled",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error cancelled. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "entropy_error_retained",
+      "value": "-9",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "entropy",
+      "stability": "fixed_contract",
+      "description": "Named device entropy error retained. No random-content or physical hardware quality claim."
     }
   ],
   "limits": [

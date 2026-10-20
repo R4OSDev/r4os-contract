@@ -127,3 +127,50 @@ test "pure acceleration ABI keeps typed Rust Zig C slots, nullable refusal and12
     try std.testing.expectEqual(abi.cpu_capabilities_error_invalid, r4os_rust_acceleration_info()(&info.value));
     try std.testing.expectEqualSlices(u8, std.mem.asBytes(&old), std.mem.asBytes(&info));
 }
+
+extern fn r4os_rust_entropy_info() callconv(.c) abi.R4SysFns.entropy_source_info;
+extern fn r4os_rust_entropy_callback(*const abi.EntropyBackend, [*]u8, u32, *abi.EntropyDeviceReceipt) callconv(.c) i32;
+extern fn r4os_c_entropy_read(u64, [*]u8, u32, *abi.EntropyDeviceReceipt) callconv(.c) i32;
+fn entropyRead(context: u64, data: [*]u8, bytes: u32, out: *abi.EntropyDeviceReceipt) callconv(.c) i32 {
+    if (context != 0xfedc_ba98_7654_3210 or bytes != 17) return -1;
+    @memcpy(data[0..17], "entropy-fixture!!");
+    out.* = .{ .requested_bytes = bytes, .completed_bytes = bytes,
+        .status = abi.entropy_device_status_bad_completion, .flags = abi.entropy_receipt_flag_retained,
+        .request_generation = context, .available_index_before = 65534, .available_index_after = 3 };
+    return -30029;
+}
+test "entropy source records and C Zig callback pointer bits cross Rust with exact signed results and tails" {
+    const sentinel: u64 = 0x8123_4567_89ab_cdef;
+    var info: extern struct { value: abi.EntropySourceInfo = .{}, tail: u64 = sentinel } = .{};
+    info.value.size = @sizeOf(@TypeOf(info));
+    try std.testing.expectEqual(@as(i32, 0), r4os_rust_entropy_info()(&info.value));
+    try std.testing.expectEqual(sentinel, info.tail);
+    try std.testing.expectEqual(sentinel, info.value.generation);
+    try std.testing.expectEqual(@as(u64, 0xfedc_ba98_7654_3210), info.value.owner_epoch);
+    try std.testing.expectEqual(@as(u16, 0x1044), info.value.device_id);
+    try std.testing.expectEqual(@as(i32, -30021), info.value.last_result);
+    try std.testing.expectEqual(@as(u32, 128), info.value.size);
+    var receipt: extern struct { value: abi.EntropyDeviceReceipt = .{}, tail: u64 = sentinel } = .{};
+    var data: [24]u8 = .{0xa5} ** 24;
+    var backend: abi.EntropyBackend = .{ .context = 0xfedc_ba98_7654_3210, .max_request_bytes = 17 };
+    for ([_]abi.EntropyReadFn{ entropyRead, r4os_c_entropy_read }, [_]i32{ -30029, -30027 }) |callback, expected| {
+        backend.read = @intFromPtr(callback);
+        receipt.value.size = @sizeOf(@TypeOf(receipt));
+        try std.testing.expectEqual(expected, r4os_rust_entropy_callback(&backend, &data, 17, &receipt.value));
+        try std.testing.expectEqualSlices(u8, "entropy-fixture!!", data[0..17]);
+        try std.testing.expectEqualSlices(u8, &(.{0xa5} ** 7), data[17..]);
+        try std.testing.expectEqual(sentinel, receipt.tail);
+        try std.testing.expectEqual(@as(u32, 128), receipt.value.size);
+        try std.testing.expectEqual(@as(u64, 0xfedc_ba98_7654_3210), receipt.value.request_generation);
+        try std.testing.expectEqual(abi.entropy_device_status_bad_completion, receipt.value.status);
+        try std.testing.expectEqual(abi.entropy_receipt_flag_retained, receipt.value.flags);
+        try std.testing.expectEqual(@as(u32, 65534), receipt.value.available_index_before);
+        try std.testing.expectEqual(@as(u32, 3), receipt.value.available_index_after);
+    }
+    const before = receipt;
+    const before_data = data;
+    backend.read = 0;
+    try std.testing.expectEqual(abi.entropy_error_invalid, r4os_rust_entropy_callback(&backend, &data, 17, &receipt.value));
+    try std.testing.expectEqualSlices(u8, std.mem.asBytes(&before), std.mem.asBytes(&receipt));
+    try std.testing.expectEqualSlices(u8, &before_data, &data);
+}
