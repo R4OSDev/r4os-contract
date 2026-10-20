@@ -2701,6 +2701,10 @@ pub const console_input_event_batch_max: u32 = 64;
 pub const console_input_key_up: u32 = 128;
 pub const console_input_key_down: u32 = 129;
 pub const console_input_key_f3: u32 = 130;
+pub const console_text_utf8: u32 = 65001;
+pub const console_text_cp437: u32 = 437;
+pub const console_text_windows1252: u32 = 1252;
+pub const console_text_closed: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19400,6 +19404,34 @@ impl Default for ConsoleInputEvent {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ConsoleTextInfo {
+    pub version: u32,
+    pub size: u32,
+    pub encoding: u32,
+    pub transcript_encoding: u32,
+    pub pending_bytes: u32,
+    pub decode_errors: u32,
+    pub truncated_sequences: u32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ConsoleTextInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            encoding: 65001,
+            transcript_encoding: 65001,
+            pending_bytes: 0,
+            decode_errors: 0,
+            truncated_sequences: 0,
+            flags: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -19983,6 +20015,8 @@ pub mod R4DeskFns {
     pub type desktop_activity_notify = unsafe extern "C" fn() -> i32;
     pub type console_read_events = unsafe extern "C" fn(*mut ConsoleInputEvent, u32) -> i32;
     pub type console_push_events = unsafe extern "C" fn(*const ProgramProcessHandle, *const ConsoleInputEvent, u32) -> i32;
+    pub type console_text_info = unsafe extern "C" fn(*const ProgramProcessHandle, *mut ConsoleTextInfo) -> i32;
+    pub type console_set_encoding = unsafe extern "C" fn(*const ProgramProcessHandle, u32) -> i32;
 }
 
 #[repr(C)]
@@ -20059,14 +20093,16 @@ pub struct R4XStartR4Desk {
     pub desktop_activity_notify: usize,
     pub console_read_events: usize,
     pub console_push_events: usize,
+    pub console_text_info: usize,
+    pub console_set_encoding: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Desk {
     fn default() -> Self {
         Self {
             magic: 826623058,
-            abi_version: 16,
-            size: 552,
+            abi_version: 17,
+            size: 568,
             flags: 0,
             read_key: 0,
             mouse_state: 0,
@@ -20135,6 +20171,8 @@ impl Default for R4XStartR4Desk {
             desktop_activity_notify: 0,
             console_read_events: 0,
             console_push_events: 0,
+            console_text_info: 0,
+            console_set_encoding: 0,
         }
     }
 }
@@ -31666,6 +31704,16 @@ const _: () = {
     assert!(core::mem::offset_of!(ConsoleInputEvent, flags) == 12);
     assert!(core::mem::size_of::<ConsoleInputEvent>() == 16);
     assert!(core::mem::align_of::<ConsoleInputEvent>() == 4);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, version) == 0);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, size) == 4);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, encoding) == 8);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, transcript_encoding) == 12);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, pending_bytes) == 16);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, decode_errors) == 20);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, truncated_sequences) == 24);
+    assert!(core::mem::offset_of!(ConsoleTextInfo, flags) == 28);
+    assert!(core::mem::size_of::<ConsoleTextInfo>() == 32);
+    assert!(core::mem::align_of::<ConsoleTextInfo>() == 4);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31906,7 +31954,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Desk, desktop_activity_notify) == 528);
     assert!(core::mem::offset_of!(R4XStartR4Desk, console_read_events) == 536);
     assert!(core::mem::offset_of!(R4XStartR4Desk, console_push_events) == 544);
-    assert!(core::mem::size_of::<R4XStartR4Desk>() == 552);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, console_text_info) == 552);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, console_set_encoding) == 560);
+    assert!(core::mem::size_of::<R4XStartR4Desk>() == 568);
     assert!(core::mem::align_of::<R4XStartR4Desk>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Draw, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Draw, abi_version) == 4);

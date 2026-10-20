@@ -2697,6 +2697,10 @@ pub const console_input_event_batch_max: u32 = 64;
 pub const console_input_key_up: u32 = 128;
 pub const console_input_key_down: u32 = 129;
 pub const console_input_key_f3: u32 = 130;
+pub const console_text_utf8: u32 = 65001;
+pub const console_text_cp437: u32 = 437;
+pub const console_text_windows1252: u32 = 1252;
+pub const console_text_closed: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10236,6 +10240,17 @@ pub const ConsoleInputEvent = extern struct {
     flags: u32 = 0,
 };
 
+pub const ConsoleTextInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    encoding: u32 = 65001,
+    transcript_encoding: u32 = 65001,
+    pending_bytes: u32 = 0,
+    decode_errors: u32 = 0,
+    truncated_sequences: u32 = 0,
+    flags: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10632,12 +10647,14 @@ pub const R4DeskFns = struct {
     pub const desktop_activity_notify = *const fn () callconv(.c) i32;
     pub const console_read_events = *const fn ([*]ConsoleInputEvent, u32) callconv(.c) i32;
     pub const console_push_events = *const fn (*const ProgramProcessHandle, [*]const ConsoleInputEvent, u32) callconv(.c) i32;
+    pub const console_text_info = *const fn (*const ProgramProcessHandle, *ConsoleTextInfo) callconv(.c) i32;
+    pub const console_set_encoding = *const fn (*const ProgramProcessHandle, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 16,
-    size: u32 = 552,
+    abi_version: u32 = 17,
+    size: u32 = 568,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -10706,6 +10723,8 @@ pub const R4XStartR4Desk = extern struct {
     desktop_activity_notify: usize = 0,
     console_read_events: usize = 0,
     console_push_events: usize = 0,
+    console_text_info: usize = 0,
+    console_set_encoding: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -11495,6 +11514,8 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 64, .offset = 528, .name = "desktop_activity_notify", .state = .function, .required = false },
     .{ .number = 65, .offset = 536, .name = "console_read_events", .state = .function, .required = false },
     .{ .number = 66, .offset = 544, .name = "console_push_events", .state = .function, .required = false },
+    .{ .number = 67, .offset = 552, .name = "console_text_info", .state = .function, .required = false },
+    .{ .number = 68, .offset = 560, .name = "console_set_encoding", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -18442,6 +18463,16 @@ comptime {
     if (@offsetOf(ConsoleInputEvent, "kind") != 4) @compileError("generated ABI offset drift: ConsoleInputEvent.kind");
     if (@offsetOf(ConsoleInputEvent, "value") != 8) @compileError("generated ABI offset drift: ConsoleInputEvent.value");
     if (@offsetOf(ConsoleInputEvent, "flags") != 12) @compileError("generated ABI offset drift: ConsoleInputEvent.flags");
+    if (@sizeOf(ConsoleTextInfo) != 32) @compileError("generated ABI size drift: ConsoleTextInfo");
+    if (@alignOf(ConsoleTextInfo) != 4) @compileError("generated ABI alignment drift: ConsoleTextInfo");
+    if (@offsetOf(ConsoleTextInfo, "version") != 0) @compileError("generated ABI offset drift: ConsoleTextInfo.version");
+    if (@offsetOf(ConsoleTextInfo, "size") != 4) @compileError("generated ABI offset drift: ConsoleTextInfo.size");
+    if (@offsetOf(ConsoleTextInfo, "encoding") != 8) @compileError("generated ABI offset drift: ConsoleTextInfo.encoding");
+    if (@offsetOf(ConsoleTextInfo, "transcript_encoding") != 12) @compileError("generated ABI offset drift: ConsoleTextInfo.transcript_encoding");
+    if (@offsetOf(ConsoleTextInfo, "pending_bytes") != 16) @compileError("generated ABI offset drift: ConsoleTextInfo.pending_bytes");
+    if (@offsetOf(ConsoleTextInfo, "decode_errors") != 20) @compileError("generated ABI offset drift: ConsoleTextInfo.decode_errors");
+    if (@offsetOf(ConsoleTextInfo, "truncated_sequences") != 24) @compileError("generated ABI offset drift: ConsoleTextInfo.truncated_sequences");
+    if (@offsetOf(ConsoleTextInfo, "flags") != 28) @compileError("generated ABI offset drift: ConsoleTextInfo.flags");
     if (@sizeOf(R4XStartR4Sys) != 1304) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -18604,7 +18635,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "system_power_transition") != 1280) @compileError("generated ABI offset drift: R4XStartR4Sys.system_power_transition");
     if (@offsetOf(R4XStartR4Sys, "entropy_source_info") != 1288) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_source_info");
     if (@offsetOf(R4XStartR4Sys, "entropy_fill") != 1296) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_fill");
-    if (@sizeOf(R4XStartR4Desk) != 552) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 568) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -18672,6 +18703,8 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("generated ABI offset drift: R4XStartR4Desk.desktop_activity_notify");
     if (@offsetOf(R4XStartR4Desk, "console_read_events") != 536) @compileError("generated ABI offset drift: R4XStartR4Desk.console_read_events");
     if (@offsetOf(R4XStartR4Desk, "console_push_events") != 544) @compileError("generated ABI offset drift: R4XStartR4Desk.console_push_events");
+    if (@offsetOf(R4XStartR4Desk, "console_text_info") != 552) @compileError("generated ABI offset drift: R4XStartR4Desk.console_text_info");
+    if (@offsetOf(R4XStartR4Desk, "console_set_encoding") != 560) @compileError("generated ABI offset drift: R4XStartR4Desk.console_set_encoding");
     if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
@@ -19335,13 +19368,15 @@ pub const R4DeskProvider = struct {
     desktop_activity_notify: ?R4DeskFns.desktop_activity_notify = null,
     console_read_events: ?R4DeskFns.console_read_events = null,
     console_push_events: ?R4DeskFns.console_push_events = null,
+    console_text_info: ?R4DeskFns.console_text_info = null,
+    console_set_encoding: ?R4DeskFns.console_set_encoding = null,
 };
 
 pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
     return .{
         .magic = 826623058,
-        .abi_version = 16,
-        .size = 552,
+        .abi_version = 17,
+        .size = 568,
         .flags = 0,
         .read_key = if (provider.read_key) |callback| @intFromPtr(callback) else 0,
         .mouse_state = if (provider.mouse_state) |callback| @intFromPtr(callback) else 0,
@@ -19410,6 +19445,8 @@ pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
         .desktop_activity_notify = if (provider.desktop_activity_notify) |callback| @intFromPtr(callback) else 0,
         .console_read_events = if (provider.console_read_events) |callback| @intFromPtr(callback) else 0,
         .console_push_events = if (provider.console_push_events) |callback| @intFromPtr(callback) else 0,
+        .console_text_info = if (provider.console_text_info) |callback| @intFromPtr(callback) else 0,
+        .console_set_encoding = if (provider.console_set_encoding) |callback| @intFromPtr(callback) else 0,
     };
 }
 

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 478,
+    "group_function_signatures": 480,
     "sdk_operation_contracts": 0,
-    "parity_entries": 478,
+    "parity_entries": 480,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2024,6 +2024,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DeskFns.console_push_events",
       "c_contract": "R4DeskConsolePushEventsFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.console_text_info",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.console_text_info",
+      "c_contract": "R4DeskConsoleTextInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.console_set_encoding",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.console_set_encoding",
+      "c_contract": "R4DeskConsoleSetEncodingFn",
       "coverage": "generated_signature"
     },
     {

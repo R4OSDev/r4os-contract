@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 478,
-    "group_slot_count": 478,
+    "function_count": 480,
+    "group_slot_count": 480,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 139
+    "advanced_count": 141
   },
   "functions": [
     {
@@ -2695,6 +2695,30 @@
       "slot": 66,
       "exposure": "advanced",
       "description": "Queues up to64 complete explicit input events for the exact live handle generation. Validate/copy the complete batch before admission, including wireversion/kind/scalar/flags; invalid batch mutates nothing. Returns accepted event prefix length,0 for full/zero count, negative for invalid/stale/closed/non-console context. Unaccepted suffix remains caller-owned for bounded retry. Same FIFO/4095-byte capacity/generation/wake and close ownership as existing input; a text scalar charges its full UTF8 width and is never partially admitted. Existing raw-byte APIs retain their formats/statuses. No callback, allocation, borrowed caller pointer or decoder state spans the queue lock.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.console_text_info",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 67,
+      "exposure": "advanced",
+      "description": "Returns current or retained-completion text metadata for the exact handle generation. Success0; invalid/stale/non-console negative; output untouched on error. Resident snapshot taken under its owner, all owners/pins released before pageable caller output copy.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.console_set_encoding",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 68,
+      "exposure": "advanced",
+      "description": "Changes only the exact live console producer encoding. Success0; invalid encoding/context-1; pending UTF8 prefix or closed/done-2. Existing canonical UTF8 transcript is never reinterpreted. Three output stream decoders remain independent. No font charset or input encoding change.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

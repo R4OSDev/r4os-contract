@@ -2709,6 +2709,10 @@ extern "C" {
 #define R4OS_CONSOLE_INPUT_KEY_UP 128u
 #define R4OS_CONSOLE_INPUT_KEY_DOWN 129u
 #define R4OS_CONSOLE_INPUT_KEY_F3 130u
+#define R4OS_CONSOLE_TEXT_UTF8 65001u
+#define R4OS_CONSOLE_TEXT_CP437 437u
+#define R4OS_CONSOLE_TEXT_WINDOWS1252 1252u
+#define R4OS_CONSOLE_TEXT_CLOSED 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3532,6 +3536,7 @@ typedef struct R4EntropyDeviceReceipt R4EntropyDeviceReceipt;
 typedef struct R4EntropyBackend R4EntropyBackend;
 typedef struct R4DriverEntropyApi R4DriverEntropyApi;
 typedef struct R4ConsoleInputEvent R4ConsoleInputEvent;
+typedef struct R4ConsoleTextInfo R4ConsoleTextInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10544,6 +10549,17 @@ typedef struct R4ConsoleInputEvent {
     uint32_t flags;
 } R4ConsoleInputEvent;
 
+typedef struct R4ConsoleTextInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t encoding;
+    uint32_t transcript_encoding;
+    uint32_t pending_bytes;
+    uint32_t decode_errors;
+    uint32_t truncated_sequences;
+    uint32_t flags;
+} R4ConsoleTextInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10983,6 +10999,8 @@ typedef int32_t (*R4DeskRemoteFrameCaptureStatsFn)(R4RemoteFrameCaptureStats * o
 typedef int32_t (*R4DeskDesktopActivityNotifyFn)(void);
 typedef int32_t (*R4DeskConsoleReadEventsFn)(R4ConsoleInputEvent * output, uint32_t capacity);
 typedef int32_t (*R4DeskConsolePushEventsFn)(const R4ProgramProcessHandle * handle, const R4ConsoleInputEvent * events, uint32_t count);
+typedef int32_t (*R4DeskConsoleTextInfoFn)(const R4ProgramProcessHandle * handle, R4ConsoleTextInfo * output);
+typedef int32_t (*R4DeskConsoleSetEncodingFn)(const R4ProgramProcessHandle * handle, uint32_t encoding);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -11056,6 +11074,8 @@ typedef struct R4XStartR4Desk {
     uintptr_t desktop_activity_notify;
     uintptr_t console_read_events;
     uintptr_t console_push_events;
+    uintptr_t console_text_info;
+    uintptr_t console_set_encoding;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -17918,6 +17938,15 @@ _Static_assert(offsetof(R4ConsoleInputEvent, version) == 0u, "ConsoleInputEvent.
 _Static_assert(offsetof(R4ConsoleInputEvent, kind) == 4u, "ConsoleInputEvent.kind offset mismatch");
 _Static_assert(offsetof(R4ConsoleInputEvent, value) == 8u, "ConsoleInputEvent.value offset mismatch");
 _Static_assert(offsetof(R4ConsoleInputEvent, flags) == 12u, "ConsoleInputEvent.flags offset mismatch");
+_Static_assert(sizeof(R4ConsoleTextInfo) == 32u, "ConsoleTextInfo size mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, version) == 0u, "ConsoleTextInfo.version offset mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, size) == 4u, "ConsoleTextInfo.size offset mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, encoding) == 8u, "ConsoleTextInfo.encoding offset mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, transcript_encoding) == 12u, "ConsoleTextInfo.transcript_encoding offset mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, pending_bytes) == 16u, "ConsoleTextInfo.pending_bytes offset mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, decode_errors) == 20u, "ConsoleTextInfo.decode_errors offset mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, truncated_sequences) == 24u, "ConsoleTextInfo.truncated_sequences offset mismatch");
+_Static_assert(offsetof(R4ConsoleTextInfo, flags) == 28u, "ConsoleTextInfo.flags offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1304u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -18238,7 +18267,7 @@ _Static_assert(offsetof(R4XStartR4Sys, entropy_source_info) == 1288u, "R4XStartR
 _Static_assert(sizeof(R4SysEntropySourceInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, entropy_fill) == 1296u, "R4XStartR4Sys.entropy_fill offset mismatch");
 _Static_assert(sizeof(R4SysEntropyFillFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 552u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 568u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -18372,6 +18401,10 @@ _Static_assert(offsetof(R4XStartR4Desk, console_read_events) == 536u, "R4XStartR
 _Static_assert(sizeof(R4DeskConsoleReadEventsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, console_push_events) == 544u, "R4XStartR4Desk.console_push_events offset mismatch");
 _Static_assert(sizeof(R4DeskConsolePushEventsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, console_text_info) == 552u, "R4XStartR4Desk.console_text_info offset mismatch");
+_Static_assert(sizeof(R4DeskConsoleTextInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, console_set_encoding) == 560u, "R4XStartR4Desk.console_set_encoding offset mismatch");
+_Static_assert(sizeof(R4DeskConsoleSetEncodingFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 912u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

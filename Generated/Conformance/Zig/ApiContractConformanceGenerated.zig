@@ -6316,6 +6316,15 @@ comptime {
     if (@offsetOf(abi.ConsoleInputEvent, "kind") != 4) @compileError("ConsoleInputEvent.kind offset");
     if (@offsetOf(abi.ConsoleInputEvent, "value") != 8) @compileError("ConsoleInputEvent.value offset");
     if (@offsetOf(abi.ConsoleInputEvent, "flags") != 12) @compileError("ConsoleInputEvent.flags offset");
+    if (@sizeOf(abi.ConsoleTextInfo) != 32) @compileError("ConsoleTextInfo size");
+    if (@offsetOf(abi.ConsoleTextInfo, "version") != 0) @compileError("ConsoleTextInfo.version offset");
+    if (@offsetOf(abi.ConsoleTextInfo, "size") != 4) @compileError("ConsoleTextInfo.size offset");
+    if (@offsetOf(abi.ConsoleTextInfo, "encoding") != 8) @compileError("ConsoleTextInfo.encoding offset");
+    if (@offsetOf(abi.ConsoleTextInfo, "transcript_encoding") != 12) @compileError("ConsoleTextInfo.transcript_encoding offset");
+    if (@offsetOf(abi.ConsoleTextInfo, "pending_bytes") != 16) @compileError("ConsoleTextInfo.pending_bytes offset");
+    if (@offsetOf(abi.ConsoleTextInfo, "decode_errors") != 20) @compileError("ConsoleTextInfo.decode_errors offset");
+    if (@offsetOf(abi.ConsoleTextInfo, "truncated_sequences") != 24) @compileError("ConsoleTextInfo.truncated_sequences offset");
+    if (@offsetOf(abi.ConsoleTextInfo, "flags") != 28) @compileError("ConsoleTextInfo.flags offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1304) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6636,7 +6645,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.entropy_source_info) != 8) @compileError("R4SysFns.entropy_source_info signature");
     if (@offsetOf(abi.R4XStartR4Sys, "entropy_fill") != 1296) @compileError("R4XStartR4Sys.entropy_fill offset");
     if (@sizeOf(abi.R4SysFns.entropy_fill) != 8) @compileError("R4SysFns.entropy_fill signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 552) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 568) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -6770,6 +6779,10 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.console_read_events) != 8) @compileError("R4DeskFns.console_read_events signature");
     if (@offsetOf(abi.R4XStartR4Desk, "console_push_events") != 544) @compileError("R4XStartR4Desk.console_push_events offset");
     if (@sizeOf(abi.R4DeskFns.console_push_events) != 8) @compileError("R4DeskFns.console_push_events signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "console_text_info") != 552) @compileError("R4XStartR4Desk.console_text_info offset");
+    if (@sizeOf(abi.R4DeskFns.console_text_info) != 8) @compileError("R4DeskFns.console_text_info signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "console_set_encoding") != 560) @compileError("R4XStartR4Desk.console_set_encoding offset");
+    if (@sizeOf(abi.R4DeskFns.console_set_encoding) != 8) @compileError("R4DeskFns.console_set_encoding signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 912) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");

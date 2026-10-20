@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 367 von 367 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 368 von 368 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2696; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2700; Limits: 111
 
 ## App-Profile
 
@@ -388,6 +388,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DriverEntropyApi` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `EntropyReadFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 | `ConsoleInputEvent` | fixed_layout | extern_struct | 16/4 | 16/4 | 16/4 | 16/4 |
+| `ConsoleTextInfo` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
 
 ## Typdetails
 
@@ -9957,6 +9958,24 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `value` | 8 | 4 | 4 | `u32` | - |
 | `flags` | 12 | 4 | 4 | `u32` | - |
 
+### `ConsoleTextInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `encoding` | 8 | 4 | 4 | `u32` | - |
+| `transcript_encoding` | 12 | 4 | 4 | `u32` | - |
+| `pending_bytes` | 16 | 4 | 4 | `u32` | - |
+| `decode_errors` | 20 | 4 | 4 | `u32` | - |
+| `truncated_sequences` | 24 | 4 | 4 | `u32` | - |
+| `flags` | 28 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13414,6 +13433,10 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `console_input_key_up` | `128` | `u32` | value | number | `console_input` | fixed_contract |
 | `console_input_key_down` | `129` | `u32` | value | number | `console_input` | fixed_contract |
 | `console_input_key_f3` | `130` | `u32` | value | number | `console_input` | fixed_contract |
+| `console_text_utf8` | `65001` | `u32` | value | number | `console_text` | fixed_contract |
+| `console_text_cp437` | `437` | `u32` | value | number | `console_text` | fixed_contract |
+| `console_text_windows1252` | `1252` | `u32` | value | number | `console_text` | fixed_contract |
+| `console_text_closed` | `1` | `u32` | value | number | `console_text` | fixed_contract |
 
 ## Limits
 
