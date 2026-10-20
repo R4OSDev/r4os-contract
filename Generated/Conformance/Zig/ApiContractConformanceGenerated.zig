@@ -6209,6 +6209,42 @@ comptime {
     if (@offsetOf(abi.CpuPmuResult, "reserved0") != 212) @compileError("CpuPmuResult.reserved0 offset");
     if (@offsetOf(abi.CpuPmuResult, "event_select") != 216) @compileError("CpuPmuResult.event_select offset");
     if (@offsetOf(abi.CpuPmuResult, "reserved1") != 224) @compileError("CpuPmuResult.reserved1 offset");
+    if (@sizeOf(abi.CpuAccelerationInfo) != 128) @compileError("CpuAccelerationInfo size");
+    if (@offsetOf(abi.CpuAccelerationInfo, "version") != 0) @compileError("CpuAccelerationInfo.version offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "size") != 4) @compileError("CpuAccelerationInfo.size offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "cpu_index") != 8) @compileError("CpuAccelerationInfo.cpu_index offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "flags") != 12) @compileError("CpuAccelerationInfo.flags offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "epoch") != 16) @compileError("CpuAccelerationInfo.epoch offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "capture_sequence") != 24) @compileError("CpuAccelerationInfo.capture_sequence offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "hardware_mask") != 32) @compileError("CpuAccelerationInfo.hardware_mask offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "os_mask") != 40) @compileError("CpuAccelerationInfo.os_mask offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "common_hardware_mask") != 48) @compileError("CpuAccelerationInfo.common_hardware_mask offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "xcr0") != 56) @compileError("CpuAccelerationInfo.xcr0 offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "signature") != 64) @compileError("CpuAccelerationInfo.signature offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "configured_cpus") != 68) @compileError("CpuAccelerationInfo.configured_cpus offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "common_known_count") != 72) @compileError("CpuAccelerationInfo.common_known_count offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "feature_count") != 76) @compileError("CpuAccelerationInfo.feature_count offset");
+    if (@offsetOf(abi.CpuAccelerationInfo, "reserved0") != 80) @compileError("CpuAccelerationInfo.reserved0 offset");
+    if (@sizeOf(abi.CpuAccelerationWork) != 128) @compileError("CpuAccelerationWork size");
+    if (@offsetOf(abi.CpuAccelerationWork, "version") != 0) @compileError("CpuAccelerationWork.version offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "size") != 4) @compileError("CpuAccelerationWork.size offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "cpu_index") != 8) @compileError("CpuAccelerationWork.cpu_index offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "flags") != 12) @compileError("CpuAccelerationWork.flags offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "epoch") != 16) @compileError("CpuAccelerationWork.epoch offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "capture_sequence") != 24) @compileError("CpuAccelerationWork.capture_sequence offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "work_kind") != 32) @compileError("CpuAccelerationWork.work_kind offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "iterations") != 36) @compileError("CpuAccelerationWork.iterations offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "status") != 40) @compileError("CpuAccelerationWork.status offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "callback_result") != 44) @compileError("CpuAccelerationWork.callback_result offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "original_if") != 48) @compileError("CpuAccelerationWork.original_if offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "final_if") != 56) @compileError("CpuAccelerationWork.final_if offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "begin_ns") != 64) @compileError("CpuAccelerationWork.begin_ns offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "end_ns") != 72) @compileError("CpuAccelerationWork.end_ns offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "granted_mask") != 80) @compileError("CpuAccelerationWork.granted_mask offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "xcr0") != 88) @compileError("CpuAccelerationWork.xcr0 offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "clock_source") != 96) @compileError("CpuAccelerationWork.clock_source offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "clock_generation") != 100) @compileError("CpuAccelerationWork.clock_generation offset");
+    if (@offsetOf(abi.CpuAccelerationWork, "reserved0") != 104) @compileError("CpuAccelerationWork.reserved0 offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1288) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6996,7 +7032,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_info) != 8) @compileError("R4AudioFns.audio_output_info signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_select_output") != 192) @compileError("R4XStartR4Audio.audio_select_output offset");
     if (@sizeOf(abi.R4AudioFns.audio_select_output) != 8) @compileError("R4AudioFns.audio_select_output signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 704) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 720) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -7167,6 +7203,10 @@ comptime {
     if (@sizeOf(abi.R4DevFns.cpu_pmu_measure) != 8) @compileError("R4DevFns.cpu_pmu_measure signature");
     if (@offsetOf(abi.R4XStartR4Dev, "cpu_pmu_result") != 696) @compileError("R4XStartR4Dev.cpu_pmu_result offset");
     if (@sizeOf(abi.R4DevFns.cpu_pmu_result) != 8) @compileError("R4DevFns.cpu_pmu_result signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "cpu_acceleration_info") != 704) @compileError("R4XStartR4Dev.cpu_acceleration_info offset");
+    if (@sizeOf(abi.R4DevFns.cpu_acceleration_info) != 8) @compileError("R4DevFns.cpu_acceleration_info signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "cpu_acceleration_work") != 712) @compileError("R4XStartR4Dev.cpu_acceleration_work offset");
+    if (@sizeOf(abi.R4DevFns.cpu_acceleration_work) != 8) @compileError("R4DevFns.cpu_acceleration_work signature");
 }
 
 test "generated API contract compiles" {}

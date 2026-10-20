@@ -475,5 +475,7 @@ static R4DevCpuMicrocodeInfoFn r4os_probe_r4dev_cpu_microcode_info = (R4DevCpuMi
 static R4DevCpuPmuInfoFn r4os_probe_r4dev_cpu_pmu_info = (R4DevCpuPmuInfoFn)0;
 static R4DevCpuPmuMeasureFn r4os_probe_r4dev_cpu_pmu_measure = (R4DevCpuPmuMeasureFn)0;
 static R4DevCpuPmuResultFn r4os_probe_r4dev_cpu_pmu_result = (R4DevCpuPmuResultFn)0;
+static R4DevCpuAccelerationInfoFn r4os_probe_r4dev_cpu_acceleration_info = (R4DevCpuAccelerationInfoFn)0;
+static R4DevCpuAccelerationWorkFn r4os_probe_r4dev_cpu_acceleration_work = (R4DevCpuAccelerationWorkFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

@@ -11,6 +11,9 @@ extern fn r4os_rust_default_header(*abi.ServiceMessageHeader) callconv(.c) void;
 extern fn r4os_c_rust_call(abi.R4SysFns.write, [*]const u8, u32) callconv(.c) i32;
 extern fn r4os_rust_pmu_measure() callconv(.c) abi.R4DevFns.cpu_pmu_measure;
 extern fn r4os_c_pmu_work(u64, u32) callconv(.c) i32;
+extern fn r4os_rust_acceleration_info() callconv(.c) abi.R4DevFns.cpu_acceleration_info;
+extern fn r4os_rust_acceleration_work() callconv(.c) abi.R4DevFns.cpu_acceleration_work;
+extern fn r4os_c_pure_work(u64, u32) callconv(.c) i32;
 
 fn zigWrite(data: [*]const u8, size: u32) callconv(.c) i32 {
     if (size != 9 or !std.mem.eql(u8, data[0..size], "R4OS-Rust")) return -1;
@@ -22,6 +25,9 @@ fn work(context: usize) callconv(.c) i32 {
 
 fn pmuWork(context: u64, iterations: u32) callconv(.c) i32 {
     return if (context == 0x8123_4567_89ab_cdef and iterations == 4096) -30007 else -1;
+}
+fn pureWork(context: u64, iterations: u32) callconv(.c) i32 {
+    return if (context == 0x8123_4567_89ab_cdef and iterations == 64) -30017 else -1;
 }
 
 test "canonical Rust/Zig/C callbacks, nullability, stack arguments and SIMD consumer" {
@@ -85,4 +91,39 @@ test "PMU typed borrowed callback slot and seven-argument C ABI preserve result 
         try std.testing.expectEqual(abi.cpu_capabilities_error_invalid, measure(0xfedc_ba98, sentinel, abi.cpu_pmu_event_branch_misses, 4096, callback_slot, 0x8123_4567_89ab_cdef, &guarded.result));
         try std.testing.expectEqualSlices(u8, std.mem.asBytes(&original), std.mem.asBytes(&guarded));
     }
+}
+
+test "pure acceleration ABI keeps typed Rust Zig C slots, nullable refusal and128byte tails" {
+    const sentinel: u64 = 0xfedc_ba98_7654_3210;
+    var info: extern struct { value: abi.CpuAccelerationInfo = .{}, tail: u64 = sentinel } = .{};
+    info.value.size = @sizeOf(@TypeOf(info));
+    try std.testing.expectEqual(@as(i32, 0), r4os_rust_acceleration_info()(&info.value));
+    try std.testing.expectEqual(sentinel, info.tail);
+    try std.testing.expectEqual(sentinel, info.value.epoch);
+    try std.testing.expectEqual(@as(u32, 128), info.value.size);
+    try std.testing.expectEqual(@as(u64, 63), info.value.hardware_mask);
+    try std.testing.expectEqual(@as(u64, 31), info.value.common_hardware_mask);
+    var value: extern struct { value: abi.CpuAccelerationWork = .{}, tail: u64 = sentinel } = .{};
+    const callbacks = [_]abi.CpuPureWorkFn{ pureWork, r4os_c_pure_work };
+    const submit = r4os_rust_acceleration_work();
+    for (callbacks, [_]i32{ -30017, -30015 }) |callback, expected| {
+        value.value.size = @sizeOf(@TypeOf(value));
+        try std.testing.expectEqual(@as(i32, 0), submit(abi.cpu_accel_work_kind_sha256, 64, &callback, 0x8123_4567_89ab_cdef, &value.value));
+        try std.testing.expectEqual(sentinel, value.tail);
+        try std.testing.expectEqual(sentinel, value.value.epoch);
+        try std.testing.expectEqual(@as(u32, 128), value.value.size);
+        try std.testing.expectEqual(@as(u32, 64), value.value.iterations);
+        try std.testing.expectEqual(expected, value.value.callback_result);
+        try std.testing.expectEqual(abi.cpu_accel_work_flag_callback_started | abi.cpu_accel_work_flag_callback_returned, value.value.flags);
+    }
+    const before = value;
+    var zero: u64 = 0;
+    for ([_]?*const abi.CpuPureWorkFn{ null, @ptrCast(&zero) }) |slot| {
+        try std.testing.expectEqual(abi.cpu_capabilities_error_invalid, submit(abi.cpu_accel_work_kind_sha256, 64, slot, 0x8123_4567_89ab_cdef, &value.value));
+        try std.testing.expectEqualSlices(u8, std.mem.asBytes(&before), std.mem.asBytes(&value));
+    }
+    info.value.version = 0;
+    const old = info;
+    try std.testing.expectEqual(abi.cpu_capabilities_error_invalid, r4os_rust_acceleration_info()(&info.value));
+    try std.testing.expectEqualSlices(u8, std.mem.asBytes(&old), std.mem.asBytes(&info));
 }

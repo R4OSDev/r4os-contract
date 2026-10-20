@@ -156,3 +156,19 @@ reload or arbitrary data/register endpoint is added. Logical CPU restart
 requalifies without applying updates while consumers exist. Diagnostic finite
 CPUID fingerprints do not replace feature or PAT/FPU admission. All preceding
 fixed records/constants/slots, DriverApi37, CPUPOWER184 and R4SYS27 are unchanged.
+
+Optional CPU work window (0.64.37 / 0.85.35)
+-------------------------------------------
+R4DEV33 appends passive `cpu_acceleration_info` and bounded
+`cpu_acceleration_work` after the original704-byte prefix, complete720.
+Independent128-byte records distinguish cached feature/OS facts, universally
+valid REP performance hints, and an exact local baseline/SHA callback window.
+Only a qualified resident callback may execute optional SHA; cached dispatch
+alone does not survive CPU migration. Task/lifecycle ownership, actual IF
+restoration and hardware-clock acceptance remain separate receipt flags.
+`CpuPureWorkFn` is borrowed through a typed nullable slot pointer. The original
+88-byte/version1 ProtocolApi gains two typed nullable tail fields, complete104;
+old size/null providers retain their fallback. Six optional feature IDs append
+after the existing55; the common AVX2 compiler baseline stays unchanged.
+No memory/hash algorithm, SIMD instruction, PMU programming or arbitrary
+feature-mask interface is added to the kernel contract.

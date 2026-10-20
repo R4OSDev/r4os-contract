@@ -21,3 +21,8 @@ int32_t r4os_c_rust_call(R4SysWriteFn callback, const uint8_t *data, uint32_t si
 int32_t r4os_c_pmu_work(uint64_t context, uint32_t iterations) {
     return context == UINT64_C(0x8123456789abcdef) && iterations == 4096 ? -30005 : -1;
 }
+
+/* Typed transport only; never execute optional CPU instructions on the host. */
+int32_t r4os_c_pure_work(uint64_t context, uint32_t iterations) {
+    return context == UINT64_C(0x8123456789abcdef) && iterations == 64 ? -30015 : -1;
+}

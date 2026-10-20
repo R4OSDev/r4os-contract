@@ -28699,10 +28699,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 32,
+      "abi_version": 33,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 704,
+      "size": 720,
       "slots": [
         {
           "number": 0,
@@ -34617,6 +34617,162 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 86,
+          "offset": 704,
+          "name": "cpu_acceleration_info",
+          "state": "function",
+          "required": false,
+          "description": "Passive cached local optional CPU/OS facts and conservative all-configured hardware hints. No CPU instruction, measurement, callback or execution grant. Current CPU may change after return.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuAccelerationInfo"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 87,
+          "offset": 712,
+          "name": "cpu_acceleration_work",
+          "state": "function",
+          "required": false,
+          "description": "Explicit synchronous pure resident baseline/SHA execution window. Exact TaskAdmission/lifecycle lease through output, original actual IF immediately before CLI, exact physical CPU/epoch/feature/OS revalidation. Virtual exposed ISA allowed, never PMU or physical qualification.1..64iterations,2ms accepted hardware clock. No allocation/fault/wait/yield/API/placement change; no Runtime owner across callback. No arbitrary feature mask/registers. Receipt0 alone not accepted: inspect flags/status/callback/identity/IF/clock. Refusal before work preserves output/tail; no automatic retry.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "work_kind",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "iterations",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "work",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuPureWorkFn"
+                  },
+                  "direction": "input",
+                  "nullable": true,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "context",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuAccelerationWork"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "serialized",
+            "callback_context": "caller_thread",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
@@ -121811,6 +121967,552 @@
         }
       },
       "description": "Trusted pure resident bounded work callback on the exact caller CPU with local IF disabled.1..4096 iterations. No allocation, fault, blocking, yield, API call or placement mutation; warm code/data/stack first. Kernel owns no Runtime/ranked guard across it.0 success, nonzero abort always followed by owned hardware cleanup. Declared work contract is not a Sandbox or forced interruption of arbitrary code."
+    },
+    {
+      "name": "CpuAccelerationInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; failed output and excess tail unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact CPU captured at entry; no promise about caller CPU after passive return.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Independent cpu_accel info/work flag bits, never event counts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact original cached CPU execution epoch.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capture_sequence",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact original capability capture identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hardware_mask",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Known present named optional features on this CPU.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "os_mask",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Corresponding present features with confirmed OS state or no OS control required.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "common_hardware_mask",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Conservative intersection of all known configured CPU facts; not an atomic group or SHA execution grant.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "xcr0",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cached XCR0; validity follows baseline_ready flag and original CPU capability record.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "signature",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Cached CPUID1 EAX.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "configured_cpus",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Sealed configured enumeration capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "common_known_count",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of exact cached CPU records included; common_complete only if all.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "feature_count",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current central optional capability inventory size, old IDs stable.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 80,
+          "type": {
+            "kind": "array",
+            "length": 6,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Zero.",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "[6]u64",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Passive existing cached capability facts only. Common ERMS/FSRM hints select universally baseline-valid REP operations; stale hints cannot permit illegal ISA. Optional SHA requires a fresh exact local execution window, never a cached current-CPU dispatch. Virtual exposure is usable ISA information, not physical hardware qualification."
+    },
+    {
+      "name": "CpuAccelerationWork",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller sets1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Caller capacity; failed output and excess tail unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "cpu_index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact CPU captured at entry; no promise about caller CPU after passive return.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Independent cpu_accel info/work flag bits, never event counts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual CPU execution epoch throughout accepted work.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capture_sequence",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original exact cached capability identity used to qualify local work.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "work_kind",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Named baseline0 or sha2561 only; no arbitrary mask or register programming.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "iterations",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Requested1..64 bounded pure iterations; not inferred hardware operations.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cpu_accel_work_status_*; copied receipt alone is not accepted output.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "callback_result",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Actual pure callback result;0 success, nonzero abort.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "original_if",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual caller IF bit immediately before CLI.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "final_if",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual returned IF bit.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "begin_ns",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Functional hardware-clock observation, never PMU count.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "end_ns",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Separate hardware-clock observation; valid only with clock_valid.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "granted_mask",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact optional feature granted for the named work; baseline0 grants no extra ISA.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "xcr0",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Cached OS-enabled existing AVX2 state; no additional XSTATE components.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Functional clock kind, hardware only1 or2.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact clock generation required through work.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 104,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Zero.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "[3]u64",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Synchronous bounded exact CPU/task/lifecycle pure-work receipt, retained through public copy. Every accepted callback needs exact local feature/OS/CPU/epoch, original IF restoration, stable hardware clock/budget and successful callback. No PMU register/state, global compiler baseline increase, task attribution or physical/native qualification. No caller callback/context retained."
+    },
+    {
+      "name": "CpuPureWorkFn",
+      "source": "API/ApiContract.json",
+      "classification": "callback",
+      "representation": "c_callback",
+      "version": 1,
+      "size": 8,
+      "alignment": 8,
+      "source_layout": "pointer",
+      "fields": [],
+      "values": [],
+      "callback": {
+        "calling_convention": "c",
+        "parameters": [
+          {
+            "name": "context",
+            "type": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          {
+            "name": "iterations",
+            "type": {
+              "kind": "scalar",
+              "name": "u32"
+            }
+          }
+        ],
+        "returns": {
+          "kind": "scalar",
+          "name": "i32"
+        }
+      },
+      "description": "Trusted pure bounded resident work;1..64iterations on exact qualified local CPU with IF0. Code/data and sufficient taskstack resident before entry; no allocation, fault, wait, yield, API or placement change. Optional SHA must never execute even for warmup before its local grant. Callback kind promises only its named optional ISA beyond the common AVX2 baseline.0 success, nonzero abort. No Runtime owner across it; not a sandbox or forced interruption promise. ABI borrows a nullable pointer to one typed slot, never optional-by-value function."
     }
   ],
   "operations": [],
@@ -150496,6 +151198,346 @@
       "scope": "cpu_pmu",
       "stability": "fixed_contract",
       "description": "Initial bounded pure PMU work/window acceptance limit; time is separate metadata, not a hardware event count."
+    },
+    {
+      "name": "cpu_feature_id_sha",
+      "value": "56",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "Named optional cached CPU feature; hardware exposure, OS enable and actual use remain distinct. Never raises global module baseline."
+    },
+    {
+      "name": "cpu_feature_id_erms",
+      "value": "57",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "Named optional cached CPU feature; hardware exposure, OS enable and actual use remain distinct. Never raises global module baseline."
+    },
+    {
+      "name": "cpu_feature_id_fsrm",
+      "value": "58",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "Named optional cached CPU feature; hardware exposure, OS enable and actual use remain distinct. Never raises global module baseline."
+    },
+    {
+      "name": "cpu_feature_id_bmi1",
+      "value": "59",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "Named optional cached CPU feature; hardware exposure, OS enable and actual use remain distinct. Never raises global module baseline."
+    },
+    {
+      "name": "cpu_feature_id_bmi2",
+      "value": "60",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "Named optional cached CPU feature; hardware exposure, OS enable and actual use remain distinct. Never raises global module baseline."
+    },
+    {
+      "name": "cpu_feature_id_adx",
+      "value": "61",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_capabilities",
+      "stability": "fixed_contract",
+      "description": "Named optional cached CPU feature; hardware exposure, OS enable and actual use remain distinct. Never raises global module baseline."
+    },
+    {
+      "name": "cpu_accel_feature_sha",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration feature sha. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_feature_erms",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration feature erms. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_feature_fsrm",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration feature fsrm. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_feature_bmi1",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration feature bmi1. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_feature_bmi2",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration feature bmi2. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_feature_adx",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration feature adx. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_info_flag_virtual",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration info_flag virtual. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_info_flag_online",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration info_flag online. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_info_flag_common_complete",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration info_flag common_complete. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_info_flag_baseline_ready",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration info_flag baseline_ready. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_callback_started",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag callback_started. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_callback_returned",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag callback_returned. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_identity_valid",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag identity_valid. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_if_preserved",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag if_preserved. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_clock_valid",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag clock_valid. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_within_budget",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag within_budget. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_feature_granted",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag feature_granted. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_flag_virtual",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_flag virtual. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_kind_baseline",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_kind baseline. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_kind_sha256",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_kind sha256. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_status_completed",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_status completed. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_status_callback_aborted",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_status callback_aborted. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_status_identity_changed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_status identity_changed. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_status_clock_unavailable",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_status clock_unavailable. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_status_clock_regressed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_status clock_regressed. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_work_status_over_budget",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Named optional CPU acceleration work_status over_budget. This is capability/work validity metadata, never a PMU count or global baseline grant."
+    },
+    {
+      "name": "cpu_accel_max_iterations",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Bounded pure resident iteration/window acceptance limit; time never hardware event count."
+    },
+    {
+      "name": "cpu_accel_max_window_ns",
+      "value": "2000000",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "cpu_acceleration",
+      "stability": "fixed_contract",
+      "description": "Bounded pure resident iteration/window acceptance limit; time never hardware event count."
     }
   ],
   "limits": [

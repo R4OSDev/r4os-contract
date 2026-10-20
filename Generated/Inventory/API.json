@@ -5,11 +5,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 472,
-    "group_slot_count": 472,
+    "function_count": 474,
+    "group_slot_count": 474,
     "sdk_only_count": 0,
     "public_count": 339,
-    "advanced_count": 133
+    "advanced_count": 135
   },
   "functions": [
     {
@@ -5671,6 +5671,30 @@
       "slot": 85,
       "exposure": "advanced",
       "description": "Passive latest retained result copy for exact original CPU/epoch/generation. Offline/restart never relabel data; stale identity/error leaves all output/tail unchanged.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_acceleration_info",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 86,
+      "exposure": "advanced",
+      "description": "Passive cached local optional CPU/OS facts and conservative all-configured hardware hints. No CPU instruction, measurement, callback or execution grant. Current CPU may change after return.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.cpu_acceleration_work",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 87,
+      "exposure": "advanced",
+      "description": "Explicit synchronous pure resident baseline/SHA execution window. Exact TaskAdmission/lifecycle lease through output, original actual IF immediately before CLI, exact physical CPU/epoch/feature/OS revalidation. Virtual exposed ISA allowed, never PMU or physical qualification.1..64iterations,2ms accepted hardware clock. No allocation/fault/wait/yield/API/placement change; no Runtime owner across callback. No arbitrary feature mask/registers. Receipt0 alone not accepted: inspect flags/status/callback/identity/IF/clock. Refusal before work preserves output/tail; no automatic retry.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

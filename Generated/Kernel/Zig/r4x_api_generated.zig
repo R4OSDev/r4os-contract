@@ -2618,6 +2618,40 @@ pub const cpu_pmu_event_cache_references: u32 = 4;
 pub const cpu_pmu_event_cache_misses: u32 = 5;
 pub const cpu_pmu_max_iterations: u32 = 4096;
 pub const cpu_pmu_max_window_ns: u64 = 2000000;
+pub const cpu_feature_id_sha: u32 = 56;
+pub const cpu_feature_id_erms: u32 = 57;
+pub const cpu_feature_id_fsrm: u32 = 58;
+pub const cpu_feature_id_bmi1: u32 = 59;
+pub const cpu_feature_id_bmi2: u32 = 60;
+pub const cpu_feature_id_adx: u32 = 61;
+pub const cpu_accel_feature_sha: u32 = 1;
+pub const cpu_accel_feature_erms: u32 = 2;
+pub const cpu_accel_feature_fsrm: u32 = 4;
+pub const cpu_accel_feature_bmi1: u32 = 8;
+pub const cpu_accel_feature_bmi2: u32 = 16;
+pub const cpu_accel_feature_adx: u32 = 32;
+pub const cpu_accel_info_flag_virtual: u32 = 1;
+pub const cpu_accel_info_flag_online: u32 = 2;
+pub const cpu_accel_info_flag_common_complete: u32 = 4;
+pub const cpu_accel_info_flag_baseline_ready: u32 = 8;
+pub const cpu_accel_work_flag_callback_started: u32 = 1;
+pub const cpu_accel_work_flag_callback_returned: u32 = 2;
+pub const cpu_accel_work_flag_identity_valid: u32 = 4;
+pub const cpu_accel_work_flag_if_preserved: u32 = 8;
+pub const cpu_accel_work_flag_clock_valid: u32 = 16;
+pub const cpu_accel_work_flag_within_budget: u32 = 32;
+pub const cpu_accel_work_flag_feature_granted: u32 = 64;
+pub const cpu_accel_work_flag_virtual: u32 = 128;
+pub const cpu_accel_work_kind_baseline: u32 = 0;
+pub const cpu_accel_work_kind_sha256: u32 = 1;
+pub const cpu_accel_work_status_completed: u32 = 0;
+pub const cpu_accel_work_status_callback_aborted: u32 = 1;
+pub const cpu_accel_work_status_identity_changed: u32 = 2;
+pub const cpu_accel_work_status_clock_unavailable: u32 = 3;
+pub const cpu_accel_work_status_clock_regressed: u32 = 4;
+pub const cpu_accel_work_status_over_budget: u32 = 5;
+pub const cpu_accel_max_iterations: u32 = 64;
+pub const cpu_accel_max_window_ns: u64 = 2000000;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10032,6 +10066,48 @@ pub const CpuPmuResult = extern struct {
 
 pub const PmuWorkFn = *const fn (u64, u32) callconv(.c) i32;
 
+pub const CpuAccelerationInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    cpu_index: u32 = 0,
+    flags: u32 = 0,
+    epoch: u64 = 0,
+    capture_sequence: u64 = 0,
+    hardware_mask: u64 = 0,
+    os_mask: u64 = 0,
+    common_hardware_mask: u64 = 0,
+    xcr0: u64 = 0,
+    signature: u32 = 0,
+    configured_cpus: u32 = 0,
+    common_known_count: u32 = 0,
+    feature_count: u32 = 0,
+    reserved0: [6]u64 = .{0} ** 6,
+};
+
+pub const CpuAccelerationWork = extern struct {
+    version: u32 = 1,
+    size: u32 = 128,
+    cpu_index: u32 = 0,
+    flags: u32 = 0,
+    epoch: u64 = 0,
+    capture_sequence: u64 = 0,
+    work_kind: u32 = 0,
+    iterations: u32 = 0,
+    status: u32 = 0,
+    callback_result: i32 = 0,
+    original_if: u64 = 0,
+    final_if: u64 = 0,
+    begin_ns: u64 = 0,
+    end_ns: u64 = 0,
+    granted_mask: u64 = 0,
+    xcr0: u64 = 0,
+    clock_source: u32 = 0,
+    clock_generation: u32 = 0,
+    reserved0: [3]u64 = .{0} ** 3,
+};
+
+pub const CpuPureWorkFn = *const fn (u64, u32) callconv(.c) i32;
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10949,12 +11025,14 @@ pub const R4DevFns = struct {
     pub const cpu_pmu_info = *const fn (u32, *CpuPmuInfo) callconv(.c) i32;
     pub const cpu_pmu_measure = *const fn (u32, u64, u32, u32, ?*const PmuWorkFn, u64, *CpuPmuResult) callconv(.c) i32;
     pub const cpu_pmu_result = *const fn (u32, u64, u64, *CpuPmuResult) callconv(.c) i32;
+    pub const cpu_acceleration_info = *const fn (*CpuAccelerationInfo) callconv(.c) i32;
+    pub const cpu_acceleration_work = *const fn (u32, u32, ?*const CpuPureWorkFn, u64, *CpuAccelerationWork) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 32,
-    size: u32 = 704,
+    abi_version: u32 = 33,
+    size: u32 = 720,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -11042,6 +11120,8 @@ pub const R4XStartR4Dev = extern struct {
     cpu_pmu_info: usize = 0,
     cpu_pmu_measure: usize = 0,
     cpu_pmu_result: usize = 0,
+    cpu_acceleration_info: usize = 0,
+    cpu_acceleration_work: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -11543,6 +11623,8 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 83, .offset = 680, .name = "cpu_pmu_info", .state = .function, .required = false },
     .{ .number = 84, .offset = 688, .name = "cpu_pmu_measure", .state = .function, .required = false },
     .{ .number = 85, .offset = 696, .name = "cpu_pmu_result", .state = .function, .required = false },
+    .{ .number = 86, .offset = 704, .name = "cpu_acceleration_info", .state = .function, .required = false },
+    .{ .number = 87, .offset = 712, .name = "cpu_acceleration_work", .state = .function, .required = false },
 };
 
 comptime {
@@ -18106,6 +18188,44 @@ comptime {
     if (@offsetOf(CpuPmuResult, "reserved0") != 212) @compileError("generated ABI offset drift: CpuPmuResult.reserved0");
     if (@offsetOf(CpuPmuResult, "event_select") != 216) @compileError("generated ABI offset drift: CpuPmuResult.event_select");
     if (@offsetOf(CpuPmuResult, "reserved1") != 224) @compileError("generated ABI offset drift: CpuPmuResult.reserved1");
+    if (@sizeOf(CpuAccelerationInfo) != 128) @compileError("generated ABI size drift: CpuAccelerationInfo");
+    if (@alignOf(CpuAccelerationInfo) != 8) @compileError("generated ABI alignment drift: CpuAccelerationInfo");
+    if (@offsetOf(CpuAccelerationInfo, "version") != 0) @compileError("generated ABI offset drift: CpuAccelerationInfo.version");
+    if (@offsetOf(CpuAccelerationInfo, "size") != 4) @compileError("generated ABI offset drift: CpuAccelerationInfo.size");
+    if (@offsetOf(CpuAccelerationInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuAccelerationInfo.cpu_index");
+    if (@offsetOf(CpuAccelerationInfo, "flags") != 12) @compileError("generated ABI offset drift: CpuAccelerationInfo.flags");
+    if (@offsetOf(CpuAccelerationInfo, "epoch") != 16) @compileError("generated ABI offset drift: CpuAccelerationInfo.epoch");
+    if (@offsetOf(CpuAccelerationInfo, "capture_sequence") != 24) @compileError("generated ABI offset drift: CpuAccelerationInfo.capture_sequence");
+    if (@offsetOf(CpuAccelerationInfo, "hardware_mask") != 32) @compileError("generated ABI offset drift: CpuAccelerationInfo.hardware_mask");
+    if (@offsetOf(CpuAccelerationInfo, "os_mask") != 40) @compileError("generated ABI offset drift: CpuAccelerationInfo.os_mask");
+    if (@offsetOf(CpuAccelerationInfo, "common_hardware_mask") != 48) @compileError("generated ABI offset drift: CpuAccelerationInfo.common_hardware_mask");
+    if (@offsetOf(CpuAccelerationInfo, "xcr0") != 56) @compileError("generated ABI offset drift: CpuAccelerationInfo.xcr0");
+    if (@offsetOf(CpuAccelerationInfo, "signature") != 64) @compileError("generated ABI offset drift: CpuAccelerationInfo.signature");
+    if (@offsetOf(CpuAccelerationInfo, "configured_cpus") != 68) @compileError("generated ABI offset drift: CpuAccelerationInfo.configured_cpus");
+    if (@offsetOf(CpuAccelerationInfo, "common_known_count") != 72) @compileError("generated ABI offset drift: CpuAccelerationInfo.common_known_count");
+    if (@offsetOf(CpuAccelerationInfo, "feature_count") != 76) @compileError("generated ABI offset drift: CpuAccelerationInfo.feature_count");
+    if (@offsetOf(CpuAccelerationInfo, "reserved0") != 80) @compileError("generated ABI offset drift: CpuAccelerationInfo.reserved0");
+    if (@sizeOf(CpuAccelerationWork) != 128) @compileError("generated ABI size drift: CpuAccelerationWork");
+    if (@alignOf(CpuAccelerationWork) != 8) @compileError("generated ABI alignment drift: CpuAccelerationWork");
+    if (@offsetOf(CpuAccelerationWork, "version") != 0) @compileError("generated ABI offset drift: CpuAccelerationWork.version");
+    if (@offsetOf(CpuAccelerationWork, "size") != 4) @compileError("generated ABI offset drift: CpuAccelerationWork.size");
+    if (@offsetOf(CpuAccelerationWork, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuAccelerationWork.cpu_index");
+    if (@offsetOf(CpuAccelerationWork, "flags") != 12) @compileError("generated ABI offset drift: CpuAccelerationWork.flags");
+    if (@offsetOf(CpuAccelerationWork, "epoch") != 16) @compileError("generated ABI offset drift: CpuAccelerationWork.epoch");
+    if (@offsetOf(CpuAccelerationWork, "capture_sequence") != 24) @compileError("generated ABI offset drift: CpuAccelerationWork.capture_sequence");
+    if (@offsetOf(CpuAccelerationWork, "work_kind") != 32) @compileError("generated ABI offset drift: CpuAccelerationWork.work_kind");
+    if (@offsetOf(CpuAccelerationWork, "iterations") != 36) @compileError("generated ABI offset drift: CpuAccelerationWork.iterations");
+    if (@offsetOf(CpuAccelerationWork, "status") != 40) @compileError("generated ABI offset drift: CpuAccelerationWork.status");
+    if (@offsetOf(CpuAccelerationWork, "callback_result") != 44) @compileError("generated ABI offset drift: CpuAccelerationWork.callback_result");
+    if (@offsetOf(CpuAccelerationWork, "original_if") != 48) @compileError("generated ABI offset drift: CpuAccelerationWork.original_if");
+    if (@offsetOf(CpuAccelerationWork, "final_if") != 56) @compileError("generated ABI offset drift: CpuAccelerationWork.final_if");
+    if (@offsetOf(CpuAccelerationWork, "begin_ns") != 64) @compileError("generated ABI offset drift: CpuAccelerationWork.begin_ns");
+    if (@offsetOf(CpuAccelerationWork, "end_ns") != 72) @compileError("generated ABI offset drift: CpuAccelerationWork.end_ns");
+    if (@offsetOf(CpuAccelerationWork, "granted_mask") != 80) @compileError("generated ABI offset drift: CpuAccelerationWork.granted_mask");
+    if (@offsetOf(CpuAccelerationWork, "xcr0") != 88) @compileError("generated ABI offset drift: CpuAccelerationWork.xcr0");
+    if (@offsetOf(CpuAccelerationWork, "clock_source") != 96) @compileError("generated ABI offset drift: CpuAccelerationWork.clock_source");
+    if (@offsetOf(CpuAccelerationWork, "clock_generation") != 100) @compileError("generated ABI offset drift: CpuAccelerationWork.clock_generation");
+    if (@offsetOf(CpuAccelerationWork, "reserved0") != 104) @compileError("generated ABI offset drift: CpuAccelerationWork.reserved0");
     if (@sizeOf(R4XStartR4Sys) != 1288) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -18505,7 +18625,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "reserved1") != 176) @compileError("generated ABI offset drift: R4XStartR4Audio.reserved1");
     if (@offsetOf(R4XStartR4Audio, "audio_output_info") != 184) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_info");
     if (@offsetOf(R4XStartR4Audio, "audio_select_output") != 192) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_select_output");
-    if (@sizeOf(R4XStartR4Dev) != 704) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 720) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -18592,6 +18712,8 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_pmu_info") != 680) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_pmu_info");
     if (@offsetOf(R4XStartR4Dev, "cpu_pmu_measure") != 688) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_pmu_measure");
     if (@offsetOf(R4XStartR4Dev, "cpu_pmu_result") != 696) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_pmu_result");
+    if (@offsetOf(R4XStartR4Dev, "cpu_acceleration_info") != 704) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_acceleration_info");
+    if (@offsetOf(R4XStartR4Dev, "cpu_acceleration_work") != 712) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_acceleration_work");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -19522,13 +19644,15 @@ pub const R4DevProvider = struct {
     cpu_pmu_info: ?R4DevFns.cpu_pmu_info = null,
     cpu_pmu_measure: ?R4DevFns.cpu_pmu_measure = null,
     cpu_pmu_result: ?R4DevFns.cpu_pmu_result = null,
+    cpu_acceleration_info: ?R4DevFns.cpu_acceleration_info = null,
+    cpu_acceleration_work: ?R4DevFns.cpu_acceleration_work = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 32,
-        .size = 704,
+        .abi_version = 33,
+        .size = 720,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -19616,5 +19740,7 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .cpu_pmu_info = if (provider.cpu_pmu_info) |callback| @intFromPtr(callback) else 0,
         .cpu_pmu_measure = if (provider.cpu_pmu_measure) |callback| @intFromPtr(callback) else 0,
         .cpu_pmu_result = if (provider.cpu_pmu_result) |callback| @intFromPtr(callback) else 0,
+        .cpu_acceleration_info = if (provider.cpu_acceleration_info) |callback| @intFromPtr(callback) else 0,
+        .cpu_acceleration_work = if (provider.cpu_acceleration_work) |callback| @intFromPtr(callback) else 0,
     };
 }

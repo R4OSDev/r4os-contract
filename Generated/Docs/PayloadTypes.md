@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 358 von 358 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 361 von 361 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2617; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2651; Limits: 111
 
 ## App-Profile
 
@@ -379,6 +379,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuPmuInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuPmuResult` | fixed_layout | extern_struct | 256/8 | 256/8 | 256/8 | 256/8 |
 | `PmuWorkFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
+| `CpuAccelerationInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `CpuAccelerationWork` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `CpuPureWorkFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 
 ## Typdetails
 
@@ -9764,6 +9767,67 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Repräsentation: `c_callback`
 - Version/Größe/Alignment: 1 / 8 / 8
 
+### `CpuAccelerationInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `capture_sequence` | 24 | 8 | 8 | `u64` | - |
+| `hardware_mask` | 32 | 8 | 8 | `u64` | - |
+| `os_mask` | 40 | 8 | 8 | `u64` | - |
+| `common_hardware_mask` | 48 | 8 | 8 | `u64` | - |
+| `xcr0` | 56 | 8 | 8 | `u64` | - |
+| `signature` | 64 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 68 | 4 | 4 | `u32` | - |
+| `common_known_count` | 72 | 4 | 4 | `u32` | - |
+| `feature_count` | 76 | 4 | 4 | `u32` | - |
+| `reserved0` | 80 | 48 | 8 | `[6]u64` | - |
+
+### `CpuAccelerationWork`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `capture_sequence` | 24 | 8 | 8 | `u64` | - |
+| `work_kind` | 32 | 4 | 4 | `u32` | - |
+| `iterations` | 36 | 4 | 4 | `u32` | - |
+| `status` | 40 | 4 | 4 | `u32` | - |
+| `callback_result` | 44 | 4 | 4 | `i32` | - |
+| `original_if` | 48 | 8 | 8 | `u64` | - |
+| `final_if` | 56 | 8 | 8 | `u64` | - |
+| `begin_ns` | 64 | 8 | 8 | `u64` | - |
+| `end_ns` | 72 | 8 | 8 | `u64` | - |
+| `granted_mask` | 80 | 8 | 8 | `u64` | - |
+| `xcr0` | 88 | 8 | 8 | `u64` | - |
+| `clock_source` | 96 | 4 | 4 | `u32` | - |
+| `clock_generation` | 100 | 4 | 4 | `u32` | - |
+| `reserved0` | 104 | 24 | 8 | `[3]u64` | - |
+
+### `CpuPureWorkFn`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `callback`
+- Repräsentation: `c_callback`
+- Version/Größe/Alignment: 1 / 8 / 8
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13142,6 +13206,40 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_pmu_event_cache_misses` | `5` | `u32` | value | number | `cpu_pmu` | fixed_contract |
 | `cpu_pmu_max_iterations` | `4096` | `u32` | value | number | `cpu_pmu` | fixed_contract |
 | `cpu_pmu_max_window_ns` | `2000000` | `u64` | value | number | `cpu_pmu` | fixed_contract |
+| `cpu_feature_id_sha` | `56` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_feature_id_erms` | `57` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_feature_id_fsrm` | `58` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_feature_id_bmi1` | `59` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_feature_id_bmi2` | `60` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_feature_id_adx` | `61` | `u32` | value | number | `cpu_capabilities` | fixed_contract |
+| `cpu_accel_feature_sha` | `1` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_feature_erms` | `2` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_feature_fsrm` | `4` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_feature_bmi1` | `8` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_feature_bmi2` | `16` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_feature_adx` | `32` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_info_flag_virtual` | `1` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_info_flag_online` | `2` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_info_flag_common_complete` | `4` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_info_flag_baseline_ready` | `8` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_callback_started` | `1` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_callback_returned` | `2` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_identity_valid` | `4` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_if_preserved` | `8` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_clock_valid` | `16` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_within_budget` | `32` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_feature_granted` | `64` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_flag_virtual` | `128` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_kind_baseline` | `0` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_kind_sha256` | `1` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_status_completed` | `0` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_status_callback_aborted` | `1` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_status_identity_changed` | `2` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_status_clock_unavailable` | `3` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_status_clock_regressed` | `4` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_work_status_over_budget` | `5` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_max_iterations` | `64` | `u32` | value | number | `cpu_acceleration` | fixed_contract |
+| `cpu_accel_max_window_ns` | `2000000` | `u64` | value | number | `cpu_acceleration` | fixed_contract |
 
 ## Limits
 

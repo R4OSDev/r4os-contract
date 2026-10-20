@@ -182,3 +182,67 @@ unsafe extern "C" fn pmu_measure(
 pub extern "C" fn r4os_rust_pmu_measure() -> abi::R4DevFns::cpu_pmu_measure {
     pmu_measure
 }
+
+// Pure ABI peers only: no optional ISA, clock or physical CPU observation.
+unsafe extern "C" fn acceleration_info(output: *mut abi::CpuAccelerationInfo) -> i32 {
+    if output.is_null() || !output.is_aligned() {
+        return abi::cpu_capabilities_error_invalid;
+    }
+    unsafe {
+        if (*output).version != 1 || (*output).size < 128 {
+            return abi::cpu_capabilities_error_invalid;
+        }
+        output.write(abi::CpuAccelerationInfo {
+            cpu_index: 0xfedc_ba98,
+            epoch: 0xfedc_ba98_7654_3210,
+            capture_sequence: 0x8123_4567_89ab_cdef,
+            flags: abi::cpu_accel_info_flag_virtual,
+            hardware_mask: 63,
+            common_hardware_mask: 31,
+            xcr0: 7,
+            ..Default::default()
+        });
+    }
+    0
+}
+unsafe extern "C" fn acceleration_work(
+    kind: u32,
+    iterations: u32,
+    slot: *const abi::CpuPureWorkFn,
+    context: u64,
+    output: *mut abi::CpuAccelerationWork,
+) -> i32 {
+    assert_eq!(kind, abi::cpu_accel_work_kind_sha256);
+    assert_eq!(iterations, 64);
+    if slot.is_null() || !slot.is_aligned() || output.is_null() || !output.is_aligned() {
+        return abi::cpu_capabilities_error_invalid;
+    }
+    let result = unsafe {
+        if slot.cast::<u64>().read() == 0 || (*output).version != 1 || (*output).size < 128 {
+            return abi::cpu_capabilities_error_invalid;
+        }
+        slot.read()(context, iterations)
+    };
+    unsafe {
+        output.write(abi::CpuAccelerationWork {
+            cpu_index: 0xfedc_ba98,
+            epoch: 0xfedc_ba98_7654_3210,
+            work_kind: kind,
+            iterations,
+            callback_result: result,
+            status: abi::cpu_accel_work_status_callback_aborted,
+            flags: abi::cpu_accel_work_flag_callback_started
+                | abi::cpu_accel_work_flag_callback_returned,
+            ..Default::default()
+        });
+    }
+    0
+}
+#[unsafe(no_mangle)]
+pub extern "C" fn r4os_rust_acceleration_info() -> abi::R4DevFns::cpu_acceleration_info {
+    acceleration_info
+}
+#[unsafe(no_mangle)]
+pub extern "C" fn r4os_rust_acceleration_work() -> abi::R4DevFns::cpu_acceleration_work {
+    acceleration_work
+}

@@ -2622,6 +2622,40 @@ pub const cpu_pmu_event_cache_references: u32 = 4;
 pub const cpu_pmu_event_cache_misses: u32 = 5;
 pub const cpu_pmu_max_iterations: u32 = 4096;
 pub const cpu_pmu_max_window_ns: u64 = 2000000;
+pub const cpu_feature_id_sha: u32 = 56;
+pub const cpu_feature_id_erms: u32 = 57;
+pub const cpu_feature_id_fsrm: u32 = 58;
+pub const cpu_feature_id_bmi1: u32 = 59;
+pub const cpu_feature_id_bmi2: u32 = 60;
+pub const cpu_feature_id_adx: u32 = 61;
+pub const cpu_accel_feature_sha: u32 = 1;
+pub const cpu_accel_feature_erms: u32 = 2;
+pub const cpu_accel_feature_fsrm: u32 = 4;
+pub const cpu_accel_feature_bmi1: u32 = 8;
+pub const cpu_accel_feature_bmi2: u32 = 16;
+pub const cpu_accel_feature_adx: u32 = 32;
+pub const cpu_accel_info_flag_virtual: u32 = 1;
+pub const cpu_accel_info_flag_online: u32 = 2;
+pub const cpu_accel_info_flag_common_complete: u32 = 4;
+pub const cpu_accel_info_flag_baseline_ready: u32 = 8;
+pub const cpu_accel_work_flag_callback_started: u32 = 1;
+pub const cpu_accel_work_flag_callback_returned: u32 = 2;
+pub const cpu_accel_work_flag_identity_valid: u32 = 4;
+pub const cpu_accel_work_flag_if_preserved: u32 = 8;
+pub const cpu_accel_work_flag_clock_valid: u32 = 16;
+pub const cpu_accel_work_flag_within_budget: u32 = 32;
+pub const cpu_accel_work_flag_feature_granted: u32 = 64;
+pub const cpu_accel_work_flag_virtual: u32 = 128;
+pub const cpu_accel_work_kind_baseline: u32 = 0;
+pub const cpu_accel_work_kind_sha256: u32 = 1;
+pub const cpu_accel_work_status_completed: u32 = 0;
+pub const cpu_accel_work_status_callback_aborted: u32 = 1;
+pub const cpu_accel_work_status_identity_changed: u32 = 2;
+pub const cpu_accel_work_status_clock_unavailable: u32 = 3;
+pub const cpu_accel_work_status_clock_regressed: u32 = 4;
+pub const cpu_accel_work_status_over_budget: u32 = 5;
+pub const cpu_accel_max_iterations: u32 = 64;
+pub const cpu_accel_max_window_ns: u64 = 2000000;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19033,6 +19067,100 @@ impl Default for CpuPmuResult {
 
 pub type PmuWorkFn = unsafe extern "C" fn(u64, u32) -> i32;
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuAccelerationInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub capture_sequence: u64,
+    pub hardware_mask: u64,
+    pub os_mask: u64,
+    pub common_hardware_mask: u64,
+    pub xcr0: u64,
+    pub signature: u32,
+    pub configured_cpus: u32,
+    pub common_known_count: u32,
+    pub feature_count: u32,
+    pub reserved0: [u64; 6],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuAccelerationInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            capture_sequence: 0,
+            hardware_mask: 0,
+            os_mask: 0,
+            common_hardware_mask: 0,
+            xcr0: 0,
+            signature: 0,
+            configured_cpus: 0,
+            common_known_count: 0,
+            feature_count: 0,
+            reserved0: [0; 6],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CpuAccelerationWork {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub flags: u32,
+    pub epoch: u64,
+    pub capture_sequence: u64,
+    pub work_kind: u32,
+    pub iterations: u32,
+    pub status: u32,
+    pub callback_result: i32,
+    pub original_if: u64,
+    pub final_if: u64,
+    pub begin_ns: u64,
+    pub end_ns: u64,
+    pub granted_mask: u64,
+    pub xcr0: u64,
+    pub clock_source: u32,
+    pub clock_generation: u32,
+    pub reserved0: [u64; 3],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuAccelerationWork {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            cpu_index: 0,
+            flags: 0,
+            epoch: 0,
+            capture_sequence: 0,
+            work_kind: 0,
+            iterations: 0,
+            status: 0,
+            callback_result: 0,
+            original_if: 0,
+            final_if: 0,
+            begin_ns: 0,
+            end_ns: 0,
+            granted_mask: 0,
+            xcr0: 0,
+            clock_source: 0,
+            clock_generation: 0,
+            reserved0: [0; 3],
+        }
+    }
+}
+
+pub type CpuPureWorkFn = unsafe extern "C" fn(u64, u32) -> i32;
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20430,6 +20558,8 @@ pub mod R4DevFns {
     pub type cpu_pmu_info = unsafe extern "C" fn(u32, *mut CpuPmuInfo) -> i32;
     pub type cpu_pmu_measure = unsafe extern "C" fn(u32, u64, u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuPmuResult) -> i32;
     pub type cpu_pmu_result = unsafe extern "C" fn(u32, u64, u64, *mut CpuPmuResult) -> i32;
+    pub type cpu_acceleration_info = unsafe extern "C" fn(*mut CpuAccelerationInfo) -> i32;
+    pub type cpu_acceleration_work = unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32;
 }
 
 #[repr(C)]
@@ -20525,14 +20655,16 @@ pub struct R4XStartR4Dev {
     pub cpu_pmu_info: usize,
     pub cpu_pmu_measure: usize,
     pub cpu_pmu_result: usize,
+    pub cpu_acceleration_info: usize,
+    pub cpu_acceleration_work: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 32,
-            size: 704,
+            abi_version: 33,
+            size: 720,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -20620,6 +20752,8 @@ impl Default for R4XStartR4Dev {
             cpu_pmu_info: 0,
             cpu_pmu_measure: 0,
             cpu_pmu_result: 0,
+            cpu_acceleration_info: 0,
+            cpu_acceleration_work: 0,
         }
     }
 }
@@ -23423,6 +23557,8 @@ pub struct ProtocolApi {
     pub alloc: unsafe extern "C" fn(u32, u32) -> *mut core::ffi::c_void,
     pub free: unsafe extern "C" fn(*mut core::ffi::c_void, u32) -> (),
     pub file_read: unsafe extern "C" fn(*const u8, *mut u8, u32) -> i32,
+    pub cpu_acceleration_info: Option<unsafe extern "C" fn(*mut CpuAccelerationInfo) -> i32>,
+    pub cpu_acceleration_work: Option<unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32>,
 }
 
 #[repr(C)]
@@ -31159,6 +31295,46 @@ const _: () = {
     assert!(core::mem::align_of::<CpuPmuResult>() == 8);
     assert!(core::mem::size_of::<PmuWorkFn>() == 8);
     assert!(core::mem::align_of::<PmuWorkFn>() == 8);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, flags) == 12);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, capture_sequence) == 24);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, hardware_mask) == 32);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, os_mask) == 40);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, common_hardware_mask) == 48);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, xcr0) == 56);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, signature) == 64);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, configured_cpus) == 68);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, common_known_count) == 72);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, feature_count) == 76);
+    assert!(core::mem::offset_of!(CpuAccelerationInfo, reserved0) == 80);
+    assert!(core::mem::size_of::<CpuAccelerationInfo>() == 128);
+    assert!(core::mem::align_of::<CpuAccelerationInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, version) == 0);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, size) == 4);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, flags) == 12);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, epoch) == 16);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, capture_sequence) == 24);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, work_kind) == 32);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, iterations) == 36);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, status) == 40);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, callback_result) == 44);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, original_if) == 48);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, final_if) == 56);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, begin_ns) == 64);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, end_ns) == 72);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, granted_mask) == 80);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, xcr0) == 88);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, clock_source) == 96);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, clock_generation) == 100);
+    assert!(core::mem::offset_of!(CpuAccelerationWork, reserved0) == 104);
+    assert!(core::mem::size_of::<CpuAccelerationWork>() == 128);
+    assert!(core::mem::align_of::<CpuAccelerationWork>() == 8);
+    assert!(core::mem::size_of::<CpuPureWorkFn>() == 8);
+    assert!(core::mem::align_of::<CpuPureWorkFn>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31675,7 +31851,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_pmu_info) == 680);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_pmu_measure) == 688);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_pmu_result) == 696);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 704);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_acceleration_info) == 704);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_acceleration_work) == 712);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 720);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);
@@ -32842,7 +33020,9 @@ const _: () = {
     assert!(core::mem::offset_of!(ProtocolApi, alloc) == 64);
     assert!(core::mem::offset_of!(ProtocolApi, free) == 72);
     assert!(core::mem::offset_of!(ProtocolApi, file_read) == 80);
-    assert!(core::mem::size_of::<ProtocolApi>() == 88);
+    assert!(core::mem::offset_of!(ProtocolApi, cpu_acceleration_info) == 88);
+    assert!(core::mem::offset_of!(ProtocolApi, cpu_acceleration_work) == 96);
+    assert!(core::mem::size_of::<ProtocolApi>() == 104);
     assert!(core::mem::align_of::<ProtocolApi>() == 8);
     assert!(core::mem::offset_of!(DmaBuffer, phys_addr) == 0);
     assert!(core::mem::offset_of!(DmaBuffer, virt_addr) == 8);
