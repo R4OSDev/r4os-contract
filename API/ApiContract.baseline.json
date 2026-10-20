@@ -12806,10 +12806,10 @@
       "fn_namespace": "R4DeskFns",
       "required": false,
       "magic": 826623058,
-      "abi_version": 15,
+      "abi_version": 16,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 536,
+      "size": 552,
       "slots": [
         {
           "number": 0,
@@ -16773,6 +16773,155 @@
             "side_effects": "may_have_occurred",
             "retry": "idempotent",
             "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 65,
+          "offset": 536,
+          "name": "console_read_events",
+          "state": "function",
+          "required": false,
+          "description": "Current admitted main/legacy console input owner reads0..64 complete events. Native u32 values are retained as full text scalars; navigation is explicitly kind2, legacy byte producers become kind3. Returns complete event count,0 for empty/zero capacity, negative for invalid/closed/unavailable context. Successful prefix only is written, all tails and all error outputs unchanged. Current console/redirected target identity is pinned until after the unlocked caller copy. No Input/Registry/Runtime owner spans pageable caller access. A compute worker is not an input producer/consumer. No decoder, line editor or clipboard policy in the kernel.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "output",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ConsoleInputEvent"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "capacity",
+                  "ownership": "caller_owned",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 66,
+          "offset": 544,
+          "name": "console_push_events",
+          "state": "function",
+          "required": false,
+          "description": "Queues up to64 complete explicit input events for the exact live handle generation. Validate/copy the complete batch before admission, including wireversion/kind/scalar/flags; invalid batch mutates nothing. Returns accepted event prefix length,0 for full/zero count, negative for invalid/stale/closed/non-console context. Unaccepted suffix remains caller-owned for bounded retry. Same FIFO/4095-byte capacity/generation/wake and close ownership as existing input; a text scalar charges its full UTF8 width and is never partially admitted. Existing raw-byte APIs retain their formats/statuses. No callback, allocation, borrowed caller pointer or decoder state spans the queue lock.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramProcessHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "single",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "events",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "ConsoleInputEvent"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "count",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "count",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -123638,6 +123787,76 @@
         }
       },
       "description": "Trusted bounded device source read under exact driver instance and task admission. May sleep using existing driver wait service, holds no Runtime/ranked owner or Rust mutable registry borrow. Returns positive exact length with confirmed receipt or negative entropy error. Descriptor/context and all DMA buffers survive pending completion and uncertain stop. Broker owns resident output staging and never exposes unconfirmed or partial caller bytes."
+    },
+    {
+      "name": "ConsoleInputEvent",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 16,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wireversion1. Every accepted input event validates the complete fixed16-byte record; output always version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "kind",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Explicit text scalar1, control key2 or UTF8 stream byte3. Byte80/81 never mean history unless kind2.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "value",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Unicode scalar for kind1; logical control/navigation code0..255 for kind2; one UTF8 stream byte0..255 for kind3.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved0; unknown flags are rejected before any queue mutation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One explicit console input unit. Text scalar, control key and UTF8 byte-stream data are disjoint. No byte value is intrinsically a navigation key. Full events are atomic under bounded queue backpressure. Source owns every unaccepted event suffix; no borrowed pointer is retained. Unicode encoding/editing/ANSI policies stay in userland."
     }
   ],
   "operations": [],
@@ -153043,6 +153262,76 @@
       "scope": "entropy",
       "stability": "fixed_contract",
       "description": "Named device entropy error retained. No random-content or physical hardware quality claim."
+    },
+    {
+      "name": "console_input_event_text",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "console_input",
+      "stability": "fixed_contract",
+      "description": "One valid Unicode scalar includingU+0000; line/path policies may reject C0 separately."
+    },
+    {
+      "name": "console_input_event_key",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "console_input",
+      "stability": "fixed_contract",
+      "description": "Explicit logical control/navigation code0..255, never inferred from UTF8 continuation bytes."
+    },
+    {
+      "name": "console_input_event_utf8_byte",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "console_input",
+      "stability": "fixed_contract",
+      "description": "One byte of caller-declared UTF8 text stream, including80/81 continuation bytes. Decoder state belongs to the receiving userland stream."
+    },
+    {
+      "name": "console_input_event_batch_max",
+      "value": "64",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "console_input",
+      "stability": "fixed_contract",
+      "description": "Maximum event count/capacity per call. Partial accepted prefix reported in events, not bytes. Existing4095-byte console budget charges scalar UTF8 width and one unit per byte/key."
+    },
+    {
+      "name": "console_input_key_up",
+      "value": "128",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "console_input",
+      "stability": "fixed_contract",
+      "description": "Logical up key, only with explicit event kind2."
+    },
+    {
+      "name": "console_input_key_down",
+      "value": "129",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "console_input",
+      "stability": "fixed_contract",
+      "description": "Logical down key, only with explicit event kind2."
+    },
+    {
+      "name": "console_input_key_f3",
+      "value": "130",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "console_input",
+      "stability": "fixed_contract",
+      "description": "Logical repeat-history key, only with explicit event kind2."
     }
   ],
   "limits": [

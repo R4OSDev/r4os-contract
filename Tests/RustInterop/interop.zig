@@ -1,5 +1,20 @@
 const std = @import("std");
 const abi = @import("r4os_technical_abi");
+
+extern fn r4os_c_console_events(*const abi.ProgramProcessHandle, [*]const abi.ConsoleInputEvent, u32) callconv(.c) i32;
+extern fn r4os_rust_console_events(*const abi.ProgramProcessHandle, [*]const abi.ConsoleInputEvent, u32) callconv(.c) i32;
+
+test "console typed scalar key and stream-byte records preserve exact generation and event prefix count across C Rust Zig" {
+    const handle: abi.ProgramProcessHandle = .{ .instance_id = 37, .generation = 0xfedcba9876543210 };
+    const events = [_]abi.ConsoleInputEvent{
+        .{ .kind = abi.console_input_event_text, .value = 0x20ac },
+        .{ .kind = abi.console_input_event_key, .value = abi.console_input_key_up },
+        .{ .kind = abi.console_input_event_utf8_byte, .value = 0x81 },
+        .{ .kind = abi.console_input_event_text, .value = 0x1f600 },
+    };
+    const callbacks = [_]abi.R4DeskFns.console_push_events{ r4os_c_console_events, r4os_rust_console_events };
+    for (callbacks) |callback| try std.testing.expectEqual(@as(i32, 3), callback(&handle, &events, events.len));
+}
 extern fn r4os_rust_write() callconv(.c) abi.R4SysFns.write;
 extern fn r4os_rust_call_write(abi.R4SysFns.write) callconv(.c) i32;
 extern fn r4os_rust_service_call() callconv(.c) abi.R4SysFns.service_call;

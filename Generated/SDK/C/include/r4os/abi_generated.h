@@ -2702,6 +2702,13 @@ extern "C" {
 #define R4OS_ENTROPY_ERROR_DEVICE ((int32_t)-7)
 #define R4OS_ENTROPY_ERROR_CANCELLED ((int32_t)-8)
 #define R4OS_ENTROPY_ERROR_RETAINED ((int32_t)-9)
+#define R4OS_CONSOLE_INPUT_EVENT_TEXT 1u
+#define R4OS_CONSOLE_INPUT_EVENT_KEY 2u
+#define R4OS_CONSOLE_INPUT_EVENT_UTF8_BYTE 3u
+#define R4OS_CONSOLE_INPUT_EVENT_BATCH_MAX 64u
+#define R4OS_CONSOLE_INPUT_KEY_UP 128u
+#define R4OS_CONSOLE_INPUT_KEY_DOWN 129u
+#define R4OS_CONSOLE_INPUT_KEY_F3 130u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3524,6 +3531,7 @@ typedef struct R4EntropySourceInfo R4EntropySourceInfo;
 typedef struct R4EntropyDeviceReceipt R4EntropyDeviceReceipt;
 typedef struct R4EntropyBackend R4EntropyBackend;
 typedef struct R4DriverEntropyApi R4DriverEntropyApi;
+typedef struct R4ConsoleInputEvent R4ConsoleInputEvent;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10529,6 +10537,13 @@ typedef struct R4DriverEntropyApi {
     uint64_t reserved0;
 } R4DriverEntropyApi;
 
+typedef struct R4ConsoleInputEvent {
+    uint32_t version;
+    uint32_t kind;
+    uint32_t value;
+    uint32_t flags;
+} R4ConsoleInputEvent;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10966,6 +10981,8 @@ typedef int32_t (*R4DeskRemoteFrameSnapshotReleaseFn)(const R4RemoteFrameLease *
 typedef int32_t (*R4DeskRemoteFrameSourceResetFn)(void);
 typedef int32_t (*R4DeskRemoteFrameCaptureStatsFn)(R4RemoteFrameCaptureStats * output);
 typedef int32_t (*R4DeskDesktopActivityNotifyFn)(void);
+typedef int32_t (*R4DeskConsoleReadEventsFn)(R4ConsoleInputEvent * output, uint32_t capacity);
+typedef int32_t (*R4DeskConsolePushEventsFn)(const R4ProgramProcessHandle * handle, const R4ConsoleInputEvent * events, uint32_t count);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -11037,6 +11054,8 @@ typedef struct R4XStartR4Desk {
     uintptr_t remote_frame_source_reset;
     uintptr_t remote_frame_capture_stats;
     uintptr_t desktop_activity_notify;
+    uintptr_t console_read_events;
+    uintptr_t console_push_events;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -17894,6 +17913,11 @@ _Static_assert(offsetof(R4DriverEntropyApi, size) == 4u, "DriverEntropyApi.size 
 _Static_assert(offsetof(R4DriverEntropyApi, register_backend) == 8u, "DriverEntropyApi.register_backend offset mismatch");
 _Static_assert(offsetof(R4DriverEntropyApi, unregister_backend) == 16u, "DriverEntropyApi.unregister_backend offset mismatch");
 _Static_assert(offsetof(R4DriverEntropyApi, reserved0) == 24u, "DriverEntropyApi.reserved0 offset mismatch");
+_Static_assert(sizeof(R4ConsoleInputEvent) == 16u, "ConsoleInputEvent size mismatch");
+_Static_assert(offsetof(R4ConsoleInputEvent, version) == 0u, "ConsoleInputEvent.version offset mismatch");
+_Static_assert(offsetof(R4ConsoleInputEvent, kind) == 4u, "ConsoleInputEvent.kind offset mismatch");
+_Static_assert(offsetof(R4ConsoleInputEvent, value) == 8u, "ConsoleInputEvent.value offset mismatch");
+_Static_assert(offsetof(R4ConsoleInputEvent, flags) == 12u, "ConsoleInputEvent.flags offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1304u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -18214,7 +18238,7 @@ _Static_assert(offsetof(R4XStartR4Sys, entropy_source_info) == 1288u, "R4XStartR
 _Static_assert(sizeof(R4SysEntropySourceInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, entropy_fill) == 1296u, "R4XStartR4Sys.entropy_fill offset mismatch");
 _Static_assert(sizeof(R4SysEntropyFillFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 536u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 552u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -18344,6 +18368,10 @@ _Static_assert(offsetof(R4XStartR4Desk, remote_frame_capture_stats) == 520u, "R4
 _Static_assert(sizeof(R4DeskRemoteFrameCaptureStatsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, desktop_activity_notify) == 528u, "R4XStartR4Desk.desktop_activity_notify offset mismatch");
 _Static_assert(sizeof(R4DeskDesktopActivityNotifyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, console_read_events) == 536u, "R4XStartR4Desk.console_read_events offset mismatch");
+_Static_assert(sizeof(R4DeskConsoleReadEventsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, console_push_events) == 544u, "R4XStartR4Desk.console_push_events offset mismatch");
+_Static_assert(sizeof(R4DeskConsolePushEventsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 912u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

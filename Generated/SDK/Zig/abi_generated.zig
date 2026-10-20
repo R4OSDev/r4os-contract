@@ -2690,6 +2690,13 @@ pub const entropy_error_context: i32 = -6;
 pub const entropy_error_device: i32 = -7;
 pub const entropy_error_cancelled: i32 = -8;
 pub const entropy_error_retained: i32 = -9;
+pub const console_input_event_text: u32 = 1;
+pub const console_input_event_key: u32 = 2;
+pub const console_input_event_utf8_byte: u32 = 3;
+pub const console_input_event_batch_max: u32 = 64;
+pub const console_input_key_up: u32 = 128;
+pub const console_input_key_down: u32 = 129;
+pub const console_input_key_f3: u32 = 130;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10222,6 +10229,13 @@ pub const DriverEntropyApi = extern struct {
 
 pub const EntropyReadFn = *const fn (u64, [*]u8, u32, *EntropyDeviceReceipt) callconv(.c) i32;
 
+pub const ConsoleInputEvent = extern struct {
+    version: u32 = 1,
+    kind: u32 = 0,
+    value: u32 = 0,
+    flags: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10616,12 +10630,14 @@ pub const R4DeskFns = struct {
     pub const remote_frame_source_reset = *const fn () callconv(.c) i32;
     pub const remote_frame_capture_stats = *const fn (*RemoteFrameCaptureStats) callconv(.c) i32;
     pub const desktop_activity_notify = *const fn () callconv(.c) i32;
+    pub const console_read_events = *const fn ([*]ConsoleInputEvent, u32) callconv(.c) i32;
+    pub const console_push_events = *const fn (*const ProgramProcessHandle, [*]const ConsoleInputEvent, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 15,
-    size: u32 = 536,
+    abi_version: u32 = 16,
+    size: u32 = 552,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -10688,6 +10704,8 @@ pub const R4XStartR4Desk = extern struct {
     remote_frame_source_reset: usize = 0,
     remote_frame_capture_stats: usize = 0,
     desktop_activity_notify: usize = 0,
+    console_read_events: usize = 0,
+    console_push_events: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -11475,6 +11493,8 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 62, .offset = 512, .name = "remote_frame_source_reset", .state = .function, .required = false },
     .{ .number = 63, .offset = 520, .name = "remote_frame_capture_stats", .state = .function, .required = false },
     .{ .number = 64, .offset = 528, .name = "desktop_activity_notify", .state = .function, .required = false },
+    .{ .number = 65, .offset = 536, .name = "console_read_events", .state = .function, .required = false },
+    .{ .number = 66, .offset = 544, .name = "console_push_events", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -18416,6 +18436,12 @@ comptime {
     if (@offsetOf(DriverEntropyApi, "register_backend") != 8) @compileError("generated ABI offset drift: DriverEntropyApi.register_backend");
     if (@offsetOf(DriverEntropyApi, "unregister_backend") != 16) @compileError("generated ABI offset drift: DriverEntropyApi.unregister_backend");
     if (@offsetOf(DriverEntropyApi, "reserved0") != 24) @compileError("generated ABI offset drift: DriverEntropyApi.reserved0");
+    if (@sizeOf(ConsoleInputEvent) != 16) @compileError("generated ABI size drift: ConsoleInputEvent");
+    if (@alignOf(ConsoleInputEvent) != 4) @compileError("generated ABI alignment drift: ConsoleInputEvent");
+    if (@offsetOf(ConsoleInputEvent, "version") != 0) @compileError("generated ABI offset drift: ConsoleInputEvent.version");
+    if (@offsetOf(ConsoleInputEvent, "kind") != 4) @compileError("generated ABI offset drift: ConsoleInputEvent.kind");
+    if (@offsetOf(ConsoleInputEvent, "value") != 8) @compileError("generated ABI offset drift: ConsoleInputEvent.value");
+    if (@offsetOf(ConsoleInputEvent, "flags") != 12) @compileError("generated ABI offset drift: ConsoleInputEvent.flags");
     if (@sizeOf(R4XStartR4Sys) != 1304) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -18578,7 +18604,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "system_power_transition") != 1280) @compileError("generated ABI offset drift: R4XStartR4Sys.system_power_transition");
     if (@offsetOf(R4XStartR4Sys, "entropy_source_info") != 1288) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_source_info");
     if (@offsetOf(R4XStartR4Sys, "entropy_fill") != 1296) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_fill");
-    if (@sizeOf(R4XStartR4Desk) != 536) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 552) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -18644,6 +18670,8 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "remote_frame_source_reset") != 512) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_source_reset");
     if (@offsetOf(R4XStartR4Desk, "remote_frame_capture_stats") != 520) @compileError("generated ABI offset drift: R4XStartR4Desk.remote_frame_capture_stats");
     if (@offsetOf(R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("generated ABI offset drift: R4XStartR4Desk.desktop_activity_notify");
+    if (@offsetOf(R4XStartR4Desk, "console_read_events") != 536) @compileError("generated ABI offset drift: R4XStartR4Desk.console_read_events");
+    if (@offsetOf(R4XStartR4Desk, "console_push_events") != 544) @compileError("generated ABI offset drift: R4XStartR4Desk.console_push_events");
     if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");

@@ -2694,6 +2694,13 @@ pub const entropy_error_context: i32 = -6;
 pub const entropy_error_device: i32 = -7;
 pub const entropy_error_cancelled: i32 = -8;
 pub const entropy_error_retained: i32 = -9;
+pub const console_input_event_text: u32 = 1;
+pub const console_input_event_key: u32 = 2;
+pub const console_input_event_utf8_byte: u32 = 3;
+pub const console_input_event_batch_max: u32 = 64;
+pub const console_input_key_up: u32 = 128;
+pub const console_input_key_down: u32 = 129;
+pub const console_input_key_f3: u32 = 130;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19373,6 +19380,26 @@ impl Default for DriverEntropyApi {
 
 pub type EntropyReadFn = unsafe extern "C" fn(u64, *mut u8, u32, *mut EntropyDeviceReceipt) -> i32;
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ConsoleInputEvent {
+    pub version: u32,
+    pub kind: u32,
+    pub value: u32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ConsoleInputEvent {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            kind: 0,
+            value: 0,
+            flags: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -19954,6 +19981,8 @@ pub mod R4DeskFns {
     pub type remote_frame_source_reset = unsafe extern "C" fn() -> i32;
     pub type remote_frame_capture_stats = unsafe extern "C" fn(*mut RemoteFrameCaptureStats) -> i32;
     pub type desktop_activity_notify = unsafe extern "C" fn() -> i32;
+    pub type console_read_events = unsafe extern "C" fn(*mut ConsoleInputEvent, u32) -> i32;
+    pub type console_push_events = unsafe extern "C" fn(*const ProgramProcessHandle, *const ConsoleInputEvent, u32) -> i32;
 }
 
 #[repr(C)]
@@ -20028,14 +20057,16 @@ pub struct R4XStartR4Desk {
     pub remote_frame_source_reset: usize,
     pub remote_frame_capture_stats: usize,
     pub desktop_activity_notify: usize,
+    pub console_read_events: usize,
+    pub console_push_events: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Desk {
     fn default() -> Self {
         Self {
             magic: 826623058,
-            abi_version: 15,
-            size: 536,
+            abi_version: 16,
+            size: 552,
             flags: 0,
             read_key: 0,
             mouse_state: 0,
@@ -20102,6 +20133,8 @@ impl Default for R4XStartR4Desk {
             remote_frame_source_reset: 0,
             remote_frame_capture_stats: 0,
             desktop_activity_notify: 0,
+            console_read_events: 0,
+            console_push_events: 0,
         }
     }
 }
@@ -31627,6 +31660,12 @@ const _: () = {
     assert!(core::mem::align_of::<DriverEntropyApi>() == 8);
     assert!(core::mem::size_of::<EntropyReadFn>() == 8);
     assert!(core::mem::align_of::<EntropyReadFn>() == 8);
+    assert!(core::mem::offset_of!(ConsoleInputEvent, version) == 0);
+    assert!(core::mem::offset_of!(ConsoleInputEvent, kind) == 4);
+    assert!(core::mem::offset_of!(ConsoleInputEvent, value) == 8);
+    assert!(core::mem::offset_of!(ConsoleInputEvent, flags) == 12);
+    assert!(core::mem::size_of::<ConsoleInputEvent>() == 16);
+    assert!(core::mem::align_of::<ConsoleInputEvent>() == 4);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31865,7 +31904,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Desk, remote_frame_source_reset) == 512);
     assert!(core::mem::offset_of!(R4XStartR4Desk, remote_frame_capture_stats) == 520);
     assert!(core::mem::offset_of!(R4XStartR4Desk, desktop_activity_notify) == 528);
-    assert!(core::mem::size_of::<R4XStartR4Desk>() == 536);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, console_read_events) == 536);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, console_push_events) == 544);
+    assert!(core::mem::size_of::<R4XStartR4Desk>() == 552);
     assert!(core::mem::align_of::<R4XStartR4Desk>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Draw, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Draw, abi_version) == 4);

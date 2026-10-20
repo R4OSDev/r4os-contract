@@ -6311,6 +6311,11 @@ comptime {
     if (@offsetOf(abi.DriverEntropyApi, "register_backend") != 8) @compileError("DriverEntropyApi.register_backend offset");
     if (@offsetOf(abi.DriverEntropyApi, "unregister_backend") != 16) @compileError("DriverEntropyApi.unregister_backend offset");
     if (@offsetOf(abi.DriverEntropyApi, "reserved0") != 24) @compileError("DriverEntropyApi.reserved0 offset");
+    if (@sizeOf(abi.ConsoleInputEvent) != 16) @compileError("ConsoleInputEvent size");
+    if (@offsetOf(abi.ConsoleInputEvent, "version") != 0) @compileError("ConsoleInputEvent.version offset");
+    if (@offsetOf(abi.ConsoleInputEvent, "kind") != 4) @compileError("ConsoleInputEvent.kind offset");
+    if (@offsetOf(abi.ConsoleInputEvent, "value") != 8) @compileError("ConsoleInputEvent.value offset");
+    if (@offsetOf(abi.ConsoleInputEvent, "flags") != 12) @compileError("ConsoleInputEvent.flags offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1304) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6631,7 +6636,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.entropy_source_info) != 8) @compileError("R4SysFns.entropy_source_info signature");
     if (@offsetOf(abi.R4XStartR4Sys, "entropy_fill") != 1296) @compileError("R4XStartR4Sys.entropy_fill offset");
     if (@sizeOf(abi.R4SysFns.entropy_fill) != 8) @compileError("R4SysFns.entropy_fill signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 536) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 552) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -6761,6 +6766,10 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.remote_frame_capture_stats) != 8) @compileError("R4DeskFns.remote_frame_capture_stats signature");
     if (@offsetOf(abi.R4XStartR4Desk, "desktop_activity_notify") != 528) @compileError("R4XStartR4Desk.desktop_activity_notify offset");
     if (@sizeOf(abi.R4DeskFns.desktop_activity_notify) != 8) @compileError("R4DeskFns.desktop_activity_notify signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "console_read_events") != 536) @compileError("R4XStartR4Desk.console_read_events offset");
+    if (@sizeOf(abi.R4DeskFns.console_read_events) != 8) @compileError("R4DeskFns.console_read_events signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "console_push_events") != 544) @compileError("R4XStartR4Desk.console_push_events offset");
+    if (@sizeOf(abi.R4DeskFns.console_push_events) != 8) @compileError("R4DeskFns.console_push_events signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 912) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");

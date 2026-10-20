@@ -2,6 +2,26 @@
 
 use r4os_contract as abi;
 
+#[unsafe(no_mangle)]
+/// # Safety
+/// The caller retains a readable exact handle and four event records.
+pub unsafe extern "C" fn r4os_rust_console_events(
+    handle: *const abi::ProgramProcessHandle,
+    events: *const abi::ConsoleInputEvent,
+    count: u32,
+) -> i32 {
+    assert_eq!(count, 4);
+    let handle = unsafe { handle.read() };
+    assert_eq!(handle.instance_id, 37);
+    assert_eq!(handle.reserved, 0);
+    assert_eq!(handle.generation, 0xfedcba9876543210);
+    let events = unsafe { core::slice::from_raw_parts(events, count as usize) };
+    for (event, (kind, value)) in events.iter().zip([(1, 0x20ac), (2, 0x80), (3, 0x81), (1, 0x1f600)]) {
+        assert_eq!((event.version, event.kind, event.value, event.flags), (1, kind, value, 0));
+    }
+    3
+}
+
 #[panic_handler]
 fn panic(_: &core::panic::PanicInfo<'_>) -> ! {
     // A rejected test contract traps immediately, including on a host caller.

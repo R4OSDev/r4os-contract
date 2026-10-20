@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 366 von 366 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 367 von 367 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2689; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2696; Limits: 111
 
 ## App-Profile
 
@@ -387,6 +387,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `EntropyBackend` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `DriverEntropyApi` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `EntropyReadFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
+| `ConsoleInputEvent` | fixed_layout | extern_struct | 16/4 | 16/4 | 16/4 | 16/4 |
 
 ## Typdetails
 
@@ -9942,6 +9943,20 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Repräsentation: `c_callback`
 - Version/Größe/Alignment: 1 / 8 / 8
 
+### `ConsoleInputEvent`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 16 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `kind` | 4 | 4 | 4 | `u32` | - |
+| `value` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13392,6 +13407,13 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `entropy_error_device` | `-7` | `i32` | value | number | `entropy` | fixed_contract |
 | `entropy_error_cancelled` | `-8` | `i32` | value | number | `entropy` | fixed_contract |
 | `entropy_error_retained` | `-9` | `i32` | value | number | `entropy` | fixed_contract |
+| `console_input_event_text` | `1` | `u32` | value | number | `console_input` | fixed_contract |
+| `console_input_event_key` | `2` | `u32` | value | number | `console_input` | fixed_contract |
+| `console_input_event_utf8_byte` | `3` | `u32` | value | number | `console_input` | fixed_contract |
+| `console_input_event_batch_max` | `64` | `u32` | value | number | `console_input` | fixed_contract |
+| `console_input_key_up` | `128` | `u32` | value | number | `console_input` | fixed_contract |
+| `console_input_key_down` | `129` | `u32` | value | number | `console_input` | fixed_contract |
+| `console_input_key_f3` | `130` | `u32` | value | number | `console_input` | fixed_contract |
 
 ## Limits
 

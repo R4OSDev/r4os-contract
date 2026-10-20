@@ -45,6 +45,7 @@ pub fn build(b: *std.Build) void {
     const write_run = b.addRunArtifact(generator);
     write_run.setCwd(b.path("."));
     write_run.addArg("--write");
+    if (b.args) |args| write_run.addArgs(args);
     const write_step = b.step("write", "Materialize generated Contract artifacts after an intentional schema change");
     write_step.dependOn(&write_run.step);
 

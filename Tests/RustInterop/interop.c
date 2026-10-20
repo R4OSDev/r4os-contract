@@ -1,6 +1,16 @@
 #include <r4os/abi_generated.h>
 #include <emmintrin.h>
 
+/* Pure event/handle transport: no console, CPU or hardware access. */
+int32_t r4os_c_console_events(const R4ProgramProcessHandle *handle, const R4ConsoleInputEvent *events, uint32_t count) {
+    if (handle->instance_id != 37 || handle->reserved != 0 || handle->generation != UINT64_C(0xfedcba9876543210) || count != 4) return -1;
+    const uint32_t kinds[4] = {1, 2, 3, 1};
+    const uint32_t values[4] = {0x20ac, 0x80, 0x81, 0x1f600};
+    for (uint32_t i = 0; i < count; ++i)
+        if (events[i].version != 1 || events[i].flags != 0 || events[i].kind != kinds[i] || events[i].value != values[i]) return -2;
+    return 3; /* A successful prefix, not a byte count. */
+}
+
 // A SIMD-capable module consumer calls the integer/pointer Platform ABI.
 // Live vector and floating-point data are retained across the Rust call.
 int32_t r4os_c_rust_call(R4SysWriteFn callback, const uint8_t *data, uint32_t size) {
