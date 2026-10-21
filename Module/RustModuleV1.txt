@@ -4,7 +4,8 @@
 Decision0.86.33; implementation follows in0.86.34-.40. This document is the
 agreed project contract, not a claim that current SDK0.64.58 builds Rust
 modules. The existing generated r4os-contract crate is a raw ABI projection.
-The current executable manifest/build path still supports Zig and C only.
+SDK0.64.59 implements Rust manifest/Cargo validation. The executable host
+build/startup follows in0.86.36; that validation alone advertises no compiler.
 
 Owners and minimum delivery
 --------------------------
@@ -40,6 +41,12 @@ and crate-type=["staticlib"]. No bin/example/test/bench/custom target may
 silently become the selected module. An empty [workspace] may isolate this
 single package from parent discovery; members/default-members, inherited
 package/dependency settings and ambiguous workspace selection are rejected.
+
+The initial parser accepts a documented bounded, single-line TOML subset:
+[package], [lib], empty [workspace] and inline [dependencies] for matched
+r4os-contract/r4os-sdk only. Strings use unescaped double quotes and canonical
+forward-slash paths. Alternate TOML spellings/tables are explicit errors.
+Implicit bin/example/test/bench paths are rejected even when disabled.
 
 The initial profile has no build.rs, proc-macro/host build dependency,
 generated-source step or arbitrary linker script/flag. Dependencies must be

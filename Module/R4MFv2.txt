@@ -20,7 +20,7 @@ Fields in canonical order:
   KIND=R4X
   NAME=<FAT-safe ASCII module name, maximum 31 bytes>
   VERSION=<MAJOR.MINOR.PATCH>          module version, required for all kinds
-  LANGUAGE=Zig|C
+  LANGUAGE=Zig|C|Rust
   SOURCE=<project-relative canonical path, ordered; see language rules below>
   ENTRY_MODE=app|lowlevel              required for R4X, forbidden otherwise
   APP_CLASS=console|gui|service        required for R4X, forbidden otherwise
@@ -381,9 +381,10 @@ Rust host module profile decision (0.86.33)
 -------------------------------------------
 RustModuleV1.txt defines the agreed additive LANGUAGE=Rust project profile,
 Cargo/manifest responsibility, minimum host R4X classes, standalone tools,
-unsupported combinations and format compatibility. Implementation follows in
-0.86.34-.40. The current parser/builder remains Zig/C until that implementation;
-raw generated Rust ABI bindings alone do not constitute module build support.
+unsupported combinations and format compatibility. SDK0.64.59 admits the three normal Rust R4X classes and validates the bounded
+single-package Cargo profile and actual source/lock files. The host module
+builder/startup follows in0.86.36; native R4BUILD reports a missing Rust compiler.
+Raw generated Rust ABI bindings alone do not constitute module build support.
 Existing Zig/C projects and R4M0/R4XStart retain their contracts.
 
 Optional parallel execution owner (0.81.19)
