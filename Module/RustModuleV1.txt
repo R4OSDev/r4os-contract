@@ -13,7 +13,9 @@ Owners and minimum delivery
 Contract/Module owns R4MF meaning, CPU/ABI and compatibility. SDK owns the
 shared parser, capability definitions, host build/startup, packaging and
 templates. DevKit owns pinned host tools and their isolated installation.
-Studio consumes those interfaces; its UI and update management are separate.
+Consumers use those interfaces independently. Component version selection and
+project locks belong to the caller, not to the SDK. Required SDK/Contract
+dependencies and proven toolchain requirements may remain exactly bound.
 
 Profile ID: r4os-rust-r4x-v1. Minimum delivered combinations are Windows-
 and Linux-hosted KIND=R4X, LANGUAGE=Rust, ENTRY_MODE=app and APP_CLASS equal
@@ -140,7 +142,7 @@ and thin Windows/Linux starters. Reuse DevKit's pins and isolated homes;
 no complete workspace/DevKit or global rustup/Cargo setup may be required.
 The final SDK/Contract/tool/template source identities and package hashes
 are pinned at publication. The first executable implementation requires SDK0.64.60 and its matched
-source/toolset identities. Studio must not infer this from a Cargo crate number.
+source/toolset identities. Consumers must not infer this from a Cargo crate number.
 
 Qualification
 -------------
