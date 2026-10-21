@@ -2,6 +2,8 @@
   "schema_version": 1,
   "generated_from": "API/ApiContract.json",
   "contract_schema_version": 11,
+  "c_binding": "Generated/SDK/C/include/r4os/abi_generated.h",
+  "c_technical_binding": "Generated/SDK/C/include/r4os/abi_technical_generated.h",
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {

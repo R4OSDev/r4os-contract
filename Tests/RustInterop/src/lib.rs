@@ -4,6 +4,25 @@ use r4os_contract as abi;
 
 #[unsafe(no_mangle)]
 /// # Safety
+/// The caller retains one fully initialized ProtocolApi for this call.
+pub unsafe extern "C" fn r4os_rust_protocol_alloc(
+    api: *const abi::ProtocolApi,
+    bytes: u32,
+    alignment: u32,
+) -> *mut core::ffi::c_void {
+    let api = unsafe { &*api };
+    assert_eq!(api.magic, 0x81234567);
+    assert_eq!(api.size as usize, core::mem::size_of::<abi::ProtocolApi>());
+    unsafe { (api.alloc)(bytes, alignment) }
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn r4os_rust_model_name() -> *const u8 {
+    c"SID-ABI".as_ptr().cast()
+}
+
+#[unsafe(no_mangle)]
+/// # Safety
 /// The caller retains a readable exact handle and four event records.
 pub unsafe extern "C" fn r4os_rust_console_events(
     handle: *const abi::ProgramProcessHandle,

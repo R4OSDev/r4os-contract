@@ -147,5 +147,10 @@ fn addRustGenerator(b: *std.Build, optimize: std.builtin.OptimizeMode, abi_modul
         .optimize = optimize,
     });
     module.addImport("r4os_technical_abi", abi_module);
+    // Embed the generated export names without compiling their types in a
+    // second module (the technical facade already imports those exact types).
+    module.addAnonymousImport("r4os_generated_abi_source", .{
+        .root_source_file = b.path("Generated/SDK/Zig/abi_exports.zig"),
+    });
     return b.addExecutable(.{ .name = name, .root_module = module });
 }

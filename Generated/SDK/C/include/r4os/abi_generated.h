@@ -3145,7 +3145,8 @@ extern "C" {
 #define R4OS_SERIAL_ERROR_OWNER ((int32_t)-13)
 #define R4OS_SERIAL_ERROR_TOO_LARGE ((int32_t)-14)
 
-typedef enum R4ErrorDomain {
+/* Wire typedefs are reflected from Zig by the technical projection. */
+enum {
     R4_ERROR_DOMAIN_NONE = 0,
     R4_ERROR_DOMAIN_CONTRACT = 1,
     R4_ERROR_DOMAIN_SYSTEM = 2,
@@ -3164,7 +3165,7 @@ typedef enum R4ErrorDomain {
     R4_ERROR_DOMAIN_DEVICE = 15,
     R4_ERROR_DOMAIN_STORAGE = 16,
     R4_ERROR_DOMAIN_SERIAL = 17
-} R4ErrorDomain;
+};
 
 #define R4L_GROUP_R4SYS 1u
 #define R4L_GROUP_R4DESK 2u
@@ -3177,11 +3178,11 @@ typedef enum R4ErrorDomain {
 #define R4XSTART_APP_CLASS_GUI 2u
 #define R4XSTART_APP_CLASS_SERVICE 3u
 
-typedef enum R4AppProfile {
+enum {
     R4_APP_PROFILE_CONSOLE = 0,
     R4_APP_PROFILE_DESKTOP = 1,
     R4_APP_PROFILE_SERVICE = 2
-} R4AppProfile;
+};
 #define R4_APP_PROFILE_CONSOLE_REQUIRED_GROUPS 2u
 #define R4_APP_PROFILE_CONSOLE_OPTIONAL_GROUPS 124u
 #define R4_APP_PROFILE_DESKTOP_REQUIRED_GROUPS 14u
@@ -19004,6 +19005,8 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_acceleration_work) == 712u, "R4XStart
 _Static_assert(sizeof(R4DevCpuAccelerationWorkFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, fpu_observation) == 720u, "R4XStartR4Dev.fpu_observation offset mismatch");
 _Static_assert(sizeof(R4DevFpuObservationFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+
+#include <r4os/abi_technical_generated.h>
 
 #ifdef __cplusplus
 }

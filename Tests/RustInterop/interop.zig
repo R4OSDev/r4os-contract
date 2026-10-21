@@ -1,5 +1,53 @@
 const std = @import("std");
 const abi = @import("r4os_technical_abi");
+const c = @cImport({
+    @cInclude("r4os/abi_generated.h");
+});
+
+test "all canonical C and Rust-projected structures retain every field layout" {
+    @setEvalBranchQuota(10000000);
+    inline for (comptime std.meta.declarations(abi)) |decl| {
+        const T = @field(abi, decl.name);
+        if (@TypeOf(T) != type) continue;
+        switch (@typeInfo(T)) {
+            .@"struct" => |s| {
+                if (s.layout != .@"extern") continue;
+                const name = if (@hasDecl(c, decl.name)) decl.name else "R4" ++ decl.name;
+                const C = @field(c, name);
+                try std.testing.expectEqual(@sizeOf(T), @sizeOf(C));
+                try std.testing.expectEqual(@alignOf(T), @alignOf(C));
+                inline for (s.fields) |field| {
+                    // C keywords have a trailing underscore. Their byte
+                    // layout and the canonical Zig field name stay intact.
+                    const c_field = if (@hasField(C, field.name)) field.name else field.name ++ "_";
+                    try std.testing.expectEqual(@offsetOf(T, field.name), @offsetOf(C, c_field));
+                    const Field = @TypeOf(@field(@as(C, undefined), c_field));
+                    try std.testing.expectEqual(@sizeOf(field.type), @sizeOf(Field));
+                    try std.testing.expectEqual(@alignOf(field.type), @alignOf(Field));
+                    if (@typeInfo(field.type) == .int) {
+                        try std.testing.expectEqual(@typeInfo(field.type).int.signedness, @typeInfo(Field).int.signedness);
+                    }
+                }
+            },
+            .@"enum" => {
+                const name = if (@hasDecl(c, decl.name)) decl.name else "R4" ++ decl.name;
+                const C = @field(c, name);
+                try std.testing.expectEqual(@sizeOf(T), @sizeOf(C));
+                try std.testing.expectEqual(@alignOf(T), @alignOf(C));
+                try std.testing.expectEqual(@typeInfo(@typeInfo(T).@"enum".tag_type).int.signedness, @typeInfo(C).int.signedness);
+            },
+            else => {},
+        }
+    }
+}
+
+extern fn r4os_rust_protocol_alloc(*const abi.ProtocolApi, u32, u32) callconv(.c) ?*anyopaque;
+extern fn r4os_rust_model_name() callconv(.c) [*:0]const u8;
+extern fn r4os_c_technical_callbacks(*const fn (*const abi.ProtocolApi, u32, u32) callconv(.c) ?*anyopaque, abi.R4AudioFns.sid_model_name) callconv(.c) i32;
+
+test "technical C table roundtrip preserves nullable and sentinel pointer returns" {
+    try std.testing.expectEqual(@as(i32, 0), r4os_c_technical_callbacks(r4os_rust_protocol_alloc, r4os_rust_model_name));
+}
 
 extern fn r4os_c_console_events(*const abi.ProgramProcessHandle, [*]const abi.ConsoleInputEvent, u32) callconv(.c) i32;
 extern fn r4os_rust_console_events(*const abi.ProgramProcessHandle, [*]const abi.ConsoleInputEvent, u32) callconv(.c) i32;
@@ -149,9 +197,7 @@ extern fn r4os_c_entropy_read(u64, [*]u8, u32, *abi.EntropyDeviceReceipt) callco
 fn entropyRead(context: u64, data: [*]u8, bytes: u32, out: *abi.EntropyDeviceReceipt) callconv(.c) i32 {
     if (context != 0xfedc_ba98_7654_3210 or bytes != 17) return -1;
     @memcpy(data[0..17], "entropy-fixture!!");
-    out.* = .{ .requested_bytes = bytes, .completed_bytes = bytes,
-        .status = abi.entropy_device_status_bad_completion, .flags = abi.entropy_receipt_flag_retained,
-        .request_generation = context, .available_index_before = 65534, .available_index_after = 3 };
+    out.* = .{ .requested_bytes = bytes, .completed_bytes = bytes, .status = abi.entropy_device_status_bad_completion, .flags = abi.entropy_receipt_flag_retained, .request_generation = context, .available_index_before = 65534, .available_index_after = 3 };
     return -30029;
 }
 test "entropy source records and C Zig callback pointer bits cross Rust with exact signed results and tails" {

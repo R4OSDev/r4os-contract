@@ -1,5 +1,6 @@
 const std = @import("std");
 const abi = @import("r4os_technical_abi");
+const c_projection = @import("c_projection.zig");
 
 // Reflect the canonical typed Contract, including the append-only technical
 // facade. There is deliberately no manually maintained Rust ABI description.
@@ -343,7 +344,8 @@ pub fn main(init: std.process.Init) !void {
     defer inventory.deinit();
     try inventory.print("{{\n  \"schema\": 1,\n  \"binding\": \"Generated/SDK/Rust/src/lib.rs\",\n  \"sources\": [\"API/ApiContract.json\", \"Generated/SDK/Zig/abi.zig\"],\n  \"extern_structs\": {d},\n  \"fields\": {d},\n  \"integer_enums\": {d},\n  \"callback_declarations\": {d},\n  \"constants\": {d},\n  \"scalar_float_abi_values\": {d},\n  \"direct_vector_abi_values\": 0,\n  \"excluded_zig_metadata_types\": [\"R4AppProfileMeta\", \"R4PlatformApiMeta\", \"R4ApiSlotMeta\"],\n  \"target\": \"x86_64-unknown-none\"\n}}\n", .{ structs, fields, enums, callbacks, constants, scalar_float_parameters });
     if (scalar_float_parameters != 0) return error.UnreviewedFloatAbi;
-    inline for (.{ .{ rust_path, out.bytes.items }, .{ inventory_path, inventory.bytes.items } }) |file| {
+    const technical_c = try c_projection.generate(init.arena.allocator());
+    inline for (.{ .{ rust_path, out.bytes.items }, .{ inventory_path, inventory.bytes.items }, .{ c_projection.path, technical_c.bytes } }) |file| {
         const cwd = std.Io.Dir.cwd();
         if (write) {
             try cwd.createDirPath(init.io, std.fs.path.dirname(file[0]).?);
@@ -355,4 +357,5 @@ pub fn main(init: std.process.Init) !void {
         }
     }
     std.debug.print("Rust ABI {s}: {d} extern structs, {d} fields, {d} integer enums, {d} callbacks, {d} constants\n", .{ if (write) "written" else "checked", structs, fields, enums, callbacks, constants });
+    std.debug.print("Technical C ABI: {d} structs, {d} integer enums, {d} callback aliases, {d} constants\n", .{ technical_c.structs, technical_c.enums, technical_c.aliases, technical_c.constants });
 }

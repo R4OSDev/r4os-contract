@@ -823,13 +823,13 @@ fn renderCAbi(allocator: std.mem.Allocator, contract: *const Contract) ![]u8 {
         const rendered = try std.fmt.bufPrint(&buffer, "{d}", .{value.value});
         try appendCValueMacro(&out, allocator, value.name, value.value_type, rendered);
     };
-    try out.appendSlice(allocator, "\ntypedef enum R4ErrorDomain {\n");
+    try out.appendSlice(allocator, "\n/* Wire typedefs are reflected from Zig by the technical projection. */\nenum {\n");
     for (contract.status_domains, 0..) |domain, index| {
         try out.appendSlice(allocator, "    R4_ERROR_DOMAIN_");
         try appendUpper(&out, allocator, domain.name);
         try appendFmt(&out, allocator, " = {d}{s}\n", .{ domain.id, if (index + 1 == contract.status_domains.len) "" else "," });
     }
-    try out.appendSlice(allocator, "} R4ErrorDomain;\n\n");
+    try out.appendSlice(allocator, "};\n\n");
 
     for (contract.groups) |group| {
         try out.appendSlice(allocator, "#define R4L_GROUP_");
@@ -841,13 +841,13 @@ fn renderCAbi(allocator: std.mem.Allocator, contract: *const Contract) ![]u8 {
         try appendUpper(&out, allocator, app_class.name);
         try appendFmt(&out, allocator, " {d}u\n", .{app_class.value});
     }
-    try out.appendSlice(allocator, "\ntypedef enum R4AppProfile {\n");
+    try out.appendSlice(allocator, "\nenum {\n");
     for (contract.app_profiles, 0..) |profile, index| {
         try out.appendSlice(allocator, "    R4_APP_PROFILE_");
         try appendUpper(&out, allocator, profile.name);
         try appendFmt(&out, allocator, " = {d}{s}\n", .{ profile.value, if (index + 1 == contract.app_profiles.len) "" else "," });
     }
-    try out.appendSlice(allocator, "} R4AppProfile;\n");
+    try out.appendSlice(allocator, "};\n");
     for (contract.app_profiles) |profile| {
         try out.appendSlice(allocator, "#define R4_APP_PROFILE_");
         try appendUpper(&out, allocator, profile.name);
@@ -937,7 +937,7 @@ fn renderCAbi(allocator: std.mem.Allocator, contract: *const Contract) ![]u8 {
             }
         }
     }
-    try out.appendSlice(allocator, "\n#ifdef __cplusplus\n}\n#endif\n\n#endif\n");
+    try out.appendSlice(allocator, "\n#include <r4os/abi_technical_generated.h>\n\n#ifdef __cplusplus\n}\n#endif\n\n#endif\n");
     return out.toOwnedSlice(allocator);
 }
 
@@ -1450,6 +1450,8 @@ fn renderApiInventory(allocator: std.mem.Allocator, contract: *const Contract) !
             "  \"schema_version\": 1,\n" ++
             "  \"generated_from\": \"{s}\",\n" ++
             "  \"contract_schema_version\": {d},\n" ++
+            "  \"c_binding\": \"Generated/SDK/C/include/r4os/abi_generated.h\",\n" ++
+            "  \"c_technical_binding\": \"Generated/SDK/C/include/r4os/abi_technical_generated.h\",\n" ++
             "  \"rust_binding\": \"Generated/SDK/Rust/src/lib.rs\",\n" ++
             "  \"rust_inventory\": \"Generated/Inventory/RustABI.json\",\n" ++
             "  \"summary\": {{\n" ++

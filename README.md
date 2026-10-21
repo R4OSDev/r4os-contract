@@ -41,8 +41,17 @@ compare Rust output without writing it; `test` also compiles both Rust targets
 and runs the existing Contract gate with a native Rust/Zig/C callback fixture.
 Use the pinned workspace Rust launcher; standalone tests require Rust 1.99.0.
 See `Generated/Inventory/RustABI.json` and the workspace guide
-`Docs/API/RustContractBindings.txt`. Adding this binding leaves API versions,
-the canonical schema/baseline and existing Zig/C consumers unchanged.
+`Docs/API/RustContractBindings.txt`. Binding generation preserves the platform
+API versions, slot numbers and canonical schema/baseline.
+
+The C header also includes `abi_technical_generated.h`, reflected by the same
+tool from the append-only technical Zig types. This adds the previously missing
+driver/protocol/DMA/USB and service payload declarations without copying their
+schema. All wire enums use their exact integer width, including the corrected
+8-bit `R4AppProfile` and 16-bit `R4ErrorDomain` C typedefs. Use these typedefs,
+not C enum tags. Existing enumerator names/values remain available; additional
+typed technical enum constants use `R4ABI_`. C keyword fields have a trailing
+underscore (`register_`). Normal `write`/`check` covers this header as well.
 
 The technical `DriverApi` facade lives outside the marked generated exports
 block in `Generated/SDK/Zig/abi.zig`; the generator preserves that area.
