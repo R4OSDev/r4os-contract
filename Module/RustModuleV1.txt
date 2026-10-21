@@ -1,11 +1,12 @@
 ﻿R4OS Rust module project profile v1
 ==================================
 
-Decision0.86.33; implementation follows in0.86.34-.40. This document is the
-agreed project contract, not a claim that current SDK0.64.58 builds Rust
-modules. The existing generated r4os-contract crate is a raw ABI projection.
-SDK0.64.59 implements Rust manifest/Cargo validation. The executable host
-build/startup follows in0.86.36; that validation alone advertises no compiler.
+Decision0.86.33, implemented through0.86.36 in SDK0.64.60: shared manifest/
+Cargo admission, isolated host tools and a genuine no_std Rust R4M0 builder.
+r4os-contract0.1.0 is the generated ABI crate; r4os-sdk0.1.0 is the separate
+minimal runtime helper crate. Neither is a module or package version.
+Common entry/exit/panic and Linux builds are qualified; complete templates and
+final GUI/service execution follow in0.86.37-.40. Windows remains prepared.
 
 Owners and minimum delivery
 --------------------------
@@ -138,8 +139,8 @@ The SDK profile installs under a caller-selected root with shared PS7 logic
 and thin Windows/Linux starters. Reuse DevKit's pins and isolated homes;
 no complete workspace/DevKit or global rustup/Cargo setup may be required.
 The final SDK/Contract/tool/template source identities and package hashes
-are pinned at publication. The first implementation advertising this profile
-sets its real minimum SDK version; this decision does not invent that number.
+are pinned at publication. The first executable implementation requires SDK0.64.60 and its matched
+source/toolset identities. Studio must not infer this from a Cargo crate number.
 
 Qualification
 -------------

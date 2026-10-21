@@ -382,8 +382,9 @@ Rust host module profile decision (0.86.33)
 RustModuleV1.txt defines the agreed additive LANGUAGE=Rust project profile,
 Cargo/manifest responsibility, minimum host R4X classes, standalone tools,
 unsupported combinations and format compatibility. SDK0.64.59 admits the three normal Rust R4X classes and validates the bounded
-single-package Cargo profile and actual source/lock files. The host module
-builder/startup follows in0.86.36; native R4BUILD reports a missing Rust compiler.
+single-package Cargo profile and actual source/lock files. SDK0.64.60 adds the qualified host builder/startup; native R4BUILD still
+reports its missing Rust compiler. Complete templates/final class runtime
+qualification follow separately; Windows execution remains unqualified.
 Raw generated Rust ABI bindings alone do not constitute module build support.
 Existing Zig/C projects and R4M0/R4XStart retain their contracts.
 
