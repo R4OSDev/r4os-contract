@@ -377,6 +377,15 @@ project path. Historical R4CP is read only by the explicit R4BUILD CONVERT
 one-shot command; normal R4CODE and R4BUILD operation does not accept it as a
 project contract.
 
+Rust host module profile decision (0.86.33)
+-------------------------------------------
+RustModuleV1.txt defines the agreed additive LANGUAGE=Rust project profile,
+Cargo/manifest responsibility, minimum host R4X classes, standalone tools,
+unsupported combinations and format compatibility. Implementation follows in
+0.86.34-.40. The current parser/builder remains Zig/C until that implementation;
+raw generated Rust ABI bindings alone do not constitute module build support.
+Existing Zig/C projects and R4M0/R4XStart retain their contracts.
+
 Optional parallel execution owner (0.81.19)
 ------------------------------------------
 META=runtime.parallel=owned-v1 declares that the module owner audited the

@@ -1,0 +1,145 @@
+﻿R4OS Rust module project profile v1
+==================================
+
+Decision0.86.33; implementation follows in0.86.34-.40. This document is the
+agreed project contract, not a claim that current SDK0.64.58 builds Rust
+modules. The existing generated r4os-contract crate is a raw ABI projection.
+The current executable manifest/build path still supports Zig and C only.
+
+Owners and minimum delivery
+--------------------------
+Contract/Module owns R4MF meaning, CPU/ABI and compatibility. SDK owns the
+shared parser, capability definitions, host build/startup, packaging and
+templates. DevKit owns pinned host tools and their isolated installation.
+Studio consumes those interfaces; its UI and update management are separate.
+
+Profile ID: r4os-rust-r4x-v1. Minimum delivered combinations are Windows-
+and Linux-hosted KIND=R4X, LANGUAGE=Rust, ENTRY_MODE=app and APP_CLASS equal
+to console, gui or service. This is a support contract; actual host execution
+and cross-host reproducibility require their own evidence. Initial Windows
+preparation must not be reported as a Windows runtime result.
+
+Rust lowlevel, R4L, R4D, R4P and MODULE_ROLE=subsystem require independent
+qualification. The first release may explicitly reject them. Recognized
+language syntax is not an executable build capability. Native R4BUILD/R4CC
+remain separate from host Rust: VALIDATE/PLAN may understand an admitted
+Rust manifest while native BUILD reports a missing compiler capability.
+
+Project and Cargo binding
+-------------------------
+One module.R4MF still describes exactly one installed module. Its directory
+is the project root. Add LANGUAGE=Rust and exactly one canonical relative
+.rs SOURCE root. Ordered additional SOURCE entries are not a second Rust
+module tree. Rust mod/include dependencies belong to the compiler; the
+build records their exact dependency inputs, not a guessed second IDE list.
+
+Cargo.toml and Cargo.lock are fixed project-root inputs. No extra R4MF key
+is needed merely to name them. Start with one local Cargo package, edition
+2024, one explicitly declared library target, [lib].path equal to SOURCE,
+and crate-type=["staticlib"]. No bin/example/test/bench/custom target may
+silently become the selected module. An empty [workspace] may isolate this
+single package from parent discovery; members/default-members, inherited
+package/dependency settings and ambiguous workspace selection are rejected.
+
+The initial profile has no build.rs, proc-macro/host build dependency,
+generated-source step or arbitrary linker script/flag. Dependencies must be
+explicit and locked; the first delivery may restrict them to the matched
+SDK/Contract crates. That restriction must be advertised as capability data,
+not relaxed by a fallback to global Cargo configuration or another compiler.
+
+Cargo metadata binds the exact manifest/package/target before building.
+Normal builds use the lock without updating it and do not fetch undeclared
+dependencies. Project creation may explicitly create the initial lock.
+The compiler dependency records bind the actual Rust module/include tree;
+plans distinguish declared inputs from observed compiler inputs. Resource
+inputs also remain explicit R4MF inputs. Dependency roots outside the project
+must be the selected SDK/profile or another explicitly supported locked
+dependency; no implicit sibling-workspace or current-directory assumption.
+
+Module truth and conflicts
+--------------------------
+R4MF alone owns KIND/NAME, VERSION, APP_CLASS, role, IMPORT/EXPORT,
+TARGET/IMAGE_SCOPE, OPTIMIZE and resources. Cargo package.name and version
+describe a crate and its dependency/cache identity. They do not supply the
+R4OS module identity or metadata version and need not have identical spelling
+or version. The packager always emits module.version from R4MF VERSION.
+Cargo metadata.r4os must not redefine these module facts; reject it in v1.
+
+The Cargo library path must equal SOURCE after canonical resolution. Missing
+lock, multiple package/target choices, unsupported dependency kinds, custom
+targets, source escape and conflicting build overrides are explicit errors.
+The SDK owns the release profile, panic=abort, target, CPU features, relocation
+and link contract. Initial projects may not declare their own [profile.*],
+Cargo config, rust-toolchain file or overriding RUSTFLAGS/linker environment.
+The isolated build must reject or replace such inputs explicitly; it must
+not silently accept a conflicting profile. This is reproducibility policy
+for a trusted single-user system, not a security sandbox.
+
+ABI, CPU and entry
+-----------------
+Reuse Contract/Generated/SDK/Rust. Do not maintain copied ABI declarations.
+Derive the module CPU minimum and profile identity from CpuBaseline.json and
+its canonical module consumer. The kernel's code-model=kernel/static build
+is not a module profile. The exact module relocation/code model is accepted
+only after the existing ELF/R4M0 packager and real loader qualify it.
+
+R4M0:1, R4XStart:1 and existing startup metadata remain unchanged. Normal
+app startup may reuse SDK-owned internal Zig/C entry parts, but the declared
+application and its entry body must actually compile from Rust. No new R4L
+runtime or kernel loader feature is implied by adding a source language.
+The existing class-required imports and memory profile still apply.
+
+Integer/pointer C ABI calls reuse existing Rust/Zig/C interoperability proof.
+No float/vector C-ABI promise is added. Panic must not unwind through FFI;
+the actual freestanding failure path and compiler helper closure belong to
+the SDK build qualification. Kernel FPU/task/lifetime ownership is unchanged.
+
+Format and compatibility decision
+--------------------------------
+R4OS_MODULE_MANIFEST stays2; LANGUAGE=Rust is an additive admitted-language
+profile. Existing Zig/C meanings, source ordering and output bytes of their
+semantic plans stay unchanged. Old parsers already reject the unknown Rust
+value. They receive no retroactive Rust support or silent C fallback.
+
+R4MF_PLAN=1 stays the environment-neutral semantic contract view, not the
+complete Cargo build graph. An admitted Rust view can use its existing
+LANGUAGE/SOURCE/BUILD_PROFILE fields; it must not invent new plan1 keys.
+The shared host compiler emits a separate versioned Rust build-plan object
+for Cargo selection, tool/profile identity and complete observed inputs.
+If implementation needs another semantic plan meaning, it must introduce a
+new explicit plan version and update consumers before accepting that form.
+
+The source catalog schema4 keeps its existing fields and their meanings.
+Rust-only additive details must be explicit and old Zig/C records must not
+drift. Installed MODULES.JSON schema4 remains the existing runtime catalog;
+it does not become an IDE/compiler tool inventory.
+
+Capabilities and standalone installation
+---------------------------------------
+Use one SDK capability definition for parser/build admission, template
+selection and the public host module-catalog capabilities --json interface.
+The catalog has its own schema and identifies SDK/Contract/profile, language,
+kind/class/role support, templates and exact required tool IDs/versions.
+Tool installation/availability is separate from semantic support. Reading
+capabilities must not require a Rust compiler, build or tool download.
+
+Host Zig/Clang builds, native R4CC and Rust host builds are separate rows.
+Unsupported combinations carry concrete reasons. Do not infer support from
+the mere existence of raw ABI types or a successfully compiled ELF.
+
+The SDK profile installs under a caller-selected root with shared PS7 logic
+and thin Windows/Linux starters. Reuse DevKit's pins and isolated homes;
+no complete workspace/DevKit or global rustup/Cargo setup may be required.
+The final SDK/Contract/tool/template source identities and package hashes
+are pinned at publication. The first implementation advertising this profile
+sets its real minimum SDK version; this decision does not invent that number.
+
+Qualification
+-------------
+Reuse existing ABI, manifest and container cases. New cases cover actual
+selection/conflict gaps, not a full repeated catalog. Build, ELF/container
+and guest execution evidence are distinct. The three Rust R4X classes are
+jointly exercised on local QEMU/KVM-SMP4. Preserve exact source/tool pins and
+small reusable fixtures, remove completed source/guest copies. No normal
+STANDARD follows from this documentation decision. Later normal R4OS runtime
+changes follow the existing one-final-STANDARD/DevCenter rule.
