@@ -20,6 +20,11 @@ version 35 preserves the complete 648-byte layout and adds owned normal-work
 submission from dedicated tasks plus terminal display shutdown semantics.
 Version 36 appends driver_work_submit_owned at offset 648 (size 656); the
 complete v35 prefix and ordinary Work semantics remain unchanged.
+Version 37 appends serial_query at offset 656 (size 664); the serial owner
+negotiates DriverSerialApi independently. New C/Rust R4D contexts require
+the current complete DriverApi; optional inner tables still negotiate their
+actual size and non-null capabilities. The two entry jumps and loader owner
+admission are unchanged.
 StorageBackend version 2
 appends asynchronous block callbacks, UsbHostController version 2 appends
 capability, activity and completion status, and NetBackend version 2 appends
