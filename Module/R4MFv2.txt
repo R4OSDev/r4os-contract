@@ -46,6 +46,7 @@ Fields in canonical order:
   IMPLEMENTATION_ZIG=<project-relative .zig>        compiled R4L only
   BINDING_ZIG=<project-relative .zig>                compiled R4L only
   BINDING_C=<project-relative .h>                    compiled R4L only
+  BINDING_RUST=<project-relative .rs>                optional R4L consumer
   CONFORMANCE_ZIG=<project-relative .zig>            compiled R4L only
   CONFORMANCE_C=<project-relative .c>                compiled R4L only
   API_REFERENCE=<project-relative .md>               compiled R4L only
@@ -287,6 +288,13 @@ check rejects name, symbol or revision drift between manifest and local
 contract and never writes. Intentional materialization uses the generator
 separately; an accepted ABI change additionally requires its explicit
 baseline-update flag.
+
+BINDING_RUST optionally declares the generated library-local Rust consumer
+source. When present, the same generator writes/checks it against the local
+contract and unchanged baseline. The consumer package's Cargo.toml owns its
+independent crate name/version/dependencies; it is not a second loader module
+or a Rust provider implementation. All current first-party library contracts
+publish this projection. The field changes no runtime ABI or installed catalog.
 
 The R4L source is compiled as Zig or C with the normal freestanding R4OS
 userland target and packed from its ELF. Zig receives IMPLEMENTATION_ZIG as
