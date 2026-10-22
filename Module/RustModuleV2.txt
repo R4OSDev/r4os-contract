@@ -24,8 +24,9 @@ to console, gui or service. This is a support contract; actual host execution
 and cross-host reproducibility require their own evidence. Initial Windows
 preparation must not be reported as a Windows runtime result.
 
-Rust lowlevel, R4L, R4D, R4P and MODULE_ROLE=subsystem require independent
-qualification. The first release may explicitly reject them. Recognized
+SDK0.64.84 additionally qualifies the canonical subsystem role on normal GUI
+R4Xs. SDK0.64.85 qualifies the separate r4os-rust-r4l-v1 host provider profile
+described below. Rust lowlevel, R4D and R4P remain separately gated. Recognized
 language syntax is not an executable build capability. Native R4BUILD/R4CC
 remain separate from host Rust: VALIDATE/PLAN may understand an admitted
 Rust manifest while native BUILD reports a missing compiler capability.
@@ -165,3 +166,30 @@ jointly exercised on local QEMU/KVM-SMP4. Preserve exact source/tool pins and
 small reusable fixtures, remove completed source/guest copies. No normal
 STANDARD follows from this documentation decision. Later normal R4OS runtime
 changes follow the existing one-final-STANDARD/DevCenter rule.
+
+
+Standalone R4L provider profile (SDK0.64.85)
+------------------------------------------
+r4os-rust-r4l-v1 reuses the module code-generation/CPU/relocation policy,
+locked local Cargo graph and matched SDK/Contract/runtime tools. KIND=R4L
+has no APP_CLASS or ENTRY_MODE and no R4XStart/startup-info dummy. SOURCE
+is the real Rust staticlib root. The existing local contract, immutable
+baseline, bindings/conformance and API documentation are checked by the
+matched host r4l-contract-gen before compilation. IMPLEMENTATION_ZIG is
+required only for Zig; Rust requires its generated BINDING_RUST.
+
+The additive explicit R4L plan is separate from unchanged R4X plan bytes.
+It carries ordinary declared Query/API exports and project-local contract
+paths. The generic builder links r4l_entry and packages KIND=r4l with the
+normal R4M0 format. Query remains standalone descriptor revision1, never a
+kernel bridge. SDK provider helpers construct the common header/Query and
+entry; all library-specific tables and implementation bodies stay local.
+
+Every caller/session owns its allocation and callback state until real
+close/quiescence. R4X-global SDK alloc is refused for a shared provider;
+use explicit caller allocators instead. A nested generated ABI crate is a
+dependency, not a second module workspace member: explicitly exclude its
+Bindings/Rust workspace from the provider root. No unwinding crosses FFI.
+Linux guest execution is qualified; Windows tools are compiled/prepared,
+without a Windows execution claim. Platform API/ABI and R4MF/R4M0 versions
+remain unchanged; this is an additive SDK build-profile qualification.

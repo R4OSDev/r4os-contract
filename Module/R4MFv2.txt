@@ -43,7 +43,7 @@ Fields in canonical order:
   EXPORT=<public-name>:<ELF-symbol>:<revision> repeated; compiled R4L only
   CONTRACT=<project-relative .json>                 compiled R4L only
   CONTRACT_BASELINE=<project-relative .json>        compiled R4L only
-  IMPLEMENTATION_ZIG=<project-relative .zig>        compiled R4L only
+  IMPLEMENTATION_ZIG=<project-relative .zig>        required for Zig R4L only
   BINDING_ZIG=<project-relative .zig>                compiled R4L only
   BINDING_C=<project-relative .h>                    compiled R4L only
   BINDING_RUST=<project-relative .rs>                optional R4L consumer
@@ -276,11 +276,12 @@ an export revision from 1 through 65535. Public names and ELF symbols are
 unique. The packager resolves the symbol to the final R4M0 section and offset;
 the private ELF symbol name is not stored as the public ABI name.
 
-For every normal Runtime-R4L, all eight project-local contract fields are required
-together. Their paths may not escape the manifest directory and must use the
+Every normal Runtime-R4L requires its project-local contract, baseline,
+bindings, conformance and documentation fields. IMPLEMENTATION_ZIG is
+required for Zig; BINDING_RUST is required for Rust. Their paths may not escape the manifest directory and must use the
 declared extension. CONTRACT is the sole fachliche schema truth of that
 library, CONTRACT_BASELINE is its explicitly accepted comparison state, and
-the remaining six paths name the materialized deterministic outputs. Every
+the applicable projection/conformance paths name deterministic outputs. Every
 compiled R4L exports Query revision 1 plus at least one fachliches Interface.
 Every normal build runs R4LContractGen --check against exactly these paths and
 passes module name and all non-Query EXPORT declarations as expectations. The
@@ -289,17 +290,25 @@ contract and never writes. Intentional materialization uses the generator
 separately; an accepted ABI change additionally requires its explicit
 baseline-update flag.
 
-BINDING_RUST optionally declares the generated library-local Rust consumer
-source. When present, the same generator writes/checks it against the local
+BINDING_RUST declares the generated library-local Rust table/consumer source;
+it is required for Rust providers since SDK0.64.85 and optional otherwise. When present, the same generator writes/checks it against the local
 contract and unchanged baseline. The consumer package's Cargo.toml owns its
 independent crate name/version/dependencies; it is not a second loader module
-or a Rust provider implementation. All current first-party library contracts
+or a second provider implementation. A Rust provider consumes its generated
+table types and expectation to define its own exported implementation.
+All current first-party library contracts
 publish this projection. The field changes no runtime ABI or installed catalog.
 
-The R4L source is compiled as Zig or C with the normal freestanding R4OS
-userland target and packed from its ELF. Zig receives IMPLEMENTATION_ZIG as
-the `r4l_contract` module; C receives the directory of BINDING_C as an include
-root. IMPORT, TARGET, IMAGE_SCOPE, VERSION and META keep their ordinary R4MF
+The R4L source is compiled as Zig, C or qualified host Rust with the normal
+freestanding R4OS userland target and packed from its ELF. Zig receives
+IMPLEMENTATION_ZIG as the `r4l_contract` module. C/Rust need no unused Zig
+implementation file; an explicitly declared one is still generated/checked.
+C receives BINDING_C and SDK/Contract include roots. Rust uses
+Tools/Build-RustModule.ps1 with profile r4os-rust-r4l-v1 and the matched host
+contract generator. Its ordinary r4l_entry and declared Query/API exports
+replace the R4X startup path. Caller-owned allocators/sessions/callbacks retain
+their exact close/quiescence contract; the SDK R4X-global alloc feature is
+rejected for a shared Rust R4L. Existing Zig/C companion builds remain. IMPORT, TARGET, IMAGE_SCOPE, VERSION and META keep their ordinary R4MF
 meaning. Normal Runtime-R4Ls without EXPORT are rejected by the manifest
 parser; there is no implicit legacy fallback in the compiled R4L catalog.
 Only explicitly generated fixtures carrying META=fixture.artifact-owner=...
