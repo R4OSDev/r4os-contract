@@ -44,8 +44,9 @@ is needed merely to name them. Start with one local Cargo package, edition
 2024, one explicitly declared library target, [lib].path equal to SOURCE,
 and crate-type=["staticlib"]. No bin/example/test/bench/custom target may
 silently become the selected module. An empty [workspace] may isolate this
-single package from parent discovery; members/default-members, inherited
-package/dependency settings and ambiguous workspace selection are rejected.
+single package from parent discovery. Metadata must identify this exact
+workspace root and exactly one member; ambiguous selection is rejected.
+Cargo resolves inherited settings from that same hashed root manifest.
 
 Cargo parses its own TOML. Compiler-free catalog plans validate R4MF and file
 presence; they do not claim to validate Cargo syntax or resolved identities.
