@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 489; Funktionen: 481; reserviert/Tombstone: 8
-- Sichtbarkeit: public=339, advanced=142, internal=8
+- Physische Gruppenslots: 489; Funktionen: 478; reserviert/Tombstone: 11
+- Sichtbarkeit: public=339, advanced=139, internal=11
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -462,10 +462,10 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DEV | 24 | `boot_info_memory_entry` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 25 | `reserved0` | reserved | internal | R4DEV | nein | `internal` | none | none | nonblocking | thread_safe | none | none | none | never_automatic | none | internal_only | none | not_cancellable | none | serialized | none | none | none |
 | R4DEV | 26 | `reserved1` | reserved | internal | R4DEV | nein | `internal` | none | none | nonblocking | thread_safe | none | none | none | never_automatic | none | internal_only | none | not_cancellable | none | serialized | none | none | none |
-| R4DEV | 27 | `program_instance_storage_summary` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4DEV | 27 | `reserved_program_instance_storage_summary_v1` | tombstone | internal | R4DEV | nein | `internal` | none | none | nonblocking | thread_safe | none | none | none | never_automatic | none | internal_only | none | not_cancellable | none | serialized | none | none | none |
 | R4DEV | 28 | `program_instance_storage_self_test` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | may_block | caller_serialized | none | valid_on_documented_error | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | serialized | none | call | none |
-| R4DEV | 29 | `program_registry_summary` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
-| R4DEV | 30 | `program_registry_self_test` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | caller_serialized | none | valid_on_documented_error | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | serialized | none | call | none |
+| R4DEV | 29 | `reserved_program_registry_summary_v1` | tombstone | internal | R4DEV | nein | `internal` | none | none | nonblocking | thread_safe | none | none | none | never_automatic | none | internal_only | none | not_cancellable | none | serialized | none | none | none |
+| R4DEV | 30 | `reserved_program_registry_self_test_v1` | tombstone | internal | R4DEV | nein | `internal` | none | none | nonblocking | thread_safe | none | none | none | never_automatic | none | internal_only | none | not_cancellable | none | serialized | none | none | none |
 | R4DEV | 31 | `program_registry_summary_v2` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 32 | `program_registry_self_test_v2` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | caller_serialized | none | valid_on_documented_error | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | serialized | none | call | none |
 | R4DEV | 33 | `execution_inventory_summary` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | caller_serialized | none | valid_on_documented_error | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | serialized | none | call | none |

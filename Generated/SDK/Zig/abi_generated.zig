@@ -6137,36 +6137,6 @@ pub const ProgramProcessCompletion = extern struct {
     console_state: ConsoleState = .{},
 };
 
-pub const ProgramRegistrySummary = extern struct {
-    version: u32 = 1,
-    size: u32 = 160,
-    chunk_slots: u32 = 0,
-    chunk_count: u32 = 0,
-    slot_capacity: u32 = 0,
-    free_slots: u32 = 0,
-    reserved_slots: u32 = 0,
-    live_slots: u32 = 0,
-    done_slots: u32 = 0,
-    retiring_slots: u32 = 0,
-    pinned_slots: u32 = 0,
-    warm_chunks: u32 = 0,
-    last_admission_error: i32 = 0,
-    flags: u32 = 0,
-    peak_chunks: u64 = 0,
-    peak_live: u64 = 0,
-    growth_attempts: u64 = 0,
-    growth_failures: u64 = 0,
-    forced_failures: u64 = 0,
-    publish_count: u64 = 0,
-    rollback_count: u64 = 0,
-    shrink_count: u64 = 0,
-    id_collisions: u64 = 0,
-    id_wraps: u64 = 0,
-    live_id_hash: u64 = 0,
-    live_address_hash: u64 = 0,
-    reserved0: u64 = 0,
-};
-
 pub const ProgramRegistrySummaryV2 = extern struct {
     version: u32 = 2,
     size: u32 = 224,
@@ -6206,21 +6176,6 @@ pub const ProgramRegistrySummaryV2 = extern struct {
     history_sequence: u64 = 0,
     completion_peak: u64 = 0,
     retire_retries: u64 = 0,
-};
-
-pub const ProgramRegistrySelfTestResult = extern struct {
-    version: u32 = 1,
-    size: u32 = 64,
-    operation: u32 = 0,
-    flags: u32 = 0,
-    chunk_count_before: u32 = 0,
-    slot_capacity_before: u32 = 0,
-    free_slots_before: u32 = 0,
-    reserved0: u32 = 0,
-    growth_failures_before: u64 = 0,
-    growth_failures_after: u64 = 0,
-    forced_failures_before: u64 = 0,
-    forced_failures_after: u64 = 0,
 };
 
 pub const ProgramRegistrySelfTestResultV2 = extern struct {
@@ -11168,10 +11123,7 @@ pub const R4DevFns = struct {
     pub const boot_info_summary = *const fn (*BootInfoSummary) callconv(.c) i32;
     pub const boot_info_memory_count = *const fn () callconv(.c) u32;
     pub const boot_info_memory_entry = *const fn (u32, *BootInfoMemoryEntry) callconv(.c) i32;
-    pub const program_instance_storage_summary = *const fn (*ProgramInstanceStorageSummary) callconv(.c) i32;
     pub const program_instance_storage_self_test = *const fn (*ProgramInstanceStorageSelfTestResult) callconv(.c) i32;
-    pub const program_registry_summary = *const fn (*ProgramRegistrySummary) callconv(.c) i32;
-    pub const program_registry_self_test = *const fn (*ProgramRegistrySelfTestResult) callconv(.c) i32;
     pub const program_registry_summary_v2 = *const fn (*ProgramRegistrySummaryV2) callconv(.c) i32;
     pub const program_registry_self_test_v2 = *const fn (*ProgramRegistrySelfTestResultV2) callconv(.c) i32;
     pub const execution_inventory_summary = *const fn (*ProgramInventorySummary) callconv(.c) i32;
@@ -11234,7 +11186,7 @@ pub const R4DevFns = struct {
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 34,
+    abi_version: u32 = 35,
     size: u32 = 728,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
@@ -11264,10 +11216,10 @@ pub const R4XStartR4Dev = extern struct {
     boot_info_memory_entry: usize = 0,
     reserved0: usize = 0,
     reserved1: usize = 0,
-    program_instance_storage_summary: usize = 0,
+    reserved_program_instance_storage_summary_v1: usize = 0,
     program_instance_storage_self_test: usize = 0,
-    program_registry_summary: usize = 0,
-    program_registry_self_test: usize = 0,
+    reserved_program_registry_summary_v1: usize = 0,
+    reserved_program_registry_self_test_v1: usize = 0,
     program_registry_summary_v2: usize = 0,
     program_registry_self_test_v2: usize = 0,
     execution_inventory_summary: usize = 0,
@@ -11774,10 +11726,10 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 24, .offset = 208, .name = "boot_info_memory_entry", .state = .function, .required = false },
     .{ .number = 25, .offset = 216, .name = "reserved0", .state = .reserved, .required = false },
     .{ .number = 26, .offset = 224, .name = "reserved1", .state = .reserved, .required = false },
-    .{ .number = 27, .offset = 232, .name = "program_instance_storage_summary", .state = .function, .required = false },
+    .{ .number = 27, .offset = 232, .name = "reserved_program_instance_storage_summary_v1", .state = .tombstone, .required = false },
     .{ .number = 28, .offset = 240, .name = "program_instance_storage_self_test", .state = .function, .required = false },
-    .{ .number = 29, .offset = 248, .name = "program_registry_summary", .state = .function, .required = false },
-    .{ .number = 30, .offset = 256, .name = "program_registry_self_test", .state = .function, .required = false },
+    .{ .number = 29, .offset = 248, .name = "reserved_program_registry_summary_v1", .state = .tombstone, .required = false },
+    .{ .number = 30, .offset = 256, .name = "reserved_program_registry_self_test_v1", .state = .tombstone, .required = false },
     .{ .number = 31, .offset = 264, .name = "program_registry_summary_v2", .state = .function, .required = false },
     .{ .number = 32, .offset = 272, .name = "program_registry_self_test_v2", .state = .function, .required = false },
     .{ .number = 33, .offset = 280, .name = "execution_inventory_summary", .state = .function, .required = false },
@@ -14656,35 +14608,6 @@ comptime {
     if (@offsetOf(ProgramProcessCompletion, "exit_reason") != 62) @compileError("generated ABI offset drift: ProgramProcessCompletion.exit_reason");
     if (@offsetOf(ProgramProcessCompletion, "reserved0") != 63) @compileError("generated ABI offset drift: ProgramProcessCompletion.reserved0");
     if (@offsetOf(ProgramProcessCompletion, "console_state") != 64) @compileError("generated ABI offset drift: ProgramProcessCompletion.console_state");
-    if (@sizeOf(ProgramRegistrySummary) != 160) @compileError("generated ABI size drift: ProgramRegistrySummary");
-    if (@alignOf(ProgramRegistrySummary) != 8) @compileError("generated ABI alignment drift: ProgramRegistrySummary");
-    if (@offsetOf(ProgramRegistrySummary, "version") != 0) @compileError("generated ABI offset drift: ProgramRegistrySummary.version");
-    if (@offsetOf(ProgramRegistrySummary, "size") != 4) @compileError("generated ABI offset drift: ProgramRegistrySummary.size");
-    if (@offsetOf(ProgramRegistrySummary, "chunk_slots") != 8) @compileError("generated ABI offset drift: ProgramRegistrySummary.chunk_slots");
-    if (@offsetOf(ProgramRegistrySummary, "chunk_count") != 12) @compileError("generated ABI offset drift: ProgramRegistrySummary.chunk_count");
-    if (@offsetOf(ProgramRegistrySummary, "slot_capacity") != 16) @compileError("generated ABI offset drift: ProgramRegistrySummary.slot_capacity");
-    if (@offsetOf(ProgramRegistrySummary, "free_slots") != 20) @compileError("generated ABI offset drift: ProgramRegistrySummary.free_slots");
-    if (@offsetOf(ProgramRegistrySummary, "reserved_slots") != 24) @compileError("generated ABI offset drift: ProgramRegistrySummary.reserved_slots");
-    if (@offsetOf(ProgramRegistrySummary, "live_slots") != 28) @compileError("generated ABI offset drift: ProgramRegistrySummary.live_slots");
-    if (@offsetOf(ProgramRegistrySummary, "done_slots") != 32) @compileError("generated ABI offset drift: ProgramRegistrySummary.done_slots");
-    if (@offsetOf(ProgramRegistrySummary, "retiring_slots") != 36) @compileError("generated ABI offset drift: ProgramRegistrySummary.retiring_slots");
-    if (@offsetOf(ProgramRegistrySummary, "pinned_slots") != 40) @compileError("generated ABI offset drift: ProgramRegistrySummary.pinned_slots");
-    if (@offsetOf(ProgramRegistrySummary, "warm_chunks") != 44) @compileError("generated ABI offset drift: ProgramRegistrySummary.warm_chunks");
-    if (@offsetOf(ProgramRegistrySummary, "last_admission_error") != 48) @compileError("generated ABI offset drift: ProgramRegistrySummary.last_admission_error");
-    if (@offsetOf(ProgramRegistrySummary, "flags") != 52) @compileError("generated ABI offset drift: ProgramRegistrySummary.flags");
-    if (@offsetOf(ProgramRegistrySummary, "peak_chunks") != 56) @compileError("generated ABI offset drift: ProgramRegistrySummary.peak_chunks");
-    if (@offsetOf(ProgramRegistrySummary, "peak_live") != 64) @compileError("generated ABI offset drift: ProgramRegistrySummary.peak_live");
-    if (@offsetOf(ProgramRegistrySummary, "growth_attempts") != 72) @compileError("generated ABI offset drift: ProgramRegistrySummary.growth_attempts");
-    if (@offsetOf(ProgramRegistrySummary, "growth_failures") != 80) @compileError("generated ABI offset drift: ProgramRegistrySummary.growth_failures");
-    if (@offsetOf(ProgramRegistrySummary, "forced_failures") != 88) @compileError("generated ABI offset drift: ProgramRegistrySummary.forced_failures");
-    if (@offsetOf(ProgramRegistrySummary, "publish_count") != 96) @compileError("generated ABI offset drift: ProgramRegistrySummary.publish_count");
-    if (@offsetOf(ProgramRegistrySummary, "rollback_count") != 104) @compileError("generated ABI offset drift: ProgramRegistrySummary.rollback_count");
-    if (@offsetOf(ProgramRegistrySummary, "shrink_count") != 112) @compileError("generated ABI offset drift: ProgramRegistrySummary.shrink_count");
-    if (@offsetOf(ProgramRegistrySummary, "id_collisions") != 120) @compileError("generated ABI offset drift: ProgramRegistrySummary.id_collisions");
-    if (@offsetOf(ProgramRegistrySummary, "id_wraps") != 128) @compileError("generated ABI offset drift: ProgramRegistrySummary.id_wraps");
-    if (@offsetOf(ProgramRegistrySummary, "live_id_hash") != 136) @compileError("generated ABI offset drift: ProgramRegistrySummary.live_id_hash");
-    if (@offsetOf(ProgramRegistrySummary, "live_address_hash") != 144) @compileError("generated ABI offset drift: ProgramRegistrySummary.live_address_hash");
-    if (@offsetOf(ProgramRegistrySummary, "reserved0") != 152) @compileError("generated ABI offset drift: ProgramRegistrySummary.reserved0");
     if (@sizeOf(ProgramRegistrySummaryV2) != 224) @compileError("generated ABI size drift: ProgramRegistrySummaryV2");
     if (@alignOf(ProgramRegistrySummaryV2) != 8) @compileError("generated ABI alignment drift: ProgramRegistrySummaryV2");
     if (@offsetOf(ProgramRegistrySummaryV2, "version") != 0) @compileError("generated ABI offset drift: ProgramRegistrySummaryV2.version");
@@ -14725,20 +14648,6 @@ comptime {
     if (@offsetOf(ProgramRegistrySummaryV2, "history_sequence") != 200) @compileError("generated ABI offset drift: ProgramRegistrySummaryV2.history_sequence");
     if (@offsetOf(ProgramRegistrySummaryV2, "completion_peak") != 208) @compileError("generated ABI offset drift: ProgramRegistrySummaryV2.completion_peak");
     if (@offsetOf(ProgramRegistrySummaryV2, "retire_retries") != 216) @compileError("generated ABI offset drift: ProgramRegistrySummaryV2.retire_retries");
-    if (@sizeOf(ProgramRegistrySelfTestResult) != 64) @compileError("generated ABI size drift: ProgramRegistrySelfTestResult");
-    if (@alignOf(ProgramRegistrySelfTestResult) != 8) @compileError("generated ABI alignment drift: ProgramRegistrySelfTestResult");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "version") != 0) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.version");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "size") != 4) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.size");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "operation") != 8) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.operation");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "flags") != 12) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.flags");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "chunk_count_before") != 16) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.chunk_count_before");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "slot_capacity_before") != 20) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.slot_capacity_before");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "free_slots_before") != 24) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.free_slots_before");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "reserved0") != 28) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.reserved0");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "growth_failures_before") != 32) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.growth_failures_before");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "growth_failures_after") != 40) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.growth_failures_after");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "forced_failures_before") != 48) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.forced_failures_before");
-    if (@offsetOf(ProgramRegistrySelfTestResult, "forced_failures_after") != 56) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResult.forced_failures_after");
     if (@sizeOf(ProgramRegistrySelfTestResultV2) != 136) @compileError("generated ABI size drift: ProgramRegistrySelfTestResultV2");
     if (@alignOf(ProgramRegistrySelfTestResultV2) != 8) @compileError("generated ABI alignment drift: ProgramRegistrySelfTestResultV2");
     if (@offsetOf(ProgramRegistrySelfTestResultV2, "version") != 0) @compileError("generated ABI offset drift: ProgramRegistrySelfTestResultV2.version");
@@ -18988,10 +18897,10 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "boot_info_memory_entry") != 208) @compileError("generated ABI offset drift: R4XStartR4Dev.boot_info_memory_entry");
     if (@offsetOf(R4XStartR4Dev, "reserved0") != 216) @compileError("generated ABI offset drift: R4XStartR4Dev.reserved0");
     if (@offsetOf(R4XStartR4Dev, "reserved1") != 224) @compileError("generated ABI offset drift: R4XStartR4Dev.reserved1");
-    if (@offsetOf(R4XStartR4Dev, "program_instance_storage_summary") != 232) @compileError("generated ABI offset drift: R4XStartR4Dev.program_instance_storage_summary");
+    if (@offsetOf(R4XStartR4Dev, "reserved_program_instance_storage_summary_v1") != 232) @compileError("generated ABI offset drift: R4XStartR4Dev.reserved_program_instance_storage_summary_v1");
     if (@offsetOf(R4XStartR4Dev, "program_instance_storage_self_test") != 240) @compileError("generated ABI offset drift: R4XStartR4Dev.program_instance_storage_self_test");
-    if (@offsetOf(R4XStartR4Dev, "program_registry_summary") != 248) @compileError("generated ABI offset drift: R4XStartR4Dev.program_registry_summary");
-    if (@offsetOf(R4XStartR4Dev, "program_registry_self_test") != 256) @compileError("generated ABI offset drift: R4XStartR4Dev.program_registry_self_test");
+    if (@offsetOf(R4XStartR4Dev, "reserved_program_registry_summary_v1") != 248) @compileError("generated ABI offset drift: R4XStartR4Dev.reserved_program_registry_summary_v1");
+    if (@offsetOf(R4XStartR4Dev, "reserved_program_registry_self_test_v1") != 256) @compileError("generated ABI offset drift: R4XStartR4Dev.reserved_program_registry_self_test_v1");
     if (@offsetOf(R4XStartR4Dev, "program_registry_summary_v2") != 264) @compileError("generated ABI offset drift: R4XStartR4Dev.program_registry_summary_v2");
     if (@offsetOf(R4XStartR4Dev, "program_registry_self_test_v2") != 272) @compileError("generated ABI offset drift: R4XStartR4Dev.program_registry_self_test_v2");
     if (@offsetOf(R4XStartR4Dev, "execution_inventory_summary") != 280) @compileError("generated ABI offset drift: R4XStartR4Dev.execution_inventory_summary");

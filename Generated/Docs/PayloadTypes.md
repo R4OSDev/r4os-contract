@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 370 von 370 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 368 von 368 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 64; Konstanten: 2713; Limits: 111
 
@@ -135,9 +135,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramInstanceStorageSelfTestResult` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `ProgramProcessHandle` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
 | `ProgramProcessCompletion` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
-| `ProgramRegistrySummary` | extensible | extern_struct | 160/8 | 160/8 | 160/8 | 160/8 |
 | `ProgramRegistrySummaryV2` | extensible | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
-| `ProgramRegistrySelfTestResult` | extensible | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `ProgramRegistrySelfTestResultV2` | extensible | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
 | `ProgramJoinHandle` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `ProgramInventoryCursor` | extensible | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
@@ -4085,43 +4083,6 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved0` | 63 | 1 | 1 | `u8` | - |
 | `console_state` | 64 | 64 | 4 | `r4os.abi.ConsoleState` | - |
 
-### `ProgramRegistrySummary`
-
-- Quelle: `API/ApiContract.json`
-- Klasse: `extensible`
-- Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 160 / 8
-
-| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
-|---|---:|---:|---:|---|---|
-| `version` | 0 | 4 | 4 | `u32` | - |
-| `size` | 4 | 4 | 4 | `u32` | - |
-| `chunk_slots` | 8 | 4 | 4 | `u32` | - |
-| `chunk_count` | 12 | 4 | 4 | `u32` | - |
-| `slot_capacity` | 16 | 4 | 4 | `u32` | - |
-| `free_slots` | 20 | 4 | 4 | `u32` | - |
-| `reserved_slots` | 24 | 4 | 4 | `u32` | - |
-| `live_slots` | 28 | 4 | 4 | `u32` | - |
-| `done_slots` | 32 | 4 | 4 | `u32` | - |
-| `retiring_slots` | 36 | 4 | 4 | `u32` | - |
-| `pinned_slots` | 40 | 4 | 4 | `u32` | - |
-| `warm_chunks` | 44 | 4 | 4 | `u32` | - |
-| `last_admission_error` | 48 | 4 | 4 | `i32` | - |
-| `flags` | 52 | 4 | 4 | `u32` | - |
-| `peak_chunks` | 56 | 8 | 8 | `u64` | - |
-| `peak_live` | 64 | 8 | 8 | `u64` | - |
-| `growth_attempts` | 72 | 8 | 8 | `u64` | - |
-| `growth_failures` | 80 | 8 | 8 | `u64` | - |
-| `forced_failures` | 88 | 8 | 8 | `u64` | - |
-| `publish_count` | 96 | 8 | 8 | `u64` | - |
-| `rollback_count` | 104 | 8 | 8 | `u64` | - |
-| `shrink_count` | 112 | 8 | 8 | `u64` | - |
-| `id_collisions` | 120 | 8 | 8 | `u64` | - |
-| `id_wraps` | 128 | 8 | 8 | `u64` | - |
-| `live_id_hash` | 136 | 8 | 8 | `u64` | - |
-| `live_address_hash` | 144 | 8 | 8 | `u64` | - |
-| `reserved0` | 152 | 8 | 8 | `u64` | - |
-
 ### `ProgramRegistrySummaryV2`
 
 - Quelle: `API/ApiContract.json`
@@ -4169,28 +4130,6 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `history_sequence` | 200 | 8 | 8 | `u64` | - |
 | `completion_peak` | 208 | 8 | 8 | `u64` | - |
 | `retire_retries` | 216 | 8 | 8 | `u64` | - |
-
-### `ProgramRegistrySelfTestResult`
-
-- Quelle: `API/ApiContract.json`
-- Klasse: `extensible`
-- Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 1 / 64 / 8
-
-| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
-|---|---:|---:|---:|---|---|
-| `version` | 0 | 4 | 4 | `u32` | - |
-| `size` | 4 | 4 | 4 | `u32` | - |
-| `operation` | 8 | 4 | 4 | `u32` | - |
-| `flags` | 12 | 4 | 4 | `u32` | - |
-| `chunk_count_before` | 16 | 4 | 4 | `u32` | - |
-| `slot_capacity_before` | 20 | 4 | 4 | `u32` | - |
-| `free_slots_before` | 24 | 4 | 4 | `u32` | - |
-| `reserved0` | 28 | 4 | 4 | `u32` | - |
-| `growth_failures_before` | 32 | 8 | 8 | `u64` | - |
-| `growth_failures_after` | 40 | 8 | 8 | `u64` | - |
-| `forced_failures_before` | 48 | 8 | 8 | `u64` | - |
-| `forced_failures_after` | 56 | 8 | 8 | `u64` | - |
 
 ### `ProgramRegistrySelfTestResultV2`
 

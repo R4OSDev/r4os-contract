@@ -5,6 +5,16 @@ It contains the R4M0 container contract, shared layouts and error codes,
 platform API groups, generated bindings, conformance fixtures, and the
 contract generator.
 
+R4DEV35 (Contract0.64.45, 0.86.80) retires V1 diagnostic slots27/29/30
+in place as zero tombstones. Current storage/registry V2 slots, table size728,
+all other offsets and current payload layouts remain unchanged. The unused
+V1 registry records are removed; there is no old OS runtime projection.
+Graphics requests use complete current records: registration48, backend152,
+submission512, driver job296, color192 and buffer statistics136 bytes.
+Short headers are refused without taking jobs, publishing data or writing
+beyond the caller's actual capacity. Optional current capabilities remain
+explicit; hardware generations and data formats are independent of OS age.
+
 R4DEV v17 appends `smp_kernel_check` and `performance_smp_tlb` after the
 preserved 416-byte prefix (total432). Fixed v1 payloads separately expose
 explicit owned functional SMP work (224bytes) and passive remote-TLB/clock

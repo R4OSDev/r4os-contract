@@ -9739,72 +9739,6 @@ impl Default for ProgramProcessCompletion {
 
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct ProgramRegistrySummary {
-    pub version: u32,
-    pub size: u32,
-    pub chunk_slots: u32,
-    pub chunk_count: u32,
-    pub slot_capacity: u32,
-    pub free_slots: u32,
-    pub reserved_slots: u32,
-    pub live_slots: u32,
-    pub done_slots: u32,
-    pub retiring_slots: u32,
-    pub pinned_slots: u32,
-    pub warm_chunks: u32,
-    pub last_admission_error: i32,
-    pub flags: u32,
-    pub peak_chunks: u64,
-    pub peak_live: u64,
-    pub growth_attempts: u64,
-    pub growth_failures: u64,
-    pub forced_failures: u64,
-    pub publish_count: u64,
-    pub rollback_count: u64,
-    pub shrink_count: u64,
-    pub id_collisions: u64,
-    pub id_wraps: u64,
-    pub live_id_hash: u64,
-    pub live_address_hash: u64,
-    pub reserved0: u64,
-}
-#[allow(clippy::derivable_impls)]
-impl Default for ProgramRegistrySummary {
-    fn default() -> Self {
-        Self {
-            version: 1,
-            size: 160,
-            chunk_slots: 0,
-            chunk_count: 0,
-            slot_capacity: 0,
-            free_slots: 0,
-            reserved_slots: 0,
-            live_slots: 0,
-            done_slots: 0,
-            retiring_slots: 0,
-            pinned_slots: 0,
-            warm_chunks: 0,
-            last_admission_error: 0,
-            flags: 0,
-            peak_chunks: 0,
-            peak_live: 0,
-            growth_attempts: 0,
-            growth_failures: 0,
-            forced_failures: 0,
-            publish_count: 0,
-            rollback_count: 0,
-            shrink_count: 0,
-            id_collisions: 0,
-            id_wraps: 0,
-            live_id_hash: 0,
-            live_address_hash: 0,
-            reserved0: 0,
-        }
-    }
-}
-
-#[repr(C)]
-#[derive(Clone, Copy)]
 pub struct ProgramRegistrySummaryV2 {
     pub version: u32,
     pub size: u32,
@@ -9887,42 +9821,6 @@ impl Default for ProgramRegistrySummaryV2 {
             history_sequence: 0,
             completion_peak: 0,
             retire_retries: 0,
-        }
-    }
-}
-
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct ProgramRegistrySelfTestResult {
-    pub version: u32,
-    pub size: u32,
-    pub operation: u32,
-    pub flags: u32,
-    pub chunk_count_before: u32,
-    pub slot_capacity_before: u32,
-    pub free_slots_before: u32,
-    pub reserved0: u32,
-    pub growth_failures_before: u64,
-    pub growth_failures_after: u64,
-    pub forced_failures_before: u64,
-    pub forced_failures_after: u64,
-}
-#[allow(clippy::derivable_impls)]
-impl Default for ProgramRegistrySelfTestResult {
-    fn default() -> Self {
-        Self {
-            version: 1,
-            size: 64,
-            operation: 0,
-            flags: 0,
-            chunk_count_before: 0,
-            slot_capacity_before: 0,
-            free_slots_before: 0,
-            reserved0: 0,
-            growth_failures_before: 0,
-            growth_failures_after: 0,
-            forced_failures_before: 0,
-            forced_failures_after: 0,
         }
     }
 }
@@ -20881,10 +20779,7 @@ pub mod R4DevFns {
     pub type boot_info_summary = unsafe extern "C" fn(*mut BootInfoSummary) -> i32;
     pub type boot_info_memory_count = unsafe extern "C" fn() -> u32;
     pub type boot_info_memory_entry = unsafe extern "C" fn(u32, *mut BootInfoMemoryEntry) -> i32;
-    pub type program_instance_storage_summary = unsafe extern "C" fn(*mut ProgramInstanceStorageSummary) -> i32;
     pub type program_instance_storage_self_test = unsafe extern "C" fn(*mut ProgramInstanceStorageSelfTestResult) -> i32;
-    pub type program_registry_summary = unsafe extern "C" fn(*mut ProgramRegistrySummary) -> i32;
-    pub type program_registry_self_test = unsafe extern "C" fn(*mut ProgramRegistrySelfTestResult) -> i32;
     pub type program_registry_summary_v2 = unsafe extern "C" fn(*mut ProgramRegistrySummaryV2) -> i32;
     pub type program_registry_self_test_v2 = unsafe extern "C" fn(*mut ProgramRegistrySelfTestResultV2) -> i32;
     pub type execution_inventory_summary = unsafe extern "C" fn(*mut ProgramInventorySummary) -> i32;
@@ -20979,10 +20874,10 @@ pub struct R4XStartR4Dev {
     pub boot_info_memory_entry: usize,
     pub reserved0: usize,
     pub reserved1: usize,
-    pub program_instance_storage_summary: usize,
+    pub reserved_program_instance_storage_summary_v1: usize,
     pub program_instance_storage_self_test: usize,
-    pub program_registry_summary: usize,
-    pub program_registry_self_test: usize,
+    pub reserved_program_registry_summary_v1: usize,
+    pub reserved_program_registry_self_test_v1: usize,
     pub program_registry_summary_v2: usize,
     pub program_registry_self_test_v2: usize,
     pub execution_inventory_summary: usize,
@@ -21047,7 +20942,7 @@ impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 34,
+            abi_version: 35,
             size: 728,
             flags: 0,
             device_inventory_summary: 0,
@@ -21077,10 +20972,10 @@ impl Default for R4XStartR4Dev {
             boot_info_memory_entry: 0,
             reserved0: 0,
             reserved1: 0,
-            program_instance_storage_summary: 0,
+            reserved_program_instance_storage_summary_v1: 0,
             program_instance_storage_self_test: 0,
-            program_registry_summary: 0,
-            program_registry_self_test: 0,
+            reserved_program_registry_summary_v1: 0,
+            reserved_program_registry_self_test_v1: 0,
             program_registry_summary_v2: 0,
             program_registry_self_test_v2: 0,
             execution_inventory_summary: 0,
@@ -27931,35 +27826,6 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramProcessCompletion, console_state) == 64);
     assert!(core::mem::size_of::<ProgramProcessCompletion>() == 128);
     assert!(core::mem::align_of::<ProgramProcessCompletion>() == 8);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, version) == 0);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, size) == 4);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, chunk_slots) == 8);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, chunk_count) == 12);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, slot_capacity) == 16);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, free_slots) == 20);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, reserved_slots) == 24);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, live_slots) == 28);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, done_slots) == 32);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, retiring_slots) == 36);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, pinned_slots) == 40);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, warm_chunks) == 44);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, last_admission_error) == 48);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, flags) == 52);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, peak_chunks) == 56);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, peak_live) == 64);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, growth_attempts) == 72);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, growth_failures) == 80);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, forced_failures) == 88);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, publish_count) == 96);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, rollback_count) == 104);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, shrink_count) == 112);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, id_collisions) == 120);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, id_wraps) == 128);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, live_id_hash) == 136);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, live_address_hash) == 144);
-    assert!(core::mem::offset_of!(ProgramRegistrySummary, reserved0) == 152);
-    assert!(core::mem::size_of::<ProgramRegistrySummary>() == 160);
-    assert!(core::mem::align_of::<ProgramRegistrySummary>() == 8);
     assert!(core::mem::offset_of!(ProgramRegistrySummaryV2, version) == 0);
     assert!(core::mem::offset_of!(ProgramRegistrySummaryV2, size) == 4);
     assert!(core::mem::offset_of!(ProgramRegistrySummaryV2, chunk_slots) == 8);
@@ -28000,20 +27866,6 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramRegistrySummaryV2, retire_retries) == 216);
     assert!(core::mem::size_of::<ProgramRegistrySummaryV2>() == 224);
     assert!(core::mem::align_of::<ProgramRegistrySummaryV2>() == 8);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, version) == 0);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, size) == 4);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, operation) == 8);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, flags) == 12);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, chunk_count_before) == 16);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, slot_capacity_before) == 20);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, free_slots_before) == 24);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, reserved0) == 28);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, growth_failures_before) == 32);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, growth_failures_after) == 40);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, forced_failures_before) == 48);
-    assert!(core::mem::offset_of!(ProgramRegistrySelfTestResult, forced_failures_after) == 56);
-    assert!(core::mem::size_of::<ProgramRegistrySelfTestResult>() == 64);
-    assert!(core::mem::align_of::<ProgramRegistrySelfTestResult>() == 8);
     assert!(core::mem::offset_of!(ProgramRegistrySelfTestResultV2, version) == 0);
     assert!(core::mem::offset_of!(ProgramRegistrySelfTestResultV2, size) == 4);
     assert!(core::mem::offset_of!(ProgramRegistrySelfTestResultV2, operation) == 8);
@@ -32305,10 +32157,10 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, boot_info_memory_entry) == 208);
     assert!(core::mem::offset_of!(R4XStartR4Dev, reserved0) == 216);
     assert!(core::mem::offset_of!(R4XStartR4Dev, reserved1) == 224);
-    assert!(core::mem::offset_of!(R4XStartR4Dev, program_instance_storage_summary) == 232);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, reserved_program_instance_storage_summary_v1) == 232);
     assert!(core::mem::offset_of!(R4XStartR4Dev, program_instance_storage_self_test) == 240);
-    assert!(core::mem::offset_of!(R4XStartR4Dev, program_registry_summary) == 248);
-    assert!(core::mem::offset_of!(R4XStartR4Dev, program_registry_self_test) == 256);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, reserved_program_registry_summary_v1) == 248);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, reserved_program_registry_self_test_v1) == 256);
     assert!(core::mem::offset_of!(R4XStartR4Dev, program_registry_summary_v2) == 264);
     assert!(core::mem::offset_of!(R4XStartR4Dev, program_registry_self_test_v2) == 272);
     assert!(core::mem::offset_of!(R4XStartR4Dev, execution_inventory_summary) == 280);

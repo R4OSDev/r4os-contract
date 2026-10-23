@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DEV (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DEV (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Dev` v34, 728 Bytes, 87 Funktionsfelder und 89 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Dev` v35, 728 Bytes, 84 Funktionsfelder und 89 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DevFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -36,10 +36,10 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 24 | 208 | function | `boot_info_memory_entry` | `*const fn (u32, *BootInfoMemoryEntry) callconv(.c) i32` |
 | 25 | 216 | reserved | `reserved0` | - |
 | 26 | 224 | reserved | `reserved1` | - |
-| 27 | 232 | function | `program_instance_storage_summary` | `*const fn (*ProgramInstanceStorageSummary) callconv(.c) i32` |
+| 27 | 232 | tombstone | `reserved_program_instance_storage_summary_v1` | - |
 | 28 | 240 | function | `program_instance_storage_self_test` | `*const fn (*ProgramInstanceStorageSelfTestResult) callconv(.c) i32` |
-| 29 | 248 | function | `program_registry_summary` | `*const fn (*ProgramRegistrySummary) callconv(.c) i32` |
-| 30 | 256 | function | `program_registry_self_test` | `*const fn (*ProgramRegistrySelfTestResult) callconv(.c) i32` |
+| 29 | 248 | tombstone | `reserved_program_registry_summary_v1` | - |
+| 30 | 256 | tombstone | `reserved_program_registry_self_test_v1` | - |
 | 31 | 264 | function | `program_registry_summary_v2` | `*const fn (*ProgramRegistrySummaryV2) callconv(.c) i32` |
 | 32 | 272 | function | `program_registry_self_test_v2` | `*const fn (*ProgramRegistrySelfTestResultV2) callconv(.c) i32` |
 | 33 | 280 | function | `execution_inventory_summary` | `*const fn (*ProgramInventorySummary) callconv(.c) i32` |

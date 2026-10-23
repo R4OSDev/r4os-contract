@@ -428,7 +428,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // (v14); 0.84.11 appends explicit owned kernel-heap checks at 48 (v15).
     // Every existing slot and payload prefix is retained.
     // 0.84.36 appends ten raw COM functions; all55 old slots stay unchanged.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 87, .reserved = 2, .tombstones = 0 },
+    // 0.86.80 retires V1 diagnostic slots27/29/30 in place. Their zero
+    // tombstones cannot be reused; current V2 slots/payloads do not move.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 84, .reserved = 2, .tombstones = 3 },
 };
 
 pub fn main(init: std.process.Init) !void {
