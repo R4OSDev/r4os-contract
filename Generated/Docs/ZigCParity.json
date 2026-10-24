@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 478,
+    "group_function_signatures": 480,
     "sdk_operation_contracts": 0,
-    "parity_entries": 478,
+    "parity_entries": 480,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1430,6 +1430,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.entropy_fill",
       "c_contract": "R4SysEntropyFillFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_lifecycle_begin",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_lifecycle_begin",
+      "c_contract": "R4SysProgramLifecycleBeginFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_lifecycle_programs",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_lifecycle_programs",
+      "c_contract": "R4SysProgramLifecycleProgramsFn",
       "coverage": "generated_signature"
     },
     {

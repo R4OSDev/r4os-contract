@@ -1,4 +1,4 @@
-﻿R4OS Plattform-Contract
+R4OS Plattform-Contract
 =======================
 
 Dieses Repository ist die zentrale API-/ABI-Wahrheit der R4OS-Plattform.
@@ -137,3 +137,18 @@ Eigene Allokationen und VM-Reservierungen bestimmen die Rueckgabebilanz;
 globale Vorher-/Nachher-Werte sind Beobachtungen. Absichtliche Double-Free-
 und VM-Fehler bleiben getrennt. Ein aktiver Lauf meldet Busy. Nicht quittierte
 Freigaben behalten ihre genaue Diagnoseidentitaet und sperren neue Laeufe.
+
+
+0.64.46: allgemeine Prozess-Lifecycleaufnahme
+------------------------------------------
+R4SYS29/1320 haengt program_lifecycle_begin und program_lifecycle_programs
+an den unveraenderten1304-Byte-Praefix an. ProgramLifecycleSnapshot40 traegt
+nur genauen Handle, Task-ID, Rolle/Klasse/Zustand/Flags, Exit und Fenster-ID.
+ProgramInventoryCursor bleibt binaer unveraendert; Flag lifecycle und Pagekind
+lifecycle grenzen diese Aufnahme ausdruecklich vom vollen Diagnoseinventar ab.
+Begin bindet allein den Registryepoch, Paging liest die kanonischen Slots und
+Completionnodes generationensortiert. Keine zweite Registry, kein VM-/Heap-/
+Task-/Threadstatistikabruf. Epochwechsel verlangt Restart ohne Teilpublikation;
+Busy und unvollstaendige Aufnahme sind keine Lifecycleautoritaet. Ein Epoch
+allein ersetzt keine erneute aktuelle Aufnahme veraenderlicher Prozessfelder.
+Vollinventar, Diagnosewerte und bisherige Slots/Layouts bleiben erhalten.

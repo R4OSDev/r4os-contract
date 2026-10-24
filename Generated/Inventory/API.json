@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 478,
-    "group_slot_count": 478,
+    "function_count": 480,
+    "group_slot_count": 480,
     "sdk_only_count": 0,
-    "public_count": 339,
+    "public_count": 341,
     "advanced_count": 139
   },
   "functions": [
@@ -1905,6 +1905,30 @@
       "slot": 160,
       "exposure": "advanced",
       "description": "Explicit bounded registered-device source read,1..4096bytes. Ordinary task with IF on, exact task admission through output, exact driver instance/lifecycle lease through resident callback/staging, no Runtime owner over wait. Release driver owner before potentially paged caller copy. Positive exact count only with confirmed full receipt; failure discards/clears valid caller range, never initial/partial entropy. No RNG pool or clock/ID substitute; SDK owns RDRAND-first/source choice.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_lifecycle_begin",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 161,
+      "exposure": "public",
+      "description": "Nonblocking process-registry epoch admission only. Initializes the existing cursor with initialized|lifecycle, snapshot_generation=program_epoch, no registry traversal, allocation, VM, heap, task or thread diagnostics. Failure leaves cursor unchanged; Busy is not lifecycle authority. Does not cache or equate program epochs with all mutable metadata.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_lifecycle_programs",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 162,
+      "exposure": "public",
+      "description": "One bounded generation-ordered lifecycle page from the canonical process registry, including pending/done completions. Forty-byte records carry exact handles and current process fields without VM statistics. Epoch mismatch returns restart with no row/cursor advancement; Busy/invalid has no complete authority. Complete paging must finish before adoption/disappearance decisions; revalidate exact handles at actions. A lifecycle cursor cannot be used by full inventory calls or vice versa.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

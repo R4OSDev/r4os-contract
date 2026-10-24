@@ -2718,6 +2718,8 @@ pub const fpu_observation_error_unavailable: i32 = -2;
 pub const fpu_observation_error_busy: i32 = -3;
 pub const fpu_observation_error_stale: i32 = -4;
 pub const fpu_observation_error_exhausted: i32 = -5;
+pub const program_inventory_kind_lifecycle: u8 = 4;
+pub const program_inventory_cursor_flag_lifecycle: u32 = 2;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19423,6 +19425,38 @@ impl Default for FpuObservationInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramLifecycleSnapshot {
+    pub version: u32,
+    pub size: u32,
+    pub handle: ProgramProcessHandle,
+    pub task_id: u32,
+    pub role: u8,
+    pub app_class: u8,
+    pub state: u8,
+    pub flags: u8,
+    pub exit_code: i32,
+    pub window_id: i32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramLifecycleSnapshot {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            handle: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            task_id: 0,
+            role: 0,
+            app_class: 0,
+            state: 0,
+            flags: 0,
+            exit_code: 0,
+            window_id: -1,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -19593,6 +19627,8 @@ pub mod R4SysFns {
     pub type system_power_transition = unsafe extern "C" fn(u32, u64) -> i32;
     pub type entropy_source_info = unsafe extern "C" fn(*mut EntropySourceInfo) -> i32;
     pub type entropy_fill = unsafe extern "C" fn(*mut u8, u32) -> i32;
+    pub type program_lifecycle_begin = unsafe extern "C" fn(*mut ProgramInventoryCursor) -> i32;
+    pub type program_lifecycle_programs = unsafe extern "C" fn(*mut ProgramInventoryCursor, *mut ProgramLifecycleSnapshot, u32, *mut ProgramInventoryPageInfo) -> i32;
 }
 
 #[repr(C)]
@@ -19763,14 +19799,16 @@ pub struct R4XStartR4Sys {
     pub system_power_transition: usize,
     pub entropy_source_info: usize,
     pub entropy_fill: usize,
+    pub program_lifecycle_begin: usize,
+    pub program_lifecycle_programs: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 28,
-            size: 1304,
+            abi_version: 29,
+            size: 1320,
             flags: 0,
             write: 0,
             putc: 0,
@@ -19933,6 +19971,8 @@ impl Default for R4XStartR4Sys {
             system_power_transition: 0,
             entropy_source_info: 0,
             entropy_fill: 0,
+            program_lifecycle_begin: 0,
+            program_lifecycle_programs: 0,
         }
     }
 }
@@ -31694,6 +31734,18 @@ const _: () = {
     assert!(core::mem::offset_of!(FpuObservationInfo, reserved2) == 120);
     assert!(core::mem::size_of::<FpuObservationInfo>() == 128);
     assert!(core::mem::align_of::<FpuObservationInfo>() == 8);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, version) == 0);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, size) == 4);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, handle) == 8);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, task_id) == 24);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, role) == 28);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, app_class) == 29);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, state) == 30);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, flags) == 31);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, exit_code) == 32);
+    assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, window_id) == 36);
+    assert!(core::mem::size_of::<ProgramLifecycleSnapshot>() == 40);
+    assert!(core::mem::align_of::<ProgramLifecycleSnapshot>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31861,7 +31913,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, system_power_transition) == 1280);
     assert!(core::mem::offset_of!(R4XStartR4Sys, entropy_source_info) == 1288);
     assert!(core::mem::offset_of!(R4XStartR4Sys, entropy_fill) == 1296);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1304);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_lifecycle_begin) == 1304);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_lifecycle_programs) == 1312);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1320);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

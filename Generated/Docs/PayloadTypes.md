@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 368 von 368 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 369 von 369 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2713; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2715; Limits: 111
 
 ## App-Profile
 
@@ -389,6 +389,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ConsoleTextInfo` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
 | `FpuObservationRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `FpuObservationInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `ProgramLifecycleSnapshot` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -9965,6 +9966,26 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved1` | 112 | 8 | 8 | `u64` | - |
 | `reserved2` | 120 | 8 | 8 | `u64` | - |
 
+### `ProgramLifecycleSnapshot`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `handle` | 8 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `task_id` | 24 | 4 | 4 | `u32` | - |
+| `role` | 28 | 1 | 1 | `u8` | - |
+| `app_class` | 29 | 1 | 1 | `u8` | - |
+| `state` | 30 | 1 | 1 | `u8` | - |
+| `flags` | 31 | 1 | 1 | `u8` | - |
+| `exit_code` | 32 | 4 | 4 | `i32` | - |
+| `window_id` | 36 | 4 | 4 | `i32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13439,6 +13460,8 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `fpu_observation_error_busy` | `-3` | `i32` | value | number | `fpu_observation` | fixed_contract |
 | `fpu_observation_error_stale` | `-4` | `i32` | value | number | `fpu_observation` | fixed_contract |
 | `fpu_observation_error_exhausted` | `-5` | `i32` | value | number | `fpu_observation` | fixed_contract |
+| `program_inventory_kind_lifecycle` | `4` | `u8` | value | enum_value | `program_inventory` | fixed_contract |
+| `program_inventory_cursor_flag_lifecycle` | `2` | `u32` | value | bit | `program_inventory` | fixed_contract |
 
 ## Limits
 

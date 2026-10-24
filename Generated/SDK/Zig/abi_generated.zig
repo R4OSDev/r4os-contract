@@ -2714,6 +2714,8 @@ pub const fpu_observation_error_unavailable: i32 = -2;
 pub const fpu_observation_error_busy: i32 = -3;
 pub const fpu_observation_error_stale: i32 = -4;
 pub const fpu_observation_error_exhausted: i32 = -5;
+pub const program_inventory_kind_lifecycle: u8 = 4;
+pub const program_inventory_cursor_flag_lifecycle: u32 = 2;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10253,6 +10255,19 @@ pub const FpuObservationInfo = extern struct {
     reserved2: u64 = 0,
 };
 
+pub const ProgramLifecycleSnapshot = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    handle: ProgramProcessHandle = .{},
+    task_id: u32 = 0,
+    role: u8 = 0,
+    app_class: u8 = 0,
+    state: u8 = 0,
+    flags: u8 = 0,
+    exit_code: i32 = 0,
+    window_id: i32 = -1,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10412,12 +10427,14 @@ pub const R4SysFns = struct {
     pub const system_power_transition = *const fn (u32, u64) callconv(.c) i32;
     pub const entropy_source_info = *const fn (*EntropySourceInfo) callconv(.c) i32;
     pub const entropy_fill = *const fn ([*]u8, u32) callconv(.c) i32;
+    pub const program_lifecycle_begin = *const fn (*ProgramInventoryCursor) callconv(.c) i32;
+    pub const program_lifecycle_programs = *const fn (*ProgramInventoryCursor, [*]ProgramLifecycleSnapshot, u32, *ProgramInventoryPageInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 28,
-    size: u32 = 1304,
+    abi_version: u32 = 29,
+    size: u32 = 1320,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -10580,6 +10597,8 @@ pub const R4XStartR4Sys = extern struct {
     system_power_transition: usize = 0,
     entropy_source_info: usize = 0,
     entropy_fill: usize = 0,
+    program_lifecycle_begin: usize = 0,
+    program_lifecycle_programs: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -11445,6 +11464,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 158, .offset = 1280, .name = "system_power_transition", .state = .function, .required = false },
     .{ .number = 159, .offset = 1288, .name = "entropy_source_info", .state = .function, .required = false },
     .{ .number = 160, .offset = 1296, .name = "entropy_fill", .state = .function, .required = false },
+    .{ .number = 161, .offset = 1304, .name = "program_lifecycle_begin", .state = .function, .required = false },
+    .{ .number = 162, .offset = 1312, .name = "program_lifecycle_programs", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -18464,7 +18485,19 @@ comptime {
     if (@offsetOf(FpuObservationInfo, "reserved0") != 108) @compileError("generated ABI offset drift: FpuObservationInfo.reserved0");
     if (@offsetOf(FpuObservationInfo, "reserved1") != 112) @compileError("generated ABI offset drift: FpuObservationInfo.reserved1");
     if (@offsetOf(FpuObservationInfo, "reserved2") != 120) @compileError("generated ABI offset drift: FpuObservationInfo.reserved2");
-    if (@sizeOf(R4XStartR4Sys) != 1304) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(ProgramLifecycleSnapshot) != 40) @compileError("generated ABI size drift: ProgramLifecycleSnapshot");
+    if (@alignOf(ProgramLifecycleSnapshot) != 8) @compileError("generated ABI alignment drift: ProgramLifecycleSnapshot");
+    if (@offsetOf(ProgramLifecycleSnapshot, "version") != 0) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.version");
+    if (@offsetOf(ProgramLifecycleSnapshot, "size") != 4) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.size");
+    if (@offsetOf(ProgramLifecycleSnapshot, "handle") != 8) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.handle");
+    if (@offsetOf(ProgramLifecycleSnapshot, "task_id") != 24) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.task_id");
+    if (@offsetOf(ProgramLifecycleSnapshot, "role") != 28) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.role");
+    if (@offsetOf(ProgramLifecycleSnapshot, "app_class") != 29) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.app_class");
+    if (@offsetOf(ProgramLifecycleSnapshot, "state") != 30) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.state");
+    if (@offsetOf(ProgramLifecycleSnapshot, "flags") != 31) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.flags");
+    if (@offsetOf(ProgramLifecycleSnapshot, "exit_code") != 32) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.exit_code");
+    if (@offsetOf(ProgramLifecycleSnapshot, "window_id") != 36) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.window_id");
+    if (@sizeOf(R4XStartR4Sys) != 1320) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -18626,6 +18659,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "system_power_transition") != 1280) @compileError("generated ABI offset drift: R4XStartR4Sys.system_power_transition");
     if (@offsetOf(R4XStartR4Sys, "entropy_source_info") != 1288) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_source_info");
     if (@offsetOf(R4XStartR4Sys, "entropy_fill") != 1296) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_fill");
+    if (@offsetOf(R4XStartR4Sys, "program_lifecycle_begin") != 1304) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_begin");
+    if (@offsetOf(R4XStartR4Sys, "program_lifecycle_programs") != 1312) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_programs");
     if (@sizeOf(R4XStartR4Desk) != 568) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

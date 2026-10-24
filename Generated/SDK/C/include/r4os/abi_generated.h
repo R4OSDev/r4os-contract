@@ -2726,6 +2726,8 @@ extern "C" {
 #define R4OS_FPU_OBSERVATION_ERROR_BUSY ((int32_t)-3)
 #define R4OS_FPU_OBSERVATION_ERROR_STALE ((int32_t)-4)
 #define R4OS_FPU_OBSERVATION_ERROR_EXHAUSTED ((int32_t)-5)
+#define R4OS_PROGRAM_INVENTORY_KIND_LIFECYCLE 4u
+#define R4OS_PROGRAM_INVENTORY_CURSOR_FLAG_LIFECYCLE 2u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3551,6 +3553,7 @@ typedef struct R4ConsoleInputEvent R4ConsoleInputEvent;
 typedef struct R4ConsoleTextInfo R4ConsoleTextInfo;
 typedef struct R4FpuObservationRequest R4FpuObservationRequest;
 typedef struct R4FpuObservationInfo R4FpuObservationInfo;
+typedef struct R4ProgramLifecycleSnapshot R4ProgramLifecycleSnapshot;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10563,6 +10566,19 @@ typedef struct R4FpuObservationInfo {
     uint64_t reserved2;
 } R4FpuObservationInfo;
 
+typedef struct R4ProgramLifecycleSnapshot {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle handle;
+    uint32_t task_id;
+    uint8_t role;
+    uint8_t app_class;
+    uint8_t state;
+    uint8_t flags;
+    int32_t exit_code;
+    int32_t window_id;
+} R4ProgramLifecycleSnapshot;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10767,6 +10783,8 @@ typedef int32_t (*R4SysThreadPlacementSetFn)(const R4ProgramJoinHandle * handle,
 typedef int32_t (*R4SysSystemPowerTransitionFn)(uint32_t action, uint64_t timeout_ticks);
 typedef int32_t (*R4SysEntropySourceInfoFn)(R4EntropySourceInfo * out);
 typedef int32_t (*R4SysEntropyFillFn)(uint8_t * out, uint32_t bytes);
+typedef int32_t (*R4SysProgramLifecycleBeginFn)(R4ProgramInventoryCursor * cursor);
+typedef int32_t (*R4SysProgramLifecycleProgramsFn)(R4ProgramInventoryCursor * cursor, R4ProgramLifecycleSnapshot * out, uint32_t capacity, R4ProgramInventoryPageInfo * out_page);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -10934,6 +10952,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t system_power_transition;
     uintptr_t entropy_source_info;
     uintptr_t entropy_fill;
+    uintptr_t program_lifecycle_begin;
+    uintptr_t program_lifecycle_programs;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -17938,7 +17958,18 @@ _Static_assert(offsetof(R4FpuObservationInfo, last_cpu) == 104u, "FpuObservation
 _Static_assert(offsetof(R4FpuObservationInfo, reserved0) == 108u, "FpuObservationInfo.reserved0 offset mismatch");
 _Static_assert(offsetof(R4FpuObservationInfo, reserved1) == 112u, "FpuObservationInfo.reserved1 offset mismatch");
 _Static_assert(offsetof(R4FpuObservationInfo, reserved2) == 120u, "FpuObservationInfo.reserved2 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1304u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4ProgramLifecycleSnapshot) == 40u, "ProgramLifecycleSnapshot size mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, version) == 0u, "ProgramLifecycleSnapshot.version offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, size) == 4u, "ProgramLifecycleSnapshot.size offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, handle) == 8u, "ProgramLifecycleSnapshot.handle offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, task_id) == 24u, "ProgramLifecycleSnapshot.task_id offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, role) == 28u, "ProgramLifecycleSnapshot.role offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, app_class) == 29u, "ProgramLifecycleSnapshot.app_class offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, state) == 30u, "ProgramLifecycleSnapshot.state offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, flags) == 31u, "ProgramLifecycleSnapshot.flags offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, exit_code) == 32u, "ProgramLifecycleSnapshot.exit_code offset mismatch");
+_Static_assert(offsetof(R4ProgramLifecycleSnapshot, window_id) == 36u, "ProgramLifecycleSnapshot.window_id offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1320u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -18258,6 +18289,10 @@ _Static_assert(offsetof(R4XStartR4Sys, entropy_source_info) == 1288u, "R4XStartR
 _Static_assert(sizeof(R4SysEntropySourceInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, entropy_fill) == 1296u, "R4XStartR4Sys.entropy_fill offset mismatch");
 _Static_assert(sizeof(R4SysEntropyFillFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_lifecycle_begin) == 1304u, "R4XStartR4Sys.program_lifecycle_begin offset mismatch");
+_Static_assert(sizeof(R4SysProgramLifecycleBeginFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_lifecycle_programs) == 1312u, "R4XStartR4Sys.program_lifecycle_programs offset mismatch");
+_Static_assert(sizeof(R4SysProgramLifecycleProgramsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 568u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
