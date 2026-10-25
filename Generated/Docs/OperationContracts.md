@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 491; Funktionen: 480; reserviert/Tombstone: 11
-- Sichtbarkeit: public=341, advanced=139, internal=11
+- Physische Gruppenslots: 493; Funktionen: 482; reserviert/Tombstone: 11
+- Sichtbarkeit: public=342, advanced=140, internal=11
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -243,7 +243,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DESK | 42 | `remote_input_push` | function | advanced | R4DESK | ja | `desktop` | borrowed | call | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 43 | `remote_input_poll` | function | advanced | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 44 | `remote_input_status` | function | advanced | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
-| R4DESK | 45 | `desktop_activity_wait` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | blocking_wait | owner_thread_only | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | wait_budget | not_cancellable | completion_wins | owner_thread_only | none | call | none |
+| R4DESK | 45 | `desktop_activity_wait` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | blocking_wait | owner_thread_only | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | wait_budget | cooperative_stop | completion_wins | owner_thread_only | none | call | none |
 | R4DESK | 46 | `remote_frame_map` | function | advanced | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 47 | `program_current_console_host` | function | public | R4DESK | ja | `desktop` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DESK | 48 | `program_request_desktop` | function | public | R4DESK | ja | `desktop` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
@@ -267,6 +267,8 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DESK | 66 | `console_push_events` | function | advanced | R4DESK | ja | `desktop` | borrowed | call | may_block | owner_thread_only | none | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 67 | `console_text_info` | function | advanced | R4DESK | ja | `desktop` | caller_buffer | call | may_block | owner_thread_only | none | success_only | none | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 68 | `console_set_encoding` | function | advanced | R4DESK | ja | `desktop` | borrowed | call | may_block | owner_thread_only | none | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
+| R4DESK | 69 | `gui_activity_wait` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | blocking_wait | owner_thread_only | none | success_only | may_have_occurred | idempotent | fixed_capacity | zig_and_c_required | wait_budget | cooperative_stop | completion_wins | owner_thread_only | none | call | none |
+| R4DESK | 70 | `gui_activity_notify` | function | advanced | R4DESK | ja | `desktop` | none | none | nonblocking | thread_safe | none | none | may_have_occurred | idempotent | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
 | R4DRAW | 0 | `screen_width` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DRAW | 1 | `screen_height` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DRAW | 2 | `clear` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |

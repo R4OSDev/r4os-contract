@@ -12965,10 +12965,10 @@
       "fn_namespace": "R4DeskFns",
       "required": false,
       "magic": 826623058,
-      "abi_version": 17,
+      "abi_version": 18,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 568,
+      "size": 584,
       "slots": [
         {
           "number": 0,
@@ -15682,7 +15682,7 @@
           "name": "desktop_activity_wait",
           "state": "function",
           "required": false,
-          "description": "Waits for desktop input, GUI activity, or a timeout.",
+          "description": "Wait for desktop-owner input, GPU/cursor/mode, console, process or filesystem activity, or the original finite timeout. Uses the desktop-owner sequence and queue independently of gui_activity_wait. Returns1 for changed sequence,0 timeout,-2 cancelled/killed,-3 failed wait; output is written on nonnegative return only. Forever waits have no periodic250-ms slices; cancellation is a real wake. Normal GUI window loops use gui_activity_wait and their exact instance/subscriptions instead.",
           "signature": {
             "calling_convention": "c",
             "parameters": [
@@ -15735,7 +15735,7 @@
             "blocking": "blocking_wait",
             "threading": "owner_thread_only",
             "timeout": "wait_budget",
-            "cancel": "not_cancellable",
+            "cancel": "cooperative_stop",
             "timeout_outcome": "completion_wins",
             "reentrancy": "owner_thread_only",
             "callback_context": "none",
@@ -17223,6 +17223,135 @@
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
             "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 69,
+          "offset": 568,
+          "name": "gui_activity_wait",
+          "state": "function",
+          "required": false,
+          "description": "Wait for activity of the exact calling GUI program instance. last_sequence is private to that instance; subscriptions is the gui_activity_shared_* mask (0 allowed). Returns1 for changed sequence,0 for the original finite timeout,-1 invalid mask/context/output,-2 terminal close/kill,-3 failed wait. Writes the current sequence on nonnegative return only. Initial enrollment and a subscription change force one rescan so a publication between poll and first wait is retained. Sequence check and wait enrollment share Runtime with targeted GUI event/lifecycle publication. A forever wait has no periodic timeout slices. Clipboard/directory notifications affect only subscribed instances; ordinary mouse/GPU/console/desktop activity does not wake this queue. Main GUI owner thread only; no queue, subscription or borrowed caller pointer outlives the exact program payload. Process Close requests are sequence events (allowing a Save dialog); terminal teardown closes the queue and unlinks subscriptions.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "last_sequence",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "timeout_ticks",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "subscriptions",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_sequence",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "single",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "blocking_wait",
+            "threading": "owner_thread_only",
+            "timeout": "wait_budget",
+            "cancel": "cooperative_stop",
+            "timeout_outcome": "completion_wins",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "idempotent",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 70,
+          "offset": 576,
+          "name": "gui_activity_notify",
+          "state": "function",
+          "required": false,
+          "description": "Publish a shared GUI change after its authoritative state/revision is committed. A nonzero gui_activity_shared_* mask is required; returns0 on publication,-1 for unknown/zero bits. Only exact live GUI instances subscribed to a matching category receive a sequence/wake; no registry scan, allocation or periodic diagnostic work. This is a hint to re-read original state, not payload delivery, task completion or a revision value. Caller state must be visible before this call. Desktop-owner activity is independently signalled so its existing shared-state observers continue to progress. Ordinary desktop_activity_notify does not broadcast GUI activity.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "categories",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "none",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "idempotent",
+            "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -153945,6 +154074,36 @@
       "scope": "program_inventory",
       "stability": "fixed_contract",
       "description": "Cursor initialized by program_lifecycle_begin; exclusively accepted by program_lifecycle_programs."
+    },
+    {
+      "name": "gui_activity_shared_clipboard",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bit",
+      "scope": "gui_activity",
+      "stability": "fixed_contract",
+      "description": "Subscribe to committed clipboard revision/provider changes."
+    },
+    {
+      "name": "gui_activity_shared_directory",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bit",
+      "scope": "gui_activity",
+      "stability": "fixed_contract",
+      "description": "Subscribe to advisory directory/mount changes; re-read original cursor/state."
+    },
+    {
+      "name": "gui_activity_shared_all",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "bitmask",
+      "scope": "gui_activity",
+      "stability": "fixed_contract",
+      "description": "All supported shared GUI activity categories; local GUI/lifecycle activity is unconditional."
     }
   ],
   "limits": [

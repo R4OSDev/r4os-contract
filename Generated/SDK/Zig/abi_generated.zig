@@ -2716,6 +2716,9 @@ pub const fpu_observation_error_stale: i32 = -4;
 pub const fpu_observation_error_exhausted: i32 = -5;
 pub const program_inventory_kind_lifecycle: u8 = 4;
 pub const program_inventory_cursor_flag_lifecycle: u32 = 2;
+pub const gui_activity_shared_clipboard: u32 = 1;
+pub const gui_activity_shared_directory: u32 = 2;
+pub const gui_activity_shared_all: u32 = 3;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10670,12 +10673,14 @@ pub const R4DeskFns = struct {
     pub const console_push_events = *const fn (*const ProgramProcessHandle, [*]const ConsoleInputEvent, u32) callconv(.c) i32;
     pub const console_text_info = *const fn (*const ProgramProcessHandle, *ConsoleTextInfo) callconv(.c) i32;
     pub const console_set_encoding = *const fn (*const ProgramProcessHandle, u32) callconv(.c) i32;
+    pub const gui_activity_wait = *const fn (u64, u64, u32, *u64) callconv(.c) i32;
+    pub const gui_activity_notify = *const fn (u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 17,
-    size: u32 = 568,
+    abi_version: u32 = 18,
+    size: u32 = 584,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -10746,6 +10751,8 @@ pub const R4XStartR4Desk = extern struct {
     console_push_events: usize = 0,
     console_text_info: usize = 0,
     console_set_encoding: usize = 0,
+    gui_activity_wait: usize = 0,
+    gui_activity_notify: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -11538,6 +11545,8 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 66, .offset = 544, .name = "console_push_events", .state = .function, .required = false },
     .{ .number = 67, .offset = 552, .name = "console_text_info", .state = .function, .required = false },
     .{ .number = 68, .offset = 560, .name = "console_set_encoding", .state = .function, .required = false },
+    .{ .number = 69, .offset = 568, .name = "gui_activity_wait", .state = .function, .required = false },
+    .{ .number = 70, .offset = 576, .name = "gui_activity_notify", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -18661,7 +18670,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "entropy_fill") != 1296) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_fill");
     if (@offsetOf(R4XStartR4Sys, "program_lifecycle_begin") != 1304) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_begin");
     if (@offsetOf(R4XStartR4Sys, "program_lifecycle_programs") != 1312) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_programs");
-    if (@sizeOf(R4XStartR4Desk) != 568) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 584) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -18731,6 +18740,8 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "console_push_events") != 544) @compileError("generated ABI offset drift: R4XStartR4Desk.console_push_events");
     if (@offsetOf(R4XStartR4Desk, "console_text_info") != 552) @compileError("generated ABI offset drift: R4XStartR4Desk.console_text_info");
     if (@offsetOf(R4XStartR4Desk, "console_set_encoding") != 560) @compileError("generated ABI offset drift: R4XStartR4Desk.console_set_encoding");
+    if (@offsetOf(R4XStartR4Desk, "gui_activity_wait") != 568) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_activity_wait");
+    if (@offsetOf(R4XStartR4Desk, "gui_activity_notify") != 576) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_activity_notify");
     if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");

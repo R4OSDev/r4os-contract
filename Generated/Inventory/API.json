@@ -7,11 +7,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 480,
-    "group_slot_count": 480,
+    "function_count": 482,
+    "group_slot_count": 482,
     "sdk_only_count": 0,
-    "public_count": 341,
-    "advanced_count": 139
+    "public_count": 342,
+    "advanced_count": 140
   },
   "functions": [
     {
@@ -2468,7 +2468,7 @@
       "kind": "group_slot",
       "slot": 45,
       "exposure": "public",
-      "description": "Waits for desktop input, GUI activity, or a timeout.",
+      "description": "Wait for desktop-owner input, GPU/cursor/mode, console, process or filesystem activity, or the original finite timeout. Uses the desktop-owner sequence and queue independently of gui_activity_wait. Returns1 for changed sequence,0 timeout,-2 cancelled/killed,-3 failed wait; output is written on nonnegative return only. Forever waits have no periodic250-ms slices; cancellation is a real wake. Normal GUI window loops use gui_activity_wait and their exact instance/subscriptions instead.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -2745,6 +2745,30 @@
       "slot": 68,
       "exposure": "advanced",
       "description": "Changes only the exact live console producer encoding. Success0; invalid encoding/context-1; pending UTF8 prefix or closed/done-2. Existing canonical UTF8 transcript is never reinterpreted. Three output stream decoders remain independent. No font charset or input encoding change.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_activity_wait",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 69,
+      "exposure": "public",
+      "description": "Wait for activity of the exact calling GUI program instance. last_sequence is private to that instance; subscriptions is the gui_activity_shared_* mask (0 allowed). Returns1 for changed sequence,0 for the original finite timeout,-1 invalid mask/context/output,-2 terminal close/kill,-3 failed wait. Writes the current sequence on nonnegative return only. Initial enrollment and a subscription change force one rescan so a publication between poll and first wait is retained. Sequence check and wait enrollment share Runtime with targeted GUI event/lifecycle publication. A forever wait has no periodic timeout slices. Clipboard/directory notifications affect only subscribed instances; ordinary mouse/GPU/console/desktop activity does not wake this queue. Main GUI owner thread only; no queue, subscription or borrowed caller pointer outlives the exact program payload. Process Close requests are sequence events (allowing a Save dialog); terminal teardown closes the queue and unlinks subscriptions.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_activity_notify",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 70,
+      "exposure": "advanced",
+      "description": "Publish a shared GUI change after its authoritative state/revision is committed. A nonzero gui_activity_shared_* mask is required; returns0 on publication,-1 for unknown/zero bits. Only exact live GUI instances subscribed to a matching category receive a sequence/wake; no registry scan, allocation or periodic diagnostic work. This is a hint to re-read original state, not payload delivery, task completion or a revision value. Caller state must be visible before this call. Desktop-owner activity is independently signalled so its existing shared-state observers continue to progress. Ordinary desktop_activity_notify does not broadcast GUI activity.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

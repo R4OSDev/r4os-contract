@@ -6649,7 +6649,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_lifecycle_begin) != 8) @compileError("R4SysFns.program_lifecycle_begin signature");
     if (@offsetOf(abi.R4XStartR4Sys, "program_lifecycle_programs") != 1312) @compileError("R4XStartR4Sys.program_lifecycle_programs offset");
     if (@sizeOf(abi.R4SysFns.program_lifecycle_programs) != 8) @compileError("R4SysFns.program_lifecycle_programs signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 568) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 584) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -6787,6 +6787,10 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.console_text_info) != 8) @compileError("R4DeskFns.console_text_info signature");
     if (@offsetOf(abi.R4XStartR4Desk, "console_set_encoding") != 560) @compileError("R4XStartR4Desk.console_set_encoding offset");
     if (@sizeOf(abi.R4DeskFns.console_set_encoding) != 8) @compileError("R4DeskFns.console_set_encoding signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "gui_activity_wait") != 568) @compileError("R4XStartR4Desk.gui_activity_wait offset");
+    if (@sizeOf(abi.R4DeskFns.gui_activity_wait) != 8) @compileError("R4DeskFns.gui_activity_wait signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "gui_activity_notify") != 576) @compileError("R4XStartR4Desk.gui_activity_notify offset");
+    if (@sizeOf(abi.R4DeskFns.gui_activity_notify) != 8) @compileError("R4DeskFns.gui_activity_notify signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 912) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");

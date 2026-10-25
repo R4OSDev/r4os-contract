@@ -2728,6 +2728,9 @@ extern "C" {
 #define R4OS_FPU_OBSERVATION_ERROR_EXHAUSTED ((int32_t)-5)
 #define R4OS_PROGRAM_INVENTORY_KIND_LIFECYCLE 4u
 #define R4OS_PROGRAM_INVENTORY_CURSOR_FLAG_LIFECYCLE 2u
+#define R4OS_GUI_ACTIVITY_SHARED_CLIPBOARD 1u
+#define R4OS_GUI_ACTIVITY_SHARED_DIRECTORY 2u
+#define R4OS_GUI_ACTIVITY_SHARED_ALL 3u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -11024,6 +11027,8 @@ typedef int32_t (*R4DeskConsoleReadEventsFn)(R4ConsoleInputEvent * output, uint3
 typedef int32_t (*R4DeskConsolePushEventsFn)(const R4ProgramProcessHandle * handle, const R4ConsoleInputEvent * events, uint32_t count);
 typedef int32_t (*R4DeskConsoleTextInfoFn)(const R4ProgramProcessHandle * handle, R4ConsoleTextInfo * output);
 typedef int32_t (*R4DeskConsoleSetEncodingFn)(const R4ProgramProcessHandle * handle, uint32_t encoding);
+typedef int32_t (*R4DeskGuiActivityWaitFn)(uint64_t last_sequence, uint64_t timeout_ticks, uint32_t subscriptions, uint64_t * out_sequence);
+typedef int32_t (*R4DeskGuiActivityNotifyFn)(uint32_t categories);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -11099,6 +11104,8 @@ typedef struct R4XStartR4Desk {
     uintptr_t console_push_events;
     uintptr_t console_text_info;
     uintptr_t console_set_encoding;
+    uintptr_t gui_activity_wait;
+    uintptr_t gui_activity_notify;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -18293,7 +18300,7 @@ _Static_assert(offsetof(R4XStartR4Sys, program_lifecycle_begin) == 1304u, "R4XSt
 _Static_assert(sizeof(R4SysProgramLifecycleBeginFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_lifecycle_programs) == 1312u, "R4XStartR4Sys.program_lifecycle_programs offset mismatch");
 _Static_assert(sizeof(R4SysProgramLifecycleProgramsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 568u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 584u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -18431,6 +18438,10 @@ _Static_assert(offsetof(R4XStartR4Desk, console_text_info) == 552u, "R4XStartR4D
 _Static_assert(sizeof(R4DeskConsoleTextInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, console_set_encoding) == 560u, "R4XStartR4Desk.console_set_encoding offset mismatch");
 _Static_assert(sizeof(R4DeskConsoleSetEncodingFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, gui_activity_wait) == 568u, "R4XStartR4Desk.gui_activity_wait offset mismatch");
+_Static_assert(sizeof(R4DeskGuiActivityWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, gui_activity_notify) == 576u, "R4XStartR4Desk.gui_activity_notify offset mismatch");
+_Static_assert(sizeof(R4DeskGuiActivityNotifyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 912u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

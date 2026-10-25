@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 369 von 369 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2715; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2718; Limits: 111
 
 ## App-Profile
 
@@ -13462,6 +13462,9 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `fpu_observation_error_exhausted` | `-5` | `i32` | value | number | `fpu_observation` | fixed_contract |
 | `program_inventory_kind_lifecycle` | `4` | `u8` | value | enum_value | `program_inventory` | fixed_contract |
 | `program_inventory_cursor_flag_lifecycle` | `2` | `u32` | value | bit | `program_inventory` | fixed_contract |
+| `gui_activity_shared_clipboard` | `1` | `u32` | flag | bit | `gui_activity` | fixed_contract |
+| `gui_activity_shared_directory` | `2` | `u32` | flag | bit | `gui_activity` | fixed_contract |
+| `gui_activity_shared_all` | `3` | `u32` | value | bitmask | `gui_activity` | fixed_contract |
 
 ## Limits
 
