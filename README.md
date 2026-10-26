@@ -5,7 +5,7 @@ It contains the R4M0 container contract, shared layouts and error codes,
 platform API groups, generated bindings, conformance fixtures, and the
 contract generator.
 
-R4AUDIO v3 (Contract0.64.50, 0.87.53) appends stream progress, explicit
+R4AUDIO v3 (Contract0.64.51, 0.87.53) appends stream progress, explicit
 continuous-source expectation and close-with-progress after the unchanged
 200-byte prefix (total224). Its original23 slots, including both tombstones,
 are preserved. Nine separate fixed v1 records carry bounded playback and
