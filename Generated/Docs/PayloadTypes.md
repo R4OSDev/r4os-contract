@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 369 von 369 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 371 von 371 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2719; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2721; Limits: 111
 
 ## App-Profile
 
@@ -390,6 +390,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `FpuObservationRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `FpuObservationInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `ProgramLifecycleSnapshot` | extensible | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `DirectoryBatchCursor` | extensible | extern_struct | 2160/8 | 2160/8 | 2160/8 | 2160/8 |
+| `DirectoryBatchEntry` | fixed_layout | extern_struct | 1120/8 | 1120/8 | 1120/8 | 1120/8 |
 
 ## Typdetails
 
@@ -9986,6 +9988,39 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `exit_code` | 32 | 4 | 4 | `i32` | - |
 | `window_id` | 36 | 4 | 4 | `i32` | - |
 
+### `DirectoryBatchCursor`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 2160 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `change` | 8 | 40 | 8 | `DirectoryChangeCursor` | - |
+| `parent_change` | 48 | 40 | 8 | `DirectoryChangeCursor` | - |
+| `owner_id` | 88 | 4 | 4 | `u32` | - |
+| `owner_kind` | 92 | 4 | 4 | `u32` | - |
+| `owner_generation` | 96 | 8 | 8 | `u64` | - |
+| `node_generation` | 104 | 4 | 4 | `u32` | - |
+| `path_len` | 108 | 4 | 4 | `u32` | - |
+| `path` | 112 | 1024 | 1 | `[1024]u8` | - |
+| `backend` | 1136 | 1024 | 8 | `[128]u64` | - |
+
+### `DirectoryBatchEntry`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1120 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `info` | 0 | 96 | 8 | `FileInfo` | - |
+| `path` | 96 | 1024 | 1 | `[1024]u8` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13466,6 +13501,8 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gui_activity_shared_directory` | `2` | `u32` | flag | bit | `gui_activity` | fixed_contract |
 | `gui_activity_shared_all` | `3` | `u32` | value | bitmask | `gui_activity` | fixed_contract |
 | `drive_info_flag_free_valid` | `1` | `u32` | flag | bitmask | `drive_info` | fixed_contract |
+| `directory_batch_max_entries` | `8` | `u32` | value | count | `directory_batch` | fixed_contract |
+| `directory_batch_work_steps` | `256` | `u32` | value | count | `directory_batch` | fixed_contract |
 
 ## Limits
 

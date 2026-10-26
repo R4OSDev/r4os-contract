@@ -2732,6 +2732,8 @@ extern "C" {
 #define R4OS_GUI_ACTIVITY_SHARED_DIRECTORY 2u
 #define R4OS_GUI_ACTIVITY_SHARED_ALL 3u
 #define R4OS_DRIVE_INFO_FLAG_FREE_VALID 1u
+#define R4OS_DIRECTORY_BATCH_MAX_ENTRIES 8u
+#define R4OS_DIRECTORY_BATCH_WORK_STEPS 256u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3558,6 +3560,8 @@ typedef struct R4ConsoleTextInfo R4ConsoleTextInfo;
 typedef struct R4FpuObservationRequest R4FpuObservationRequest;
 typedef struct R4FpuObservationInfo R4FpuObservationInfo;
 typedef struct R4ProgramLifecycleSnapshot R4ProgramLifecycleSnapshot;
+typedef struct R4DirectoryBatchCursor R4DirectoryBatchCursor;
+typedef struct R4DirectoryBatchEntry R4DirectoryBatchEntry;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10583,6 +10587,25 @@ typedef struct R4ProgramLifecycleSnapshot {
     int32_t window_id;
 } R4ProgramLifecycleSnapshot;
 
+typedef struct R4DirectoryBatchCursor {
+    uint32_t version;
+    uint32_t size;
+    R4DirectoryChangeCursor change;
+    R4DirectoryChangeCursor parent_change;
+    uint32_t owner_id;
+    uint32_t owner_kind;
+    uint64_t owner_generation;
+    uint32_t node_generation;
+    uint32_t path_len;
+    uint8_t path[1024];
+    uint64_t backend[128];
+} R4DirectoryBatchCursor;
+
+typedef struct R4DirectoryBatchEntry {
+    R4FileInfo info;
+    uint8_t path[1024];
+} R4DirectoryBatchEntry;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10790,6 +10813,7 @@ typedef int32_t (*R4SysEntropyFillFn)(uint8_t * out, uint32_t bytes);
 typedef int32_t (*R4SysProgramLifecycleBeginFn)(R4ProgramInventoryCursor * cursor);
 typedef int32_t (*R4SysProgramLifecycleProgramsFn)(R4ProgramInventoryCursor * cursor, R4ProgramLifecycleSnapshot * out, uint32_t capacity, R4ProgramInventoryPageInfo * out_page);
 typedef int32_t (*R4SysDriveInfoGeometryFn)(uint32_t arg0, R4DriveInfo * arg1);
+typedef int32_t (*R4SysDirectoryBatchFn)(const uint8_t * path, R4DirectoryBatchCursor * cursor, R4DirectoryBatchEntry * out, uint32_t capacity);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -10960,6 +10984,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_lifecycle_begin;
     uintptr_t program_lifecycle_programs;
     uintptr_t drive_info_geometry;
+    uintptr_t directory_batch;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -17979,7 +18004,22 @@ _Static_assert(offsetof(R4ProgramLifecycleSnapshot, state) == 30u, "ProgramLifec
 _Static_assert(offsetof(R4ProgramLifecycleSnapshot, flags) == 31u, "ProgramLifecycleSnapshot.flags offset mismatch");
 _Static_assert(offsetof(R4ProgramLifecycleSnapshot, exit_code) == 32u, "ProgramLifecycleSnapshot.exit_code offset mismatch");
 _Static_assert(offsetof(R4ProgramLifecycleSnapshot, window_id) == 36u, "ProgramLifecycleSnapshot.window_id offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1328u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4DirectoryBatchCursor) == 2160u, "DirectoryBatchCursor size mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, version) == 0u, "DirectoryBatchCursor.version offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, size) == 4u, "DirectoryBatchCursor.size offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, change) == 8u, "DirectoryBatchCursor.change offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, parent_change) == 48u, "DirectoryBatchCursor.parent_change offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, owner_id) == 88u, "DirectoryBatchCursor.owner_id offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, owner_kind) == 92u, "DirectoryBatchCursor.owner_kind offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, owner_generation) == 96u, "DirectoryBatchCursor.owner_generation offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, node_generation) == 104u, "DirectoryBatchCursor.node_generation offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, path_len) == 108u, "DirectoryBatchCursor.path_len offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, path) == 112u, "DirectoryBatchCursor.path offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchCursor, backend) == 1136u, "DirectoryBatchCursor.backend offset mismatch");
+_Static_assert(sizeof(R4DirectoryBatchEntry) == 1120u, "DirectoryBatchEntry size mismatch");
+_Static_assert(offsetof(R4DirectoryBatchEntry, info) == 0u, "DirectoryBatchEntry.info offset mismatch");
+_Static_assert(offsetof(R4DirectoryBatchEntry, path) == 96u, "DirectoryBatchEntry.path offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1336u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -18305,6 +18345,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_lifecycle_programs) == 1312u, "R4
 _Static_assert(sizeof(R4SysProgramLifecycleProgramsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, drive_info_geometry) == 1320u, "R4XStartR4Sys.drive_info_geometry offset mismatch");
 _Static_assert(sizeof(R4SysDriveInfoGeometryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, directory_batch) == 1328u, "R4XStartR4Sys.directory_batch offset mismatch");
+_Static_assert(sizeof(R4SysDirectoryBatchFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 584u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 483,
-    "group_slot_count": 483,
+    "function_count": 484,
+    "group_slot_count": 484,
     "sdk_only_count": 0,
-    "public_count": 343,
+    "public_count": 344,
     "advanced_count": 140
   },
   "functions": [
@@ -1941,6 +1941,18 @@
       "slot": 163,
       "exposure": "public",
       "description": "Returns the same mounted drive identity/capacity and scalar cluster geometry without executing FREE or reading a free-space bitmap. Existing exact mount/request admission can wait. Free fields and drive_info_flag_free_valid are zero: explicitly unknown, not measured zero. Existing DriveInfo56 layout unchanged. index0..25; returns1 mounted,0 unmounted,-1 invalid index,-2 request unavailable.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.directory_batch",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 164,
+      "exposure": "public",
+      "description": "Initialize with path and default2160-byte cursor; continuation uses its captured node/path with exact logical-owner, mount and mutation validation. Return1..capacity complete1120-byte records,0 bounded progress,-5 EOF; -1 invalid,-3 absent/not-directory initially,-7 full-path bounds,-9 I/O/admission,-10 stale/foreign/cancel. Capacity1..8; one shared256-step backend budget and prepared metadata per visit. Initialized capacity0/out=NULL validates without advancing (RAM-only while namespace unchanged); input path is ignored on continuation. No persistent kernel allocation/scan lease; call guards always release, including caller unwind. Outputs/cursor have no authority on error. A caller must not modify or concurrently reuse a cursor.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

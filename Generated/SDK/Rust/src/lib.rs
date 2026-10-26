@@ -2724,6 +2724,8 @@ pub const gui_activity_shared_clipboard: u32 = 1;
 pub const gui_activity_shared_directory: u32 = 2;
 pub const gui_activity_shared_all: u32 = 3;
 pub const drive_info_flag_free_valid: u32 = 1;
+pub const directory_batch_max_entries: u32 = 8;
+pub const directory_batch_work_steps: u32 = 256;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19461,6 +19463,56 @@ impl Default for ProgramLifecycleSnapshot {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DirectoryBatchCursor {
+    pub version: u32,
+    pub size: u32,
+    pub change: DirectoryChangeCursor,
+    pub parent_change: DirectoryChangeCursor,
+    pub owner_id: u32,
+    pub owner_kind: u32,
+    pub owner_generation: u64,
+    pub node_generation: u32,
+    pub path_len: u32,
+    pub path: [u8; 1024],
+    pub backend: [u64; 128],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DirectoryBatchCursor {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 2160,
+            change: DirectoryChangeCursor { version: 1, size: 40, sequence: 0, node: 0, mount_generation: 0, mount_slot: 0, reserved: 0 },
+            parent_change: DirectoryChangeCursor { version: 1, size: 40, sequence: 0, node: 0, mount_generation: 0, mount_slot: 0, reserved: 0 },
+            owner_id: 0,
+            owner_kind: 0,
+            owner_generation: 0,
+            node_generation: 0,
+            path_len: 0,
+            path: [0; 1024],
+            backend: [0; 128],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DirectoryBatchEntry {
+    pub info: FileInfo,
+    pub path: [u8; 1024],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DirectoryBatchEntry {
+    fn default() -> Self {
+        Self {
+            info: FileInfo { exists: 0, is_dir: 0, attr: 0, drive: 0, size: 0, first_cluster: 0, created_time: 0, created_date: 0, access_date: 0, modified_time: 0, modified_date: 0, reserved: 0, name: [0; 64] },
+            path: [0; 1024],
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -19634,6 +19686,7 @@ pub mod R4SysFns {
     pub type program_lifecycle_begin = unsafe extern "C" fn(*mut ProgramInventoryCursor) -> i32;
     pub type program_lifecycle_programs = unsafe extern "C" fn(*mut ProgramInventoryCursor, *mut ProgramLifecycleSnapshot, u32, *mut ProgramInventoryPageInfo) -> i32;
     pub type drive_info_geometry = unsafe extern "C" fn(u32, *mut DriveInfo) -> i32;
+    pub type directory_batch = unsafe extern "C" fn(*const u8, *mut DirectoryBatchCursor, *mut DirectoryBatchEntry, u32) -> i32;
 }
 
 #[repr(C)]
@@ -19807,14 +19860,15 @@ pub struct R4XStartR4Sys {
     pub program_lifecycle_begin: usize,
     pub program_lifecycle_programs: usize,
     pub drive_info_geometry: usize,
+    pub directory_batch: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 30,
-            size: 1328,
+            abi_version: 31,
+            size: 1336,
             flags: 0,
             write: 0,
             putc: 0,
@@ -19980,6 +20034,7 @@ impl Default for R4XStartR4Sys {
             program_lifecycle_begin: 0,
             program_lifecycle_programs: 0,
             drive_info_geometry: 0,
+            directory_batch: 0,
         }
     }
 }
@@ -31759,6 +31814,23 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramLifecycleSnapshot, window_id) == 36);
     assert!(core::mem::size_of::<ProgramLifecycleSnapshot>() == 40);
     assert!(core::mem::align_of::<ProgramLifecycleSnapshot>() == 8);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, version) == 0);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, size) == 4);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, change) == 8);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, parent_change) == 48);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, owner_id) == 88);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, owner_kind) == 92);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, owner_generation) == 96);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, node_generation) == 104);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, path_len) == 108);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, path) == 112);
+    assert!(core::mem::offset_of!(DirectoryBatchCursor, backend) == 1136);
+    assert!(core::mem::size_of::<DirectoryBatchCursor>() == 2160);
+    assert!(core::mem::align_of::<DirectoryBatchCursor>() == 8);
+    assert!(core::mem::offset_of!(DirectoryBatchEntry, info) == 0);
+    assert!(core::mem::offset_of!(DirectoryBatchEntry, path) == 96);
+    assert!(core::mem::size_of::<DirectoryBatchEntry>() == 1120);
+    assert!(core::mem::align_of::<DirectoryBatchEntry>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -31929,7 +32001,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_lifecycle_begin) == 1304);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_lifecycle_programs) == 1312);
     assert!(core::mem::offset_of!(R4XStartR4Sys, drive_info_geometry) == 1320);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1328);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, directory_batch) == 1328);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1336);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

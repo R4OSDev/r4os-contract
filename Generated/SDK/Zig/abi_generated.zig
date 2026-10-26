@@ -2720,6 +2720,8 @@ pub const gui_activity_shared_clipboard: u32 = 1;
 pub const gui_activity_shared_directory: u32 = 2;
 pub const gui_activity_shared_all: u32 = 3;
 pub const drive_info_flag_free_valid: u32 = 1;
+pub const directory_batch_max_entries: u32 = 8;
+pub const directory_batch_work_steps: u32 = 256;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10272,6 +10274,25 @@ pub const ProgramLifecycleSnapshot = extern struct {
     window_id: i32 = -1,
 };
 
+pub const DirectoryBatchCursor = extern struct {
+    version: u32 = 1,
+    size: u32 = 2160,
+    change: DirectoryChangeCursor = .{},
+    parent_change: DirectoryChangeCursor = .{},
+    owner_id: u32 = 0,
+    owner_kind: u32 = 0,
+    owner_generation: u64 = 0,
+    node_generation: u32 = 0,
+    path_len: u32 = 0,
+    path: [1024]u8 = .{0} ** 1024,
+    backend: [128]u64 = .{0} ** 128,
+};
+
+pub const DirectoryBatchEntry = extern struct {
+    info: FileInfo = .{},
+    path: [1024]u8 = .{0} ** 1024,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10434,12 +10455,13 @@ pub const R4SysFns = struct {
     pub const program_lifecycle_begin = *const fn (*ProgramInventoryCursor) callconv(.c) i32;
     pub const program_lifecycle_programs = *const fn (*ProgramInventoryCursor, [*]ProgramLifecycleSnapshot, u32, *ProgramInventoryPageInfo) callconv(.c) i32;
     pub const drive_info_geometry = *const fn (u32, *DriveInfo) callconv(.c) i32;
+    pub const directory_batch = *const fn (?[*:0]const u8, *DirectoryBatchCursor, ?[*]DirectoryBatchEntry, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 30,
-    size: u32 = 1328,
+    abi_version: u32 = 31,
+    size: u32 = 1336,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -10605,6 +10627,7 @@ pub const R4XStartR4Sys = extern struct {
     program_lifecycle_begin: usize = 0,
     program_lifecycle_programs: usize = 0,
     drive_info_geometry: usize = 0,
+    directory_batch: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -11477,6 +11500,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 161, .offset = 1304, .name = "program_lifecycle_begin", .state = .function, .required = false },
     .{ .number = 162, .offset = 1312, .name = "program_lifecycle_programs", .state = .function, .required = false },
     .{ .number = 163, .offset = 1320, .name = "drive_info_geometry", .state = .function, .required = false },
+    .{ .number = 164, .offset = 1328, .name = "directory_batch", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -18510,7 +18534,24 @@ comptime {
     if (@offsetOf(ProgramLifecycleSnapshot, "flags") != 31) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.flags");
     if (@offsetOf(ProgramLifecycleSnapshot, "exit_code") != 32) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.exit_code");
     if (@offsetOf(ProgramLifecycleSnapshot, "window_id") != 36) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.window_id");
-    if (@sizeOf(R4XStartR4Sys) != 1328) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(DirectoryBatchCursor) != 2160) @compileError("generated ABI size drift: DirectoryBatchCursor");
+    if (@alignOf(DirectoryBatchCursor) != 8) @compileError("generated ABI alignment drift: DirectoryBatchCursor");
+    if (@offsetOf(DirectoryBatchCursor, "version") != 0) @compileError("generated ABI offset drift: DirectoryBatchCursor.version");
+    if (@offsetOf(DirectoryBatchCursor, "size") != 4) @compileError("generated ABI offset drift: DirectoryBatchCursor.size");
+    if (@offsetOf(DirectoryBatchCursor, "change") != 8) @compileError("generated ABI offset drift: DirectoryBatchCursor.change");
+    if (@offsetOf(DirectoryBatchCursor, "parent_change") != 48) @compileError("generated ABI offset drift: DirectoryBatchCursor.parent_change");
+    if (@offsetOf(DirectoryBatchCursor, "owner_id") != 88) @compileError("generated ABI offset drift: DirectoryBatchCursor.owner_id");
+    if (@offsetOf(DirectoryBatchCursor, "owner_kind") != 92) @compileError("generated ABI offset drift: DirectoryBatchCursor.owner_kind");
+    if (@offsetOf(DirectoryBatchCursor, "owner_generation") != 96) @compileError("generated ABI offset drift: DirectoryBatchCursor.owner_generation");
+    if (@offsetOf(DirectoryBatchCursor, "node_generation") != 104) @compileError("generated ABI offset drift: DirectoryBatchCursor.node_generation");
+    if (@offsetOf(DirectoryBatchCursor, "path_len") != 108) @compileError("generated ABI offset drift: DirectoryBatchCursor.path_len");
+    if (@offsetOf(DirectoryBatchCursor, "path") != 112) @compileError("generated ABI offset drift: DirectoryBatchCursor.path");
+    if (@offsetOf(DirectoryBatchCursor, "backend") != 1136) @compileError("generated ABI offset drift: DirectoryBatchCursor.backend");
+    if (@sizeOf(DirectoryBatchEntry) != 1120) @compileError("generated ABI size drift: DirectoryBatchEntry");
+    if (@alignOf(DirectoryBatchEntry) != 8) @compileError("generated ABI alignment drift: DirectoryBatchEntry");
+    if (@offsetOf(DirectoryBatchEntry, "info") != 0) @compileError("generated ABI offset drift: DirectoryBatchEntry.info");
+    if (@offsetOf(DirectoryBatchEntry, "path") != 96) @compileError("generated ABI offset drift: DirectoryBatchEntry.path");
+    if (@sizeOf(R4XStartR4Sys) != 1336) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -18675,6 +18716,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_lifecycle_begin") != 1304) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_begin");
     if (@offsetOf(R4XStartR4Sys, "program_lifecycle_programs") != 1312) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_programs");
     if (@offsetOf(R4XStartR4Sys, "drive_info_geometry") != 1320) @compileError("generated ABI offset drift: R4XStartR4Sys.drive_info_geometry");
+    if (@offsetOf(R4XStartR4Sys, "directory_batch") != 1328) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_batch");
     if (@sizeOf(R4XStartR4Desk) != 584) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
