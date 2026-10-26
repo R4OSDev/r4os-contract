@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 484,
+    "group_function_signatures": 487,
     "sdk_operation_contracts": 0,
-    "parity_entries": 484,
+    "parity_entries": 487,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -3608,6 +3608,33 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4AudioFns.audio_select_output",
       "c_contract": "R4AudioAudioSelectOutputFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4AUDIO.audio_stream_progress",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4AudioFns.audio_stream_progress",
+      "c_contract": "R4AudioAudioStreamProgressFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4AUDIO.audio_set_stream_expectation",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4AudioFns.audio_set_stream_expectation",
+      "c_contract": "R4AudioAudioSetStreamExpectationFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4AUDIO.audio_close_stream_progress",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4AudioFns.audio_close_stream_progress",
+      "c_contract": "R4AudioAudioCloseStreamProgressFn",
       "coverage": "generated_signature"
     },
     {

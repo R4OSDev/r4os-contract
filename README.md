@@ -5,6 +5,19 @@ It contains the R4M0 container contract, shared layouts and error codes,
 platform API groups, generated bindings, conformance fixtures, and the
 contract generator.
 
+R4AUDIO v3 (Contract0.64.50, 0.87.53) appends stream progress, explicit
+continuous-source expectation and close-with-progress after the unchanged
+200-byte prefix (total224). Its original23 slots, including both tombstones,
+are preserved. Nine separate fixed v1 records carry bounded playback and
+AUDSVC transport receipts; existing payloads and constants are unchanged.
+The optional R4D playback descriptor v5 preserves the 104-byte idle prefix
+and appends atomic tracked acceptance, cursor and flow callbacks (total128).
+Canonical frames mean 48-kHz stereo S16 PCM. Acceptance, DMA submission,
+validated DMA consumption and reset-unconfirmed tail are distinct quantities;
+none is a receipt for a speaker. Backend registration, output/reset epoch,
+kernel stream generation and service/logical stream generation bind each
+observation to its owner. Repeated reads never extend a source deadline.
+
 R4DEV35 (Contract0.64.45, 0.86.80) retires V1 diagnostic slots27/29/30
 in place as zero tombstones. Current storage/registry V2 slots, table size728,
 all other offsets and current payload layouts remain unchanged. The unused

@@ -423,7 +423,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.75.18 appends the TCP burst/ACK/poll performance snapshot at slot 34.
     .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 35, .reserved = 0, .tombstones = 0 },
     // 0.78.16 appends physical audio-output enumeration and selection.
-    .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 21, .reserved = 2, .tombstones = 0 },
+    // 0.87.53 appends generation-exact progress/expectation/close receipts;
+    // the original200-byte table and both reserved slots are unchanged.
+    .{ .id = 5, .name = "R4AUDIO", .kind = .kernel_table, .functions = 24, .reserved = 2, .tombstones = 0 },
     // 0.84.1 appends the bounded resident stack-failure snapshot at slot 47
     // (v14); 0.84.11 appends explicit owned kernel-heap checks at 48 (v15).
     // Every existing slot and payload prefix is retained.

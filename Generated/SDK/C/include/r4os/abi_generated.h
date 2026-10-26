@@ -2734,6 +2734,24 @@ extern "C" {
 #define R4OS_DRIVE_INFO_FLAG_FREE_VALID 1u
 #define R4OS_DIRECTORY_BATCH_MAX_ENTRIES 8u
 #define R4OS_DIRECTORY_BATCH_WORK_STEPS 256u
+#define R4OS_AUDIO_BACKEND_PLAYBACK_VERSION 5u
+#define R4OS_AUDIO_PLAYBACK_VALID 1u
+#define R4OS_AUDIO_PLAYBACK_PREVIOUS_VALID 2u
+#define R4OS_AUDIO_PLAYBACK_RUNNING 4u
+#define R4OS_AUDIO_PLAYBACK_QUIET 8u
+#define R4OS_AUDIO_FLOW_CONTINUOUS 1u
+#define R4OS_AUDIO_PROGRESS_SOURCE_VALID 1u
+#define R4OS_AUDIO_PROGRESS_DEVICE_VALID 2u
+#define R4OS_AUDIO_PROGRESS_AGE_VALID 4u
+#define R4OS_AUDIO_PROGRESS_CONTINUOUS 8u
+#define R4OS_AUDIO_PROGRESS_ENDED 16u
+#define R4OS_AUDIO_PROGRESS_UNCONFIRMED 32u
+#define R4OS_AUDIO_PROGRESS_CLOSED 64u
+#define R4OS_AUDIO_PROGRESS_FRESH 128u
+#define R4OS_AUDIO_SERVICE_OP_STREAM_PROGRESS 11u
+#define R4OS_AUDIO_SERVICE_OP_STREAM_EXPECTATION 12u
+#define R4OS_AUDIO_SERVICE_OP_WRITE_STREAM_TRACKED 13u
+#define R4OS_AUDIO_SERVICE_OP_CLOSE_STREAM_PROGRESS 14u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3562,6 +3580,15 @@ typedef struct R4FpuObservationInfo R4FpuObservationInfo;
 typedef struct R4ProgramLifecycleSnapshot R4ProgramLifecycleSnapshot;
 typedef struct R4DirectoryBatchCursor R4DirectoryBatchCursor;
 typedef struct R4DirectoryBatchEntry R4DirectoryBatchEntry;
+typedef struct R4AudioBackendWriteReceipt R4AudioBackendWriteReceipt;
+typedef struct R4AudioBackendPlayback R4AudioBackendPlayback;
+typedef struct R4AudioBackendFlow R4AudioBackendFlow;
+typedef struct R4AudioStreamExpectation R4AudioStreamExpectation;
+typedef struct R4AudioStreamProgress R4AudioStreamProgress;
+typedef struct R4AudioServiceStreamProgressRequest R4AudioServiceStreamProgressRequest;
+typedef struct R4AudioServiceStreamProgressState R4AudioServiceStreamProgressState;
+typedef struct R4AudioServiceStreamFlowRequest R4AudioServiceStreamFlowRequest;
+typedef struct R4AudioServiceStreamTrackedWriteRequest R4AudioServiceStreamTrackedWriteRequest;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10606,6 +10633,129 @@ typedef struct R4DirectoryBatchEntry {
     uint8_t path[1024];
 } R4DirectoryBatchEntry;
 
+typedef struct R4AudioBackendWriteReceipt {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t reserved;
+    uint64_t output_generation;
+    uint64_t reset_generation;
+    uint64_t first_frame;
+    uint64_t frames;
+} R4AudioBackendWriteReceipt;
+
+typedef struct R4AudioBackendPlayback {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t reserved;
+    uint64_t output_generation;
+    uint64_t reset_generation;
+    uint64_t accepted_frames;
+    uint64_t dma_frames;
+    uint64_t consumed_frames;
+    uint64_t previous_output_generation;
+    uint64_t previous_reset_generation;
+    uint64_t previous_accepted_frames;
+    uint64_t previous_dma_frames;
+    uint64_t previous_consumed_frames;
+    uint32_t rate;
+    uint16_t channels;
+    uint16_t format;
+    uint32_t max_queue_frames;
+    uint32_t reserved1;
+} R4AudioBackendPlayback;
+
+typedef struct R4AudioBackendFlow {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t reserved;
+    uint64_t source_due_ns;
+    uint32_t low_water_frames;
+    uint32_t high_water_frames;
+    uint64_t output_generation;
+} R4AudioBackendFlow;
+
+typedef struct R4AudioStreamExpectation {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t reserved;
+    uint64_t stream_generation;
+    uint64_t source_due_ns;
+    uint32_t low_water_frames;
+    uint32_t high_water_frames;
+} R4AudioStreamExpectation;
+
+typedef struct R4AudioStreamProgress {
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    uint32_t stream_id;
+    uint64_t stream_generation;
+    uint64_t backend_generation;
+    uint64_t output_generation;
+    uint64_t reset_generation;
+    uint64_t accepted_source_bytes;
+    uint64_t accepted_frames;
+    uint64_t backend_frames;
+    uint64_t submitted_frames;
+    uint64_t consumed_frames;
+    uint64_t unconfirmed_frames;
+    uint64_t queued_frames;
+    uint64_t queue_age_ns;
+    uint64_t observed_ns;
+    uint64_t source_due_ns;
+    uint64_t source_starvations;
+    uint32_t rate;
+    uint16_t channels;
+    uint16_t format;
+    uint32_t reserved0;
+    uint32_t reserved1;
+} R4AudioStreamProgress;
+
+typedef struct R4AudioServiceStreamProgressRequest {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint32_t stream_id;
+    uint32_t flags;
+    uint64_t service_epoch;
+    uint64_t stream_generation;
+} R4AudioServiceStreamProgressRequest;
+
+typedef struct R4AudioServiceStreamProgressState {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    int32_t result;
+    uint32_t stream_id;
+    uint64_t service_epoch;
+    uint64_t stream_generation;
+    uint64_t suppressed_bytes;
+    uint64_t accepted_source_bytes;
+    R4AudioStreamProgress progress;
+} R4AudioServiceStreamProgressState;
+
+typedef struct R4AudioServiceStreamFlowRequest {
+    R4AudioServiceStreamProgressRequest stream;
+    R4AudioStreamExpectation expectation;
+} R4AudioServiceStreamFlowRequest;
+
+typedef struct R4AudioServiceStreamTrackedWriteRequest {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t size;
+    uint32_t stream_id;
+    uint32_t byte_count;
+    uint64_t service_epoch;
+    uint64_t stream_generation;
+    uint64_t source_due_ns;
+    uint32_t flags;
+    uint32_t reserved;
+} R4AudioServiceStreamTrackedWriteRequest;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11467,6 +11617,9 @@ typedef int32_t (*R4AudioOpl3RenderBlockFn)(void);
 typedef int32_t (*R4AudioOpl3StopFn)(void);
 typedef int32_t (*R4AudioAudioOutputInfoFn)(uint32_t index, R4AudioOutputInfo * out);
 typedef int32_t (*R4AudioAudioSelectOutputFn)(const uint8_t (*id)[64]);
+typedef int32_t (*R4AudioAudioStreamProgressFn)(uint32_t stream_id, uint64_t generation, R4AudioStreamProgress * out);
+typedef int32_t (*R4AudioAudioSetStreamExpectationFn)(uint32_t stream_id, const R4AudioStreamExpectation * expectation);
+typedef int32_t (*R4AudioAudioCloseStreamProgressFn)(uint32_t stream_id, uint64_t generation, R4AudioStreamProgress * out);
 
 typedef struct R4XStartR4Audio {
     uint32_t magic;
@@ -11496,6 +11649,9 @@ typedef struct R4XStartR4Audio {
     uintptr_t reserved1;
     uintptr_t audio_output_info;
     uintptr_t audio_select_output;
+    uintptr_t audio_stream_progress;
+    uintptr_t audio_set_stream_expectation;
+    uintptr_t audio_close_stream_progress;
 } R4XStartR4Audio;
 
 typedef int32_t (*R4DevDeviceInventorySummaryFn)(R4DeviceInventorySummary * arg0);
@@ -18019,6 +18175,111 @@ _Static_assert(offsetof(R4DirectoryBatchCursor, backend) == 1136u, "DirectoryBat
 _Static_assert(sizeof(R4DirectoryBatchEntry) == 1120u, "DirectoryBatchEntry size mismatch");
 _Static_assert(offsetof(R4DirectoryBatchEntry, info) == 0u, "DirectoryBatchEntry.info offset mismatch");
 _Static_assert(offsetof(R4DirectoryBatchEntry, path) == 96u, "DirectoryBatchEntry.path offset mismatch");
+_Static_assert(sizeof(R4AudioBackendWriteReceipt) == 48u, "AudioBackendWriteReceipt size mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, version) == 0u, "AudioBackendWriteReceipt.version offset mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, size) == 4u, "AudioBackendWriteReceipt.size offset mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, flags) == 8u, "AudioBackendWriteReceipt.flags offset mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, reserved) == 12u, "AudioBackendWriteReceipt.reserved offset mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, output_generation) == 16u, "AudioBackendWriteReceipt.output_generation offset mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, reset_generation) == 24u, "AudioBackendWriteReceipt.reset_generation offset mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, first_frame) == 32u, "AudioBackendWriteReceipt.first_frame offset mismatch");
+_Static_assert(offsetof(R4AudioBackendWriteReceipt, frames) == 40u, "AudioBackendWriteReceipt.frames offset mismatch");
+_Static_assert(sizeof(R4AudioBackendPlayback) == 112u, "AudioBackendPlayback size mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, version) == 0u, "AudioBackendPlayback.version offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, size) == 4u, "AudioBackendPlayback.size offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, flags) == 8u, "AudioBackendPlayback.flags offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, reserved) == 12u, "AudioBackendPlayback.reserved offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, output_generation) == 16u, "AudioBackendPlayback.output_generation offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, reset_generation) == 24u, "AudioBackendPlayback.reset_generation offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, accepted_frames) == 32u, "AudioBackendPlayback.accepted_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, dma_frames) == 40u, "AudioBackendPlayback.dma_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, consumed_frames) == 48u, "AudioBackendPlayback.consumed_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, previous_output_generation) == 56u, "AudioBackendPlayback.previous_output_generation offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, previous_reset_generation) == 64u, "AudioBackendPlayback.previous_reset_generation offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, previous_accepted_frames) == 72u, "AudioBackendPlayback.previous_accepted_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, previous_dma_frames) == 80u, "AudioBackendPlayback.previous_dma_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, previous_consumed_frames) == 88u, "AudioBackendPlayback.previous_consumed_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, rate) == 96u, "AudioBackendPlayback.rate offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, channels) == 100u, "AudioBackendPlayback.channels offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, format) == 102u, "AudioBackendPlayback.format offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, max_queue_frames) == 104u, "AudioBackendPlayback.max_queue_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendPlayback, reserved1) == 108u, "AudioBackendPlayback.reserved1 offset mismatch");
+_Static_assert(sizeof(R4AudioBackendFlow) == 40u, "AudioBackendFlow size mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, version) == 0u, "AudioBackendFlow.version offset mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, size) == 4u, "AudioBackendFlow.size offset mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, flags) == 8u, "AudioBackendFlow.flags offset mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, reserved) == 12u, "AudioBackendFlow.reserved offset mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, source_due_ns) == 16u, "AudioBackendFlow.source_due_ns offset mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, low_water_frames) == 24u, "AudioBackendFlow.low_water_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, high_water_frames) == 28u, "AudioBackendFlow.high_water_frames offset mismatch");
+_Static_assert(offsetof(R4AudioBackendFlow, output_generation) == 32u, "AudioBackendFlow.output_generation offset mismatch");
+_Static_assert(sizeof(R4AudioStreamExpectation) == 40u, "AudioStreamExpectation size mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, version) == 0u, "AudioStreamExpectation.version offset mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, size) == 4u, "AudioStreamExpectation.size offset mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, flags) == 8u, "AudioStreamExpectation.flags offset mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, reserved) == 12u, "AudioStreamExpectation.reserved offset mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, stream_generation) == 16u, "AudioStreamExpectation.stream_generation offset mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, source_due_ns) == 24u, "AudioStreamExpectation.source_due_ns offset mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, low_water_frames) == 32u, "AudioStreamExpectation.low_water_frames offset mismatch");
+_Static_assert(offsetof(R4AudioStreamExpectation, high_water_frames) == 36u, "AudioStreamExpectation.high_water_frames offset mismatch");
+_Static_assert(sizeof(R4AudioStreamProgress) == 152u, "AudioStreamProgress size mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, version) == 0u, "AudioStreamProgress.version offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, size) == 4u, "AudioStreamProgress.size offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, flags) == 8u, "AudioStreamProgress.flags offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, stream_id) == 12u, "AudioStreamProgress.stream_id offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, stream_generation) == 16u, "AudioStreamProgress.stream_generation offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, backend_generation) == 24u, "AudioStreamProgress.backend_generation offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, output_generation) == 32u, "AudioStreamProgress.output_generation offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, reset_generation) == 40u, "AudioStreamProgress.reset_generation offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, accepted_source_bytes) == 48u, "AudioStreamProgress.accepted_source_bytes offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, accepted_frames) == 56u, "AudioStreamProgress.accepted_frames offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, backend_frames) == 64u, "AudioStreamProgress.backend_frames offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, submitted_frames) == 72u, "AudioStreamProgress.submitted_frames offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, consumed_frames) == 80u, "AudioStreamProgress.consumed_frames offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, unconfirmed_frames) == 88u, "AudioStreamProgress.unconfirmed_frames offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, queued_frames) == 96u, "AudioStreamProgress.queued_frames offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, queue_age_ns) == 104u, "AudioStreamProgress.queue_age_ns offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, observed_ns) == 112u, "AudioStreamProgress.observed_ns offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, source_due_ns) == 120u, "AudioStreamProgress.source_due_ns offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, source_starvations) == 128u, "AudioStreamProgress.source_starvations offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, rate) == 136u, "AudioStreamProgress.rate offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, channels) == 140u, "AudioStreamProgress.channels offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, format) == 142u, "AudioStreamProgress.format offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, reserved0) == 144u, "AudioStreamProgress.reserved0 offset mismatch");
+_Static_assert(offsetof(R4AudioStreamProgress, reserved1) == 148u, "AudioStreamProgress.reserved1 offset mismatch");
+_Static_assert(sizeof(R4AudioServiceStreamProgressRequest) == 32u, "AudioServiceStreamProgressRequest size mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressRequest, magic) == 0u, "AudioServiceStreamProgressRequest.magic offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressRequest, version) == 4u, "AudioServiceStreamProgressRequest.version offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressRequest, size) == 6u, "AudioServiceStreamProgressRequest.size offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressRequest, stream_id) == 8u, "AudioServiceStreamProgressRequest.stream_id offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressRequest, flags) == 12u, "AudioServiceStreamProgressRequest.flags offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressRequest, service_epoch) == 16u, "AudioServiceStreamProgressRequest.service_epoch offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressRequest, stream_generation) == 24u, "AudioServiceStreamProgressRequest.stream_generation offset mismatch");
+_Static_assert(sizeof(R4AudioServiceStreamProgressState) == 200u, "AudioServiceStreamProgressState size mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, magic) == 0u, "AudioServiceStreamProgressState.magic offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, version) == 4u, "AudioServiceStreamProgressState.version offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, size) == 6u, "AudioServiceStreamProgressState.size offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, result) == 8u, "AudioServiceStreamProgressState.result offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, stream_id) == 12u, "AudioServiceStreamProgressState.stream_id offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, service_epoch) == 16u, "AudioServiceStreamProgressState.service_epoch offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, stream_generation) == 24u, "AudioServiceStreamProgressState.stream_generation offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, suppressed_bytes) == 32u, "AudioServiceStreamProgressState.suppressed_bytes offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, accepted_source_bytes) == 40u, "AudioServiceStreamProgressState.accepted_source_bytes offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamProgressState, progress) == 48u, "AudioServiceStreamProgressState.progress offset mismatch");
+_Static_assert(sizeof(R4AudioServiceStreamFlowRequest) == 72u, "AudioServiceStreamFlowRequest size mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamFlowRequest, stream) == 0u, "AudioServiceStreamFlowRequest.stream offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamFlowRequest, expectation) == 32u, "AudioServiceStreamFlowRequest.expectation offset mismatch");
+_Static_assert(sizeof(R4AudioServiceStreamTrackedWriteRequest) == 48u, "AudioServiceStreamTrackedWriteRequest size mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, magic) == 0u, "AudioServiceStreamTrackedWriteRequest.magic offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, version) == 4u, "AudioServiceStreamTrackedWriteRequest.version offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, size) == 6u, "AudioServiceStreamTrackedWriteRequest.size offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, stream_id) == 8u, "AudioServiceStreamTrackedWriteRequest.stream_id offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, byte_count) == 12u, "AudioServiceStreamTrackedWriteRequest.byte_count offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, service_epoch) == 16u, "AudioServiceStreamTrackedWriteRequest.service_epoch offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, stream_generation) == 24u, "AudioServiceStreamTrackedWriteRequest.stream_generation offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, source_due_ns) == 32u, "AudioServiceStreamTrackedWriteRequest.source_due_ns offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, flags) == 40u, "AudioServiceStreamTrackedWriteRequest.flags offset mismatch");
+_Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, reserved) == 44u, "AudioServiceStreamTrackedWriteRequest.reserved offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1336u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -18785,7 +19046,7 @@ _Static_assert(offsetof(R4XStartR4Net, ipc_performance) == 280u, "R4XStartR4Net.
 _Static_assert(sizeof(R4NetIpcPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_performance) == 288u, "R4XStartR4Net.tcp_performance offset mismatch");
 _Static_assert(sizeof(R4NetTcpPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Audio) == 200u, "R4XStartR4Audio size mismatch");
+_Static_assert(sizeof(R4XStartR4Audio) == 224u, "R4XStartR4Audio size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_open_stream) == 16u, "R4XStartR4Audio.audio_open_stream offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOpenStreamFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_write) == 24u, "R4XStartR4Audio.audio_write offset mismatch");
@@ -18830,6 +19091,12 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_info) == 184u, "R4XStartR4
 _Static_assert(sizeof(R4AudioAudioOutputInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_select_output) == 192u, "R4XStartR4Audio.audio_select_output offset mismatch");
 _Static_assert(sizeof(R4AudioAudioSelectOutputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Audio, audio_stream_progress) == 200u, "R4XStartR4Audio.audio_stream_progress offset mismatch");
+_Static_assert(sizeof(R4AudioAudioStreamProgressFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Audio, audio_set_stream_expectation) == 208u, "R4XStartR4Audio.audio_set_stream_expectation offset mismatch");
+_Static_assert(sizeof(R4AudioAudioSetStreamExpectationFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Audio, audio_close_stream_progress) == 216u, "R4XStartR4Audio.audio_close_stream_progress offset mismatch");
+_Static_assert(sizeof(R4AudioAudioCloseStreamProgressFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Dev) == 728u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

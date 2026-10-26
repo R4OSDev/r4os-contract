@@ -2726,6 +2726,24 @@ pub const gui_activity_shared_all: u32 = 3;
 pub const drive_info_flag_free_valid: u32 = 1;
 pub const directory_batch_max_entries: u32 = 8;
 pub const directory_batch_work_steps: u32 = 256;
+pub const audio_backend_playback_version: u32 = 5;
+pub const audio_playback_valid: u32 = 1;
+pub const audio_playback_previous_valid: u32 = 2;
+pub const audio_playback_running: u32 = 4;
+pub const audio_playback_quiet: u32 = 8;
+pub const audio_flow_continuous: u32 = 1;
+pub const audio_progress_source_valid: u32 = 1;
+pub const audio_progress_device_valid: u32 = 2;
+pub const audio_progress_age_valid: u32 = 4;
+pub const audio_progress_continuous: u32 = 8;
+pub const audio_progress_ended: u32 = 16;
+pub const audio_progress_unconfirmed: u32 = 32;
+pub const audio_progress_closed: u32 = 64;
+pub const audio_progress_fresh: u32 = 128;
+pub const audio_service_op_stream_progress: u16 = 11;
+pub const audio_service_op_stream_expectation: u16 = 12;
+pub const audio_service_op_write_stream_tracked: u16 = 13;
+pub const audio_service_op_close_stream_progress: u16 = 14;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19513,6 +19531,306 @@ impl Default for DirectoryBatchEntry {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioBackendWriteReceipt {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub output_generation: u64,
+    pub reset_generation: u64,
+    pub first_frame: u64,
+    pub frames: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioBackendWriteReceipt {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            flags: 0,
+            reserved: 0,
+            output_generation: 0,
+            reset_generation: 0,
+            first_frame: 0,
+            frames: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioBackendPlayback {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub output_generation: u64,
+    pub reset_generation: u64,
+    pub accepted_frames: u64,
+    pub dma_frames: u64,
+    pub consumed_frames: u64,
+    pub previous_output_generation: u64,
+    pub previous_reset_generation: u64,
+    pub previous_accepted_frames: u64,
+    pub previous_dma_frames: u64,
+    pub previous_consumed_frames: u64,
+    pub rate: u32,
+    pub channels: u16,
+    pub format: u16,
+    pub max_queue_frames: u32,
+    pub reserved1: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioBackendPlayback {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            flags: 0,
+            reserved: 0,
+            output_generation: 0,
+            reset_generation: 0,
+            accepted_frames: 0,
+            dma_frames: 0,
+            consumed_frames: 0,
+            previous_output_generation: 0,
+            previous_reset_generation: 0,
+            previous_accepted_frames: 0,
+            previous_dma_frames: 0,
+            previous_consumed_frames: 0,
+            rate: 48000,
+            channels: 2,
+            format: 1,
+            max_queue_frames: 0,
+            reserved1: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioBackendFlow {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub source_due_ns: u64,
+    pub low_water_frames: u32,
+    pub high_water_frames: u32,
+    pub output_generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioBackendFlow {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            flags: 0,
+            reserved: 0,
+            source_due_ns: 0,
+            low_water_frames: 0,
+            high_water_frames: 0,
+            output_generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioStreamExpectation {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub stream_generation: u64,
+    pub source_due_ns: u64,
+    pub low_water_frames: u32,
+    pub high_water_frames: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioStreamExpectation {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            flags: 0,
+            reserved: 0,
+            stream_generation: 0,
+            source_due_ns: 0,
+            low_water_frames: 960,
+            high_water_frames: 1920,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioStreamProgress {
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub stream_id: u32,
+    pub stream_generation: u64,
+    pub backend_generation: u64,
+    pub output_generation: u64,
+    pub reset_generation: u64,
+    pub accepted_source_bytes: u64,
+    pub accepted_frames: u64,
+    pub backend_frames: u64,
+    pub submitted_frames: u64,
+    pub consumed_frames: u64,
+    pub unconfirmed_frames: u64,
+    pub queued_frames: u64,
+    pub queue_age_ns: u64,
+    pub observed_ns: u64,
+    pub source_due_ns: u64,
+    pub source_starvations: u64,
+    pub rate: u32,
+    pub channels: u16,
+    pub format: u16,
+    pub reserved0: u32,
+    pub reserved1: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioStreamProgress {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 152,
+            flags: 0,
+            stream_id: 0,
+            stream_generation: 0,
+            backend_generation: 0,
+            output_generation: 0,
+            reset_generation: 0,
+            accepted_source_bytes: 0,
+            accepted_frames: 0,
+            backend_frames: 0,
+            submitted_frames: 0,
+            consumed_frames: 0,
+            unconfirmed_frames: 0,
+            queued_frames: 0,
+            queue_age_ns: 0,
+            observed_ns: 0,
+            source_due_ns: 0,
+            source_starvations: 0,
+            rate: 48000,
+            channels: 2,
+            format: 1,
+            reserved0: 0,
+            reserved1: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioServiceStreamProgressRequest {
+    pub magic: u32,
+    pub version: u16,
+    pub size: u16,
+    pub stream_id: u32,
+    pub flags: u32,
+    pub service_epoch: u64,
+    pub stream_generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioServiceStreamProgressRequest {
+    fn default() -> Self {
+        Self {
+            magic: 1364350273,
+            version: 1,
+            size: 32,
+            stream_id: 0,
+            flags: 0,
+            service_epoch: 0,
+            stream_generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioServiceStreamProgressState {
+    pub magic: u32,
+    pub version: u16,
+    pub size: u16,
+    pub result: i32,
+    pub stream_id: u32,
+    pub service_epoch: u64,
+    pub stream_generation: u64,
+    pub suppressed_bytes: u64,
+    pub accepted_source_bytes: u64,
+    pub progress: AudioStreamProgress,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioServiceStreamProgressState {
+    fn default() -> Self {
+        Self {
+            magic: 1381193025,
+            version: 1,
+            size: 200,
+            result: 0,
+            stream_id: 0,
+            service_epoch: 0,
+            stream_generation: 0,
+            suppressed_bytes: 0,
+            accepted_source_bytes: 0,
+            progress: AudioStreamProgress { version: 1, size: 152, flags: 0, stream_id: 0, stream_generation: 0, backend_generation: 0, output_generation: 0, reset_generation: 0, accepted_source_bytes: 0, accepted_frames: 0, backend_frames: 0, submitted_frames: 0, consumed_frames: 0, unconfirmed_frames: 0, queued_frames: 0, queue_age_ns: 0, observed_ns: 0, source_due_ns: 0, source_starvations: 0, rate: 48000, channels: 2, format: 1, reserved0: 0, reserved1: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioServiceStreamFlowRequest {
+    pub stream: AudioServiceStreamProgressRequest,
+    pub expectation: AudioStreamExpectation,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioServiceStreamFlowRequest {
+    fn default() -> Self {
+        Self {
+            stream: AudioServiceStreamProgressRequest { magic: 1364350273, version: 1, size: 32, stream_id: 0, flags: 0, service_epoch: 0, stream_generation: 0 },
+            expectation: AudioStreamExpectation { version: 1, size: 40, flags: 0, reserved: 0, stream_generation: 0, source_due_ns: 0, low_water_frames: 960, high_water_frames: 1920 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioServiceStreamTrackedWriteRequest {
+    pub magic: u32,
+    pub version: u16,
+    pub size: u16,
+    pub stream_id: u32,
+    pub byte_count: u32,
+    pub service_epoch: u64,
+    pub stream_generation: u64,
+    pub source_due_ns: u64,
+    pub flags: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioServiceStreamTrackedWriteRequest {
+    fn default() -> Self {
+        Self {
+            magic: 1364350273,
+            version: 1,
+            size: 48,
+            stream_id: 0,
+            byte_count: 0,
+            service_epoch: 0,
+            stream_generation: 0,
+            source_due_ns: 0,
+            flags: 0,
+            reserved: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20791,6 +21109,9 @@ pub mod R4AudioFns {
     pub type opl3_stop = unsafe extern "C" fn() -> i32;
     pub type audio_output_info = unsafe extern "C" fn(u32, *mut AudioOutputInfo) -> i32;
     pub type audio_select_output = unsafe extern "C" fn(*const [u8; 64]) -> i32;
+    pub type audio_stream_progress = unsafe extern "C" fn(u32, u64, *mut AudioStreamProgress) -> i32;
+    pub type audio_set_stream_expectation = unsafe extern "C" fn(u32, *const AudioStreamExpectation) -> i32;
+    pub type audio_close_stream_progress = unsafe extern "C" fn(u32, u64, *mut AudioStreamProgress) -> i32;
 }
 
 #[repr(C)]
@@ -20823,14 +21144,17 @@ pub struct R4XStartR4Audio {
     pub reserved1: usize,
     pub audio_output_info: usize,
     pub audio_select_output: usize,
+    pub audio_stream_progress: usize,
+    pub audio_set_stream_expectation: usize,
+    pub audio_close_stream_progress: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Audio {
     fn default() -> Self {
         Self {
             magic: 827670866,
-            abi_version: 2,
-            size: 200,
+            abi_version: 3,
+            size: 224,
             flags: 0,
             audio_open_stream: 0,
             audio_write: 0,
@@ -20855,6 +21179,9 @@ impl Default for R4XStartR4Audio {
             reserved1: 0,
             audio_output_info: 0,
             audio_select_output: 0,
+            audio_stream_progress: 0,
+            audio_set_stream_expectation: 0,
+            audio_close_stream_progress: 0,
         }
     }
 }
@@ -31831,6 +32158,120 @@ const _: () = {
     assert!(core::mem::offset_of!(DirectoryBatchEntry, path) == 96);
     assert!(core::mem::size_of::<DirectoryBatchEntry>() == 1120);
     assert!(core::mem::align_of::<DirectoryBatchEntry>() == 8);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, version) == 0);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, size) == 4);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, flags) == 8);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, reserved) == 12);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, output_generation) == 16);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, reset_generation) == 24);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, first_frame) == 32);
+    assert!(core::mem::offset_of!(AudioBackendWriteReceipt, frames) == 40);
+    assert!(core::mem::size_of::<AudioBackendWriteReceipt>() == 48);
+    assert!(core::mem::align_of::<AudioBackendWriteReceipt>() == 8);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, version) == 0);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, size) == 4);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, flags) == 8);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, reserved) == 12);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, output_generation) == 16);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, reset_generation) == 24);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, accepted_frames) == 32);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, dma_frames) == 40);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, consumed_frames) == 48);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, previous_output_generation) == 56);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, previous_reset_generation) == 64);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, previous_accepted_frames) == 72);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, previous_dma_frames) == 80);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, previous_consumed_frames) == 88);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, rate) == 96);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, channels) == 100);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, format) == 102);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, max_queue_frames) == 104);
+    assert!(core::mem::offset_of!(AudioBackendPlayback, reserved1) == 108);
+    assert!(core::mem::size_of::<AudioBackendPlayback>() == 112);
+    assert!(core::mem::align_of::<AudioBackendPlayback>() == 8);
+    assert!(core::mem::offset_of!(AudioBackendFlow, version) == 0);
+    assert!(core::mem::offset_of!(AudioBackendFlow, size) == 4);
+    assert!(core::mem::offset_of!(AudioBackendFlow, flags) == 8);
+    assert!(core::mem::offset_of!(AudioBackendFlow, reserved) == 12);
+    assert!(core::mem::offset_of!(AudioBackendFlow, source_due_ns) == 16);
+    assert!(core::mem::offset_of!(AudioBackendFlow, low_water_frames) == 24);
+    assert!(core::mem::offset_of!(AudioBackendFlow, high_water_frames) == 28);
+    assert!(core::mem::offset_of!(AudioBackendFlow, output_generation) == 32);
+    assert!(core::mem::size_of::<AudioBackendFlow>() == 40);
+    assert!(core::mem::align_of::<AudioBackendFlow>() == 8);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, version) == 0);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, size) == 4);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, flags) == 8);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, reserved) == 12);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, stream_generation) == 16);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, source_due_ns) == 24);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, low_water_frames) == 32);
+    assert!(core::mem::offset_of!(AudioStreamExpectation, high_water_frames) == 36);
+    assert!(core::mem::size_of::<AudioStreamExpectation>() == 40);
+    assert!(core::mem::align_of::<AudioStreamExpectation>() == 8);
+    assert!(core::mem::offset_of!(AudioStreamProgress, version) == 0);
+    assert!(core::mem::offset_of!(AudioStreamProgress, size) == 4);
+    assert!(core::mem::offset_of!(AudioStreamProgress, flags) == 8);
+    assert!(core::mem::offset_of!(AudioStreamProgress, stream_id) == 12);
+    assert!(core::mem::offset_of!(AudioStreamProgress, stream_generation) == 16);
+    assert!(core::mem::offset_of!(AudioStreamProgress, backend_generation) == 24);
+    assert!(core::mem::offset_of!(AudioStreamProgress, output_generation) == 32);
+    assert!(core::mem::offset_of!(AudioStreamProgress, reset_generation) == 40);
+    assert!(core::mem::offset_of!(AudioStreamProgress, accepted_source_bytes) == 48);
+    assert!(core::mem::offset_of!(AudioStreamProgress, accepted_frames) == 56);
+    assert!(core::mem::offset_of!(AudioStreamProgress, backend_frames) == 64);
+    assert!(core::mem::offset_of!(AudioStreamProgress, submitted_frames) == 72);
+    assert!(core::mem::offset_of!(AudioStreamProgress, consumed_frames) == 80);
+    assert!(core::mem::offset_of!(AudioStreamProgress, unconfirmed_frames) == 88);
+    assert!(core::mem::offset_of!(AudioStreamProgress, queued_frames) == 96);
+    assert!(core::mem::offset_of!(AudioStreamProgress, queue_age_ns) == 104);
+    assert!(core::mem::offset_of!(AudioStreamProgress, observed_ns) == 112);
+    assert!(core::mem::offset_of!(AudioStreamProgress, source_due_ns) == 120);
+    assert!(core::mem::offset_of!(AudioStreamProgress, source_starvations) == 128);
+    assert!(core::mem::offset_of!(AudioStreamProgress, rate) == 136);
+    assert!(core::mem::offset_of!(AudioStreamProgress, channels) == 140);
+    assert!(core::mem::offset_of!(AudioStreamProgress, format) == 142);
+    assert!(core::mem::offset_of!(AudioStreamProgress, reserved0) == 144);
+    assert!(core::mem::offset_of!(AudioStreamProgress, reserved1) == 148);
+    assert!(core::mem::size_of::<AudioStreamProgress>() == 152);
+    assert!(core::mem::align_of::<AudioStreamProgress>() == 8);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressRequest, magic) == 0);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressRequest, version) == 4);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressRequest, size) == 6);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressRequest, stream_id) == 8);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressRequest, flags) == 12);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressRequest, service_epoch) == 16);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressRequest, stream_generation) == 24);
+    assert!(core::mem::size_of::<AudioServiceStreamProgressRequest>() == 32);
+    assert!(core::mem::align_of::<AudioServiceStreamProgressRequest>() == 8);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, magic) == 0);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, version) == 4);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, size) == 6);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, result) == 8);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, stream_id) == 12);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, service_epoch) == 16);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, stream_generation) == 24);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, suppressed_bytes) == 32);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, accepted_source_bytes) == 40);
+    assert!(core::mem::offset_of!(AudioServiceStreamProgressState, progress) == 48);
+    assert!(core::mem::size_of::<AudioServiceStreamProgressState>() == 200);
+    assert!(core::mem::align_of::<AudioServiceStreamProgressState>() == 8);
+    assert!(core::mem::offset_of!(AudioServiceStreamFlowRequest, stream) == 0);
+    assert!(core::mem::offset_of!(AudioServiceStreamFlowRequest, expectation) == 32);
+    assert!(core::mem::size_of::<AudioServiceStreamFlowRequest>() == 72);
+    assert!(core::mem::align_of::<AudioServiceStreamFlowRequest>() == 8);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, magic) == 0);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, version) == 4);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, size) == 6);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, stream_id) == 8);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, byte_count) == 12);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, service_epoch) == 16);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, stream_generation) == 24);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, source_due_ns) == 32);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, flags) == 40);
+    assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, reserved) == 44);
+    assert!(core::mem::size_of::<AudioServiceStreamTrackedWriteRequest>() == 48);
+    assert!(core::mem::align_of::<AudioServiceStreamTrackedWriteRequest>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -32267,7 +32708,10 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Audio, reserved1) == 176);
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_output_info) == 184);
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_select_output) == 192);
-    assert!(core::mem::size_of::<R4XStartR4Audio>() == 200);
+    assert!(core::mem::offset_of!(R4XStartR4Audio, audio_stream_progress) == 200);
+    assert!(core::mem::offset_of!(R4XStartR4Audio, audio_set_stream_expectation) == 208);
+    assert!(core::mem::offset_of!(R4XStartR4Audio, audio_close_stream_progress) == 216);
+    assert!(core::mem::size_of::<R4XStartR4Audio>() == 224);
     assert!(core::mem::align_of::<R4XStartR4Audio>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Dev, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Dev, abi_version) == 4);
