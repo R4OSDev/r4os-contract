@@ -2719,6 +2719,7 @@ pub const program_inventory_cursor_flag_lifecycle: u32 = 2;
 pub const gui_activity_shared_clipboard: u32 = 1;
 pub const gui_activity_shared_directory: u32 = 2;
 pub const gui_activity_shared_all: u32 = 3;
+pub const drive_info_flag_free_valid: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10432,12 +10433,13 @@ pub const R4SysFns = struct {
     pub const entropy_fill = *const fn ([*]u8, u32) callconv(.c) i32;
     pub const program_lifecycle_begin = *const fn (*ProgramInventoryCursor) callconv(.c) i32;
     pub const program_lifecycle_programs = *const fn (*ProgramInventoryCursor, [*]ProgramLifecycleSnapshot, u32, *ProgramInventoryPageInfo) callconv(.c) i32;
+    pub const drive_info_geometry = *const fn (u32, *DriveInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 29,
-    size: u32 = 1320,
+    abi_version: u32 = 30,
+    size: u32 = 1328,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -10602,6 +10604,7 @@ pub const R4XStartR4Sys = extern struct {
     entropy_fill: usize = 0,
     program_lifecycle_begin: usize = 0,
     program_lifecycle_programs: usize = 0,
+    drive_info_geometry: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -11473,6 +11476,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 160, .offset = 1296, .name = "entropy_fill", .state = .function, .required = false },
     .{ .number = 161, .offset = 1304, .name = "program_lifecycle_begin", .state = .function, .required = false },
     .{ .number = 162, .offset = 1312, .name = "program_lifecycle_programs", .state = .function, .required = false },
+    .{ .number = 163, .offset = 1320, .name = "drive_info_geometry", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -18506,7 +18510,7 @@ comptime {
     if (@offsetOf(ProgramLifecycleSnapshot, "flags") != 31) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.flags");
     if (@offsetOf(ProgramLifecycleSnapshot, "exit_code") != 32) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.exit_code");
     if (@offsetOf(ProgramLifecycleSnapshot, "window_id") != 36) @compileError("generated ABI offset drift: ProgramLifecycleSnapshot.window_id");
-    if (@sizeOf(R4XStartR4Sys) != 1320) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1328) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -18670,6 +18674,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "entropy_fill") != 1296) @compileError("generated ABI offset drift: R4XStartR4Sys.entropy_fill");
     if (@offsetOf(R4XStartR4Sys, "program_lifecycle_begin") != 1304) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_begin");
     if (@offsetOf(R4XStartR4Sys, "program_lifecycle_programs") != 1312) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_programs");
+    if (@offsetOf(R4XStartR4Sys, "drive_info_geometry") != 1320) @compileError("generated ABI offset drift: R4XStartR4Sys.drive_info_geometry");
     if (@sizeOf(R4XStartR4Desk) != 584) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

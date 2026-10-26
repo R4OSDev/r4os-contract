@@ -152,3 +152,12 @@ Task-/Threadstatistikabruf. Epochwechsel verlangt Restart ohne Teilpublikation;
 Busy und unvollstaendige Aufnahme sind keine Lifecycleautoritaet. Ein Epoch
 allein ersetzt keine erneute aktuelle Aufnahme veraenderlicher Prozessfelder.
 Vollinventar, Diagnosewerte und bisherige Slots/Layouts bleiben erhalten.
+
+0.87.42 / Contract0.64.48: R4SYS30 ergaenzt drive_info_geometry an1320,
+Tabelle1328, alle163 alten Slots und kompletter1320-Byte-Praefix bleiben.
+DriveInfo56 bleibt; reserved Bit0=drive_info_flag_free_valid bedeutet
+backendbestaetigtes FREE, auch0. Ohne Bit ist Freiplatz unbekannt. Geometrie
+fuehrt kein FREE/Bitmap-I/O aus; bestehende Mount-/Requestaufnahme kann
+warten. Volle Abfrage nutzt unveraenderten Backendcache. Query:1/alle5
+anderen Gruppen unveraendert; Zig/C/Rust-Konformanz und kontrollierter
+Praefixvergleich bestanden. Keine neue Hardware-/Zeitqualifikation.

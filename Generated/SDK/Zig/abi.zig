@@ -2718,6 +2718,7 @@ pub const program_inventory_cursor_flag_lifecycle = generated.program_inventory_
 pub const gui_activity_shared_clipboard = generated.gui_activity_shared_clipboard;
 pub const gui_activity_shared_directory = generated.gui_activity_shared_directory;
 pub const gui_activity_shared_all = generated.gui_activity_shared_all;
+pub const drive_info_flag_free_valid = generated.drive_info_flag_free_valid;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;

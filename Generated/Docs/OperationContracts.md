@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 493; Funktionen: 482; reserviert/Tombstone: 11
-- Sichtbarkeit: public=342, advanced=140, internal=11
+- Physische Gruppenslots: 494; Funktionen: 483; reserviert/Tombstone: 11
+- Sichtbarkeit: public=343, advanced=140, internal=11
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -94,7 +94,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4SYS | 56 | `dir_list` | function | public | R4SYS | ja | `filesystem` | caller_buffer | call | may_block | thread_safe | path_based_no_handle | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 57 | `dir_create` | function | public | R4SYS | ja | `filesystem` | borrowed | call | may_block | thread_safe | path_based_no_handle | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 58 | `dir_delete` | function | public | R4SYS | ja | `filesystem` | borrowed | call | may_block | thread_safe | path_based_no_handle | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
-| R4SYS | 59 | `drive_info` | function | public | R4SYS | ja | `system` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4SYS | 59 | `drive_info` | function | public | R4SYS | ja | `system` | caller_buffer | call | may_block | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 60 | `file_info` | function | public | R4SYS | ja | `filesystem` | caller_buffer | call | may_block | thread_safe | path_based_no_handle | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 61 | `file_delete` | function | public | R4SYS | ja | `filesystem` | borrowed | call | may_block | thread_safe | path_based_no_handle | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 62 | `file_rename` | function | public | R4SYS | ja | `filesystem` | borrowed | call | may_block | thread_safe | path_based_no_handle | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
@@ -198,6 +198,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4SYS | 160 | `entropy_fill` | function | advanced | R4SYS | ja | `system` | caller_buffer | none | may_block | thread_safe | none | valid_on_documented_error | may_have_occurred | never_automatic | none | zig_and_c_required | wait_budget | not_cancellable | outcome_unknown | serialized | caller_thread | none | none |
 | R4SYS | 161 | `program_lifecycle_begin` | function | public | R4SYS | ja | `program` | caller_buffer | call | nonblocking | thread_safe | none | valid_on_documented_error | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 162 | `program_lifecycle_programs` | function | public | R4SYS | ja | `program` | caller_buffer | call | nonblocking | thread_safe | none | valid_on_documented_error | atomic_on_success | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4SYS | 163 | `drive_info_geometry` | function | public | R4SYS | ja | `system` | caller_buffer | call | may_block | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DESK | 0 | `read_key` | function | public | R4DESK | ja | `desktop` | none | none | may_block | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DESK | 1 | `mouse_state` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 2 | `mouse_show` | function | public | R4DESK | ja | `desktop` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |

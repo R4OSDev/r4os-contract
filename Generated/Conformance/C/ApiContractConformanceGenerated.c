@@ -163,6 +163,7 @@ static R4SysEntropySourceInfoFn r4os_probe_r4sys_entropy_source_info = (R4SysEnt
 static R4SysEntropyFillFn r4os_probe_r4sys_entropy_fill = (R4SysEntropyFillFn)0;
 static R4SysProgramLifecycleBeginFn r4os_probe_r4sys_program_lifecycle_begin = (R4SysProgramLifecycleBeginFn)0;
 static R4SysProgramLifecycleProgramsFn r4os_probe_r4sys_program_lifecycle_programs = (R4SysProgramLifecycleProgramsFn)0;
+static R4SysDriveInfoGeometryFn r4os_probe_r4sys_drive_info_geometry = (R4SysDriveInfoGeometryFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;

@@ -2723,6 +2723,7 @@ pub const program_inventory_cursor_flag_lifecycle: u32 = 2;
 pub const gui_activity_shared_clipboard: u32 = 1;
 pub const gui_activity_shared_directory: u32 = 2;
 pub const gui_activity_shared_all: u32 = 3;
+pub const drive_info_flag_free_valid: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19632,6 +19633,7 @@ pub mod R4SysFns {
     pub type entropy_fill = unsafe extern "C" fn(*mut u8, u32) -> i32;
     pub type program_lifecycle_begin = unsafe extern "C" fn(*mut ProgramInventoryCursor) -> i32;
     pub type program_lifecycle_programs = unsafe extern "C" fn(*mut ProgramInventoryCursor, *mut ProgramLifecycleSnapshot, u32, *mut ProgramInventoryPageInfo) -> i32;
+    pub type drive_info_geometry = unsafe extern "C" fn(u32, *mut DriveInfo) -> i32;
 }
 
 #[repr(C)]
@@ -19804,14 +19806,15 @@ pub struct R4XStartR4Sys {
     pub entropy_fill: usize,
     pub program_lifecycle_begin: usize,
     pub program_lifecycle_programs: usize,
+    pub drive_info_geometry: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 29,
-            size: 1320,
+            abi_version: 30,
+            size: 1328,
             flags: 0,
             write: 0,
             putc: 0,
@@ -19976,6 +19979,7 @@ impl Default for R4XStartR4Sys {
             entropy_fill: 0,
             program_lifecycle_begin: 0,
             program_lifecycle_programs: 0,
+            drive_info_geometry: 0,
         }
     }
 }
@@ -31924,7 +31928,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, entropy_fill) == 1296);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_lifecycle_begin) == 1304);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_lifecycle_programs) == 1312);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1320);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, drive_info_geometry) == 1320);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1328);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

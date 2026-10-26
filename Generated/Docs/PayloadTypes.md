@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 369 von 369 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2718; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2719; Limits: 111
 
 ## App-Profile
 
@@ -13465,6 +13465,7 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gui_activity_shared_clipboard` | `1` | `u32` | flag | bit | `gui_activity` | fixed_contract |
 | `gui_activity_shared_directory` | `2` | `u32` | flag | bit | `gui_activity` | fixed_contract |
 | `gui_activity_shared_all` | `3` | `u32` | value | bitmask | `gui_activity` | fixed_contract |
+| `drive_info_flag_free_valid` | `1` | `u32` | flag | bitmask | `drive_info` | fixed_contract |
 
 ## Limits
 

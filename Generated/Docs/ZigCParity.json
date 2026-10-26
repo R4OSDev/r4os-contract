@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 482,
+    "group_function_signatures": 483,
     "sdk_operation_contracts": 0,
-    "parity_entries": 482,
+    "parity_entries": 483,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1448,6 +1448,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.program_lifecycle_programs",
       "c_contract": "R4SysProgramLifecycleProgramsFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.drive_info_geometry",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.drive_info_geometry",
+      "c_contract": "R4SysDriveInfoGeometryFn",
       "coverage": "generated_signature"
     },
     {

@@ -206,3 +206,15 @@ admission and CF checks remain mandatory. The SDK owns source choice; the
 external driver owns transport/completion/reset. No Runtime or Rust mutable
 registry borrow spans callbacks; release the driver owner before a paged
 caller copy while retaining the exact task. Old/missing sources fail safely.
+
+0.64.48 appends optional R4SYS30 `drive_info_geometry` at1320 (table1328),
+retaining all163 original slots and the complete1320-byte prefix; Query:1
+and the other five groups stay unchanged. DriveInfo remains56 bytes. Its
+reserved bit0, `drive_info_flag_free_valid`, distinguishes backend-provided
+FREE values (including zero) from unknown. The geometry call never executes
+FREE or reads a free-space bitmap. Existing exact mounted request admission
+remains and may wait; this is no unconditional nonblocking guarantee. The
+full call retains the existing FREE backend/cache and marks only valid FREE
+results. The old full-call nonblocking annotation is corrected to may_block.
+Source/layout prefix proof and generated Zig/C/Rust conformance pass; no new
+physical timing, cache invalidation, mount lifecycle or hardware claim.

@@ -2731,6 +2731,7 @@ extern "C" {
 #define R4OS_GUI_ACTIVITY_SHARED_CLIPBOARD 1u
 #define R4OS_GUI_ACTIVITY_SHARED_DIRECTORY 2u
 #define R4OS_GUI_ACTIVITY_SHARED_ALL 3u
+#define R4OS_DRIVE_INFO_FLAG_FREE_VALID 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -10788,6 +10789,7 @@ typedef int32_t (*R4SysEntropySourceInfoFn)(R4EntropySourceInfo * out);
 typedef int32_t (*R4SysEntropyFillFn)(uint8_t * out, uint32_t bytes);
 typedef int32_t (*R4SysProgramLifecycleBeginFn)(R4ProgramInventoryCursor * cursor);
 typedef int32_t (*R4SysProgramLifecycleProgramsFn)(R4ProgramInventoryCursor * cursor, R4ProgramLifecycleSnapshot * out, uint32_t capacity, R4ProgramInventoryPageInfo * out_page);
+typedef int32_t (*R4SysDriveInfoGeometryFn)(uint32_t arg0, R4DriveInfo * arg1);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -10957,6 +10959,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t entropy_fill;
     uintptr_t program_lifecycle_begin;
     uintptr_t program_lifecycle_programs;
+    uintptr_t drive_info_geometry;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -17976,7 +17979,7 @@ _Static_assert(offsetof(R4ProgramLifecycleSnapshot, state) == 30u, "ProgramLifec
 _Static_assert(offsetof(R4ProgramLifecycleSnapshot, flags) == 31u, "ProgramLifecycleSnapshot.flags offset mismatch");
 _Static_assert(offsetof(R4ProgramLifecycleSnapshot, exit_code) == 32u, "ProgramLifecycleSnapshot.exit_code offset mismatch");
 _Static_assert(offsetof(R4ProgramLifecycleSnapshot, window_id) == 36u, "ProgramLifecycleSnapshot.window_id offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1320u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1328u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -18300,6 +18303,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_lifecycle_begin) == 1304u, "R4XSt
 _Static_assert(sizeof(R4SysProgramLifecycleBeginFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_lifecycle_programs) == 1312u, "R4XStartR4Sys.program_lifecycle_programs offset mismatch");
 _Static_assert(sizeof(R4SysProgramLifecycleProgramsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, drive_info_geometry) == 1320u, "R4XStartR4Sys.drive_info_geometry offset mismatch");
+_Static_assert(sizeof(R4SysDriveInfoGeometryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 584u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -6325,7 +6325,7 @@ comptime {
     if (@offsetOf(abi.ProgramLifecycleSnapshot, "flags") != 31) @compileError("ProgramLifecycleSnapshot.flags offset");
     if (@offsetOf(abi.ProgramLifecycleSnapshot, "exit_code") != 32) @compileError("ProgramLifecycleSnapshot.exit_code offset");
     if (@offsetOf(abi.ProgramLifecycleSnapshot, "window_id") != 36) @compileError("ProgramLifecycleSnapshot.window_id offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1320) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1328) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -6649,6 +6649,8 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_lifecycle_begin) != 8) @compileError("R4SysFns.program_lifecycle_begin signature");
     if (@offsetOf(abi.R4XStartR4Sys, "program_lifecycle_programs") != 1312) @compileError("R4XStartR4Sys.program_lifecycle_programs offset");
     if (@sizeOf(abi.R4SysFns.program_lifecycle_programs) != 8) @compileError("R4SysFns.program_lifecycle_programs signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "drive_info_geometry") != 1320) @compileError("R4XStartR4Sys.drive_info_geometry offset");
+    if (@sizeOf(abi.R4SysFns.drive_info_geometry) != 8) @compileError("R4SysFns.drive_info_geometry signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 584) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 482,
-    "group_slot_count": 482,
+    "function_count": 483,
+    "group_slot_count": 483,
     "sdk_only_count": 0,
-    "public_count": 342,
+    "public_count": 343,
     "advanced_count": 140
   },
   "functions": [
@@ -692,7 +692,7 @@
       "kind": "group_slot",
       "slot": 59,
       "exposure": "public",
-      "description": "Returns capacity and filesystem information for a mounted drive.",
+      "description": "Returns mounted drive metadata and scalar filesystem geometry, then performs the exact FREE query under the existing mounted request owner. May wait for request admission and cold bitmap I/O. DriveInfo.reserved bit drive_info_flag_free_valid is set only when the FREE backend supplied a value; zero free space with that bit set is valid. Other reserved bits remain zero.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
@@ -1929,6 +1929,18 @@
       "slot": 162,
       "exposure": "public",
       "description": "One bounded generation-ordered lifecycle page from the canonical process registry, including pending/done completions. Forty-byte records carry exact handles and current process fields without VM statistics. Epoch mismatch returns restart with no row/cursor advancement; Busy/invalid has no complete authority. Complete paging must finish before adoption/disappearance decisions; revalidate exact handles at actions. A lifecycle cursor cannot be used by full inventory calls or vice versa.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.drive_info_geometry",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 163,
+      "exposure": "public",
+      "description": "Returns the same mounted drive identity/capacity and scalar cluster geometry without executing FREE or reading a free-space bitmap. Existing exact mount/request admission can wait. Free fields and drive_info_flag_free_valid are zero: explicitly unknown, not measured zero. Existing DriveInfo56 layout unchanged. index0..25; returns1 mounted,0 unmounted,-1 invalid index,-2 request unavailable.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
