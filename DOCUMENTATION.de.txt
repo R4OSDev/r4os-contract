@@ -1,4 +1,4 @@
-R4OS Plattform-Contract
+﻿R4OS Plattform-Contract
 =======================
 
 Dieses Repository ist die zentrale API-/ABI-Wahrheit der R4OS-Plattform.
@@ -180,3 +180,13 @@ fuehrt kein FREE/Bitmap-I/O aus; bestehende Mount-/Requestaufnahme kann
 warten. Volle Abfrage nutzt unveraenderten Backendcache. Query:1/alle5
 anderen Gruppen unveraendert; Zig/C/Rust-Konformanz und kontrollierter
 Praefixvergleich bestanden. Keine neue Hardware-/Zeitqualifikation.
+
+0.87.57 / Contract0.64.53: Ein separater Diagnose-Selektor
+kernel_scheduler_check_case_workers=128 erweitert die vorhandene KernelCheck-
+Auswahl. case_all=127 und alle498Slots/380Payloads/Layouts bleiben gleich.
+Der explizite4000Tick-Beobachter erzeugt oder beendet keine fremde Arbeit;
+er verlangt echte AP-Aufnahme und erfolgreiche Originalreturns von Desktop-
+Compute-, Async-Datei-/Service- und Audiofortschrittsarbeit. Alle CPU-/Task-/
+Owner-/Requestquittungen im Bootlog, maximal16repräsentative Returns jeKlasse.
+Kein Defaultsampler/Timerhook; unvollstaendige oder fehlende Arbeit gilt nicht
+als bestanden. Kontrollierte Baselineaenderung umfasst genau diesen Selektor.

@@ -1988,6 +1988,7 @@ pub const kernel_scheduler_check_case_fairness: u32 = 8;
 pub const kernel_scheduler_check_case_inheritance: u32 = 16;
 pub const kernel_scheduler_check_case_deadlines: u32 = 32;
 pub const kernel_scheduler_check_case_fpu: u32 = 64;
+pub const kernel_scheduler_check_case_workers: u32 = 128;
 pub const kernel_scheduler_check_case_all: u32 = 127;
 pub const kernel_scheduler_check_isolated_timer_reprogram: u32 = 1;
 pub const kernel_scheduler_check_isolated_timeout_batch_64: u32 = 2;

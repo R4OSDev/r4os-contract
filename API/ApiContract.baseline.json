@@ -148831,6 +148831,16 @@
       "description": "Select existing/shared native fpu contracts."
     },
     {
+      "name": "kernel_scheduler_check_case_workers",
+      "value": "128",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_scheduler_check",
+      "stability": "fixed_contract",
+      "description": "Explicit 4000-tick diagnostic observation of real owned Desktop-compute, Async-file/service and Audio-progress entries/returns. Requires concurrent normal workloads in all four classes; confirms AP execution, exact task/owner generations and returned results. No work is generated, cancelled or owned by this observer. Separate from case_all=127; dormant outside this selected window. Bounded representative original-return receipts are written to the boot log; absence is failed/unavailable, never proof of successful work."
+    },
+    {
       "name": "kernel_scheduler_check_case_all",
       "value": "127",
       "value_type": "u32",

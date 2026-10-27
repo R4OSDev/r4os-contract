@@ -6,7 +6,7 @@
   "fields": 7993,
   "integer_enums": 20,
   "callback_declarations": 652,
-  "constants": 3196,
+  "constants": 3197,
   "scalar_float_abi_values": 0,
   "direct_vector_abi_values": 0,
   "excluded_zig_metadata_types": ["R4AppProfileMeta", "R4PlatformApiMeta", "R4ApiSlotMeta"],
