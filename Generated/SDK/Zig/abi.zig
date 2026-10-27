@@ -1984,6 +1984,7 @@ pub const kernel_scheduler_check_case_inheritance = generated.kernel_scheduler_c
 pub const kernel_scheduler_check_case_deadlines = generated.kernel_scheduler_check_case_deadlines;
 pub const kernel_scheduler_check_case_fpu = generated.kernel_scheduler_check_case_fpu;
 pub const kernel_scheduler_check_case_workers = generated.kernel_scheduler_check_case_workers;
+pub const kernel_scheduler_check_case_idle = generated.kernel_scheduler_check_case_idle;
 pub const kernel_scheduler_check_case_all = generated.kernel_scheduler_check_case_all;
 pub const kernel_scheduler_check_isolated_timer_reprogram = generated.kernel_scheduler_check_isolated_timer_reprogram;
 pub const kernel_scheduler_check_isolated_timeout_batch_64 = generated.kernel_scheduler_check_isolated_timeout_batch_64;

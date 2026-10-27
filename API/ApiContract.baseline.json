@@ -148838,7 +148838,17 @@
       "unit": "bitmask",
       "scope": "kernel_scheduler_check",
       "stability": "fixed_contract",
-      "description": "Explicit 4000-tick diagnostic observation of real owned Desktop-compute, Async-file/service and Audio-progress entries/returns. Requires concurrent normal workloads in all four classes; confirms AP execution, exact task/owner generations and returned results. No work is generated, cancelled or owned by this observer. Separate from case_all=127; dormant outside this selected window. Bounded representative original-return receipts are written to the boot log; absence is failed/unavailable, never proof of successful work."
+      "description": "Explicit 30000-tick diagnostic observation of real owned Desktop-compute, Async-file/service and Audio-progress entries/returns. Requires concurrent normal workloads in all four classes; confirms AP execution, exact task/owner generations and returned results. No work is generated, cancelled or owned by this observer. Separate from case_all=127; dormant outside this selected window. Bounded representative original-return receipts are written to the boot log; absence is failed/unavailable, never proof of successful work."
+    },
+    {
+      "name": "kernel_scheduler_check_case_idle",
+      "value": "256",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "kernel_scheduler_check",
+      "stability": "fixed_contract",
+      "description": "Explicit standalone AP idle-timer diagnostic using actual local timer IRQs, stable exact-epoch idle loans and an owned AP worker. Verifies quiet idle, active timer restoration, remote ready and timed wake edges, then exact task retirement. Separate from case_all=127 and workers=128; combinations are rejected. No sampler or work runs outside this explicit request. Slot counts, headers and payload layouts are unchanged."
     },
     {
       "name": "kernel_scheduler_check_case_all",

@@ -190,3 +190,11 @@ Compute-, Async-Datei-/Service- und Audiofortschrittsarbeit. Alle CPU-/Task-/
 Owner-/Requestquittungen im Bootlog, maximal16repräsentative Returns jeKlasse.
 Kein Defaultsampler/Timerhook; unvollstaendige oder fehlende Arbeit gilt nicht
 als bestanden. Kontrollierte Baselineaenderung umfasst genau diesen Selektor.
+
+0.87.58: explizite AP-Idle-Timer-Diagnose
+
+kernel_scheduler_check_case_idle=256 ist ausschliesslich einzeln waehlbar.
+Der Kernel prueft echte Timer-IRQs waehrend eines stabilen AP-Idlefensters,
+wieder aktivierte Timer, Remote-Ready und zeitgesteuerte Wake-Ereignisse
+sowie den exakten Abbau eigener Diagnose-Tasks. all=127 und workers=128
+bleiben getrennt; Slotzahlen, Header und Payloadlayouts bleiben gleich.
