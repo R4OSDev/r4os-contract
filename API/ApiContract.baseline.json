@@ -126954,6 +126954,18 @@
           "value": -7,
           "value_type": "i32",
           "description": "Public result or error value."
+        },
+        {
+          "name": "driver_work_result_continue",
+          "value": -8,
+          "value_type": "i32",
+          "description": "Only callbacks submitted with driver_work_flag_continuation: return with no callback-local owner held, retaining this same ticket at the normal FIFO tail. This is not completion and does not reset the original submission/start timestamps. Unflagged callbacks retain their ordinary terminal-result semantics."
+        },
+        {
+          "name": "driver_work_result_wait",
+          "value": -9,
+          "value_type": "i32",
+          "description": "Same lifetime and owner contract as driver_work_result_continue, with next eligibility at the next logical tick. Other normal Work remains eligible and the existing worker sleeps when no eligible Work remains. No new timer thread, completion or deadline renewal."
         }
       ],
       "description": "Public result and error domain."
@@ -130530,7 +130542,7 @@
     },
     {
       "name": "driver_api_version",
-      "value": "37",
+      "value": "38",
       "value_type": "u32",
       "category": "version",
       "unit": "number",
@@ -130547,6 +130559,16 @@
       "scope": "driver_api",
       "stability": "fixed_contract",
       "description": "Minimum DriverApi for owner-bound normal Work submission by dedicated driver tasks and terminal display shutdown before warm reset."
+    },
+    {
+      "name": "driver_api_continuation_work_version",
+      "value": "38",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "driver_api",
+      "stability": "fixed_contract",
+      "description": "Minimum DriverApi for driver_work_flag_continuation on the unchanged normal work-submit slot. DriverApi has the same664-byte layout and all existing offsets. No arbitrary kernel/R4D timer preemption is admitted."
     },
     {
       "name": "driver_magic",
@@ -130567,6 +130589,16 @@
       "scope": "driver_work",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "driver_work_flag_continuation",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "driver_work",
+      "stability": "fixed_contract",
+      "description": "DriverApi38 normal task Work only. A callback may return driver_work_result_continue or driver_work_result_wait to retain its exact ticket and original lifetime while releasing all callback-local owners. Continue queues at the normal FIFO tail; wait permits the next turn no earlier than the next logical tick. No completion or waiter wake is published before a terminal result. Not valid for IRQ-class, owned callback admission, or the audio deadline lane."
     },
     {
       "name": "driver_work_flag_none",

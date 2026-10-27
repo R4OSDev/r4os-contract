@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 380 von 380 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2739; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2741; Limits: 111
 
 ## App-Profile
 
@@ -10337,6 +10337,8 @@ Geltung: `driver_work`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | Name | Wert | Typ |
 |---|---:|---|
 | `driver_work_result_cancelled` | -7 | `i32` |
+| `driver_work_result_continue` | -8 | `i32` |
+| `driver_work_result_wait` | -9 | `i32` |
 
 ### `ethernet`
 
@@ -11131,10 +11133,12 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `37` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `38` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_api_thread_work_version` | `35` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_continuation_work_version` | `38` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |
 | `driver_work_flag_from_irq` | `1` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
+| `driver_work_flag_continuation` | `2` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_flag_none` | `0` | `u32` | flag | bitmask | `driver_work` | fixed_contract |
 | `driver_work_state_cancelled` | `4` | `u32` | identity | number | `driver_work` | fixed_contract |
 | `driver_work_state_completed` | `3` | `u32` | identity | number | `driver_work` | fixed_contract |

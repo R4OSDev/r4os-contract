@@ -32,6 +32,25 @@ vollstaendig in ihrer eigenen Library-Einheit.
 Build und Pruefung
 ------------------
 
+0.87.55 / Contract0.64.52: DriverApi38 ergaenzt die Semantik der normalen
+Work-Aufnahme um das ausdrueckliche continuation-Flag. Tabellenlayout664,
+alle alten Slots, Payloadlayouts und bisherigen Zahlenwerte bleiben gleich;
+die Mindestversion steht in driver_api_continuation_work_version. Nur neue
+Flag-Aufnahmen interpretieren continue/wait als Fortsetzung desselben
+Tickets. Unmarkierte Callbacks behalten auch fuer diese Zahlenwerte ihre
+terminalen Ergebnisse. IRQ-Klasse, owned-Callbackadmission und Audio-EDF
+nehmen das Flag nicht an. Die kontrollierte Baseline wurde nach diesem
+Kompatibilitaetsentscheid fortgeschrieben.
+
+Jeder Callback gibt vor seiner Rueckkehr alle lokalen Leihen/Locks frei.
+Continue stellt denselben Slot an das normale FIFO-Ende; wait verschiebt
+nur dessen naechste Zulaessigkeit um einen logischen Tick. Der vorhandene
+Worker wartet bei ausschliesslich verschobener Arbeit; kein neuer Thread,
+keine pauschale Timerfreigabe, keine Zwischen-Completion. Urspruengliche
+Einreichungs-/Startzeit und echte Join-/Cancel-/Releasequittungen bleiben
+erhalten. Die konkreten Produzentengrenzen qualifiziert der jeweilige
+Treiber; dies ist keine harte Laufzeitbegrenzung beliebigen nativen Codes.
+
 Voraussetzung ist Zig 0.16.0 oder kompatibel.
 
     zig build
