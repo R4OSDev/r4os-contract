@@ -2761,6 +2761,43 @@ pub const file_name_atomic_backup_short: u32 = 2;
 pub const file_name_atomic_owned_target_short: u32 = 4;
 pub const file_replace_atomic_error_name_not_supported: i32 = -64;
 pub const file_replace_atomic_error_name_too_long: i32 = -65;
+pub const gui_pointer_mode_drag: u32 = 1;
+pub const gui_pointer_mode_relative: u32 = 2;
+pub const gui_pointer_state_none: u32 = 0;
+pub const gui_pointer_state_pending: u32 = 1;
+pub const gui_pointer_state_active: u32 = 2;
+pub const gui_pointer_state_released: u32 = 3;
+pub const gui_pointer_state_cancelled: u32 = 4;
+pub const gui_pointer_reason_none: u32 = 0;
+pub const gui_pointer_reason_explicit: u32 = 1;
+pub const gui_pointer_reason_focus_lost: u32 = 2;
+pub const gui_pointer_reason_window_closed: u32 = 3;
+pub const gui_pointer_reason_minimized: u32 = 4;
+pub const gui_pointer_reason_process_ended: u32 = 5;
+pub const gui_pointer_reason_desktop_changed: u32 = 6;
+pub const gui_pointer_reason_wm_conflict: u32 = 7;
+pub const gui_pointer_reason_source_unsupported: u32 = 8;
+pub const gui_pointer_reason_input_overflow: u32 = 9;
+pub const gui_pointer_capability_drag: u32 = 1;
+pub const gui_pointer_capability_relative_physical: u32 = 2;
+pub const gui_pointer_capability_absolute_remote_drag: u32 = 4;
+pub const gui_pointer_capability_wheel_events: u32 = 8;
+pub const gui_pointer_source_physical_relative: u32 = 1;
+pub const gui_pointer_source_remote_absolute: u32 = 2;
+pub const gui_pointer_host_bind: u32 = 0;
+pub const gui_pointer_host_snapshot: u32 = 1;
+pub const gui_pointer_host_grant: u32 = 2;
+pub const gui_pointer_host_cancel: u32 = 3;
+pub const gui_pointer_host_deliver: u32 = 4;
+pub const gui_pointer_host_unbind: u32 = 5;
+pub const gui_pointer_error_invalid: i32 = -1;
+pub const gui_pointer_error_stale: i32 = -2;
+pub const gui_pointer_error_busy: i32 = -3;
+pub const gui_pointer_error_context: i32 = -4;
+pub const gui_pointer_error_unsupported: i32 = -5;
+pub const gui_pointer_error_queue_full: i32 = -6;
+pub const gui_pointer_error_exhausted: i32 = -7;
+pub const gui_pointer_error_unavailable: i32 = -8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10481,6 +10518,43 @@ pub const FileNameLimits = extern struct {
     atomic_rules: u32 = 0,
 };
 
+pub const GuiPointerWindowIdentity = extern struct {
+    owner: ProgramProcessHandle = .{},
+    epoch: u64 = 0,
+    window_id: i32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const GuiPointerCaptureHandle = extern struct {
+    window: GuiPointerWindowIdentity = .{},
+    id: u64 = 0,
+};
+
+pub const GuiPointerCaptureInfo = extern struct {
+    capture: GuiPointerCaptureHandle = .{},
+    desktop: ProgramProcessHandle = .{},
+    revision: u64 = 0,
+    state: u32 = 0,
+    mode: u32 = 0,
+    reason: u32 = 0,
+    capabilities: u32 = 0,
+    buttons: u32 = 0,
+    motion_x: u32 = 0,
+    motion_y: u32 = 0,
+    reserved: u32 = 0,
+    cursor_x: i32 = 0,
+    cursor_y: i32 = 0,
+};
+
+pub const GuiPointerHostRequest = extern struct {
+    operation: u32 = 0,
+    reason: u32 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+    capture: GuiPointerCaptureHandle = .{},
+    event: GuiEvent = .{},
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10899,12 +10973,16 @@ pub const R4DeskFns = struct {
     pub const console_set_encoding = *const fn (*const ProgramProcessHandle, u32) callconv(.c) i32;
     pub const gui_activity_wait = *const fn (u64, u64, u32, *u64) callconv(.c) i32;
     pub const gui_activity_notify = *const fn (u32) callconv(.c) i32;
+    pub const gui_pointer_capture_info = *const fn (?*const GuiPointerCaptureHandle, *GuiPointerCaptureInfo) callconv(.c) i32;
+    pub const gui_pointer_capture_acquire = *const fn (*const GuiPointerWindowIdentity, u32, *GuiPointerCaptureHandle) callconv(.c) i32;
+    pub const gui_pointer_capture_release = *const fn (*const GuiPointerCaptureHandle) callconv(.c) i32;
+    pub const gui_pointer_capture_host = *const fn (*const GuiPointerHostRequest, *GuiPointerCaptureInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 18,
-    size: u32 = 584,
+    abi_version: u32 = 19,
+    size: u32 = 616,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -10977,6 +11055,10 @@ pub const R4XStartR4Desk = extern struct {
     console_set_encoding: usize = 0,
     gui_activity_wait: usize = 0,
     gui_activity_notify: usize = 0,
+    gui_pointer_capture_info: usize = 0,
+    gui_pointer_capture_acquire: usize = 0,
+    gui_pointer_capture_release: usize = 0,
+    gui_pointer_capture_host: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -11784,6 +11866,10 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 68, .offset = 560, .name = "console_set_encoding", .state = .function, .required = false },
     .{ .number = 69, .offset = 568, .name = "gui_activity_wait", .state = .function, .required = false },
     .{ .number = 70, .offset = 576, .name = "gui_activity_notify", .state = .function, .required = false },
+    .{ .number = 71, .offset = 584, .name = "gui_pointer_capture_info", .state = .function, .required = false },
+    .{ .number = 72, .offset = 592, .name = "gui_pointer_capture_acquire", .state = .function, .required = false },
+    .{ .number = 73, .offset = 600, .name = "gui_pointer_capture_release", .state = .function, .required = false },
+    .{ .number = 74, .offset = 608, .name = "gui_pointer_capture_host", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -18897,6 +18983,39 @@ comptime {
     if (@offsetOf(FileNameLimits, "short_extension_bytes") != 46) @compileError("generated ABI offset drift: FileNameLimits.short_extension_bytes");
     if (@offsetOf(FileNameLimits, "name_rules") != 48) @compileError("generated ABI offset drift: FileNameLimits.name_rules");
     if (@offsetOf(FileNameLimits, "atomic_rules") != 52) @compileError("generated ABI offset drift: FileNameLimits.atomic_rules");
+    if (@sizeOf(GuiPointerWindowIdentity) != 32) @compileError("generated ABI size drift: GuiPointerWindowIdentity");
+    if (@alignOf(GuiPointerWindowIdentity) != 8) @compileError("generated ABI alignment drift: GuiPointerWindowIdentity");
+    if (@offsetOf(GuiPointerWindowIdentity, "owner") != 0) @compileError("generated ABI offset drift: GuiPointerWindowIdentity.owner");
+    if (@offsetOf(GuiPointerWindowIdentity, "epoch") != 16) @compileError("generated ABI offset drift: GuiPointerWindowIdentity.epoch");
+    if (@offsetOf(GuiPointerWindowIdentity, "window_id") != 24) @compileError("generated ABI offset drift: GuiPointerWindowIdentity.window_id");
+    if (@offsetOf(GuiPointerWindowIdentity, "reserved") != 28) @compileError("generated ABI offset drift: GuiPointerWindowIdentity.reserved");
+    if (@sizeOf(GuiPointerCaptureHandle) != 40) @compileError("generated ABI size drift: GuiPointerCaptureHandle");
+    if (@alignOf(GuiPointerCaptureHandle) != 8) @compileError("generated ABI alignment drift: GuiPointerCaptureHandle");
+    if (@offsetOf(GuiPointerCaptureHandle, "window") != 0) @compileError("generated ABI offset drift: GuiPointerCaptureHandle.window");
+    if (@offsetOf(GuiPointerCaptureHandle, "id") != 32) @compileError("generated ABI offset drift: GuiPointerCaptureHandle.id");
+    if (@sizeOf(GuiPointerCaptureInfo) != 104) @compileError("generated ABI size drift: GuiPointerCaptureInfo");
+    if (@alignOf(GuiPointerCaptureInfo) != 8) @compileError("generated ABI alignment drift: GuiPointerCaptureInfo");
+    if (@offsetOf(GuiPointerCaptureInfo, "capture") != 0) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.capture");
+    if (@offsetOf(GuiPointerCaptureInfo, "desktop") != 40) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.desktop");
+    if (@offsetOf(GuiPointerCaptureInfo, "revision") != 56) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.revision");
+    if (@offsetOf(GuiPointerCaptureInfo, "state") != 64) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.state");
+    if (@offsetOf(GuiPointerCaptureInfo, "mode") != 68) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.mode");
+    if (@offsetOf(GuiPointerCaptureInfo, "reason") != 72) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.reason");
+    if (@offsetOf(GuiPointerCaptureInfo, "capabilities") != 76) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.capabilities");
+    if (@offsetOf(GuiPointerCaptureInfo, "buttons") != 80) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.buttons");
+    if (@offsetOf(GuiPointerCaptureInfo, "motion_x") != 84) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.motion_x");
+    if (@offsetOf(GuiPointerCaptureInfo, "motion_y") != 88) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.motion_y");
+    if (@offsetOf(GuiPointerCaptureInfo, "reserved") != 92) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.reserved");
+    if (@offsetOf(GuiPointerCaptureInfo, "cursor_x") != 96) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.cursor_x");
+    if (@offsetOf(GuiPointerCaptureInfo, "cursor_y") != 100) @compileError("generated ABI offset drift: GuiPointerCaptureInfo.cursor_y");
+    if (@sizeOf(GuiPointerHostRequest) != 96) @compileError("generated ABI size drift: GuiPointerHostRequest");
+    if (@alignOf(GuiPointerHostRequest) != 8) @compileError("generated ABI alignment drift: GuiPointerHostRequest");
+    if (@offsetOf(GuiPointerHostRequest, "operation") != 0) @compileError("generated ABI offset drift: GuiPointerHostRequest.operation");
+    if (@offsetOf(GuiPointerHostRequest, "reason") != 4) @compileError("generated ABI offset drift: GuiPointerHostRequest.reason");
+    if (@offsetOf(GuiPointerHostRequest, "flags") != 8) @compileError("generated ABI offset drift: GuiPointerHostRequest.flags");
+    if (@offsetOf(GuiPointerHostRequest, "reserved") != 12) @compileError("generated ABI offset drift: GuiPointerHostRequest.reserved");
+    if (@offsetOf(GuiPointerHostRequest, "capture") != 16) @compileError("generated ABI offset drift: GuiPointerHostRequest.capture");
+    if (@offsetOf(GuiPointerHostRequest, "event") != 56) @compileError("generated ABI offset drift: GuiPointerHostRequest.event");
     if (@sizeOf(R4XStartR4Sys) != 1376) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -19068,7 +19187,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_observation_read") != 1352) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_read");
     if (@offsetOf(R4XStartR4Sys, "program_observation_release") != 1360) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_release");
     if (@offsetOf(R4XStartR4Sys, "file_name_limits") != 1368) @compileError("generated ABI offset drift: R4XStartR4Sys.file_name_limits");
-    if (@sizeOf(R4XStartR4Desk) != 584) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 616) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -19140,6 +19259,10 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "console_set_encoding") != 560) @compileError("generated ABI offset drift: R4XStartR4Desk.console_set_encoding");
     if (@offsetOf(R4XStartR4Desk, "gui_activity_wait") != 568) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_activity_wait");
     if (@offsetOf(R4XStartR4Desk, "gui_activity_notify") != 576) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_activity_notify");
+    if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_info") != 584) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_info");
+    if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_acquire") != 592) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_acquire");
+    if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_release") != 600) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_release");
+    if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_host") != 608) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_host");
     if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");

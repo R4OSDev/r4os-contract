@@ -2765,6 +2765,43 @@ pub const file_name_atomic_backup_short: u32 = 2;
 pub const file_name_atomic_owned_target_short: u32 = 4;
 pub const file_replace_atomic_error_name_not_supported: i32 = -64;
 pub const file_replace_atomic_error_name_too_long: i32 = -65;
+pub const gui_pointer_mode_drag: u32 = 1;
+pub const gui_pointer_mode_relative: u32 = 2;
+pub const gui_pointer_state_none: u32 = 0;
+pub const gui_pointer_state_pending: u32 = 1;
+pub const gui_pointer_state_active: u32 = 2;
+pub const gui_pointer_state_released: u32 = 3;
+pub const gui_pointer_state_cancelled: u32 = 4;
+pub const gui_pointer_reason_none: u32 = 0;
+pub const gui_pointer_reason_explicit: u32 = 1;
+pub const gui_pointer_reason_focus_lost: u32 = 2;
+pub const gui_pointer_reason_window_closed: u32 = 3;
+pub const gui_pointer_reason_minimized: u32 = 4;
+pub const gui_pointer_reason_process_ended: u32 = 5;
+pub const gui_pointer_reason_desktop_changed: u32 = 6;
+pub const gui_pointer_reason_wm_conflict: u32 = 7;
+pub const gui_pointer_reason_source_unsupported: u32 = 8;
+pub const gui_pointer_reason_input_overflow: u32 = 9;
+pub const gui_pointer_capability_drag: u32 = 1;
+pub const gui_pointer_capability_relative_physical: u32 = 2;
+pub const gui_pointer_capability_absolute_remote_drag: u32 = 4;
+pub const gui_pointer_capability_wheel_events: u32 = 8;
+pub const gui_pointer_source_physical_relative: u32 = 1;
+pub const gui_pointer_source_remote_absolute: u32 = 2;
+pub const gui_pointer_host_bind: u32 = 0;
+pub const gui_pointer_host_snapshot: u32 = 1;
+pub const gui_pointer_host_grant: u32 = 2;
+pub const gui_pointer_host_cancel: u32 = 3;
+pub const gui_pointer_host_deliver: u32 = 4;
+pub const gui_pointer_host_unbind: u32 = 5;
+pub const gui_pointer_error_invalid: i32 = -1;
+pub const gui_pointer_error_stale: i32 = -2;
+pub const gui_pointer_error_busy: i32 = -3;
+pub const gui_pointer_error_context: i32 = -4;
+pub const gui_pointer_error_unsupported: i32 = -5;
+pub const gui_pointer_error_queue_full: i32 = -6;
+pub const gui_pointer_error_exhausted: i32 = -7;
+pub const gui_pointer_error_unavailable: i32 = -8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19912,6 +19949,104 @@ impl Default for FileNameLimits {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiPointerWindowIdentity {
+    pub owner: ProgramProcessHandle,
+    pub epoch: u64,
+    pub window_id: i32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiPointerWindowIdentity {
+    fn default() -> Self {
+        Self {
+            owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            epoch: 0,
+            window_id: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiPointerCaptureHandle {
+    pub window: GuiPointerWindowIdentity,
+    pub id: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiPointerCaptureHandle {
+    fn default() -> Self {
+        Self {
+            window: GuiPointerWindowIdentity { owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: 0, window_id: 0, reserved: 0 },
+            id: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiPointerCaptureInfo {
+    pub capture: GuiPointerCaptureHandle,
+    pub desktop: ProgramProcessHandle,
+    pub revision: u64,
+    pub state: u32,
+    pub mode: u32,
+    pub reason: u32,
+    pub capabilities: u32,
+    pub buttons: u32,
+    pub motion_x: u32,
+    pub motion_y: u32,
+    pub reserved: u32,
+    pub cursor_x: i32,
+    pub cursor_y: i32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiPointerCaptureInfo {
+    fn default() -> Self {
+        Self {
+            capture: GuiPointerCaptureHandle { window: GuiPointerWindowIdentity { owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: 0, window_id: 0, reserved: 0 }, id: 0 },
+            desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            revision: 0,
+            state: 0,
+            mode: 0,
+            reason: 0,
+            capabilities: 0,
+            buttons: 0,
+            motion_x: 0,
+            motion_y: 0,
+            reserved: 0,
+            cursor_x: 0,
+            cursor_y: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiPointerHostRequest {
+    pub operation: u32,
+    pub reason: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub capture: GuiPointerCaptureHandle,
+    pub event: GuiEvent,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiPointerHostRequest {
+    fn default() -> Self {
+        Self {
+            operation: 0,
+            reason: 0,
+            flags: 0,
+            reserved: 0,
+            capture: GuiPointerCaptureHandle { window: GuiPointerWindowIdentity { owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: 0, window_id: 0, reserved: 0 }, id: 0 },
+            event: GuiEvent { kind: 0, window_id: -1, x: 0, y: 0, key: 0, buttons: 0, modifiers: 0, tick: 0 },
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20526,6 +20661,10 @@ pub mod R4DeskFns {
     pub type console_set_encoding = unsafe extern "C" fn(*const ProgramProcessHandle, u32) -> i32;
     pub type gui_activity_wait = unsafe extern "C" fn(u64, u64, u32, *mut u64) -> i32;
     pub type gui_activity_notify = unsafe extern "C" fn(u32) -> i32;
+    pub type gui_pointer_capture_info = unsafe extern "C" fn(*const GuiPointerCaptureHandle, *mut GuiPointerCaptureInfo) -> i32;
+    pub type gui_pointer_capture_acquire = unsafe extern "C" fn(*const GuiPointerWindowIdentity, u32, *mut GuiPointerCaptureHandle) -> i32;
+    pub type gui_pointer_capture_release = unsafe extern "C" fn(*const GuiPointerCaptureHandle) -> i32;
+    pub type gui_pointer_capture_host = unsafe extern "C" fn(*const GuiPointerHostRequest, *mut GuiPointerCaptureInfo) -> i32;
 }
 
 #[repr(C)]
@@ -20606,14 +20745,18 @@ pub struct R4XStartR4Desk {
     pub console_set_encoding: usize,
     pub gui_activity_wait: usize,
     pub gui_activity_notify: usize,
+    pub gui_pointer_capture_info: usize,
+    pub gui_pointer_capture_acquire: usize,
+    pub gui_pointer_capture_release: usize,
+    pub gui_pointer_capture_host: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Desk {
     fn default() -> Self {
         Self {
             magic: 826623058,
-            abi_version: 18,
-            size: 584,
+            abi_version: 19,
+            size: 616,
             flags: 0,
             read_key: 0,
             mouse_state: 0,
@@ -20686,6 +20829,10 @@ impl Default for R4XStartR4Desk {
             console_set_encoding: 0,
             gui_activity_wait: 0,
             gui_activity_notify: 0,
+            gui_pointer_capture_info: 0,
+            gui_pointer_capture_acquire: 0,
+            gui_pointer_capture_release: 0,
+            gui_pointer_capture_host: 0,
         }
     }
 }
@@ -21748,6 +21895,9 @@ impl GuiEventKind {
     pub const physical_key_down: Self = Self(10);
     pub const physical_key_up: Self = Self(11);
     pub const physical_key_reset: Self = Self(12);
+    pub const mouse_wheel: Self = Self(13);
+    pub const mouse_relative: Self = Self(14);
+    pub const capture_changed: Self = Self(15);
 }
 
 pub mod GuiWindowFlag {
@@ -32388,6 +32538,39 @@ const _: () = {
     assert!(core::mem::offset_of!(FileNameLimits, atomic_rules) == 52);
     assert!(core::mem::size_of::<FileNameLimits>() == 56);
     assert!(core::mem::align_of::<FileNameLimits>() == 8);
+    assert!(core::mem::offset_of!(GuiPointerWindowIdentity, owner) == 0);
+    assert!(core::mem::offset_of!(GuiPointerWindowIdentity, epoch) == 16);
+    assert!(core::mem::offset_of!(GuiPointerWindowIdentity, window_id) == 24);
+    assert!(core::mem::offset_of!(GuiPointerWindowIdentity, reserved) == 28);
+    assert!(core::mem::size_of::<GuiPointerWindowIdentity>() == 32);
+    assert!(core::mem::align_of::<GuiPointerWindowIdentity>() == 8);
+    assert!(core::mem::offset_of!(GuiPointerCaptureHandle, window) == 0);
+    assert!(core::mem::offset_of!(GuiPointerCaptureHandle, id) == 32);
+    assert!(core::mem::size_of::<GuiPointerCaptureHandle>() == 40);
+    assert!(core::mem::align_of::<GuiPointerCaptureHandle>() == 8);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, capture) == 0);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, desktop) == 40);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, revision) == 56);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, state) == 64);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, mode) == 68);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, reason) == 72);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, capabilities) == 76);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, buttons) == 80);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, motion_x) == 84);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, motion_y) == 88);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, reserved) == 92);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, cursor_x) == 96);
+    assert!(core::mem::offset_of!(GuiPointerCaptureInfo, cursor_y) == 100);
+    assert!(core::mem::size_of::<GuiPointerCaptureInfo>() == 104);
+    assert!(core::mem::align_of::<GuiPointerCaptureInfo>() == 8);
+    assert!(core::mem::offset_of!(GuiPointerHostRequest, operation) == 0);
+    assert!(core::mem::offset_of!(GuiPointerHostRequest, reason) == 4);
+    assert!(core::mem::offset_of!(GuiPointerHostRequest, flags) == 8);
+    assert!(core::mem::offset_of!(GuiPointerHostRequest, reserved) == 12);
+    assert!(core::mem::offset_of!(GuiPointerHostRequest, capture) == 16);
+    assert!(core::mem::offset_of!(GuiPointerHostRequest, event) == 56);
+    assert!(core::mem::size_of::<GuiPointerHostRequest>() == 96);
+    assert!(core::mem::align_of::<GuiPointerHostRequest>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -32641,7 +32824,11 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Desk, console_set_encoding) == 560);
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_activity_wait) == 568);
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_activity_notify) == 576);
-    assert!(core::mem::size_of::<R4XStartR4Desk>() == 584);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_info) == 584);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_acquire) == 592);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_release) == 600);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_host) == 608);
+    assert!(core::mem::size_of::<R4XStartR4Desk>() == 616);
     assert!(core::mem::align_of::<R4XStartR4Desk>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Draw, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Draw, abi_version) == 4);

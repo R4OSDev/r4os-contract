@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 492,
-    "group_slot_count": 492,
+    "function_count": 496,
+    "group_slot_count": 496,
     "sdk_only_count": 0,
-    "public_count": 352,
+    "public_count": 356,
     "advanced_count": 140
   },
   "functions": [
@@ -2853,6 +2853,54 @@
       "slot": 70,
       "exposure": "advanced",
       "description": "Publish a shared GUI change after its authoritative state/revision is committed. A nonzero gui_activity_shared_* mask is required; returns0 on publication,-1 for unknown/zero bits. Only exact live GUI instances subscribed to a matching category receive a sequence/wake; no registry scan, allocation or periodic diagnostic work. This is a hint to re-read original state, not payload delivery, task completion or a revision value. Caller state must be visible before this call. Desktop-owner activity is independently signalled so its existing shared-state observers continue to progress. Ordinary desktop_activity_notify does not broadcast GUI activity.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_pointer_capture_info",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 71,
+      "exposure": "public",
+      "description": "Query an exact own capture, including the last terminal receipt. Null capture queries the current own window identity/capabilities and any current binding; it does not acquire or reserve anything.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_pointer_capture_acquire",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 72,
+      "exposure": "public",
+      "description": "Request capture for the exact supplied current own window incarnation. Zero accepts PENDING only; ACTIVE starts after desktop validation/cursor policy and an explicit grant notice. Foreign/stale identities and contention cannot change another lease. Previous reliable control notices must be consumed before another request.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_pointer_capture_release",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 73,
+      "exposure": "public",
+      "description": "End exactly this own pending/active lease. The last matching terminal receipt releases idempotently; stale or foreign tokens cannot release a newer lease. Desktop restoration is woken and native terminal state/control notice remain observable.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_pointer_capture_host",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 74,
+      "exposure": "public",
+      "description": "Registered desktop-host bind/snapshot/grant/cancel/delivery/unbind. Grant follows focused visible-window and WM-conflict validation and applied cursor policy. Ordinary captured delivery is exact-generation and source bound; control notices remain reliable outside the ordinary queue. Absolute remote input cannot be labelled physical raw motion.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

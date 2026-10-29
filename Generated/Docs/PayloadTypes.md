@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 382 von 382 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 386 von 386 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2760; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2797; Limits: 111
 
 ## App-Profile
 
@@ -403,6 +403,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioServiceStreamTrackedWriteRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `ProgramObservationHandle` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `FileNameLimits` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `GuiPointerWindowIdentity` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `GuiPointerCaptureHandle` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `GuiPointerCaptureInfo` | fixed_layout | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
+| `GuiPointerHostRequest` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 
 ## Typdetails
 
@@ -10254,6 +10258,71 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `name_rules` | 48 | 4 | 4 | `u32` | - |
 | `atomic_rules` | 52 | 4 | 4 | `u32` | - |
 
+### `GuiPointerWindowIdentity`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `owner` | 0 | 16 | 8 | `ProgramProcessHandle` | - |
+| `epoch` | 16 | 8 | 8 | `u64` | - |
+| `window_id` | 24 | 4 | 4 | `i32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+
+### `GuiPointerCaptureHandle`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `window` | 0 | 32 | 8 | `GuiPointerWindowIdentity` | - |
+| `id` | 32 | 8 | 8 | `u64` | - |
+
+### `GuiPointerCaptureInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 104 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `capture` | 0 | 40 | 8 | `GuiPointerCaptureHandle` | - |
+| `desktop` | 40 | 16 | 8 | `ProgramProcessHandle` | - |
+| `revision` | 56 | 8 | 8 | `u64` | - |
+| `state` | 64 | 4 | 4 | `u32` | - |
+| `mode` | 68 | 4 | 4 | `u32` | - |
+| `reason` | 72 | 4 | 4 | `u32` | - |
+| `capabilities` | 76 | 4 | 4 | `u32` | - |
+| `buttons` | 80 | 4 | 4 | `u32` | - |
+| `motion_x` | 84 | 4 | 4 | `u32` | - |
+| `motion_y` | 88 | 4 | 4 | `u32` | - |
+| `reserved` | 92 | 4 | 4 | `u32` | - |
+| `cursor_x` | 96 | 4 | 4 | `i32` | - |
+| `cursor_y` | 100 | 4 | 4 | `i32` | - |
+
+### `GuiPointerHostRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `operation` | 0 | 4 | 4 | `u32` | - |
+| `reason` | 4 | 4 | 4 | `u32` | - |
+| `flags` | 8 | 4 | 4 | `u32` | - |
+| `reserved` | 12 | 4 | 4 | `u32` | - |
+| `capture` | 16 | 40 | 8 | `GuiPointerCaptureHandle` | - |
+| `event` | 56 | 40 | 8 | `GuiEvent` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13779,6 +13848,43 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `file_name_atomic_owned_target_short` | `4` | `u32` | value | number | `file_name_atomic` | fixed_contract |
 | `file_replace_atomic_error_name_not_supported` | `-64` | `i32` | value | number | `file_replace_atomic` | fixed_contract |
 | `file_replace_atomic_error_name_too_long` | `-65` | `i32` | value | number | `file_replace_atomic` | fixed_contract |
+| `gui_pointer_mode_drag` | `1` | `u32` | value | number | `gui_pointer_mode` | fixed_contract |
+| `gui_pointer_mode_relative` | `2` | `u32` | value | number | `gui_pointer_mode` | fixed_contract |
+| `gui_pointer_state_none` | `0` | `u32` | value | number | `gui_pointer_state` | fixed_contract |
+| `gui_pointer_state_pending` | `1` | `u32` | value | number | `gui_pointer_state` | fixed_contract |
+| `gui_pointer_state_active` | `2` | `u32` | value | number | `gui_pointer_state` | fixed_contract |
+| `gui_pointer_state_released` | `3` | `u32` | value | number | `gui_pointer_state` | fixed_contract |
+| `gui_pointer_state_cancelled` | `4` | `u32` | value | number | `gui_pointer_state` | fixed_contract |
+| `gui_pointer_reason_none` | `0` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_explicit` | `1` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_focus_lost` | `2` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_window_closed` | `3` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_minimized` | `4` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_process_ended` | `5` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_desktop_changed` | `6` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_wm_conflict` | `7` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_source_unsupported` | `8` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_reason_input_overflow` | `9` | `u32` | value | number | `gui_pointer_reason` | fixed_contract |
+| `gui_pointer_capability_drag` | `1` | `u32` | value | number | `gui_pointer_capability` | fixed_contract |
+| `gui_pointer_capability_relative_physical` | `2` | `u32` | value | number | `gui_pointer_capability` | fixed_contract |
+| `gui_pointer_capability_absolute_remote_drag` | `4` | `u32` | value | number | `gui_pointer_capability` | fixed_contract |
+| `gui_pointer_capability_wheel_events` | `8` | `u32` | value | number | `gui_pointer_capability` | fixed_contract |
+| `gui_pointer_source_physical_relative` | `1` | `u32` | value | number | `gui_pointer_source` | fixed_contract |
+| `gui_pointer_source_remote_absolute` | `2` | `u32` | value | number | `gui_pointer_source` | fixed_contract |
+| `gui_pointer_host_bind` | `0` | `u32` | value | number | `gui_pointer_host` | fixed_contract |
+| `gui_pointer_host_snapshot` | `1` | `u32` | value | number | `gui_pointer_host` | fixed_contract |
+| `gui_pointer_host_grant` | `2` | `u32` | value | number | `gui_pointer_host` | fixed_contract |
+| `gui_pointer_host_cancel` | `3` | `u32` | value | number | `gui_pointer_host` | fixed_contract |
+| `gui_pointer_host_deliver` | `4` | `u32` | value | number | `gui_pointer_host` | fixed_contract |
+| `gui_pointer_host_unbind` | `5` | `u32` | value | number | `gui_pointer_host` | fixed_contract |
+| `gui_pointer_error_invalid` | `-1` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_error_stale` | `-2` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_error_busy` | `-3` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_error_context` | `-4` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_error_unsupported` | `-5` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_error_queue_full` | `-6` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_error_exhausted` | `-7` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_error_unavailable` | `-8` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
 
 ## Limits
 

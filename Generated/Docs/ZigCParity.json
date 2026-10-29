@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 492,
+    "group_function_signatures": 496,
     "sdk_operation_contracts": 0,
-    "parity_entries": 492,
+    "parity_entries": 496,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2141,6 +2141,42 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DeskFns.gui_activity_notify",
       "c_contract": "R4DeskGuiActivityNotifyFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.gui_pointer_capture_info",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.gui_pointer_capture_info",
+      "c_contract": "R4DeskGuiPointerCaptureInfoFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.gui_pointer_capture_acquire",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.gui_pointer_capture_acquire",
+      "c_contract": "R4DeskGuiPointerCaptureAcquireFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.gui_pointer_capture_release",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.gui_pointer_capture_release",
+      "c_contract": "R4DeskGuiPointerCaptureReleaseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.gui_pointer_capture_host",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.gui_pointer_capture_host",
+      "c_contract": "R4DeskGuiPointerCaptureHostFn",
       "coverage": "generated_signature"
     },
     {

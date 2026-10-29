@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 503; Funktionen: 492; reserviert/Tombstone: 11
-- Sichtbarkeit: public=352, advanced=140, internal=11
+- Physische Gruppenslots: 507; Funktionen: 496; reserviert/Tombstone: 11
+- Sichtbarkeit: public=356, advanced=140, internal=11
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -276,6 +276,10 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4DESK | 68 | `console_set_encoding` | function | advanced | R4DESK | ja | `desktop` | borrowed | call | may_block | owner_thread_only | none | none | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 69 | `gui_activity_wait` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | blocking_wait | owner_thread_only | none | success_only | may_have_occurred | idempotent | fixed_capacity | zig_and_c_required | wait_budget | cooperative_stop | completion_wins | owner_thread_only | none | call | none |
 | R4DESK | 70 | `gui_activity_notify` | function | advanced | R4DESK | ja | `desktop` | none | none | nonblocking | thread_safe | none | none | may_have_occurred | idempotent | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | none | none |
+| R4DESK | 71 | `gui_pointer_capture_info` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
+| R4DESK | 72 | `gui_pointer_capture_acquire` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | atomic_on_success | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
+| R4DESK | 73 | `gui_pointer_capture_release` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | atomic_on_success | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
+| R4DESK | 74 | `gui_pointer_capture_host` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | atomic_on_success | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DRAW | 0 | `screen_width` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DRAW | 1 | `screen_height` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DRAW | 2 | `clear` | function | public | R4DRAW | ja | `draw` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |

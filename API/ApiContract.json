@@ -13541,10 +13541,10 @@
       "fn_namespace": "R4DeskFns",
       "required": false,
       "magic": 826623058,
-      "abi_version": 18,
+      "abi_version": 19,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 584,
+      "size": 616,
       "slots": [
         {
           "number": 0,
@@ -17928,6 +17928,300 @@
             "side_effects": "may_have_occurred",
             "retry": "idempotent",
             "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 71,
+          "offset": 584,
+          "name": "gui_pointer_capture_info",
+          "state": "function",
+          "required": false,
+          "description": "Query an exact own capture, including the last terminal receipt. Null capture queries the current own window identity/capabilities and any current binding; it does not acquire or reserve anything.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "capture",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerCaptureHandle"
+                  },
+                  "direction": "input",
+                  "nullable": true,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_info",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerCaptureInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 72,
+          "offset": 592,
+          "name": "gui_pointer_capture_acquire",
+          "state": "function",
+          "required": false,
+          "description": "Request capture for the exact supplied current own window incarnation. Zero accepts PENDING only; ACTIVE starts after desktop validation/cursor policy and an explicit grant notice. Foreign/stale identities and contention cannot change another lease. Previous reliable control notices must be consumed before another request.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "window",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerWindowIdentity"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "mode",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_capture",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerCaptureHandle"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 73,
+          "offset": 600,
+          "name": "gui_pointer_capture_release",
+          "state": "function",
+          "required": false,
+          "description": "End exactly this own pending/active lease. The last matching terminal receipt releases idempotently; stale or foreign tokens cannot release a newer lease. Desktop restoration is woken and native terminal state/control notice remain observable.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "capture",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerCaptureHandle"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 74,
+          "offset": 608,
+          "name": "gui_pointer_capture_host",
+          "state": "function",
+          "required": false,
+          "description": "Registered desktop-host bind/snapshot/grant/cancel/delivery/unbind. Grant follows focused visible-window and WM-conflict validation and applied cursor policy. Ordinary captured delivery is exact-generation and source bound; control notices remain reliable outside the ordinary queue. Absolute remote input cannot be labelled physical raw motion.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "request",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerHostRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_info",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerCaptureInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -127132,6 +127426,406 @@
       ],
       "values": [],
       "description": "Read-only capability snapshot for the actual resolved path mount, including C:\\BOOT routing. No file must exist and no data/free-space scan is performed. Limits are simultaneous byte and UTF-16-unit bounds; operation restrictions are separate. Caller output is written only on success, not for unsupported or unknown providers."
+    },
+    {
+      "name": "GuiPointerWindowIdentity",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "owner",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact process identity, never an ID-only destination.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "epoch",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonzero boot-unique window incarnation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "window_id",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Desktop slot index for this incarnation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact hosted GUI window incarnation. owner is generation-bound; epoch changes on detach, ID reuse or desktop host-session replacement. No pointer or live resource is retained."
+    },
+    {
+      "name": "GuiPointerCaptureHandle",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "window",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "GuiPointerWindowIdentity"
+          },
+          "description": "Exact intended window incarnation.",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GuiPointerWindowIdentity",
+          "default_kind": "empty"
+        },
+        {
+          "name": "id",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonzero capture serial; never reused within the boot.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One boot-unique native pointer capture request bound to an exact process/window incarnation. Native pending/active/terminal state is queried independently of local widget state."
+    },
+    {
+      "name": "GuiPointerCaptureInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 104,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "capture",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "GuiPointerCaptureHandle"
+          },
+          "description": "Exact binding; with a null info-query handle, id0 carries the current own window identity when no current lease exists.",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GuiPointerCaptureHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "desktop",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact registered desktop host generation.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonzero control-state revision, never a pointer or reservation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "NONE/PENDING/ACTIVE/RELEASED/CANCELLED.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "DRAG or RELATIVE; zero for no binding.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Explicit release/cancellation reason; zero while pending/active.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capabilities",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Current host/source support. Relative physical support never means absolute remote positions supply raw deltas.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "buttons",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Observed supported mouse button mask for transition/cleanup diagnostics.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "motion_x",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wrapping cumulative physical relative X baseline sampled without consuming input at host grant.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "motion_y",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Wrapping cumulative physical relative Y baseline sampled at the same instant.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor_x",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Saved visible desktop cursor position on grant; restore clamped to current output topology.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor_y",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Saved visible desktop cursor position on grant.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Read-only owner or desktop-host capture snapshot. Cursor policy becomes active only after host grant. Explicit native release is immediate; cursor restoration follows the desktop activity wake. Motion baselines are physical preclamp totals, not cursor coordinates."
+    },
+    {
+      "name": "GuiPointerHostRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "operation",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "BIND/SNAPSHOT/GRANT/CANCEL/DELIVER/UNBIND.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Cancellation reason, or DESKTOP_CHANGED for explicit same-process host-session rebind.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Host capability bits for BIND; input source bits for DELIVER.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capture",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "GuiPointerCaptureHandle"
+          },
+          "description": "Exact capture for grant/cancel/delivery; zero for bind/snapshot.",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GuiPointerCaptureHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "event",
+          "offset": 56,
+          "type": {
+            "kind": "named",
+            "name": "GuiEvent"
+          },
+          "description": "Captured pointer event; grant uses x/y as saved desktop cursor and tick as transition time. Other unused fields are zero.",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GuiEvent",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Technical registered desktop-host control/delivery request. Every non-bind operation is bound to the exact registered host. Delivery requires the exact active capture token and cannot target a new process/window generation."
     }
   ],
   "operations": [],
@@ -157271,6 +157965,376 @@
       "scope": "file_replace_atomic",
       "stability": "fixed_contract",
       "description": "Raw/resolved path or component name exceeds a reported bound. Reject before publication and preserve existing files."
+    },
+    {
+      "name": "gui_pointer_mode_drag",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_mode",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture mode drag. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_mode_relative",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_mode",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture mode relative. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_state_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_state",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture state none. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_state_pending",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_state",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture state pending. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_state_active",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_state",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture state active. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_state_released",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_state",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture state released. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_state_cancelled",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_state",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture state cancelled. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason none. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_explicit",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason explicit. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_focus_lost",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason focus_lost. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_window_closed",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason window_closed. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_minimized",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason minimized. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_process_ended",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason process_ended. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_desktop_changed",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason desktop_changed. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_wm_conflict",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason wm_conflict. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_source_unsupported",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason source_unsupported. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_reason_input_overflow",
+      "value": "9",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_reason",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture reason input_overflow. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_capability_drag",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_capability",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture capability drag. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_capability_relative_physical",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_capability",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture capability relative_physical. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_capability_absolute_remote_drag",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_capability",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture capability absolute_remote_drag. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_capability_wheel_events",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_capability",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture capability wheel_events. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_source_physical_relative",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_source",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture source physical_relative. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_source_remote_absolute",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_source",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture source remote_absolute. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_host_bind",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_host",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture host bind. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_host_snapshot",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_host",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture host snapshot. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_host_grant",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_host",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture host grant. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_host_cancel",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_host",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture host cancel. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_host_deliver",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_host",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture host deliver. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_host_unbind",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_host",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture host unbind. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error invalid. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_stale",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error stale. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_busy",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error busy. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_context",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error context. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_unsupported",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error unsupported. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_queue_full",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error queue_full. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_exhausted",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error exhausted. Control notices are generation bound; PENDING does not assert active cursor/input policy."
+    },
+    {
+      "name": "gui_pointer_error_unavailable",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_pointer_error",
+      "stability": "fixed_contract",
+      "description": "Native pointer capture error unavailable. Control notices are generation bound; PENDING does not assert active cursor/input policy."
     }
   ],
   "limits": [
