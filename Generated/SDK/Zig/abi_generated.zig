@@ -2748,6 +2748,19 @@ pub const program_completion_flag_output_available: u32 = 16;
 pub const program_completion_flag_output_truncated: u32 = 32;
 pub const program_completion_flag_output_incomplete: u32 = 64;
 pub const program_observation_flag_portable: u32 = 1;
+pub const file_name_limits_flag_known: u32 = 1;
+pub const file_name_limits_flag_mount_identity: u32 = 2;
+pub const file_name_provider_fat32: u32 = 2;
+pub const file_name_provider_ntfs: u32 = 3;
+pub const file_name_rule_fat_long: u32 = 1;
+pub const file_name_rule_append_create_short: u32 = 2;
+pub const file_name_rule_ascii_casefold: u32 = 4;
+pub const file_name_rule_ntfs_upcase: u32 = 8;
+pub const file_name_atomic_stage_short: u32 = 1;
+pub const file_name_atomic_backup_short: u32 = 2;
+pub const file_name_atomic_owned_target_short: u32 = 4;
+pub const file_replace_atomic_error_name_not_supported: i32 = -64;
+pub const file_replace_atomic_error_name_too_long: i32 = -65;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -2924,6 +2937,8 @@ pub const file_stream_error_size_mismatch: i32 = -7;
 pub const file_stream_error_too_large: i32 = -8;
 pub const file_stream_error_unsupported: i32 = -2;
 pub const file_stream_result_ok: i32 = 0;
+pub const file_stream_error_name_not_supported: i32 = -64;
+pub const file_stream_error_name_too_long: i32 = -65;
 pub const gui_frame_error_buffer_too_small: i32 = -5;
 pub const gui_frame_error_invalid: i32 = -1;
 pub const gui_frame_error_oom: i32 = -6;
@@ -10449,6 +10464,23 @@ pub const ProgramObservationHandle = extern struct {
     id: u64 = 0,
 };
 
+pub const FileNameLimits = extern struct {
+    size: u32 = 0,
+    flags: u32 = 0,
+    provider: u32 = 0,
+    drive_letter: u32 = 0,
+    mount_slot: u32 = 0,
+    reserved: u32 = 0,
+    mount_generation: u64 = 0,
+    max_path_bytes: u32 = 0,
+    max_component_bytes: u32 = 0,
+    max_component_utf16_units: u32 = 0,
+    short_base_bytes: u16 = 0,
+    short_extension_bytes: u16 = 0,
+    name_rules: u32 = 0,
+    atomic_rules: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10616,12 +10648,13 @@ pub const R4SysFns = struct {
     pub const program_observation_wait = *const fn (*const ProgramObservationHandle, u64, *ProgramProcessCompletion) callconv(.c) i32;
     pub const program_observation_read = *const fn (*const ProgramObservationHandle, u32, [*]u8, u32, *u32) callconv(.c) i32;
     pub const program_observation_release = *const fn (*const ProgramObservationHandle) callconv(.c) i32;
+    pub const file_name_limits = *const fn ([*:0]const u8, *FileNameLimits) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 32,
-    size: u32 = 1368,
+    abi_version: u32 = 33,
+    size: u32 = 1376,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -10792,6 +10825,7 @@ pub const R4XStartR4Sys = extern struct {
     program_observation_wait: usize = 0,
     program_observation_read: usize = 0,
     program_observation_release: usize = 0,
+    file_name_limits: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -11675,6 +11709,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 166, .offset = 1344, .name = "program_observation_wait", .state = .function, .required = false },
     .{ .number = 167, .offset = 1352, .name = "program_observation_read", .state = .function, .required = false },
     .{ .number = 168, .offset = 1360, .name = "program_observation_release", .state = .function, .required = false },
+    .{ .number = 169, .offset = 1368, .name = "file_name_limits", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -18846,7 +18881,23 @@ comptime {
     if (@alignOf(ProgramObservationHandle) != 8) @compileError("generated ABI alignment drift: ProgramObservationHandle");
     if (@offsetOf(ProgramObservationHandle, "process") != 0) @compileError("generated ABI offset drift: ProgramObservationHandle.process");
     if (@offsetOf(ProgramObservationHandle, "id") != 16) @compileError("generated ABI offset drift: ProgramObservationHandle.id");
-    if (@sizeOf(R4XStartR4Sys) != 1368) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(FileNameLimits) != 56) @compileError("generated ABI size drift: FileNameLimits");
+    if (@alignOf(FileNameLimits) != 8) @compileError("generated ABI alignment drift: FileNameLimits");
+    if (@offsetOf(FileNameLimits, "size") != 0) @compileError("generated ABI offset drift: FileNameLimits.size");
+    if (@offsetOf(FileNameLimits, "flags") != 4) @compileError("generated ABI offset drift: FileNameLimits.flags");
+    if (@offsetOf(FileNameLimits, "provider") != 8) @compileError("generated ABI offset drift: FileNameLimits.provider");
+    if (@offsetOf(FileNameLimits, "drive_letter") != 12) @compileError("generated ABI offset drift: FileNameLimits.drive_letter");
+    if (@offsetOf(FileNameLimits, "mount_slot") != 16) @compileError("generated ABI offset drift: FileNameLimits.mount_slot");
+    if (@offsetOf(FileNameLimits, "reserved") != 20) @compileError("generated ABI offset drift: FileNameLimits.reserved");
+    if (@offsetOf(FileNameLimits, "mount_generation") != 24) @compileError("generated ABI offset drift: FileNameLimits.mount_generation");
+    if (@offsetOf(FileNameLimits, "max_path_bytes") != 32) @compileError("generated ABI offset drift: FileNameLimits.max_path_bytes");
+    if (@offsetOf(FileNameLimits, "max_component_bytes") != 36) @compileError("generated ABI offset drift: FileNameLimits.max_component_bytes");
+    if (@offsetOf(FileNameLimits, "max_component_utf16_units") != 40) @compileError("generated ABI offset drift: FileNameLimits.max_component_utf16_units");
+    if (@offsetOf(FileNameLimits, "short_base_bytes") != 44) @compileError("generated ABI offset drift: FileNameLimits.short_base_bytes");
+    if (@offsetOf(FileNameLimits, "short_extension_bytes") != 46) @compileError("generated ABI offset drift: FileNameLimits.short_extension_bytes");
+    if (@offsetOf(FileNameLimits, "name_rules") != 48) @compileError("generated ABI offset drift: FileNameLimits.name_rules");
+    if (@offsetOf(FileNameLimits, "atomic_rules") != 52) @compileError("generated ABI offset drift: FileNameLimits.atomic_rules");
+    if (@sizeOf(R4XStartR4Sys) != 1376) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -19016,6 +19067,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_observation_wait") != 1344) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_wait");
     if (@offsetOf(R4XStartR4Sys, "program_observation_read") != 1352) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_read");
     if (@offsetOf(R4XStartR4Sys, "program_observation_release") != 1360) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_release");
+    if (@offsetOf(R4XStartR4Sys, "file_name_limits") != 1368) @compileError("generated ABI offset drift: R4XStartR4Sys.file_name_limits");
     if (@sizeOf(R4XStartR4Desk) != 584) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

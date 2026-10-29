@@ -169,6 +169,7 @@ static R4SysProgramObservationRetainFn r4os_probe_r4sys_program_observation_reta
 static R4SysProgramObservationWaitFn r4os_probe_r4sys_program_observation_wait = (R4SysProgramObservationWaitFn)0;
 static R4SysProgramObservationReadFn r4os_probe_r4sys_program_observation_read = (R4SysProgramObservationReadFn)0;
 static R4SysProgramObservationReleaseFn r4os_probe_r4sys_program_observation_release = (R4SysProgramObservationReleaseFn)0;
+static R4SysFileNameLimitsFn r4os_probe_r4sys_file_name_limits = (R4SysFileNameLimitsFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;

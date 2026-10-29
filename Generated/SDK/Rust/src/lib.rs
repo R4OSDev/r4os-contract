@@ -2752,6 +2752,19 @@ pub const program_completion_flag_output_available: u32 = 16;
 pub const program_completion_flag_output_truncated: u32 = 32;
 pub const program_completion_flag_output_incomplete: u32 = 64;
 pub const program_observation_flag_portable: u32 = 1;
+pub const file_name_limits_flag_known: u32 = 1;
+pub const file_name_limits_flag_mount_identity: u32 = 2;
+pub const file_name_provider_fat32: u32 = 2;
+pub const file_name_provider_ntfs: u32 = 3;
+pub const file_name_rule_fat_long: u32 = 1;
+pub const file_name_rule_append_create_short: u32 = 2;
+pub const file_name_rule_ascii_casefold: u32 = 4;
+pub const file_name_rule_ntfs_upcase: u32 = 8;
+pub const file_name_atomic_stage_short: u32 = 1;
+pub const file_name_atomic_backup_short: u32 = 2;
+pub const file_name_atomic_owned_target_short: u32 = 4;
+pub const file_replace_atomic_error_name_not_supported: i32 = -64;
+pub const file_replace_atomic_error_name_too_long: i32 = -65;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -2928,6 +2941,8 @@ pub const file_stream_error_size_mismatch: i32 = -7;
 pub const file_stream_error_too_large: i32 = -8;
 pub const file_stream_error_unsupported: i32 = -2;
 pub const file_stream_result_ok: i32 = 0;
+pub const file_stream_error_name_not_supported: i32 = -64;
+pub const file_stream_error_name_too_long: i32 = -65;
 pub const gui_frame_error_buffer_too_small: i32 = -5;
 pub const gui_frame_error_invalid: i32 = -1;
 pub const gui_frame_error_oom: i32 = -6;
@@ -19857,6 +19872,46 @@ impl Default for ProgramObservationHandle {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FileNameLimits {
+    pub size: u32,
+    pub flags: u32,
+    pub provider: u32,
+    pub drive_letter: u32,
+    pub mount_slot: u32,
+    pub reserved: u32,
+    pub mount_generation: u64,
+    pub max_path_bytes: u32,
+    pub max_component_bytes: u32,
+    pub max_component_utf16_units: u32,
+    pub short_base_bytes: u16,
+    pub short_extension_bytes: u16,
+    pub name_rules: u32,
+    pub atomic_rules: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FileNameLimits {
+    fn default() -> Self {
+        Self {
+            size: 0,
+            flags: 0,
+            provider: 0,
+            drive_letter: 0,
+            mount_slot: 0,
+            reserved: 0,
+            mount_generation: 0,
+            max_path_bytes: 0,
+            max_component_bytes: 0,
+            max_component_utf16_units: 0,
+            short_base_bytes: 0,
+            short_extension_bytes: 0,
+            name_rules: 0,
+            atomic_rules: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20035,6 +20090,7 @@ pub mod R4SysFns {
     pub type program_observation_wait = unsafe extern "C" fn(*const ProgramObservationHandle, u64, *mut ProgramProcessCompletion) -> i32;
     pub type program_observation_read = unsafe extern "C" fn(*const ProgramObservationHandle, u32, *mut u8, u32, *mut u32) -> i32;
     pub type program_observation_release = unsafe extern "C" fn(*const ProgramObservationHandle) -> i32;
+    pub type file_name_limits = unsafe extern "C" fn(*const u8, *mut FileNameLimits) -> i32;
 }
 
 #[repr(C)]
@@ -20213,14 +20269,15 @@ pub struct R4XStartR4Sys {
     pub program_observation_wait: usize,
     pub program_observation_read: usize,
     pub program_observation_release: usize,
+    pub file_name_limits: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 32,
-            size: 1368,
+            abi_version: 33,
+            size: 1376,
             flags: 0,
             write: 0,
             putc: 0,
@@ -20391,6 +20448,7 @@ impl Default for R4XStartR4Sys {
             program_observation_wait: 0,
             program_observation_read: 0,
             program_observation_release: 0,
+            file_name_limits: 0,
         }
     }
 }
@@ -32314,6 +32372,22 @@ const _: () = {
     assert!(core::mem::offset_of!(ProgramObservationHandle, id) == 16);
     assert!(core::mem::size_of::<ProgramObservationHandle>() == 24);
     assert!(core::mem::align_of::<ProgramObservationHandle>() == 8);
+    assert!(core::mem::offset_of!(FileNameLimits, size) == 0);
+    assert!(core::mem::offset_of!(FileNameLimits, flags) == 4);
+    assert!(core::mem::offset_of!(FileNameLimits, provider) == 8);
+    assert!(core::mem::offset_of!(FileNameLimits, drive_letter) == 12);
+    assert!(core::mem::offset_of!(FileNameLimits, mount_slot) == 16);
+    assert!(core::mem::offset_of!(FileNameLimits, reserved) == 20);
+    assert!(core::mem::offset_of!(FileNameLimits, mount_generation) == 24);
+    assert!(core::mem::offset_of!(FileNameLimits, max_path_bytes) == 32);
+    assert!(core::mem::offset_of!(FileNameLimits, max_component_bytes) == 36);
+    assert!(core::mem::offset_of!(FileNameLimits, max_component_utf16_units) == 40);
+    assert!(core::mem::offset_of!(FileNameLimits, short_base_bytes) == 44);
+    assert!(core::mem::offset_of!(FileNameLimits, short_extension_bytes) == 46);
+    assert!(core::mem::offset_of!(FileNameLimits, name_rules) == 48);
+    assert!(core::mem::offset_of!(FileNameLimits, atomic_rules) == 52);
+    assert!(core::mem::size_of::<FileNameLimits>() == 56);
+    assert!(core::mem::align_of::<FileNameLimits>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -32489,7 +32563,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_wait) == 1344);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_read) == 1352);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_release) == 1360);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1368);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, file_name_limits) == 1368);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1376);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

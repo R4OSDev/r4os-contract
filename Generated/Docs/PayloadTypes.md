@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 381 von 381 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 382 von 382 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2747; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2760; Limits: 111
 
 ## App-Profile
 
@@ -402,6 +402,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioServiceStreamFlowRequest` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `AudioServiceStreamTrackedWriteRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `ProgramObservationHandle` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `FileNameLimits` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 
 ## Typdetails
 
@@ -10229,6 +10230,30 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `process` | 0 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
 | `id` | 16 | 8 | 8 | `u64` | - |
 
+### `FileNameLimits`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `size` | 0 | 4 | 4 | `u32` | - |
+| `flags` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 4 | 4 | `u32` | - |
+| `drive_letter` | 12 | 4 | 4 | `u32` | - |
+| `mount_slot` | 16 | 4 | 4 | `u32` | - |
+| `reserved` | 20 | 4 | 4 | `u32` | - |
+| `mount_generation` | 24 | 8 | 8 | `u64` | - |
+| `max_path_bytes` | 32 | 4 | 4 | `u32` | - |
+| `max_component_bytes` | 36 | 4 | 4 | `u32` | - |
+| `max_component_utf16_units` | 40 | 4 | 4 | `u32` | - |
+| `short_base_bytes` | 44 | 2 | 2 | `u16` | - |
+| `short_extension_bytes` | 46 | 2 | 2 | `u16` | - |
+| `name_rules` | 48 | 4 | 4 | `u32` | - |
+| `atomic_rules` | 52 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -10379,6 +10404,8 @@ Geltung: `file_stream`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `file_stream_error_too_large` | -8 | `i32` |
 | `file_stream_error_unsupported` | -2 | `i32` |
 | `file_stream_result_ok` | 0 | `i32` |
+| `file_stream_error_name_not_supported` | -64 | `i32` |
+| `file_stream_error_name_too_long` | -65 | `i32` |
 
 ### `gui_frame`
 
@@ -13739,6 +13766,19 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `program_completion_flag_output_truncated` | `32` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_completion_flag_output_incomplete` | `64` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
 | `program_observation_flag_portable` | `1` | `u32` | flag | bitmask | `program_observation` | fixed_contract |
+| `file_name_limits_flag_known` | `1` | `u32` | value | number | `file_name_limits` | fixed_contract |
+| `file_name_limits_flag_mount_identity` | `2` | `u32` | value | number | `file_name_limits` | fixed_contract |
+| `file_name_provider_fat32` | `2` | `u32` | value | number | `file_name_provider` | fixed_contract |
+| `file_name_provider_ntfs` | `3` | `u32` | value | number | `file_name_provider` | fixed_contract |
+| `file_name_rule_fat_long` | `1` | `u32` | value | number | `file_name_rules` | fixed_contract |
+| `file_name_rule_append_create_short` | `2` | `u32` | value | number | `file_name_rules` | fixed_contract |
+| `file_name_rule_ascii_casefold` | `4` | `u32` | value | number | `file_name_rules` | fixed_contract |
+| `file_name_rule_ntfs_upcase` | `8` | `u32` | value | number | `file_name_rules` | fixed_contract |
+| `file_name_atomic_stage_short` | `1` | `u32` | value | number | `file_name_atomic` | fixed_contract |
+| `file_name_atomic_backup_short` | `2` | `u32` | value | number | `file_name_atomic` | fixed_contract |
+| `file_name_atomic_owned_target_short` | `4` | `u32` | value | number | `file_name_atomic` | fixed_contract |
+| `file_replace_atomic_error_name_not_supported` | `-64` | `i32` | value | number | `file_replace_atomic` | fixed_contract |
+| `file_replace_atomic_error_name_too_long` | `-65` | `i32` | value | number | `file_replace_atomic` | fixed_contract |
 
 ## Limits
 

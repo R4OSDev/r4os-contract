@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 491,
-    "group_slot_count": 491,
+    "function_count": 492,
+    "group_slot_count": 492,
     "sdk_only_count": 0,
-    "public_count": 351,
+    "public_count": 352,
     "advanced_count": 140
   },
   "functions": [
@@ -2001,6 +2001,18 @@
       "slot": 168,
       "exposure": "public",
       "description": "Release exactly one independent retention binding. Last release after owner consumption frees only retained completion/output storage. Normal bound observations also close when their creator ends; portable observations require explicit release. Stale/wrong-generation handles cannot close another binding.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.file_name_limits",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 169,
+      "exposure": "public",
+      "description": "Resolve the actual target mount (the final file need not exist) and return its name/operation limits without mutation or free-space scanning. C:\\BOOT may differ from its visible drive provider. Return FileStream errors, including NAME_TOO_LONG; unsupported providers leave output untouched. The exact mount identity is a snapshot, not a reservation; file operations revalidate normally.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

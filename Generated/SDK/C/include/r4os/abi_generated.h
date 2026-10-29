@@ -2760,6 +2760,19 @@ extern "C" {
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT_TRUNCATED 32u
 #define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT_INCOMPLETE 64u
 #define R4OS_PROGRAM_OBSERVATION_FLAG_PORTABLE 1u
+#define R4OS_FILE_NAME_LIMITS_FLAG_KNOWN 1u
+#define R4OS_FILE_NAME_LIMITS_FLAG_MOUNT_IDENTITY 2u
+#define R4OS_FILE_NAME_PROVIDER_FAT32 2u
+#define R4OS_FILE_NAME_PROVIDER_NTFS 3u
+#define R4OS_FILE_NAME_RULE_FAT_LONG 1u
+#define R4OS_FILE_NAME_RULE_APPEND_CREATE_SHORT 2u
+#define R4OS_FILE_NAME_RULE_ASCII_CASEFOLD 4u
+#define R4OS_FILE_NAME_RULE_NTFS_UPCASE 8u
+#define R4OS_FILE_NAME_ATOMIC_STAGE_SHORT 1u
+#define R4OS_FILE_NAME_ATOMIC_BACKUP_SHORT 2u
+#define R4OS_FILE_NAME_ATOMIC_OWNED_TARGET_SHORT 4u
+#define R4OS_FILE_REPLACE_ATOMIC_ERROR_NAME_NOT_SUPPORTED ((int32_t)-64)
+#define R4OS_FILE_REPLACE_ATOMIC_ERROR_NAME_TOO_LONG ((int32_t)-65)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -2936,6 +2949,8 @@ extern "C" {
 #define R4OS_FILE_STREAM_ERROR_TOO_LARGE ((int32_t)-8)
 #define R4OS_FILE_STREAM_ERROR_UNSUPPORTED ((int32_t)-2)
 #define R4OS_FILE_STREAM_RESULT_OK ((int32_t)0)
+#define R4OS_FILE_STREAM_ERROR_NAME_NOT_SUPPORTED ((int32_t)-64)
+#define R4OS_FILE_STREAM_ERROR_NAME_TOO_LONG ((int32_t)-65)
 #define R4OS_GUI_FRAME_ERROR_BUFFER_TOO_SMALL ((int32_t)-5)
 #define R4OS_GUI_FRAME_ERROR_INVALID ((int32_t)-1)
 #define R4OS_GUI_FRAME_ERROR_OOM ((int32_t)-6)
@@ -3600,6 +3615,7 @@ typedef struct R4AudioServiceStreamProgressState R4AudioServiceStreamProgressSta
 typedef struct R4AudioServiceStreamFlowRequest R4AudioServiceStreamFlowRequest;
 typedef struct R4AudioServiceStreamTrackedWriteRequest R4AudioServiceStreamTrackedWriteRequest;
 typedef struct R4ProgramObservationHandle R4ProgramObservationHandle;
+typedef struct R4FileNameLimits R4FileNameLimits;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10772,6 +10788,23 @@ typedef struct R4ProgramObservationHandle {
     uint64_t id;
 } R4ProgramObservationHandle;
 
+typedef struct R4FileNameLimits {
+    uint32_t size;
+    uint32_t flags;
+    uint32_t provider;
+    uint32_t drive_letter;
+    uint32_t mount_slot;
+    uint32_t reserved;
+    uint64_t mount_generation;
+    uint32_t max_path_bytes;
+    uint32_t max_component_bytes;
+    uint32_t max_component_utf16_units;
+    uint16_t short_base_bytes;
+    uint16_t short_extension_bytes;
+    uint32_t name_rules;
+    uint32_t atomic_rules;
+} R4FileNameLimits;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10984,6 +11017,7 @@ typedef int32_t (*R4SysProgramObservationRetainFn)(const R4ProgramProcessHandle 
 typedef int32_t (*R4SysProgramObservationWaitFn)(const R4ProgramObservationHandle * observation, uint64_t timeout_ticks, R4ProgramProcessCompletion * out_completion);
 typedef int32_t (*R4SysProgramObservationReadFn)(const R4ProgramObservationHandle * observation, uint32_t offset, uint8_t * out, uint32_t capacity, uint32_t * out_read);
 typedef int32_t (*R4SysProgramObservationReleaseFn)(const R4ProgramObservationHandle * observation);
+typedef int32_t (*R4SysFileNameLimitsFn)(const uint8_t * path, R4FileNameLimits * out_limits);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11159,6 +11193,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_observation_wait;
     uintptr_t program_observation_read;
     uintptr_t program_observation_release;
+    uintptr_t file_name_limits;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -18307,7 +18342,22 @@ _Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, reserved) == 44
 _Static_assert(sizeof(R4ProgramObservationHandle) == 24u, "ProgramObservationHandle size mismatch");
 _Static_assert(offsetof(R4ProgramObservationHandle, process) == 0u, "ProgramObservationHandle.process offset mismatch");
 _Static_assert(offsetof(R4ProgramObservationHandle, id) == 16u, "ProgramObservationHandle.id offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1368u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4FileNameLimits) == 56u, "FileNameLimits size mismatch");
+_Static_assert(offsetof(R4FileNameLimits, size) == 0u, "FileNameLimits.size offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, flags) == 4u, "FileNameLimits.flags offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, provider) == 8u, "FileNameLimits.provider offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, drive_letter) == 12u, "FileNameLimits.drive_letter offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, mount_slot) == 16u, "FileNameLimits.mount_slot offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, reserved) == 20u, "FileNameLimits.reserved offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, mount_generation) == 24u, "FileNameLimits.mount_generation offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, max_path_bytes) == 32u, "FileNameLimits.max_path_bytes offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, max_component_bytes) == 36u, "FileNameLimits.max_component_bytes offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, max_component_utf16_units) == 40u, "FileNameLimits.max_component_utf16_units offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, short_base_bytes) == 44u, "FileNameLimits.short_base_bytes offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, short_extension_bytes) == 46u, "FileNameLimits.short_extension_bytes offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, name_rules) == 48u, "FileNameLimits.name_rules offset mismatch");
+_Static_assert(offsetof(R4FileNameLimits, atomic_rules) == 52u, "FileNameLimits.atomic_rules offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1376u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -18643,6 +18693,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_observation_read) == 1352u, "R4XS
 _Static_assert(sizeof(R4SysProgramObservationReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_observation_release) == 1360u, "R4XStartR4Sys.program_observation_release offset mismatch");
 _Static_assert(sizeof(R4SysProgramObservationReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, file_name_limits) == 1368u, "R4XStartR4Sys.file_name_limits offset mismatch");
+_Static_assert(sizeof(R4SysFileNameLimitsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 584u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 32,
+      "abi_version": 33,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1368,
+      "size": 1376,
       "slots": [
         {
           "number": 0,
@@ -13450,6 +13450,83 @@
             "side_effects": "atomic_on_success",
             "retry": "never_automatic",
             "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 169,
+          "offset": 1368,
+          "name": "file_name_limits",
+          "state": "function",
+          "required": false,
+          "description": "Resolve the actual target mount (the final file need not exist) and return its name/operation limits without mutation or free-space scanning. C:\\BOOT may differ from its visible drive provider. Return FileStream errors, including NAME_TOO_LONG; unsupported providers leave output untouched. The exact mount identity is a snapshot, not a reservation; file operations revalidate normally.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_limits",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "FileNameLimits"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "filesystem",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "path_based_no_handle",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -126845,6 +126922,216 @@
       ],
       "values": [],
       "description": "One independent completion/output retention binding. Default ownership ends with its creator process; explicitly portable bindings require release. This handle retains no live process, Task, VM, image or GUI resources."
+    },
+    {
+      "name": "FileNameLimits",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "size",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Size of this fixed-layout snapshot, 56 bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Known limits and exact mount identity flags. Absent flags mean unknown, never zero-length support.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual path provider: 2 FAT32, 3 NTFS; not inferred from its visible drive alone.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "drive_letter",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Uppercase visible ASCII drive letter of the resolved path.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mount_slot",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact live mount slot when MOUNT_IDENTITY is set; slot zero is valid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mount_generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact mount generation when MOUNT_IDENTITY is set. A snapshot is not a reservation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_path_bytes",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum raw UTF-8 path bytes excluding NUL, 1023; relative paths must also fit after CWD resolution. This is not the SDK syntax character budget.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_component_bytes",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum UTF-8 bytes in a component, excluding NUL, additionally constrained by UTF-16 units.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_component_utf16_units",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum UTF-16 code units per component, 255; supplementary scalars consume two units.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "short_base_bytes",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Short staging base length 1..8 ASCII bytes; allowed letters, digits, underscore, hyphen, dollar and tilde, case insensitive.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "short_extension_bytes",
+          "offset": 46,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Short staging extension length 0..3 ASCII bytes with the same repertoire; one optional dot.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "name_rules",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Provider naming/collation and operation-specific APPEND-new-file rules. FAT_LONG applies only to names not already accepted by its short-name predicate.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "atomic_rules",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Independent atomic-operation restrictions: short stage/backup on both current providers, short owned-create target on FAT32. Ordinary CREATE is not generally 8.3-only.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Read-only capability snapshot for the actual resolved path mount, including C:\\BOOT routing. No file must exist and no data/free-space scan is performed. Limits are simultaneous byte and UTF-16-unit bounds; operation restrictions are separate. Caller output is written only on success, not for unsupported or unknown providers."
     }
   ],
   "operations": [],
@@ -127435,6 +127722,18 @@
           "value": 0,
           "value_type": "i32",
           "description": "Public result or error value."
+        },
+        {
+          "name": "file_stream_error_name_not_supported",
+          "value": -64,
+          "value_type": "i32",
+          "description": "A well-formed name is rejected by the actual provider naming rules. No file mutation or new stream occurs."
+        },
+        {
+          "name": "file_stream_error_name_too_long",
+          "value": -65,
+          "value_type": "i32",
+          "description": "A raw/resolved path byte or component UTF-16-unit bound was exceeded. No file mutation or new stream occurs."
         }
       ],
       "description": "Public result and error domain."
@@ -156842,6 +157141,136 @@
       "scope": "program_observation",
       "stability": "fixed_contract",
       "description": "Explicit portable retention survives creator process exit until observation_release or end of the current boot. Default flags0 automatically close with the exact creator process generation."
+    },
+    {
+      "name": "file_name_limits_flag_known",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_limits",
+      "stability": "fixed_contract",
+      "description": "Name/operation limits are known for this snapshot. Unsupported providers return UNSUPPORTED instead of fabricated zero limits."
+    },
+    {
+      "name": "file_name_limits_flag_mount_identity",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_limits",
+      "stability": "fixed_contract",
+      "description": "mount_slot and mount_generation identify the exact live mount for this snapshot, including hidden boot routing; no reservation is retained."
+    },
+    {
+      "name": "file_name_provider_fat32",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_provider",
+      "stability": "fixed_contract",
+      "description": "Actual FAT32 path provider."
+    },
+    {
+      "name": "file_name_provider_ntfs",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_provider",
+      "stability": "fixed_contract",
+      "description": "Actual NTFS path provider."
+    },
+    {
+      "name": "file_name_rule_fat_long",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_rules",
+      "stability": "fixed_contract",
+      "description": "For FAT names not accepted as short: no leading/trailing dot, no all-space name, no controls below U+0020, U+007F, U+FFFF, or slash/backslash/colon/star/question/quote/angle brackets/vertical bar. UTF-8 must encode at most 255 UTF-16 units."
+    },
+    {
+      "name": "file_name_rule_append_create_short",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_rules",
+      "stability": "fixed_contract",
+      "description": "The current FAT APPEND-new-file path needs a short name. This does not restrict ordinary write or stream CREATE, which support valid long names."
+    },
+    {
+      "name": "file_name_rule_ascii_casefold",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_rules",
+      "stability": "fixed_contract",
+      "description": "Existing FAT ASCII case-insensitive collation; no Unicode normalization promise."
+    },
+    {
+      "name": "file_name_rule_ntfs_upcase",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_rules",
+      "stability": "fixed_contract",
+      "description": "Existing NTFS volume UpCase collation; no Unicode normalization promise."
+    },
+    {
+      "name": "file_name_atomic_stage_short",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_atomic",
+      "stability": "fixed_contract",
+      "description": "Atomic stage basename must satisfy the reported short-name syntax, independently of ordinary CREATE support."
+    },
+    {
+      "name": "file_name_atomic_backup_short",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_atomic",
+      "stability": "fixed_contract",
+      "description": "Atomic backup basename must satisfy the reported short-name syntax; same-directory/same-volume and alias checks remain separate."
+    },
+    {
+      "name": "file_name_atomic_owned_target_short",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_name_atomic",
+      "stability": "fixed_contract",
+      "description": "Owned create-only atomic publication additionally requires a short target name; ordinary replacement may target a supported long name."
+    },
+    {
+      "name": "file_replace_atomic_error_name_not_supported",
+      "value": "-64",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_replace_atomic",
+      "stability": "fixed_contract",
+      "description": "Actual provider rejects a name or an atomic stage/backup/owned-create target violates the reported short-name rule. Reject before publication and preserve existing files."
+    },
+    {
+      "name": "file_replace_atomic_error_name_too_long",
+      "value": "-65",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "file_replace_atomic",
+      "stability": "fixed_contract",
+      "description": "Raw/resolved path or component name exceeds a reported bound. Reject before publication and preserve existing files."
     }
   ],
   "limits": [
