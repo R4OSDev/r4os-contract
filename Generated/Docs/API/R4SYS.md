@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4SYS (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4SYS (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Sys` v31, 1336 Bytes, 162 Funktionsfelder und 165 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Sys` v32, 1368 Bytes, 166 Funktionsfelder und 169 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4SysFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -174,4 +174,8 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 162 | 1312 | function | `program_lifecycle_programs` | `*const fn (*ProgramInventoryCursor, [*]ProgramLifecycleSnapshot, u32, *ProgramInventoryPageInfo) callconv(.c) i32` |
 | 163 | 1320 | function | `drive_info_geometry` | `*const fn (u32, *DriveInfo) callconv(.c) i32` |
 | 164 | 1328 | function | `directory_batch` | `*const fn (?[*:0]const u8, *DirectoryBatchCursor, ?[*]DirectoryBatchEntry, u32) callconv(.c) i32` |
+| 165 | 1336 | function | `program_observation_retain` | `*const fn (*const ProgramProcessHandle, u32, *ProgramObservationHandle) callconv(.c) i32` |
+| 166 | 1344 | function | `program_observation_wait` | `*const fn (*const ProgramObservationHandle, u64, *ProgramProcessCompletion) callconv(.c) i32` |
+| 167 | 1352 | function | `program_observation_read` | `*const fn (*const ProgramObservationHandle, u32, [*]u8, u32, *u32) callconv(.c) i32` |
+| 168 | 1360 | function | `program_observation_release` | `*const fn (*const ProgramObservationHandle) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4SYS -->

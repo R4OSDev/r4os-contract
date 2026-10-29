@@ -6445,7 +6445,10 @@ comptime {
     if (@offsetOf(abi.AudioServiceStreamTrackedWriteRequest, "source_due_ns") != 32) @compileError("AudioServiceStreamTrackedWriteRequest.source_due_ns offset");
     if (@offsetOf(abi.AudioServiceStreamTrackedWriteRequest, "flags") != 40) @compileError("AudioServiceStreamTrackedWriteRequest.flags offset");
     if (@offsetOf(abi.AudioServiceStreamTrackedWriteRequest, "reserved") != 44) @compileError("AudioServiceStreamTrackedWriteRequest.reserved offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1336) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.ProgramObservationHandle) != 24) @compileError("ProgramObservationHandle size");
+    if (@offsetOf(abi.ProgramObservationHandle, "process") != 0) @compileError("ProgramObservationHandle.process offset");
+    if (@offsetOf(abi.ProgramObservationHandle, "id") != 16) @compileError("ProgramObservationHandle.id offset");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1368) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -6773,6 +6776,14 @@ comptime {
     if (@sizeOf(abi.R4SysFns.drive_info_geometry) != 8) @compileError("R4SysFns.drive_info_geometry signature");
     if (@offsetOf(abi.R4XStartR4Sys, "directory_batch") != 1328) @compileError("R4XStartR4Sys.directory_batch offset");
     if (@sizeOf(abi.R4SysFns.directory_batch) != 8) @compileError("R4SysFns.directory_batch signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "program_observation_retain") != 1336) @compileError("R4XStartR4Sys.program_observation_retain offset");
+    if (@sizeOf(abi.R4SysFns.program_observation_retain) != 8) @compileError("R4SysFns.program_observation_retain signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "program_observation_wait") != 1344) @compileError("R4XStartR4Sys.program_observation_wait offset");
+    if (@sizeOf(abi.R4SysFns.program_observation_wait) != 8) @compileError("R4SysFns.program_observation_wait signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "program_observation_read") != 1352) @compileError("R4XStartR4Sys.program_observation_read offset");
+    if (@sizeOf(abi.R4SysFns.program_observation_read) != 8) @compileError("R4SysFns.program_observation_read signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "program_observation_release") != 1360) @compileError("R4XStartR4Sys.program_observation_release offset");
+    if (@sizeOf(abi.R4SysFns.program_observation_release) != 8) @compileError("R4SysFns.program_observation_release signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 584) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

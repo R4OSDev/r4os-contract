@@ -2756,6 +2756,10 @@ extern "C" {
 #define R4OS_AUDIO_SERVICE_OP_STREAM_EXPECTATION 12u
 #define R4OS_AUDIO_SERVICE_OP_WRITE_STREAM_TRACKED 13u
 #define R4OS_AUDIO_SERVICE_OP_CLOSE_STREAM_PROGRESS 14u
+#define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT_AVAILABLE 16u
+#define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT_TRUNCATED 32u
+#define R4OS_PROGRAM_COMPLETION_FLAG_OUTPUT_INCOMPLETE 64u
+#define R4OS_PROGRAM_OBSERVATION_FLAG_PORTABLE 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3595,6 +3599,7 @@ typedef struct R4AudioServiceStreamProgressRequest R4AudioServiceStreamProgressR
 typedef struct R4AudioServiceStreamProgressState R4AudioServiceStreamProgressState;
 typedef struct R4AudioServiceStreamFlowRequest R4AudioServiceStreamFlowRequest;
 typedef struct R4AudioServiceStreamTrackedWriteRequest R4AudioServiceStreamTrackedWriteRequest;
+typedef struct R4ProgramObservationHandle R4ProgramObservationHandle;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10762,6 +10767,11 @@ typedef struct R4AudioServiceStreamTrackedWriteRequest {
     uint32_t reserved;
 } R4AudioServiceStreamTrackedWriteRequest;
 
+typedef struct R4ProgramObservationHandle {
+    R4ProgramProcessHandle process;
+    uint64_t id;
+} R4ProgramObservationHandle;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -10970,6 +10980,10 @@ typedef int32_t (*R4SysProgramLifecycleBeginFn)(R4ProgramInventoryCursor * curso
 typedef int32_t (*R4SysProgramLifecycleProgramsFn)(R4ProgramInventoryCursor * cursor, R4ProgramLifecycleSnapshot * out, uint32_t capacity, R4ProgramInventoryPageInfo * out_page);
 typedef int32_t (*R4SysDriveInfoGeometryFn)(uint32_t arg0, R4DriveInfo * arg1);
 typedef int32_t (*R4SysDirectoryBatchFn)(const uint8_t * path, R4DirectoryBatchCursor * cursor, R4DirectoryBatchEntry * out, uint32_t capacity);
+typedef int32_t (*R4SysProgramObservationRetainFn)(const R4ProgramProcessHandle * process, uint32_t flags, R4ProgramObservationHandle * out_observation);
+typedef int32_t (*R4SysProgramObservationWaitFn)(const R4ProgramObservationHandle * observation, uint64_t timeout_ticks, R4ProgramProcessCompletion * out_completion);
+typedef int32_t (*R4SysProgramObservationReadFn)(const R4ProgramObservationHandle * observation, uint32_t offset, uint8_t * out, uint32_t capacity, uint32_t * out_read);
+typedef int32_t (*R4SysProgramObservationReleaseFn)(const R4ProgramObservationHandle * observation);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11141,6 +11155,10 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_lifecycle_programs;
     uintptr_t drive_info_geometry;
     uintptr_t directory_batch;
+    uintptr_t program_observation_retain;
+    uintptr_t program_observation_wait;
+    uintptr_t program_observation_read;
+    uintptr_t program_observation_release;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -18286,7 +18304,10 @@ _Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, stream_generati
 _Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, source_due_ns) == 32u, "AudioServiceStreamTrackedWriteRequest.source_due_ns offset mismatch");
 _Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, flags) == 40u, "AudioServiceStreamTrackedWriteRequest.flags offset mismatch");
 _Static_assert(offsetof(R4AudioServiceStreamTrackedWriteRequest, reserved) == 44u, "AudioServiceStreamTrackedWriteRequest.reserved offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1336u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4ProgramObservationHandle) == 24u, "ProgramObservationHandle size mismatch");
+_Static_assert(offsetof(R4ProgramObservationHandle, process) == 0u, "ProgramObservationHandle.process offset mismatch");
+_Static_assert(offsetof(R4ProgramObservationHandle, id) == 16u, "ProgramObservationHandle.id offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1368u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -18614,6 +18635,14 @@ _Static_assert(offsetof(R4XStartR4Sys, drive_info_geometry) == 1320u, "R4XStartR
 _Static_assert(sizeof(R4SysDriveInfoGeometryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, directory_batch) == 1328u, "R4XStartR4Sys.directory_batch offset mismatch");
 _Static_assert(sizeof(R4SysDirectoryBatchFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_observation_retain) == 1336u, "R4XStartR4Sys.program_observation_retain offset mismatch");
+_Static_assert(sizeof(R4SysProgramObservationRetainFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_observation_wait) == 1344u, "R4XStartR4Sys.program_observation_wait offset mismatch");
+_Static_assert(sizeof(R4SysProgramObservationWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_observation_read) == 1352u, "R4XStartR4Sys.program_observation_read offset mismatch");
+_Static_assert(sizeof(R4SysProgramObservationReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_observation_release) == 1360u, "R4XStartR4Sys.program_observation_release offset mismatch");
+_Static_assert(sizeof(R4SysProgramObservationReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 584u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

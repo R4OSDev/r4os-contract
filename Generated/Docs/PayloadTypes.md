@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 380 von 380 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 381 von 381 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2743; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2747; Limits: 111
 
 ## App-Profile
 
@@ -401,6 +401,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioServiceStreamProgressState` | fixed_layout | extern_struct | 200/8 | 200/8 | 200/8 | 200/8 |
 | `AudioServiceStreamFlowRequest` | fixed_layout | extern_struct | 72/8 | 72/8 | 72/8 | 72/8 |
 | `AudioServiceStreamTrackedWriteRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `ProgramObservationHandle` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 
 ## Typdetails
 
@@ -10216,6 +10217,18 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `flags` | 40 | 4 | 4 | `u32` | - |
 | `reserved` | 44 | 4 | 4 | `u32` | - |
 
+### `ProgramObservationHandle`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `process` | 0 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `id` | 16 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13722,6 +13735,10 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `audio_service_op_stream_expectation` | `12` | `u16` | value | number | `audio_service` | fixed_contract |
 | `audio_service_op_write_stream_tracked` | `13` | `u16` | value | number | `audio_service` | fixed_contract |
 | `audio_service_op_close_stream_progress` | `14` | `u16` | value | number | `audio_service` | fixed_contract |
+| `program_completion_flag_output_available` | `16` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
+| `program_completion_flag_output_truncated` | `32` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
+| `program_completion_flag_output_incomplete` | `64` | `u32` | flag | bitmask | `program_completion` | fixed_contract |
+| `program_observation_flag_portable` | `1` | `u32` | flag | bitmask | `program_observation` | fixed_contract |
 
 ## Limits
 

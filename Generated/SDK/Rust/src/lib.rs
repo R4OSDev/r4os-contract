@@ -2748,6 +2748,10 @@ pub const audio_service_op_stream_progress: u16 = 11;
 pub const audio_service_op_stream_expectation: u16 = 12;
 pub const audio_service_op_write_stream_tracked: u16 = 13;
 pub const audio_service_op_close_stream_progress: u16 = 14;
+pub const program_completion_flag_output_available: u32 = 16;
+pub const program_completion_flag_output_truncated: u32 = 32;
+pub const program_completion_flag_output_incomplete: u32 = 64;
+pub const program_observation_flag_portable: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -19837,6 +19841,22 @@ impl Default for AudioServiceStreamTrackedWriteRequest {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProgramObservationHandle {
+    pub process: ProgramProcessHandle,
+    pub id: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ProgramObservationHandle {
+    fn default() -> Self {
+        Self {
+            process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            id: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20011,6 +20031,10 @@ pub mod R4SysFns {
     pub type program_lifecycle_programs = unsafe extern "C" fn(*mut ProgramInventoryCursor, *mut ProgramLifecycleSnapshot, u32, *mut ProgramInventoryPageInfo) -> i32;
     pub type drive_info_geometry = unsafe extern "C" fn(u32, *mut DriveInfo) -> i32;
     pub type directory_batch = unsafe extern "C" fn(*const u8, *mut DirectoryBatchCursor, *mut DirectoryBatchEntry, u32) -> i32;
+    pub type program_observation_retain = unsafe extern "C" fn(*const ProgramProcessHandle, u32, *mut ProgramObservationHandle) -> i32;
+    pub type program_observation_wait = unsafe extern "C" fn(*const ProgramObservationHandle, u64, *mut ProgramProcessCompletion) -> i32;
+    pub type program_observation_read = unsafe extern "C" fn(*const ProgramObservationHandle, u32, *mut u8, u32, *mut u32) -> i32;
+    pub type program_observation_release = unsafe extern "C" fn(*const ProgramObservationHandle) -> i32;
 }
 
 #[repr(C)]
@@ -20185,14 +20209,18 @@ pub struct R4XStartR4Sys {
     pub program_lifecycle_programs: usize,
     pub drive_info_geometry: usize,
     pub directory_batch: usize,
+    pub program_observation_retain: usize,
+    pub program_observation_wait: usize,
+    pub program_observation_read: usize,
+    pub program_observation_release: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 31,
-            size: 1336,
+            abi_version: 32,
+            size: 1368,
             flags: 0,
             write: 0,
             putc: 0,
@@ -20359,6 +20387,10 @@ impl Default for R4XStartR4Sys {
             program_lifecycle_programs: 0,
             drive_info_geometry: 0,
             directory_batch: 0,
+            program_observation_retain: 0,
+            program_observation_wait: 0,
+            program_observation_read: 0,
+            program_observation_release: 0,
         }
     }
 }
@@ -32278,6 +32310,10 @@ const _: () = {
     assert!(core::mem::offset_of!(AudioServiceStreamTrackedWriteRequest, reserved) == 44);
     assert!(core::mem::size_of::<AudioServiceStreamTrackedWriteRequest>() == 48);
     assert!(core::mem::align_of::<AudioServiceStreamTrackedWriteRequest>() == 8);
+    assert!(core::mem::offset_of!(ProgramObservationHandle, process) == 0);
+    assert!(core::mem::offset_of!(ProgramObservationHandle, id) == 16);
+    assert!(core::mem::size_of::<ProgramObservationHandle>() == 24);
+    assert!(core::mem::align_of::<ProgramObservationHandle>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -32449,7 +32485,11 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_lifecycle_programs) == 1312);
     assert!(core::mem::offset_of!(R4XStartR4Sys, drive_info_geometry) == 1320);
     assert!(core::mem::offset_of!(R4XStartR4Sys, directory_batch) == 1328);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1336);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_retain) == 1336);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_wait) == 1344);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_read) == 1352);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_release) == 1360);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1368);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

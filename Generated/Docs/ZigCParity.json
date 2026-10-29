@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 487,
+    "group_function_signatures": 491,
     "sdk_operation_contracts": 0,
-    "parity_entries": 487,
+    "parity_entries": 491,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1466,6 +1466,42 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.directory_batch",
       "c_contract": "R4SysDirectoryBatchFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_observation_retain",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_observation_retain",
+      "c_contract": "R4SysProgramObservationRetainFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_observation_wait",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_observation_wait",
+      "c_contract": "R4SysProgramObservationWaitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_observation_read",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_observation_read",
+      "c_contract": "R4SysProgramObservationReadFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.program_observation_release",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.program_observation_release",
+      "c_contract": "R4SysProgramObservationReleaseFn",
       "coverage": "generated_signature"
     },
     {

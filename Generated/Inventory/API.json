@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 487,
-    "group_slot_count": 487,
+    "function_count": 491,
+    "group_slot_count": 491,
     "sdk_only_count": 0,
-    "public_count": 347,
+    "public_count": 351,
     "advanced_count": 140
   },
   "functions": [
@@ -1953,6 +1953,54 @@
       "slot": 164,
       "exposure": "public",
       "description": "Initialize with path and default2160-byte cursor; continuation uses its captured node/path with exact logical-owner, mount and mutation validation. Return1..capacity complete1120-byte records,0 bounded progress,-5 EOF; -1 invalid,-3 absent/not-directory initially,-7 full-path bounds,-9 I/O/admission,-10 stale/foreign/cancel. Capacity1..8; one shared256-step backend budget and prepared metadata per visit. Initialized capacity0/out=NULL validates without advancing (RAM-only while namespace unchanged); input path is ignored on continuation. No persistent kernel allocation/scan lease; call guards always release, including caller unwind. Outputs/cursor have no authority on error. A caller must not modify or concurrently reuse a cursor.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_observation_retain",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 165,
+      "exposure": "public",
+      "description": "Retain one exact process completion and captured output across owner reap. flags0 binds cleanup to the calling process; PORTABLE explicitly survives creator exit until release. Admission before owner consumption is required; failure never invents evidence. Independent bindings may observe the same process.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_observation_wait",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 166,
+      "exposure": "public",
+      "description": "Nonconsuming observation of the exact retained terminal record, including after owner reap. Zero polls and FOREVER waits; completion wins at timeout. Release/creator cleanup invalidates only this binding and wakes a blocked observer.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_observation_read",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 167,
+      "exposure": "public",
+      "description": "Read the immutable retained normalized UTF-8 console transcript, merging stdout/stderr in accepted order. OUTPUT_AVAILABLE distinguishes captured empty output from unavailable evidence; OUTPUT_TRUNCATED/OUTPUT_INCOMPLETE forbid a full-output claim. Offset refers to retained bytes, not discarded prefixes.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_observation_release",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 168,
+      "exposure": "public",
+      "description": "Release exactly one independent retention binding. Last release after owner consumption frees only retained completion/output storage. Normal bound observations also close when their creator ends; portable observations require explicit release. Stale/wrong-generation handles cannot close another binding.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

@@ -238,3 +238,14 @@ full call retains the existing FREE backend/cache and marks only valid FREE
 results. The old full-call nonblocking annotation is corrected to may_block.
 Source/layout prefix proof and generated Zig/C/Rust conformance pass; no new
 physical timing, cache invalidation, mount lifecycle or hardware claim.
+
+0.64.56 appends R4SYS32 observation retain/wait/read/release at1336..1360
+(table1368), preserving the old165 slots and1336-byte prefix. A24-byte
+ProgramObservationHandle binds a separate reference to one exact process
+generation. Bind while its completion still exists; an existing binding
+survives the consuming owner's reap. Default bindings end with their
+creator generation; explicit portable bindings require release or boot end.
+Only terminal metadata and an inactive bounded transcript survive: no task,
+VM, module, live console or GUI resource. OutputAvailable includes captured
+empty output; OutputTruncated/OutputIncomplete distinguish missing bytes.
+The previous process wait/reap contract remains consuming and unchanged.

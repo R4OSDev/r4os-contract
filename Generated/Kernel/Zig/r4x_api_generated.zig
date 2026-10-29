@@ -2744,6 +2744,10 @@ pub const audio_service_op_stream_progress: u16 = 11;
 pub const audio_service_op_stream_expectation: u16 = 12;
 pub const audio_service_op_write_stream_tracked: u16 = 13;
 pub const audio_service_op_close_stream_progress: u16 = 14;
+pub const program_completion_flag_output_available: u32 = 16;
+pub const program_completion_flag_output_truncated: u32 = 32;
+pub const program_completion_flag_output_incomplete: u32 = 64;
+pub const program_observation_flag_portable: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10440,6 +10444,11 @@ pub const AudioServiceStreamTrackedWriteRequest = extern struct {
     reserved: u32 = 0,
 };
 
+pub const ProgramObservationHandle = extern struct {
+    process: ProgramProcessHandle = .{},
+    id: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10603,12 +10612,16 @@ pub const R4SysFns = struct {
     pub const program_lifecycle_programs = *const fn (*ProgramInventoryCursor, [*]ProgramLifecycleSnapshot, u32, *ProgramInventoryPageInfo) callconv(.c) i32;
     pub const drive_info_geometry = *const fn (u32, *DriveInfo) callconv(.c) i32;
     pub const directory_batch = *const fn (?[*:0]const u8, *DirectoryBatchCursor, ?[*]DirectoryBatchEntry, u32) callconv(.c) i32;
+    pub const program_observation_retain = *const fn (*const ProgramProcessHandle, u32, *ProgramObservationHandle) callconv(.c) i32;
+    pub const program_observation_wait = *const fn (*const ProgramObservationHandle, u64, *ProgramProcessCompletion) callconv(.c) i32;
+    pub const program_observation_read = *const fn (*const ProgramObservationHandle, u32, [*]u8, u32, *u32) callconv(.c) i32;
+    pub const program_observation_release = *const fn (*const ProgramObservationHandle) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 31,
-    size: u32 = 1336,
+    abi_version: u32 = 32,
+    size: u32 = 1368,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -10775,6 +10788,10 @@ pub const R4XStartR4Sys = extern struct {
     program_lifecycle_programs: usize = 0,
     drive_info_geometry: usize = 0,
     directory_batch: usize = 0,
+    program_observation_retain: usize = 0,
+    program_observation_wait: usize = 0,
+    program_observation_read: usize = 0,
+    program_observation_release: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -11654,6 +11671,10 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 162, .offset = 1312, .name = "program_lifecycle_programs", .state = .function, .required = false },
     .{ .number = 163, .offset = 1320, .name = "drive_info_geometry", .state = .function, .required = false },
     .{ .number = 164, .offset = 1328, .name = "directory_batch", .state = .function, .required = false },
+    .{ .number = 165, .offset = 1336, .name = "program_observation_retain", .state = .function, .required = false },
+    .{ .number = 166, .offset = 1344, .name = "program_observation_wait", .state = .function, .required = false },
+    .{ .number = 167, .offset = 1352, .name = "program_observation_read", .state = .function, .required = false },
+    .{ .number = 168, .offset = 1360, .name = "program_observation_release", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -18821,7 +18842,11 @@ comptime {
     if (@offsetOf(AudioServiceStreamTrackedWriteRequest, "source_due_ns") != 32) @compileError("generated ABI offset drift: AudioServiceStreamTrackedWriteRequest.source_due_ns");
     if (@offsetOf(AudioServiceStreamTrackedWriteRequest, "flags") != 40) @compileError("generated ABI offset drift: AudioServiceStreamTrackedWriteRequest.flags");
     if (@offsetOf(AudioServiceStreamTrackedWriteRequest, "reserved") != 44) @compileError("generated ABI offset drift: AudioServiceStreamTrackedWriteRequest.reserved");
-    if (@sizeOf(R4XStartR4Sys) != 1336) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(ProgramObservationHandle) != 24) @compileError("generated ABI size drift: ProgramObservationHandle");
+    if (@alignOf(ProgramObservationHandle) != 8) @compileError("generated ABI alignment drift: ProgramObservationHandle");
+    if (@offsetOf(ProgramObservationHandle, "process") != 0) @compileError("generated ABI offset drift: ProgramObservationHandle.process");
+    if (@offsetOf(ProgramObservationHandle, "id") != 16) @compileError("generated ABI offset drift: ProgramObservationHandle.id");
+    if (@sizeOf(R4XStartR4Sys) != 1368) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -18987,6 +19012,10 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_lifecycle_programs") != 1312) @compileError("generated ABI offset drift: R4XStartR4Sys.program_lifecycle_programs");
     if (@offsetOf(R4XStartR4Sys, "drive_info_geometry") != 1320) @compileError("generated ABI offset drift: R4XStartR4Sys.drive_info_geometry");
     if (@offsetOf(R4XStartR4Sys, "directory_batch") != 1328) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_batch");
+    if (@offsetOf(R4XStartR4Sys, "program_observation_retain") != 1336) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_retain");
+    if (@offsetOf(R4XStartR4Sys, "program_observation_wait") != 1344) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_wait");
+    if (@offsetOf(R4XStartR4Sys, "program_observation_read") != 1352) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_read");
+    if (@offsetOf(R4XStartR4Sys, "program_observation_release") != 1360) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_release");
     if (@sizeOf(R4XStartR4Desk) != 584) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -19491,13 +19520,17 @@ pub const R4SysProvider = struct {
     program_lifecycle_programs: ?R4SysFns.program_lifecycle_programs = null,
     drive_info_geometry: ?R4SysFns.drive_info_geometry = null,
     directory_batch: ?R4SysFns.directory_batch = null,
+    program_observation_retain: ?R4SysFns.program_observation_retain = null,
+    program_observation_wait: ?R4SysFns.program_observation_wait = null,
+    program_observation_read: ?R4SysFns.program_observation_read = null,
+    program_observation_release: ?R4SysFns.program_observation_release = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 31,
-        .size = 1336,
+        .abi_version = 32,
+        .size = 1368,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -19664,6 +19697,10 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .program_lifecycle_programs = if (provider.program_lifecycle_programs) |callback| @intFromPtr(callback) else 0,
         .drive_info_geometry = if (provider.drive_info_geometry) |callback| @intFromPtr(callback) else 0,
         .directory_batch = if (provider.directory_batch) |callback| @intFromPtr(callback) else 0,
+        .program_observation_retain = if (provider.program_observation_retain) |callback| @intFromPtr(callback) else 0,
+        .program_observation_wait = if (provider.program_observation_wait) |callback| @intFromPtr(callback) else 0,
+        .program_observation_read = if (provider.program_observation_read) |callback| @intFromPtr(callback) else 0,
+        .program_observation_release = if (provider.program_observation_release) |callback| @intFromPtr(callback) else 0,
     };
 }
 
