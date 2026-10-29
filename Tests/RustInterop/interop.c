@@ -4,6 +4,12 @@
 /* Two independent projections of the existing borrowed callback-slot ABI. */
 _Static_assert(__builtin_types_compatible_p(__typeof__(((R4ProtocolApi *)0)->cpu_acceleration_work), R4DevCpuAccelerationWorkFn), "protocol callback pointer/const levels");
 
+uint32_t r4os_c_gui_window_flag(uint32_t index) {
+    const uint32_t flags[] = {R4ABI_GUI_WINDOW_FLAG_VISIBLE, R4ABI_GUI_WINDOW_FLAG_MINIMIZED,
+        R4ABI_GUI_WINDOW_FLAG_MAXIMIZED, R4ABI_GUI_WINDOW_FLAG_CLOSE_REQUESTED};
+    return index < sizeof(flags) / sizeof(flags[0]) ? flags[index] : 0;
+}
+
 /* Pure table/callback transport, not a driver/protocol lifecycle or allocator. */
 static uint8_t protocol_marker;
 static void technical_log(const uint8_t *text) { (void)text; }

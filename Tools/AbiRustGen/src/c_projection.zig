@@ -262,6 +262,12 @@ pub fn generate(allocator: std.mem.Allocator) !Result {
         try constant(&out, d.name, value);
         counts.constants += 1;
     }
+    // This canonical flag namespace has no fields or C struct layout. Reflect
+    // its declarations, just as Rust does, rather than duplicating bit values.
+    inline for (comptime std.meta.declarations(abi.GuiWindowFlag)) |d| {
+        try constant(&out, "R4ABI_GUI_WINDOW_FLAG_" ++ d.name, @field(abi.GuiWindowFlag, d.name));
+        counts.constants += 1;
+    }
     try out.text("\n#endif\n");
     counts.bytes = try out.bytes.toOwnedSlice(allocator);
     return counts;

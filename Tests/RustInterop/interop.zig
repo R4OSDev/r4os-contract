@@ -44,9 +44,13 @@ test "all canonical C and Rust-projected structures retain every field layout" {
 extern fn r4os_rust_protocol_alloc(*const abi.ProtocolApi, u32, u32) callconv(.c) ?*anyopaque;
 extern fn r4os_rust_model_name() callconv(.c) [*:0]const u8;
 extern fn r4os_c_technical_callbacks(*const fn (*const abi.ProtocolApi, u32, u32) callconv(.c) ?*anyopaque, abi.R4AudioFns.sid_model_name) callconv(.c) i32;
+extern fn r4os_c_gui_window_flag(u32) callconv(.c) u32;
 
 test "technical C table roundtrip preserves nullable and sentinel pointer returns" {
     try std.testing.expectEqual(@as(i32, 0), r4os_c_technical_callbacks(r4os_rust_protocol_alloc, r4os_rust_model_name));
+    const flags = [_]u32{ abi.GuiWindowFlag.visible, abi.GuiWindowFlag.minimized, abi.GuiWindowFlag.maximized, abi.GuiWindowFlag.close_requested };
+    for (flags, 0..) |flag, index| try std.testing.expectEqual(flag, r4os_c_gui_window_flag(@intCast(index)));
+    try std.testing.expectEqual(@as(u32, 0), r4os_c_gui_window_flag(flags.len));
 }
 
 extern fn r4os_c_console_events(*const abi.ProgramProcessHandle, [*]const abi.ConsoleInputEvent, u32) callconv(.c) i32;

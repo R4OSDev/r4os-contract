@@ -76,6 +76,13 @@ not C enum tags. Existing enumerator names/values remain available; additional
 typed technical enum constants use `R4ABI_`. C keyword fields have a trailing
 underscore (`register_`). Normal `write`/`check` covers this header as well.
 
+Contract0.64.55 also reflects the existing `GuiWindowFlag` namespace as
+`R4ABI_GUI_WINDOW_FLAG_VISIBLE`, `...MINIMIZED`, `...MAXIMIZED` and
+`...CLOSE_REQUESTED`. The generator reads the canonical declarations; no wire
+value, payload layout or provider slot changes. Raw focus and font event kinds
+already exist as `R4ABI_GUI_EVENT_KIND_FOCUS_GAINED`, `...FOCUS_LOST` and
+`...FONT_CHANGED`.
+
 The technical `DriverApi` facade lives outside the marked generated exports
 block in `Generated/SDK/Zig/abi.zig`; the generator preserves that area.
 DriverApi34 appends two optional DMA range-sync callbacks after the unchanged
