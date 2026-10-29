@@ -6492,6 +6492,11 @@ comptime {
     if (@offsetOf(abi.GuiPointerHostRequest, "reserved") != 12) @compileError("GuiPointerHostRequest.reserved offset");
     if (@offsetOf(abi.GuiPointerHostRequest, "capture") != 16) @compileError("GuiPointerHostRequest.capture offset");
     if (@offsetOf(abi.GuiPointerHostRequest, "event") != 56) @compileError("GuiPointerHostRequest.event offset");
+    if (@sizeOf(abi.GuiHostInputRequest) != 80) @compileError("GuiHostInputRequest size");
+    if (@offsetOf(abi.GuiHostInputRequest, "window") != 0) @compileError("GuiHostInputRequest.window offset");
+    if (@offsetOf(abi.GuiHostInputRequest, "event") != 32) @compileError("GuiHostInputRequest.event offset");
+    if (@offsetOf(abi.GuiHostInputRequest, "operation") != 72) @compileError("GuiHostInputRequest.operation offset");
+    if (@offsetOf(abi.GuiHostInputRequest, "reason") != 76) @compileError("GuiHostInputRequest.reason offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1376) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -6830,7 +6835,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_observation_release) != 8) @compileError("R4SysFns.program_observation_release signature");
     if (@offsetOf(abi.R4XStartR4Sys, "file_name_limits") != 1368) @compileError("R4XStartR4Sys.file_name_limits offset");
     if (@sizeOf(abi.R4SysFns.file_name_limits) != 8) @compileError("R4SysFns.file_name_limits signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 616) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 624) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -6980,6 +6985,8 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.gui_pointer_capture_release) != 8) @compileError("R4DeskFns.gui_pointer_capture_release signature");
     if (@offsetOf(abi.R4XStartR4Desk, "gui_pointer_capture_host") != 608) @compileError("R4XStartR4Desk.gui_pointer_capture_host offset");
     if (@sizeOf(abi.R4DeskFns.gui_pointer_capture_host) != 8) @compileError("R4DeskFns.gui_pointer_capture_host signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "gui_host_input") != 616) @compileError("R4XStartR4Desk.gui_host_input offset");
+    if (@sizeOf(abi.R4DeskFns.gui_host_input) != 8) @compileError("R4DeskFns.gui_host_input signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 912) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");

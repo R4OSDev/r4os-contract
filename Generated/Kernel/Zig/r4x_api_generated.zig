@@ -2799,6 +2799,18 @@ pub const gui_pointer_error_queue_full: i32 = -6;
 pub const gui_pointer_error_exhausted: i32 = -7;
 pub const gui_pointer_error_unavailable: i32 = -8;
 pub const gui_pointer_host_flag_motion_snapshot: u32 = 1;
+pub const gui_host_input_operation_query: u32 = 0;
+pub const gui_host_input_operation_post: u32 = 1;
+pub const gui_host_input_operation_reset: u32 = 2;
+pub const gui_input_reset_reason_overflow: u32 = 1;
+pub const gui_input_reset_reason_focus_lost: u32 = 2;
+pub const gui_input_reset_reason_window_closed: u32 = 3;
+pub const gui_input_reset_reason_desktop_changed: u32 = 4;
+pub const gui_input_reset_reason_process_ended: u32 = 5;
+pub const gui_host_input_error_invalid: i32 = -1;
+pub const gui_host_input_error_stale: i32 = -2;
+pub const gui_host_input_error_busy: i32 = -3;
+pub const gui_host_input_error_context: i32 = -4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10556,6 +10568,13 @@ pub const GuiPointerHostRequest = extern struct {
     event: GuiEvent = .{},
 };
 
+pub const GuiHostInputRequest = extern struct {
+    window: GuiPointerWindowIdentity = .{},
+    event: GuiEvent = .{},
+    operation: u32 = 0,
+    reason: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -10978,12 +10997,13 @@ pub const R4DeskFns = struct {
     pub const gui_pointer_capture_acquire = *const fn (*const GuiPointerWindowIdentity, u32, *GuiPointerCaptureHandle) callconv(.c) i32;
     pub const gui_pointer_capture_release = *const fn (*const GuiPointerCaptureHandle) callconv(.c) i32;
     pub const gui_pointer_capture_host = *const fn (*const GuiPointerHostRequest, *GuiPointerCaptureInfo) callconv(.c) i32;
+    pub const gui_host_input = *const fn (*const GuiHostInputRequest, *GuiPointerWindowIdentity) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 19,
-    size: u32 = 616,
+    abi_version: u32 = 20,
+    size: u32 = 624,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -11060,6 +11080,7 @@ pub const R4XStartR4Desk = extern struct {
     gui_pointer_capture_acquire: usize = 0,
     gui_pointer_capture_release: usize = 0,
     gui_pointer_capture_host: usize = 0,
+    gui_host_input: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -11871,6 +11892,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 72, .offset = 592, .name = "gui_pointer_capture_acquire", .state = .function, .required = false },
     .{ .number = 73, .offset = 600, .name = "gui_pointer_capture_release", .state = .function, .required = false },
     .{ .number = 74, .offset = 608, .name = "gui_pointer_capture_host", .state = .function, .required = false },
+    .{ .number = 75, .offset = 616, .name = "gui_host_input", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -19017,6 +19039,12 @@ comptime {
     if (@offsetOf(GuiPointerHostRequest, "reserved") != 12) @compileError("generated ABI offset drift: GuiPointerHostRequest.reserved");
     if (@offsetOf(GuiPointerHostRequest, "capture") != 16) @compileError("generated ABI offset drift: GuiPointerHostRequest.capture");
     if (@offsetOf(GuiPointerHostRequest, "event") != 56) @compileError("generated ABI offset drift: GuiPointerHostRequest.event");
+    if (@sizeOf(GuiHostInputRequest) != 80) @compileError("generated ABI size drift: GuiHostInputRequest");
+    if (@alignOf(GuiHostInputRequest) != 8) @compileError("generated ABI alignment drift: GuiHostInputRequest");
+    if (@offsetOf(GuiHostInputRequest, "window") != 0) @compileError("generated ABI offset drift: GuiHostInputRequest.window");
+    if (@offsetOf(GuiHostInputRequest, "event") != 32) @compileError("generated ABI offset drift: GuiHostInputRequest.event");
+    if (@offsetOf(GuiHostInputRequest, "operation") != 72) @compileError("generated ABI offset drift: GuiHostInputRequest.operation");
+    if (@offsetOf(GuiHostInputRequest, "reason") != 76) @compileError("generated ABI offset drift: GuiHostInputRequest.reason");
     if (@sizeOf(R4XStartR4Sys) != 1376) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -19188,7 +19216,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_observation_read") != 1352) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_read");
     if (@offsetOf(R4XStartR4Sys, "program_observation_release") != 1360) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_release");
     if (@offsetOf(R4XStartR4Sys, "file_name_limits") != 1368) @compileError("generated ABI offset drift: R4XStartR4Sys.file_name_limits");
-    if (@sizeOf(R4XStartR4Desk) != 616) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 624) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -19264,6 +19292,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_acquire") != 592) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_acquire");
     if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_release") != 600) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_release");
     if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_host") != 608) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_host");
+    if (@offsetOf(R4XStartR4Desk, "gui_host_input") != 616) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_host_input");
     if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
@@ -19957,13 +19986,14 @@ pub const R4DeskProvider = struct {
     gui_pointer_capture_acquire: ?R4DeskFns.gui_pointer_capture_acquire = null,
     gui_pointer_capture_release: ?R4DeskFns.gui_pointer_capture_release = null,
     gui_pointer_capture_host: ?R4DeskFns.gui_pointer_capture_host = null,
+    gui_host_input: ?R4DeskFns.gui_host_input = null,
 };
 
 pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
     return .{
         .magic = 826623058,
-        .abi_version = 19,
-        .size = 616,
+        .abi_version = 20,
+        .size = 624,
         .flags = 0,
         .read_key = if (provider.read_key) |callback| @intFromPtr(callback) else 0,
         .mouse_state = if (provider.mouse_state) |callback| @intFromPtr(callback) else 0,
@@ -20040,6 +20070,7 @@ pub fn buildR4DeskTable(provider: R4DeskProvider) R4XStartR4Desk {
         .gui_pointer_capture_acquire = if (provider.gui_pointer_capture_acquire) |callback| @intFromPtr(callback) else 0,
         .gui_pointer_capture_release = if (provider.gui_pointer_capture_release) |callback| @intFromPtr(callback) else 0,
         .gui_pointer_capture_host = if (provider.gui_pointer_capture_host) |callback| @intFromPtr(callback) else 0,
+        .gui_host_input = if (provider.gui_host_input) |callback| @intFromPtr(callback) else 0,
     };
 }
 

@@ -2803,6 +2803,18 @@ pub const gui_pointer_error_queue_full: i32 = -6;
 pub const gui_pointer_error_exhausted: i32 = -7;
 pub const gui_pointer_error_unavailable: i32 = -8;
 pub const gui_pointer_host_flag_motion_snapshot: u32 = 1;
+pub const gui_host_input_operation_query: u32 = 0;
+pub const gui_host_input_operation_post: u32 = 1;
+pub const gui_host_input_operation_reset: u32 = 2;
+pub const gui_input_reset_reason_overflow: u32 = 1;
+pub const gui_input_reset_reason_focus_lost: u32 = 2;
+pub const gui_input_reset_reason_window_closed: u32 = 3;
+pub const gui_input_reset_reason_desktop_changed: u32 = 4;
+pub const gui_input_reset_reason_process_ended: u32 = 5;
+pub const gui_host_input_error_invalid: i32 = -1;
+pub const gui_host_input_error_stale: i32 = -2;
+pub const gui_host_input_error_busy: i32 = -3;
+pub const gui_host_input_error_context: i32 = -4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -20048,6 +20060,26 @@ impl Default for GuiPointerHostRequest {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiHostInputRequest {
+    pub window: GuiPointerWindowIdentity,
+    pub event: GuiEvent,
+    pub operation: u32,
+    pub reason: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiHostInputRequest {
+    fn default() -> Self {
+        Self {
+            window: GuiPointerWindowIdentity { owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: 0, window_id: 0, reserved: 0 },
+            event: GuiEvent { kind: 0, window_id: -1, x: 0, y: 0, key: 0, buttons: 0, modifiers: 0, tick: 0 },
+            operation: 0,
+            reason: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20666,6 +20698,7 @@ pub mod R4DeskFns {
     pub type gui_pointer_capture_acquire = unsafe extern "C" fn(*const GuiPointerWindowIdentity, u32, *mut GuiPointerCaptureHandle) -> i32;
     pub type gui_pointer_capture_release = unsafe extern "C" fn(*const GuiPointerCaptureHandle) -> i32;
     pub type gui_pointer_capture_host = unsafe extern "C" fn(*const GuiPointerHostRequest, *mut GuiPointerCaptureInfo) -> i32;
+    pub type gui_host_input = unsafe extern "C" fn(*const GuiHostInputRequest, *mut GuiPointerWindowIdentity) -> i32;
 }
 
 #[repr(C)]
@@ -20750,14 +20783,15 @@ pub struct R4XStartR4Desk {
     pub gui_pointer_capture_acquire: usize,
     pub gui_pointer_capture_release: usize,
     pub gui_pointer_capture_host: usize,
+    pub gui_host_input: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Desk {
     fn default() -> Self {
         Self {
             magic: 826623058,
-            abi_version: 19,
-            size: 616,
+            abi_version: 20,
+            size: 624,
             flags: 0,
             read_key: 0,
             mouse_state: 0,
@@ -20834,6 +20868,7 @@ impl Default for R4XStartR4Desk {
             gui_pointer_capture_acquire: 0,
             gui_pointer_capture_release: 0,
             gui_pointer_capture_host: 0,
+            gui_host_input: 0,
         }
     }
 }
@@ -21899,6 +21934,7 @@ impl GuiEventKind {
     pub const mouse_wheel: Self = Self(13);
     pub const mouse_relative: Self = Self(14);
     pub const capture_changed: Self = Self(15);
+    pub const input_reset: Self = Self(16);
 }
 
 pub mod GuiWindowFlag {
@@ -32572,6 +32608,12 @@ const _: () = {
     assert!(core::mem::offset_of!(GuiPointerHostRequest, event) == 56);
     assert!(core::mem::size_of::<GuiPointerHostRequest>() == 96);
     assert!(core::mem::align_of::<GuiPointerHostRequest>() == 8);
+    assert!(core::mem::offset_of!(GuiHostInputRequest, window) == 0);
+    assert!(core::mem::offset_of!(GuiHostInputRequest, event) == 32);
+    assert!(core::mem::offset_of!(GuiHostInputRequest, operation) == 72);
+    assert!(core::mem::offset_of!(GuiHostInputRequest, reason) == 76);
+    assert!(core::mem::size_of::<GuiHostInputRequest>() == 80);
+    assert!(core::mem::align_of::<GuiHostInputRequest>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -32829,7 +32871,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_acquire) == 592);
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_release) == 600);
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_host) == 608);
-    assert!(core::mem::size_of::<R4XStartR4Desk>() == 616);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, gui_host_input) == 616);
+    assert!(core::mem::size_of::<R4XStartR4Desk>() == 624);
     assert!(core::mem::align_of::<R4XStartR4Desk>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Draw, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Draw, abi_version) == 4);

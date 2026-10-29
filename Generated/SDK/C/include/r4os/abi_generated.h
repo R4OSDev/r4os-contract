@@ -2811,6 +2811,18 @@ extern "C" {
 #define R4OS_GUI_POINTER_ERROR_EXHAUSTED ((int32_t)-7)
 #define R4OS_GUI_POINTER_ERROR_UNAVAILABLE ((int32_t)-8)
 #define R4OS_GUI_POINTER_HOST_FLAG_MOTION_SNAPSHOT 1u
+#define R4OS_GUI_HOST_INPUT_OPERATION_QUERY 0u
+#define R4OS_GUI_HOST_INPUT_OPERATION_POST 1u
+#define R4OS_GUI_HOST_INPUT_OPERATION_RESET 2u
+#define R4OS_GUI_INPUT_RESET_REASON_OVERFLOW 1u
+#define R4OS_GUI_INPUT_RESET_REASON_FOCUS_LOST 2u
+#define R4OS_GUI_INPUT_RESET_REASON_WINDOW_CLOSED 3u
+#define R4OS_GUI_INPUT_RESET_REASON_DESKTOP_CHANGED 4u
+#define R4OS_GUI_INPUT_RESET_REASON_PROCESS_ENDED 5u
+#define R4OS_GUI_HOST_INPUT_ERROR_INVALID ((int32_t)-1)
+#define R4OS_GUI_HOST_INPUT_ERROR_STALE ((int32_t)-2)
+#define R4OS_GUI_HOST_INPUT_ERROR_BUSY ((int32_t)-3)
+#define R4OS_GUI_HOST_INPUT_ERROR_CONTEXT ((int32_t)-4)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3658,6 +3670,7 @@ typedef struct R4GuiPointerWindowIdentity R4GuiPointerWindowIdentity;
 typedef struct R4GuiPointerCaptureHandle R4GuiPointerCaptureHandle;
 typedef struct R4GuiPointerCaptureInfo R4GuiPointerCaptureInfo;
 typedef struct R4GuiPointerHostRequest R4GuiPointerHostRequest;
+typedef struct R4GuiHostInputRequest R4GuiHostInputRequest;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10884,6 +10897,13 @@ typedef struct R4GuiPointerHostRequest {
     R4GuiEvent event;
 } R4GuiPointerHostRequest;
 
+typedef struct R4GuiHostInputRequest {
+    R4GuiPointerWindowIdentity window;
+    R4GuiEvent event;
+    uint32_t operation;
+    uint32_t reason;
+} R4GuiHostInputRequest;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11349,6 +11369,7 @@ typedef int32_t (*R4DeskGuiPointerCaptureInfoFn)(const R4GuiPointerCaptureHandle
 typedef int32_t (*R4DeskGuiPointerCaptureAcquireFn)(const R4GuiPointerWindowIdentity * window, uint32_t mode, R4GuiPointerCaptureHandle * out_capture);
 typedef int32_t (*R4DeskGuiPointerCaptureReleaseFn)(const R4GuiPointerCaptureHandle * capture);
 typedef int32_t (*R4DeskGuiPointerCaptureHostFn)(const R4GuiPointerHostRequest * request, R4GuiPointerCaptureInfo * out_info);
+typedef int32_t (*R4DeskGuiHostInputFn)(const R4GuiHostInputRequest * request, R4GuiPointerWindowIdentity * out_window);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -11430,6 +11451,7 @@ typedef struct R4XStartR4Desk {
     uintptr_t gui_pointer_capture_acquire;
     uintptr_t gui_pointer_capture_release;
     uintptr_t gui_pointer_capture_host;
+    uintptr_t gui_host_input;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -18473,6 +18495,11 @@ _Static_assert(offsetof(R4GuiPointerHostRequest, flags) == 8u, "GuiPointerHostRe
 _Static_assert(offsetof(R4GuiPointerHostRequest, reserved) == 12u, "GuiPointerHostRequest.reserved offset mismatch");
 _Static_assert(offsetof(R4GuiPointerHostRequest, capture) == 16u, "GuiPointerHostRequest.capture offset mismatch");
 _Static_assert(offsetof(R4GuiPointerHostRequest, event) == 56u, "GuiPointerHostRequest.event offset mismatch");
+_Static_assert(sizeof(R4GuiHostInputRequest) == 80u, "GuiHostInputRequest size mismatch");
+_Static_assert(offsetof(R4GuiHostInputRequest, window) == 0u, "GuiHostInputRequest.window offset mismatch");
+_Static_assert(offsetof(R4GuiHostInputRequest, event) == 32u, "GuiHostInputRequest.event offset mismatch");
+_Static_assert(offsetof(R4GuiHostInputRequest, operation) == 72u, "GuiHostInputRequest.operation offset mismatch");
+_Static_assert(offsetof(R4GuiHostInputRequest, reason) == 76u, "GuiHostInputRequest.reason offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1376u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -18811,7 +18838,7 @@ _Static_assert(offsetof(R4XStartR4Sys, program_observation_release) == 1360u, "R
 _Static_assert(sizeof(R4SysProgramObservationReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, file_name_limits) == 1368u, "R4XStartR4Sys.file_name_limits offset mismatch");
 _Static_assert(sizeof(R4SysFileNameLimitsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 616u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 624u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -18961,6 +18988,8 @@ _Static_assert(offsetof(R4XStartR4Desk, gui_pointer_capture_release) == 600u, "R
 _Static_assert(sizeof(R4DeskGuiPointerCaptureReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, gui_pointer_capture_host) == 608u, "R4XStartR4Desk.gui_pointer_capture_host offset mismatch");
 _Static_assert(sizeof(R4DeskGuiPointerCaptureHostFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, gui_host_input) == 616u, "R4XStartR4Desk.gui_host_input offset mismatch");
+_Static_assert(sizeof(R4DeskGuiHostInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 912u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

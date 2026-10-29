@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 496,
-    "group_slot_count": 496,
+    "function_count": 497,
+    "group_slot_count": 497,
     "sdk_only_count": 0,
-    "public_count": 356,
+    "public_count": 357,
     "advanced_count": 140
   },
   "functions": [
@@ -2901,6 +2901,18 @@
       "slot": 74,
       "exposure": "public",
       "description": "Registered desktop-host bind/snapshot/grant/cancel/delivery/unbind. Grant follows focused visible-window and WM-conflict validation and applied cursor policy. Ordinary captured delivery is exact-generation and source bound; control notices remain reliable outside the ordinary queue. Absolute remote input cannot be labelled physical raw motion.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_host_input",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 75,
+      "exposure": "public",
+      "description": "Nonblocking exact ordinary GUI input QUERY/POST/RESET for the registered Desktop host. Query returns the current exact window identity; accepted POST returns0, full returns Busy without consuming input. A pending reset fences subsequent POST until its reliable native control receipt is consumed. Reset removes unread ordinary input while preserving metadata and prior native capture termination. Output is written only on success; no ID-only or window-epoch truncation fallback.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

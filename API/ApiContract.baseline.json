@@ -13541,10 +13541,10 @@
       "fn_namespace": "R4DeskFns",
       "required": false,
       "magic": 826623058,
-      "abi_version": 19,
+      "abi_version": 20,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 616,
+      "size": 624,
       "slots": [
         {
           "number": 0,
@@ -18185,6 +18185,82 @@
                   "child": {
                     "kind": "named",
                     "name": "GuiPointerCaptureInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4DESK"
+            ],
+            "optional_capability": true,
+            "error_domain": "desktop",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "owner_thread_only",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "owner_thread_only",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 75,
+          "offset": 616,
+          "name": "gui_host_input",
+          "state": "function",
+          "required": false,
+          "description": "Nonblocking exact ordinary GUI input QUERY/POST/RESET for the registered Desktop host. Query returns the current exact window identity; accepted POST returns0, full returns Busy without consuming input. A pending reset fences subsequent POST until its reliable native control receipt is consumed. Reset removes unread ordinary input while preserving metadata and prior native capture termination. Output is written only on success; no ID-only or window-epoch truncation fallback.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "request",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiHostInputRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_window",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "GuiPointerWindowIdentity"
                   },
                   "direction": "output",
                   "nullable": false,
@@ -127826,6 +127902,74 @@
       ],
       "values": [],
       "description": "Technical registered desktop-host control/delivery request. Every non-bind operation is bound to the exact registered host. Delivery requires the exact active capture token and cannot target a new process/window generation."
+    },
+    {
+      "name": "GuiHostInputRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "window",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "GuiPointerWindowIdentity"
+          },
+          "description": "Exact process/window incarnation. QUERY requires a valid owner and window_id with epoch0; POST/RESET require the exact nonzero returned epoch. reserved stays zero.",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "GuiPointerWindowIdentity",
+          "default_kind": "empty"
+        },
+        {
+          "name": "event",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "GuiEvent"
+          },
+          "description": "POST carries the complete ordinary host event. RESET uses tick only; QUERY uses a zero event. No captured/relative/control event can bypass the native capture contract.",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "GuiEvent",
+          "default_kind": "empty"
+        },
+        {
+          "name": "operation",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "QUERY, POST or RESET. Nonblocking, registered exact Desktop host only.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reason",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "RESET cancellation reason; zero for QUERY/POST. Cancellation is explicit, not a false acknowledgement of delivery.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fixed ordinary GUI host input request. Pending policy stays with Desktop. Provider checks exact registered host/process/window atomically; QUERY never retains resources. POST acknowledgement0 means native admission; Busy retains the unaccepted suffix at the caller. RESET is a reliable barrier that invalidates unread ordinary input, preserves unrelated metadata and capture-control ordering, and emits typed input_reset before later ordinary input. Old input cannot replay after the barrier."
     }
   ],
   "operations": [],
@@ -158345,6 +158489,126 @@
       "scope": "gui_pointer_host_flags",
       "stability": "fixed_contract",
       "description": "SNAPSHOT only: request current nonconsuming physical totals in motion_x/y as cursor-restoration fence. Zero flags preserves the grant baseline and the idle state-only fast path."
+    },
+    {
+      "name": "gui_host_input_operation_query",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_host_input_operation",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_host_input_operation query. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_host_input_operation_post",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_host_input_operation",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_host_input_operation post. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_host_input_operation_reset",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_host_input_operation",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_host_input_operation reset. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_input_reset_reason_overflow",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_input_reset_reason",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_input_reset_reason overflow. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_input_reset_reason_focus_lost",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_input_reset_reason",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_input_reset_reason focus_lost. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_input_reset_reason_window_closed",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_input_reset_reason",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_input_reset_reason window_closed. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_input_reset_reason_desktop_changed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_input_reset_reason",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_input_reset_reason desktop_changed. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_input_reset_reason_process_ended",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_input_reset_reason",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_input_reset_reason process_ended. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_host_input_error_invalid",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_host_input_error",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_host_input_error invalid. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_host_input_error_stale",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_host_input_error",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_host_input_error stale. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_host_input_error_busy",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_host_input_error",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_host_input_error busy. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "gui_host_input_error_context",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_host_input_error",
+      "stability": "fixed_contract",
+      "description": "Ordinary generation-bound GUI host input gui_host_input_error context. Native capture and unrelated metadata retain their separate ordering contracts."
     }
   ],
   "limits": [

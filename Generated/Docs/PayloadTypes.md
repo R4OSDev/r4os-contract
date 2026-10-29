@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 386 von 386 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 387 von 387 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2798; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2810; Limits: 111
 
 ## App-Profile
 
@@ -407,6 +407,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GuiPointerCaptureHandle` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 | `GuiPointerCaptureInfo` | fixed_layout | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
 | `GuiPointerHostRequest` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `GuiHostInputRequest` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
 
 ## Typdetails
 
@@ -10323,6 +10324,20 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `capture` | 16 | 40 | 8 | `GuiPointerCaptureHandle` | - |
 | `event` | 56 | 40 | 8 | `GuiEvent` | - |
 
+### `GuiHostInputRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `window` | 0 | 32 | 8 | `GuiPointerWindowIdentity` | - |
+| `event` | 32 | 40 | 8 | `GuiEvent` | - |
+| `operation` | 72 | 4 | 4 | `u32` | - |
+| `reason` | 76 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13886,6 +13901,18 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gui_pointer_error_exhausted` | `-7` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
 | `gui_pointer_error_unavailable` | `-8` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
 | `gui_pointer_host_flag_motion_snapshot` | `1` | `u32` | value | number | `gui_pointer_host_flags` | fixed_contract |
+| `gui_host_input_operation_query` | `0` | `u32` | value | number | `gui_host_input_operation` | fixed_contract |
+| `gui_host_input_operation_post` | `1` | `u32` | value | number | `gui_host_input_operation` | fixed_contract |
+| `gui_host_input_operation_reset` | `2` | `u32` | value | number | `gui_host_input_operation` | fixed_contract |
+| `gui_input_reset_reason_overflow` | `1` | `u32` | value | number | `gui_input_reset_reason` | fixed_contract |
+| `gui_input_reset_reason_focus_lost` | `2` | `u32` | value | number | `gui_input_reset_reason` | fixed_contract |
+| `gui_input_reset_reason_window_closed` | `3` | `u32` | value | number | `gui_input_reset_reason` | fixed_contract |
+| `gui_input_reset_reason_desktop_changed` | `4` | `u32` | value | number | `gui_input_reset_reason` | fixed_contract |
+| `gui_input_reset_reason_process_ended` | `5` | `u32` | value | number | `gui_input_reset_reason` | fixed_contract |
+| `gui_host_input_error_invalid` | `-1` | `i32` | value | number | `gui_host_input_error` | fixed_contract |
+| `gui_host_input_error_stale` | `-2` | `i32` | value | number | `gui_host_input_error` | fixed_contract |
+| `gui_host_input_error_busy` | `-3` | `i32` | value | number | `gui_host_input_error` | fixed_contract |
+| `gui_host_input_error_context` | `-4` | `i32` | value | number | `gui_host_input_error` | fixed_contract |
 
 ## Limits
 
