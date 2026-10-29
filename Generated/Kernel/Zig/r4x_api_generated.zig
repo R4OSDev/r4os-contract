@@ -2798,6 +2798,7 @@ pub const gui_pointer_error_unsupported: i32 = -5;
 pub const gui_pointer_error_queue_full: i32 = -6;
 pub const gui_pointer_error_exhausted: i32 = -7;
 pub const gui_pointer_error_unavailable: i32 = -8;
+pub const gui_pointer_host_flag_motion_snapshot: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;

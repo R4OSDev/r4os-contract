@@ -2797,6 +2797,7 @@ pub const gui_pointer_error_unsupported = generated.gui_pointer_error_unsupporte
 pub const gui_pointer_error_queue_full = generated.gui_pointer_error_queue_full;
 pub const gui_pointer_error_exhausted = generated.gui_pointer_error_exhausted;
 pub const gui_pointer_error_unavailable = generated.gui_pointer_error_unavailable;
+pub const gui_pointer_host_flag_motion_snapshot = generated.gui_pointer_host_flag_motion_snapshot;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;

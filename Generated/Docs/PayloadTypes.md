@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 386 von 386 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2797; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2798; Limits: 111
 
 ## App-Profile
 
@@ -13885,6 +13885,7 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gui_pointer_error_queue_full` | `-6` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
 | `gui_pointer_error_exhausted` | `-7` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
 | `gui_pointer_error_unavailable` | `-8` | `i32` | value | number | `gui_pointer_error` | fixed_contract |
+| `gui_pointer_host_flag_motion_snapshot` | `1` | `u32` | value | number | `gui_pointer_host_flags` | fixed_contract |
 
 ## Limits
 
