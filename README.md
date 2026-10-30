@@ -18,6 +18,16 @@ none is a receipt for a speaker. Backend registration, output/reset epoch,
 kernel stream generation and service/logical stream generation bind each
 observation to its owner. Repeated reads never extend a source deadline.
 
+Contract0.64.61 retires the unused audio write/refill duration collection.
+All nine `ProgramPerformanceSummary` duration fields and all six
+`AudioBackendStatus` duration fields retain their names, offsets and layouts.
+Current providers return `audio_duration_ticks_unavailable` (`UINT64_MAX`)
+and clear `performance_flag_audio_latency_ready`. This is unavailable data;
+exclude it from arithmetic, latency displays and scores. Historical exports
+keep their actual values. No diagnostic window remains active or can enable
+this retired collection. Accepted PCM, DMA progress, functional deadlines,
+worker completion, errors and drain receipts keep their existing contracts.
+
 R4DEV35 (Contract0.64.45, 0.86.80) retires V1 diagnostic slots27/29/30
 in place as zero tombstones. Current storage/registry V2 slots, table size728,
 all other offsets and current payload layouts remain unchanged. The unused

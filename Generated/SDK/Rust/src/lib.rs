@@ -2815,6 +2815,7 @@ pub const gui_host_input_error_invalid: i32 = -1;
 pub const gui_host_input_error_stale: i32 = -2;
 pub const gui_host_input_error_busy: i32 = -3;
 pub const gui_host_input_error_context: i32 = -4;
+pub const audio_duration_ticks_unavailable: u64 = 18446744073709551615;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -5607,21 +5608,21 @@ impl Default for ProgramPerformanceSummary {
             audio_stream_high_water_bytes: 0,
             audio_stream_write_truncations: 0,
             audio_stream_dropped_bytes: 0,
-            audio_stream_write_total_ticks: 0,
-            audio_stream_write_max_ticks: 0,
-            audio_stream_write_last_ticks: 0,
+            audio_stream_write_total_ticks: 18446744073709551615,
+            audio_stream_write_max_ticks: 18446744073709551615,
+            audio_stream_write_last_ticks: 18446744073709551615,
             audio_backend_write_calls: 0,
-            audio_backend_write_total_ticks: 0,
-            audio_backend_write_max_ticks: 0,
-            audio_backend_write_last_ticks: 0,
+            audio_backend_write_total_ticks: 18446744073709551615,
+            audio_backend_write_max_ticks: 18446744073709551615,
+            audio_backend_write_last_ticks: 18446744073709551615,
             audio_backend_refills: 0,
             audio_backend_silence_refills: 0,
             audio_backend_buffer_bytes: 0,
             audio_backend_queued_buffers: 0,
             audio_backend_last_buffer_bytes: 0,
-            audio_backend_refill_total_ticks: 0,
-            audio_backend_refill_max_ticks: 0,
-            audio_backend_refill_last_ticks: 0,
+            audio_backend_refill_total_ticks: 18446744073709551615,
+            audio_backend_refill_max_ticks: 18446744073709551615,
+            audio_backend_refill_last_ticks: 18446744073709551615,
             loader_initialized: 0,
             loader_started: 0,
             loader_completed: 0,
@@ -25402,12 +25403,12 @@ impl Default for AudioBackendStatus {
             buffer_bytes: 0,
             queued_buffers: 0,
             last_buffer_bytes: 0,
-            last_write_ticks: 0,
-            max_write_ticks: 0,
-            total_write_ticks: 0,
-            last_refill_ticks: 0,
-            max_refill_ticks: 0,
-            total_refill_ticks: 0,
+            last_write_ticks: 18446744073709551615,
+            max_write_ticks: 18446744073709551615,
+            total_write_ticks: 18446744073709551615,
+            last_refill_ticks: 18446744073709551615,
+            max_refill_ticks: 18446744073709551615,
+            total_refill_ticks: 18446744073709551615,
         }
     }
 }

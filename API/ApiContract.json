@@ -48870,12 +48870,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_stream_write_total_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_stream_write_max_ticks",
@@ -48884,12 +48884,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_stream_write_max_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_stream_write_last_ticks",
@@ -48898,12 +48898,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_stream_write_last_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_backend_write_calls",
@@ -48926,12 +48926,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_backend_write_total_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_backend_write_max_ticks",
@@ -48940,12 +48940,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_backend_write_max_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_backend_write_last_ticks",
@@ -48954,12 +48954,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_backend_write_last_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_backend_refills",
@@ -49038,12 +49038,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_backend_refill_total_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_backend_refill_max_ticks",
@@ -49052,12 +49052,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_backend_refill_max_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "audio_backend_refill_last_ticks",
@@ -49066,12 +49066,12 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field audio_backend_refill_last_ticks.",
+          "description": "Retired detail timing; current providers return audio_duration_ticks_unavailable (UINT64_MAX), never zero latency. Preserve this field and its offset; do not aggregate, subtract or score the unavailable value. Historical exports retain their original measured values.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
           "default_kind": "integer",
-          "default_value": "0"
+          "default_value": "18446744073709551615"
         },
         {
           "name": "loader_initialized",
@@ -139806,7 +139806,7 @@
       "unit": "bitmask",
       "scope": "performance",
       "stability": "fixed_contract",
-      "description": "Public fixed contract constant."
+      "description": "Retained bit value for historical detailed audio duration availability. Current providers clear this bit: detailed audio duration fields are audio_duration_ticks_unavailable. Functional audio work counters remain available independently."
     },
     {
       "name": "performance_flag_avx_state_ready",
@@ -159007,6 +159007,16 @@
       "scope": "gui_host_input_error",
       "stability": "fixed_contract",
       "description": "Ordinary generation-bound GUI host input gui_host_input_error context. Native capture and unrelated metadata retain their separate ordering contracts."
+    },
+    {
+      "name": "audio_duration_ticks_unavailable",
+      "value": "18446744073709551615",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "ticks",
+      "scope": "audio",
+      "stability": "fixed_contract",
+      "description": "Explicit unavailable value for retired audio stream-write, backend-write and backend-refill duration ticks. Never a measured duration; exclude from arithmetic. Current providers do not collect these detail timings. Functional clocks, progress, work and error counters remain available."
     }
   ],
   "limits": [

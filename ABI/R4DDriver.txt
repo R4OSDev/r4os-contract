@@ -4,6 +4,20 @@
 Scope
 -----
 
+Audio detail duration retirement (Contract0.64.61 / R4OS0.88.59)
+-------------------------------------------------------------
+AudioBackendStatus remains fixed128 bytes. Its last/max/total_write_ticks
+and last/max/total_refill_ticks fields are retained ABI slots. Current HDA
+and AC97 providers return audio_duration_ticks_unavailable (UINT64_MAX);
+new default records use the same unavailable value. These fields are not
+measured and must never be added, subtracted, scored or displayed as latency.
+The nine corresponding ProgramPerformanceSummary fields use that same
+sentinel, and performance_flag_audio_latency_ready is clear. Ordinary work,
+accepted bytes, IRQ/DMA/worker counters, functional clocks, deadlines and
+generation-bound playback/Close receipts remain available independently.
+No timing session is introduced. Unmodified historical reports retain their
+original measured values and original contract identity.
+
 This document defines the owner and lifetime rules for the technical R4D
 types that accompany the generated R4DEV platform contract. The target is
 trusted little-endian x86_64. DriverApi version 19 appends segment-DMA

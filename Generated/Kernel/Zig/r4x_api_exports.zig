@@ -2810,6 +2810,7 @@ pub const gui_host_input_error_invalid = generated.gui_host_input_error_invalid;
 pub const gui_host_input_error_stale = generated.gui_host_input_error_stale;
 pub const gui_host_input_error_busy = generated.gui_host_input_error_busy;
 pub const gui_host_input_error_context = generated.gui_host_input_error_context;
+pub const audio_duration_ticks_unavailable = generated.audio_duration_ticks_unavailable;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;

@@ -2810,6 +2810,7 @@ pub const gui_host_input_error_invalid = generated.gui_host_input_error_invalid;
 pub const gui_host_input_error_stale = generated.gui_host_input_error_stale;
 pub const gui_host_input_error_busy = generated.gui_host_input_error_busy;
 pub const gui_host_input_error_context = generated.gui_host_input_error_context;
+pub const audio_duration_ticks_unavailable = generated.audio_duration_ticks_unavailable;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;
@@ -5408,6 +5409,8 @@ pub const UsbHostController = extern struct {
     status: ?*const fn (?*anyopaque, *UsbHostStatus) callconv(.c) i32 = null,
 };
 
+// Detail duration observation is retired; fixed128-byte layout is preserved.
+// UINT64_MAX means unavailable, including an unfilled status; never zero latency.
 pub const AudioBackendStatus = extern struct {
     active: u32 = 0,
     writes: u64 = 0,
@@ -5420,12 +5423,12 @@ pub const AudioBackendStatus = extern struct {
     buffer_bytes: u64 = 0,
     queued_buffers: u64 = 0,
     last_buffer_bytes: u64 = 0,
-    last_write_ticks: u64 = 0,
-    max_write_ticks: u64 = 0,
-    total_write_ticks: u64 = 0,
-    last_refill_ticks: u64 = 0,
-    max_refill_ticks: u64 = 0,
-    total_refill_ticks: u64 = 0,
+    last_write_ticks: u64 = audio_duration_ticks_unavailable,
+    max_write_ticks: u64 = audio_duration_ticks_unavailable,
+    total_write_ticks: u64 = audio_duration_ticks_unavailable,
+    last_refill_ticks: u64 = audio_duration_ticks_unavailable,
+    max_refill_ticks: u64 = audio_duration_ticks_unavailable,
+    total_refill_ticks: u64 = audio_duration_ticks_unavailable,
 };
 
 pub const AudioBackend = extern struct {
