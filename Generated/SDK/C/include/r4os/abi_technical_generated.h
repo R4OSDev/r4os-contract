@@ -2443,8 +2443,9 @@ struct R4DriverApi {
     int32_t (*dma_sync_range_for_cpu)(const R4DmaMapping *, uint32_t, uint32_t);
     int32_t (*driver_work_submit_owned)(int32_t (*)(uintptr_t), uintptr_t, uint32_t *);
     int32_t (*serial_query)(R4DriverSerialApi *);
+    int32_t (*register_audio_output_epoch)(const uint8_t *, int32_t (*)(uint64_t, R4AudioOutputEpoch *));
 };
-_Static_assert(sizeof(R4DriverApi) == 664, "R4DriverApi size");
+_Static_assert(sizeof(R4DriverApi) == 672, "R4DriverApi size");
 _Static_assert(_Alignof(R4DriverApi) == 8, "R4DriverApi alignment");
 _Static_assert(offsetof(R4DriverApi, magic) == 0, "R4DriverApi.magic offset");
 _Static_assert(offsetof(R4DriverApi, version) == 4, "R4DriverApi.version offset");
@@ -2531,6 +2532,7 @@ _Static_assert(offsetof(R4DriverApi, dma_sync_range_for_device) == 632, "R4Drive
 _Static_assert(offsetof(R4DriverApi, dma_sync_range_for_cpu) == 640, "R4DriverApi.dma_sync_range_for_cpu offset");
 _Static_assert(offsetof(R4DriverApi, driver_work_submit_owned) == 648, "R4DriverApi.driver_work_submit_owned offset");
 _Static_assert(offsetof(R4DriverApi, serial_query) == 656, "R4DriverApi.serial_query offset");
+_Static_assert(offsetof(R4DriverApi, register_audio_output_epoch) == 664, "R4DriverApi.register_audio_output_epoch offset");
 
 struct R4ProtocolApi {
     uint32_t magic;

@@ -167,7 +167,7 @@ extern "C" {
 #define R4OS_DNS_FLAG_A_RECORD 1u
 #define R4OS_DNS_OP_BUILD_A_QUERY 1u
 #define R4OS_DNS_OP_HANDLE_RESPONSE 2u
-#define R4OS_DRIVER_API_VERSION 38u
+#define R4OS_DRIVER_API_VERSION 39u
 #define R4OS_DRIVER_API_THREAD_WORK_VERSION 35u
 #define R4OS_DRIVER_API_CONTINUATION_WORK_VERSION 38u
 #define R4OS_DRIVER_MAGIC 826888260u
@@ -3671,6 +3671,9 @@ typedef struct R4GuiPointerCaptureHandle R4GuiPointerCaptureHandle;
 typedef struct R4GuiPointerCaptureInfo R4GuiPointerCaptureInfo;
 typedef struct R4GuiPointerHostRequest R4GuiPointerHostRequest;
 typedef struct R4GuiHostInputRequest R4GuiHostInputRequest;
+typedef struct R4AudioOutputEpoch R4AudioOutputEpoch;
+typedef struct R4AudioOutputProviderEpoch R4AudioOutputProviderEpoch;
+typedef struct R4AudioOutputCatalog R4AudioOutputCatalog;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -3685,6 +3688,8 @@ typedef int32_t (*R4PmuWorkFn)(uint64_t context, uint32_t iterations);
 typedef int32_t (*R4CpuPureWorkFn)(uint64_t context, uint32_t iterations);
 
 typedef int32_t (*R4EntropyReadFn)(uint64_t context, uint8_t * data, uint32_t bytes, R4EntropyDeviceReceipt * receipt);
+
+typedef int32_t (*R4AudioOutputEpochFn)(uint64_t context, R4AudioOutputEpoch * out);
 
 typedef struct R4BootInfoSummary {
     uint32_t flags;
@@ -10904,6 +10909,31 @@ typedef struct R4GuiHostInputRequest {
     uint32_t reason;
 } R4GuiHostInputRequest;
 
+typedef struct R4AudioOutputEpoch {
+    uint32_t version;
+    uint32_t size;
+    uint64_t generation;
+    uint32_t count;
+    int32_t active_index;
+} R4AudioOutputEpoch;
+
+typedef struct R4AudioOutputProviderEpoch {
+    uint64_t registration;
+    uint64_t generation;
+    uint32_t count;
+    int32_t active_index;
+} R4AudioOutputProviderEpoch;
+
+typedef struct R4AudioOutputCatalog {
+    uint32_t version;
+    uint32_t size;
+    uint64_t registry_generation;
+    uint64_t active_registration;
+    uint32_t count;
+    uint32_t provider_count;
+    R4AudioOutputProviderEpoch providers[8];
+} R4AudioOutputCatalog;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11788,6 +11818,7 @@ typedef int32_t (*R4AudioAudioSelectOutputFn)(const uint8_t (*id)[64]);
 typedef int32_t (*R4AudioAudioStreamProgressFn)(uint32_t stream_id, uint64_t generation, R4AudioStreamProgress * out);
 typedef int32_t (*R4AudioAudioSetStreamExpectationFn)(uint32_t stream_id, const R4AudioStreamExpectation * expectation);
 typedef int32_t (*R4AudioAudioCloseStreamProgressFn)(uint32_t stream_id, uint64_t generation, R4AudioStreamProgress * out);
+typedef int32_t (*R4AudioAudioOutputCatalogFn)(R4AudioOutputInfo * outputs, uint32_t capacity, R4AudioOutputCatalog * out);
 
 typedef struct R4XStartR4Audio {
     uint32_t magic;
@@ -11820,6 +11851,7 @@ typedef struct R4XStartR4Audio {
     uintptr_t audio_stream_progress;
     uintptr_t audio_set_stream_expectation;
     uintptr_t audio_close_stream_progress;
+    uintptr_t audio_output_catalog;
 } R4XStartR4Audio;
 
 typedef int32_t (*R4DevDeviceInventorySummaryFn)(R4DeviceInventorySummary * arg0);
@@ -18500,6 +18532,25 @@ _Static_assert(offsetof(R4GuiHostInputRequest, window) == 0u, "GuiHostInputReque
 _Static_assert(offsetof(R4GuiHostInputRequest, event) == 32u, "GuiHostInputRequest.event offset mismatch");
 _Static_assert(offsetof(R4GuiHostInputRequest, operation) == 72u, "GuiHostInputRequest.operation offset mismatch");
 _Static_assert(offsetof(R4GuiHostInputRequest, reason) == 76u, "GuiHostInputRequest.reason offset mismatch");
+_Static_assert(sizeof(R4AudioOutputEpoch) == 24u, "AudioOutputEpoch size mismatch");
+_Static_assert(offsetof(R4AudioOutputEpoch, version) == 0u, "AudioOutputEpoch.version offset mismatch");
+_Static_assert(offsetof(R4AudioOutputEpoch, size) == 4u, "AudioOutputEpoch.size offset mismatch");
+_Static_assert(offsetof(R4AudioOutputEpoch, generation) == 8u, "AudioOutputEpoch.generation offset mismatch");
+_Static_assert(offsetof(R4AudioOutputEpoch, count) == 16u, "AudioOutputEpoch.count offset mismatch");
+_Static_assert(offsetof(R4AudioOutputEpoch, active_index) == 20u, "AudioOutputEpoch.active_index offset mismatch");
+_Static_assert(sizeof(R4AudioOutputProviderEpoch) == 24u, "AudioOutputProviderEpoch size mismatch");
+_Static_assert(offsetof(R4AudioOutputProviderEpoch, registration) == 0u, "AudioOutputProviderEpoch.registration offset mismatch");
+_Static_assert(offsetof(R4AudioOutputProviderEpoch, generation) == 8u, "AudioOutputProviderEpoch.generation offset mismatch");
+_Static_assert(offsetof(R4AudioOutputProviderEpoch, count) == 16u, "AudioOutputProviderEpoch.count offset mismatch");
+_Static_assert(offsetof(R4AudioOutputProviderEpoch, active_index) == 20u, "AudioOutputProviderEpoch.active_index offset mismatch");
+_Static_assert(sizeof(R4AudioOutputCatalog) == 224u, "AudioOutputCatalog size mismatch");
+_Static_assert(offsetof(R4AudioOutputCatalog, version) == 0u, "AudioOutputCatalog.version offset mismatch");
+_Static_assert(offsetof(R4AudioOutputCatalog, size) == 4u, "AudioOutputCatalog.size offset mismatch");
+_Static_assert(offsetof(R4AudioOutputCatalog, registry_generation) == 8u, "AudioOutputCatalog.registry_generation offset mismatch");
+_Static_assert(offsetof(R4AudioOutputCatalog, active_registration) == 16u, "AudioOutputCatalog.active_registration offset mismatch");
+_Static_assert(offsetof(R4AudioOutputCatalog, count) == 24u, "AudioOutputCatalog.count offset mismatch");
+_Static_assert(offsetof(R4AudioOutputCatalog, provider_count) == 28u, "AudioOutputCatalog.provider_count offset mismatch");
+_Static_assert(offsetof(R4AudioOutputCatalog, providers) == 32u, "AudioOutputCatalog.providers offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1376u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -19286,7 +19337,7 @@ _Static_assert(offsetof(R4XStartR4Net, ipc_performance) == 280u, "R4XStartR4Net.
 _Static_assert(sizeof(R4NetIpcPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_performance) == 288u, "R4XStartR4Net.tcp_performance offset mismatch");
 _Static_assert(sizeof(R4NetTcpPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Audio) == 224u, "R4XStartR4Audio size mismatch");
+_Static_assert(sizeof(R4XStartR4Audio) == 232u, "R4XStartR4Audio size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_open_stream) == 16u, "R4XStartR4Audio.audio_open_stream offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOpenStreamFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_write) == 24u, "R4XStartR4Audio.audio_write offset mismatch");
@@ -19337,6 +19388,8 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_set_stream_expectation) == 208u, 
 _Static_assert(sizeof(R4AudioAudioSetStreamExpectationFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_close_stream_progress) == 216u, "R4XStartR4Audio.audio_close_stream_progress offset mismatch");
 _Static_assert(sizeof(R4AudioAudioCloseStreamProgressFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStartR4Audio.audio_output_catalog offset mismatch");
+_Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Dev) == 728u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

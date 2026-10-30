@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 387 von 387 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 391 von 391 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 64; Konstanten: 2810; Limits: 111
 
@@ -408,6 +408,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GuiPointerCaptureInfo` | fixed_layout | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
 | `GuiPointerHostRequest` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `GuiHostInputRequest` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `AudioOutputEpoch` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `AudioOutputEpochFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
+| `AudioOutputProviderEpoch` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `AudioOutputCatalog` | fixed_layout | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
 
 ## Typdetails
 
@@ -10338,6 +10342,59 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `operation` | 72 | 4 | 4 | `u32` | - |
 | `reason` | 76 | 4 | 4 | `u32` | - |
 
+### `AudioOutputEpoch`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+| `count` | 16 | 4 | 4 | `u32` | - |
+| `active_index` | 20 | 4 | 4 | `i32` | - |
+
+### `AudioOutputEpochFn`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `callback`
+- Repräsentation: `c_callback`
+- Version/Größe/Alignment: 1 / 8 / 8
+
+### `AudioOutputProviderEpoch`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `registration` | 0 | 8 | 8 | `u64` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+| `count` | 16 | 4 | 4 | `u32` | - |
+| `active_index` | 20 | 4 | 4 | `i32` | - |
+
+### `AudioOutputCatalog`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 224 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `registry_generation` | 8 | 8 | 8 | `u64` | - |
+| `active_registration` | 16 | 8 | 8 | `u64` | - |
+| `count` | 24 | 4 | 4 | `u32` | - |
+| `provider_count` | 28 | 4 | 4 | `u32` | - |
+| `providers` | 32 | 192 | 8 | `[8]AudioOutputProviderEpoch` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11257,7 +11314,7 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `dns_flag_a_record` | `1` | `u32` | flag | bitmask | `dns` | fixed_contract |
 | `dns_op_build_a_query` | `1` | `u32` | identity | number | `dns_op` | fixed_contract |
 | `dns_op_handle_response` | `2` | `u32` | identity | number | `dns_op` | fixed_contract |
-| `driver_api_version` | `38` | `u32` | version | number | `driver_api` | fixed_contract |
+| `driver_api_version` | `39` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_api_thread_work_version` | `35` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_api_continuation_work_version` | `38` | `u32` | version | number | `driver_api` | fixed_contract |
 | `driver_magic` | `826888260` | `u32` | magic | number | `driver` | fixed_contract |

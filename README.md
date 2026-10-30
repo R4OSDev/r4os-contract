@@ -249,3 +249,20 @@ Only terminal metadata and an inactive bounded transcript survive: no task,
 VM, module, live console or GUI resource. OutputAvailable includes captured
 empty output; OutputTruncated/OutputIncomplete distinguish missing bytes.
 The previous process wait/reap contract remains consuming and unchanged.
+# Audio output catalog (0.64.60)
+
+R4AUDIO v4 appends `audio_output_catalog` at offset224; its complete table is
+232 bytes. The preceding224-byte table and scalar `audio_output_info` stay
+unchanged. Supply256 caller-owned `AudioOutputInfo` rows and a disjoint
+v1/224-byte `AudioOutputCatalog`. Result1 publishes the complete copied rows
+and exact registry/provider witnesses. Discard scratch rows on any failure;
+the receipt stays unchanged. Busy never confirms cached availability.
+
+DriverApi v39 appends `register_audio_output_epoch`. Bind it once, after the
+structured backend, from the same R4D owner. Its synchronous callback returns
+a real, nonreused publication generation, count and active index under the
+provider's row owner. Transitions/exhaustion return Busy. Old providers retain
+scalar enumeration; a complete capture reports unsupported if any participating
+provider lacks this contract. No implicit fallback invents a generation.
+Catalog observations are separate from physical route, ELD, Stop and playback
+acknowledgements. AUDSVC binds its copied pages to service epoch and revision.

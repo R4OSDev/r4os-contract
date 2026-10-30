@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 497,
-    "group_slot_count": 497,
+    "function_count": 498,
+    "group_slot_count": 498,
     "sdk_only_count": 0,
-    "public_count": 357,
+    "public_count": 358,
     "advanced_count": 140
   },
   "functions": [
@@ -4965,6 +4965,18 @@
       "slot": 25,
       "exposure": "public",
       "description": "Ends and closes this exact owned stream, returning its last valid drain/consumption snapshot before retirement; shared output may have a known partial cursor.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4AUDIO.audio_output_catalog",
+      "group": "R4AUDIO",
+      "kind": "group_slot",
+      "slot": 26,
+      "exposure": "public",
+      "description": "Copy the complete current output catalog in linear row-query work. Caller supplies at least256 AudioOutputInfo slots and a disjoint v1/size>=224 AudioOutputCatalog; no allocation or retained pointer. Returns1 on complete success, service_api_result_busy for contention/provider epoch change, err_no_fn if a registered provider lacks the epoch contract, invalid for malformed metadata/capacity. Metadata and buffer tail remain unchanged on failure; the row prefix is scratch and MUST be discarded unless result1. Count<=256; each provider count<=32, validated with its actual epoch before and after all rows under one registry permit. No retry loop, wait callback, hardware scan, route/Stop/ELD receipt or global availability lease. Scalar audio_output_info stays available for individual consumers.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

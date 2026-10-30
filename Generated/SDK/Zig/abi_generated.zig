@@ -155,7 +155,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 38;
+pub const driver_api_version: u32 = 39;
 pub const driver_api_thread_work_version: u32 = 35;
 pub const driver_api_continuation_work_version: u32 = 38;
 pub const driver_magic: u32 = 826888260;
@@ -10575,6 +10575,33 @@ pub const GuiHostInputRequest = extern struct {
     reason: u32 = 0,
 };
 
+pub const AudioOutputEpoch = extern struct {
+    version: u32 = 1,
+    size: u32 = 24,
+    generation: u64 = 0,
+    count: u32 = 0,
+    active_index: i32 = -1,
+};
+
+pub const AudioOutputEpochFn = *const fn (u64, *AudioOutputEpoch) callconv(.c) i32;
+
+pub const AudioOutputProviderEpoch = extern struct {
+    registration: u64 = 0,
+    generation: u64 = 0,
+    count: u32 = 0,
+    active_index: i32 = -1,
+};
+
+pub const AudioOutputCatalog = extern struct {
+    version: u32 = 1,
+    size: u32 = 224,
+    registry_generation: u64 = 0,
+    active_registration: u64 = 0,
+    count: u32 = 0,
+    provider_count: u32 = 0,
+    providers: [8]AudioOutputProviderEpoch = .{AudioOutputProviderEpoch{}} ** 8,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11422,12 +11449,13 @@ pub const R4AudioFns = struct {
     pub const audio_stream_progress = *const fn (u32, u64, *AudioStreamProgress) callconv(.c) i32;
     pub const audio_set_stream_expectation = *const fn (u32, *const AudioStreamExpectation) callconv(.c) i32;
     pub const audio_close_stream_progress = *const fn (u32, u64, *AudioStreamProgress) callconv(.c) i32;
+    pub const audio_output_catalog = *const fn ([*]AudioOutputInfo, u32, *AudioOutputCatalog) callconv(.c) i32;
 };
 
 pub const R4XStartR4Audio = extern struct {
     magic: u32 = 827670866,
-    abi_version: u32 = 3,
-    size: u32 = 224,
+    abi_version: u32 = 4,
+    size: u32 = 232,
     flags: u32 = 0,
     audio_open_stream: usize = 0,
     audio_write: usize = 0,
@@ -11455,6 +11483,7 @@ pub const R4XStartR4Audio = extern struct {
     audio_stream_progress: usize = 0,
     audio_set_stream_expectation: usize = 0,
     audio_close_stream_progress: usize = 0,
+    audio_output_catalog: usize = 0,
 };
 
 pub const R4DevFns = struct {
@@ -12075,6 +12104,7 @@ pub const R4AudioSlots = [_]R4ApiSlotMeta{
     .{ .number = 23, .offset = 200, .name = "audio_stream_progress", .state = .function, .required = false },
     .{ .number = 24, .offset = 208, .name = "audio_set_stream_expectation", .state = .function, .required = false },
     .{ .number = 25, .offset = 216, .name = "audio_close_stream_progress", .state = .function, .required = false },
+    .{ .number = 26, .offset = 224, .name = "audio_output_catalog", .state = .function, .required = false },
 };
 
 pub const R4DevSlots = [_]R4ApiSlotMeta{
@@ -19045,6 +19075,28 @@ comptime {
     if (@offsetOf(GuiHostInputRequest, "event") != 32) @compileError("generated ABI offset drift: GuiHostInputRequest.event");
     if (@offsetOf(GuiHostInputRequest, "operation") != 72) @compileError("generated ABI offset drift: GuiHostInputRequest.operation");
     if (@offsetOf(GuiHostInputRequest, "reason") != 76) @compileError("generated ABI offset drift: GuiHostInputRequest.reason");
+    if (@sizeOf(AudioOutputEpoch) != 24) @compileError("generated ABI size drift: AudioOutputEpoch");
+    if (@alignOf(AudioOutputEpoch) != 8) @compileError("generated ABI alignment drift: AudioOutputEpoch");
+    if (@offsetOf(AudioOutputEpoch, "version") != 0) @compileError("generated ABI offset drift: AudioOutputEpoch.version");
+    if (@offsetOf(AudioOutputEpoch, "size") != 4) @compileError("generated ABI offset drift: AudioOutputEpoch.size");
+    if (@offsetOf(AudioOutputEpoch, "generation") != 8) @compileError("generated ABI offset drift: AudioOutputEpoch.generation");
+    if (@offsetOf(AudioOutputEpoch, "count") != 16) @compileError("generated ABI offset drift: AudioOutputEpoch.count");
+    if (@offsetOf(AudioOutputEpoch, "active_index") != 20) @compileError("generated ABI offset drift: AudioOutputEpoch.active_index");
+    if (@sizeOf(AudioOutputProviderEpoch) != 24) @compileError("generated ABI size drift: AudioOutputProviderEpoch");
+    if (@alignOf(AudioOutputProviderEpoch) != 8) @compileError("generated ABI alignment drift: AudioOutputProviderEpoch");
+    if (@offsetOf(AudioOutputProviderEpoch, "registration") != 0) @compileError("generated ABI offset drift: AudioOutputProviderEpoch.registration");
+    if (@offsetOf(AudioOutputProviderEpoch, "generation") != 8) @compileError("generated ABI offset drift: AudioOutputProviderEpoch.generation");
+    if (@offsetOf(AudioOutputProviderEpoch, "count") != 16) @compileError("generated ABI offset drift: AudioOutputProviderEpoch.count");
+    if (@offsetOf(AudioOutputProviderEpoch, "active_index") != 20) @compileError("generated ABI offset drift: AudioOutputProviderEpoch.active_index");
+    if (@sizeOf(AudioOutputCatalog) != 224) @compileError("generated ABI size drift: AudioOutputCatalog");
+    if (@alignOf(AudioOutputCatalog) != 8) @compileError("generated ABI alignment drift: AudioOutputCatalog");
+    if (@offsetOf(AudioOutputCatalog, "version") != 0) @compileError("generated ABI offset drift: AudioOutputCatalog.version");
+    if (@offsetOf(AudioOutputCatalog, "size") != 4) @compileError("generated ABI offset drift: AudioOutputCatalog.size");
+    if (@offsetOf(AudioOutputCatalog, "registry_generation") != 8) @compileError("generated ABI offset drift: AudioOutputCatalog.registry_generation");
+    if (@offsetOf(AudioOutputCatalog, "active_registration") != 16) @compileError("generated ABI offset drift: AudioOutputCatalog.active_registration");
+    if (@offsetOf(AudioOutputCatalog, "count") != 24) @compileError("generated ABI offset drift: AudioOutputCatalog.count");
+    if (@offsetOf(AudioOutputCatalog, "provider_count") != 28) @compileError("generated ABI offset drift: AudioOutputCatalog.provider_count");
+    if (@offsetOf(AudioOutputCatalog, "providers") != 32) @compileError("generated ABI offset drift: AudioOutputCatalog.providers");
     if (@sizeOf(R4XStartR4Sys) != 1376) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -19442,7 +19494,7 @@ comptime {
     if (@offsetOf(R4XStartR4Net, "net_service_request") != 272) @compileError("generated ABI offset drift: R4XStartR4Net.net_service_request");
     if (@offsetOf(R4XStartR4Net, "ipc_performance") != 280) @compileError("generated ABI offset drift: R4XStartR4Net.ipc_performance");
     if (@offsetOf(R4XStartR4Net, "tcp_performance") != 288) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_performance");
-    if (@sizeOf(R4XStartR4Audio) != 224) @compileError("generated ABI size drift: R4XStartR4Audio");
+    if (@sizeOf(R4XStartR4Audio) != 232) @compileError("generated ABI size drift: R4XStartR4Audio");
     if (@offsetOf(R4XStartR4Audio, "audio_open_stream") != 16) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_open_stream");
     if (@offsetOf(R4XStartR4Audio, "audio_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_write");
     if (@offsetOf(R4XStartR4Audio, "audio_close") != 32) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close");
@@ -19469,6 +19521,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_stream_progress") != 200) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_set_stream_expectation") != 208) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_set_stream_expectation");
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
+    if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
     if (@sizeOf(R4XStartR4Dev) != 728) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");

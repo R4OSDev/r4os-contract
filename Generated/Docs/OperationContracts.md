@@ -2,8 +2,8 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 508; Funktionen: 497; reserviert/Tombstone: 11
-- Sichtbarkeit: public=357, advanced=140, internal=11
+- Physische Gruppenslots: 509; Funktionen: 498; reserviert/Tombstone: 11
+- Sichtbarkeit: public=358, advanced=140, internal=11
 - Zentrale SDK-only-Operationen: 0
 - Statusdomänen: 18
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
@@ -454,6 +454,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4AUDIO | 23 | `audio_stream_progress` | function | public | R4AUDIO | ja | `audio` | none | call | may_block | thread_safe | none | progress_reported | may_have_occurred | idempotent | none | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
 | R4AUDIO | 24 | `audio_set_stream_expectation` | function | public | R4AUDIO | ja | `audio` | none | call | may_block | thread_safe | none | none | may_have_occurred | idempotent | none | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
 | R4AUDIO | 25 | `audio_close_stream_progress` | function | public | R4AUDIO | ja | `audio` | consumes_owned_handle | call | may_block | thread_safe | none | progress_reported | may_have_occurred | idempotent | none | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
+| R4AUDIO | 26 | `audio_output_catalog` | function | public | R4AUDIO | ja | `audio` | none | call | nonblocking | thread_safe | none | success_only | none | idempotent | fixed_capacity | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
 | R4DEV | 0 | `device_inventory_summary` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 1 | `device_inventory_record` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 2 | `memory_summary` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |

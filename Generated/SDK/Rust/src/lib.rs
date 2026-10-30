@@ -159,7 +159,7 @@ pub const display_summary_reason_xrgb32_present: u8 = 4;
 pub const dns_flag_a_record: u32 = 1;
 pub const dns_op_build_a_query: u32 = 1;
 pub const dns_op_handle_response: u32 = 2;
-pub const driver_api_version: u32 = 38;
+pub const driver_api_version: u32 = 39;
 pub const driver_api_thread_work_version: u32 = 35;
 pub const driver_api_continuation_work_version: u32 = 38;
 pub const driver_magic: u32 = 826888260;
@@ -20080,6 +20080,76 @@ impl Default for GuiHostInputRequest {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioOutputEpoch {
+    pub version: u32,
+    pub size: u32,
+    pub generation: u64,
+    pub count: u32,
+    pub active_index: i32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioOutputEpoch {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 24,
+            generation: 0,
+            count: 0,
+            active_index: -1,
+        }
+    }
+}
+
+pub type AudioOutputEpochFn = unsafe extern "C" fn(u64, *mut AudioOutputEpoch) -> i32;
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioOutputProviderEpoch {
+    pub registration: u64,
+    pub generation: u64,
+    pub count: u32,
+    pub active_index: i32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioOutputProviderEpoch {
+    fn default() -> Self {
+        Self {
+            registration: 0,
+            generation: 0,
+            count: 0,
+            active_index: -1,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioOutputCatalog {
+    pub version: u32,
+    pub size: u32,
+    pub registry_generation: u64,
+    pub active_registration: u64,
+    pub count: u32,
+    pub provider_count: u32,
+    pub providers: [AudioOutputProviderEpoch; 8],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioOutputCatalog {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 224,
+            registry_generation: 0,
+            active_registration: 0,
+            count: 0,
+            provider_count: 0,
+            providers: [AudioOutputProviderEpoch { registration: 0, generation: 0, count: 0, active_index: -1 }; 8],
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21391,6 +21461,7 @@ pub mod R4AudioFns {
     pub type audio_stream_progress = unsafe extern "C" fn(u32, u64, *mut AudioStreamProgress) -> i32;
     pub type audio_set_stream_expectation = unsafe extern "C" fn(u32, *const AudioStreamExpectation) -> i32;
     pub type audio_close_stream_progress = unsafe extern "C" fn(u32, u64, *mut AudioStreamProgress) -> i32;
+    pub type audio_output_catalog = unsafe extern "C" fn(*mut AudioOutputInfo, u32, *mut AudioOutputCatalog) -> i32;
 }
 
 #[repr(C)]
@@ -21426,14 +21497,15 @@ pub struct R4XStartR4Audio {
     pub audio_stream_progress: usize,
     pub audio_set_stream_expectation: usize,
     pub audio_close_stream_progress: usize,
+    pub audio_output_catalog: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Audio {
     fn default() -> Self {
         Self {
             magic: 827670866,
-            abi_version: 3,
-            size: 224,
+            abi_version: 4,
+            size: 232,
             flags: 0,
             audio_open_stream: 0,
             audio_write: 0,
@@ -21461,6 +21533,7 @@ impl Default for R4XStartR4Audio {
             audio_stream_progress: 0,
             audio_set_stream_expectation: 0,
             audio_close_stream_progress: 0,
+            audio_output_catalog: 0,
         }
     }
 }
@@ -24537,6 +24610,7 @@ pub struct DriverApi {
     pub dma_sync_range_for_cpu: Option<unsafe extern "C" fn(*const DmaMapping, u32, u32) -> i32>,
     pub driver_work_submit_owned: Option<unsafe extern "C" fn(unsafe extern "C" fn(usize) -> i32, usize, *mut u32) -> i32>,
     pub serial_query: Option<unsafe extern "C" fn(*mut DriverSerialApi) -> i32>,
+    pub register_audio_output_epoch: Option<unsafe extern "C" fn(*const u8, unsafe extern "C" fn(u64, *mut AudioOutputEpoch) -> i32) -> i32>,
 }
 
 #[repr(C)]
@@ -32614,6 +32688,30 @@ const _: () = {
     assert!(core::mem::offset_of!(GuiHostInputRequest, reason) == 76);
     assert!(core::mem::size_of::<GuiHostInputRequest>() == 80);
     assert!(core::mem::align_of::<GuiHostInputRequest>() == 8);
+    assert!(core::mem::offset_of!(AudioOutputEpoch, version) == 0);
+    assert!(core::mem::offset_of!(AudioOutputEpoch, size) == 4);
+    assert!(core::mem::offset_of!(AudioOutputEpoch, generation) == 8);
+    assert!(core::mem::offset_of!(AudioOutputEpoch, count) == 16);
+    assert!(core::mem::offset_of!(AudioOutputEpoch, active_index) == 20);
+    assert!(core::mem::size_of::<AudioOutputEpoch>() == 24);
+    assert!(core::mem::align_of::<AudioOutputEpoch>() == 8);
+    assert!(core::mem::size_of::<AudioOutputEpochFn>() == 8);
+    assert!(core::mem::align_of::<AudioOutputEpochFn>() == 8);
+    assert!(core::mem::offset_of!(AudioOutputProviderEpoch, registration) == 0);
+    assert!(core::mem::offset_of!(AudioOutputProviderEpoch, generation) == 8);
+    assert!(core::mem::offset_of!(AudioOutputProviderEpoch, count) == 16);
+    assert!(core::mem::offset_of!(AudioOutputProviderEpoch, active_index) == 20);
+    assert!(core::mem::size_of::<AudioOutputProviderEpoch>() == 24);
+    assert!(core::mem::align_of::<AudioOutputProviderEpoch>() == 8);
+    assert!(core::mem::offset_of!(AudioOutputCatalog, version) == 0);
+    assert!(core::mem::offset_of!(AudioOutputCatalog, size) == 4);
+    assert!(core::mem::offset_of!(AudioOutputCatalog, registry_generation) == 8);
+    assert!(core::mem::offset_of!(AudioOutputCatalog, active_registration) == 16);
+    assert!(core::mem::offset_of!(AudioOutputCatalog, count) == 24);
+    assert!(core::mem::offset_of!(AudioOutputCatalog, provider_count) == 28);
+    assert!(core::mem::offset_of!(AudioOutputCatalog, providers) == 32);
+    assert!(core::mem::size_of::<AudioOutputCatalog>() == 224);
+    assert!(core::mem::align_of::<AudioOutputCatalog>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -33063,7 +33161,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_stream_progress) == 200);
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_set_stream_expectation) == 208);
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_close_stream_progress) == 216);
-    assert!(core::mem::size_of::<R4XStartR4Audio>() == 224);
+    assert!(core::mem::offset_of!(R4XStartR4Audio, audio_output_catalog) == 224);
+    assert!(core::mem::size_of::<R4XStartR4Audio>() == 232);
     assert!(core::mem::align_of::<R4XStartR4Audio>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Dev, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Dev, abi_version) == 4);
@@ -34310,7 +34409,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverApi, dma_sync_range_for_cpu) == 640);
     assert!(core::mem::offset_of!(DriverApi, driver_work_submit_owned) == 648);
     assert!(core::mem::offset_of!(DriverApi, serial_query) == 656);
-    assert!(core::mem::size_of::<DriverApi>() == 664);
+    assert!(core::mem::offset_of!(DriverApi, register_audio_output_epoch) == 664);
+    assert!(core::mem::size_of::<DriverApi>() == 672);
     assert!(core::mem::align_of::<DriverApi>() == 8);
     assert!(core::mem::offset_of!(ProtocolApi, magic) == 0);
     assert!(core::mem::offset_of!(ProtocolApi, version) == 4);

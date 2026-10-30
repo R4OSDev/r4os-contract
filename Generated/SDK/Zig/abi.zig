@@ -3633,6 +3633,10 @@ pub const GuiPointerCaptureHandle = generated.GuiPointerCaptureHandle;
 pub const GuiPointerCaptureInfo = generated.GuiPointerCaptureInfo;
 pub const GuiPointerHostRequest = generated.GuiPointerHostRequest;
 pub const GuiHostInputRequest = generated.GuiHostInputRequest;
+pub const AudioOutputEpoch = generated.AudioOutputEpoch;
+pub const AudioOutputEpochFn = generated.AudioOutputEpochFn;
+pub const AudioOutputProviderEpoch = generated.AudioOutputProviderEpoch;
+pub const AudioOutputCatalog = generated.AudioOutputCatalog;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;
@@ -5021,6 +5025,8 @@ pub const DriverApi = extern struct {
     driver_work_submit_owned: ?*const fn (DriverWorkHandler, usize, *u32) callconv(.c) i32 = null,
     // v37: external UART/transport registration; original prefix unchanged.
     serial_query: ?*const fn (*DriverSerialApi) callconv(.c) i32 = null,
+    // v39: owner-bound catalog epoch callback; all earlier slots unchanged.
+    register_audio_output_epoch: ?*const fn ([*:0]const u8, AudioOutputEpochFn) callconv(.c) i32 = null,
 };
 
 pub const ProtocolApi = extern struct {
