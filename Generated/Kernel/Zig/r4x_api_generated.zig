@@ -10771,12 +10771,14 @@ pub const R4SysFns = struct {
     pub const program_observation_read = *const fn (*const ProgramObservationHandle, u32, [*]u8, u32, *u32) callconv(.c) i32;
     pub const program_observation_release = *const fn (*const ProgramObservationHandle) callconv(.c) i32;
     pub const file_name_limits = *const fn ([*:0]const u8, *FileNameLimits) callconv(.c) i32;
+    pub const service_bound_detail = *const fn ([*:0]const u8, *ServiceDetail, *ProgramProcessHandle) callconv(.c) i32;
+    pub const service_stop_bound = *const fn ([*:0]const u8, *const ProgramProcessHandle, *ServiceInfo, u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 33,
-    size: u32 = 1376,
+    abi_version: u32 = 34,
+    size: u32 = 1392,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -10948,6 +10950,8 @@ pub const R4XStartR4Sys = extern struct {
     program_observation_read: usize = 0,
     program_observation_release: usize = 0,
     file_name_limits: usize = 0,
+    service_bound_detail: usize = 0,
+    service_stop_bound: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -11844,6 +11848,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 167, .offset = 1352, .name = "program_observation_read", .state = .function, .required = false },
     .{ .number = 168, .offset = 1360, .name = "program_observation_release", .state = .function, .required = false },
     .{ .number = 169, .offset = 1368, .name = "file_name_limits", .state = .function, .required = false },
+    .{ .number = 170, .offset = 1376, .name = "service_bound_detail", .state = .function, .required = false },
+    .{ .number = 171, .offset = 1384, .name = "service_stop_bound", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -19098,7 +19104,7 @@ comptime {
     if (@offsetOf(AudioOutputCatalog, "count") != 24) @compileError("generated ABI offset drift: AudioOutputCatalog.count");
     if (@offsetOf(AudioOutputCatalog, "provider_count") != 28) @compileError("generated ABI offset drift: AudioOutputCatalog.provider_count");
     if (@offsetOf(AudioOutputCatalog, "providers") != 32) @compileError("generated ABI offset drift: AudioOutputCatalog.providers");
-    if (@sizeOf(R4XStartR4Sys) != 1376) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1392) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -19269,6 +19275,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_observation_read") != 1352) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_read");
     if (@offsetOf(R4XStartR4Sys, "program_observation_release") != 1360) @compileError("generated ABI offset drift: R4XStartR4Sys.program_observation_release");
     if (@offsetOf(R4XStartR4Sys, "file_name_limits") != 1368) @compileError("generated ABI offset drift: R4XStartR4Sys.file_name_limits");
+    if (@offsetOf(R4XStartR4Sys, "service_bound_detail") != 1376) @compileError("generated ABI offset drift: R4XStartR4Sys.service_bound_detail");
+    if (@offsetOf(R4XStartR4Sys, "service_stop_bound") != 1384) @compileError("generated ABI offset drift: R4XStartR4Sys.service_stop_bound");
     if (@sizeOf(R4XStartR4Desk) != 624) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -19784,13 +19792,15 @@ pub const R4SysProvider = struct {
     program_observation_read: ?R4SysFns.program_observation_read = null,
     program_observation_release: ?R4SysFns.program_observation_release = null,
     file_name_limits: ?R4SysFns.file_name_limits = null,
+    service_bound_detail: ?R4SysFns.service_bound_detail = null,
+    service_stop_bound: ?R4SysFns.service_stop_bound = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 33,
-        .size = 1376,
+        .abi_version = 34,
+        .size = 1392,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -19962,6 +19972,8 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .program_observation_read = if (provider.program_observation_read) |callback| @intFromPtr(callback) else 0,
         .program_observation_release = if (provider.program_observation_release) |callback| @intFromPtr(callback) else 0,
         .file_name_limits = if (provider.file_name_limits) |callback| @intFromPtr(callback) else 0,
+        .service_bound_detail = if (provider.service_bound_detail) |callback| @intFromPtr(callback) else 0,
+        .service_stop_bound = if (provider.service_stop_bound) |callback| @intFromPtr(callback) else 0,
     };
 }
 

@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 498,
-    "group_slot_count": 498,
+    "function_count": 500,
+    "group_slot_count": 500,
     "sdk_only_count": 0,
-    "public_count": 358,
+    "public_count": 360,
     "advanced_count": 140
   },
   "functions": [
@@ -2013,6 +2013,30 @@
       "slot": 169,
       "exposure": "public",
       "description": "Resolve the actual target mount (the final file need not exist) and return its name/operation limits without mutation or free-space scanning. C:\\BOOT may differ from its visible drive provider. Return FileStream errors, including NAME_TOO_LONG; unsupported providers leave output untouched. The exact mount identity is a snapshot, not a reservation; file operations revalidate normally.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.service_bound_detail",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 170,
+      "exposure": "public",
+      "description": "Returns ServiceDetail and its exact current or last retained ProgramProcessHandle from one generation-validated registry selection. Terminal rows may retain the last process identity until next start/removal; an unbound row returns a zero process handle. The identity value grants no retention lease. Use service_stop_bound for service shutdown or program_handle_status, program_handle_request_close and program_handle_kill with this full handle; never reopen the displayed ID. Concurrent replacement returns BUSY, not another generation. Endpoint counters remain per-owner snapshots. No wait for process completion; normal owner/lifecycle admission may block.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.service_stop_bound",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 171,
+      "exposure": "public",
+      "description": "Request cooperative stop only if the named service is still bound to the supplied full ProgramProcessHandle; mismatch returns BUSY before Close. The same captured registry target is used throughout status/Close/completion, including restart/reinstall races. One absolute monotonic entry wait budget includes owner/status work; zero polls, FOREVER waits. Only actual retained physical completion succeeds; TIMEOUT remains an unknown outcome. The expected handle must be nonzero/valid; unbound starts use the existing named stop contract.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

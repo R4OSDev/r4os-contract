@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 498,
+    "group_function_signatures": 500,
     "sdk_operation_contracts": 0,
-    "parity_entries": 498,
+    "parity_entries": 500,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1511,6 +1511,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.file_name_limits",
       "c_contract": "R4SysFileNameLimitsFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.service_bound_detail",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.service_bound_detail",
+      "c_contract": "R4SysServiceBoundDetailFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.service_stop_bound",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.service_stop_bound",
+      "c_contract": "R4SysServiceStopBoundFn",
       "coverage": "generated_signature"
     },
     {

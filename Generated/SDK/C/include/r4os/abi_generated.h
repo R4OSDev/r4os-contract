@@ -11148,6 +11148,8 @@ typedef int32_t (*R4SysProgramObservationWaitFn)(const R4ProgramObservationHandl
 typedef int32_t (*R4SysProgramObservationReadFn)(const R4ProgramObservationHandle * observation, uint32_t offset, uint8_t * out, uint32_t capacity, uint32_t * out_read);
 typedef int32_t (*R4SysProgramObservationReleaseFn)(const R4ProgramObservationHandle * observation);
 typedef int32_t (*R4SysFileNameLimitsFn)(const uint8_t * path, R4FileNameLimits * out_limits);
+typedef int32_t (*R4SysServiceBoundDetailFn)(const uint8_t * name, R4ServiceDetail * out_detail, R4ProgramProcessHandle * out_process);
+typedef int32_t (*R4SysServiceStopBoundFn)(const uint8_t * name, const R4ProgramProcessHandle * expected_process, R4ServiceInfo * out_info, uint64_t timeout_ticks);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11324,6 +11326,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_observation_read;
     uintptr_t program_observation_release;
     uintptr_t file_name_limits;
+    uintptr_t service_bound_detail;
+    uintptr_t service_stop_bound;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -18552,7 +18556,7 @@ _Static_assert(offsetof(R4AudioOutputCatalog, active_registration) == 16u, "Audi
 _Static_assert(offsetof(R4AudioOutputCatalog, count) == 24u, "AudioOutputCatalog.count offset mismatch");
 _Static_assert(offsetof(R4AudioOutputCatalog, provider_count) == 28u, "AudioOutputCatalog.provider_count offset mismatch");
 _Static_assert(offsetof(R4AudioOutputCatalog, providers) == 32u, "AudioOutputCatalog.providers offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1376u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1392u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -18890,6 +18894,10 @@ _Static_assert(offsetof(R4XStartR4Sys, program_observation_release) == 1360u, "R
 _Static_assert(sizeof(R4SysProgramObservationReleaseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, file_name_limits) == 1368u, "R4XStartR4Sys.file_name_limits offset mismatch");
 _Static_assert(sizeof(R4SysFileNameLimitsFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, service_bound_detail) == 1376u, "R4XStartR4Sys.service_bound_detail offset mismatch");
+_Static_assert(sizeof(R4SysServiceBoundDetailFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, service_stop_bound) == 1384u, "R4XStartR4Sys.service_stop_bound offset mismatch");
+_Static_assert(sizeof(R4SysServiceStopBoundFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 624u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

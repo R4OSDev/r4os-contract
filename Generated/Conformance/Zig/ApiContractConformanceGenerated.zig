@@ -6516,7 +6516,7 @@ comptime {
     if (@offsetOf(abi.AudioOutputCatalog, "count") != 24) @compileError("AudioOutputCatalog.count offset");
     if (@offsetOf(abi.AudioOutputCatalog, "provider_count") != 28) @compileError("AudioOutputCatalog.provider_count offset");
     if (@offsetOf(abi.AudioOutputCatalog, "providers") != 32) @compileError("AudioOutputCatalog.providers offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1376) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1392) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -6854,6 +6854,10 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_observation_release) != 8) @compileError("R4SysFns.program_observation_release signature");
     if (@offsetOf(abi.R4XStartR4Sys, "file_name_limits") != 1368) @compileError("R4XStartR4Sys.file_name_limits offset");
     if (@sizeOf(abi.R4SysFns.file_name_limits) != 8) @compileError("R4SysFns.file_name_limits signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "service_bound_detail") != 1376) @compileError("R4XStartR4Sys.service_bound_detail offset");
+    if (@sizeOf(abi.R4SysFns.service_bound_detail) != 8) @compileError("R4SysFns.service_bound_detail signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "service_stop_bound") != 1384) @compileError("R4XStartR4Sys.service_stop_bound offset");
+    if (@sizeOf(abi.R4SysFns.service_stop_bound) != 8) @compileError("R4SysFns.service_stop_bound signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 624) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

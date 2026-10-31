@@ -20330,6 +20330,8 @@ pub mod R4SysFns {
     pub type program_observation_read = unsafe extern "C" fn(*const ProgramObservationHandle, u32, *mut u8, u32, *mut u32) -> i32;
     pub type program_observation_release = unsafe extern "C" fn(*const ProgramObservationHandle) -> i32;
     pub type file_name_limits = unsafe extern "C" fn(*const u8, *mut FileNameLimits) -> i32;
+    pub type service_bound_detail = unsafe extern "C" fn(*const u8, *mut ServiceDetail, *mut ProgramProcessHandle) -> i32;
+    pub type service_stop_bound = unsafe extern "C" fn(*const u8, *const ProgramProcessHandle, *mut ServiceInfo, u64) -> i32;
 }
 
 #[repr(C)]
@@ -20509,14 +20511,16 @@ pub struct R4XStartR4Sys {
     pub program_observation_read: usize,
     pub program_observation_release: usize,
     pub file_name_limits: usize,
+    pub service_bound_detail: usize,
+    pub service_stop_bound: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 33,
-            size: 1376,
+            abi_version: 34,
+            size: 1392,
             flags: 0,
             write: 0,
             putc: 0,
@@ -20688,6 +20692,8 @@ impl Default for R4XStartR4Sys {
             program_observation_read: 0,
             program_observation_release: 0,
             file_name_limits: 0,
+            service_bound_detail: 0,
+            service_stop_bound: 0,
         }
     }
 }
@@ -32889,7 +32895,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_read) == 1352);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_observation_release) == 1360);
     assert!(core::mem::offset_of!(R4XStartR4Sys, file_name_limits) == 1368);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1376);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, service_bound_detail) == 1376);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, service_stop_bound) == 1384);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1392);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);
