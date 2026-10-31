@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 391 von 391 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2811; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2814; Limits: 111
 
 ## App-Profile
 
@@ -13971,6 +13971,9 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gui_host_input_error_busy` | `-3` | `i32` | value | number | `gui_host_input_error` | fixed_contract |
 | `gui_host_input_error_context` | `-4` | `i32` | value | number | `gui_host_input_error` | fixed_contract |
 | `audio_duration_ticks_unavailable` | `18446744073709551615` | `u64` | value | ticks | `audio` | fixed_contract |
+| `service_deadline_footer_magic` | `1279538258` | `u32` | magic | number | `service_api` | fixed_contract |
+| `service_deadline_footer_version` | `1` | `u16` | version | version | `service_api` | fixed_contract |
+| `net_service_tcp_deadline_poll` | `0` | `u64` | value | ticks | `tcp_service` | fixed_contract |
 
 ## Limits
 

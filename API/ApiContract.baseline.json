@@ -80416,7 +80416,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Absolute system monotonic tick; maximum u64 denotes an unbounded wait.",
+          "description": "Absolute system monotonic tick for TCPSVC finite operations; net_service_tcp_deadline_poll (0) requests one nonblocking attempt without deferral, and maximum u64 denotes an unbounded wait. An expired finite request is rejected before operation admission; timeout does not undo an already admitted effect.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -159212,6 +159212,36 @@
       "scope": "audio",
       "stability": "fixed_contract",
       "description": "Explicit unavailable value for retired audio stream-write, backend-write and backend-refill duration ticks. Never a measured duration; exclude from arithmetic. Current providers do not collect these detail timings. Functional clocks, progress, work and error counters remain available."
+    },
+    {
+      "name": "service_deadline_footer_magic",
+      "value": "1279538258",
+      "value_type": "u32",
+      "category": "magic",
+      "unit": "number",
+      "scope": "service_api",
+      "stability": "fixed_contract",
+      "description": "Existing R4DL suffix marker; identical to ServiceDeadlineFooter.magic default."
+    },
+    {
+      "name": "service_deadline_footer_version",
+      "value": "1",
+      "value_type": "u16",
+      "category": "version",
+      "unit": "version",
+      "scope": "service_api",
+      "stability": "fixed_contract",
+      "description": "Existing 24-byte deadline suffix version; layout unchanged."
+    },
+    {
+      "name": "net_service_tcp_deadline_poll",
+      "value": "0",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "ticks",
+      "scope": "tcp_service",
+      "stability": "fixed_contract",
+      "description": "TCPSVC one nonblocking operation attempt, no deferred retry; connect reports would-block without starting a blocking handshake. Requires TCPSVC supporting this documented sentinel."
     }
   ],
   "limits": [
