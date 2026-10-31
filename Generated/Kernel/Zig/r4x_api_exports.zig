@@ -48,6 +48,7 @@ pub const audio_service_flag_backend_present = generated.audio_service_flag_back
 pub const audio_service_flag_mixer_present = generated.audio_service_flag_mixer_present;
 pub const audio_service_flag_service_ready = generated.audio_service_flag_service_ready;
 pub const audio_service_flag_sessions_open = generated.audio_service_flag_sessions_open;
+pub const audio_service_flag_duration_unavailable = generated.audio_service_flag_duration_unavailable;
 pub const audio_service_op_close_stream = generated.audio_service_op_close_stream;
 pub const audio_service_op_master_status = generated.audio_service_op_master_status;
 pub const audio_service_op_open_stream = generated.audio_service_op_open_stream;

@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 391 von 391 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2814; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2815; Limits: 111
 
 ## App-Profile
 
@@ -11208,6 +11208,7 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `audio_service_flag_mixer_present` | `2` | `u32` | flag | bitmask | `audio_service` | fixed_contract |
 | `audio_service_flag_service_ready` | `8` | `u32` | flag | bitmask | `audio_service` | fixed_contract |
 | `audio_service_flag_sessions_open` | `4` | `u32` | flag | bitmask | `audio_service` | fixed_contract |
+| `audio_service_flag_duration_unavailable` | `16` | `u32` | flag | bitmask | `audio_service` | fixed_contract |
 | `audio_service_op_close_stream` | `5` | `u16` | identity | number | `audio_service` | fixed_contract |
 | `audio_service_op_master_status` | `7` | `u16` | identity | number | `audio_service` | fixed_contract |
 | `audio_service_op_open_stream` | `3` | `u16` | identity | number | `audio_service` | fixed_contract |

@@ -53,6 +53,7 @@ pub const audio_service_flag_backend_present: u32 = 1;
 pub const audio_service_flag_mixer_present: u32 = 2;
 pub const audio_service_flag_service_ready: u32 = 8;
 pub const audio_service_flag_sessions_open: u32 = 4;
+pub const audio_service_flag_duration_unavailable: u32 = 16;
 pub const audio_service_op_close_stream: u16 = 5;
 pub const audio_service_op_master_status: u16 = 7;
 pub const audio_service_op_open_stream: u16 = 3;

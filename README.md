@@ -18,6 +18,15 @@ none is a receipt for a speaker. Backend registration, output/reset epoch,
 kernel stream generation and service/logical stream generation bind each
 observation to its owner. Repeated reads never extend a source deadline.
 
+Contract0.64.66 extends the retired audio-duration contract to AUDSVC.
+From AUDSVC0.1.22, `AudioServiceStatus` and `AudioServiceStreamResult` set
+`audio_service_flag_duration_unavailable`; all six status and both result
+request/write duration fields equal `audio_duration_ticks_unavailable`.
+Exclude these values from arithmetic. Historical providers without the flag
+retain their original measured values. Record versions, sizes, offsets and
+all existing flag values stay unchanged. The actual 500 ms Close deadline,
+selection thread Join, PCM work and error/progress counters remain active.
+
 Contract0.64.61 retires the unused audio write/refill duration collection.
 All nine `ProgramPerformanceSummary` duration fields and all six
 `AudioBackendStatus` duration fields retain their names, offsets and layouts.

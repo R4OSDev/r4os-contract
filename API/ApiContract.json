@@ -131584,6 +131584,16 @@
       "description": "Public fixed contract constant."
     },
     {
+      "name": "audio_service_flag_duration_unavailable",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "audio_service",
+      "stability": "fixed_contract",
+      "description": "AudioServiceStatus and AudioServiceStreamResult request/write duration fields are retired and equal audio_duration_ticks_unavailable. These values are unavailable, not measured zero; exclude them from arithmetic. Functional close deadlines, progress and work/error counters remain active."
+    },
+    {
       "name": "audio_service_op_close_stream",
       "value": "5",
       "value_type": "u16",
@@ -159211,7 +159221,7 @@
       "unit": "ticks",
       "scope": "audio",
       "stability": "fixed_contract",
-      "description": "Explicit unavailable value for retired audio stream-write, backend-write and backend-refill duration ticks. Never a measured duration; exclude from arithmetic. Current providers do not collect these detail timings. Functional clocks, progress, work and error counters remain available."
+      "description": "Explicit unavailable value for retired audio stream-write, backend-write, backend-refill and AUDSVC request/write-request duration ticks. Never a measured duration; exclude from arithmetic. AUDSVC marks retired status/result duration fields with audio_service_flag_duration_unavailable. Current providers do not collect these detail timings. Functional clocks, progress, work and error counters remain available."
     },
     {
       "name": "service_deadline_footer_magic",
