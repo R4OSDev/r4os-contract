@@ -37731,7 +37731,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field memory_reserved_limit.",
+          "description": "Profile reservation limit for explicit R4X VM-window virtual ranges, including SDK heap backing in that window; not the sum of all process VM ranges. Image and stack admission retain their separate bounds.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37745,7 +37745,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field memory_committed_limit.",
+          "description": "Profile logical-commit limit for explicit R4X VM-window virtual ranges; a quota rather than current residency or history. Image and stack bounds remain separately enforced.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37759,7 +37759,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field memory_resident_limit.",
+          "description": "Profile resident-admission limit for explicit R4X VM-window virtual ranges, including pending page-in admission. Pending frames are not actual resident bytes or resident high-water.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37773,7 +37773,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field memory_reserved_bytes.",
+          "description": "Full-instance diagnostic: current sum of active VM-range reservations owned by this R4X instance, including image, SDK heap/explicit VM and main/secondary R4X stacks with reserved guards. Separately owned kernel/task stacks, shared R4L images and kernel payload/DMA allocations are excluded.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37787,7 +37787,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field memory_committed_bytes.",
+          "description": "Full-instance diagnostic: current logical committed bytes on the same process-owned VM-range basis as memory_reserved_bytes; committed pages may be nonresident. This total has a broader basis than the explicit-VM-window profile quota.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37801,7 +37801,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field memory_resident_bytes.",
+          "description": "Full-instance diagnostic: current simultaneously resident bytes over all active VM ranges owned by this R4X instance, including image, SDK heap/explicit VM and main/secondary R4X stacks. Separately owned kernel/task stacks, shared R4L images and kernel payload/DMA allocations are excluded. VM-range residency is not total physical RAM or unique-physical-page RSS.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37815,7 +37815,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field memory_peak_resident_bytes.",
+          "description": "Historical maximum of the simultaneous memory_resident_bytes sum for this exact process generation, recorded at actual resident transitions even between status queries. It survives decommit, range release and instance reaping through the retained completion; a new generation starts fresh. Range peaks are neither added nor substituted. Saturates at u64 max. Lifecycle-only inventory omits memory diagnostics.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37829,7 +37829,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field stack_reserved_bytes.",
+          "description": "Full-instance diagnostic: current main R4X stack VM-range reservation including its guard, from the same VM-owner snapshot as process totals. A subset of memory_reserved_bytes, not an additional charge. Secondary R4X stacks contribute to process totals but not this main-stack field.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37843,7 +37843,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field stack_committed_bytes.",
+          "description": "Full-instance diagnostic: current logical committed bytes of the main R4X stack, including acknowledged stack growth, from the same VM-owner snapshot as process totals. A subset of memory_committed_bytes; neither the sum of secondary stacks nor necessarily resident bytes.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -37869,7 +37869,7 @@
         }
       ],
       "values": [],
-      "description": "Public R4OS ABI payload type."
+      "description": "Full live-instance information reports coherent process-owned VM totals and the main-stack subset. A generation-bound retained completion preserves lifecycle data and memory_peak_resident_bytes; current memory/profile/stack fields are unavailable (zero placeholders) after the live instance row is retired. These placeholders must not be interpreted as measured zero usage. Lifecycle-only inventory requests omit all memory diagnostics."
     },
     {
       "name": "ThreadEntryFn",
@@ -57219,7 +57219,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Public field peak_resident_bytes.",
+          "description": "Historical resident-byte high-water of this individual VM range until that range is released. Decommit preserves this history; actual range release/reuse resets it. This is neither a process-wide simultaneous peak nor a global VM peak. Different range high-waters must not be summed.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
