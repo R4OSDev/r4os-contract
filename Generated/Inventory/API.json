@@ -1964,7 +1964,7 @@
       "kind": "group_slot",
       "slot": 165,
       "exposure": "public",
-      "description": "Retain one exact process completion and captured output across owner reap. flags0 binds cleanup to the calling process; PORTABLE explicitly survives creator exit until release. Admission before owner consumption is required; failure never invents evidence. Independent bindings may observe the same process.",
+      "description": "Create an independent observation binding to the exact process handle and generation while its completion record still exists. A first binding can be admitted before owner reap; after consuming owner reap, a new independent binding can still be admitted while an existing reference retains that exact record. Copying the same observation token creates no additional binding or reference. Once the last retaining reference is released and the consumed record is removed, retain fails; it never reconstructs missing completion or output evidence. flags0 binds cleanup to the calling process generation; PORTABLE explicitly survives creator exit until release. Existing generation checks and owner reap authority are unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
