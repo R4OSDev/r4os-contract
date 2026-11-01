@@ -6591,6 +6591,12 @@ comptime {
     if (@sizeOf(abi.DesktopWindowReply) != 640) @compileError("DesktopWindowReply size");
     if (@offsetOf(abi.DesktopWindowReply, "mode") != 0) @compileError("DesktopWindowReply.mode offset");
     if (@offsetOf(abi.DesktopWindowReply, "action") != 96) @compileError("DesktopWindowReply.action offset");
+    if (@sizeOf(abi.FirmwareSystemUuidInfo) != 32) @compileError("FirmwareSystemUuidInfo size");
+    if (@offsetOf(abi.FirmwareSystemUuidInfo, "version") != 0) @compileError("FirmwareSystemUuidInfo.version offset");
+    if (@offsetOf(abi.FirmwareSystemUuidInfo, "size") != 4) @compileError("FirmwareSystemUuidInfo.size offset");
+    if (@offsetOf(abi.FirmwareSystemUuidInfo, "source") != 8) @compileError("FirmwareSystemUuidInfo.source offset");
+    if (@offsetOf(abi.FirmwareSystemUuidInfo, "reserved") != 12) @compileError("FirmwareSystemUuidInfo.reserved offset");
+    if (@offsetOf(abi.FirmwareSystemUuidInfo, "uuid") != 16) @compileError("FirmwareSystemUuidInfo.uuid offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1392) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -7434,7 +7440,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_close_stream_progress) != 8) @compileError("R4AudioFns.audio_close_stream_progress signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("R4XStartR4Audio.audio_output_catalog offset");
     if (@sizeOf(abi.R4AudioFns.audio_output_catalog) != 8) @compileError("R4AudioFns.audio_output_catalog signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 728) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 736) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -7608,6 +7614,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.cpu_acceleration_work) != 8) @compileError("R4DevFns.cpu_acceleration_work signature");
     if (@offsetOf(abi.R4XStartR4Dev, "fpu_observation") != 720) @compileError("R4XStartR4Dev.fpu_observation offset");
     if (@sizeOf(abi.R4DevFns.fpu_observation) != 8) @compileError("R4DevFns.fpu_observation signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "firmware_system_uuid") != 728) @compileError("R4XStartR4Dev.firmware_system_uuid offset");
+    if (@sizeOf(abi.R4DevFns.firmware_system_uuid) != 8) @compileError("R4DevFns.firmware_system_uuid signature");
 }
 
 test "generated API contract compiles" {}

@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 500,
+    "group_function_signatures": 501,
     "sdk_operation_contracts": 0,
-    "parity_entries": 500,
+    "parity_entries": 501,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4508,6 +4508,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.fpu_observation",
       "c_contract": "R4DevFpuObservationFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.firmware_system_uuid",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.firmware_system_uuid",
+      "c_contract": "R4DevFirmwareSystemUuidFn",
       "coverage": "generated_signature"
     }
   ],

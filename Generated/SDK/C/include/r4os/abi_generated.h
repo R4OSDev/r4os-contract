@@ -3761,6 +3761,7 @@ typedef struct R4DesktopActionRequest R4DesktopActionRequest;
 typedef struct R4DesktopActionReply R4DesktopActionReply;
 typedef struct R4DesktopWindowExchange R4DesktopWindowExchange;
 typedef struct R4DesktopWindowReply R4DesktopWindowReply;
+typedef struct R4FirmwareSystemUuidInfo R4FirmwareSystemUuidInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11114,6 +11115,14 @@ typedef struct R4DesktopWindowReply {
     R4DesktopActionReply action;
 } R4DesktopWindowReply;
 
+typedef struct R4FirmwareSystemUuidInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t source;
+    uint32_t reserved;
+    uint8_t uuid[16];
+} R4FirmwareSystemUuidInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -12122,6 +12131,7 @@ typedef int32_t (*R4DevCpuPmuResultFn)(uint32_t cpu_index, uint64_t epoch, uint6
 typedef int32_t (*R4DevCpuAccelerationInfoFn)(R4CpuAccelerationInfo * out);
 typedef int32_t (*R4DevCpuAccelerationWorkFn)(uint32_t work_kind, uint32_t iterations, const R4CpuPureWorkFn * work, uint64_t context, R4CpuAccelerationWork * out);
 typedef int32_t (*R4DevFpuObservationFn)(const R4FpuObservationRequest * request, R4FpuObservationInfo * out);
+typedef int32_t (*R4DevFirmwareSystemUuidFn)(R4FirmwareSystemUuidInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -12217,6 +12227,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_acceleration_info;
     uintptr_t cpu_acceleration_work;
     uintptr_t fpu_observation;
+    uintptr_t firmware_system_uuid;
 } R4XStartR4Dev;
 
 
@@ -18810,6 +18821,12 @@ _Static_assert(offsetof(R4DesktopWindowExchange, flags) == 636u, "DesktopWindowE
 _Static_assert(sizeof(R4DesktopWindowReply) == 640u, "DesktopWindowReply size mismatch");
 _Static_assert(offsetof(R4DesktopWindowReply, mode) == 0u, "DesktopWindowReply.mode offset mismatch");
 _Static_assert(offsetof(R4DesktopWindowReply, action) == 96u, "DesktopWindowReply.action offset mismatch");
+_Static_assert(sizeof(R4FirmwareSystemUuidInfo) == 32u, "FirmwareSystemUuidInfo size mismatch");
+_Static_assert(offsetof(R4FirmwareSystemUuidInfo, version) == 0u, "FirmwareSystemUuidInfo.version offset mismatch");
+_Static_assert(offsetof(R4FirmwareSystemUuidInfo, size) == 4u, "FirmwareSystemUuidInfo.size offset mismatch");
+_Static_assert(offsetof(R4FirmwareSystemUuidInfo, source) == 8u, "FirmwareSystemUuidInfo.source offset mismatch");
+_Static_assert(offsetof(R4FirmwareSystemUuidInfo, reserved) == 12u, "FirmwareSystemUuidInfo.reserved offset mismatch");
+_Static_assert(offsetof(R4FirmwareSystemUuidInfo, uuid) == 16u, "FirmwareSystemUuidInfo.uuid offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1392u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -19653,7 +19670,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_close_stream_progress) == 216u, "
 _Static_assert(sizeof(R4AudioAudioCloseStreamProgressFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStartR4Audio.audio_output_catalog offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 728u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 736u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -19827,6 +19844,8 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_acceleration_work) == 712u, "R4XStart
 _Static_assert(sizeof(R4DevCpuAccelerationWorkFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, fpu_observation) == 720u, "R4XStartR4Dev.fpu_observation offset mismatch");
 _Static_assert(sizeof(R4DevFpuObservationFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, firmware_system_uuid) == 728u, "R4XStartR4Dev.firmware_system_uuid offset mismatch");
+_Static_assert(sizeof(R4DevFirmwareSystemUuidFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #include <r4os/abi_technical_generated.h>
 

@@ -20468,6 +20468,28 @@ impl Default for DesktopWindowReply {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FirmwareSystemUuidInfo {
+    pub version: u32,
+    pub size: u32,
+    pub source: u32,
+    pub reserved: u32,
+    pub uuid: [u8; 16],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FirmwareSystemUuidInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            source: 0,
+            reserved: 0,
+            uuid: [0; 16],
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21949,6 +21971,7 @@ pub mod R4DevFns {
     pub type cpu_acceleration_info = unsafe extern "C" fn(*mut CpuAccelerationInfo) -> i32;
     pub type cpu_acceleration_work = unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32;
     pub type fpu_observation = unsafe extern "C" fn(*const FpuObservationRequest, *mut FpuObservationInfo) -> i32;
+    pub type firmware_system_uuid = unsafe extern "C" fn(*mut FirmwareSystemUuidInfo) -> i32;
 }
 
 #[repr(C)]
@@ -22047,14 +22070,15 @@ pub struct R4XStartR4Dev {
     pub cpu_acceleration_info: usize,
     pub cpu_acceleration_work: usize,
     pub fpu_observation: usize,
+    pub firmware_system_uuid: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 35,
-            size: 728,
+            abi_version: 36,
+            size: 736,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -22145,6 +22169,7 @@ impl Default for R4XStartR4Dev {
             cpu_acceleration_info: 0,
             cpu_acceleration_work: 0,
             fpu_observation: 0,
+            firmware_system_uuid: 0,
         }
     }
 }
@@ -33120,6 +33145,13 @@ const _: () = {
     assert!(core::mem::offset_of!(DesktopWindowReply, action) == 96);
     assert!(core::mem::size_of::<DesktopWindowReply>() == 640);
     assert!(core::mem::align_of::<DesktopWindowReply>() == 8);
+    assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, version) == 0);
+    assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, size) == 4);
+    assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, source) == 8);
+    assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, reserved) == 12);
+    assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, uuid) == 16);
+    assert!(core::mem::size_of::<FirmwareSystemUuidInfo>() == 32);
+    assert!(core::mem::align_of::<FirmwareSystemUuidInfo>() == 4);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -33667,7 +33699,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_acceleration_info) == 704);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_acceleration_work) == 712);
     assert!(core::mem::offset_of!(R4XStartR4Dev, fpu_observation) == 720);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 728);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, firmware_system_uuid) == 728);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 736);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

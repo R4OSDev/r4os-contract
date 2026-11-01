@@ -3724,6 +3724,7 @@ pub const DesktopActionRequest = generated.DesktopActionRequest;
 pub const DesktopActionReply = generated.DesktopActionReply;
 pub const DesktopWindowExchange = generated.DesktopWindowExchange;
 pub const DesktopWindowReply = generated.DesktopWindowReply;
+pub const FirmwareSystemUuidInfo = generated.FirmwareSystemUuidInfo;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
 pub const R4SysFns = generated.R4SysFns;

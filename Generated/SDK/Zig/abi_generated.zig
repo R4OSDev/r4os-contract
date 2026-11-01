@@ -10773,6 +10773,14 @@ pub const DesktopWindowReply = extern struct {
     action: DesktopActionReply = .{},
 };
 
+pub const FirmwareSystemUuidInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    source: u32 = 0,
+    reserved: u32 = 0,
+    uuid: [16]u8 = .{0} ** 16,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11746,12 +11754,13 @@ pub const R4DevFns = struct {
     pub const cpu_acceleration_info = *const fn (*CpuAccelerationInfo) callconv(.c) i32;
     pub const cpu_acceleration_work = *const fn (u32, u32, ?*const CpuPureWorkFn, u64, *CpuAccelerationWork) callconv(.c) i32;
     pub const fpu_observation = *const fn (*const FpuObservationRequest, *FpuObservationInfo) callconv(.c) i32;
+    pub const firmware_system_uuid = *const fn (*FirmwareSystemUuidInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 35,
-    size: u32 = 728,
+    abi_version: u32 = 36,
+    size: u32 = 736,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -11842,6 +11851,7 @@ pub const R4XStartR4Dev = extern struct {
     cpu_acceleration_info: usize = 0,
     cpu_acceleration_work: usize = 0,
     fpu_observation: usize = 0,
+    firmware_system_uuid: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -12374,6 +12384,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 86, .offset = 704, .name = "cpu_acceleration_info", .state = .function, .required = false },
     .{ .number = 87, .offset = 712, .name = "cpu_acceleration_work", .state = .function, .required = false },
     .{ .number = 88, .offset = 720, .name = "fpu_observation", .state = .function, .required = false },
+    .{ .number = 89, .offset = 728, .name = "firmware_system_uuid", .state = .function, .required = false },
 };
 
 comptime {
@@ -19358,6 +19369,13 @@ comptime {
     if (@alignOf(DesktopWindowReply) != 8) @compileError("generated ABI alignment drift: DesktopWindowReply");
     if (@offsetOf(DesktopWindowReply, "mode") != 0) @compileError("generated ABI offset drift: DesktopWindowReply.mode");
     if (@offsetOf(DesktopWindowReply, "action") != 96) @compileError("generated ABI offset drift: DesktopWindowReply.action");
+    if (@sizeOf(FirmwareSystemUuidInfo) != 32) @compileError("generated ABI size drift: FirmwareSystemUuidInfo");
+    if (@alignOf(FirmwareSystemUuidInfo) != 4) @compileError("generated ABI alignment drift: FirmwareSystemUuidInfo");
+    if (@offsetOf(FirmwareSystemUuidInfo, "version") != 0) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.version");
+    if (@offsetOf(FirmwareSystemUuidInfo, "size") != 4) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.size");
+    if (@offsetOf(FirmwareSystemUuidInfo, "source") != 8) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.source");
+    if (@offsetOf(FirmwareSystemUuidInfo, "reserved") != 12) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.reserved");
+    if (@offsetOf(FirmwareSystemUuidInfo, "uuid") != 16) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.uuid");
     if (@sizeOf(R4XStartR4Sys) != 1392) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -19785,7 +19803,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_set_stream_expectation") != 208) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_set_stream_expectation");
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
-    if (@sizeOf(R4XStartR4Dev) != 728) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 736) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -19875,4 +19893,5 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_acceleration_info") != 704) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_acceleration_info");
     if (@offsetOf(R4XStartR4Dev, "cpu_acceleration_work") != 712) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_acceleration_work");
     if (@offsetOf(R4XStartR4Dev, "fpu_observation") != 720) @compileError("generated ABI offset drift: R4XStartR4Dev.fpu_observation");
+    if (@offsetOf(R4XStartR4Dev, "firmware_system_uuid") != 728) @compileError("generated ABI offset drift: R4XStartR4Dev.firmware_system_uuid");
 }
