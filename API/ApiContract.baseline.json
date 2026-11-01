@@ -128563,6 +128563,1043 @@
       ],
       "values": [],
       "description": "Complete copied catalog receipt. Caller initializes version1/size>=224. Registry/active selection is held for the call; each provider epoch is revalidated after all rows. No persistent kernel snapshot or lease. Only provider_count witnesses and count rows are valid; remaining witness entries are zero. AUDSVC binds its downstream pages to its service_epoch/revision."
+    },
+    {
+      "name": "DesktopEvidenceToken",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "broker",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "broker",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "request",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "request",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "process",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "process",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "desktop",
+          "offset": 56,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "desktop",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "epoch",
+          "offset": 72,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Fresh192bit WINSVC incarnation from actual entropy; never persisted or generated from IDs/clocks. Scope is strictly inside one boot; broker restart invalidates it too.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "[3]u64",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "serial",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonwrapping broker reservation identity. Zero only for pre-reservation intent and read-only recovery of a lost reservation reply.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "intent",
+          "offset": 104,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Receiver logical identity chosen and persisted before reserve. Copies alias one lease; different observers use distinct intents. No permission or reap capability.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "[3]u64",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "WINSVC evidence handoffV1 token; public service wire, no new kernel function. Token scope contains actual broker generation plus fresh volatile entropy epoch to reject service/boot reuse even if numeric IDs repeat. Reservation precedes Offer and is known before any Retain; Offer/ACK/Status/Read/Release never create a missing reservation. Actual full process generation is filled from the already protected launch ticket. Save canonical token before ACK. An acknowledged service-owned creator-bound evidence lease survives observer exit until explicit release or broker end; unacknowledged reservations expire. No process lifecycle or reap rights."
+    },
+    {
+      "name": "DesktopEvidenceRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 136,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "token",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DesktopEvidenceToken"
+          },
+          "description": "token",
+          "size": 128,
+          "alignment": 8,
+          "source_type": "DesktopEvidenceToken",
+          "default_kind": "empty"
+        },
+        {
+          "name": "offset",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Output byte offset for read; zero for other operations.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Maximum appended read bytes, at most service payload minus reply header; zero for other operations.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fixed WINSVC evidenceV1 request, little-endian x86_64 native fixed layout. Service opcode supplies operation. Scope query uses the default empty token; reserve uses nonzero receiver intent and request identity with serial0; lost reserve reply is resolved by read-only status with that same pre-intent. Offer requires the returned serial. All mutating retries are idempotent on the exact retained reservation; Unknown must not be replaced with a blind new Retain or Spawn."
+    },
+    {
+      "name": "DesktopEvidenceReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 288,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "token",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DesktopEvidenceToken"
+          },
+          "description": "token",
+          "size": 128,
+          "alignment": 8,
+          "source_type": "DesktopEvidenceToken",
+          "default_kind": "empty"
+        },
+        {
+          "name": "result",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Desktop evidence service result, separate from transport header status and app exit code.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved/awaiting source/offered/acknowledged/released/expired/unavailable; see service constants.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Unacknowledged offer/reservation expiry in current system ticks;0 for durable acknowledged lease or terminal tombstone.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completion",
+          "offset": 144,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessCompletion"
+          },
+          "description": "completion",
+          "size": 128,
+          "alignment": 8,
+          "source_type": "ProgramProcessCompletion",
+          "default_kind": "empty"
+        },
+        {
+          "name": "data_bytes",
+          "offset": 272,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bytes appended immediately after this288byte header by Read;0 for other operations.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "raw_result",
+          "offset": 276,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Original evidence backend result where queried;0 otherwise. Separate from service and app exit codes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 280,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Broker-owned phase revision; immutable across read-only status retries.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "WINSVC evidenceV1 fixed reply header followed by data_bytes output bytes only for Read. Completion is the original kernel completion copied verbatim, never inferred from launch/window state. Pending is distinct from unavailable evidence; zero captured output, truncation and incomplete flags remain the original completion facts. Status/Read do not Retain/Spawn/ACK/reap or renew a reservation. Closed terminal history is bounded; evicted tokens are Unknown and old nonzero serials never recreate references."
+    },
+    {
+      "name": "DesktopActionToken",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 144,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "144"
+        },
+        {
+          "name": "window",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "WindowModeIdentity"
+          },
+          "description": "window",
+          "size": 64,
+          "alignment": 8,
+          "source_type": "WindowModeIdentity",
+          "default_kind": "empty"
+        },
+        {
+          "name": "request",
+          "offset": 72,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "request",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "controller",
+          "offset": 88,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "controller",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "epoch",
+          "offset": 104,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Exact fresh192bit WINSVC incarnation from actual entropy, not an observationlease or actionauthority by itself.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "[3]u64",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "grant",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonwrapping explicit action delegation ID. Zero only scope/grant lookup or own-app view proof, never command authority.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rights",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Resize/Minimize/Restore explicit bounded mask granted by the original live launch requester.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit own-launch WM action delegation, separate from evidence observation. Original live launcher names a live full-generation controller and allowed actions. Actual window identity is bound only from Desktop publication. Scope/app-view token grant0 never authorizes commands. Full broker/target/Desktop/window serial/request/controller and actual-entropy epoch reject stale/reused resources. No reap, global window control or user permission architecture."
+    },
+    {
+      "name": "DesktopActionState",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 168,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "168"
+        },
+        {
+          "name": "window",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "WindowModeIdentity"
+          },
+          "description": "window",
+          "size": 64,
+          "alignment": 8,
+          "source_type": "WindowModeIdentity",
+          "default_kind": "empty"
+        },
+        {
+          "name": "view_revision",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonwrapping Desktop-owned actual geometry/state/coordinate-basis revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frame_before",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Producer committed generation observed before this actual view transition.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "candidate_generation",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "App-acknowledged candidate for this exact view, not proof of composition.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frame_generation",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact producer generation actually consumed by the qualifying composed frame; zero for invisible/minimized or unavailable content.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "composition_serial",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Desktop-issued bounded actual composition receipt for this view, not an all-frame profiler or physical scanout assertion.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "input_revision",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Coordinate basis identity, equal to this exact view revision. Old image/input basis is not the new view.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "info",
+          "offset": 120,
+          "type": {
+            "kind": "named",
+            "name": "GuiWindowInfo"
+          },
+          "description": "info",
+          "size": 40,
+          "alignment": 4,
+          "source_type": "GuiWindowInfo",
+          "default_kind": "empty"
+        },
+        {
+          "name": "proof_flags",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Actual view/app-ack/fresh producer/composed/invisible/unsupported distinctions.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 164,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied actual Desktop WM state and view/image proof. Only Desktop owns geometry and original apply receipt; app candidate ACK is separate from actual consumed/composed frame. Resize/Restore can be Applied while FramePending. Minimize requires a new composition excluding the window, no fictitious invisible app frame. Unsupported/unavailable proof paths remain explicit. This is a last published receipt, not a live global policy snapshot."
+    },
+    {
+      "name": "DesktopActionRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 192,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "token",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionToken"
+          },
+          "description": "token",
+          "size": 144,
+          "alignment": 8,
+          "source_type": "DesktopActionToken",
+          "default_kind": "empty"
+        },
+        {
+          "name": "operation",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Immutable nonzero monotonic controller operation ID; for own-app frame ACK exact view_revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original absolute system tick deadline for command admission/apply, never extended by status/retry; zero otherwise.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "kind",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Resize/Minimize/Restore only for command; zero for scope/grant/status/release/app-view/frame-ack.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 164,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "x",
+          "offset": 168,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Requested outer-frame screen x for Resize; zero otherwise.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "y",
+          "offset": 172,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Requested outer-frame screen y for Resize; zero otherwise.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Requested client width for Resize; exact painted client width for own-app frame ACK.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 180,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Requested client height for Resize; exact painted client height for own-app frame ACK.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frame_generation",
+          "offset": 184,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Own-app frame ACK producer generation; zero for controller operations.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fixed service action request. Same ID and exact parameters return retained original receipt; changed parameters, stale controller/window or evicted IDs never silently reapply. Own-app view/frame-ack authorize only the actual target caller and exact copied view; they confer no controller rights. Original launcher must explicitly grant, evidence token possession is insufficient."
+    },
+    {
+      "name": "DesktopActionReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 544,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "request",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionRequest"
+          },
+          "description": "request",
+          "size": 192,
+          "alignment": 8,
+          "source_type": "DesktopActionRequest",
+          "default_kind": "empty"
+        },
+        {
+          "name": "result",
+          "offset": 192,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Domain result, separate from transport and process exit.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 196,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Granted/Pending/Applied/Rejected/Expired/Released/Ended/Unknown. Offered timeout is Unknown until exact original receipt is reconciled.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "applied_tick",
+          "offset": 200,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual Desktop operation apply/reject tick. A successful original apply must precede the original deadline even if ACK is received later.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "applied",
+          "offset": 208,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionState"
+          },
+          "description": "applied",
+          "size": 168,
+          "alignment": 8,
+          "source_type": "DesktopActionState",
+          "default_kind": "empty"
+        },
+        {
+          "name": "current",
+          "offset": 376,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionState"
+          },
+          "description": "current",
+          "size": 168,
+          "alignment": 8,
+          "source_type": "DesktopActionState",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Exact retained request and immutable original applied geometry/state receipt plus separately progressing current view/frame proof. Status is read-only and never creates an action, grant or process. Lost/partial transport is Unknown until the same immutable identity is reconciled. Terminal receipt may remain readable after controller end, while new commands cannot use a dead controller. Bounded grant/history reuse can make old receipts Unknown. Offered timeout does not assert non-application; late original receipt can resolve Unknown using its actual apply tick. New operations wait for reconciliation. Original apply snapshot/tick remains immutable while current view progresses."
+    },
+    {
+      "name": "DesktopWindowExchange",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 640,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "mode",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "WindowModeExchange"
+          },
+          "description": "mode",
+          "size": 96,
+          "alignment": 8,
+          "source_type": "WindowModeExchange",
+          "default_kind": "empty"
+        },
+        {
+          "name": "state",
+          "offset": 96,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionState"
+          },
+          "description": "state",
+          "size": 168,
+          "alignment": 8,
+          "source_type": "DesktopActionState",
+          "default_kind": "empty"
+        },
+        {
+          "name": "ack",
+          "offset": 264,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionRequest"
+          },
+          "description": "ack",
+          "size": 192,
+          "alignment": 8,
+          "source_type": "DesktopActionRequest",
+          "default_kind": "empty"
+        },
+        {
+          "name": "applied",
+          "offset": 456,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionState"
+          },
+          "description": "applied",
+          "size": 168,
+          "alignment": 8,
+          "source_type": "DesktopActionState",
+          "default_kind": "empty"
+        },
+        {
+          "name": "applied_tick",
+          "offset": 624,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original physical apply/reject tick retained by Desktop, separate from service response arrival time.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ack_result",
+          "offset": 632,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Exact actual WM apply/reject result for ack.operation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 636,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero current publication only,1 exact actual terminal action ACK. Never infer apply from mirrored flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Desktop-only combined owned exchange. Existing WindowModeExchange96 prefix is nested unchanged; the new opcode carries one current copied WM state and exact retained action receipt. Replaces the existing Desktop mode RPC one-for-one, no second periodic poll/worker. Application owner-only legacy mode opcodes/layouts remain unchanged. Actual caller must be current admitted Desktop and full exact target/window identity. Current state and original applied state are separate even if local geometry changed while ACK was lost. Original tick prevents late transport from turning an actual successful in-deadline apply into a fabricated non-application."
+    },
+    {
+      "name": "DesktopWindowReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 640,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "mode",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "WindowModeReply"
+          },
+          "description": "mode",
+          "size": 96,
+          "alignment": 8,
+          "source_type": "WindowModeReply",
+          "default_kind": "empty"
+        },
+        {
+          "name": "action",
+          "offset": 96,
+          "type": {
+            "kind": "named",
+            "name": "DesktopActionReply"
+          },
+          "description": "action",
+          "size": 544,
+          "alignment": 8,
+          "source_type": "DesktopActionReply",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Combined original WindowModeReply96 and bounded delegated action work/state reply. A pending command is applied only by real Desktop WM after final identity/deadline checks. Original receipt is retained through response loss; Desktop does not reapply a cached operation. App candidate frame ACK is not actual composed/accepted frame proof."
     }
   ],
   "operations": [],
@@ -159252,6 +160289,736 @@
       "scope": "tcp_service",
       "stability": "fixed_contract",
       "description": "TCPSVC one nonblocking operation attempt, no deferred retry; connect reports would-block without starting a blocking handshake. Requires TCPSVC supporting this documented sentinel."
+    },
+    {
+      "name": "desktop_evidence_op_scope",
+      "value": "4784",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 op scope. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_op_reserve",
+      "value": "4785",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 op reserve. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_op_offer",
+      "value": "4786",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 op offer. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_op_ack",
+      "value": "4787",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 op ack. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_op_status",
+      "value": "4788",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 op status. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_op_read",
+      "value": "4789",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 op read. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_op_release",
+      "value": "4790",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 op release. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_phase_reserved",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 phase reserved. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_phase_waiting",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 phase waiting. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_phase_offered",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 phase offered. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_phase_acknowledged",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 phase acknowledged. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_phase_released",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 phase released. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_phase_expired",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 phase expired. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_phase_unavailable",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 phase unavailable. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result ok. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_unknown",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result unknown. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_invalid",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result invalid. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_stale",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result stale. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_quota",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result quota. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_expired",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result expired. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_unavailable",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result unavailable. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_pending",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result pending. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_not_acknowledged",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result not acknowledged. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_result_released",
+      "value": "-9",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 result released. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_max_leases",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 max leases. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_reservation_ms",
+      "value": "300000",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 reservation ms. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_evidence_max_output_chunk",
+      "value": "3808",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_evidence",
+      "stability": "fixed_contract",
+      "description": "WINSVC creator-bound evidence handoffV1 max output chunk. Service protocol only; no kernel table slot."
+    },
+    {
+      "name": "desktop_action_op_scope",
+      "value": "4800",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_scope"
+    },
+    {
+      "name": "desktop_action_op_grant",
+      "value": "4801",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_grant"
+    },
+    {
+      "name": "desktop_action_op_command",
+      "value": "4802",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_command"
+    },
+    {
+      "name": "desktop_action_op_status",
+      "value": "4803",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_status"
+    },
+    {
+      "name": "desktop_action_op_release",
+      "value": "4804",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_release"
+    },
+    {
+      "name": "desktop_action_op_exchange",
+      "value": "4805",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_exchange"
+    },
+    {
+      "name": "desktop_action_op_app_view",
+      "value": "4806",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_app_view"
+    },
+    {
+      "name": "desktop_action_op_app_frame",
+      "value": "4807",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_op_app_frame"
+    },
+    {
+      "name": "desktop_action_kind_resize",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_kind_resize"
+    },
+    {
+      "name": "desktop_action_kind_minimize",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_kind_minimize"
+    },
+    {
+      "name": "desktop_action_kind_restore",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_kind_restore"
+    },
+    {
+      "name": "desktop_action_right_resize",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_right_resize"
+    },
+    {
+      "name": "desktop_action_right_minimize",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_right_minimize"
+    },
+    {
+      "name": "desktop_action_right_restore",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_right_restore"
+    },
+    {
+      "name": "desktop_action_right_all",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_right_all"
+    },
+    {
+      "name": "desktop_action_phase_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_none"
+    },
+    {
+      "name": "desktop_action_phase_granted",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_granted"
+    },
+    {
+      "name": "desktop_action_phase_pending",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_pending"
+    },
+    {
+      "name": "desktop_action_phase_applied",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_applied"
+    },
+    {
+      "name": "desktop_action_phase_rejected",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_rejected"
+    },
+    {
+      "name": "desktop_action_phase_expired",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_expired"
+    },
+    {
+      "name": "desktop_action_phase_released",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_released"
+    },
+    {
+      "name": "desktop_action_phase_ended",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_phase_ended"
+    },
+    {
+      "name": "desktop_action_result_ok",
+      "value": "0",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_ok"
+    },
+    {
+      "name": "desktop_action_result_unknown",
+      "value": "-1",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_unknown"
+    },
+    {
+      "name": "desktop_action_result_invalid",
+      "value": "-2",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_invalid"
+    },
+    {
+      "name": "desktop_action_result_stale",
+      "value": "-3",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_stale"
+    },
+    {
+      "name": "desktop_action_result_quota",
+      "value": "-4",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_quota"
+    },
+    {
+      "name": "desktop_action_result_expired",
+      "value": "-5",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_expired"
+    },
+    {
+      "name": "desktop_action_result_unavailable",
+      "value": "-6",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_unavailable"
+    },
+    {
+      "name": "desktop_action_result_pending",
+      "value": "-7",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_pending"
+    },
+    {
+      "name": "desktop_action_result_not_owner",
+      "value": "-8",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_not_owner"
+    },
+    {
+      "name": "desktop_action_result_unsupported",
+      "value": "-9",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_unsupported"
+    },
+    {
+      "name": "desktop_action_result_busy",
+      "value": "-10",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_busy"
+    },
+    {
+      "name": "desktop_action_result_target_ended",
+      "value": "-11",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_target_ended"
+    },
+    {
+      "name": "desktop_action_result_released",
+      "value": "-12",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_result_released"
+    },
+    {
+      "name": "desktop_action_proof_view",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_proof_view"
+    },
+    {
+      "name": "desktop_action_proof_composed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_proof_composed"
+    },
+    {
+      "name": "desktop_action_proof_app_fresh",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_proof_app_fresh"
+    },
+    {
+      "name": "desktop_action_proof_unsupported",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_proof_unsupported"
+    },
+    {
+      "name": "desktop_action_proof_app_ack",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_proof_app_ack"
+    },
+    {
+      "name": "desktop_action_proof_invisible",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_proof_invisible"
+    },
+    {
+      "name": "desktop_action_max_grants",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_max_grants"
+    },
+    {
+      "name": "desktop_action_max_timeout_ms",
+      "value": "5000",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: desktop_action_max_timeout_ms"
+    },
+    {
+      "name": "gui_resize_action_view_key",
+      "value": "1464686129",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "Delegated Desktop WM contract: gui_resize_action_view_key"
+    },
+    {
+      "name": "desktop_action_phase_unknown",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "desktop_actions",
+      "stability": "fixed_contract",
+      "description": "An offered action reached its deadline without the actual original Desktop receipt. It may already be applied; do not blindly admit a new action. Read-only reconciliation or late original receipt resolves it."
     }
   ],
   "limits": [

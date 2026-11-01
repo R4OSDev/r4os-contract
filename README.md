@@ -285,3 +285,12 @@ scalar enumeration; a complete capture reports unsupported if any participating
 provider lacks this contract. No implicit fallback invents a generation.
 Catalog observations are separate from physical route, ELD, Stop and playback
 acknowledgements. AUDSVC binds its copied pages to service epoch and revision.
+
+Contract0.64.67 adds the fixed WINSVC evidence handoffV1 service payloads
+DesktopEvidenceToken128 / DesktopEvidenceRequest136 / DesktopEvidenceReply288
+and the desktop_evidence operation/state/result constants. These are opaque
+service messages carried by the existing Service API. The six platform
+function tables and all prior payload layouts remain unchanged. A controlled
+append-only baseline update records the new public types; generated Zig/C/Rust
+layouts and existing callback interop pass. Candidate desktop-native and final
+SDK/OS qualification are tracked separately in R4OS0.88.97/99/100.

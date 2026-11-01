@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 391 von 391 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 400 von 400 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2815; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2888; Limits: 111
 
 ## App-Profile
 
@@ -412,6 +412,15 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioOutputEpochFn` | callback | c_callback | 8/8 | 8/8 | 8/8 | 8/8 |
 | `AudioOutputProviderEpoch` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `AudioOutputCatalog` | fixed_layout | extern_struct | 224/8 | 224/8 | 224/8 | 224/8 |
+| `DesktopEvidenceToken` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `DesktopEvidenceRequest` | fixed_layout | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
+| `DesktopEvidenceReply` | fixed_layout | extern_struct | 288/8 | 288/8 | 288/8 | 288/8 |
+| `DesktopActionToken` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
+| `DesktopActionState` | fixed_layout | extern_struct | 168/8 | 168/8 | 168/8 | 168/8 |
+| `DesktopActionRequest` | fixed_layout | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
+| `DesktopActionReply` | fixed_layout | extern_struct | 544/8 | 544/8 | 544/8 | 544/8 |
+| `DesktopWindowExchange` | fixed_layout | extern_struct | 640/8 | 640/8 | 640/8 | 640/8 |
+| `DesktopWindowReply` | fixed_layout | extern_struct | 640/8 | 640/8 | 640/8 | 640/8 |
 
 ## Typdetails
 
@@ -10395,6 +10404,162 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `provider_count` | 28 | 4 | 4 | `u32` | - |
 | `providers` | 32 | 192 | 8 | `[8]AudioOutputProviderEpoch` | - |
 
+### `DesktopEvidenceToken`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `broker` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `request` | 24 | 16 | 8 | `ProgramProcessHandle` | - |
+| `process` | 40 | 16 | 8 | `ProgramProcessHandle` | - |
+| `desktop` | 56 | 16 | 8 | `ProgramProcessHandle` | - |
+| `epoch` | 72 | 24 | 8 | `[3]u64` | - |
+| `serial` | 96 | 8 | 8 | `u64` | - |
+| `intent` | 104 | 24 | 8 | `[3]u64` | - |
+
+### `DesktopEvidenceRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 136 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `token` | 0 | 128 | 8 | `DesktopEvidenceToken` | - |
+| `offset` | 128 | 4 | 4 | `u32` | - |
+| `capacity` | 132 | 4 | 4 | `u32` | - |
+
+### `DesktopEvidenceReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 288 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `token` | 0 | 128 | 8 | `DesktopEvidenceToken` | - |
+| `result` | 128 | 4 | 4 | `i32` | - |
+| `phase` | 132 | 4 | 4 | `u32` | - |
+| `deadline` | 136 | 8 | 8 | `u64` | - |
+| `completion` | 144 | 128 | 8 | `ProgramProcessCompletion` | - |
+| `data_bytes` | 272 | 4 | 4 | `u32` | - |
+| `raw_result` | 276 | 4 | 4 | `i32` | - |
+| `revision` | 280 | 8 | 8 | `u64` | - |
+
+### `DesktopActionToken`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 144 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `window` | 8 | 64 | 8 | `WindowModeIdentity` | - |
+| `request` | 72 | 16 | 8 | `ProgramProcessHandle` | - |
+| `controller` | 88 | 16 | 8 | `ProgramProcessHandle` | - |
+| `epoch` | 104 | 24 | 8 | `[3]u64` | - |
+| `grant` | 128 | 8 | 8 | `u64` | - |
+| `rights` | 136 | 4 | 4 | `u32` | - |
+| `reserved` | 140 | 4 | 4 | `u32` | - |
+
+### `DesktopActionState`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 168 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `window` | 8 | 64 | 8 | `WindowModeIdentity` | - |
+| `view_revision` | 72 | 8 | 8 | `u64` | - |
+| `frame_before` | 80 | 8 | 8 | `u64` | - |
+| `candidate_generation` | 88 | 8 | 8 | `u64` | - |
+| `frame_generation` | 96 | 8 | 8 | `u64` | - |
+| `composition_serial` | 104 | 8 | 8 | `u64` | - |
+| `input_revision` | 112 | 8 | 8 | `u64` | - |
+| `info` | 120 | 40 | 4 | `GuiWindowInfo` | - |
+| `proof_flags` | 160 | 4 | 4 | `u32` | - |
+| `reserved` | 164 | 4 | 4 | `u32` | - |
+
+### `DesktopActionRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 192 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `token` | 0 | 144 | 8 | `DesktopActionToken` | - |
+| `operation` | 144 | 8 | 8 | `u64` | - |
+| `deadline` | 152 | 8 | 8 | `u64` | - |
+| `kind` | 160 | 4 | 4 | `u32` | - |
+| `flags` | 164 | 4 | 4 | `u32` | - |
+| `x` | 168 | 4 | 4 | `i32` | - |
+| `y` | 172 | 4 | 4 | `i32` | - |
+| `width` | 176 | 4 | 4 | `i32` | - |
+| `height` | 180 | 4 | 4 | `i32` | - |
+| `frame_generation` | 184 | 8 | 8 | `u64` | - |
+
+### `DesktopActionReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 544 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `request` | 0 | 192 | 8 | `DesktopActionRequest` | - |
+| `result` | 192 | 4 | 4 | `i32` | - |
+| `phase` | 196 | 4 | 4 | `u32` | - |
+| `applied_tick` | 200 | 8 | 8 | `u64` | - |
+| `applied` | 208 | 168 | 8 | `DesktopActionState` | - |
+| `current` | 376 | 168 | 8 | `DesktopActionState` | - |
+
+### `DesktopWindowExchange`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 640 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `mode` | 0 | 96 | 8 | `WindowModeExchange` | - |
+| `state` | 96 | 168 | 8 | `DesktopActionState` | - |
+| `ack` | 264 | 192 | 8 | `DesktopActionRequest` | - |
+| `applied` | 456 | 168 | 8 | `DesktopActionState` | - |
+| `applied_tick` | 624 | 8 | 8 | `u64` | - |
+| `ack_result` | 632 | 4 | 4 | `i32` | - |
+| `flags` | 636 | 4 | 4 | `u32` | - |
+
+### `DesktopWindowReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 640 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `mode` | 0 | 96 | 8 | `WindowModeReply` | - |
+| `action` | 96 | 544 | 8 | `DesktopActionReply` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -13975,6 +14140,79 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `service_deadline_footer_magic` | `1279538258` | `u32` | magic | number | `service_api` | fixed_contract |
 | `service_deadline_footer_version` | `1` | `u16` | version | version | `service_api` | fixed_contract |
 | `net_service_tcp_deadline_poll` | `0` | `u64` | value | ticks | `tcp_service` | fixed_contract |
+| `desktop_evidence_op_scope` | `4784` | `u16` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_op_reserve` | `4785` | `u16` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_op_offer` | `4786` | `u16` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_op_ack` | `4787` | `u16` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_op_status` | `4788` | `u16` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_op_read` | `4789` | `u16` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_op_release` | `4790` | `u16` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_phase_reserved` | `1` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_phase_waiting` | `2` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_phase_offered` | `3` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_phase_acknowledged` | `4` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_phase_released` | `5` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_phase_expired` | `6` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_phase_unavailable` | `7` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_ok` | `0` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_unknown` | `-1` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_invalid` | `-2` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_stale` | `-3` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_quota` | `-4` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_expired` | `-5` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_unavailable` | `-6` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_pending` | `-7` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_not_acknowledged` | `-8` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_result_released` | `-9` | `i32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_max_leases` | `16` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_reservation_ms` | `300000` | `u64` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_evidence_max_output_chunk` | `3808` | `u32` | value | number | `desktop_evidence` | fixed_contract |
+| `desktop_action_op_scope` | `4800` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_op_grant` | `4801` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_op_command` | `4802` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_op_status` | `4803` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_op_release` | `4804` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_op_exchange` | `4805` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_op_app_view` | `4806` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_op_app_frame` | `4807` | `u16` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_kind_resize` | `1` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_kind_minimize` | `2` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_kind_restore` | `3` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_right_resize` | `1` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_right_minimize` | `2` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_right_restore` | `4` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_right_all` | `7` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_none` | `0` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_granted` | `1` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_pending` | `2` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_applied` | `3` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_rejected` | `4` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_expired` | `5` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_released` | `6` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_ended` | `7` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_ok` | `0` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_unknown` | `-1` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_invalid` | `-2` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_stale` | `-3` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_quota` | `-4` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_expired` | `-5` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_unavailable` | `-6` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_pending` | `-7` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_not_owner` | `-8` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_unsupported` | `-9` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_busy` | `-10` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_target_ended` | `-11` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_result_released` | `-12` | `i32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_proof_view` | `1` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_proof_composed` | `2` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_proof_app_fresh` | `4` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_proof_unsupported` | `8` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_proof_app_ack` | `16` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_proof_invisible` | `32` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_max_grants` | `16` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_max_timeout_ms` | `5000` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `gui_resize_action_view_key` | `1464686129` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `desktop_action_phase_unknown` | `8` | `u32` | value | number | `desktop_actions` | fixed_contract |
 
 ## Limits
 

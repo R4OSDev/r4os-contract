@@ -2820,6 +2820,79 @@ pub const audio_duration_ticks_unavailable: u64 = 18446744073709551615;
 pub const service_deadline_footer_magic: u32 = 1279538258;
 pub const service_deadline_footer_version: u16 = 1;
 pub const net_service_tcp_deadline_poll: u64 = 0;
+pub const desktop_evidence_op_scope: u16 = 4784;
+pub const desktop_evidence_op_reserve: u16 = 4785;
+pub const desktop_evidence_op_offer: u16 = 4786;
+pub const desktop_evidence_op_ack: u16 = 4787;
+pub const desktop_evidence_op_status: u16 = 4788;
+pub const desktop_evidence_op_read: u16 = 4789;
+pub const desktop_evidence_op_release: u16 = 4790;
+pub const desktop_evidence_phase_reserved: u32 = 1;
+pub const desktop_evidence_phase_waiting: u32 = 2;
+pub const desktop_evidence_phase_offered: u32 = 3;
+pub const desktop_evidence_phase_acknowledged: u32 = 4;
+pub const desktop_evidence_phase_released: u32 = 5;
+pub const desktop_evidence_phase_expired: u32 = 6;
+pub const desktop_evidence_phase_unavailable: u32 = 7;
+pub const desktop_evidence_result_ok: i32 = 0;
+pub const desktop_evidence_result_unknown: i32 = -1;
+pub const desktop_evidence_result_invalid: i32 = -2;
+pub const desktop_evidence_result_stale: i32 = -3;
+pub const desktop_evidence_result_quota: i32 = -4;
+pub const desktop_evidence_result_expired: i32 = -5;
+pub const desktop_evidence_result_unavailable: i32 = -6;
+pub const desktop_evidence_result_pending: i32 = -7;
+pub const desktop_evidence_result_not_acknowledged: i32 = -8;
+pub const desktop_evidence_result_released: i32 = -9;
+pub const desktop_evidence_max_leases: u32 = 16;
+pub const desktop_evidence_reservation_ms: u64 = 300000;
+pub const desktop_evidence_max_output_chunk: u32 = 3808;
+pub const desktop_action_op_scope: u16 = 4800;
+pub const desktop_action_op_grant: u16 = 4801;
+pub const desktop_action_op_command: u16 = 4802;
+pub const desktop_action_op_status: u16 = 4803;
+pub const desktop_action_op_release: u16 = 4804;
+pub const desktop_action_op_exchange: u16 = 4805;
+pub const desktop_action_op_app_view: u16 = 4806;
+pub const desktop_action_op_app_frame: u16 = 4807;
+pub const desktop_action_kind_resize: u32 = 1;
+pub const desktop_action_kind_minimize: u32 = 2;
+pub const desktop_action_kind_restore: u32 = 3;
+pub const desktop_action_right_resize: u32 = 1;
+pub const desktop_action_right_minimize: u32 = 2;
+pub const desktop_action_right_restore: u32 = 4;
+pub const desktop_action_right_all: u32 = 7;
+pub const desktop_action_phase_none: u32 = 0;
+pub const desktop_action_phase_granted: u32 = 1;
+pub const desktop_action_phase_pending: u32 = 2;
+pub const desktop_action_phase_applied: u32 = 3;
+pub const desktop_action_phase_rejected: u32 = 4;
+pub const desktop_action_phase_expired: u32 = 5;
+pub const desktop_action_phase_released: u32 = 6;
+pub const desktop_action_phase_ended: u32 = 7;
+pub const desktop_action_result_ok: i32 = 0;
+pub const desktop_action_result_unknown: i32 = -1;
+pub const desktop_action_result_invalid: i32 = -2;
+pub const desktop_action_result_stale: i32 = -3;
+pub const desktop_action_result_quota: i32 = -4;
+pub const desktop_action_result_expired: i32 = -5;
+pub const desktop_action_result_unavailable: i32 = -6;
+pub const desktop_action_result_pending: i32 = -7;
+pub const desktop_action_result_not_owner: i32 = -8;
+pub const desktop_action_result_unsupported: i32 = -9;
+pub const desktop_action_result_busy: i32 = -10;
+pub const desktop_action_result_target_ended: i32 = -11;
+pub const desktop_action_result_released: i32 = -12;
+pub const desktop_action_proof_view: u32 = 1;
+pub const desktop_action_proof_composed: u32 = 2;
+pub const desktop_action_proof_app_fresh: u32 = 4;
+pub const desktop_action_proof_unsupported: u32 = 8;
+pub const desktop_action_proof_app_ack: u32 = 16;
+pub const desktop_action_proof_invisible: u32 = 32;
+pub const desktop_action_max_grants: u32 = 16;
+pub const desktop_action_max_timeout_ms: u32 = 5000;
+pub const gui_resize_action_view_key: u32 = 1464686129;
+pub const desktop_action_phase_unknown: u32 = 8;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -20155,6 +20228,246 @@ impl Default for AudioOutputCatalog {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopEvidenceToken {
+    pub version: u32,
+    pub size: u32,
+    pub broker: ProgramProcessHandle,
+    pub request: ProgramProcessHandle,
+    pub process: ProgramProcessHandle,
+    pub desktop: ProgramProcessHandle,
+    pub epoch: [u64; 3],
+    pub serial: u64,
+    pub intent: [u64; 3],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopEvidenceToken {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            broker: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            epoch: [0; 3],
+            serial: 0,
+            intent: [0; 3],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopEvidenceRequest {
+    pub token: DesktopEvidenceToken,
+    pub offset: u32,
+    pub capacity: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopEvidenceRequest {
+    fn default() -> Self {
+        Self {
+            token: DesktopEvidenceToken { version: 1, size: 128, broker: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], serial: 0, intent: [0; 3] },
+            offset: 0,
+            capacity: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopEvidenceReply {
+    pub token: DesktopEvidenceToken,
+    pub result: i32,
+    pub phase: u32,
+    pub deadline: u64,
+    pub completion: ProgramProcessCompletion,
+    pub data_bytes: u32,
+    pub raw_result: i32,
+    pub revision: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopEvidenceReply {
+    fn default() -> Self {
+        Self {
+            token: DesktopEvidenceToken { version: 1, size: 128, broker: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], serial: 0, intent: [0; 3] },
+            result: 0,
+            phase: 0,
+            deadline: 0,
+            completion: ProgramProcessCompletion { handle: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, sequence: 0, start_tick: 0, finish_tick: 0, exit_code: 0, task_id: 0, output_revision: 0, output_length: 0, flags: 0, app_class: 0, role: 0, exit_reason: 0, reserved0: 0, console_state: ConsoleState { fg: 14211288, bg: 0, clear_count: 0, cursor_x: 0, cursor_y: 0, cursor_visible: 1, reserved: [0; 3], cols: 80, rows: 25, stdin_pending: 0, stdin_bytes: 0, stdout_bytes: 0, stderr_bytes: 0, output_capacity: 16384, output_len: 0, scrollback_lines: 0, output_dropped_bytes: 0 } },
+            data_bytes: 0,
+            raw_result: 0,
+            revision: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopActionToken {
+    pub version: u32,
+    pub size: u32,
+    pub window: WindowModeIdentity,
+    pub request: ProgramProcessHandle,
+    pub controller: ProgramProcessHandle,
+    pub epoch: [u64; 3],
+    pub grant: u64,
+    pub rights: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopActionToken {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 144,
+            window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 },
+            request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            controller: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            epoch: [0; 3],
+            grant: 0,
+            rights: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopActionState {
+    pub version: u32,
+    pub size: u32,
+    pub window: WindowModeIdentity,
+    pub view_revision: u64,
+    pub frame_before: u64,
+    pub candidate_generation: u64,
+    pub frame_generation: u64,
+    pub composition_serial: u64,
+    pub input_revision: u64,
+    pub info: GuiWindowInfo,
+    pub proof_flags: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopActionState {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 168,
+            window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 },
+            view_revision: 0,
+            frame_before: 0,
+            candidate_generation: 0,
+            frame_generation: 0,
+            composition_serial: 0,
+            input_revision: 0,
+            info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 },
+            proof_flags: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopActionRequest {
+    pub token: DesktopActionToken,
+    pub operation: u64,
+    pub deadline: u64,
+    pub kind: u32,
+    pub flags: u32,
+    pub x: i32,
+    pub y: i32,
+    pub width: i32,
+    pub height: i32,
+    pub frame_generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopActionRequest {
+    fn default() -> Self {
+        Self {
+            token: DesktopActionToken { version: 1, size: 144, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, controller: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], grant: 0, rights: 0, reserved: 0 },
+            operation: 0,
+            deadline: 0,
+            kind: 0,
+            flags: 0,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            frame_generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopActionReply {
+    pub request: DesktopActionRequest,
+    pub result: i32,
+    pub phase: u32,
+    pub applied_tick: u64,
+    pub applied: DesktopActionState,
+    pub current: DesktopActionState,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopActionReply {
+    fn default() -> Self {
+        Self {
+            request: DesktopActionRequest { token: DesktopActionToken { version: 1, size: 144, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, controller: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], grant: 0, rights: 0, reserved: 0 }, operation: 0, deadline: 0, kind: 0, flags: 0, x: 0, y: 0, width: 0, height: 0, frame_generation: 0 },
+            result: 0,
+            phase: 0,
+            applied_tick: 0,
+            applied: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 },
+            current: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopWindowExchange {
+    pub mode: WindowModeExchange,
+    pub state: DesktopActionState,
+    pub ack: DesktopActionRequest,
+    pub applied: DesktopActionState,
+    pub applied_tick: u64,
+    pub ack_result: i32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopWindowExchange {
+    fn default() -> Self {
+        Self {
+            mode: WindowModeExchange { version: 1, size: 96, identity: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, ack_request_id: 0, ack_result: 0, mode: 0, flags: 0, reserved: 0 },
+            state: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 },
+            ack: DesktopActionRequest { token: DesktopActionToken { version: 1, size: 144, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, controller: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], grant: 0, rights: 0, reserved: 0 }, operation: 0, deadline: 0, kind: 0, flags: 0, x: 0, y: 0, width: 0, height: 0, frame_generation: 0 },
+            applied: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 },
+            applied_tick: 0,
+            ack_result: 0,
+            flags: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopWindowReply {
+    pub mode: WindowModeReply,
+    pub action: DesktopActionReply,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopWindowReply {
+    fn default() -> Self {
+        Self {
+            mode: WindowModeReply { version: 1, size: 96, identity: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, request_id: 0, result: 0, phase: 0, mode: 0, requested_mode: 0 },
+            action: DesktopActionReply { request: DesktopActionRequest { token: DesktopActionToken { version: 1, size: 144, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, controller: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], grant: 0, rights: 0, reserved: 0 }, operation: 0, deadline: 0, kind: 0, flags: 0, x: 0, y: 0, width: 0, height: 0, frame_generation: 0 }, result: 0, phase: 0, applied_tick: 0, applied: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 }, current: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 } },
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -32723,6 +33036,90 @@ const _: () = {
     assert!(core::mem::offset_of!(AudioOutputCatalog, providers) == 32);
     assert!(core::mem::size_of::<AudioOutputCatalog>() == 224);
     assert!(core::mem::align_of::<AudioOutputCatalog>() == 8);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, version) == 0);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, size) == 4);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, broker) == 8);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, request) == 24);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, process) == 40);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, desktop) == 56);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, epoch) == 72);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, serial) == 96);
+    assert!(core::mem::offset_of!(DesktopEvidenceToken, intent) == 104);
+    assert!(core::mem::size_of::<DesktopEvidenceToken>() == 128);
+    assert!(core::mem::align_of::<DesktopEvidenceToken>() == 8);
+    assert!(core::mem::offset_of!(DesktopEvidenceRequest, token) == 0);
+    assert!(core::mem::offset_of!(DesktopEvidenceRequest, offset) == 128);
+    assert!(core::mem::offset_of!(DesktopEvidenceRequest, capacity) == 132);
+    assert!(core::mem::size_of::<DesktopEvidenceRequest>() == 136);
+    assert!(core::mem::align_of::<DesktopEvidenceRequest>() == 8);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, token) == 0);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, result) == 128);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, phase) == 132);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, deadline) == 136);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, completion) == 144);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, data_bytes) == 272);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, raw_result) == 276);
+    assert!(core::mem::offset_of!(DesktopEvidenceReply, revision) == 280);
+    assert!(core::mem::size_of::<DesktopEvidenceReply>() == 288);
+    assert!(core::mem::align_of::<DesktopEvidenceReply>() == 8);
+    assert!(core::mem::offset_of!(DesktopActionToken, version) == 0);
+    assert!(core::mem::offset_of!(DesktopActionToken, size) == 4);
+    assert!(core::mem::offset_of!(DesktopActionToken, window) == 8);
+    assert!(core::mem::offset_of!(DesktopActionToken, request) == 72);
+    assert!(core::mem::offset_of!(DesktopActionToken, controller) == 88);
+    assert!(core::mem::offset_of!(DesktopActionToken, epoch) == 104);
+    assert!(core::mem::offset_of!(DesktopActionToken, grant) == 128);
+    assert!(core::mem::offset_of!(DesktopActionToken, rights) == 136);
+    assert!(core::mem::offset_of!(DesktopActionToken, reserved) == 140);
+    assert!(core::mem::size_of::<DesktopActionToken>() == 144);
+    assert!(core::mem::align_of::<DesktopActionToken>() == 8);
+    assert!(core::mem::offset_of!(DesktopActionState, version) == 0);
+    assert!(core::mem::offset_of!(DesktopActionState, size) == 4);
+    assert!(core::mem::offset_of!(DesktopActionState, window) == 8);
+    assert!(core::mem::offset_of!(DesktopActionState, view_revision) == 72);
+    assert!(core::mem::offset_of!(DesktopActionState, frame_before) == 80);
+    assert!(core::mem::offset_of!(DesktopActionState, candidate_generation) == 88);
+    assert!(core::mem::offset_of!(DesktopActionState, frame_generation) == 96);
+    assert!(core::mem::offset_of!(DesktopActionState, composition_serial) == 104);
+    assert!(core::mem::offset_of!(DesktopActionState, input_revision) == 112);
+    assert!(core::mem::offset_of!(DesktopActionState, info) == 120);
+    assert!(core::mem::offset_of!(DesktopActionState, proof_flags) == 160);
+    assert!(core::mem::offset_of!(DesktopActionState, reserved) == 164);
+    assert!(core::mem::size_of::<DesktopActionState>() == 168);
+    assert!(core::mem::align_of::<DesktopActionState>() == 8);
+    assert!(core::mem::offset_of!(DesktopActionRequest, token) == 0);
+    assert!(core::mem::offset_of!(DesktopActionRequest, operation) == 144);
+    assert!(core::mem::offset_of!(DesktopActionRequest, deadline) == 152);
+    assert!(core::mem::offset_of!(DesktopActionRequest, kind) == 160);
+    assert!(core::mem::offset_of!(DesktopActionRequest, flags) == 164);
+    assert!(core::mem::offset_of!(DesktopActionRequest, x) == 168);
+    assert!(core::mem::offset_of!(DesktopActionRequest, y) == 172);
+    assert!(core::mem::offset_of!(DesktopActionRequest, width) == 176);
+    assert!(core::mem::offset_of!(DesktopActionRequest, height) == 180);
+    assert!(core::mem::offset_of!(DesktopActionRequest, frame_generation) == 184);
+    assert!(core::mem::size_of::<DesktopActionRequest>() == 192);
+    assert!(core::mem::align_of::<DesktopActionRequest>() == 8);
+    assert!(core::mem::offset_of!(DesktopActionReply, request) == 0);
+    assert!(core::mem::offset_of!(DesktopActionReply, result) == 192);
+    assert!(core::mem::offset_of!(DesktopActionReply, phase) == 196);
+    assert!(core::mem::offset_of!(DesktopActionReply, applied_tick) == 200);
+    assert!(core::mem::offset_of!(DesktopActionReply, applied) == 208);
+    assert!(core::mem::offset_of!(DesktopActionReply, current) == 376);
+    assert!(core::mem::size_of::<DesktopActionReply>() == 544);
+    assert!(core::mem::align_of::<DesktopActionReply>() == 8);
+    assert!(core::mem::offset_of!(DesktopWindowExchange, mode) == 0);
+    assert!(core::mem::offset_of!(DesktopWindowExchange, state) == 96);
+    assert!(core::mem::offset_of!(DesktopWindowExchange, ack) == 264);
+    assert!(core::mem::offset_of!(DesktopWindowExchange, applied) == 456);
+    assert!(core::mem::offset_of!(DesktopWindowExchange, applied_tick) == 624);
+    assert!(core::mem::offset_of!(DesktopWindowExchange, ack_result) == 632);
+    assert!(core::mem::offset_of!(DesktopWindowExchange, flags) == 636);
+    assert!(core::mem::size_of::<DesktopWindowExchange>() == 640);
+    assert!(core::mem::align_of::<DesktopWindowExchange>() == 8);
+    assert!(core::mem::offset_of!(DesktopWindowReply, mode) == 0);
+    assert!(core::mem::offset_of!(DesktopWindowReply, action) == 96);
+    assert!(core::mem::size_of::<DesktopWindowReply>() == 640);
+    assert!(core::mem::align_of::<DesktopWindowReply>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);

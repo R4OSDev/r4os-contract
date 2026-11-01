@@ -2828,6 +2828,79 @@ extern "C" {
 #define R4OS_SERVICE_DEADLINE_FOOTER_MAGIC 1279538258u
 #define R4OS_SERVICE_DEADLINE_FOOTER_VERSION 1u
 #define R4OS_NET_SERVICE_TCP_DEADLINE_POLL 0ull
+#define R4OS_DESKTOP_EVIDENCE_OP_SCOPE 4784u
+#define R4OS_DESKTOP_EVIDENCE_OP_RESERVE 4785u
+#define R4OS_DESKTOP_EVIDENCE_OP_OFFER 4786u
+#define R4OS_DESKTOP_EVIDENCE_OP_ACK 4787u
+#define R4OS_DESKTOP_EVIDENCE_OP_STATUS 4788u
+#define R4OS_DESKTOP_EVIDENCE_OP_READ 4789u
+#define R4OS_DESKTOP_EVIDENCE_OP_RELEASE 4790u
+#define R4OS_DESKTOP_EVIDENCE_PHASE_RESERVED 1u
+#define R4OS_DESKTOP_EVIDENCE_PHASE_WAITING 2u
+#define R4OS_DESKTOP_EVIDENCE_PHASE_OFFERED 3u
+#define R4OS_DESKTOP_EVIDENCE_PHASE_ACKNOWLEDGED 4u
+#define R4OS_DESKTOP_EVIDENCE_PHASE_RELEASED 5u
+#define R4OS_DESKTOP_EVIDENCE_PHASE_EXPIRED 6u
+#define R4OS_DESKTOP_EVIDENCE_PHASE_UNAVAILABLE 7u
+#define R4OS_DESKTOP_EVIDENCE_RESULT_OK ((int32_t)0)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_UNKNOWN ((int32_t)-1)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_INVALID ((int32_t)-2)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_STALE ((int32_t)-3)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_QUOTA ((int32_t)-4)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_EXPIRED ((int32_t)-5)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_UNAVAILABLE ((int32_t)-6)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_PENDING ((int32_t)-7)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_NOT_ACKNOWLEDGED ((int32_t)-8)
+#define R4OS_DESKTOP_EVIDENCE_RESULT_RELEASED ((int32_t)-9)
+#define R4OS_DESKTOP_EVIDENCE_MAX_LEASES 16u
+#define R4OS_DESKTOP_EVIDENCE_RESERVATION_MS 300000ull
+#define R4OS_DESKTOP_EVIDENCE_MAX_OUTPUT_CHUNK 3808u
+#define R4OS_DESKTOP_ACTION_OP_SCOPE 4800u
+#define R4OS_DESKTOP_ACTION_OP_GRANT 4801u
+#define R4OS_DESKTOP_ACTION_OP_COMMAND 4802u
+#define R4OS_DESKTOP_ACTION_OP_STATUS 4803u
+#define R4OS_DESKTOP_ACTION_OP_RELEASE 4804u
+#define R4OS_DESKTOP_ACTION_OP_EXCHANGE 4805u
+#define R4OS_DESKTOP_ACTION_OP_APP_VIEW 4806u
+#define R4OS_DESKTOP_ACTION_OP_APP_FRAME 4807u
+#define R4OS_DESKTOP_ACTION_KIND_RESIZE 1u
+#define R4OS_DESKTOP_ACTION_KIND_MINIMIZE 2u
+#define R4OS_DESKTOP_ACTION_KIND_RESTORE 3u
+#define R4OS_DESKTOP_ACTION_RIGHT_RESIZE 1u
+#define R4OS_DESKTOP_ACTION_RIGHT_MINIMIZE 2u
+#define R4OS_DESKTOP_ACTION_RIGHT_RESTORE 4u
+#define R4OS_DESKTOP_ACTION_RIGHT_ALL 7u
+#define R4OS_DESKTOP_ACTION_PHASE_NONE 0u
+#define R4OS_DESKTOP_ACTION_PHASE_GRANTED 1u
+#define R4OS_DESKTOP_ACTION_PHASE_PENDING 2u
+#define R4OS_DESKTOP_ACTION_PHASE_APPLIED 3u
+#define R4OS_DESKTOP_ACTION_PHASE_REJECTED 4u
+#define R4OS_DESKTOP_ACTION_PHASE_EXPIRED 5u
+#define R4OS_DESKTOP_ACTION_PHASE_RELEASED 6u
+#define R4OS_DESKTOP_ACTION_PHASE_ENDED 7u
+#define R4OS_DESKTOP_ACTION_RESULT_OK ((int32_t)0)
+#define R4OS_DESKTOP_ACTION_RESULT_UNKNOWN ((int32_t)-1)
+#define R4OS_DESKTOP_ACTION_RESULT_INVALID ((int32_t)-2)
+#define R4OS_DESKTOP_ACTION_RESULT_STALE ((int32_t)-3)
+#define R4OS_DESKTOP_ACTION_RESULT_QUOTA ((int32_t)-4)
+#define R4OS_DESKTOP_ACTION_RESULT_EXPIRED ((int32_t)-5)
+#define R4OS_DESKTOP_ACTION_RESULT_UNAVAILABLE ((int32_t)-6)
+#define R4OS_DESKTOP_ACTION_RESULT_PENDING ((int32_t)-7)
+#define R4OS_DESKTOP_ACTION_RESULT_NOT_OWNER ((int32_t)-8)
+#define R4OS_DESKTOP_ACTION_RESULT_UNSUPPORTED ((int32_t)-9)
+#define R4OS_DESKTOP_ACTION_RESULT_BUSY ((int32_t)-10)
+#define R4OS_DESKTOP_ACTION_RESULT_TARGET_ENDED ((int32_t)-11)
+#define R4OS_DESKTOP_ACTION_RESULT_RELEASED ((int32_t)-12)
+#define R4OS_DESKTOP_ACTION_PROOF_VIEW 1u
+#define R4OS_DESKTOP_ACTION_PROOF_COMPOSED 2u
+#define R4OS_DESKTOP_ACTION_PROOF_APP_FRESH 4u
+#define R4OS_DESKTOP_ACTION_PROOF_UNSUPPORTED 8u
+#define R4OS_DESKTOP_ACTION_PROOF_APP_ACK 16u
+#define R4OS_DESKTOP_ACTION_PROOF_INVISIBLE 32u
+#define R4OS_DESKTOP_ACTION_MAX_GRANTS 16u
+#define R4OS_DESKTOP_ACTION_MAX_TIMEOUT_MS 5000u
+#define R4OS_GUI_RESIZE_ACTION_VIEW_KEY 1464686129u
+#define R4OS_DESKTOP_ACTION_PHASE_UNKNOWN 8u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3679,6 +3752,15 @@ typedef struct R4GuiHostInputRequest R4GuiHostInputRequest;
 typedef struct R4AudioOutputEpoch R4AudioOutputEpoch;
 typedef struct R4AudioOutputProviderEpoch R4AudioOutputProviderEpoch;
 typedef struct R4AudioOutputCatalog R4AudioOutputCatalog;
+typedef struct R4DesktopEvidenceToken R4DesktopEvidenceToken;
+typedef struct R4DesktopEvidenceRequest R4DesktopEvidenceRequest;
+typedef struct R4DesktopEvidenceReply R4DesktopEvidenceReply;
+typedef struct R4DesktopActionToken R4DesktopActionToken;
+typedef struct R4DesktopActionState R4DesktopActionState;
+typedef struct R4DesktopActionRequest R4DesktopActionRequest;
+typedef struct R4DesktopActionReply R4DesktopActionReply;
+typedef struct R4DesktopWindowExchange R4DesktopWindowExchange;
+typedef struct R4DesktopWindowReply R4DesktopWindowReply;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -10938,6 +11020,99 @@ typedef struct R4AudioOutputCatalog {
     uint32_t provider_count;
     R4AudioOutputProviderEpoch providers[8];
 } R4AudioOutputCatalog;
+
+typedef struct R4DesktopEvidenceToken {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle broker;
+    R4ProgramProcessHandle request;
+    R4ProgramProcessHandle process;
+    R4ProgramProcessHandle desktop;
+    uint64_t epoch[3];
+    uint64_t serial;
+    uint64_t intent[3];
+} R4DesktopEvidenceToken;
+
+typedef struct R4DesktopEvidenceRequest {
+    R4DesktopEvidenceToken token;
+    uint32_t offset;
+    uint32_t capacity;
+} R4DesktopEvidenceRequest;
+
+typedef struct R4DesktopEvidenceReply {
+    R4DesktopEvidenceToken token;
+    int32_t result;
+    uint32_t phase;
+    uint64_t deadline;
+    R4ProgramProcessCompletion completion;
+    uint32_t data_bytes;
+    int32_t raw_result;
+    uint64_t revision;
+} R4DesktopEvidenceReply;
+
+typedef struct R4DesktopActionToken {
+    uint32_t version;
+    uint32_t size;
+    R4WindowModeIdentity window;
+    R4ProgramProcessHandle request;
+    R4ProgramProcessHandle controller;
+    uint64_t epoch[3];
+    uint64_t grant;
+    uint32_t rights;
+    uint32_t reserved;
+} R4DesktopActionToken;
+
+typedef struct R4DesktopActionState {
+    uint32_t version;
+    uint32_t size;
+    R4WindowModeIdentity window;
+    uint64_t view_revision;
+    uint64_t frame_before;
+    uint64_t candidate_generation;
+    uint64_t frame_generation;
+    uint64_t composition_serial;
+    uint64_t input_revision;
+    R4GuiWindowInfo info;
+    uint32_t proof_flags;
+    uint32_t reserved;
+} R4DesktopActionState;
+
+typedef struct R4DesktopActionRequest {
+    R4DesktopActionToken token;
+    uint64_t operation;
+    uint64_t deadline;
+    uint32_t kind;
+    uint32_t flags;
+    int32_t x;
+    int32_t y;
+    int32_t width;
+    int32_t height;
+    uint64_t frame_generation;
+} R4DesktopActionRequest;
+
+typedef struct R4DesktopActionReply {
+    R4DesktopActionRequest request;
+    int32_t result;
+    uint32_t phase;
+    uint64_t applied_tick;
+    R4DesktopActionState applied;
+    R4DesktopActionState current;
+} R4DesktopActionReply;
+
+typedef struct R4DesktopWindowExchange {
+    R4WindowModeExchange mode;
+    R4DesktopActionState state;
+    R4DesktopActionRequest ack;
+    R4DesktopActionState applied;
+    uint64_t applied_tick;
+    int32_t ack_result;
+    uint32_t flags;
+} R4DesktopWindowExchange;
+
+typedef struct R4DesktopWindowReply {
+    R4WindowModeReply mode;
+    R4DesktopActionReply action;
+} R4DesktopWindowReply;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -18560,6 +18735,81 @@ _Static_assert(offsetof(R4AudioOutputCatalog, active_registration) == 16u, "Audi
 _Static_assert(offsetof(R4AudioOutputCatalog, count) == 24u, "AudioOutputCatalog.count offset mismatch");
 _Static_assert(offsetof(R4AudioOutputCatalog, provider_count) == 28u, "AudioOutputCatalog.provider_count offset mismatch");
 _Static_assert(offsetof(R4AudioOutputCatalog, providers) == 32u, "AudioOutputCatalog.providers offset mismatch");
+_Static_assert(sizeof(R4DesktopEvidenceToken) == 128u, "DesktopEvidenceToken size mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, version) == 0u, "DesktopEvidenceToken.version offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, size) == 4u, "DesktopEvidenceToken.size offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, broker) == 8u, "DesktopEvidenceToken.broker offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, request) == 24u, "DesktopEvidenceToken.request offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, process) == 40u, "DesktopEvidenceToken.process offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, desktop) == 56u, "DesktopEvidenceToken.desktop offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, epoch) == 72u, "DesktopEvidenceToken.epoch offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, serial) == 96u, "DesktopEvidenceToken.serial offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceToken, intent) == 104u, "DesktopEvidenceToken.intent offset mismatch");
+_Static_assert(sizeof(R4DesktopEvidenceRequest) == 136u, "DesktopEvidenceRequest size mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceRequest, token) == 0u, "DesktopEvidenceRequest.token offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceRequest, offset) == 128u, "DesktopEvidenceRequest.offset offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceRequest, capacity) == 132u, "DesktopEvidenceRequest.capacity offset mismatch");
+_Static_assert(sizeof(R4DesktopEvidenceReply) == 288u, "DesktopEvidenceReply size mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, token) == 0u, "DesktopEvidenceReply.token offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, result) == 128u, "DesktopEvidenceReply.result offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, phase) == 132u, "DesktopEvidenceReply.phase offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, deadline) == 136u, "DesktopEvidenceReply.deadline offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, completion) == 144u, "DesktopEvidenceReply.completion offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, data_bytes) == 272u, "DesktopEvidenceReply.data_bytes offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, raw_result) == 276u, "DesktopEvidenceReply.raw_result offset mismatch");
+_Static_assert(offsetof(R4DesktopEvidenceReply, revision) == 280u, "DesktopEvidenceReply.revision offset mismatch");
+_Static_assert(sizeof(R4DesktopActionToken) == 144u, "DesktopActionToken size mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, version) == 0u, "DesktopActionToken.version offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, size) == 4u, "DesktopActionToken.size offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, window) == 8u, "DesktopActionToken.window offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, request) == 72u, "DesktopActionToken.request offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, controller) == 88u, "DesktopActionToken.controller offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, epoch) == 104u, "DesktopActionToken.epoch offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, grant) == 128u, "DesktopActionToken.grant offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, rights) == 136u, "DesktopActionToken.rights offset mismatch");
+_Static_assert(offsetof(R4DesktopActionToken, reserved) == 140u, "DesktopActionToken.reserved offset mismatch");
+_Static_assert(sizeof(R4DesktopActionState) == 168u, "DesktopActionState size mismatch");
+_Static_assert(offsetof(R4DesktopActionState, version) == 0u, "DesktopActionState.version offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, size) == 4u, "DesktopActionState.size offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, window) == 8u, "DesktopActionState.window offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, view_revision) == 72u, "DesktopActionState.view_revision offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, frame_before) == 80u, "DesktopActionState.frame_before offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, candidate_generation) == 88u, "DesktopActionState.candidate_generation offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, frame_generation) == 96u, "DesktopActionState.frame_generation offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, composition_serial) == 104u, "DesktopActionState.composition_serial offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, input_revision) == 112u, "DesktopActionState.input_revision offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, info) == 120u, "DesktopActionState.info offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, proof_flags) == 160u, "DesktopActionState.proof_flags offset mismatch");
+_Static_assert(offsetof(R4DesktopActionState, reserved) == 164u, "DesktopActionState.reserved offset mismatch");
+_Static_assert(sizeof(R4DesktopActionRequest) == 192u, "DesktopActionRequest size mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, token) == 0u, "DesktopActionRequest.token offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, operation) == 144u, "DesktopActionRequest.operation offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, deadline) == 152u, "DesktopActionRequest.deadline offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, kind) == 160u, "DesktopActionRequest.kind offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, flags) == 164u, "DesktopActionRequest.flags offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, x) == 168u, "DesktopActionRequest.x offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, y) == 172u, "DesktopActionRequest.y offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, width) == 176u, "DesktopActionRequest.width offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, height) == 180u, "DesktopActionRequest.height offset mismatch");
+_Static_assert(offsetof(R4DesktopActionRequest, frame_generation) == 184u, "DesktopActionRequest.frame_generation offset mismatch");
+_Static_assert(sizeof(R4DesktopActionReply) == 544u, "DesktopActionReply size mismatch");
+_Static_assert(offsetof(R4DesktopActionReply, request) == 0u, "DesktopActionReply.request offset mismatch");
+_Static_assert(offsetof(R4DesktopActionReply, result) == 192u, "DesktopActionReply.result offset mismatch");
+_Static_assert(offsetof(R4DesktopActionReply, phase) == 196u, "DesktopActionReply.phase offset mismatch");
+_Static_assert(offsetof(R4DesktopActionReply, applied_tick) == 200u, "DesktopActionReply.applied_tick offset mismatch");
+_Static_assert(offsetof(R4DesktopActionReply, applied) == 208u, "DesktopActionReply.applied offset mismatch");
+_Static_assert(offsetof(R4DesktopActionReply, current) == 376u, "DesktopActionReply.current offset mismatch");
+_Static_assert(sizeof(R4DesktopWindowExchange) == 640u, "DesktopWindowExchange size mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchange, mode) == 0u, "DesktopWindowExchange.mode offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchange, state) == 96u, "DesktopWindowExchange.state offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchange, ack) == 264u, "DesktopWindowExchange.ack offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchange, applied) == 456u, "DesktopWindowExchange.applied offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchange, applied_tick) == 624u, "DesktopWindowExchange.applied_tick offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchange, ack_result) == 632u, "DesktopWindowExchange.ack_result offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchange, flags) == 636u, "DesktopWindowExchange.flags offset mismatch");
+_Static_assert(sizeof(R4DesktopWindowReply) == 640u, "DesktopWindowReply size mismatch");
+_Static_assert(offsetof(R4DesktopWindowReply, mode) == 0u, "DesktopWindowReply.mode offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowReply, action) == 96u, "DesktopWindowReply.action offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1392u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
