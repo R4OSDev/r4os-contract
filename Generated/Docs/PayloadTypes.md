@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 404 von 404 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 407 von 407 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 64; Konstanten: 2888; Limits: 111
 
@@ -425,6 +425,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DesktopFocusReply` | fixed_layout | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
 | `DesktopWindowExchangeV2` | fixed_layout | extern_struct | 752/8 | 752/8 | 752/8 | 752/8 |
 | `FirmwareSystemUuidInfo` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `DesktopLinkToken` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
+| `DesktopLinkRequest` | fixed_layout | extern_struct | 1296/8 | 1296/8 | 1296/8 | 1296/8 |
+| `DesktopLinkReply` | fixed_layout | extern_struct | 1800/8 | 1800/8 | 1800/8 | 1800/8 |
 
 ## Typdetails
 
@@ -10622,6 +10625,64 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `source` | 8 | 4 | 4 | `u32` | - |
 | `reserved` | 12 | 4 | 4 | `u32` | - |
 | `uuid` | 16 | 16 | 1 | `[16]u8` | - |
+
+### `DesktopLinkToken`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 96 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `service` | 8 | 16 | 8 | `ProgramProcessHandle` | - |
+| `owner` | 24 | 16 | 8 | `ProgramProcessHandle` | - |
+| `epoch` | 40 | 24 | 8 | `[3]u64` | - |
+| `intent` | 64 | 24 | 8 | `[3]u64` | - |
+| `serial` | 88 | 8 | 8 | `u64` | - |
+
+### `DesktopLinkRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1296 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `token` | 0 | 96 | 8 | `DesktopLinkToken` | - |
+| `deadline` | 96 | 8 | 8 | `u64` | - |
+| `link_path` | 104 | 160 | 1 | `[160]u8` | - |
+| `link_length` | 264 | 4 | 4 | `u32` | - |
+| `reserved` | 268 | 4 | 4 | `u32` | - |
+| `link_bytes` | 272 | 1024 | 1 | `[1024]u8` | - |
+
+### `DesktopLinkReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1800 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `request` | 0 | 1296 | 8 | `DesktopLinkRequest` | - |
+| `result` | 1296 | 4 | 4 | `i32` | - |
+| `phase` | 1300 | 4 | 4 | `u32` | - |
+| `desktop` | 1304 | 16 | 8 | `ProgramProcessHandle` | - |
+| `process` | 1320 | 16 | 8 | `ProgramProcessHandle` | - |
+| `accepted_tick` | 1336 | 8 | 8 | `u64` | - |
+| `started_tick` | 1344 | 8 | 8 | `u64` | - |
+| `ready_tick` | 1352 | 8 | 8 | `u64` | - |
+| `cleanup_tick` | 1360 | 8 | 8 | `u64` | - |
+| `content_generation` | 1368 | 8 | 8 | `u64` | - |
+| `resolved_path` | 1376 | 160 | 1 | `[160]u8` | - |
+| `resolved_args` | 1536 | 128 | 1 | `[128]u8` | - |
+| `policy` | 1664 | 4 | 4 | `u32` | - |
+| `flags` | 1668 | 4 | 4 | `u32` | - |
+| `completion` | 1672 | 128 | 8 | `ProgramProcessCompletion` | - |
 
 ## Fehlerdomänen
 

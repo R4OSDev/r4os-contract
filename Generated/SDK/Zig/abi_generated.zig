@@ -10804,6 +10804,43 @@ pub const FirmwareSystemUuidInfo = extern struct {
     uuid: [16]u8 = .{0} ** 16,
 };
 
+pub const DesktopLinkToken = extern struct {
+    version: u32 = 1,
+    size: u32 = 96,
+    service: ProgramProcessHandle = .{},
+    owner: ProgramProcessHandle = .{},
+    epoch: [3]u64 = .{0} ** 3,
+    intent: [3]u64 = .{0} ** 3,
+    serial: u64 = 0,
+};
+
+pub const DesktopLinkRequest = extern struct {
+    token: DesktopLinkToken = .{},
+    deadline: u64 = 0,
+    link_path: [160]u8 = .{0} ** 160,
+    link_length: u32 = 0,
+    reserved: u32 = 0,
+    link_bytes: [1024]u8 = .{0} ** 1024,
+};
+
+pub const DesktopLinkReply = extern struct {
+    request: DesktopLinkRequest = .{},
+    result: i32 = 0,
+    phase: u32 = 0,
+    desktop: ProgramProcessHandle = .{},
+    process: ProgramProcessHandle = .{},
+    accepted_tick: u64 = 0,
+    started_tick: u64 = 0,
+    ready_tick: u64 = 0,
+    cleanup_tick: u64 = 0,
+    content_generation: u64 = 0,
+    resolved_path: [160]u8 = .{0} ** 160,
+    resolved_args: [128]u8 = .{0} ** 128,
+    policy: u32 = 0,
+    flags: u32 = 0,
+    completion: ProgramProcessCompletion = .{},
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -19419,6 +19456,40 @@ comptime {
     if (@offsetOf(FirmwareSystemUuidInfo, "source") != 8) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.source");
     if (@offsetOf(FirmwareSystemUuidInfo, "reserved") != 12) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.reserved");
     if (@offsetOf(FirmwareSystemUuidInfo, "uuid") != 16) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.uuid");
+    if (@sizeOf(DesktopLinkToken) != 96) @compileError("generated ABI size drift: DesktopLinkToken");
+    if (@alignOf(DesktopLinkToken) != 8) @compileError("generated ABI alignment drift: DesktopLinkToken");
+    if (@offsetOf(DesktopLinkToken, "version") != 0) @compileError("generated ABI offset drift: DesktopLinkToken.version");
+    if (@offsetOf(DesktopLinkToken, "size") != 4) @compileError("generated ABI offset drift: DesktopLinkToken.size");
+    if (@offsetOf(DesktopLinkToken, "service") != 8) @compileError("generated ABI offset drift: DesktopLinkToken.service");
+    if (@offsetOf(DesktopLinkToken, "owner") != 24) @compileError("generated ABI offset drift: DesktopLinkToken.owner");
+    if (@offsetOf(DesktopLinkToken, "epoch") != 40) @compileError("generated ABI offset drift: DesktopLinkToken.epoch");
+    if (@offsetOf(DesktopLinkToken, "intent") != 64) @compileError("generated ABI offset drift: DesktopLinkToken.intent");
+    if (@offsetOf(DesktopLinkToken, "serial") != 88) @compileError("generated ABI offset drift: DesktopLinkToken.serial");
+    if (@sizeOf(DesktopLinkRequest) != 1296) @compileError("generated ABI size drift: DesktopLinkRequest");
+    if (@alignOf(DesktopLinkRequest) != 8) @compileError("generated ABI alignment drift: DesktopLinkRequest");
+    if (@offsetOf(DesktopLinkRequest, "token") != 0) @compileError("generated ABI offset drift: DesktopLinkRequest.token");
+    if (@offsetOf(DesktopLinkRequest, "deadline") != 96) @compileError("generated ABI offset drift: DesktopLinkRequest.deadline");
+    if (@offsetOf(DesktopLinkRequest, "link_path") != 104) @compileError("generated ABI offset drift: DesktopLinkRequest.link_path");
+    if (@offsetOf(DesktopLinkRequest, "link_length") != 264) @compileError("generated ABI offset drift: DesktopLinkRequest.link_length");
+    if (@offsetOf(DesktopLinkRequest, "reserved") != 268) @compileError("generated ABI offset drift: DesktopLinkRequest.reserved");
+    if (@offsetOf(DesktopLinkRequest, "link_bytes") != 272) @compileError("generated ABI offset drift: DesktopLinkRequest.link_bytes");
+    if (@sizeOf(DesktopLinkReply) != 1800) @compileError("generated ABI size drift: DesktopLinkReply");
+    if (@alignOf(DesktopLinkReply) != 8) @compileError("generated ABI alignment drift: DesktopLinkReply");
+    if (@offsetOf(DesktopLinkReply, "request") != 0) @compileError("generated ABI offset drift: DesktopLinkReply.request");
+    if (@offsetOf(DesktopLinkReply, "result") != 1296) @compileError("generated ABI offset drift: DesktopLinkReply.result");
+    if (@offsetOf(DesktopLinkReply, "phase") != 1300) @compileError("generated ABI offset drift: DesktopLinkReply.phase");
+    if (@offsetOf(DesktopLinkReply, "desktop") != 1304) @compileError("generated ABI offset drift: DesktopLinkReply.desktop");
+    if (@offsetOf(DesktopLinkReply, "process") != 1320) @compileError("generated ABI offset drift: DesktopLinkReply.process");
+    if (@offsetOf(DesktopLinkReply, "accepted_tick") != 1336) @compileError("generated ABI offset drift: DesktopLinkReply.accepted_tick");
+    if (@offsetOf(DesktopLinkReply, "started_tick") != 1344) @compileError("generated ABI offset drift: DesktopLinkReply.started_tick");
+    if (@offsetOf(DesktopLinkReply, "ready_tick") != 1352) @compileError("generated ABI offset drift: DesktopLinkReply.ready_tick");
+    if (@offsetOf(DesktopLinkReply, "cleanup_tick") != 1360) @compileError("generated ABI offset drift: DesktopLinkReply.cleanup_tick");
+    if (@offsetOf(DesktopLinkReply, "content_generation") != 1368) @compileError("generated ABI offset drift: DesktopLinkReply.content_generation");
+    if (@offsetOf(DesktopLinkReply, "resolved_path") != 1376) @compileError("generated ABI offset drift: DesktopLinkReply.resolved_path");
+    if (@offsetOf(DesktopLinkReply, "resolved_args") != 1536) @compileError("generated ABI offset drift: DesktopLinkReply.resolved_args");
+    if (@offsetOf(DesktopLinkReply, "policy") != 1664) @compileError("generated ABI offset drift: DesktopLinkReply.policy");
+    if (@offsetOf(DesktopLinkReply, "flags") != 1668) @compileError("generated ABI offset drift: DesktopLinkReply.flags");
+    if (@offsetOf(DesktopLinkReply, "completion") != 1672) @compileError("generated ABI offset drift: DesktopLinkReply.completion");
     if (@sizeOf(R4XStartR4Sys) != 1392) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");

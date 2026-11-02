@@ -3765,6 +3765,9 @@ typedef struct R4DesktopFocusSnapshot R4DesktopFocusSnapshot;
 typedef struct R4DesktopFocusReply R4DesktopFocusReply;
 typedef struct R4DesktopWindowExchangeV2 R4DesktopWindowExchangeV2;
 typedef struct R4FirmwareSystemUuidInfo R4FirmwareSystemUuidInfo;
+typedef struct R4DesktopLinkToken R4DesktopLinkToken;
+typedef struct R4DesktopLinkRequest R4DesktopLinkRequest;
+typedef struct R4DesktopLinkReply R4DesktopLinkReply;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11148,6 +11151,43 @@ typedef struct R4FirmwareSystemUuidInfo {
     uint32_t reserved;
     uint8_t uuid[16];
 } R4FirmwareSystemUuidInfo;
+
+typedef struct R4DesktopLinkToken {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle service;
+    R4ProgramProcessHandle owner;
+    uint64_t epoch[3];
+    uint64_t intent[3];
+    uint64_t serial;
+} R4DesktopLinkToken;
+
+typedef struct R4DesktopLinkRequest {
+    R4DesktopLinkToken token;
+    uint64_t deadline;
+    uint8_t link_path[160];
+    uint32_t link_length;
+    uint32_t reserved;
+    uint8_t link_bytes[1024];
+} R4DesktopLinkRequest;
+
+typedef struct R4DesktopLinkReply {
+    R4DesktopLinkRequest request;
+    int32_t result;
+    uint32_t phase;
+    R4ProgramProcessHandle desktop;
+    R4ProgramProcessHandle process;
+    uint64_t accepted_tick;
+    uint64_t started_tick;
+    uint64_t ready_tick;
+    uint64_t cleanup_tick;
+    uint64_t content_generation;
+    uint8_t resolved_path[160];
+    uint8_t resolved_args[128];
+    uint32_t policy;
+    uint32_t flags;
+    R4ProgramProcessCompletion completion;
+} R4DesktopLinkReply;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -18870,6 +18910,37 @@ _Static_assert(offsetof(R4FirmwareSystemUuidInfo, size) == 4u, "FirmwareSystemUu
 _Static_assert(offsetof(R4FirmwareSystemUuidInfo, source) == 8u, "FirmwareSystemUuidInfo.source offset mismatch");
 _Static_assert(offsetof(R4FirmwareSystemUuidInfo, reserved) == 12u, "FirmwareSystemUuidInfo.reserved offset mismatch");
 _Static_assert(offsetof(R4FirmwareSystemUuidInfo, uuid) == 16u, "FirmwareSystemUuidInfo.uuid offset mismatch");
+_Static_assert(sizeof(R4DesktopLinkToken) == 96u, "DesktopLinkToken size mismatch");
+_Static_assert(offsetof(R4DesktopLinkToken, version) == 0u, "DesktopLinkToken.version offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkToken, size) == 4u, "DesktopLinkToken.size offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkToken, service) == 8u, "DesktopLinkToken.service offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkToken, owner) == 24u, "DesktopLinkToken.owner offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkToken, epoch) == 40u, "DesktopLinkToken.epoch offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkToken, intent) == 64u, "DesktopLinkToken.intent offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkToken, serial) == 88u, "DesktopLinkToken.serial offset mismatch");
+_Static_assert(sizeof(R4DesktopLinkRequest) == 1296u, "DesktopLinkRequest size mismatch");
+_Static_assert(offsetof(R4DesktopLinkRequest, token) == 0u, "DesktopLinkRequest.token offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkRequest, deadline) == 96u, "DesktopLinkRequest.deadline offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkRequest, link_path) == 104u, "DesktopLinkRequest.link_path offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkRequest, link_length) == 264u, "DesktopLinkRequest.link_length offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkRequest, reserved) == 268u, "DesktopLinkRequest.reserved offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkRequest, link_bytes) == 272u, "DesktopLinkRequest.link_bytes offset mismatch");
+_Static_assert(sizeof(R4DesktopLinkReply) == 1800u, "DesktopLinkReply size mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, request) == 0u, "DesktopLinkReply.request offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, result) == 1296u, "DesktopLinkReply.result offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, phase) == 1300u, "DesktopLinkReply.phase offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, desktop) == 1304u, "DesktopLinkReply.desktop offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, process) == 1320u, "DesktopLinkReply.process offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, accepted_tick) == 1336u, "DesktopLinkReply.accepted_tick offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, started_tick) == 1344u, "DesktopLinkReply.started_tick offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, ready_tick) == 1352u, "DesktopLinkReply.ready_tick offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, cleanup_tick) == 1360u, "DesktopLinkReply.cleanup_tick offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, content_generation) == 1368u, "DesktopLinkReply.content_generation offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, resolved_path) == 1376u, "DesktopLinkReply.resolved_path offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, resolved_args) == 1536u, "DesktopLinkReply.resolved_args offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, policy) == 1664u, "DesktopLinkReply.policy offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, flags) == 1668u, "DesktopLinkReply.flags offset mismatch");
+_Static_assert(offsetof(R4DesktopLinkReply, completion) == 1672u, "DesktopLinkReply.completion offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1392u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

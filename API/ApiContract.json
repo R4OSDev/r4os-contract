@@ -129980,6 +129980,451 @@
       ],
       "values": [],
       "description": "Passive canonical SMBIOS Type 1 system UUID. The UUID is returned only when valid, and remains local to the trusted R4OS client."
+    },
+    {
+      "name": "DesktopLinkToken",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 96,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Token version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Token size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "96"
+        },
+        {
+          "name": "service",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact WINSVC generation.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "owner",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Original requesting process generation; only it may activate.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "epoch",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Fresh service/boot epoch. Persist the token, never reconstruct this epoch.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "[3]u64",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "intent",
+          "offset": 64,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u64"
+            }
+          },
+          "description": "Caller-chosen logical intent saved before Prepare; read-only recovery can use serial zero.",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "[3]u64",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "serial",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Nonwrapping reservation identity. Save canonical nonzero serial before Activate.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Bounded native own-link activation identity. Possession grants read-only original receipt recovery; activation additionally authenticates the original owner generation. Service restart invalidates old epochs and never replays a saved activation."
+    },
+    {
+      "name": "DesktopLinkRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1296,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "token",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DesktopLinkToken"
+          },
+          "description": "Original immutable activation identity.",
+          "size": 96,
+          "alignment": 8,
+          "source_type": "DesktopLinkToken",
+          "default_kind": "empty"
+        },
+        {
+          "name": "deadline",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original absolute start deadline; Prepare admits at most 30 seconds. Never extend on retry.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_path",
+          "offset": 104,
+          "type": {
+            "kind": "array",
+            "length": 160,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Canonical absolute own .LNK path, NUL terminated, remaining bytes zero.",
+          "size": 160,
+          "alignment": 1,
+          "source_type": "[160]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "link_length",
+          "offset": 264,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact expected UTF-8 R4LNK byte count, 1..1024.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 268,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_bytes",
+          "offset": 272,
+          "type": {
+            "kind": "array",
+            "length": 1024,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Exact caller-owned link snapshot; zero tail. Desktop revalidates real file bytes before launch.",
+          "size": 1024,
+          "alignment": 1,
+          "source_type": "[1024]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Immutable link binding. Prepare only reserves and returns a stable token; save it before Activate. Same token/intent with changed path, bytes or deadline is a conflict. Status and Release carry this complete original record so mismatches cannot silently authorize effects."
+    },
+    {
+      "name": "DesktopLinkReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1800,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "request",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DesktopLinkRequest"
+          },
+          "description": "Original copied request, including actual expected link bytes.",
+          "size": 1296,
+          "alignment": 8,
+          "source_type": "DesktopLinkRequest",
+          "default_kind": "empty"
+        },
+        {
+          "name": "result",
+          "offset": 1296,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Domain result, separate from transport and lifecycle.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "phase",
+          "offset": 1300,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Prepared, accepted, starting, process, ready, ended, cleaned, rejected or expired.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "desktop",
+          "offset": 1304,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Actual Desktop generation that consumed the activation.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "process",
+          "offset": 1320,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Actual spawned process generation; zero until positively observed.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "accepted_tick",
+          "offset": 1336,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original admission observation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "started_tick",
+          "offset": 1344,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Positive process-start observation, not readiness.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "ready_tick",
+          "offset": 1352,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Positive consumed frame/output observation, not physical scanout.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cleanup_tick",
+          "offset": 1360,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Explicit broker evidence cleanup after proven process completion/reap.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "content_generation",
+          "offset": 1368,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual committed GUI frame or console-output revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "resolved_path",
+          "offset": 1376,
+          "type": {
+            "kind": "array",
+            "length": 160,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Target resolved by the actual Desktop R4LNK path.",
+          "size": 160,
+          "alignment": 1,
+          "source_type": "[160]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "resolved_args",
+          "offset": 1536,
+          "type": {
+            "kind": "array",
+            "length": 128,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Exact resolved argument bytes.",
+          "size": 128,
+          "alignment": 1,
+          "source_type": "[128]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "policy",
+          "offset": 1664,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Resolved launch policy.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 1668,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Capabilities and positively established link/lifecycle/evidence facts.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "completion",
+          "offset": 1672,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessCompletion"
+          },
+          "description": "Native original completion, only when the ended flag is set.",
+          "size": 128,
+          "alignment": 8,
+          "source_type": "ProgramProcessCompletion",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Original native link activation receipt. No icon/publication/direct-R4X substitute. Read-only Status never submits, reactivates, reaps or frees resources. Prepared/accepted/start/ready/end/cleanup are separate. Explicit Release cannot kill a running process. Unknown/expired/stale never authorize a replacement start."
     }
   ],
   "operations": [],

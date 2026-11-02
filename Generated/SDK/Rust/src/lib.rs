@@ -20554,6 +20554,98 @@ impl Default for FirmwareSystemUuidInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopLinkToken {
+    pub version: u32,
+    pub size: u32,
+    pub service: ProgramProcessHandle,
+    pub owner: ProgramProcessHandle,
+    pub epoch: [u64; 3],
+    pub intent: [u64; 3],
+    pub serial: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopLinkToken {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 96,
+            service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            epoch: [0; 3],
+            intent: [0; 3],
+            serial: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopLinkRequest {
+    pub token: DesktopLinkToken,
+    pub deadline: u64,
+    pub link_path: [u8; 160],
+    pub link_length: u32,
+    pub reserved: u32,
+    pub link_bytes: [u8; 1024],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopLinkRequest {
+    fn default() -> Self {
+        Self {
+            token: DesktopLinkToken { version: 1, size: 96, service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], intent: [0; 3], serial: 0 },
+            deadline: 0,
+            link_path: [0; 160],
+            link_length: 0,
+            reserved: 0,
+            link_bytes: [0; 1024],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopLinkReply {
+    pub request: DesktopLinkRequest,
+    pub result: i32,
+    pub phase: u32,
+    pub desktop: ProgramProcessHandle,
+    pub process: ProgramProcessHandle,
+    pub accepted_tick: u64,
+    pub started_tick: u64,
+    pub ready_tick: u64,
+    pub cleanup_tick: u64,
+    pub content_generation: u64,
+    pub resolved_path: [u8; 160],
+    pub resolved_args: [u8; 128],
+    pub policy: u32,
+    pub flags: u32,
+    pub completion: ProgramProcessCompletion,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopLinkReply {
+    fn default() -> Self {
+        Self {
+            request: DesktopLinkRequest { token: DesktopLinkToken { version: 1, size: 96, service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], intent: [0; 3], serial: 0 }, deadline: 0, link_path: [0; 160], link_length: 0, reserved: 0, link_bytes: [0; 1024] },
+            result: 0,
+            phase: 0,
+            desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            accepted_tick: 0,
+            started_tick: 0,
+            ready_tick: 0,
+            cleanup_tick: 0,
+            content_generation: 0,
+            resolved_path: [0; 160],
+            resolved_args: [0; 128],
+            policy: 0,
+            flags: 0,
+            completion: ProgramProcessCompletion { handle: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, sequence: 0, start_tick: 0, finish_tick: 0, exit_code: 0, task_id: 0, output_revision: 0, output_length: 0, flags: 0, app_class: 0, role: 0, exit_reason: 0, reserved0: 0, console_state: ConsoleState { fg: 14211288, bg: 0, clear_count: 0, cursor_x: 0, cursor_y: 0, cursor_visible: 1, reserved: [0; 3], cols: 80, rows: 25, stdin_pending: 0, stdin_bytes: 0, stdout_bytes: 0, stderr_bytes: 0, output_capacity: 16384, output_len: 0, scrollback_lines: 0, output_dropped_bytes: 0 } },
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -22253,6 +22345,40 @@ pub const desktop_focus_result_ok: i32 = 0;
 pub const desktop_focus_result_missing: i32 = -1;
 pub const desktop_focus_result_stale: i32 = -2;
 pub const desktop_focus_result_unknown: i32 = -3;
+pub const desktop_link_op_scope: u16 = 4810;
+pub const desktop_link_op_prepare: u16 = 4811;
+pub const desktop_link_op_activate: u16 = 4812;
+pub const desktop_link_op_status: u16 = 4813;
+pub const desktop_link_op_release: u16 = 4814;
+pub const desktop_link_op_exchange: u16 = 4815;
+pub const desktop_link_op_report: u16 = 4816;
+pub const desktop_link_phase_prepared: u32 = 1;
+pub const desktop_link_phase_accepted: u32 = 2;
+pub const desktop_link_phase_starting: u32 = 3;
+pub const desktop_link_phase_process: u32 = 4;
+pub const desktop_link_phase_ready: u32 = 5;
+pub const desktop_link_phase_ended: u32 = 6;
+pub const desktop_link_phase_cleaned: u32 = 7;
+pub const desktop_link_phase_rejected: u32 = 8;
+pub const desktop_link_phase_expired: u32 = 9;
+pub const desktop_link_result_invalid: i32 = -1;
+pub const desktop_link_result_stale: i32 = -2;
+pub const desktop_link_result_not_owner: i32 = -3;
+pub const desktop_link_result_unknown: i32 = -4;
+pub const desktop_link_result_changed: i32 = -5;
+pub const desktop_link_result_quota: i32 = -6;
+pub const desktop_link_result_expired: i32 = -7;
+pub const desktop_link_result_pending: i32 = -8;
+pub const desktop_link_result_released: i32 = -9;
+pub const desktop_link_result_unavailable: i32 = -10;
+pub const desktop_link_capabilities: u32 = 15;
+pub const desktop_link_flag_validated: u32 = 16;
+pub const desktop_link_flag_ended: u32 = 32;
+pub const desktop_link_flag_reaped: u32 = 64;
+pub const desktop_link_flag_released: u32 = 128;
+pub const desktop_link_max_bytes: u32 = 1024;
+pub const desktop_link_max_duration_ms: u32 = 30000;
+pub const desktop_link_max_leases: u32 = 8;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -33252,6 +33378,40 @@ const _: () = {
     assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, uuid) == 16);
     assert!(core::mem::size_of::<FirmwareSystemUuidInfo>() == 32);
     assert!(core::mem::align_of::<FirmwareSystemUuidInfo>() == 4);
+    assert!(core::mem::offset_of!(DesktopLinkToken, version) == 0);
+    assert!(core::mem::offset_of!(DesktopLinkToken, size) == 4);
+    assert!(core::mem::offset_of!(DesktopLinkToken, service) == 8);
+    assert!(core::mem::offset_of!(DesktopLinkToken, owner) == 24);
+    assert!(core::mem::offset_of!(DesktopLinkToken, epoch) == 40);
+    assert!(core::mem::offset_of!(DesktopLinkToken, intent) == 64);
+    assert!(core::mem::offset_of!(DesktopLinkToken, serial) == 88);
+    assert!(core::mem::size_of::<DesktopLinkToken>() == 96);
+    assert!(core::mem::align_of::<DesktopLinkToken>() == 8);
+    assert!(core::mem::offset_of!(DesktopLinkRequest, token) == 0);
+    assert!(core::mem::offset_of!(DesktopLinkRequest, deadline) == 96);
+    assert!(core::mem::offset_of!(DesktopLinkRequest, link_path) == 104);
+    assert!(core::mem::offset_of!(DesktopLinkRequest, link_length) == 264);
+    assert!(core::mem::offset_of!(DesktopLinkRequest, reserved) == 268);
+    assert!(core::mem::offset_of!(DesktopLinkRequest, link_bytes) == 272);
+    assert!(core::mem::size_of::<DesktopLinkRequest>() == 1296);
+    assert!(core::mem::align_of::<DesktopLinkRequest>() == 8);
+    assert!(core::mem::offset_of!(DesktopLinkReply, request) == 0);
+    assert!(core::mem::offset_of!(DesktopLinkReply, result) == 1296);
+    assert!(core::mem::offset_of!(DesktopLinkReply, phase) == 1300);
+    assert!(core::mem::offset_of!(DesktopLinkReply, desktop) == 1304);
+    assert!(core::mem::offset_of!(DesktopLinkReply, process) == 1320);
+    assert!(core::mem::offset_of!(DesktopLinkReply, accepted_tick) == 1336);
+    assert!(core::mem::offset_of!(DesktopLinkReply, started_tick) == 1344);
+    assert!(core::mem::offset_of!(DesktopLinkReply, ready_tick) == 1352);
+    assert!(core::mem::offset_of!(DesktopLinkReply, cleanup_tick) == 1360);
+    assert!(core::mem::offset_of!(DesktopLinkReply, content_generation) == 1368);
+    assert!(core::mem::offset_of!(DesktopLinkReply, resolved_path) == 1376);
+    assert!(core::mem::offset_of!(DesktopLinkReply, resolved_args) == 1536);
+    assert!(core::mem::offset_of!(DesktopLinkReply, policy) == 1664);
+    assert!(core::mem::offset_of!(DesktopLinkReply, flags) == 1668);
+    assert!(core::mem::offset_of!(DesktopLinkReply, completion) == 1672);
+    assert!(core::mem::size_of::<DesktopLinkReply>() == 1800);
+    assert!(core::mem::align_of::<DesktopLinkReply>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
