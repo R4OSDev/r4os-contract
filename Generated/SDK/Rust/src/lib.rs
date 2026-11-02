@@ -20470,6 +20470,70 @@ impl Default for DesktopWindowReply {
 
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct DesktopFocusSnapshot {
+    pub version: u32,
+    pub size: u32,
+    pub window: WindowModeIdentity,
+    pub view_revision: u64,
+    pub input_revision: u64,
+    pub observed_tick: u64,
+    pub focus_state: u32,
+    pub flags: u32,
+    pub reserved: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopFocusSnapshot {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 },
+            view_revision: 0,
+            input_revision: 0,
+            observed_tick: 0,
+            focus_state: 0,
+            flags: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopFocusReply {
+    pub result: i32,
+    pub reserved: u32,
+    pub snapshot: DesktopFocusSnapshot,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopFocusReply {
+    fn default() -> Self {
+        Self {
+            result: 0,
+            reserved: 0,
+            snapshot: DesktopFocusSnapshot { version: 1, size: 112, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, input_revision: 0, observed_tick: 0, focus_state: 0, flags: 0, reserved: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DesktopWindowExchangeV2 {
+    pub previous: DesktopWindowExchange,
+    pub focus: DesktopFocusSnapshot,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DesktopWindowExchangeV2 {
+    fn default() -> Self {
+        Self {
+            previous: DesktopWindowExchange { mode: WindowModeExchange { version: 1, size: 96, identity: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, ack_request_id: 0, ack_result: 0, mode: 0, flags: 0, reserved: 0 }, state: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 }, ack: DesktopActionRequest { token: DesktopActionToken { version: 1, size: 144, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, request: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, controller: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: [0; 3], grant: 0, rights: 0, reserved: 0 }, operation: 0, deadline: 0, kind: 0, flags: 0, x: 0, y: 0, width: 0, height: 0, frame_generation: 0 }, applied: DesktopActionState { version: 1, size: 168, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, frame_before: 0, candidate_generation: 0, frame_generation: 0, composition_serial: 0, input_revision: 0, info: GuiWindowInfo { window_id: -1, frame_x: 0, frame_y: 0, frame_w: 0, frame_h: 0, client_x: 0, client_y: 0, client_w: 0, client_h: 0, flags: 0 }, proof_flags: 0, reserved: 0 }, applied_tick: 0, ack_result: 0, flags: 0 },
+            focus: DesktopFocusSnapshot { version: 1, size: 112, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_revision: 0, input_revision: 0, observed_tick: 0, focus_state: 0, flags: 0, reserved: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct FirmwareSystemUuidInfo {
     pub version: u32,
     pub size: u32,
@@ -22173,6 +22237,22 @@ impl Default for R4XStartR4Dev {
         }
     }
 }
+pub const desktop_action_op_exchange_focus: u16 = 4808;
+pub const desktop_action_op_focus_snapshot: u16 = 4809;
+pub const desktop_action_kind_pointer_down: u32 = 4;
+pub const desktop_action_kind_pointer_move: u32 = 5;
+pub const desktop_action_kind_pointer_up: u32 = 6;
+pub const desktop_action_right_pointer: u32 = 8;
+pub const desktop_action_pointer_max_steps: u32 = 32;
+pub const desktop_action_pointer_max_duration_ms: u32 = 2000;
+pub const desktop_action_pointer_max_distance_px: u32 = 1024;
+pub const desktop_focus_state_unknown: u32 = 0;
+pub const desktop_focus_state_unfocused: u32 = 1;
+pub const desktop_focus_state_focused: u32 = 2;
+pub const desktop_focus_result_ok: i32 = 0;
+pub const desktop_focus_result_missing: i32 = -1;
+pub const desktop_focus_result_stale: i32 = -2;
+pub const desktop_focus_result_unknown: i32 = -3;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -33145,6 +33225,26 @@ const _: () = {
     assert!(core::mem::offset_of!(DesktopWindowReply, action) == 96);
     assert!(core::mem::size_of::<DesktopWindowReply>() == 640);
     assert!(core::mem::align_of::<DesktopWindowReply>() == 8);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, version) == 0);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, size) == 4);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, window) == 8);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, view_revision) == 72);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, input_revision) == 80);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, observed_tick) == 88);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, focus_state) == 96);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, flags) == 100);
+    assert!(core::mem::offset_of!(DesktopFocusSnapshot, reserved) == 104);
+    assert!(core::mem::size_of::<DesktopFocusSnapshot>() == 112);
+    assert!(core::mem::align_of::<DesktopFocusSnapshot>() == 8);
+    assert!(core::mem::offset_of!(DesktopFocusReply, result) == 0);
+    assert!(core::mem::offset_of!(DesktopFocusReply, reserved) == 4);
+    assert!(core::mem::offset_of!(DesktopFocusReply, snapshot) == 8);
+    assert!(core::mem::size_of::<DesktopFocusReply>() == 120);
+    assert!(core::mem::align_of::<DesktopFocusReply>() == 8);
+    assert!(core::mem::offset_of!(DesktopWindowExchangeV2, previous) == 0);
+    assert!(core::mem::offset_of!(DesktopWindowExchangeV2, focus) == 640);
+    assert!(core::mem::size_of::<DesktopWindowExchangeV2>() == 752);
+    assert!(core::mem::align_of::<DesktopWindowExchangeV2>() == 8);
     assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, version) == 0);
     assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, size) == 4);
     assert!(core::mem::offset_of!(FirmwareSystemUuidInfo, source) == 8);

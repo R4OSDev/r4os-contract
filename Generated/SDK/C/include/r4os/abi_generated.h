@@ -3761,6 +3761,9 @@ typedef struct R4DesktopActionRequest R4DesktopActionRequest;
 typedef struct R4DesktopActionReply R4DesktopActionReply;
 typedef struct R4DesktopWindowExchange R4DesktopWindowExchange;
 typedef struct R4DesktopWindowReply R4DesktopWindowReply;
+typedef struct R4DesktopFocusSnapshot R4DesktopFocusSnapshot;
+typedef struct R4DesktopFocusReply R4DesktopFocusReply;
+typedef struct R4DesktopWindowExchangeV2 R4DesktopWindowExchangeV2;
 typedef struct R4FirmwareSystemUuidInfo R4FirmwareSystemUuidInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
@@ -11114,6 +11117,29 @@ typedef struct R4DesktopWindowReply {
     R4WindowModeReply mode;
     R4DesktopActionReply action;
 } R4DesktopWindowReply;
+
+typedef struct R4DesktopFocusSnapshot {
+    uint32_t version;
+    uint32_t size;
+    R4WindowModeIdentity window;
+    uint64_t view_revision;
+    uint64_t input_revision;
+    uint64_t observed_tick;
+    uint32_t focus_state;
+    uint32_t flags;
+    uint64_t reserved;
+} R4DesktopFocusSnapshot;
+
+typedef struct R4DesktopFocusReply {
+    int32_t result;
+    uint32_t reserved;
+    R4DesktopFocusSnapshot snapshot;
+} R4DesktopFocusReply;
+
+typedef struct R4DesktopWindowExchangeV2 {
+    R4DesktopWindowExchange previous;
+    R4DesktopFocusSnapshot focus;
+} R4DesktopWindowExchangeV2;
 
 typedef struct R4FirmwareSystemUuidInfo {
     uint32_t version;
@@ -18821,6 +18847,23 @@ _Static_assert(offsetof(R4DesktopWindowExchange, flags) == 636u, "DesktopWindowE
 _Static_assert(sizeof(R4DesktopWindowReply) == 640u, "DesktopWindowReply size mismatch");
 _Static_assert(offsetof(R4DesktopWindowReply, mode) == 0u, "DesktopWindowReply.mode offset mismatch");
 _Static_assert(offsetof(R4DesktopWindowReply, action) == 96u, "DesktopWindowReply.action offset mismatch");
+_Static_assert(sizeof(R4DesktopFocusSnapshot) == 112u, "DesktopFocusSnapshot size mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, version) == 0u, "DesktopFocusSnapshot.version offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, size) == 4u, "DesktopFocusSnapshot.size offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, window) == 8u, "DesktopFocusSnapshot.window offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, view_revision) == 72u, "DesktopFocusSnapshot.view_revision offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, input_revision) == 80u, "DesktopFocusSnapshot.input_revision offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, observed_tick) == 88u, "DesktopFocusSnapshot.observed_tick offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, focus_state) == 96u, "DesktopFocusSnapshot.focus_state offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, flags) == 100u, "DesktopFocusSnapshot.flags offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusSnapshot, reserved) == 104u, "DesktopFocusSnapshot.reserved offset mismatch");
+_Static_assert(sizeof(R4DesktopFocusReply) == 120u, "DesktopFocusReply size mismatch");
+_Static_assert(offsetof(R4DesktopFocusReply, result) == 0u, "DesktopFocusReply.result offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusReply, reserved) == 4u, "DesktopFocusReply.reserved offset mismatch");
+_Static_assert(offsetof(R4DesktopFocusReply, snapshot) == 8u, "DesktopFocusReply.snapshot offset mismatch");
+_Static_assert(sizeof(R4DesktopWindowExchangeV2) == 752u, "DesktopWindowExchangeV2 size mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchangeV2, previous) == 0u, "DesktopWindowExchangeV2.previous offset mismatch");
+_Static_assert(offsetof(R4DesktopWindowExchangeV2, focus) == 640u, "DesktopWindowExchangeV2.focus offset mismatch");
 _Static_assert(sizeof(R4FirmwareSystemUuidInfo) == 32u, "FirmwareSystemUuidInfo size mismatch");
 _Static_assert(offsetof(R4FirmwareSystemUuidInfo, version) == 0u, "FirmwareSystemUuidInfo.version offset mismatch");
 _Static_assert(offsetof(R4FirmwareSystemUuidInfo, size) == 4u, "FirmwareSystemUuidInfo.size offset mismatch");

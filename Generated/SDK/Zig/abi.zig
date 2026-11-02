@@ -3724,6 +3724,9 @@ pub const DesktopActionRequest = generated.DesktopActionRequest;
 pub const DesktopActionReply = generated.DesktopActionReply;
 pub const DesktopWindowExchange = generated.DesktopWindowExchange;
 pub const DesktopWindowReply = generated.DesktopWindowReply;
+pub const DesktopFocusSnapshot = generated.DesktopFocusSnapshot;
+pub const DesktopFocusReply = generated.DesktopFocusReply;
+pub const DesktopWindowExchangeV2 = generated.DesktopWindowExchangeV2;
 pub const FirmwareSystemUuidInfo = generated.FirmwareSystemUuidInfo;
 pub const R4ApiSlotState = generated.R4ApiSlotState;
 pub const R4ApiSlotMeta = generated.R4ApiSlotMeta;
@@ -3750,6 +3753,25 @@ pub const R4DevSlots = generated.R4DevSlots;
 // Kernel-/Modulvertraege ausserhalb der oeffentlichen Program-API bleiben
 // bewusst handgeschrieben. Die Program-API oberhalb dieses Blocks wird aus
 // ApiContract.json generiert und nur ueber diese Fassade re-exportiert.
+// V1 DesktopAction layouts and values remain fixed. These new opcodes and
+// pointer/focus values are append-only service protocol extensions.
+pub const desktop_action_op_exchange_focus: u16 = 4808;
+pub const desktop_action_op_focus_snapshot: u16 = 4809;
+pub const desktop_action_kind_pointer_down: u32 = 4;
+pub const desktop_action_kind_pointer_move: u32 = 5;
+pub const desktop_action_kind_pointer_up: u32 = 6;
+pub const desktop_action_right_pointer: u32 = 8;
+pub const desktop_action_pointer_max_steps: u32 = 32;
+pub const desktop_action_pointer_max_duration_ms: u32 = 2000;
+pub const desktop_action_pointer_max_distance_px: u32 = 1024;
+pub const desktop_focus_state_unknown: u32 = 0;
+pub const desktop_focus_state_unfocused: u32 = 1;
+pub const desktop_focus_state_focused: u32 = 2;
+pub const desktop_focus_result_ok: i32 = 0;
+pub const desktop_focus_result_missing: i32 = -1;
+pub const desktop_focus_result_stale: i32 = -2;
+pub const desktop_focus_result_unknown: i32 = -3;
+
 pub const R4LABISnapshot = extern struct {
     magic: u32,
     abi_version: u32,

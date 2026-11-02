@@ -294,3 +294,13 @@ function tables and all prior payload layouts remain unchanged. A controlled
 append-only baseline update records the new public types; generated Zig/C/Rust
 layouts and existing callback interop pass. Candidate desktop-native and final
 SDK/OS qualification are tracked separately in R4OS0.88.97/99/100.
+
+Contract0.64.70 adds the WINSVC focus observation records
+DesktopFocusSnapshot112, DesktopFocusReply120 and
+DesktopWindowExchangeV2=752 bytes. The latter appends a focus observation to
+the existing 640-byte window exchange; existing service operations and all
+platform slots remain unchanged. Technical service values 4808/4809 and
+pointer kinds 4/5/6 are append-only. The snapshot carries exact window and
+process generation, view/input revisions, observation tick, focus and
+visible/minimized flags. WINSVC authenticates own-window reads; no focus
+setter or global controller authority is introduced.

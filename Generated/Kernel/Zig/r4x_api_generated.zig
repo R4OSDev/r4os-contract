@@ -10773,6 +10773,29 @@ pub const DesktopWindowReply = extern struct {
     action: DesktopActionReply = .{},
 };
 
+pub const DesktopFocusSnapshot = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    window: WindowModeIdentity = .{},
+    view_revision: u64 = 0,
+    input_revision: u64 = 0,
+    observed_tick: u64 = 0,
+    focus_state: u32 = 0,
+    flags: u32 = 0,
+    reserved: u64 = 0,
+};
+
+pub const DesktopFocusReply = extern struct {
+    result: i32 = 0,
+    reserved: u32 = 0,
+    snapshot: DesktopFocusSnapshot = .{},
+};
+
+pub const DesktopWindowExchangeV2 = extern struct {
+    previous: DesktopWindowExchange = .{},
+    focus: DesktopFocusSnapshot = .{},
+};
+
 pub const FirmwareSystemUuidInfo = extern struct {
     version: u32 = 1,
     size: u32 = 32,
@@ -19369,6 +19392,26 @@ comptime {
     if (@alignOf(DesktopWindowReply) != 8) @compileError("generated ABI alignment drift: DesktopWindowReply");
     if (@offsetOf(DesktopWindowReply, "mode") != 0) @compileError("generated ABI offset drift: DesktopWindowReply.mode");
     if (@offsetOf(DesktopWindowReply, "action") != 96) @compileError("generated ABI offset drift: DesktopWindowReply.action");
+    if (@sizeOf(DesktopFocusSnapshot) != 112) @compileError("generated ABI size drift: DesktopFocusSnapshot");
+    if (@alignOf(DesktopFocusSnapshot) != 8) @compileError("generated ABI alignment drift: DesktopFocusSnapshot");
+    if (@offsetOf(DesktopFocusSnapshot, "version") != 0) @compileError("generated ABI offset drift: DesktopFocusSnapshot.version");
+    if (@offsetOf(DesktopFocusSnapshot, "size") != 4) @compileError("generated ABI offset drift: DesktopFocusSnapshot.size");
+    if (@offsetOf(DesktopFocusSnapshot, "window") != 8) @compileError("generated ABI offset drift: DesktopFocusSnapshot.window");
+    if (@offsetOf(DesktopFocusSnapshot, "view_revision") != 72) @compileError("generated ABI offset drift: DesktopFocusSnapshot.view_revision");
+    if (@offsetOf(DesktopFocusSnapshot, "input_revision") != 80) @compileError("generated ABI offset drift: DesktopFocusSnapshot.input_revision");
+    if (@offsetOf(DesktopFocusSnapshot, "observed_tick") != 88) @compileError("generated ABI offset drift: DesktopFocusSnapshot.observed_tick");
+    if (@offsetOf(DesktopFocusSnapshot, "focus_state") != 96) @compileError("generated ABI offset drift: DesktopFocusSnapshot.focus_state");
+    if (@offsetOf(DesktopFocusSnapshot, "flags") != 100) @compileError("generated ABI offset drift: DesktopFocusSnapshot.flags");
+    if (@offsetOf(DesktopFocusSnapshot, "reserved") != 104) @compileError("generated ABI offset drift: DesktopFocusSnapshot.reserved");
+    if (@sizeOf(DesktopFocusReply) != 120) @compileError("generated ABI size drift: DesktopFocusReply");
+    if (@alignOf(DesktopFocusReply) != 8) @compileError("generated ABI alignment drift: DesktopFocusReply");
+    if (@offsetOf(DesktopFocusReply, "result") != 0) @compileError("generated ABI offset drift: DesktopFocusReply.result");
+    if (@offsetOf(DesktopFocusReply, "reserved") != 4) @compileError("generated ABI offset drift: DesktopFocusReply.reserved");
+    if (@offsetOf(DesktopFocusReply, "snapshot") != 8) @compileError("generated ABI offset drift: DesktopFocusReply.snapshot");
+    if (@sizeOf(DesktopWindowExchangeV2) != 752) @compileError("generated ABI size drift: DesktopWindowExchangeV2");
+    if (@alignOf(DesktopWindowExchangeV2) != 8) @compileError("generated ABI alignment drift: DesktopWindowExchangeV2");
+    if (@offsetOf(DesktopWindowExchangeV2, "previous") != 0) @compileError("generated ABI offset drift: DesktopWindowExchangeV2.previous");
+    if (@offsetOf(DesktopWindowExchangeV2, "focus") != 640) @compileError("generated ABI offset drift: DesktopWindowExchangeV2.focus");
     if (@sizeOf(FirmwareSystemUuidInfo) != 32) @compileError("generated ABI size drift: FirmwareSystemUuidInfo");
     if (@alignOf(FirmwareSystemUuidInfo) != 4) @compileError("generated ABI alignment drift: FirmwareSystemUuidInfo");
     if (@offsetOf(FirmwareSystemUuidInfo, "version") != 0) @compileError("generated ABI offset drift: FirmwareSystemUuidInfo.version");

@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 401 von 401 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 404 von 404 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 64; Konstanten: 2888; Limits: 111
 
@@ -421,6 +421,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DesktopActionReply` | fixed_layout | extern_struct | 544/8 | 544/8 | 544/8 | 544/8 |
 | `DesktopWindowExchange` | fixed_layout | extern_struct | 640/8 | 640/8 | 640/8 | 640/8 |
 | `DesktopWindowReply` | fixed_layout | extern_struct | 640/8 | 640/8 | 640/8 | 640/8 |
+| `DesktopFocusSnapshot` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `DesktopFocusReply` | fixed_layout | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `DesktopWindowExchangeV2` | fixed_layout | extern_struct | 752/8 | 752/8 | 752/8 | 752/8 |
 | `FirmwareSystemUuidInfo` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
 
 ## Typdetails
@@ -10560,6 +10563,50 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 |---|---:|---:|---:|---|---|
 | `mode` | 0 | 96 | 8 | `WindowModeReply` | - |
 | `action` | 96 | 544 | 8 | `DesktopActionReply` | - |
+
+### `DesktopFocusSnapshot`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `window` | 8 | 64 | 8 | `WindowModeIdentity` | - |
+| `view_revision` | 72 | 8 | 8 | `u64` | - |
+| `input_revision` | 80 | 8 | 8 | `u64` | - |
+| `observed_tick` | 88 | 8 | 8 | `u64` | - |
+| `focus_state` | 96 | 4 | 4 | `u32` | - |
+| `flags` | 100 | 4 | 4 | `u32` | - |
+| `reserved` | 104 | 8 | 8 | `u64` | - |
+
+### `DesktopFocusReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 120 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `result` | 0 | 4 | 4 | `i32` | - |
+| `reserved` | 4 | 4 | 4 | `u32` | - |
+| `snapshot` | 8 | 112 | 8 | `DesktopFocusSnapshot` | - |
+
+### `DesktopWindowExchangeV2`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 752 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `previous` | 0 | 640 | 8 | `DesktopWindowExchange` | - |
+| `focus` | 640 | 112 | 8 | `DesktopFocusSnapshot` | - |
 
 ### `FirmwareSystemUuidInfo`
 

@@ -129661,6 +129661,240 @@
       "description": "Combined original WindowModeReply96 and bounded delegated action work/state reply. A pending command is applied only by real Desktop WM after final identity/deadline checks. Original receipt is retained through response loss; Desktop does not reapply a cached operation. App candidate frame ACK is not actual composed/accepted frame proof."
     },
     {
+      "name": "DesktopFocusSnapshot",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Snapshot version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Snapshot size.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "window",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "WindowModeIdentity"
+          },
+          "description": "Exact own process generation and window incarnation.",
+          "size": 64,
+          "alignment": 8,
+          "source_type": "WindowModeIdentity",
+          "default_kind": "empty"
+        },
+        {
+          "name": "view_revision",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Published window view revision at observation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "input_revision",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Monotonic authoritative Desktop input-router revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_tick",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Actual Desktop observation tick, not service query time.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "focus_state",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Unknown, unfocused or focused input-router state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Visible and minimized bits from the same Desktop observation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Reserved zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Read-only own-window input-focus observation from the Desktop router. An old observation is not a live setter or global focus authority; clients inspect observed_tick and input_revision."
+    },
+    {
+      "name": "DesktopFocusReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 120,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "result",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "OK, missing, stale or unknown publication.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "snapshot",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "DesktopFocusSnapshot"
+          },
+          "description": "Latest consistent own-window observation.",
+          "size": 112,
+          "alignment": 8,
+          "source_type": "DesktopFocusSnapshot",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Own-window focus query reply. The caller must match the owner generation; an expected serial detects reused windows."
+    },
+    {
+      "name": "DesktopWindowExchangeV2",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 752,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "previous",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "DesktopWindowExchange"
+          },
+          "description": "Unchanged v1 window/action exchange prefix.",
+          "size": 640,
+          "alignment": 8,
+          "source_type": "DesktopWindowExchange",
+          "default_kind": "empty"
+        },
+        {
+          "name": "focus",
+          "offset": 640,
+          "type": {
+            "kind": "named",
+            "name": "DesktopFocusSnapshot"
+          },
+          "description": "Focus state observed with this exact window view.",
+          "size": 112,
+          "alignment": 8,
+          "source_type": "DesktopFocusSnapshot",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Desktop-only combined window/action/focus exchange. The v1 prefix and v1 opcode remain compatible."
+    },
+    {
       "name": "FirmwareSystemUuidInfo",
       "source": "API/ApiContract.json",
       "classification": "fixed_layout",
