@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 501,
-    "group_slot_count": 501,
+    "function_count": 503,
+    "group_slot_count": 503,
     "sdk_only_count": 0,
-    "public_count": 360,
+    "public_count": 362,
     "advanced_count": 141
   },
   "functions": [
@@ -2037,6 +2037,30 @@
       "slot": 171,
       "exposure": "public",
       "description": "Request cooperative stop only if the named service is still bound to the supplied full ProgramProcessHandle; mismatch returns BUSY before Close. The same captured registry target is used throughout status/Close/completion, including restart/reinstall races. One absolute monotonic entry wait budget includes owner/status work; zero polls, FOREVER waits. Only actual retained physical completion succeeds; TIMEOUT remains an unknown outcome. The expected handle must be nonzero/valid; unbound starts use the existing named stop contract.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.service_inventory_page",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 172,
+      "exposure": "public",
+      "description": "Read a bounded page from a dynamic service inventory. Zero cursor begins; later calls bind revision/total/last ID. Returns copied row count, END explicitly proves EOF, DYNAMIC reports no compiled count limit. Membership/configuration changes return RESTART; callers discard all partial pages. Cursor/rows remain unchanged on errors; buffer tail remains untouched. capacity must be positive and only bounds one transfer; arbitrary many pages are supported. Complete 1024-byte paths and exact registration/start/process bindings are returned. Runtime and endpoint counters are per-owner observations. No new process/endpoint lease is granted.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.service_control_bound",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 173,
+      "exposure": "public",
+      "description": "Apply START/STOP/RESTART/MODE/REMOVE only to the original registration ID and expected full process/start binding. A removed/reinstalled name, reused process ID or changed start returns BUSY/NOT_FOUND before effects. Uses existing native generation-aware start/stop/reap, absolute stop deadline, restart/disable and self-restart policy. MODE requires a valid public mode; other operations require mode0. Only STOP accepts timeout_ticks; other operations require0. Timeout is unknown completion, never automatic retry or permission for a second close/start. Returns the existing service status domain; no caller pointers are retained.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

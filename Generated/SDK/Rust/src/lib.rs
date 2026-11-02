@@ -2893,6 +2893,14 @@ pub const desktop_action_max_grants: u32 = 16;
 pub const desktop_action_max_timeout_ms: u32 = 5000;
 pub const gui_resize_action_view_key: u32 = 1464686129;
 pub const desktop_action_phase_unknown: u32 = 8;
+pub const service_inventory_end: u32 = 1;
+pub const service_inventory_dynamic: u32 = 2;
+pub const service_inventory_page_rows: usize = 8;
+pub const service_control_start: u32 = 1;
+pub const service_control_stop: u32 = 2;
+pub const service_control_restart: u32 = 3;
+pub const service_control_mode: u32 = 4;
+pub const service_control_remove: u32 = 5;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3224,6 +3232,9 @@ pub const service_api_result_self_restart: i32 = -19;
 pub const service_api_result_spawn_failed: i32 = -17;
 pub const service_api_result_stop_failed: i32 = -18;
 pub const service_api_result_timeout: i32 = -8;
+pub const service_api_result_memory: i32 = -20;
+pub const service_api_result_exhausted: i32 = -21;
+pub const service_api_result_restart: i32 = -22;
 pub const storage_backend_status_ok: i32 = 0;
 pub const storage_backend_status_error: i32 = -1;
 pub const tcp_result_bad_state: i32 = -2;
@@ -20646,6 +20657,78 @@ impl Default for DesktopLinkReply {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ServiceInventoryCursor {
+    pub revision: u64,
+    pub after_id: u64,
+    pub total: u64,
+    pub flags: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ServiceInventoryCursor {
+    fn default() -> Self {
+        Self {
+            revision: 0,
+            after_id: 0,
+            total: 0,
+            flags: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ServiceInventoryRow {
+    pub registration_id: u64,
+    pub start_generation: u64,
+    pub process: ProgramProcessHandle,
+    pub info: ServiceInfo,
+    pub path: [u8; 1024],
+    pub args: [u8; 96],
+    pub description: [u8; 80],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ServiceInventoryRow {
+    fn default() -> Self {
+        Self {
+            registration_id: 0,
+            start_generation: 0,
+            process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            info: ServiceInfo { handle: 0, state: 0, start_mode: 0, flags: 0, instance_id: 0, exit_code: 0, restart_count: 0, reserved0: 0, start_tick: 0, uptime_ticks: 0, requests: 0, responses: 0, drops: 0, queue_depth: 0, queue_used: 0, queue_high_water: 0, active_workers: 0, max_active_workers: 0, open_handles: 0, busy_rejections: 0, timeouts: 0, cancellations: 0, name: [0; 32], last_error: [0; 64] },
+            path: [0; 1024],
+            args: [0; 96],
+            description: [0; 80],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ServiceControlRequest {
+    pub registration_id: u64,
+    pub start_generation: u64,
+    pub process: ProgramProcessHandle,
+    pub operation: u32,
+    pub mode: u32,
+    pub timeout_ticks: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ServiceControlRequest {
+    fn default() -> Self {
+        Self {
+            registration_id: 0,
+            start_generation: 0,
+            process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            operation: 0,
+            mode: 0,
+            timeout_ticks: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -20827,6 +20910,8 @@ pub mod R4SysFns {
     pub type file_name_limits = unsafe extern "C" fn(*const u8, *mut FileNameLimits) -> i32;
     pub type service_bound_detail = unsafe extern "C" fn(*const u8, *mut ServiceDetail, *mut ProgramProcessHandle) -> i32;
     pub type service_stop_bound = unsafe extern "C" fn(*const u8, *const ProgramProcessHandle, *mut ServiceInfo, u64) -> i32;
+    pub type service_inventory_page = unsafe extern "C" fn(*mut ServiceInventoryCursor, *mut ServiceInventoryRow, u32) -> i32;
+    pub type service_control_bound = unsafe extern "C" fn(*const ServiceControlRequest) -> i32;
 }
 
 #[repr(C)]
@@ -21008,14 +21093,16 @@ pub struct R4XStartR4Sys {
     pub file_name_limits: usize,
     pub service_bound_detail: usize,
     pub service_stop_bound: usize,
+    pub service_inventory_page: usize,
+    pub service_control_bound: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 34,
-            size: 1392,
+            abi_version: 35,
+            size: 1408,
             flags: 0,
             write: 0,
             putc: 0,
@@ -21189,6 +21276,8 @@ impl Default for R4XStartR4Sys {
             file_name_limits: 0,
             service_bound_detail: 0,
             service_stop_bound: 0,
+            service_inventory_page: 0,
+            service_control_bound: 0,
         }
     }
 }
@@ -33412,6 +33501,30 @@ const _: () = {
     assert!(core::mem::offset_of!(DesktopLinkReply, completion) == 1672);
     assert!(core::mem::size_of::<DesktopLinkReply>() == 1800);
     assert!(core::mem::align_of::<DesktopLinkReply>() == 8);
+    assert!(core::mem::offset_of!(ServiceInventoryCursor, revision) == 0);
+    assert!(core::mem::offset_of!(ServiceInventoryCursor, after_id) == 8);
+    assert!(core::mem::offset_of!(ServiceInventoryCursor, total) == 16);
+    assert!(core::mem::offset_of!(ServiceInventoryCursor, flags) == 24);
+    assert!(core::mem::offset_of!(ServiceInventoryCursor, reserved) == 28);
+    assert!(core::mem::size_of::<ServiceInventoryCursor>() == 32);
+    assert!(core::mem::align_of::<ServiceInventoryCursor>() == 8);
+    assert!(core::mem::offset_of!(ServiceInventoryRow, registration_id) == 0);
+    assert!(core::mem::offset_of!(ServiceInventoryRow, start_generation) == 8);
+    assert!(core::mem::offset_of!(ServiceInventoryRow, process) == 16);
+    assert!(core::mem::offset_of!(ServiceInventoryRow, info) == 32);
+    assert!(core::mem::offset_of!(ServiceInventoryRow, path) == 248);
+    assert!(core::mem::offset_of!(ServiceInventoryRow, args) == 1272);
+    assert!(core::mem::offset_of!(ServiceInventoryRow, description) == 1368);
+    assert!(core::mem::size_of::<ServiceInventoryRow>() == 1448);
+    assert!(core::mem::align_of::<ServiceInventoryRow>() == 8);
+    assert!(core::mem::offset_of!(ServiceControlRequest, registration_id) == 0);
+    assert!(core::mem::offset_of!(ServiceControlRequest, start_generation) == 8);
+    assert!(core::mem::offset_of!(ServiceControlRequest, process) == 16);
+    assert!(core::mem::offset_of!(ServiceControlRequest, operation) == 32);
+    assert!(core::mem::offset_of!(ServiceControlRequest, mode) == 36);
+    assert!(core::mem::offset_of!(ServiceControlRequest, timeout_ticks) == 40);
+    assert!(core::mem::size_of::<ServiceControlRequest>() == 48);
+    assert!(core::mem::align_of::<ServiceControlRequest>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -33590,7 +33703,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, file_name_limits) == 1368);
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_bound_detail) == 1376);
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_stop_bound) == 1384);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1392);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, service_inventory_page) == 1392);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, service_control_bound) == 1400);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1408);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

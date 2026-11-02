@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 501,
+    "group_function_signatures": 503,
     "sdk_operation_contracts": 0,
-    "parity_entries": 501,
+    "parity_entries": 503,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1529,6 +1529,24 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.service_stop_bound",
       "c_contract": "R4SysServiceStopBoundFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.service_inventory_page",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.service_inventory_page",
+      "c_contract": "R4SysServiceInventoryPageFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.service_control_bound",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.service_control_bound",
+      "c_contract": "R4SysServiceControlBoundFn",
       "coverage": "generated_signature"
     },
     {

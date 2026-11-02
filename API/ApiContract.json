@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 34,
+      "abi_version": 35,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1392,
+      "size": 1408,
       "slots": [
         {
           "number": 0,
@@ -13722,6 +13722,148 @@
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 172,
+          "offset": 1392,
+          "name": "service_inventory_page",
+          "state": "function",
+          "required": false,
+          "description": "Read a bounded page from a dynamic service inventory. Zero cursor begins; later calls bind revision/total/last ID. Returns copied row count, END explicitly proves EOF, DYNAMIC reports no compiled count limit. Membership/configuration changes return RESTART; callers discard all partial pages. Cursor/rows remain unchanged on errors; buffer tail remains untouched. capacity must be positive and only bounds one transfer; arbitrary many pages are supported. Complete 1024-byte paths and exact registration/start/process bindings are returned. Runtime and endpoint counters are per-owner observations. No new process/endpoint lease is granted.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cursor",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ServiceInventoryCursor"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "rows",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ServiceInventoryRow"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "service",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 173,
+          "offset": 1400,
+          "name": "service_control_bound",
+          "state": "function",
+          "required": false,
+          "description": "Apply START/STOP/RESTART/MODE/REMOVE only to the original registration ID and expected full process/start binding. A removed/reinstalled name, reused process ID or changed start returns BUSY/NOT_FOUND before effects. Uses existing native generation-aware start/stop/reap, absolute stop deadline, restart/disable and self-restart policy. MODE requires a valid public mode; other operations require mode0. Only STOP accepts timeout_ticks; other operations require0. Timeout is unknown completion, never automatic retry or permission for a second close/start. Returns the existing service status domain; no caller pointers are retained.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "request",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "ServiceControlRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "service",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "blocking_wait",
+            "threading": "thread_safe",
+            "timeout": "wait_budget",
+            "cancel": "shutdown_wakeup",
+            "timeout_outcome": "outcome_unknown",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "request_close_wait_reap",
+            "close_rule": "none",
+            "outputs": "none",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -43017,7 +43159,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Public field service_max_count.",
+          "description": "Legacy fixed-layout capacity field: zero denotes dynamic resource-limited service admission, not zero capacity. Query optional service_inventory_page for DYNAMIC and exact full count.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -130425,6 +130567,306 @@
       ],
       "values": [],
       "description": "Original native link activation receipt. No icon/publication/direct-R4X substitute. Read-only Status never submits, reactivates, reaps or frees resources. Prepared/accepted/start/ready/end/cleanup are separate. Explicit Release cannot kill a running process. Unknown/expired/stale never authorize a replacement start."
+    },
+    {
+      "name": "ServiceInventoryCursor",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "revision",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Captured service membership/configuration revision, zero begins a capture.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "after_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Last emitted original registration ID, never a dense array index.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Full registered service count for the captured revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "DYNAMIC is set on success; END proves complete enumeration.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Reserved and zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Caller-owned revision-bound service inventory cursor. Zero initializes a capture; EOF is explicit; transfer capacity is never a total service limit."
+    },
+    {
+      "name": "ServiceInventoryRow",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1448,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "registration_id",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original boot-local nonreused service registration identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "start_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact current start reservation nonce, zero outside STARTING.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "process",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Exact active or last retained process binding; zero if unbound. Does not grant a retention lease.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "info",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "ServiceInfo"
+          },
+          "description": "Current service state and separately observed endpoint counters.",
+          "size": 216,
+          "alignment": 8,
+          "source_type": "r4os.abi.ServiceInfo",
+          "default_kind": "empty"
+        },
+        {
+          "name": "path",
+          "offset": 248,
+          "type": {
+            "kind": "array",
+            "length": 1024,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Complete NUL-terminated service path; no legacy 128-byte truncation.",
+          "size": 1024,
+          "alignment": 1,
+          "source_type": "[1024]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "args",
+          "offset": 1272,
+          "type": {
+            "kind": "array",
+            "length": 96,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Complete NUL-terminated original arguments.",
+          "size": 96,
+          "alignment": 1,
+          "source_type": "[96]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "description",
+          "offset": 1368,
+          "type": {
+            "kind": "array",
+            "length": 80,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Complete NUL-terminated service description.",
+          "size": 80,
+          "alignment": 1,
+          "source_type": "[80]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Full service configuration and its original registration, start reservation and process binding. Process/endpoint counters are fresh per-owner observations, not a global atomic IPC snapshot."
+    },
+    {
+      "name": "ServiceControlRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "registration_id",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original nonzero registration identity from a successful inventory row.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "start_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Expected start reservation nonce from the same row.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "process",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "Expected exact process binding from the same row, including a zero unbound identity.",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "operation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "START, STOP, RESTART, MODE or REMOVE; no implicit retry.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mode",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Public service start mode for MODE; zero for all other operations.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timeout_ticks",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Original monotonic STOP budget; zero for other operations. Zero polls and FOREVER remains explicit.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Mutation request bound to an original service registration and exact observed process/start generation. An unchanged name or list index alone never authorizes a replacement registration."
     }
   ],
   "operations": [],
@@ -132305,6 +132747,24 @@
           "value": -8,
           "value_type": "i32",
           "description": "Public result or error value."
+        },
+        {
+          "name": "service_api_result_memory",
+          "value": -20,
+          "value_type": "i32",
+          "description": "Required service/endpoint/inventory storage could not be allocated; no artificial service-count capacity is implied."
+        },
+        {
+          "name": "service_api_result_exhausted",
+          "value": -21,
+          "value_type": "i32",
+          "description": "A nonreused identity, revision or representable arithmetic range is exhausted; no identity wraps or aliases an old object."
+        },
+        {
+          "name": "service_api_result_restart",
+          "value": -22,
+          "value_type": "i32",
+          "description": "Membership/configuration changed during inventory capture; discard all partial rows and restart from a zero cursor."
         }
       ],
       "description": "Public result and error domain."
@@ -161844,6 +162304,86 @@
       "scope": "desktop_actions",
       "stability": "fixed_contract",
       "description": "An offered action reached its deadline without the actual original Desktop receipt. It may already be applied; do not blindly admit a new action. Read-only reconciliation or late original receipt resolves it."
+    },
+    {
+      "name": "service_inventory_end",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_inventory",
+      "stability": "fixed_contract",
+      "description": "Explicit complete inventory end flag."
+    },
+    {
+      "name": "service_inventory_dynamic",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_inventory",
+      "stability": "fixed_contract",
+      "description": "Service count is resource-limited and has no fixed compiled capacity."
+    },
+    {
+      "name": "service_inventory_page_rows",
+      "value": "8",
+      "value_type": "usize",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_inventory",
+      "stability": "fixed_contract",
+      "description": "Maximum rows copied per native call; never a total service-count limit."
+    },
+    {
+      "name": "service_control_start",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_control",
+      "stability": "fixed_contract",
+      "description": "Start the exact registration and observed binding."
+    },
+    {
+      "name": "service_control_stop",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_control",
+      "stability": "fixed_contract",
+      "description": "Stop the exact observed binding using its original wait budget."
+    },
+    {
+      "name": "service_control_restart",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_control",
+      "stability": "fixed_contract",
+      "description": "Restart the exact registration with existing native stop/reap policy."
+    },
+    {
+      "name": "service_control_mode",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_control",
+      "stability": "fixed_contract",
+      "description": "Set start mode for the exact registration with existing native disable policy."
+    },
+    {
+      "name": "service_control_remove",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "service_control",
+      "stability": "fixed_contract",
+      "description": "Remove only the exact stopped registration."
     }
   ],
   "limits": [

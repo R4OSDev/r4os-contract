@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 407 von 407 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 410 von 410 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2888; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2896; Limits: 111
 
 ## App-Profile
 
@@ -428,6 +428,9 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DesktopLinkToken` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `DesktopLinkRequest` | fixed_layout | extern_struct | 1296/8 | 1296/8 | 1296/8 | 1296/8 |
 | `DesktopLinkReply` | fixed_layout | extern_struct | 1800/8 | 1800/8 | 1800/8 | 1800/8 |
+| `ServiceInventoryCursor` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `ServiceInventoryRow` | fixed_layout | extern_struct | 1448/8 | 1448/8 | 1448/8 | 1448/8 |
+| `ServiceControlRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 
 ## Typdetails
 
@@ -10684,6 +10687,54 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `flags` | 1668 | 4 | 4 | `u32` | - |
 | `completion` | 1672 | 128 | 8 | `ProgramProcessCompletion` | - |
 
+### `ServiceInventoryCursor`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `revision` | 0 | 8 | 8 | `u64` | - |
+| `after_id` | 8 | 8 | 8 | `u64` | - |
+| `total` | 16 | 8 | 8 | `u64` | - |
+| `flags` | 24 | 4 | 4 | `u32` | - |
+| `reserved` | 28 | 4 | 4 | `u32` | - |
+
+### `ServiceInventoryRow`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1448 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `registration_id` | 0 | 8 | 8 | `u64` | - |
+| `start_generation` | 8 | 8 | 8 | `u64` | - |
+| `process` | 16 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `info` | 32 | 216 | 8 | `r4os.abi.ServiceInfo` | - |
+| `path` | 248 | 1024 | 1 | `[1024]u8` | - |
+| `args` | 1272 | 96 | 1 | `[96]u8` | - |
+| `description` | 1368 | 80 | 1 | `[80]u8` | - |
+
+### `ServiceControlRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `registration_id` | 0 | 8 | 8 | `u64` | - |
+| `start_generation` | 8 | 8 | 8 | `u64` | - |
+| `process` | 16 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `operation` | 32 | 4 | 4 | `u32` | - |
+| `mode` | 36 | 4 | 4 | `u32` | - |
+| `timeout_ticks` | 40 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11269,6 +11320,9 @@ Geltung: `service_api`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `service_api_result_spawn_failed` | -17 | `i32` |
 | `service_api_result_stop_failed` | -18 | `i32` |
 | `service_api_result_timeout` | -8 | `i32` |
+| `service_api_result_memory` | -20 | `i32` |
+| `service_api_result_exhausted` | -21 | `i32` |
+| `service_api_result_restart` | -22 | `i32` |
 
 ### `storage_backend_status`
 
@@ -14337,6 +14391,14 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `desktop_action_max_timeout_ms` | `5000` | `u32` | value | number | `desktop_actions` | fixed_contract |
 | `gui_resize_action_view_key` | `1464686129` | `u32` | value | number | `desktop_actions` | fixed_contract |
 | `desktop_action_phase_unknown` | `8` | `u32` | value | number | `desktop_actions` | fixed_contract |
+| `service_inventory_end` | `1` | `u32` | value | number | `service_inventory` | fixed_contract |
+| `service_inventory_dynamic` | `2` | `u32` | value | number | `service_inventory` | fixed_contract |
+| `service_inventory_page_rows` | `8` | `usize` | value | number | `service_inventory` | fixed_contract |
+| `service_control_start` | `1` | `u32` | value | number | `service_control` | fixed_contract |
+| `service_control_stop` | `2` | `u32` | value | number | `service_control` | fixed_contract |
+| `service_control_restart` | `3` | `u32` | value | number | `service_control` | fixed_contract |
+| `service_control_mode` | `4` | `u32` | value | number | `service_control` | fixed_contract |
+| `service_control_remove` | `5` | `u32` | value | number | `service_control` | fixed_contract |
 
 ## Limits
 

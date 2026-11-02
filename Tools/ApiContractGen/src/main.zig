@@ -392,7 +392,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // Baseline refresh 0.79.4 includes the existing slots through 143.
     // 0.79.39 adds process-scoped self-exit at slot153 (v23); the v22
     // 1240-byte prefix and all existing function signatures are retained.
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 169, .reserved = 2, .tombstones = 1 },
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 171, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47
@@ -432,7 +432,8 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.84.36 appends ten raw COM functions; all55 old slots stay unchanged.
     // 0.86.80 retires V1 diagnostic slots27/29/30 in place. Their zero
     // tombstones cannot be reused; current V2 slots/payloads do not move.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 84, .reserved = 2, .tombstones = 3 },
+    // Existing 0.89.2 firmware_system_identity is already public in Contract71.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 85, .reserved = 2, .tombstones = 3 },
 };
 
 pub fn main(init: std.process.Init) !void {

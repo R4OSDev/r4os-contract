@@ -2889,6 +2889,14 @@ pub const desktop_action_max_grants: u32 = 16;
 pub const desktop_action_max_timeout_ms: u32 = 5000;
 pub const gui_resize_action_view_key: u32 = 1464686129;
 pub const desktop_action_phase_unknown: u32 = 8;
+pub const service_inventory_end: u32 = 1;
+pub const service_inventory_dynamic: u32 = 2;
+pub const service_inventory_page_rows: usize = 8;
+pub const service_control_start: u32 = 1;
+pub const service_control_stop: u32 = 2;
+pub const service_control_restart: u32 = 3;
+pub const service_control_mode: u32 = 4;
+pub const service_control_remove: u32 = 5;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3220,6 +3228,9 @@ pub const service_api_result_self_restart: i32 = -19;
 pub const service_api_result_spawn_failed: i32 = -17;
 pub const service_api_result_stop_failed: i32 = -18;
 pub const service_api_result_timeout: i32 = -8;
+pub const service_api_result_memory: i32 = -20;
+pub const service_api_result_exhausted: i32 = -21;
+pub const service_api_result_restart: i32 = -22;
 pub const storage_backend_status_ok: i32 = 0;
 pub const storage_backend_status_error: i32 = -1;
 pub const tcp_result_bad_state: i32 = -2;
@@ -10841,6 +10852,33 @@ pub const DesktopLinkReply = extern struct {
     completion: ProgramProcessCompletion = .{},
 };
 
+pub const ServiceInventoryCursor = extern struct {
+    revision: u64 = 0,
+    after_id: u64 = 0,
+    total: u64 = 0,
+    flags: u32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const ServiceInventoryRow = extern struct {
+    registration_id: u64 = 0,
+    start_generation: u64 = 0,
+    process: ProgramProcessHandle = .{},
+    info: ServiceInfo = .{},
+    path: [1024]u8 = .{0} ** 1024,
+    args: [96]u8 = .{0} ** 96,
+    description: [80]u8 = .{0} ** 80,
+};
+
+pub const ServiceControlRequest = extern struct {
+    registration_id: u64 = 0,
+    start_generation: u64 = 0,
+    process: ProgramProcessHandle = .{},
+    operation: u32 = 0,
+    mode: u32 = 0,
+    timeout_ticks: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11011,12 +11049,14 @@ pub const R4SysFns = struct {
     pub const file_name_limits = *const fn ([*:0]const u8, *FileNameLimits) callconv(.c) i32;
     pub const service_bound_detail = *const fn ([*:0]const u8, *ServiceDetail, *ProgramProcessHandle) callconv(.c) i32;
     pub const service_stop_bound = *const fn ([*:0]const u8, *const ProgramProcessHandle, *ServiceInfo, u64) callconv(.c) i32;
+    pub const service_inventory_page = *const fn (*ServiceInventoryCursor, [*]ServiceInventoryRow, u32) callconv(.c) i32;
+    pub const service_control_bound = *const fn (*const ServiceControlRequest) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 34,
-    size: u32 = 1392,
+    abi_version: u32 = 35,
+    size: u32 = 1408,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -11190,6 +11230,8 @@ pub const R4XStartR4Sys = extern struct {
     file_name_limits: usize = 0,
     service_bound_detail: usize = 0,
     service_stop_bound: usize = 0,
+    service_inventory_page: usize = 0,
+    service_control_bound: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -12090,6 +12132,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 169, .offset = 1368, .name = "file_name_limits", .state = .function, .required = false },
     .{ .number = 170, .offset = 1376, .name = "service_bound_detail", .state = .function, .required = false },
     .{ .number = 171, .offset = 1384, .name = "service_stop_bound", .state = .function, .required = false },
+    .{ .number = 172, .offset = 1392, .name = "service_inventory_page", .state = .function, .required = false },
+    .{ .number = 173, .offset = 1400, .name = "service_control_bound", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -19490,7 +19534,31 @@ comptime {
     if (@offsetOf(DesktopLinkReply, "policy") != 1664) @compileError("generated ABI offset drift: DesktopLinkReply.policy");
     if (@offsetOf(DesktopLinkReply, "flags") != 1668) @compileError("generated ABI offset drift: DesktopLinkReply.flags");
     if (@offsetOf(DesktopLinkReply, "completion") != 1672) @compileError("generated ABI offset drift: DesktopLinkReply.completion");
-    if (@sizeOf(R4XStartR4Sys) != 1392) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(ServiceInventoryCursor) != 32) @compileError("generated ABI size drift: ServiceInventoryCursor");
+    if (@alignOf(ServiceInventoryCursor) != 8) @compileError("generated ABI alignment drift: ServiceInventoryCursor");
+    if (@offsetOf(ServiceInventoryCursor, "revision") != 0) @compileError("generated ABI offset drift: ServiceInventoryCursor.revision");
+    if (@offsetOf(ServiceInventoryCursor, "after_id") != 8) @compileError("generated ABI offset drift: ServiceInventoryCursor.after_id");
+    if (@offsetOf(ServiceInventoryCursor, "total") != 16) @compileError("generated ABI offset drift: ServiceInventoryCursor.total");
+    if (@offsetOf(ServiceInventoryCursor, "flags") != 24) @compileError("generated ABI offset drift: ServiceInventoryCursor.flags");
+    if (@offsetOf(ServiceInventoryCursor, "reserved") != 28) @compileError("generated ABI offset drift: ServiceInventoryCursor.reserved");
+    if (@sizeOf(ServiceInventoryRow) != 1448) @compileError("generated ABI size drift: ServiceInventoryRow");
+    if (@alignOf(ServiceInventoryRow) != 8) @compileError("generated ABI alignment drift: ServiceInventoryRow");
+    if (@offsetOf(ServiceInventoryRow, "registration_id") != 0) @compileError("generated ABI offset drift: ServiceInventoryRow.registration_id");
+    if (@offsetOf(ServiceInventoryRow, "start_generation") != 8) @compileError("generated ABI offset drift: ServiceInventoryRow.start_generation");
+    if (@offsetOf(ServiceInventoryRow, "process") != 16) @compileError("generated ABI offset drift: ServiceInventoryRow.process");
+    if (@offsetOf(ServiceInventoryRow, "info") != 32) @compileError("generated ABI offset drift: ServiceInventoryRow.info");
+    if (@offsetOf(ServiceInventoryRow, "path") != 248) @compileError("generated ABI offset drift: ServiceInventoryRow.path");
+    if (@offsetOf(ServiceInventoryRow, "args") != 1272) @compileError("generated ABI offset drift: ServiceInventoryRow.args");
+    if (@offsetOf(ServiceInventoryRow, "description") != 1368) @compileError("generated ABI offset drift: ServiceInventoryRow.description");
+    if (@sizeOf(ServiceControlRequest) != 48) @compileError("generated ABI size drift: ServiceControlRequest");
+    if (@alignOf(ServiceControlRequest) != 8) @compileError("generated ABI alignment drift: ServiceControlRequest");
+    if (@offsetOf(ServiceControlRequest, "registration_id") != 0) @compileError("generated ABI offset drift: ServiceControlRequest.registration_id");
+    if (@offsetOf(ServiceControlRequest, "start_generation") != 8) @compileError("generated ABI offset drift: ServiceControlRequest.start_generation");
+    if (@offsetOf(ServiceControlRequest, "process") != 16) @compileError("generated ABI offset drift: ServiceControlRequest.process");
+    if (@offsetOf(ServiceControlRequest, "operation") != 32) @compileError("generated ABI offset drift: ServiceControlRequest.operation");
+    if (@offsetOf(ServiceControlRequest, "mode") != 36) @compileError("generated ABI offset drift: ServiceControlRequest.mode");
+    if (@offsetOf(ServiceControlRequest, "timeout_ticks") != 40) @compileError("generated ABI offset drift: ServiceControlRequest.timeout_ticks");
+    if (@sizeOf(R4XStartR4Sys) != 1408) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -19663,6 +19731,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "file_name_limits") != 1368) @compileError("generated ABI offset drift: R4XStartR4Sys.file_name_limits");
     if (@offsetOf(R4XStartR4Sys, "service_bound_detail") != 1376) @compileError("generated ABI offset drift: R4XStartR4Sys.service_bound_detail");
     if (@offsetOf(R4XStartR4Sys, "service_stop_bound") != 1384) @compileError("generated ABI offset drift: R4XStartR4Sys.service_stop_bound");
+    if (@offsetOf(R4XStartR4Sys, "service_inventory_page") != 1392) @compileError("generated ABI offset drift: R4XStartR4Sys.service_inventory_page");
+    if (@offsetOf(R4XStartR4Sys, "service_control_bound") != 1400) @compileError("generated ABI offset drift: R4XStartR4Sys.service_control_bound");
     if (@sizeOf(R4XStartR4Desk) != 624) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

@@ -2901,6 +2901,14 @@ extern "C" {
 #define R4OS_DESKTOP_ACTION_MAX_TIMEOUT_MS 5000u
 #define R4OS_GUI_RESIZE_ACTION_VIEW_KEY 1464686129u
 #define R4OS_DESKTOP_ACTION_PHASE_UNKNOWN 8u
+#define R4OS_SERVICE_INVENTORY_END 1u
+#define R4OS_SERVICE_INVENTORY_DYNAMIC 2u
+#define R4OS_SERVICE_INVENTORY_PAGE_ROWS 8ull
+#define R4OS_SERVICE_CONTROL_START 1u
+#define R4OS_SERVICE_CONTROL_STOP 2u
+#define R4OS_SERVICE_CONTROL_RESTART 3u
+#define R4OS_SERVICE_CONTROL_MODE 4u
+#define R4OS_SERVICE_CONTROL_REMOVE 5u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3232,6 +3240,9 @@ extern "C" {
 #define R4OS_SERVICE_API_RESULT_SPAWN_FAILED ((int32_t)-17)
 #define R4OS_SERVICE_API_RESULT_STOP_FAILED ((int32_t)-18)
 #define R4OS_SERVICE_API_RESULT_TIMEOUT ((int32_t)-8)
+#define R4OS_SERVICE_API_RESULT_MEMORY ((int32_t)-20)
+#define R4OS_SERVICE_API_RESULT_EXHAUSTED ((int32_t)-21)
+#define R4OS_SERVICE_API_RESULT_RESTART ((int32_t)-22)
 #define R4OS_STORAGE_BACKEND_STATUS_OK ((int32_t)0)
 #define R4OS_STORAGE_BACKEND_STATUS_ERROR ((int32_t)-1)
 #define R4OS_TCP_RESULT_BAD_STATE ((int32_t)-2)
@@ -3768,6 +3779,9 @@ typedef struct R4FirmwareSystemUuidInfo R4FirmwareSystemUuidInfo;
 typedef struct R4DesktopLinkToken R4DesktopLinkToken;
 typedef struct R4DesktopLinkRequest R4DesktopLinkRequest;
 typedef struct R4DesktopLinkReply R4DesktopLinkReply;
+typedef struct R4ServiceInventoryCursor R4ServiceInventoryCursor;
+typedef struct R4ServiceInventoryRow R4ServiceInventoryRow;
+typedef struct R4ServiceControlRequest R4ServiceControlRequest;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11189,6 +11203,33 @@ typedef struct R4DesktopLinkReply {
     R4ProgramProcessCompletion completion;
 } R4DesktopLinkReply;
 
+typedef struct R4ServiceInventoryCursor {
+    uint64_t revision;
+    uint64_t after_id;
+    uint64_t total;
+    uint32_t flags;
+    uint32_t reserved;
+} R4ServiceInventoryCursor;
+
+typedef struct R4ServiceInventoryRow {
+    uint64_t registration_id;
+    uint64_t start_generation;
+    R4ProgramProcessHandle process;
+    R4ServiceInfo info;
+    uint8_t path[1024];
+    uint8_t args[96];
+    uint8_t description[80];
+} R4ServiceInventoryRow;
+
+typedef struct R4ServiceControlRequest {
+    uint64_t registration_id;
+    uint64_t start_generation;
+    R4ProgramProcessHandle process;
+    uint32_t operation;
+    uint32_t mode;
+    uint64_t timeout_ticks;
+} R4ServiceControlRequest;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11404,6 +11445,8 @@ typedef int32_t (*R4SysProgramObservationReleaseFn)(const R4ProgramObservationHa
 typedef int32_t (*R4SysFileNameLimitsFn)(const uint8_t * path, R4FileNameLimits * out_limits);
 typedef int32_t (*R4SysServiceBoundDetailFn)(const uint8_t * name, R4ServiceDetail * out_detail, R4ProgramProcessHandle * out_process);
 typedef int32_t (*R4SysServiceStopBoundFn)(const uint8_t * name, const R4ProgramProcessHandle * expected_process, R4ServiceInfo * out_info, uint64_t timeout_ticks);
+typedef int32_t (*R4SysServiceInventoryPageFn)(R4ServiceInventoryCursor * cursor, R4ServiceInventoryRow * rows, uint32_t capacity);
+typedef int32_t (*R4SysServiceControlBoundFn)(const R4ServiceControlRequest * request);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11582,6 +11625,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t file_name_limits;
     uintptr_t service_bound_detail;
     uintptr_t service_stop_bound;
+    uintptr_t service_inventory_page;
+    uintptr_t service_control_bound;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -18941,7 +18986,28 @@ _Static_assert(offsetof(R4DesktopLinkReply, resolved_args) == 1536u, "DesktopLin
 _Static_assert(offsetof(R4DesktopLinkReply, policy) == 1664u, "DesktopLinkReply.policy offset mismatch");
 _Static_assert(offsetof(R4DesktopLinkReply, flags) == 1668u, "DesktopLinkReply.flags offset mismatch");
 _Static_assert(offsetof(R4DesktopLinkReply, completion) == 1672u, "DesktopLinkReply.completion offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1392u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4ServiceInventoryCursor) == 32u, "ServiceInventoryCursor size mismatch");
+_Static_assert(offsetof(R4ServiceInventoryCursor, revision) == 0u, "ServiceInventoryCursor.revision offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryCursor, after_id) == 8u, "ServiceInventoryCursor.after_id offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryCursor, total) == 16u, "ServiceInventoryCursor.total offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryCursor, flags) == 24u, "ServiceInventoryCursor.flags offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryCursor, reserved) == 28u, "ServiceInventoryCursor.reserved offset mismatch");
+_Static_assert(sizeof(R4ServiceInventoryRow) == 1448u, "ServiceInventoryRow size mismatch");
+_Static_assert(offsetof(R4ServiceInventoryRow, registration_id) == 0u, "ServiceInventoryRow.registration_id offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryRow, start_generation) == 8u, "ServiceInventoryRow.start_generation offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryRow, process) == 16u, "ServiceInventoryRow.process offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryRow, info) == 32u, "ServiceInventoryRow.info offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryRow, path) == 248u, "ServiceInventoryRow.path offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryRow, args) == 1272u, "ServiceInventoryRow.args offset mismatch");
+_Static_assert(offsetof(R4ServiceInventoryRow, description) == 1368u, "ServiceInventoryRow.description offset mismatch");
+_Static_assert(sizeof(R4ServiceControlRequest) == 48u, "ServiceControlRequest size mismatch");
+_Static_assert(offsetof(R4ServiceControlRequest, registration_id) == 0u, "ServiceControlRequest.registration_id offset mismatch");
+_Static_assert(offsetof(R4ServiceControlRequest, start_generation) == 8u, "ServiceControlRequest.start_generation offset mismatch");
+_Static_assert(offsetof(R4ServiceControlRequest, process) == 16u, "ServiceControlRequest.process offset mismatch");
+_Static_assert(offsetof(R4ServiceControlRequest, operation) == 32u, "ServiceControlRequest.operation offset mismatch");
+_Static_assert(offsetof(R4ServiceControlRequest, mode) == 36u, "ServiceControlRequest.mode offset mismatch");
+_Static_assert(offsetof(R4ServiceControlRequest, timeout_ticks) == 40u, "ServiceControlRequest.timeout_ticks offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1408u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -19283,6 +19349,10 @@ _Static_assert(offsetof(R4XStartR4Sys, service_bound_detail) == 1376u, "R4XStart
 _Static_assert(sizeof(R4SysServiceBoundDetailFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, service_stop_bound) == 1384u, "R4XStartR4Sys.service_stop_bound offset mismatch");
 _Static_assert(sizeof(R4SysServiceStopBoundFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, service_inventory_page) == 1392u, "R4XStartR4Sys.service_inventory_page offset mismatch");
+_Static_assert(sizeof(R4SysServiceInventoryPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, service_control_bound) == 1400u, "R4XStartR4Sys.service_control_bound offset mismatch");
+_Static_assert(sizeof(R4SysServiceControlBoundFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 624u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
