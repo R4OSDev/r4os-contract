@@ -13,10 +13,13 @@ Owners and minimum delivery
 --------------------------
 Contract/Module owns R4MF meaning, CPU/ABI and compatibility. SDK owns the
 shared parser, capability definitions, host build/startup, packaging and
-templates. DevKit owns pinned host tools and their isolated installation.
-Consumers use those interfaces independently. Component version selection and
-project locks belong to the caller, not to the SDK. Required SDK/Contract
-dependencies and proven toolchain requirements may remain exactly bound.
+templates. The SDK alone owns build/tool profiles and selects the exact
+Contract, tools and system libraries in Profiles/Build.json, Tools.json and
+Components.json. DevKit is only a local installation/cache location.
+Consumers select an SDK profile and may pin additional libraries without
+replacing SDK system identities. Necessary project locks are derived from
+or checked against that SDK selection. The profile ownership contract is
+documented in Docs/SDK/Profiles.txt; builders migrate in R4OS0.89.26-.34.
 
 Profile ID: r4os-rust-r4x-v2. Minimum delivered combinations are Windows-
 and Linux-hosted KIND=R4X, LANGUAGE=Rust, ENTRY_MODE=app and APP_CLASS equal
@@ -57,8 +60,9 @@ The root still has one explicit staticlib target, not an implicit executable.
 
 No build.rs, proc-macro/host build step, generated-source step or arbitrary
 linker script/flag is admitted. Dependencies must be explicit, local/path or
-vendored and locked. Additional component roots are selected by the caller's
-DependencyRoot arguments; SDK/Contract paths and binding versions remain exact.
+vendored and locked. DependencyRoot arguments may select locations for
+additional pinned libraries; they cannot override SDK-owned Contract, tools
+or system-library identities. Required paths and binding versions remain exact.
 Features/NoDefaultFeatures explicitly select root features; Cargo manifests
 own defaults and transitive feature requirements. No registry/git fetch occurs.
 Optional C sources require an explicit ZigRoot with the matched pinned version.
@@ -151,7 +155,7 @@ Unsupported combinations carry concrete reasons. Do not infer support from
 the mere existence of raw ABI types or a successfully compiled ELF.
 
 The SDK profile installs under a caller-selected root with shared PS7 logic
-and thin Windows/Linux starters. Reuse DevKit's pins and isolated homes;
+and thin Windows/Linux starters. Use SDK-owned tool pins and isolated homes;
 no complete workspace/DevKit or global rustup/Cargo setup may be required.
 The final SDK/Contract/tool/template source identities and package hashes
 are pinned at publication. The first executable implementation requires SDK0.64.60 and its matched
