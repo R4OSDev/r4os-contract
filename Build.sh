@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
-contract_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
-exec pwsh -NoProfile -File "$contract_root/Build.ps1" "$@"
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+exec pwsh -NoLogo -NoProfile -File "$script_dir/Build.ps1" "$@"
