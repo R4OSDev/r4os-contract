@@ -26,8 +26,10 @@ CPU-Ausfuehrungsvertrag
 Architektur 1 prueft das Containerformat, nicht die CPU-Mindestmerkmale.
 Der gemeinsame Modulbau verwendet Module/CpuBaseline.json als einzige
 maschinenlesbare Quelle fuer seine tatsaechlichen ISA-Voraussetzungen und
-die benoetigte XCR0-Maske. Der Contract-Buildhelfer module_cpu erzeugt daraus
-das SDK-Zig-/C-Ziel und prueft auch implizite Compilerabhaengigkeiten.
+die benoetigte XCR0-Maske. Die Compilerabbildung kommt ausschliesslich aus
+SDK/Profiles/Build.json und wird gegen die normativen CPUID-/XCR0-Felder
+geprueft. Der unbenutzte Contract-Compilerhelfer module_cpu ist entfernt;
+historische Compilerannotationen im JSON sind keine aktive Profilquelle.
 Kernel/Build.ps1 uebernimmt dieselben CPUID-Deskriptoren und den Profilhash
 in seine unveraenderliche, ELF-gebundene Buildkonfiguration.
 
