@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 410 von 410 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 412 von 412 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2896; Limits: 111
+- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2902; Limits: 111
 
 ## App-Profile
 
@@ -431,6 +431,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ServiceInventoryCursor` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `ServiceInventoryRow` | fixed_layout | extern_struct | 1448/8 | 1448/8 | 1448/8 | 1448/8 |
 | `ServiceControlRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `GuiGradientPaint` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `GuiGradientStop` | fixed_layout | extern_struct | 8/4 | 8/4 | 8/4 | 8/4 |
 
 ## Typdetails
 
@@ -10735,6 +10737,36 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `mode` | 36 | 4 | 4 | `u32` | - |
 | `timeout_ticks` | 40 | 8 | 8 | `u64` | - |
 
+### `GuiGradientPaint`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `stop_count` | 12 | 4 | 4 | `u32` | - |
+| `start_x_bits` | 16 | 4 | 4 | `u32` | - |
+| `start_y_bits` | 20 | 4 | 4 | `u32` | - |
+| `end_x_bits` | 24 | 4 | 4 | `u32` | - |
+| `end_y_bits` | 28 | 4 | 4 | `u32` | - |
+
+### `GuiGradientStop`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 8 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `position_bits` | 0 | 4 | 4 | `u32` | - |
+| `argb` | 4 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -14399,6 +14431,12 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `service_control_restart` | `3` | `u32` | value | number | `service_control` | fixed_contract |
 | `service_control_mode` | `4` | `u32` | value | number | `service_control` | fixed_contract |
 | `service_control_remove` | `5` | `u32` | value | number | `service_control` | fixed_contract |
+| `gui_frame_command_kind_gradient_rounded_rect` | `14` | `u32` | value | number | `gui_frame` | fixed_contract |
+| `gui_gradient_kind_linear` | `1` | `u32` | value | number | `gui_gradient` | fixed_contract |
+| `gui_gradient_kind_radial` | `2` | `u32` | value | number | `gui_gradient` | fixed_contract |
+| `gui_gradient_max_stops` | `8` | `u32` | value | number | `gui_gradient` | fixed_contract |
+| `gui_gradient_resource_version` | `1` | `u32` | version | number | `gui_gradient` | fixed_contract |
+| `gui_gradient_min_r4draw_version` | `39` | `u32` | version | number | `gui_gradient` | fixed_contract |
 
 ## Limits
 

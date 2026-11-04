@@ -18649,7 +18649,7 @@
       "fn_namespace": "R4DrawFns",
       "required": false,
       "magic": 827802706,
-      "abi_version": 38,
+      "abi_version": 39,
       "header_size": 16,
       "pointer_size": 8,
       "size": 912,
@@ -130867,6 +130867,174 @@
       ],
       "values": [],
       "description": "Mutation request bound to an original service registration and exact observed process/start generation. An unchanged name or list index alone never authorizes a replacement registration."
+    },
+    {
+      "name": "GuiGradientPaint",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Gradient paint version.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact gradient header size, excluding stops.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "kind",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Linear or elliptical radial gradient; unknown values are invalid.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stop_count",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Two through eight sorted stops after this header.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "start_x_bits",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite local x of linear start or radial center.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "start_y_bits",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite local y of linear start or radial center.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "end_x_bits",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite local x of linear end, or strictly positive radial x radius.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "end_y_bits",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite local y of linear end, or strictly positive radial y radius.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Optional paint following an unchanged GuiShapeResource v1 rounded-rectangle header for gradient_rounded_rect only. Coordinates are local to command bounds; colors clamp outside endpoints. Linear vector length and radial radii are at least 1/256 pixel. Interpolate premultiplied alpha and RGB; then apply ordinary shape coverage and source-over. Border remains the shape border color."
+    },
+    {
+      "name": "GuiGradientStop",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 8,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "position_bits",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite IEEE-754 binary32 position in [0,1]; strictly increasing, endpoints exactly zero and one.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "argb",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Straight-alpha 0xAARRGGBB color.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One bounded gradient stop, in wire order. Gradient coordinates and stop data are copied with the frame resource."
     }
   ],
   "operations": [],
@@ -162384,6 +162552,66 @@
       "scope": "service_control",
       "stability": "fixed_contract",
       "description": "Remove only the exact stopped registration."
+    },
+    {
+      "name": "gui_frame_command_kind_gradient_rounded_rect",
+      "value": "14",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_frame",
+      "stability": "fixed_contract",
+      "description": "Rounded-rectangle gradient fill with existing solid border. Resource: GuiShapeResource v1 rounded geometry, GuiGradientPaint v1, then exact stop_count GuiGradientStop records. No padding or path segments."
+    },
+    {
+      "name": "gui_gradient_kind_linear",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_gradient",
+      "stability": "fixed_contract",
+      "description": "Clamped linear gradient."
+    },
+    {
+      "name": "gui_gradient_kind_radial",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_gradient",
+      "stability": "fixed_contract",
+      "description": "Clamped elliptical radial gradient."
+    },
+    {
+      "name": "gui_gradient_max_stops",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "gui_gradient",
+      "stability": "fixed_contract",
+      "description": "Maximum gradient stops."
+    },
+    {
+      "name": "gui_gradient_resource_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "gui_gradient",
+      "stability": "fixed_contract",
+      "description": "Gradient paint wire version."
+    },
+    {
+      "name": "gui_gradient_min_r4draw_version",
+      "value": "39",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "gui_gradient",
+      "stability": "fixed_contract",
+      "description": "R4DRAW grammar revision introducing gradient_rounded_rect. Existing table slots and size remain unchanged."
     }
   ],
   "limits": [

@@ -2909,6 +2909,12 @@ extern "C" {
 #define R4OS_SERVICE_CONTROL_RESTART 3u
 #define R4OS_SERVICE_CONTROL_MODE 4u
 #define R4OS_SERVICE_CONTROL_REMOVE 5u
+#define R4OS_GUI_FRAME_COMMAND_KIND_GRADIENT_ROUNDED_RECT 14u
+#define R4OS_GUI_GRADIENT_KIND_LINEAR 1u
+#define R4OS_GUI_GRADIENT_KIND_RADIAL 2u
+#define R4OS_GUI_GRADIENT_MAX_STOPS 8u
+#define R4OS_GUI_GRADIENT_RESOURCE_VERSION 1u
+#define R4OS_GUI_GRADIENT_MIN_R4DRAW_VERSION 39u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3782,6 +3788,8 @@ typedef struct R4DesktopLinkReply R4DesktopLinkReply;
 typedef struct R4ServiceInventoryCursor R4ServiceInventoryCursor;
 typedef struct R4ServiceInventoryRow R4ServiceInventoryRow;
 typedef struct R4ServiceControlRequest R4ServiceControlRequest;
+typedef struct R4GuiGradientPaint R4GuiGradientPaint;
+typedef struct R4GuiGradientStop R4GuiGradientStop;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11229,6 +11237,22 @@ typedef struct R4ServiceControlRequest {
     uint32_t mode;
     uint64_t timeout_ticks;
 } R4ServiceControlRequest;
+
+typedef struct R4GuiGradientPaint {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t stop_count;
+    uint32_t start_x_bits;
+    uint32_t start_y_bits;
+    uint32_t end_x_bits;
+    uint32_t end_y_bits;
+} R4GuiGradientPaint;
+
+typedef struct R4GuiGradientStop {
+    uint32_t position_bits;
+    uint32_t argb;
+} R4GuiGradientStop;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -19007,6 +19031,18 @@ _Static_assert(offsetof(R4ServiceControlRequest, process) == 16u, "ServiceContro
 _Static_assert(offsetof(R4ServiceControlRequest, operation) == 32u, "ServiceControlRequest.operation offset mismatch");
 _Static_assert(offsetof(R4ServiceControlRequest, mode) == 36u, "ServiceControlRequest.mode offset mismatch");
 _Static_assert(offsetof(R4ServiceControlRequest, timeout_ticks) == 40u, "ServiceControlRequest.timeout_ticks offset mismatch");
+_Static_assert(sizeof(R4GuiGradientPaint) == 32u, "GuiGradientPaint size mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, version) == 0u, "GuiGradientPaint.version offset mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, size) == 4u, "GuiGradientPaint.size offset mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, kind) == 8u, "GuiGradientPaint.kind offset mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, stop_count) == 12u, "GuiGradientPaint.stop_count offset mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, start_x_bits) == 16u, "GuiGradientPaint.start_x_bits offset mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, start_y_bits) == 20u, "GuiGradientPaint.start_y_bits offset mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, end_x_bits) == 24u, "GuiGradientPaint.end_x_bits offset mismatch");
+_Static_assert(offsetof(R4GuiGradientPaint, end_y_bits) == 28u, "GuiGradientPaint.end_y_bits offset mismatch");
+_Static_assert(sizeof(R4GuiGradientStop) == 8u, "GuiGradientStop size mismatch");
+_Static_assert(offsetof(R4GuiGradientStop, position_bits) == 0u, "GuiGradientStop.position_bits offset mismatch");
+_Static_assert(offsetof(R4GuiGradientStop, argb) == 4u, "GuiGradientStop.argb offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1408u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

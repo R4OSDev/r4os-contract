@@ -5,6 +5,18 @@ Dieses Repository ist die zentrale API-/ABI-Wahrheit der R4OS-Plattform.
 Es beschreibt den gemeinsamen R4M0-, R4XStart- und R4L-Mechanismus sowie die
 sechs vom Kernel bereitgestellten Plattformgruppen.
 
+R4DRAW39 / Contract0.64.74
+--------------------------
+Der Framevertrag ergänzt gradient_rounded_rect mit einem unveränderten
+GuiShapeResource-v1-Praefix und getrennten GuiGradientPaint-/GuiGradientStop-
+Records. Alle alten Payloads, Konstanten und Slots bleiben unverändert;
+die R4DRAW-Tabelle bleibt 912 Bytes groß. Zwei bis acht strikt geordnete
+Stopps, begrenzte endliche Koordinaten und eindeutige Payloadlängen gehören
+zur Aufnahmeprüfung. Interpolation und Darstellung besitzt der Desktop.
+Der kontrollierte Baseline-Abgleich fügt genau diese zwei Records und sechs
+Konstanten hinzu und erhöht ausschließlich die R4DRAW-Grammatikrevision.
+Fachliche Nutzung: SDK gui_shapes und Docs/API/GuiShapeContract.txt.
+
 Wahrheit und Ausgaben
 ---------------------
 

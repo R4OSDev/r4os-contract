@@ -2901,6 +2901,12 @@ pub const service_control_stop: u32 = 2;
 pub const service_control_restart: u32 = 3;
 pub const service_control_mode: u32 = 4;
 pub const service_control_remove: u32 = 5;
+pub const gui_frame_command_kind_gradient_rounded_rect: u32 = 14;
+pub const gui_gradient_kind_linear: u32 = 1;
+pub const gui_gradient_kind_radial: u32 = 2;
+pub const gui_gradient_max_stops: u32 = 8;
+pub const gui_gradient_resource_version: u32 = 1;
+pub const gui_gradient_min_r4draw_version: u32 = 39;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -20729,6 +20735,50 @@ impl Default for ServiceControlRequest {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiGradientPaint {
+    pub version: u32,
+    pub size: u32,
+    pub kind: u32,
+    pub stop_count: u32,
+    pub start_x_bits: u32,
+    pub start_y_bits: u32,
+    pub end_x_bits: u32,
+    pub end_y_bits: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiGradientPaint {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            kind: 0,
+            stop_count: 0,
+            start_x_bits: 0,
+            start_y_bits: 0,
+            end_x_bits: 0,
+            end_y_bits: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiGradientStop {
+    pub position_bits: u32,
+    pub argb: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiGradientStop {
+    fn default() -> Self {
+        Self {
+            position_bits: 0,
+            argb: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21776,7 +21826,7 @@ impl Default for R4XStartR4Draw {
     fn default() -> Self {
         Self {
             magic: 827802706,
-            abi_version: 38,
+            abi_version: 39,
             size: 912,
             flags: 0,
             screen_width: 0,
@@ -33525,6 +33575,20 @@ const _: () = {
     assert!(core::mem::offset_of!(ServiceControlRequest, timeout_ticks) == 40);
     assert!(core::mem::size_of::<ServiceControlRequest>() == 48);
     assert!(core::mem::align_of::<ServiceControlRequest>() == 8);
+    assert!(core::mem::offset_of!(GuiGradientPaint, version) == 0);
+    assert!(core::mem::offset_of!(GuiGradientPaint, size) == 4);
+    assert!(core::mem::offset_of!(GuiGradientPaint, kind) == 8);
+    assert!(core::mem::offset_of!(GuiGradientPaint, stop_count) == 12);
+    assert!(core::mem::offset_of!(GuiGradientPaint, start_x_bits) == 16);
+    assert!(core::mem::offset_of!(GuiGradientPaint, start_y_bits) == 20);
+    assert!(core::mem::offset_of!(GuiGradientPaint, end_x_bits) == 24);
+    assert!(core::mem::offset_of!(GuiGradientPaint, end_y_bits) == 28);
+    assert!(core::mem::size_of::<GuiGradientPaint>() == 32);
+    assert!(core::mem::align_of::<GuiGradientPaint>() == 4);
+    assert!(core::mem::offset_of!(GuiGradientStop, position_bits) == 0);
+    assert!(core::mem::offset_of!(GuiGradientStop, argb) == 4);
+    assert!(core::mem::size_of::<GuiGradientStop>() == 8);
+    assert!(core::mem::align_of::<GuiGradientStop>() == 4);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);

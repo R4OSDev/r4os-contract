@@ -2897,6 +2897,12 @@ pub const service_control_stop: u32 = 2;
 pub const service_control_restart: u32 = 3;
 pub const service_control_mode: u32 = 4;
 pub const service_control_remove: u32 = 5;
+pub const gui_frame_command_kind_gradient_rounded_rect: u32 = 14;
+pub const gui_gradient_kind_linear: u32 = 1;
+pub const gui_gradient_kind_radial: u32 = 2;
+pub const gui_gradient_max_stops: u32 = 8;
+pub const gui_gradient_resource_version: u32 = 1;
+pub const gui_gradient_min_r4draw_version: u32 = 39;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -10879,6 +10885,22 @@ pub const ServiceControlRequest = extern struct {
     timeout_ticks: u64 = 0,
 };
 
+pub const GuiGradientPaint = extern struct {
+    version: u32 = 1,
+    size: u32 = 32,
+    kind: u32 = 0,
+    stop_count: u32 = 0,
+    start_x_bits: u32 = 0,
+    start_y_bits: u32 = 0,
+    end_x_bits: u32 = 0,
+    end_y_bits: u32 = 0,
+};
+
+pub const GuiGradientStop = extern struct {
+    position_bits: u32 = 0,
+    argb: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11512,7 +11534,7 @@ pub const R4DrawFns = struct {
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 38,
+    abi_version: u32 = 39,
     size: u32 = 912,
     flags: u32 = 0,
     screen_width: usize = 0,
@@ -19558,6 +19580,20 @@ comptime {
     if (@offsetOf(ServiceControlRequest, "operation") != 32) @compileError("generated ABI offset drift: ServiceControlRequest.operation");
     if (@offsetOf(ServiceControlRequest, "mode") != 36) @compileError("generated ABI offset drift: ServiceControlRequest.mode");
     if (@offsetOf(ServiceControlRequest, "timeout_ticks") != 40) @compileError("generated ABI offset drift: ServiceControlRequest.timeout_ticks");
+    if (@sizeOf(GuiGradientPaint) != 32) @compileError("generated ABI size drift: GuiGradientPaint");
+    if (@alignOf(GuiGradientPaint) != 4) @compileError("generated ABI alignment drift: GuiGradientPaint");
+    if (@offsetOf(GuiGradientPaint, "version") != 0) @compileError("generated ABI offset drift: GuiGradientPaint.version");
+    if (@offsetOf(GuiGradientPaint, "size") != 4) @compileError("generated ABI offset drift: GuiGradientPaint.size");
+    if (@offsetOf(GuiGradientPaint, "kind") != 8) @compileError("generated ABI offset drift: GuiGradientPaint.kind");
+    if (@offsetOf(GuiGradientPaint, "stop_count") != 12) @compileError("generated ABI offset drift: GuiGradientPaint.stop_count");
+    if (@offsetOf(GuiGradientPaint, "start_x_bits") != 16) @compileError("generated ABI offset drift: GuiGradientPaint.start_x_bits");
+    if (@offsetOf(GuiGradientPaint, "start_y_bits") != 20) @compileError("generated ABI offset drift: GuiGradientPaint.start_y_bits");
+    if (@offsetOf(GuiGradientPaint, "end_x_bits") != 24) @compileError("generated ABI offset drift: GuiGradientPaint.end_x_bits");
+    if (@offsetOf(GuiGradientPaint, "end_y_bits") != 28) @compileError("generated ABI offset drift: GuiGradientPaint.end_y_bits");
+    if (@sizeOf(GuiGradientStop) != 8) @compileError("generated ABI size drift: GuiGradientStop");
+    if (@alignOf(GuiGradientStop) != 4) @compileError("generated ABI alignment drift: GuiGradientStop");
+    if (@offsetOf(GuiGradientStop, "position_bits") != 0) @compileError("generated ABI offset drift: GuiGradientStop.position_bits");
+    if (@offsetOf(GuiGradientStop, "argb") != 4) @compileError("generated ABI offset drift: GuiGradientStop.argb");
     if (@sizeOf(R4XStartR4Sys) != 1408) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
