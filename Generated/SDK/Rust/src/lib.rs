@@ -20779,6 +20779,28 @@ impl Default for GuiGradientStop {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct GuiWindowAppearance {
+    pub window: GuiPointerWindowIdentity,
+    pub flags: u32,
+    pub title_background: u32,
+    pub title_foreground: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for GuiWindowAppearance {
+    fn default() -> Self {
+        Self {
+            window: GuiPointerWindowIdentity { owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, epoch: 0, window_id: 0, reserved: 0 },
+            flags: 0,
+            title_background: 0,
+            title_foreground: 0,
+            reserved: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21410,6 +21432,7 @@ pub mod R4DeskFns {
     pub type gui_pointer_capture_release = unsafe extern "C" fn(*const GuiPointerCaptureHandle) -> i32;
     pub type gui_pointer_capture_host = unsafe extern "C" fn(*const GuiPointerHostRequest, *mut GuiPointerCaptureInfo) -> i32;
     pub type gui_host_input = unsafe extern "C" fn(*const GuiHostInputRequest, *mut GuiPointerWindowIdentity) -> i32;
+    pub type gui_window_appearance = unsafe extern "C" fn(*const GuiPointerWindowIdentity, *mut GuiWindowAppearance) -> i32;
 }
 
 #[repr(C)]
@@ -21495,14 +21518,15 @@ pub struct R4XStartR4Desk {
     pub gui_pointer_capture_release: usize,
     pub gui_pointer_capture_host: usize,
     pub gui_host_input: usize,
+    pub gui_window_appearance: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Desk {
     fn default() -> Self {
         Self {
             magic: 826623058,
-            abi_version: 20,
-            size: 624,
+            abi_version: 21,
+            size: 632,
             flags: 0,
             read_key: 0,
             mouse_state: 0,
@@ -21580,6 +21604,7 @@ impl Default for R4XStartR4Desk {
             gui_pointer_capture_release: 0,
             gui_pointer_capture_host: 0,
             gui_host_input: 0,
+            gui_window_appearance: 0,
         }
     }
 }
@@ -33589,6 +33614,13 @@ const _: () = {
     assert!(core::mem::offset_of!(GuiGradientStop, argb) == 4);
     assert!(core::mem::size_of::<GuiGradientStop>() == 8);
     assert!(core::mem::align_of::<GuiGradientStop>() == 4);
+    assert!(core::mem::offset_of!(GuiWindowAppearance, window) == 0);
+    assert!(core::mem::offset_of!(GuiWindowAppearance, flags) == 32);
+    assert!(core::mem::offset_of!(GuiWindowAppearance, title_background) == 36);
+    assert!(core::mem::offset_of!(GuiWindowAppearance, title_foreground) == 40);
+    assert!(core::mem::offset_of!(GuiWindowAppearance, reserved) == 44);
+    assert!(core::mem::size_of::<GuiWindowAppearance>() == 48);
+    assert!(core::mem::align_of::<GuiWindowAppearance>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -33851,7 +33883,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_release) == 600);
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_pointer_capture_host) == 608);
     assert!(core::mem::offset_of!(R4XStartR4Desk, gui_host_input) == 616);
-    assert!(core::mem::size_of::<R4XStartR4Desk>() == 624);
+    assert!(core::mem::offset_of!(R4XStartR4Desk, gui_window_appearance) == 624);
+    assert!(core::mem::size_of::<R4XStartR4Desk>() == 632);
     assert!(core::mem::align_of::<R4XStartR4Desk>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Draw, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Draw, abi_version) == 4);

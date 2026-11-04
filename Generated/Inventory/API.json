@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 503,
-    "group_slot_count": 503,
+    "function_count": 504,
+    "group_slot_count": 504,
     "sdk_only_count": 0,
-    "public_count": 362,
+    "public_count": 363,
     "advanced_count": 141
   },
   "functions": [
@@ -2961,6 +2961,18 @@
       "slot": 75,
       "exposure": "public",
       "description": "Nonblocking exact ordinary GUI input QUERY/POST/RESET for the registered Desktop host. Query returns the current exact window identity; accepted POST returns0, full returns Busy without consuming input. A pending reset fences subsequent POST until its reliable native control receipt is consumed. Reset removes unread ordinary input while preserving metadata and prior native capture termination. Output is written only on success; no ID-only or window-epoch truncation fallback.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DESK.gui_window_appearance",
+      "group": "R4DESK",
+      "kind": "group_slot",
+      "slot": 76,
+      "exposure": "public",
+      "description": "Read immutable loaded R4X title colors for the exact hosted window. Only its registered Desktop host may read; no setter, file reopen or focus change.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

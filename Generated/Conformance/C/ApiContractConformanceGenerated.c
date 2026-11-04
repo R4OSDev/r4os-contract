@@ -249,6 +249,7 @@ static R4DeskGuiPointerCaptureAcquireFn r4os_probe_r4desk_gui_pointer_capture_ac
 static R4DeskGuiPointerCaptureReleaseFn r4os_probe_r4desk_gui_pointer_capture_release = (R4DeskGuiPointerCaptureReleaseFn)0;
 static R4DeskGuiPointerCaptureHostFn r4os_probe_r4desk_gui_pointer_capture_host = (R4DeskGuiPointerCaptureHostFn)0;
 static R4DeskGuiHostInputFn r4os_probe_r4desk_gui_host_input = (R4DeskGuiHostInputFn)0;
+static R4DeskGuiWindowAppearanceFn r4os_probe_r4desk_gui_window_appearance = (R4DeskGuiWindowAppearanceFn)0;
 static R4DrawScreenWidthFn r4os_probe_r4draw_screen_width = (R4DrawScreenWidthFn)0;
 static R4DrawScreenHeightFn r4os_probe_r4draw_screen_height = (R4DrawScreenHeightFn)0;
 static R4DrawClearFn r4os_probe_r4draw_clear = (R4DrawClearFn)0;

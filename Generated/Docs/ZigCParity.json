@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 503,
+    "group_function_signatures": 504,
     "sdk_operation_contracts": 0,
-    "parity_entries": 503,
+    "parity_entries": 504,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -2222,6 +2222,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DeskFns.gui_host_input",
       "c_contract": "R4DeskGuiHostInputFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DESK.gui_window_appearance",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DeskFns.gui_window_appearance",
+      "c_contract": "R4DeskGuiWindowAppearanceFn",
       "coverage": "generated_signature"
     },
     {

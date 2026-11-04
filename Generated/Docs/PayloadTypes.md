@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 412 von 412 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 413 von 413 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 64; Konstanten: 2902; Limits: 111
 
@@ -433,6 +433,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ServiceControlRequest` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `GuiGradientPaint` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
 | `GuiGradientStop` | fixed_layout | extern_struct | 8/4 | 8/4 | 8/4 | 8/4 |
+| `GuiWindowAppearance` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 
 ## Typdetails
 
@@ -10766,6 +10767,21 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 |---|---:|---:|---:|---|---|
 | `position_bits` | 0 | 4 | 4 | `u32` | - |
 | `argb` | 4 | 4 | 4 | `u32` | - |
+
+### `GuiWindowAppearance`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `window` | 0 | 32 | 8 | `GuiPointerWindowIdentity` | - |
+| `flags` | 32 | 4 | 4 | `u32` | - |
+| `title_background` | 36 | 4 | 4 | `u32` | - |
+| `title_foreground` | 40 | 4 | 4 | `u32` | - |
+| `reserved` | 44 | 4 | 4 | `u32` | - |
 
 ## Fehlerdomänen
 

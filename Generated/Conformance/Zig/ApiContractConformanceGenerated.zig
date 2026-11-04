@@ -6678,6 +6678,12 @@ comptime {
     if (@sizeOf(abi.GuiGradientStop) != 8) @compileError("GuiGradientStop size");
     if (@offsetOf(abi.GuiGradientStop, "position_bits") != 0) @compileError("GuiGradientStop.position_bits offset");
     if (@offsetOf(abi.GuiGradientStop, "argb") != 4) @compileError("GuiGradientStop.argb offset");
+    if (@sizeOf(abi.GuiWindowAppearance) != 48) @compileError("GuiWindowAppearance size");
+    if (@offsetOf(abi.GuiWindowAppearance, "window") != 0) @compileError("GuiWindowAppearance.window offset");
+    if (@offsetOf(abi.GuiWindowAppearance, "flags") != 32) @compileError("GuiWindowAppearance.flags offset");
+    if (@offsetOf(abi.GuiWindowAppearance, "title_background") != 36) @compileError("GuiWindowAppearance.title_background offset");
+    if (@offsetOf(abi.GuiWindowAppearance, "title_foreground") != 40) @compileError("GuiWindowAppearance.title_foreground offset");
+    if (@offsetOf(abi.GuiWindowAppearance, "reserved") != 44) @compileError("GuiWindowAppearance.reserved offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1408) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -7024,7 +7030,7 @@ comptime {
     if (@sizeOf(abi.R4SysFns.service_inventory_page) != 8) @compileError("R4SysFns.service_inventory_page signature");
     if (@offsetOf(abi.R4XStartR4Sys, "service_control_bound") != 1400) @compileError("R4XStartR4Sys.service_control_bound offset");
     if (@sizeOf(abi.R4SysFns.service_control_bound) != 8) @compileError("R4SysFns.service_control_bound signature");
-    if (@sizeOf(abi.R4XStartR4Desk) != 624) @compileError("R4XStartR4Desk size");
+    if (@sizeOf(abi.R4XStartR4Desk) != 632) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");
     if (@offsetOf(abi.R4XStartR4Desk, "mouse_state") != 24) @compileError("R4XStartR4Desk.mouse_state offset");
@@ -7176,6 +7182,8 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.gui_pointer_capture_host) != 8) @compileError("R4DeskFns.gui_pointer_capture_host signature");
     if (@offsetOf(abi.R4XStartR4Desk, "gui_host_input") != 616) @compileError("R4XStartR4Desk.gui_host_input offset");
     if (@sizeOf(abi.R4DeskFns.gui_host_input) != 8) @compileError("R4DeskFns.gui_host_input signature");
+    if (@offsetOf(abi.R4XStartR4Desk, "gui_window_appearance") != 624) @compileError("R4XStartR4Desk.gui_window_appearance offset");
+    if (@sizeOf(abi.R4DeskFns.gui_window_appearance) != 8) @compileError("R4DeskFns.gui_window_appearance signature");
     if (@sizeOf(abi.R4XStartR4Draw) != 912) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");

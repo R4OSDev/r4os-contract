@@ -3790,6 +3790,7 @@ typedef struct R4ServiceInventoryRow R4ServiceInventoryRow;
 typedef struct R4ServiceControlRequest R4ServiceControlRequest;
 typedef struct R4GuiGradientPaint R4GuiGradientPaint;
 typedef struct R4GuiGradientStop R4GuiGradientStop;
+typedef struct R4GuiWindowAppearance R4GuiWindowAppearance;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11254,6 +11255,14 @@ typedef struct R4GuiGradientStop {
     uint32_t argb;
 } R4GuiGradientStop;
 
+typedef struct R4GuiWindowAppearance {
+    R4GuiPointerWindowIdentity window;
+    uint32_t flags;
+    uint32_t title_background;
+    uint32_t title_foreground;
+    uint32_t reserved;
+} R4GuiWindowAppearance;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11728,6 +11737,7 @@ typedef int32_t (*R4DeskGuiPointerCaptureAcquireFn)(const R4GuiPointerWindowIden
 typedef int32_t (*R4DeskGuiPointerCaptureReleaseFn)(const R4GuiPointerCaptureHandle * capture);
 typedef int32_t (*R4DeskGuiPointerCaptureHostFn)(const R4GuiPointerHostRequest * request, R4GuiPointerCaptureInfo * out_info);
 typedef int32_t (*R4DeskGuiHostInputFn)(const R4GuiHostInputRequest * request, R4GuiPointerWindowIdentity * out_window);
+typedef int32_t (*R4DeskGuiWindowAppearanceFn)(const R4GuiPointerWindowIdentity * window, R4GuiWindowAppearance * out);
 
 typedef struct R4XStartR4Desk {
     uint32_t magic;
@@ -11810,6 +11820,7 @@ typedef struct R4XStartR4Desk {
     uintptr_t gui_pointer_capture_release;
     uintptr_t gui_pointer_capture_host;
     uintptr_t gui_host_input;
+    uintptr_t gui_window_appearance;
 } R4XStartR4Desk;
 
 typedef uint32_t (*R4DrawScreenWidthFn)(void);
@@ -19043,6 +19054,12 @@ _Static_assert(offsetof(R4GuiGradientPaint, end_y_bits) == 28u, "GuiGradientPain
 _Static_assert(sizeof(R4GuiGradientStop) == 8u, "GuiGradientStop size mismatch");
 _Static_assert(offsetof(R4GuiGradientStop, position_bits) == 0u, "GuiGradientStop.position_bits offset mismatch");
 _Static_assert(offsetof(R4GuiGradientStop, argb) == 4u, "GuiGradientStop.argb offset mismatch");
+_Static_assert(sizeof(R4GuiWindowAppearance) == 48u, "GuiWindowAppearance size mismatch");
+_Static_assert(offsetof(R4GuiWindowAppearance, window) == 0u, "GuiWindowAppearance.window offset mismatch");
+_Static_assert(offsetof(R4GuiWindowAppearance, flags) == 32u, "GuiWindowAppearance.flags offset mismatch");
+_Static_assert(offsetof(R4GuiWindowAppearance, title_background) == 36u, "GuiWindowAppearance.title_background offset mismatch");
+_Static_assert(offsetof(R4GuiWindowAppearance, title_foreground) == 40u, "GuiWindowAppearance.title_foreground offset mismatch");
+_Static_assert(offsetof(R4GuiWindowAppearance, reserved) == 44u, "GuiWindowAppearance.reserved offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1408u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -19389,7 +19406,7 @@ _Static_assert(offsetof(R4XStartR4Sys, service_inventory_page) == 1392u, "R4XSta
 _Static_assert(sizeof(R4SysServiceInventoryPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, service_control_bound) == 1400u, "R4XStartR4Sys.service_control_bound offset mismatch");
 _Static_assert(sizeof(R4SysServiceControlBoundFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Desk) == 624u, "R4XStartR4Desk size mismatch");
+_Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, mouse_state) == 24u, "R4XStartR4Desk.mouse_state offset mismatch");
@@ -19541,6 +19558,8 @@ _Static_assert(offsetof(R4XStartR4Desk, gui_pointer_capture_host) == 608u, "R4XS
 _Static_assert(sizeof(R4DeskGuiPointerCaptureHostFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, gui_host_input) == 616u, "R4XStartR4Desk.gui_host_input offset mismatch");
 _Static_assert(sizeof(R4DeskGuiHostInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Desk, gui_window_appearance) == 624u, "R4XStartR4Desk.gui_window_appearance offset mismatch");
+_Static_assert(sizeof(R4DeskGuiWindowAppearanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Draw) == 912u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

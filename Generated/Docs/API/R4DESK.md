@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DESK (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DESK (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Desk` v20, 624 Bytes, 75 Funktionsfelder und 76 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Desk` v21, 632 Bytes, 76 Funktionsfelder und 77 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DeskFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -85,4 +85,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 73 | 600 | function | `gui_pointer_capture_release` | `*const fn (*const GuiPointerCaptureHandle) callconv(.c) i32` |
 | 74 | 608 | function | `gui_pointer_capture_host` | `*const fn (*const GuiPointerHostRequest, *GuiPointerCaptureInfo) callconv(.c) i32` |
 | 75 | 616 | function | `gui_host_input` | `*const fn (*const GuiHostInputRequest, *GuiPointerWindowIdentity) callconv(.c) i32` |
+| 76 | 624 | function | `gui_window_appearance` | `*const fn (*const GuiPointerWindowIdentity, *GuiWindowAppearance) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DESK -->

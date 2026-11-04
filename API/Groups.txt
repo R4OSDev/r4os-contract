@@ -82,3 +82,7 @@ Gemeinsame Regeln
 - Nicht erreichbare Plattformgruppen beziehungsweise Felder melden
   `err_no_group` (-9001) oder `err_no_fn` (-9002).
 - Fachliche Runtime-R4L-Fehler bleiben Eigentum der jeweiligen Library.
+
+R4DESK21 ergaenzt gui_window_appearance am Tabellenende. Die rein lesende
+48-Byte-Antwort bindet die geladenen optionalen R4X-Titelfarben an exakte
+Prozess-/Fenster-/Hostgenerationen. Vertrag: ABI/R4M0TitleAppearance.txt.

@@ -217,3 +217,6 @@ Vertragsquellen und Verbraucher
 
 Loader, SDK-Packager und Gast-Packager sind Verbraucher dieses Vertrags und
 besitzen keine abweichende Formatwahrheit.
+
+Optionale unveraenderliche R4X-Titelfarben des bestehenden META-Kanals:
+ABI/R4M0TitleAppearance.txt. Keine neue Section oder Containerrevision.

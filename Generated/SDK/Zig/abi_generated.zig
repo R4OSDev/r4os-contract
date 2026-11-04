@@ -10901,6 +10901,14 @@ pub const GuiGradientStop = extern struct {
     argb: u32 = 0,
 };
 
+pub const GuiWindowAppearance = extern struct {
+    window: GuiPointerWindowIdentity = .{},
+    flags: u32 = 0,
+    title_background: u32 = 0,
+    title_foreground: u32 = 0,
+    reserved: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11332,12 +11340,13 @@ pub const R4DeskFns = struct {
     pub const gui_pointer_capture_release = *const fn (*const GuiPointerCaptureHandle) callconv(.c) i32;
     pub const gui_pointer_capture_host = *const fn (*const GuiPointerHostRequest, *GuiPointerCaptureInfo) callconv(.c) i32;
     pub const gui_host_input = *const fn (*const GuiHostInputRequest, *GuiPointerWindowIdentity) callconv(.c) i32;
+    pub const gui_window_appearance = *const fn (*const GuiPointerWindowIdentity, *GuiWindowAppearance) callconv(.c) i32;
 };
 
 pub const R4XStartR4Desk = extern struct {
     magic: u32 = 826623058,
-    abi_version: u32 = 20,
-    size: u32 = 624,
+    abi_version: u32 = 21,
+    size: u32 = 632,
     flags: u32 = 0,
     read_key: usize = 0,
     mouse_state: usize = 0,
@@ -11415,6 +11424,7 @@ pub const R4XStartR4Desk = extern struct {
     gui_pointer_capture_release: usize = 0,
     gui_pointer_capture_host: usize = 0,
     gui_host_input: usize = 0,
+    gui_window_appearance: usize = 0,
 };
 
 pub const R4DrawFns = struct {
@@ -12235,6 +12245,7 @@ pub const R4DeskSlots = [_]R4ApiSlotMeta{
     .{ .number = 73, .offset = 600, .name = "gui_pointer_capture_release", .state = .function, .required = false },
     .{ .number = 74, .offset = 608, .name = "gui_pointer_capture_host", .state = .function, .required = false },
     .{ .number = 75, .offset = 616, .name = "gui_host_input", .state = .function, .required = false },
+    .{ .number = 76, .offset = 624, .name = "gui_window_appearance", .state = .function, .required = false },
 };
 
 pub const R4DrawSlots = [_]R4ApiSlotMeta{
@@ -19594,6 +19605,13 @@ comptime {
     if (@alignOf(GuiGradientStop) != 4) @compileError("generated ABI alignment drift: GuiGradientStop");
     if (@offsetOf(GuiGradientStop, "position_bits") != 0) @compileError("generated ABI offset drift: GuiGradientStop.position_bits");
     if (@offsetOf(GuiGradientStop, "argb") != 4) @compileError("generated ABI offset drift: GuiGradientStop.argb");
+    if (@sizeOf(GuiWindowAppearance) != 48) @compileError("generated ABI size drift: GuiWindowAppearance");
+    if (@alignOf(GuiWindowAppearance) != 8) @compileError("generated ABI alignment drift: GuiWindowAppearance");
+    if (@offsetOf(GuiWindowAppearance, "window") != 0) @compileError("generated ABI offset drift: GuiWindowAppearance.window");
+    if (@offsetOf(GuiWindowAppearance, "flags") != 32) @compileError("generated ABI offset drift: GuiWindowAppearance.flags");
+    if (@offsetOf(GuiWindowAppearance, "title_background") != 36) @compileError("generated ABI offset drift: GuiWindowAppearance.title_background");
+    if (@offsetOf(GuiWindowAppearance, "title_foreground") != 40) @compileError("generated ABI offset drift: GuiWindowAppearance.title_foreground");
+    if (@offsetOf(GuiWindowAppearance, "reserved") != 44) @compileError("generated ABI offset drift: GuiWindowAppearance.reserved");
     if (@sizeOf(R4XStartR4Sys) != 1408) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -19769,7 +19787,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "service_stop_bound") != 1384) @compileError("generated ABI offset drift: R4XStartR4Sys.service_stop_bound");
     if (@offsetOf(R4XStartR4Sys, "service_inventory_page") != 1392) @compileError("generated ABI offset drift: R4XStartR4Sys.service_inventory_page");
     if (@offsetOf(R4XStartR4Sys, "service_control_bound") != 1400) @compileError("generated ABI offset drift: R4XStartR4Sys.service_control_bound");
-    if (@sizeOf(R4XStartR4Desk) != 624) @compileError("generated ABI size drift: R4XStartR4Desk");
+    if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
     if (@offsetOf(R4XStartR4Desk, "mouse_show") != 32) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_show");
@@ -19846,6 +19864,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_release") != 600) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_release");
     if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_host") != 608) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_host");
     if (@offsetOf(R4XStartR4Desk, "gui_host_input") != 616) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_host_input");
+    if (@offsetOf(R4XStartR4Desk, "gui_window_appearance") != 624) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_window_appearance");
     if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
