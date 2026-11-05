@@ -20984,6 +20984,7 @@ pub mod R4SysFns {
     pub type service_stop_bound = unsafe extern "C" fn(*const u8, *const ProgramProcessHandle, *mut ServiceInfo, u64) -> i32;
     pub type service_inventory_page = unsafe extern "C" fn(*mut ServiceInventoryCursor, *mut ServiceInventoryRow, u32) -> i32;
     pub type service_control_bound = unsafe extern "C" fn(*const ServiceControlRequest) -> i32;
+    pub type system_update_target_supported = unsafe extern "C" fn(*const u8) -> i32;
 }
 
 #[repr(C)]
@@ -21167,14 +21168,15 @@ pub struct R4XStartR4Sys {
     pub service_stop_bound: usize,
     pub service_inventory_page: usize,
     pub service_control_bound: usize,
+    pub system_update_target_supported: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 35,
-            size: 1408,
+            abi_version: 36,
+            size: 1416,
             flags: 0,
             write: 0,
             putc: 0,
@@ -21350,6 +21352,7 @@ impl Default for R4XStartR4Sys {
             service_stop_bound: 0,
             service_inventory_page: 0,
             service_control_bound: 0,
+            system_update_target_supported: 0,
         }
     }
 }
@@ -33801,7 +33804,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_stop_bound) == 1384);
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_inventory_page) == 1392);
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_control_bound) == 1400);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1408);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, system_update_target_supported) == 1408);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1416);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

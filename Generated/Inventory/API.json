@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 504,
-    "group_slot_count": 504,
+    "function_count": 505,
+    "group_slot_count": 505,
     "sdk_only_count": 0,
-    "public_count": 363,
+    "public_count": 364,
     "advanced_count": 141
   },
   "functions": [
@@ -2061,6 +2061,18 @@
       "slot": 173,
       "exposure": "public",
       "description": "Apply START/STOP/RESTART/MODE/REMOVE only to the original registration ID and expected full process/start binding. A removed/reinstalled name, reused process ID or changed start returns BUSY/NOT_FOUND before effects. Uses existing native generation-aware start/stop/reap, absolute stop deadline, restart/disable and self-restart policy. MODE requires a valid public mode; other operations require mode0. Only STOP accepts timeout_ticks; other operations require0. Timeout is unknown completion, never automatic retry or permission for a second close/start. Returns the existing service status domain; no caller pointers are retained.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.system_update_target_supported",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 174,
+      "exposure": "public",
+      "description": "Read-only admission query for the installed early-update-recovery target scope. Borrowed NUL-terminated native journal path, at most1023 UTF8 bytes; returns1 if normalized target is supported,0 if outside the scope,-1 for invalid path/Unicode. No filesystem access, reservation, installation or version/dependency check. Mount, capacity, artifact identity, ownership and lifecycle remain the updater preflight responsibility.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

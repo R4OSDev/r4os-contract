@@ -11480,6 +11480,7 @@ typedef int32_t (*R4SysServiceBoundDetailFn)(const uint8_t * name, R4ServiceDeta
 typedef int32_t (*R4SysServiceStopBoundFn)(const uint8_t * name, const R4ProgramProcessHandle * expected_process, R4ServiceInfo * out_info, uint64_t timeout_ticks);
 typedef int32_t (*R4SysServiceInventoryPageFn)(R4ServiceInventoryCursor * cursor, R4ServiceInventoryRow * rows, uint32_t capacity);
 typedef int32_t (*R4SysServiceControlBoundFn)(const R4ServiceControlRequest * request);
+typedef int32_t (*R4SysSystemUpdateTargetSupportedFn)(const uint8_t * path);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11660,6 +11661,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t service_stop_bound;
     uintptr_t service_inventory_page;
     uintptr_t service_control_bound;
+    uintptr_t system_update_target_supported;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -19060,7 +19062,7 @@ _Static_assert(offsetof(R4GuiWindowAppearance, flags) == 32u, "GuiWindowAppearan
 _Static_assert(offsetof(R4GuiWindowAppearance, title_background) == 36u, "GuiWindowAppearance.title_background offset mismatch");
 _Static_assert(offsetof(R4GuiWindowAppearance, title_foreground) == 40u, "GuiWindowAppearance.title_foreground offset mismatch");
 _Static_assert(offsetof(R4GuiWindowAppearance, reserved) == 44u, "GuiWindowAppearance.reserved offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1408u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1416u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -19406,6 +19408,8 @@ _Static_assert(offsetof(R4XStartR4Sys, service_inventory_page) == 1392u, "R4XSta
 _Static_assert(sizeof(R4SysServiceInventoryPageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, service_control_bound) == 1400u, "R4XStartR4Sys.service_control_bound offset mismatch");
 _Static_assert(sizeof(R4SysServiceControlBoundFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, system_update_target_supported) == 1408u, "R4XStartR4Sys.system_update_target_supported offset mismatch");
+_Static_assert(sizeof(R4SysSystemUpdateTargetSupportedFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

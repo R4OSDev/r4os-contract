@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 35,
+      "abi_version": 36,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1408,
+      "size": 1416,
       "slots": [
         {
           "number": 0,
@@ -13863,6 +13863,66 @@
             "outputs": "none",
             "side_effects": "may_have_occurred",
             "retry": "never_automatic",
+            "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 174,
+          "offset": 1408,
+          "name": "system_update_target_supported",
+          "state": "function",
+          "required": false,
+          "description": "Read-only admission query for the installed early-update-recovery target scope. Borrowed NUL-terminated native journal path, at most1023 UTF8 bytes; returns1 if normalized target is supported,0 if outside the scope,-1 for invalid path/Unicode. No filesystem access, reservation, installation or version/dependency check. Mount, capacity, artifact identity, ownership and lifecycle remain the updater preflight responsibility.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "filesystem",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "path_based_no_handle",
+            "outputs": "none",
+            "side_effects": "none",
+            "retry": "idempotent",
             "buffer_too_small": "none",
             "language_parity": "zig_and_c_required"
           }

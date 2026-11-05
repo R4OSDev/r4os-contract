@@ -2039,26 +2039,30 @@ fn validateContract(allocator: std.mem.Allocator, current: *const Contract, base
 
     for (baseline.groups, 0..) |old_group, group_index| {
         const group = &current.groups[group_index];
-        if (group.id != old_group.id or
-            !std.mem.eql(u8, group.name, old_group.name) or
-            !std.mem.eql(u8, group.query_import, old_group.query_import) or
-            !std.mem.eql(u8, group.table_type, old_group.table_type) or
-            !std.mem.eql(u8, group.fn_namespace, old_group.fn_namespace) or
-            group.kind != old_group.kind or group.required != old_group.required or
-            group.magic != old_group.magic or group.header_size != old_group.header_size or
-            group.pointer_size != old_group.pointer_size)
-        {
-            return error.GroupIdentityDrift;
-        }
-        if (group.slots.len < old_group.slots.len) return error.SlotRemoved;
-        for (old_group.slots, 0..) |old_slot, slot_index| {
-            try requireCanonicalEqual(allocator, group.slots[slot_index], old_slot, error.SlotDrift);
-        }
-        if (group.slots.len == old_group.slots.len) {
-            if (group.abi_version != old_group.abi_version) return error.VersionWithoutAppend;
-        } else if (group.abi_version <= old_group.abi_version) {
-            return error.AppendWithoutVersionBump;
-        }
+        try validateGroupEvolution(allocator, group, &old_group);
+    }
+}
+
+fn validateGroupEvolution(allocator: std.mem.Allocator, group: *const Group, old_group: *const Group) !void {
+    if (group.id != old_group.id or
+        !std.mem.eql(u8, group.name, old_group.name) or
+        !std.mem.eql(u8, group.query_import, old_group.query_import) or
+        !std.mem.eql(u8, group.table_type, old_group.table_type) or
+        !std.mem.eql(u8, group.fn_namespace, old_group.fn_namespace) or
+        group.kind != old_group.kind or group.required != old_group.required or
+        group.magic != old_group.magic or group.header_size != old_group.header_size or
+        group.pointer_size != old_group.pointer_size)
+    {
+        return error.GroupIdentityDrift;
+    }
+    if (group.slots.len < old_group.slots.len) return error.SlotRemoved;
+    for (old_group.slots, 0..) |old_slot, slot_index| {
+        try requireCanonicalEqual(allocator, group.slots[slot_index], old_slot, error.SlotDrift);
+    }
+    if (group.slots.len == old_group.slots.len) {
+        if (group.abi_version != old_group.abi_version) return error.VersionWithoutAppend;
+    } else if (group.abi_version <= old_group.abi_version) {
+        return error.AppendWithoutVersionBump;
     }
 }
 
@@ -2653,8 +2657,10 @@ fn runSelftest(allocator: std.mem.Allocator, contract: *Contract, baseline: *con
 
     const old_slots = group.slots;
     const old_size = group.size;
-    group.slots = old_slots[0 .. old_slots.len - 1];
-    group.size -= 8;
+    // Remove a slot covered by the baseline, even when the current schema
+    // already contains a legitimate optional append beyond that baseline.
+    group.slots = old_slots[0 .. baseline.groups[0].slots.len - 1];
+    group.size = group.header_size + @as(u32, @intCast(group.slots.len)) * group.pointer_size;
     try expectRejected(allocator, contract, baseline);
     group.slots = old_slots;
     group.size = old_size;
@@ -2715,8 +2721,13 @@ fn runSelftest(allocator: std.mem.Allocator, contract: *Contract, baseline: *con
     contract.groups[1].magic = old_magic;
 
     const old_version = group.abi_version;
+    const reference_group = group.*;
     group.abi_version += 1;
-    try expectRejected(allocator, contract, baseline);
+    // A version-only mutation is checked against the current table shape.
+    // Its already accepted new slots must not legitimize another bump.
+    if (validateGroupEvolution(allocator, group, &reference_group)) |_| return error.MutationNotRejected else |err| {
+        if (err != error.VersionWithoutAppend) return err;
+    }
     group.abi_version = old_version;
 
     group.size += 8;
@@ -2739,8 +2750,11 @@ fn runSelftest(allocator: std.mem.Allocator, contract: *Contract, baseline: *con
     };
     group.slots = extended_slots;
     group.size += group.pointer_size;
-    try expectRejected(allocator, contract, baseline);
+    if (validateGroupEvolution(allocator, group, &reference_group)) |_| return error.MutationNotRejected else |err| {
+        if (err != error.AppendWithoutVersionBump) return err;
+    }
     group.abi_version += 1;
+    try validateGroupEvolution(allocator, group, &reference_group);
     try validateContract(allocator, contract, baseline);
     group.abi_version -= 1;
     group.size -= group.pointer_size;

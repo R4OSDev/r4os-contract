@@ -6684,7 +6684,7 @@ comptime {
     if (@offsetOf(abi.GuiWindowAppearance, "title_background") != 36) @compileError("GuiWindowAppearance.title_background offset");
     if (@offsetOf(abi.GuiWindowAppearance, "title_foreground") != 40) @compileError("GuiWindowAppearance.title_foreground offset");
     if (@offsetOf(abi.GuiWindowAppearance, "reserved") != 44) @compileError("GuiWindowAppearance.reserved offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1408) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1416) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -7030,6 +7030,8 @@ comptime {
     if (@sizeOf(abi.R4SysFns.service_inventory_page) != 8) @compileError("R4SysFns.service_inventory_page signature");
     if (@offsetOf(abi.R4XStartR4Sys, "service_control_bound") != 1400) @compileError("R4XStartR4Sys.service_control_bound offset");
     if (@sizeOf(abi.R4SysFns.service_control_bound) != 8) @compileError("R4SysFns.service_control_bound signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "system_update_target_supported") != 1408) @compileError("R4XStartR4Sys.system_update_target_supported offset");
+    if (@sizeOf(abi.R4SysFns.system_update_target_supported) != 8) @compileError("R4SysFns.system_update_target_supported signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 632) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

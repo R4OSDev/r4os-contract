@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 504,
+    "group_function_signatures": 505,
     "sdk_operation_contracts": 0,
-    "parity_entries": 504,
+    "parity_entries": 505,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1547,6 +1547,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.service_control_bound",
       "c_contract": "R4SysServiceControlBoundFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.system_update_target_supported",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.system_update_target_supported",
+      "c_contract": "R4SysSystemUpdateTargetSupportedFn",
       "coverage": "generated_signature"
     },
     {

@@ -11081,12 +11081,13 @@ pub const R4SysFns = struct {
     pub const service_stop_bound = *const fn ([*:0]const u8, *const ProgramProcessHandle, *ServiceInfo, u64) callconv(.c) i32;
     pub const service_inventory_page = *const fn (*ServiceInventoryCursor, [*]ServiceInventoryRow, u32) callconv(.c) i32;
     pub const service_control_bound = *const fn (*const ServiceControlRequest) callconv(.c) i32;
+    pub const system_update_target_supported = *const fn ([*:0]const u8) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 35,
-    size: u32 = 1408,
+    abi_version: u32 = 36,
+    size: u32 = 1416,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -11262,6 +11263,7 @@ pub const R4XStartR4Sys = extern struct {
     service_stop_bound: usize = 0,
     service_inventory_page: usize = 0,
     service_control_bound: usize = 0,
+    system_update_target_supported: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -12166,6 +12168,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 171, .offset = 1384, .name = "service_stop_bound", .state = .function, .required = false },
     .{ .number = 172, .offset = 1392, .name = "service_inventory_page", .state = .function, .required = false },
     .{ .number = 173, .offset = 1400, .name = "service_control_bound", .state = .function, .required = false },
+    .{ .number = 174, .offset = 1408, .name = "system_update_target_supported", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -19612,7 +19615,7 @@ comptime {
     if (@offsetOf(GuiWindowAppearance, "title_background") != 36) @compileError("generated ABI offset drift: GuiWindowAppearance.title_background");
     if (@offsetOf(GuiWindowAppearance, "title_foreground") != 40) @compileError("generated ABI offset drift: GuiWindowAppearance.title_foreground");
     if (@offsetOf(GuiWindowAppearance, "reserved") != 44) @compileError("generated ABI offset drift: GuiWindowAppearance.reserved");
-    if (@sizeOf(R4XStartR4Sys) != 1408) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1416) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -19787,6 +19790,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "service_stop_bound") != 1384) @compileError("generated ABI offset drift: R4XStartR4Sys.service_stop_bound");
     if (@offsetOf(R4XStartR4Sys, "service_inventory_page") != 1392) @compileError("generated ABI offset drift: R4XStartR4Sys.service_inventory_page");
     if (@offsetOf(R4XStartR4Sys, "service_control_bound") != 1400) @compileError("generated ABI offset drift: R4XStartR4Sys.service_control_bound");
+    if (@offsetOf(R4XStartR4Sys, "system_update_target_supported") != 1408) @compileError("generated ABI offset drift: R4XStartR4Sys.system_update_target_supported");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

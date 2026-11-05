@@ -174,6 +174,7 @@ static R4SysServiceBoundDetailFn r4os_probe_r4sys_service_bound_detail = (R4SysS
 static R4SysServiceStopBoundFn r4os_probe_r4sys_service_stop_bound = (R4SysServiceStopBoundFn)0;
 static R4SysServiceInventoryPageFn r4os_probe_r4sys_service_inventory_page = (R4SysServiceInventoryPageFn)0;
 static R4SysServiceControlBoundFn r4os_probe_r4sys_service_control_bound = (R4SysServiceControlBoundFn)0;
+static R4SysSystemUpdateTargetSupportedFn r4os_probe_r4sys_system_update_target_supported = (R4SysSystemUpdateTargetSupportedFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;
