@@ -39,3 +39,43 @@ test "generation2 typed calls preserve the canonical C function signature and de
     table.write = 0;
     try std.testing.expect(api.function(api.R4SysFns2, view, "write") == null);
 }
+
+test "technical generation2 retains exact typed live slots and bounds the real smaller status callback" {
+    @setEvalBranchQuota(100_000);
+    inline for (.{ .{ api.DriverApi2, c.R4DriverApi2 }, .{ api.ProtocolApi2, c.R4ProtocolApi2 }, .{ api.AudioBackend2, c.R4AudioBackend2 }, .{ api.AudioBackendStatus2, c.R4AudioBackendStatus2 } }) |pair| {
+        try std.testing.expectEqual(@sizeOf(pair[0]), @sizeOf(pair[1]));
+        try std.testing.expectEqual(@alignOf(pair[0]), @alignOf(pair[1]));
+        inline for (std.meta.fields(pair[0])) |field| try std.testing.expectEqual(@offsetOf(pair[0], field.name), @offsetOf(pair[1], field.name));
+    }
+    try std.testing.expectEqual(@as(usize, 656), @sizeOf(api.DriverApi2));
+    try std.testing.expectEqual(@as(usize, 120), @sizeOf(api.ProtocolApi2));
+    try std.testing.expectEqual(@as(usize, 80), @sizeOf(api.AudioBackendStatus2));
+    try std.testing.expectEqual(@as(usize, 136), @sizeOf(api.AudioBackend2));
+    try std.testing.expect(!@hasField(api.DriverApi2, "register_audio_backend"));
+    try std.testing.expect(!@hasField(api.DriverApi2, "register_synth_engine"));
+    inline for (.{ "last_write_ticks", "max_write_ticks", "total_write_ticks", "last_refill_ticks", "max_refill_ticks", "total_refill_ticks" }) |name| try std.testing.expect(!@hasField(api.AudioBackendStatus2, name));
+    var offset: usize = 0;
+    inline for (std.meta.fields(api.shared.DriverApi)) |field| {
+        if (comptime std.mem.eql(u8, field.name, "register_audio_backend") or std.mem.eql(u8, field.name, "register_synth_engine")) continue;
+        try std.testing.expectEqual(offset, @offsetOf(api.DriverApi2, field.name));
+        if (comptime !std.mem.eql(u8, field.name, "register_audio_output_backend")) try std.testing.expect(@FieldType(api.DriverApi2, field.name) == field.type);
+        offset += @sizeOf(field.type);
+    }
+    try std.testing.expect(api.driver_magic != api.shared.driver_magic);
+    try std.testing.expect(api.protocol_magic != api.shared.protocol_magic);
+    try std.testing.expectEqual(@as(u32, 3), (api.AudioBackend2{}).version);
+    try std.testing.expect((api.AudioBackend2{}).magic != api.shared.audio_backend_outputs_version);
+    const Provider = struct {
+        fn status(raw: ?*anyopaque, out: *api.AudioBackendStatus2) callconv(.c) i32 {
+            if (@intFromPtr(raw) != 0x100000009) return -1;
+            out.* = .{ .active = 1, .writes = 0x100000007, .underruns = 3, .last_result = -17, .last_buffer_bytes = 64 };
+            return 0;
+        }
+    };
+    var guarded: extern struct { status: c.R4AudioBackendStatus2, guard: u64 } = .{ .status = std.mem.zeroes(c.R4AudioBackendStatus2), .guard = 0xdeadbeef10000003 };
+    const callback: c.R4AudioBackendStatusFn2 = @ptrCast(&Provider.status);
+    try std.testing.expectEqual(@as(i32, 0), callback.?(@ptrFromInt(0x100000009), &guarded.status));
+    try std.testing.expectEqual(@as(u64, 0x100000007), guarded.status.writes);
+    try std.testing.expectEqual(@as(i32, -17), guarded.status.last_result);
+    try std.testing.expectEqual(@as(u64, 0xdeadbeef10000003), guarded.guard);
+}

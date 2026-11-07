@@ -26506,6 +26506,345 @@ impl Default for NetBackend {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DriverApi2 {
+    pub magic: u32,
+    pub version: u32,
+    pub size: u32,
+    pub reserved: u32,
+    pub log_info: unsafe extern "C" fn(*const u8) -> (),
+    pub log_warn: unsafe extern "C" fn(*const u8) -> (),
+    pub log_error: unsafe extern "C" fn(*const u8) -> (),
+    pub port_inb: unsafe extern "C" fn(u16) -> u8,
+    pub port_outb: unsafe extern "C" fn(u16, u8) -> (),
+    pub alloc_dma_buffer: unsafe extern "C" fn(u32, u32) -> u64,
+    pub free_dma_buffer: unsafe extern "C" fn(u64, u32) -> (),
+    pub request_irq: unsafe extern "C" fn(u8, *const core::ffi::c_void) -> i32,
+    pub release_irq: unsafe extern "C" fn(u8) -> i32,
+    pub get_option: unsafe extern "C" fn(*const u8, *const u8) -> *const u8,
+    pub register_storage_backend: unsafe extern "C" fn(*const u8, *const core::ffi::c_void) -> i32,
+    pub register_input_backend: unsafe extern "C" fn(*const u8, *const core::ffi::c_void) -> i32,
+    pub register_mixer_backend: unsafe extern "C" fn(*const u8, *const core::ffi::c_void) -> i32,
+    pub register_net_backend: unsafe extern "C" fn(*const u8, *const core::ffi::c_void) -> i32,
+    pub alloc_dma_region: unsafe extern "C" fn(u32, u32, *mut DmaBuffer) -> i32,
+    pub free_dma_region: unsafe extern "C" fn(*mut DmaBuffer) -> (),
+    pub pci_device_count: unsafe extern "C" fn() -> u32,
+    pub pci_device_at: unsafe extern "C" fn(u32, *mut PciDeviceInfo) -> i32,
+    pub pci_find_by_class: unsafe extern "C" fn(u8, u8, u32, *mut PciDeviceInfo) -> i32,
+    pub pci_read_config32: unsafe extern "C" fn(u8, u8, u8, u8, u16) -> u32,
+    pub pci_write_config32: unsafe extern "C" fn(u8, u8, u8, u8, u16, u32) -> i32,
+    pub pci_read_bar: unsafe extern "C" fn(u8, u8, u8, u8, u8) -> u32,
+    pub pci_enable_bus_master: unsafe extern "C" fn(u8, u8, u8, u8, u32) -> i32,
+    pub irq_register: unsafe extern "C" fn(u8, unsafe extern "C" fn(u8, usize) -> u32, usize, u32) -> i32,
+    pub irq_unregister: unsafe extern "C" fn(u8, unsafe extern "C" fn(u8, usize) -> u32, usize) -> i32,
+    pub irq_stats: unsafe extern "C" fn(u8, *mut IrqStats) -> i32,
+    pub pci_map_bar: unsafe extern "C" fn(u8, u8, u8, u8, u8, u32, u32, *mut MmioRegion) -> i32,
+    pub port_inw: unsafe extern "C" fn(u16) -> u16,
+    pub port_outw: unsafe extern "C" fn(u16, u16) -> (),
+    pub port_inl: unsafe extern "C" fn(u16) -> u32,
+    pub port_outl: unsafe extern "C" fn(u16, u32) -> (),
+    pub net_receive_frame: unsafe extern "C" fn(i32, *const u8, u32) -> i32,
+    pub register_audio_output_backend: unsafe extern "C" fn(*const u8, *const AudioBackend2) -> i32,
+    pub unregister_audio_backend: unsafe extern "C" fn(*const u8) -> i32,
+    pub tick_count: unsafe extern "C" fn() -> u64,
+    pub timer_frequency: unsafe extern "C" fn() -> u32,
+    pub wait_ticks: unsafe extern "C" fn(u64) -> (),
+    pub register_synth_engine_v2: unsafe extern "C" fn(*const u8, *const SynthEngine) -> i32,
+    pub unregister_storage_backend: unsafe extern "C" fn(*const u8) -> i32,
+    pub storage_backend_recovery_begin: unsafe extern "C" fn(*const u8) -> i32,
+    pub storage_backend_recovery_finish: unsafe extern "C" fn(*const u8, i32) -> i32,
+    pub register_usb_host_controller: unsafe extern "C" fn(*const u8, *const UsbHostController) -> i32,
+    pub unregister_usb_host_controller: unsafe extern "C" fn(*const u8) -> i32,
+    pub driver_work_submit: unsafe extern "C" fn(unsafe extern "C" fn(usize) -> i32, usize, u32, *mut u32) -> i32,
+    pub driver_work_cancel: unsafe extern "C" fn(u32) -> i32,
+    pub driver_completion_wait: unsafe extern "C" fn(u32, u64, *mut i32) -> i32,
+    pub driver_completion_status: unsafe extern "C" fn(u32, *mut DriverCompletionStatus) -> i32,
+    pub driver_completion_release: unsafe extern "C" fn(u32) -> i32,
+    pub driver_work_summary: unsafe extern "C" fn(*mut DriverWorkSummary) -> i32,
+    pub pci_enable_msi: unsafe extern "C" fn(u8, u8, u8, u8) -> i32,
+    pub alloc_dma_region_constrained: unsafe extern "C" fn(u32, u32, u64, *mut DmaBuffer) -> i32,
+    pub pci_disable_msi: unsafe extern "C" fn(u8, u8, u8, u8) -> i32,
+    pub protocol_dispatch: Option<unsafe extern "C" fn(*const u8, u32, *const ProtocolBuffer, *mut ProtocolBuffer) -> i32>,
+    pub dma_pin_buffer: unsafe extern "C" fn(u64, u32, u32, *mut DmaPinnedBuffer) -> i32,
+    pub dma_map_pinned: unsafe extern "C" fn(*const DmaPinnedBuffer, *const DmaConstraints, u32, *mut DmaMapping) -> i32,
+    pub dma_sync_for_device: unsafe extern "C" fn(*const DmaMapping) -> i32,
+    pub dma_sync_for_cpu: unsafe extern "C" fn(*const DmaMapping) -> i32,
+    pub dma_unmap: unsafe extern "C" fn(*mut DmaMapping) -> i32,
+    pub dma_unpin_buffer: unsafe extern "C" fn(*mut DmaPinnedBuffer) -> i32,
+    pub driver_work_submit_request: unsafe extern "C" fn(*const DriverWorkRequest, *mut u32) -> i32,
+    pub activate_usb_host_controller: unsafe extern "C" fn(*const u8, u32) -> i32,
+    pub register_display_blit_backend: unsafe extern "C" fn(*const u8, *const DisplayBlitBackend) -> i32,
+    pub unregister_display_blit_backend: unsafe extern "C" fn(*const u8) -> i32,
+    pub net_schedule_rx: unsafe extern "C" fn(i32) -> i32,
+    pub net_backend_query: unsafe extern "C" fn(i32, *mut NetBackendNegotiation) -> i32,
+    pub net_receive_packet: unsafe extern "C" fn(i32, *const NetPacket) -> i32,
+    pub gfx_memory_query: Option<unsafe extern "C" fn(*mut GfxDriverMemoryApi) -> i32>,
+    pub gfx_queue_query: Option<unsafe extern "C" fn(*mut GfxDriverQueueApi) -> i32>,
+    pub gfx_output_query: Option<unsafe extern "C" fn(*mut GfxDriverOutputApi) -> i32>,
+    pub gfx_display_query: Option<unsafe extern "C" fn(*mut GfxDriverDisplayApi) -> i32>,
+    pub resource_query: Option<unsafe extern "C" fn(*mut DriverResourceApi) -> i32>,
+    pub heap_query: Option<unsafe extern "C" fn(*mut DriverHeapApi) -> i32>,
+    pub monotonic_clock: Option<unsafe extern "C" fn(*mut MonotonicClockInfo) -> i32>,
+    pub thread_query: Option<unsafe extern "C" fn(*mut DriverThreadApi) -> i32>,
+    pub semaphore_query: Option<unsafe extern "C" fn(*mut DriverSemaphoreApi) -> i32>,
+    pub dma_sync_range_for_device: Option<unsafe extern "C" fn(*const DmaMapping, u32, u32) -> i32>,
+    pub dma_sync_range_for_cpu: Option<unsafe extern "C" fn(*const DmaMapping, u32, u32) -> i32>,
+    pub driver_work_submit_owned: Option<unsafe extern "C" fn(unsafe extern "C" fn(usize) -> i32, usize, *mut u32) -> i32>,
+    pub serial_query: Option<unsafe extern "C" fn(*mut DriverSerialApi) -> i32>,
+    pub register_audio_output_epoch: Option<unsafe extern "C" fn(*const u8, unsafe extern "C" fn(u64, *mut AudioOutputEpoch) -> i32) -> i32>,
+}
+
+impl DriverApi2 {
+    pub const fn project_provider(source: &DriverApi, register_audio: AudioBackendRegisterFn2) -> Self { Self {
+        magic: driver_api2_magic,
+        version: driver_api2_version,
+        size: core::mem::size_of::<Self>() as u32,
+        reserved: 0,
+        log_info: source.log_info,
+        log_warn: source.log_warn,
+        log_error: source.log_error,
+        port_inb: source.port_inb,
+        port_outb: source.port_outb,
+        alloc_dma_buffer: source.alloc_dma_buffer,
+        free_dma_buffer: source.free_dma_buffer,
+        request_irq: source.request_irq,
+        release_irq: source.release_irq,
+        get_option: source.get_option,
+        register_storage_backend: source.register_storage_backend,
+        register_input_backend: source.register_input_backend,
+        register_mixer_backend: source.register_mixer_backend,
+        register_net_backend: source.register_net_backend,
+        alloc_dma_region: source.alloc_dma_region,
+        free_dma_region: source.free_dma_region,
+        pci_device_count: source.pci_device_count,
+        pci_device_at: source.pci_device_at,
+        pci_find_by_class: source.pci_find_by_class,
+        pci_read_config32: source.pci_read_config32,
+        pci_write_config32: source.pci_write_config32,
+        pci_read_bar: source.pci_read_bar,
+        pci_enable_bus_master: source.pci_enable_bus_master,
+        irq_register: source.irq_register,
+        irq_unregister: source.irq_unregister,
+        irq_stats: source.irq_stats,
+        pci_map_bar: source.pci_map_bar,
+        port_inw: source.port_inw,
+        port_outw: source.port_outw,
+        port_inl: source.port_inl,
+        port_outl: source.port_outl,
+        net_receive_frame: source.net_receive_frame,
+        register_audio_output_backend: register_audio,
+        unregister_audio_backend: source.unregister_audio_backend,
+        tick_count: source.tick_count,
+        timer_frequency: source.timer_frequency,
+        wait_ticks: source.wait_ticks,
+        register_synth_engine_v2: source.register_synth_engine_v2,
+        unregister_storage_backend: source.unregister_storage_backend,
+        storage_backend_recovery_begin: source.storage_backend_recovery_begin,
+        storage_backend_recovery_finish: source.storage_backend_recovery_finish,
+        register_usb_host_controller: source.register_usb_host_controller,
+        unregister_usb_host_controller: source.unregister_usb_host_controller,
+        driver_work_submit: source.driver_work_submit,
+        driver_work_cancel: source.driver_work_cancel,
+        driver_completion_wait: source.driver_completion_wait,
+        driver_completion_status: source.driver_completion_status,
+        driver_completion_release: source.driver_completion_release,
+        driver_work_summary: source.driver_work_summary,
+        pci_enable_msi: source.pci_enable_msi,
+        alloc_dma_region_constrained: source.alloc_dma_region_constrained,
+        pci_disable_msi: source.pci_disable_msi,
+        protocol_dispatch: source.protocol_dispatch,
+        dma_pin_buffer: source.dma_pin_buffer,
+        dma_map_pinned: source.dma_map_pinned,
+        dma_sync_for_device: source.dma_sync_for_device,
+        dma_sync_for_cpu: source.dma_sync_for_cpu,
+        dma_unmap: source.dma_unmap,
+        dma_unpin_buffer: source.dma_unpin_buffer,
+        driver_work_submit_request: source.driver_work_submit_request,
+        activate_usb_host_controller: source.activate_usb_host_controller,
+        register_display_blit_backend: source.register_display_blit_backend,
+        unregister_display_blit_backend: source.unregister_display_blit_backend,
+        net_schedule_rx: source.net_schedule_rx,
+        net_backend_query: source.net_backend_query,
+        net_receive_packet: source.net_receive_packet,
+        gfx_memory_query: source.gfx_memory_query,
+        gfx_queue_query: source.gfx_queue_query,
+        gfx_output_query: source.gfx_output_query,
+        gfx_display_query: source.gfx_display_query,
+        resource_query: source.resource_query,
+        heap_query: source.heap_query,
+        monotonic_clock: source.monotonic_clock,
+        thread_query: source.thread_query,
+        semaphore_query: source.semaphore_query,
+        dma_sync_range_for_device: source.dma_sync_range_for_device,
+        dma_sync_range_for_cpu: source.dma_sync_range_for_cpu,
+        driver_work_submit_owned: source.driver_work_submit_owned,
+        serial_query: source.serial_query,
+        register_audio_output_epoch: source.register_audio_output_epoch,
+    } }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ProtocolApi2 {
+    pub magic: u32,
+    pub version: u32,
+    pub size: u32,
+    pub reserved: u32,
+    pub log_info: unsafe extern "C" fn(*const u8) -> (),
+    pub log_warn: unsafe extern "C" fn(*const u8) -> (),
+    pub log_error: unsafe extern "C" fn(*const u8) -> (),
+    pub register_role: unsafe extern "C" fn(*const u8, u32, u32) -> i32,
+    pub set_status: unsafe extern "C" fn(u32, *const u8) -> i32,
+    pub dependency_status: unsafe extern "C" fn(*const u8) -> i32,
+    pub alloc: unsafe extern "C" fn(u32, u32) -> *mut core::ffi::c_void,
+    pub free: unsafe extern "C" fn(*mut core::ffi::c_void, u32) -> (),
+    pub file_read: unsafe extern "C" fn(*const u8, *mut u8, u32) -> i32,
+    pub cpu_acceleration_info: Option<unsafe extern "C" fn(*mut CpuAccelerationInfo) -> i32>,
+    pub cpu_acceleration_work: Option<unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32>,
+    pub entropy_source_info: Option<unsafe extern "C" fn(*mut EntropySourceInfo) -> i32>,
+    pub entropy_fill: Option<unsafe extern "C" fn(*mut u8, u32) -> i32>,
+}
+
+impl ProtocolApi2 {
+    pub const fn project_provider(source: &ProtocolApi) -> Self { Self {
+        magic: protocol_api2_magic,
+        version: protocol_api2_version,
+        size: core::mem::size_of::<Self>() as u32,
+        reserved: 0,
+        log_info: source.log_info,
+        log_warn: source.log_warn,
+        log_error: source.log_error,
+        register_role: source.register_role,
+        set_status: source.set_status,
+        dependency_status: source.dependency_status,
+        alloc: source.alloc,
+        free: source.free,
+        file_read: source.file_read,
+        cpu_acceleration_info: source.cpu_acceleration_info,
+        cpu_acceleration_work: source.cpu_acceleration_work,
+        entropy_source_info: source.entropy_source_info,
+        entropy_fill: source.entropy_fill,
+    } }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioBackend2 {
+    pub magic: u32,
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub formats: u32,
+    pub min_rate: u32,
+    pub max_rate: u32,
+    pub preferred_rate: u32,
+    pub max_channels: u16,
+    pub reserved: u16,
+    pub context: *mut core::ffi::c_void,
+    pub write_pcm: Option<unsafe extern "C" fn(*mut core::ffi::c_void, *const u8, u32, u32, u16, u16) -> i32>,
+    pub stop: Option<unsafe extern "C" fn(*mut core::ffi::c_void) -> i32>,
+    pub shutdown: Option<unsafe extern "C" fn(*mut core::ffi::c_void) -> i32>,
+    pub status: Option<unsafe extern "C" fn(*mut core::ffi::c_void, *mut AudioBackendStatus2) -> i32>,
+    pub output_query: Option<unsafe extern "C" fn(u64, u32, *mut AudioOutputInfo) -> i32>,
+    pub output_select: Option<unsafe extern "C" fn(u64, u32) -> i32>,
+    pub output_active: Option<unsafe extern "C" fn(u64) -> i32>,
+    pub idle: Option<unsafe extern "C" fn(*mut core::ffi::c_void) -> i32>,
+    pub write_tracked: Option<unsafe extern "C" fn(*mut core::ffi::c_void, *const u8, u32, u32, u16, u16, *mut AudioBackendWriteReceipt) -> i32>,
+    pub playback: Option<unsafe extern "C" fn(*mut core::ffi::c_void, *mut AudioBackendPlayback) -> i32>,
+    pub flow: Option<unsafe extern "C" fn(*mut core::ffi::c_void, *const AudioBackendFlow) -> i32>,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioBackend2 {
+    fn default() -> Self {
+        Self {
+            magic: 843208001,
+            version: 3,
+            size: 136,
+            flags: 0,
+            formats: 1,
+            min_rate: 0,
+            max_rate: 0,
+            preferred_rate: 48000,
+            max_channels: 2,
+            reserved: 0,
+            context: core::ptr::null_mut(),
+            write_pcm: None,
+            stop: None,
+            shutdown: None,
+            status: None,
+            output_query: None,
+            output_select: None,
+            output_active: None,
+            idle: None,
+            write_tracked: None,
+            playback: None,
+            flow: None,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioBackendStatus2 {
+    pub active: u32,
+    pub writes: u64,
+    pub underruns: u64,
+    pub errors: u64,
+    pub last_result: i32,
+    pub reserved: u32,
+    pub refills: u64,
+    pub silence_refills: u64,
+    pub buffer_bytes: u64,
+    pub queued_buffers: u64,
+    pub last_buffer_bytes: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioBackendStatus2 {
+    fn default() -> Self {
+        Self {
+            active: 0,
+            writes: 0,
+            underruns: 0,
+            errors: 0,
+            last_result: 0,
+            reserved: 0,
+            refills: 0,
+            silence_refills: 0,
+            buffer_bytes: 0,
+            queued_buffers: 0,
+            last_buffer_bytes: 0,
+        }
+    }
+}
+
+impl AudioBackendStatus2 {
+    pub fn expand_legacy(self) -> AudioBackendStatus { AudioBackendStatus {
+        active: self.active,
+        writes: self.writes,
+        underruns: self.underruns,
+        errors: self.errors,
+        last_result: self.last_result,
+        reserved: self.reserved,
+        refills: self.refills,
+        silence_refills: self.silence_refills,
+        buffer_bytes: self.buffer_bytes,
+        queued_buffers: self.queued_buffers,
+        last_buffer_bytes: self.last_buffer_bytes,
+        ..AudioBackendStatus::default()
+    } }
+}
+
+pub type AudioBackendRegisterFn2 = unsafe extern "C" fn(*const u8, *const AudioBackend2) -> i32;
+
+pub type AudioBackendStatusFn2 = unsafe extern "C" fn(*mut core::ffi::c_void, *mut AudioBackendStatus2) -> i32;
+pub const driver_api2_magic: u32 = 843665476;
+pub const driver_api2_version: u32 = 1;
+pub const protocol_api2_magic: u32 = 843665488;
+pub const protocol_api2_version: u32 = 1;
+pub const audio_backend2_magic: u32 = 843208001;
+pub const audio_backend2_version: u32 = 3;
+
 // Each expectation is computed independently by Zig from the canonical type.
 const _: () = {
     assert!(core::mem::size_of::<R4ErrorDomain>() == 2);
@@ -35819,4 +36158,150 @@ const _: () = {
     assert!(core::mem::offset_of!(NetBackend, transmit_packet) == 112);
     assert!(core::mem::size_of::<NetBackend>() == 120);
     assert!(core::mem::align_of::<NetBackend>() == 8);
+    assert!(core::mem::offset_of!(DriverApi2, magic) == 0);
+    assert!(core::mem::offset_of!(DriverApi2, version) == 4);
+    assert!(core::mem::offset_of!(DriverApi2, size) == 8);
+    assert!(core::mem::offset_of!(DriverApi2, reserved) == 12);
+    assert!(core::mem::offset_of!(DriverApi2, log_info) == 16);
+    assert!(core::mem::offset_of!(DriverApi2, log_warn) == 24);
+    assert!(core::mem::offset_of!(DriverApi2, log_error) == 32);
+    assert!(core::mem::offset_of!(DriverApi2, port_inb) == 40);
+    assert!(core::mem::offset_of!(DriverApi2, port_outb) == 48);
+    assert!(core::mem::offset_of!(DriverApi2, alloc_dma_buffer) == 56);
+    assert!(core::mem::offset_of!(DriverApi2, free_dma_buffer) == 64);
+    assert!(core::mem::offset_of!(DriverApi2, request_irq) == 72);
+    assert!(core::mem::offset_of!(DriverApi2, release_irq) == 80);
+    assert!(core::mem::offset_of!(DriverApi2, get_option) == 88);
+    assert!(core::mem::offset_of!(DriverApi2, register_storage_backend) == 96);
+    assert!(core::mem::offset_of!(DriverApi2, register_input_backend) == 104);
+    assert!(core::mem::offset_of!(DriverApi2, register_mixer_backend) == 112);
+    assert!(core::mem::offset_of!(DriverApi2, register_net_backend) == 120);
+    assert!(core::mem::offset_of!(DriverApi2, alloc_dma_region) == 128);
+    assert!(core::mem::offset_of!(DriverApi2, free_dma_region) == 136);
+    assert!(core::mem::offset_of!(DriverApi2, pci_device_count) == 144);
+    assert!(core::mem::offset_of!(DriverApi2, pci_device_at) == 152);
+    assert!(core::mem::offset_of!(DriverApi2, pci_find_by_class) == 160);
+    assert!(core::mem::offset_of!(DriverApi2, pci_read_config32) == 168);
+    assert!(core::mem::offset_of!(DriverApi2, pci_write_config32) == 176);
+    assert!(core::mem::offset_of!(DriverApi2, pci_read_bar) == 184);
+    assert!(core::mem::offset_of!(DriverApi2, pci_enable_bus_master) == 192);
+    assert!(core::mem::offset_of!(DriverApi2, irq_register) == 200);
+    assert!(core::mem::offset_of!(DriverApi2, irq_unregister) == 208);
+    assert!(core::mem::offset_of!(DriverApi2, irq_stats) == 216);
+    assert!(core::mem::offset_of!(DriverApi2, pci_map_bar) == 224);
+    assert!(core::mem::offset_of!(DriverApi2, port_inw) == 232);
+    assert!(core::mem::offset_of!(DriverApi2, port_outw) == 240);
+    assert!(core::mem::offset_of!(DriverApi2, port_inl) == 248);
+    assert!(core::mem::offset_of!(DriverApi2, port_outl) == 256);
+    assert!(core::mem::offset_of!(DriverApi2, net_receive_frame) == 264);
+    assert!(core::mem::offset_of!(DriverApi2, register_audio_output_backend) == 272);
+    assert!(core::mem::offset_of!(DriverApi2, unregister_audio_backend) == 280);
+    assert!(core::mem::offset_of!(DriverApi2, tick_count) == 288);
+    assert!(core::mem::offset_of!(DriverApi2, timer_frequency) == 296);
+    assert!(core::mem::offset_of!(DriverApi2, wait_ticks) == 304);
+    assert!(core::mem::offset_of!(DriverApi2, register_synth_engine_v2) == 312);
+    assert!(core::mem::offset_of!(DriverApi2, unregister_storage_backend) == 320);
+    assert!(core::mem::offset_of!(DriverApi2, storage_backend_recovery_begin) == 328);
+    assert!(core::mem::offset_of!(DriverApi2, storage_backend_recovery_finish) == 336);
+    assert!(core::mem::offset_of!(DriverApi2, register_usb_host_controller) == 344);
+    assert!(core::mem::offset_of!(DriverApi2, unregister_usb_host_controller) == 352);
+    assert!(core::mem::offset_of!(DriverApi2, driver_work_submit) == 360);
+    assert!(core::mem::offset_of!(DriverApi2, driver_work_cancel) == 368);
+    assert!(core::mem::offset_of!(DriverApi2, driver_completion_wait) == 376);
+    assert!(core::mem::offset_of!(DriverApi2, driver_completion_status) == 384);
+    assert!(core::mem::offset_of!(DriverApi2, driver_completion_release) == 392);
+    assert!(core::mem::offset_of!(DriverApi2, driver_work_summary) == 400);
+    assert!(core::mem::offset_of!(DriverApi2, pci_enable_msi) == 408);
+    assert!(core::mem::offset_of!(DriverApi2, alloc_dma_region_constrained) == 416);
+    assert!(core::mem::offset_of!(DriverApi2, pci_disable_msi) == 424);
+    assert!(core::mem::offset_of!(DriverApi2, protocol_dispatch) == 432);
+    assert!(core::mem::offset_of!(DriverApi2, dma_pin_buffer) == 440);
+    assert!(core::mem::offset_of!(DriverApi2, dma_map_pinned) == 448);
+    assert!(core::mem::offset_of!(DriverApi2, dma_sync_for_device) == 456);
+    assert!(core::mem::offset_of!(DriverApi2, dma_sync_for_cpu) == 464);
+    assert!(core::mem::offset_of!(DriverApi2, dma_unmap) == 472);
+    assert!(core::mem::offset_of!(DriverApi2, dma_unpin_buffer) == 480);
+    assert!(core::mem::offset_of!(DriverApi2, driver_work_submit_request) == 488);
+    assert!(core::mem::offset_of!(DriverApi2, activate_usb_host_controller) == 496);
+    assert!(core::mem::offset_of!(DriverApi2, register_display_blit_backend) == 504);
+    assert!(core::mem::offset_of!(DriverApi2, unregister_display_blit_backend) == 512);
+    assert!(core::mem::offset_of!(DriverApi2, net_schedule_rx) == 520);
+    assert!(core::mem::offset_of!(DriverApi2, net_backend_query) == 528);
+    assert!(core::mem::offset_of!(DriverApi2, net_receive_packet) == 536);
+    assert!(core::mem::offset_of!(DriverApi2, gfx_memory_query) == 544);
+    assert!(core::mem::offset_of!(DriverApi2, gfx_queue_query) == 552);
+    assert!(core::mem::offset_of!(DriverApi2, gfx_output_query) == 560);
+    assert!(core::mem::offset_of!(DriverApi2, gfx_display_query) == 568);
+    assert!(core::mem::offset_of!(DriverApi2, resource_query) == 576);
+    assert!(core::mem::offset_of!(DriverApi2, heap_query) == 584);
+    assert!(core::mem::offset_of!(DriverApi2, monotonic_clock) == 592);
+    assert!(core::mem::offset_of!(DriverApi2, thread_query) == 600);
+    assert!(core::mem::offset_of!(DriverApi2, semaphore_query) == 608);
+    assert!(core::mem::offset_of!(DriverApi2, dma_sync_range_for_device) == 616);
+    assert!(core::mem::offset_of!(DriverApi2, dma_sync_range_for_cpu) == 624);
+    assert!(core::mem::offset_of!(DriverApi2, driver_work_submit_owned) == 632);
+    assert!(core::mem::offset_of!(DriverApi2, serial_query) == 640);
+    assert!(core::mem::offset_of!(DriverApi2, register_audio_output_epoch) == 648);
+    assert!(core::mem::size_of::<DriverApi2>() == 656);
+    assert!(core::mem::align_of::<DriverApi2>() == 8);
+    assert!(core::mem::offset_of!(ProtocolApi2, magic) == 0);
+    assert!(core::mem::offset_of!(ProtocolApi2, version) == 4);
+    assert!(core::mem::offset_of!(ProtocolApi2, size) == 8);
+    assert!(core::mem::offset_of!(ProtocolApi2, reserved) == 12);
+    assert!(core::mem::offset_of!(ProtocolApi2, log_info) == 16);
+    assert!(core::mem::offset_of!(ProtocolApi2, log_warn) == 24);
+    assert!(core::mem::offset_of!(ProtocolApi2, log_error) == 32);
+    assert!(core::mem::offset_of!(ProtocolApi2, register_role) == 40);
+    assert!(core::mem::offset_of!(ProtocolApi2, set_status) == 48);
+    assert!(core::mem::offset_of!(ProtocolApi2, dependency_status) == 56);
+    assert!(core::mem::offset_of!(ProtocolApi2, alloc) == 64);
+    assert!(core::mem::offset_of!(ProtocolApi2, free) == 72);
+    assert!(core::mem::offset_of!(ProtocolApi2, file_read) == 80);
+    assert!(core::mem::offset_of!(ProtocolApi2, cpu_acceleration_info) == 88);
+    assert!(core::mem::offset_of!(ProtocolApi2, cpu_acceleration_work) == 96);
+    assert!(core::mem::offset_of!(ProtocolApi2, entropy_source_info) == 104);
+    assert!(core::mem::offset_of!(ProtocolApi2, entropy_fill) == 112);
+    assert!(core::mem::size_of::<ProtocolApi2>() == 120);
+    assert!(core::mem::align_of::<ProtocolApi2>() == 8);
+    assert!(core::mem::offset_of!(AudioBackend2, magic) == 0);
+    assert!(core::mem::offset_of!(AudioBackend2, version) == 4);
+    assert!(core::mem::offset_of!(AudioBackend2, size) == 8);
+    assert!(core::mem::offset_of!(AudioBackend2, flags) == 12);
+    assert!(core::mem::offset_of!(AudioBackend2, formats) == 16);
+    assert!(core::mem::offset_of!(AudioBackend2, min_rate) == 20);
+    assert!(core::mem::offset_of!(AudioBackend2, max_rate) == 24);
+    assert!(core::mem::offset_of!(AudioBackend2, preferred_rate) == 28);
+    assert!(core::mem::offset_of!(AudioBackend2, max_channels) == 32);
+    assert!(core::mem::offset_of!(AudioBackend2, reserved) == 34);
+    assert!(core::mem::offset_of!(AudioBackend2, context) == 40);
+    assert!(core::mem::offset_of!(AudioBackend2, write_pcm) == 48);
+    assert!(core::mem::offset_of!(AudioBackend2, stop) == 56);
+    assert!(core::mem::offset_of!(AudioBackend2, shutdown) == 64);
+    assert!(core::mem::offset_of!(AudioBackend2, status) == 72);
+    assert!(core::mem::offset_of!(AudioBackend2, output_query) == 80);
+    assert!(core::mem::offset_of!(AudioBackend2, output_select) == 88);
+    assert!(core::mem::offset_of!(AudioBackend2, output_active) == 96);
+    assert!(core::mem::offset_of!(AudioBackend2, idle) == 104);
+    assert!(core::mem::offset_of!(AudioBackend2, write_tracked) == 112);
+    assert!(core::mem::offset_of!(AudioBackend2, playback) == 120);
+    assert!(core::mem::offset_of!(AudioBackend2, flow) == 128);
+    assert!(core::mem::size_of::<AudioBackend2>() == 136);
+    assert!(core::mem::align_of::<AudioBackend2>() == 8);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, active) == 0);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, writes) == 8);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, underruns) == 16);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, errors) == 24);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, last_result) == 32);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, reserved) == 36);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, refills) == 40);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, silence_refills) == 48);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, buffer_bytes) == 56);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, queued_buffers) == 64);
+    assert!(core::mem::offset_of!(AudioBackendStatus2, last_buffer_bytes) == 72);
+    assert!(core::mem::size_of::<AudioBackendStatus2>() == 80);
+    assert!(core::mem::align_of::<AudioBackendStatus2>() == 8);
+    assert!(core::mem::size_of::<AudioBackendRegisterFn2>() == 8);
+    assert!(core::mem::align_of::<AudioBackendRegisterFn2>() == 8);
+    assert!(core::mem::size_of::<AudioBackendStatusFn2>() == 8);
+    assert!(core::mem::align_of::<AudioBackendStatusFn2>() == 8);
 };

@@ -15,8 +15,8 @@ const Config = struct {
         source_versions: struct { R4SYS: u32, R4DESK: u32, R4DRAW: u32, R4NET: u32, R4AUDIO: u32, R4DEV: u32 },
         remove_slots: struct { R4SYS: []const []const u8, R4DEV: []const []const u8 },
     },
-    driver: struct { init_symbol: []const u8, protocol_init_symbol: []const u8, export_version: u32, initial_version: u32, remove_fields: []const []const u8, magic: u32 },
-    audio_status: struct { name: []const u8, remove_fields: []const []const u8, backend_version: u32 },
+    driver: struct { init_symbol: []const u8, protocol_init_symbol: []const u8, export_version: u32, initial_version: u32, source_version: u32, protocol_source_version: u32, protocol_magic: u32, remove_fields: []const []const u8, magic: u32 },
+    audio_status: struct { name: []const u8, remove_fields: []const []const u8, backend_version: u32, backend_magic: u32 },
     selection: struct { default_generation: u32, profile_selection: []const u8, mixed_start_generations: []const u8, missing_generation: []const u8, shared_resource_owners: bool, profiles: []const []const u8 },
 };
 const Output = struct {
@@ -63,6 +63,10 @@ fn validate(config: Config, contract: anytype) !void {
     if (origins.R4SYS != 36 or origins.R4DESK != 21 or origins.R4DRAW != 39 or origins.R4NET != 2 or origins.R4AUDIO != 4 or origins.R4DEV != 36) return error.GenerationSourceRevision;
     if (!contains(config.start.remove_fields, "reserved_runtime") or config.start.remove_fields.len != 1 or !contains(config.query.remove_fields, "kernel_bridge") or config.query.remove_fields.len != 1) return error.GenerationFieldRemoval;
     if (!std.mem.eql(u8, config.driver.init_symbol, "DriverInit2") or !std.mem.eql(u8, config.driver.protocol_init_symbol, "ProtocolInit2") or config.driver.export_version != 2) return error.GenerationDriverIdentity;
+    if (config.driver.magic != 0x32495044 or config.driver.protocol_magic != 0x32495050 or config.driver.initial_version != 1 or config.driver.source_version != 39 or config.driver.protocol_source_version != 1) return error.GenerationDriverIdentity;
+    if (config.driver.remove_fields.len != 2 or !contains(config.driver.remove_fields, "register_audio_backend") or !contains(config.driver.remove_fields, "register_synth_engine")) return error.GenerationFieldRemoval;
+    if (!std.mem.eql(u8, config.audio_status.name, "AudioBackendStatus2") or config.audio_status.backend_version != 3 or config.audio_status.backend_magic != 0x32425541 or config.audio_status.remove_fields.len != 6) return error.GenerationAudioIdentity;
+    for ([_][]const u8{ "last_write_ticks", "max_write_ticks", "total_write_ticks", "last_refill_ticks", "max_refill_ticks", "total_refill_ticks" }) |field| if (!contains(config.audio_status.remove_fields, field)) return error.GenerationFieldRemoval;
     if (config.selection.default_generation != 1 or !config.selection.shared_resource_owners or !std.mem.eql(u8, config.selection.missing_generation, "reject") or !std.mem.eql(u8, config.selection.mixed_start_generations, "reject")) return error.GenerationSelection;
     var drops: usize = 0;
     for (contract.groups) |group| {
@@ -80,6 +84,7 @@ fn emitZig(a: std.mem.Allocator, config: Config, contract: anytype) ![]const u8 
     var out: Output = .{ .allocator = a };
     try out.text("pub const R4XStartShouldCloseFn2 = *const fn (*const R4XStartContext2) callconv(.c) u32;\npub const R4XStartYieldFn2 = *const fn (*const R4XStartContext2) callconv(.c) void;\n");
     try out.text("// Generated from API/ApiContract.json and API/Generation2.json. DO NOT EDIT.\nconst std = @import(\"std\");\nconst base = @import(\"r4os_base_abi\");\npub const shared = if (@hasDecl(base, \"abi\")) base.abi else base;\n\n");
+    try out.text("pub const DriverApi2 = shared.DriverApi2;\npub const ProtocolApi2 = shared.ProtocolApi2;\npub const AudioBackend2 = shared.AudioBackend2;\npub const AudioBackendStatus2 = shared.AudioBackendStatus2;\npub const AudioBackendRegisterFn2 = shared.AudioBackendRegisterFn2;\npub const AudioBackendStatusFn2 = shared.AudioBackendStatusFn2;\npub const driver_magic = shared.driver_api2_magic;\npub const driver_version = shared.driver_api2_version;\npub const protocol_magic = shared.protocol_api2_magic;\npub const protocol_version = shared.protocol_api2_version;\npub const audio_backend_magic = shared.audio_backend2_magic;\npub const audio_backend_version = shared.audio_backend2_version;\n");
     try out.print("pub const generation: u32 = 2;\npub const query_symbol = \"{s}\";\npub const query_version: u32 = {d};\npub const start_symbol = \"{s}\";\npub const start_version: u32 = {d};\n", .{ config.query.symbol, config.query.export_version, config.start.symbol, config.start.export_version });
     try out.print("pub const query_magic: u32 = {d};\npub const start_magic: u32 = {d};\n", .{ config.query.magic, config.start.magic });
     try out.print("pub const R4LQuery2 = extern struct {{\n    magic: u32 = {d},\n    abi_version: u32 = 2,\n    size: u32 = 24,\n    group: u32 = 0,\n    reserved: u64 = 0,\n}};\n", .{config.query.magic});
@@ -147,6 +152,7 @@ fn emitC(a: std.mem.Allocator, config: Config, contract: anytype) ![]const u8 {
 fn emitRust(a: std.mem.Allocator, config: Config, contract: anytype) ![]const u8 {
     var out: Output = .{ .allocator = a };
     try out.text("// Generated Generation2. DO NOT EDIT.\n");
+    try out.text("pub use super::{DriverApi2, ProtocolApi2, AudioBackend2, AudioBackendStatus2, AudioBackendRegisterFn2, AudioBackendStatusFn2};\npub const DRIVER_MAGIC: u32 = super::driver_api2_magic;\npub const DRIVER_VERSION: u32 = super::driver_api2_version;\npub const PROTOCOL_MAGIC: u32 = super::protocol_api2_magic;\npub const PROTOCOL_VERSION: u32 = super::protocol_api2_version;\npub const AUDIO_BACKEND_MAGIC: u32 = super::audio_backend2_magic;\npub const AUDIO_BACKEND_VERSION: u32 = super::audio_backend2_version;\n");
     try out.text("pub type R4XStartShouldCloseFn2 = unsafe extern \"C\" fn(*const R4XStartContext2) -> u32;\npub type R4XStartYieldFn2 = unsafe extern \"C\" fn(*const R4XStartContext2);\n");
     try out.print("pub const QUERY_MAGIC: u32 = {d};\npub const START_MAGIC: u32 = {d};\n#[repr(C)]\n#[derive(Clone, Copy)]\npub struct R4LQuery2 {{ pub magic: u32, pub abi_version: u32, pub size: u32, pub group: u32, pub reserved: u64 }}\nimpl Default for R4LQuery2 {{ fn default() -> Self {{ Self {{ magic: QUERY_MAGIC, abi_version: 2, size: 24, group: 0, reserved: 0 }} }} }}\n#[repr(C)]\n#[derive(Clone, Copy)]\npub struct R4XStartContext2 {{\n", .{ config.query.magic, config.start.magic });
     for (contract.r4x_start.context.fields) |field| if (!contains(config.start.remove_fields, field.name)) {
@@ -231,6 +237,7 @@ pub fn process(allocator: std.mem.Allocator, io: std.Io, contract: anytype, writ
     const config = parsed.value;
     try validate(config, contract);
     if (!write and !check) return;
+    try output(io, a, "Generated/SDK/Zig/technical2_generated.zig", try emitTechnical(a, config), write);
     try output(io, a, "Generated/Generation2/Zig/abi.zig", try emitZig(a, config, contract), write);
     try output(io, a, "Generated/Generation2/C/include/r4os/generation2.h", try emitC(a, config, contract), write);
     try output(io, a, "Generated/Generation2/Rust/generation2.rs", try emitRust(a, config, contract), write);
@@ -245,7 +252,7 @@ pub fn selftest(allocator: std.mem.Allocator, io: std.Io, contract: anytype) !vo
     const raw = try std.Io.Dir.cwd().readFileAlloc(io, "API/Generation2.json", a, .limited(64 * 1024));
     const parsed = try std.json.parseFromSlice(Config, a, raw, .{});
     try validate(parsed.value, contract);
-    for (0..9) |i| {
+    for (0..13) |i| {
         var mutated = parsed.value;
         switch (i) {
             0 => mutated.query.symbol = "Query",
@@ -257,9 +264,26 @@ pub fn selftest(allocator: std.mem.Allocator, io: std.Io, contract: anytype) !vo
             6 => mutated.selection.missing_generation = "fallback",
             7 => mutated.query.size = 32,
             8 => mutated.tables.source_versions.R4SYS = 35,
+            9 => mutated.driver.protocol_magic = mutated.driver.magic,
+            10 => mutated.driver.remove_fields = &.{"register_audio_output_backend"},
+            11 => mutated.audio_status.backend_magic = 3,
+            12 => mutated.audio_status.remove_fields = &.{"writes"},
             else => unreachable,
         }
         if (validate(mutated, contract)) |_| return error.GenerationMutationAccepted else |_| {}
     }
-    std.debug.print("Generation2 selftest: 9 incompatible identity/removal/selection/revision mutations rejected.\n", .{});
+    std.debug.print("Generation2 selftest: 13 incompatible identity/removal/selection/revision mutations rejected.\n", .{});
+}
+
+fn emitTechnical(a: std.mem.Allocator, config: Config) ![]const u8 {
+    var out: Output = .{ .allocator = a };
+    try out.text("// Generated from API/Generation2.json and canonical technical ABI types. DO NOT EDIT.\nconst std = @import(\"std\");\nconst base = @import(\"abi.zig\");\n");
+    try out.print("pub const driver_api2_magic: u32 = {d};\npub const driver_api2_version: u32 = {d} + base.driver_api_version - {d};\npub const protocol_api2_magic: u32 = {d};\npub const protocol_api2_version: u32 = {d} + base.protocol_api_version - {d};\npub const audio_backend2_magic: u32 = {d};\npub const audio_backend2_version: u32 = {d};\n", .{ config.driver.magic, config.driver.initial_version, config.driver.source_version, config.driver.protocol_magic, config.driver.initial_version, config.driver.protocol_source_version, config.audio_status.backend_magic, config.audio_status.backend_version });
+    try out.text("const driver_drops = [_][]const u8{");
+    for (config.driver.remove_fields) |field| try out.print("\"{s}\",", .{field});
+    try out.text("};\nconst status_drops = [_][]const u8{");
+    for (config.audio_status.remove_fields) |field| try out.print("\"{s}\",", .{field});
+    try out.text("};\n");
+    try out.text(@embedFile("generation2_technical.zig.in"));
+    return out.bytes.items;
 }

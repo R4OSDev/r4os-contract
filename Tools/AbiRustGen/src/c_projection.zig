@@ -49,8 +49,12 @@ fn localName(comptime T: type) []const u8 {
     const full = @typeName(T);
     const start = if (std.mem.lastIndexOfScalar(u8, full, '.')) |i| i + 1 else 0;
     const name = full[start..];
-    if (!@hasDecl(abi, name) or @field(abi, name) != T) @compileError("C ABI type needs its canonical public name: " ++ full);
-    return name;
+    if (@hasDecl(abi, name) and @field(abi, name) == T) return name;
+    inline for (std.meta.declarations(abi)) |decl| {
+        const value = @field(abi, decl.name);
+        if (@TypeOf(value) == type and value == T) return decl.name;
+    }
+    @compileError("C ABI type needs its canonical public name: " ++ full);
 }
 fn cName(comptime name: []const u8) []const u8 {
     return if (std.mem.startsWith(u8, name, "R4")) name else "R4" ++ name;

@@ -50,6 +50,9 @@
     "protocol_init_symbol": "ProtocolInit2",
     "export_version": 2,
     "initial_version": 1,
+    "source_version": 39,
+    "protocol_source_version": 1,
+    "protocol_magic": 843665488,
     "remove_fields": [
       "register_audio_backend",
       "register_synth_engine"
@@ -66,7 +69,8 @@
       "max_refill_ticks",
       "total_refill_ticks"
     ],
-    "backend_version": 3
+    "backend_version": 3,
+    "backend_magic": 843208001
   },
   "selection": {
     "default_generation": 1,
@@ -77,7 +81,13 @@
     "profiles": [
       "r4os-zig-generation2",
       "r4os-c-generation2",
-      "r4os-rust-generation2"
+      "r4os-rust-generation2",
+      "r4os-zig-r4d-generation2",
+      "r4os-c-r4d-generation2",
+      "r4os-rust-r4d-generation2",
+      "r4os-zig-r4p-generation2",
+      "r4os-c-r4p-generation2",
+      "r4os-rust-r4p-generation2"
     ]
   }
 }

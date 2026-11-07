@@ -1092,3 +1092,47 @@ or register_synth_engine_v2 with SynthEngine. No structured version is retired.
 Mixer registration, exact callback ownership, output selection, Idle versus
 physical Stop, closing and confirmed driver cleanup keep their existing rules.
 The SDK exposes only the structured synth helper registerSynthEngineEx.
+
+Explicit technical generation2 (0.90.15)
+----------------------------------------
+API/Generation2.json owns the initial source revisions, removal sets and
+independent identities. Its generator derives DriverApi2 from DriverApi39
+and ProtocolApi2 from ProtocolApi1; retained callback signatures are shared.
+DriverInit2:2 receives DriverApi2 (DPI2/0x32495044, revision1,656bytes).
+Only the two reserved untyped registration slots above are absent. The
+retained structured audio registration instead takes const AudioBackend2*.
+ProtocolInit2:2 receives the separate ProtocolApi2 (PPI2/0x32495050,
+revision1,120bytes). It must never be interpreted as a DriverApi table.
+Exactly one Init or Init2 with its exact export revision is permitted.
+The export must resolve to its actual loaded executable section and offset.
+DriverShutdown and ProtocolShutdown/Query/Dispatch keep their shared symbols.
+
+AudioBackend2 begins with AUB2/0x32425541, version3, size136 and flags0.
+It is not compatible with any old AudioBackend descriptor. Old versions
+2/3/4/5 (72/96/104/128bytes) remain live; version3 alone would be ambiguous.
+The full header and reserved0 precede use of the typed callbacks. PCM write,
+stop and status are mandatory. Output query/select/active are an optional
+complete triplet; Idle requires that triplet. Tracked write/playback/flow
+form another optional complete triplet. Nonzero known formats, bounded
+channels and consistent rate bounds are required before any record is stored.
+
+The new status callback writes AudioBackendStatus2,80bytes. It retains real
+operating/error counters and removes exactly the six retired duration u64s.
+Generated field-wise expansion into the shared private legacy core status
+sets those six fields to the unchanged unavailable UINT64_MAX defaults.
+No status callback pointer cast or reinterpretation is allowed. A callback
+error or nonzero reserved does not publish a partial status output.
+
+The existing registry, lifecycle identity, IRQ/task/DMA resource owners and
+audio core remain shared. New registration requires real Init/Owned-Work
+admission and refuses IRQ, dedicated-task and backend-callback contexts.
+Descriptors and callback/context backing remain resident through partial
+registration failure until actual unregister or terminal cleanup succeeds.
+Busy, callback error and shutdown veto retain backing and exact identity.
+No language destructor or timer return constitutes DMA/callback retirement.
+
+SDK Profiles/Build.json binds each explicit r4os-{zig,c,rust}-{r4d,r4p}-
+generation2 profile to its language/kind; manifests use R4DEV:Query2:2.
+Existing profiles, Init1 tables, old descriptors and consumer artifacts keep
+their existing layouts. Consumer migration and retirement of old providers
+are a later, separately planned cutover.

@@ -5776,3 +5776,19 @@ pub const NetBackend = extern struct {
     reserved2: u32 = 0,
     transmit_packet: ?NetTransmitPacketFn = null,
 };
+
+// Separate generation2 technical records; canonical removals/projections are
+// generated from Generation2.json without changing any legacy field layout.
+const technical2 = @import("technical2_generated.zig");
+pub const DriverApi2 = technical2.DriverApi2;
+pub const ProtocolApi2 = technical2.ProtocolApi2;
+pub const AudioBackend2 = technical2.AudioBackend2;
+pub const AudioBackendStatus2 = technical2.AudioBackendStatus2;
+pub const AudioBackendRegisterFn2 = technical2.AudioBackendRegisterFn2;
+pub const AudioBackendStatusFn2 = technical2.AudioBackendStatusFn2;
+pub const driver_api2_magic = technical2.driver_api2_magic;
+pub const driver_api2_version = technical2.driver_api2_version;
+pub const protocol_api2_magic = technical2.protocol_api2_magic;
+pub const protocol_api2_version = technical2.protocol_api2_version;
+pub const audio_backend2_magic = technical2.audio_backend2_magic;
+pub const audio_backend2_version = technical2.audio_backend2_version;

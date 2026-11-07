@@ -1,4 +1,11 @@
 // Generated Generation2. DO NOT EDIT.
+pub use super::{DriverApi2, ProtocolApi2, AudioBackend2, AudioBackendStatus2, AudioBackendRegisterFn2, AudioBackendStatusFn2};
+pub const DRIVER_MAGIC: u32 = super::driver_api2_magic;
+pub const DRIVER_VERSION: u32 = super::driver_api2_version;
+pub const PROTOCOL_MAGIC: u32 = super::protocol_api2_magic;
+pub const PROTOCOL_VERSION: u32 = super::protocol_api2_version;
+pub const AUDIO_BACKEND_MAGIC: u32 = super::audio_backend2_magic;
+pub const AUDIO_BACKEND_VERSION: u32 = super::audio_backend2_version;
 pub type R4XStartShouldCloseFn2 = unsafe extern "C" fn(*const R4XStartContext2) -> u32;
 pub type R4XStartYieldFn2 = unsafe extern "C" fn(*const R4XStartContext2);
 pub const QUERY_MAGIC: u32 = 843854930;
