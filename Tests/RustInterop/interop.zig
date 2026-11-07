@@ -1,8 +1,23 @@
 const std = @import("std");
 const abi = @import("r4os_technical_abi");
+const api2 = @import("r4os_generation2");
 const c = @cImport({
     @cInclude("r4os/abi_generated.h");
 });
+
+extern fn r4os_c_generation2(*const api2.R4XStartContext2, *const api2.R4XStartR4Sys2) callconv(.c) i32;
+extern fn r4os_rust_generation2(*const api2.R4XStartContext2, *const api2.R4XStartR4Sys2) callconv(.c) i32;
+test "generation2 C Rust Zig layouts defaults and callable slots agree" {
+    const Provider = struct {
+        fn write(data: [*]const u8, len: u32) callconv(.c) i32 {
+            return if (len == 4 and std.mem.eql(u8, data[0..len], "API2")) -20002 else -1;
+        }
+    };
+    const ctx: api2.R4XStartContext2 = .{};
+    const table: api2.R4XStartR4Sys2 = .{ .write = @intFromPtr(&Provider.write) };
+    try std.testing.expectEqual(@as(i32, -20002), r4os_c_generation2(&ctx, &table));
+    try std.testing.expectEqual(@as(i32, -20002), r4os_rust_generation2(&ctx, &table));
+}
 
 test "all canonical C and Rust-projected structures retain every field layout" {
     @setEvalBranchQuota(10000000);

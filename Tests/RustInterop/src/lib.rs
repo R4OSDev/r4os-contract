@@ -4,6 +4,45 @@ use r4os_contract as abi;
 
 #[unsafe(no_mangle)]
 /// # Safety
+/// Context, table and the callable table slot remain valid through this call.
+pub unsafe extern "C" fn r4os_rust_generation2(
+    context: *const abi::generation2::R4XStartContext2,
+    table: *const abi::generation2::R4XStartR4Sys2,
+) -> i32 {
+    let context = unsafe { &*context };
+    let table = unsafe { &*table };
+    assert_eq!(
+        (context.magic, context.abi_major, context.size),
+        (abi::generation2::START_MAGIC, 2, 120)
+    );
+    assert_eq!(
+        (table.magic, table.size),
+        (
+            abi::generation2::R4SYS_MAGIC,
+            core::mem::size_of_val(table) as u32
+        )
+    );
+    assert_ne!(table.write, 0);
+    let default = abi::generation2::R4XStartContext2::default();
+    assert_eq!(
+        (default.magic, default.abi_major, default.size),
+        (abi::generation2::START_MAGIC, 2, 120)
+    );
+    let default = abi::generation2::R4XStartR4Sys2::default();
+    assert_eq!(
+        (default.magic, default.abi_version, default.size),
+        (
+            abi::generation2::R4SYS_MAGIC,
+            1,
+            core::mem::size_of_val(&default) as u32
+        )
+    );
+    let call: abi::R4SysFns::write = unsafe { core::mem::transmute(table.write as usize) };
+    unsafe { call(b"API2".as_ptr(), 4) }
+}
+
+#[unsafe(no_mangle)]
+/// # Safety
 /// The caller retains one fully initialized ProtocolApi for this call.
 pub unsafe extern "C" fn r4os_rust_protocol_alloc(
     api: *const abi::ProtocolApi,
@@ -35,8 +74,15 @@ pub unsafe extern "C" fn r4os_rust_console_events(
     assert_eq!(handle.reserved, 0);
     assert_eq!(handle.generation, 0xfedcba9876543210);
     let events = unsafe { core::slice::from_raw_parts(events, count as usize) };
-    for (event, (kind, value)) in events.iter().zip([(1, 0x20ac), (2, 0x80), (3, 0x81), (1, 0x1f600)]) {
-        assert_eq!((event.version, event.kind, event.value, event.flags), (1, kind, value, 0));
+    for (event, (kind, value)) in
+        events
+            .iter()
+            .zip([(1, 0x20ac), (2, 0x80), (3, 0x81), (1, 0x1f600)])
+    {
+        assert_eq!(
+            (event.version, event.kind, event.value, event.flags),
+            (1, kind, value, 0)
+        );
     }
     3
 }

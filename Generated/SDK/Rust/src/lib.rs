@@ -5,6 +5,8 @@
 
 #[cfg(not(all(target_arch = "x86_64", target_pointer_width = "64", target_endian = "little")))]
 compile_error!("R4OS Contract requires little-endian x86_64 with 64-bit pointers");
+#[path = "../../../Generation2/Rust/generation2.rs"]
+pub mod generation2;
 pub const arch_x86_64: u16 = 1;
 pub const arp_flag_reply: u32 = 2;
 pub const arp_flag_request: u32 = 1;

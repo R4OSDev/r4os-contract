@@ -43,10 +43,12 @@ $libraryName = if ($IsWindows) { 'r4os_contract_interop.lib' } else { 'libr4os_c
 $library = Join-Path $targetDirectory ($executionTarget + '/release/' + $libraryName)
 $include = Join-Path $contract 'Generated/SDK/C/include'
 $abi = Join-Path $contract 'Generated/SDK/Zig/abi.zig'
+$generation2 = Join-Path $contract 'Generated/Generation2/Zig/abi.zig'
 $fixture = Join-Path $contract 'Tests/RustInterop/interop.zig'
 $cFixture = Join-Path $contract 'Tests/RustInterop/interop.c'
-$arguments = @('test','-O','ReleaseSafe','-lc','-I',$include,$cFixture,$library,
-    '--dep','r4os_technical_abi',('-Mroot='+$fixture),('-Mr4os_technical_abi='+$abi),
+$arguments = @('test','-O','ReleaseSafe','-lc','-I',$include,'-I',(Join-Path $contract 'Generated/Generation2/C/include'),$cFixture,$library,
+    '--dep','r4os_technical_abi','--dep','r4os_generation2',('-Mroot='+$fixture),('-Mr4os_technical_abi='+$abi),
+    '--dep','r4os_base_abi=r4os_technical_abi',('-Mr4os_generation2='+$generation2),
     '--cache-dir',(Join-Path $temporary 'zig-cache'))
 & $zig @arguments
 if ($LASTEXITCODE -ne 0) { throw 'Canonical Rust/Zig/C callback roundtrip failed.' }

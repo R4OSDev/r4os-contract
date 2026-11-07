@@ -5,9 +5,14 @@ pub const abi = @import("Generated/SDK/Zig/abi_exports.zig");
 pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
-    _ = b.addModule("r4os_contract", .{
+    const base_contract = b.addModule("r4os_contract", .{
         .root_source_file = b.path("Generated/SDK/Zig/package.zig"),
     });
+    const next_contract = b.addModule("r4os_contract2", .{
+        .root_source_file = b.path("Generated/Generation2/Zig/abi.zig"),
+    });
+    next_contract.addImport("r4os_base_abi", base_contract);
+    b.addNamedLazyPath("r4os_contract2_c_include", b.path("Generated/Generation2/C/include"));
     b.addNamedLazyPath(
         "r4os_contract_c_include",
         b.path("Generated/SDK/C/include"),
@@ -50,7 +55,9 @@ pub fn build(b: *std.Build) void {
 
     // Compile reflection only after the schema generator has materialized its
     // new Zig types. Check/default builds never acquire this write dependency.
-    const rust_write_generator = addRustGenerator(b, optimize, technical_abi, "api-rust-gen-write");
+    // Same compiler identity permits reuse after write; distinct build steps
+    // preserve the required materialize-before-reflection dependency.
+    const rust_write_generator = addRustGenerator(b, optimize, technical_abi, "api-rust-gen");
     rust_write_generator.step.dependOn(&write_run.step);
     const rust_write = b.addRunArtifact(rust_write_generator);
     rust_write.setCwd(b.path("."));
@@ -122,6 +129,16 @@ pub fn build(b: *std.Build) void {
     });
 
     const test_step = b.step("test", "Run generator self-tests and compile all generated Zig/C artifacts");
+    const next_tests_root = b.createModule(.{
+        .root_source_file = b.path("Tests/Generation2.zig"),
+        .target = b.graph.host,
+        .optimize = .Debug,
+    });
+    next_tests_root.addImport("r4os_contract2", next_contract);
+    next_tests_root.addIncludePath(b.path("Generated/SDK/C/include"));
+    next_tests_root.addIncludePath(b.path("Generated/Generation2/C/include"));
+    const next_tests = b.addRunArtifact(b.addTest(.{ .root_module = next_tests_root }));
+    test_step.dependOn(&next_tests.step);
     test_step.dependOn(&check_run.step);
     test_step.dependOn(&selftest_run.step);
     test_step.dependOn(&run_abi_tests.step);

@@ -1,5 +1,13 @@
 #include <r4os/abi_generated.h>
+#include <r4os/generation2.h>
 #include <emmintrin.h>
+
+int32_t r4os_c_generation2(const R4XStartContext2 *context, const R4XStartR4Sys2 *table) {
+    if(context->magic != R4OS2_START_MAGIC || context->abi_major != 2 || context->size != 120 ||
+       table->magic != R4OS2_R4SYS_MAGIC || table->size != sizeof(*table) || table->write == 0) return -1;
+    const R4SysWriteFn call = (R4SysWriteFn)(uintptr_t)table->write;
+    return call((const uint8_t*)"API2",4);
+}
 
 /* Two independent projections of the existing borrowed callback-slot ABI. */
 _Static_assert(__builtin_types_compatible_p(__typeof__(((R4ProtocolApi *)0)->cpu_acceleration_work), R4DevCpuAccelerationWorkFn), "protocol callback pointer/const levels");

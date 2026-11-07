@@ -1,4 +1,5 @@
 const std = @import("std");
+const generation2 = @import("generation2.zig");
 
 const default_schema_path = "API/ApiContract.json";
 const default_baseline_path = "API/ApiContract.baseline.json";
@@ -455,11 +456,13 @@ pub fn main(init: std.process.Init) !void {
         defer baseline.deinit();
         try validateContract(allocator, &parsed.value, &baseline.value);
         try runSelftest(allocator, &parsed.value, &baseline.value);
+        try generation2.selftest(allocator, io, &parsed.value);
         std.debug.print("ApiContractGen selftest OK: 26/26 Mutationen erkannt; zentrale Runtime-R4L-Gruppen abgelehnt, gueltige Slot-/Payload-Appends, Extensible-Canaries und API-Inventarauswahl akzeptiert.\n", .{});
         return;
     }
 
     try validateInternal(&parsed.value, options.update_baseline);
+    try generation2.process(allocator, io, &parsed.value, false, false);
     const payload_reference = try renderPayloadReference(allocator, &parsed.value);
     defer allocator.free(payload_reference);
     const zig_abi = try renderZigAbi(allocator, &parsed.value);
@@ -482,6 +485,7 @@ pub fn main(init: std.process.Init) !void {
     defer allocator.free(r4l_contract);
 
     if (options.action == .write and options.update_baseline) {
+        try generation2.process(allocator, io, &parsed.value, true, false);
         const canonical = try canonicalAlloc(allocator, parsed.value);
         defer allocator.free(canonical);
         try cwd.writeFile(io, .{ .sub_path = options.schema_path, .data = canonical });
@@ -502,6 +506,8 @@ pub fn main(init: std.process.Init) !void {
     var baseline = try std.json.parseFromSlice(Contract, allocator, baseline_bytes, .{});
     defer baseline.deinit();
     try validateContract(allocator, &parsed.value, &baseline.value);
+
+    try generation2.process(allocator, io, &parsed.value, options.action == .write, options.action == .check);
 
     const canonical = try canonicalAlloc(allocator, parsed.value);
     defer allocator.free(canonical);
