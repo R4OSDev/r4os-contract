@@ -1,3 +1,5 @@
+pub const R4XStartShouldCloseFn2 = *const fn (*const R4XStartContext2) callconv(.c) u32;
+pub const R4XStartYieldFn2 = *const fn (*const R4XStartContext2) callconv(.c) void;
 // Generated from API/ApiContract.json and API/Generation2.json. DO NOT EDIT.
 const std = @import("std");
 const base = @import("r4os_base_abi");

@@ -78,6 +78,7 @@ fn validate(config: Config, contract: anytype) !void {
 
 fn emitZig(a: std.mem.Allocator, config: Config, contract: anytype) ![]const u8 {
     var out: Output = .{ .allocator = a };
+    try out.text("pub const R4XStartShouldCloseFn2 = *const fn (*const R4XStartContext2) callconv(.c) u32;\npub const R4XStartYieldFn2 = *const fn (*const R4XStartContext2) callconv(.c) void;\n");
     try out.text("// Generated from API/ApiContract.json and API/Generation2.json. DO NOT EDIT.\nconst std = @import(\"std\");\nconst base = @import(\"r4os_base_abi\");\npub const shared = if (@hasDecl(base, \"abi\")) base.abi else base;\n\n");
     try out.print("pub const generation: u32 = 2;\npub const query_symbol = \"{s}\";\npub const query_version: u32 = {d};\npub const start_symbol = \"{s}\";\npub const start_version: u32 = {d};\n", .{ config.query.symbol, config.query.export_version, config.start.symbol, config.start.export_version });
     try out.print("pub const query_magic: u32 = {d};\npub const start_magic: u32 = {d};\n", .{ config.query.magic, config.start.magic });
@@ -139,13 +140,14 @@ fn emitC(a: std.mem.Allocator, config: Config, contract: anytype) ![]const u8 {
             i += 1;
         };
     }
-    try out.text("#endif\n");
+    try out.text("typedef uint32_t (*R4XStartShouldCloseFn2)(const R4XStartContext2 *);\ntypedef void (*R4XStartYieldFn2)(const R4XStartContext2 *);\n#endif\n");
     return out.bytes.items;
 }
 
 fn emitRust(a: std.mem.Allocator, config: Config, contract: anytype) ![]const u8 {
     var out: Output = .{ .allocator = a };
     try out.text("// Generated Generation2. DO NOT EDIT.\n");
+    try out.text("pub type R4XStartShouldCloseFn2 = unsafe extern \"C\" fn(*const R4XStartContext2) -> u32;\npub type R4XStartYieldFn2 = unsafe extern \"C\" fn(*const R4XStartContext2);\n");
     try out.print("pub const QUERY_MAGIC: u32 = {d};\npub const START_MAGIC: u32 = {d};\n#[repr(C)]\n#[derive(Clone, Copy)]\npub struct R4LQuery2 {{ pub magic: u32, pub abi_version: u32, pub size: u32, pub group: u32, pub reserved: u64 }}\nimpl Default for R4LQuery2 {{ fn default() -> Self {{ Self {{ magic: QUERY_MAGIC, abi_version: 2, size: 24, group: 0, reserved: 0 }} }} }}\n#[repr(C)]\n#[derive(Clone, Copy)]\npub struct R4XStartContext2 {{\n", .{ config.query.magic, config.start.magic });
     for (contract.r4x_start.context.fields) |field| if (!contains(config.start.remove_fields, field.name)) {
         const name = if (std.mem.eql(u8, field.name, "yield")) "r#yield" else field.name;

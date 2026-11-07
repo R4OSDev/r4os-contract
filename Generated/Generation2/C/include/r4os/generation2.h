@@ -1092,4 +1092,6 @@ _Static_assert(offsetof(R4XStartR4Dev2,cpu_acceleration_info)==680, "Generation2
 _Static_assert(offsetof(R4XStartR4Dev2,cpu_acceleration_work)==688, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,fpu_observation)==696, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,firmware_system_uuid)==704, "Generation2 slot");
+typedef uint32_t (*R4XStartShouldCloseFn2)(const R4XStartContext2 *);
+typedef void (*R4XStartYieldFn2)(const R4XStartContext2 *);
 #endif

@@ -1,4 +1,6 @@
 // Generated Generation2. DO NOT EDIT.
+pub type R4XStartShouldCloseFn2 = unsafe extern "C" fn(*const R4XStartContext2) -> u32;
+pub type R4XStartYieldFn2 = unsafe extern "C" fn(*const R4XStartContext2);
 pub const QUERY_MAGIC: u32 = 843854930;
 pub const START_MAGIC: u32 = 844641362;
 #[repr(C)]
