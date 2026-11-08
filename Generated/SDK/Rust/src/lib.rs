@@ -2993,6 +2993,61 @@ pub const clipboard_offer_error_unsupported: i32 = -6107;
 pub const clipboard_offer_error_invalid_encoding: i32 = -6108;
 pub const clipboard_offer_error_incomplete: i32 = -6109;
 pub const clipboard_offer_error_not_found: i32 = -6110;
+pub const network_family_ipv4: u16 = 4;
+pub const network_family_ipv6: u16 = 6;
+pub const network_cap_ipv4: u64 = 1;
+pub const network_cap_ipv6: u64 = 2;
+pub const network_cap_dns_a: u64 = 4;
+pub const network_cap_dns_aaaa_codec: u64 = 8;
+pub const network_cap_dns_aaaa: u64 = 16;
+pub const network_cap_tcp: u64 = 32;
+pub const network_cap_udp: u64 = 64;
+pub const network_cap_listen: u64 = 128;
+pub const network_cap_dual_stack: u64 = 256;
+pub const network_cap_v4_mapped: u64 = 512;
+pub const network_cap_datagram_truncate: u64 = 1024;
+pub const network_cap_retained_terminal: u64 = 2048;
+pub const network_policy_dual_stack: u32 = 1;
+pub const network_policy_v4_mapped: u32 = 2;
+pub const network_policy_fallback: u32 = 4;
+pub const network_flag_more: u32 = 1;
+pub const network_flag_truncated: u32 = 2;
+pub const network_state_ready: u32 = 1;
+pub const network_state_would_block: u32 = 2;
+pub const network_state_eof: u32 = 3;
+pub const network_state_reset: u32 = 4;
+pub const network_state_local_closed: u32 = 5;
+pub const network_state_timeout: u32 = 6;
+pub const network_max_answers: u32 = 32;
+pub const network_page_capacity: u32 = 16;
+pub const network_lease_ns: u64 = 30000000000;
+pub const network_op_info: u16 = 1280;
+pub const network_op_connect: u16 = 1281;
+pub const network_op_bind: u16 = 1282;
+pub const network_op_read: u16 = 1283;
+pub const network_op_write: u16 = 1284;
+pub const network_op_send: u16 = 1285;
+pub const network_op_recv: u16 = 1286;
+pub const network_op_close: u16 = 1287;
+pub const network_op_listen: u16 = 1288;
+pub const network_op_accept: u16 = 1289;
+pub const network_op_resolve: u16 = 1290;
+pub const network_op_release: u16 = 1291;
+pub const net_service_op_tcp_connect_retained_result: u16 = 797;
+pub const network_error_invalid: i32 = -6201;
+pub const network_error_unsupported_family: i32 = -6202;
+pub const network_error_unsupported_policy: i32 = -6203;
+pub const network_error_unsupported_scope: i32 = -6204;
+pub const network_error_provider_changed: i32 = -6205;
+pub const network_error_bad_socket: i32 = -6206;
+pub const network_error_capacity: i32 = -6207;
+pub const network_error_clock_changed: i32 = -6208;
+pub const network_error_timeout: i32 = -6209;
+pub const network_error_would_block: i32 = -6210;
+pub const network_error_reset: i32 = -6211;
+pub const network_error_backend: i32 = -6212;
+pub const network_error_not_found: i32 = -6213;
+pub const network_error_truncated_dns: i32 = -6214;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -21517,6 +21572,262 @@ impl Default for ClipboardOfferChunk {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkAddress {
+    pub family: u16,
+    pub reserved0: u16,
+    pub scope_id: u32,
+    pub interface_id: u32,
+    pub reserved1: u32,
+    pub bytes: [u8; 16],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkAddress {
+    fn default() -> Self {
+        Self {
+            family: 0,
+            reserved0: 0,
+            scope_id: 0,
+            interface_id: 0,
+            reserved1: 0,
+            bytes: [0; 16],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkEndpoint {
+    pub address: NetworkAddress,
+    pub port: u16,
+    pub reserved: u16,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkEndpoint {
+    fn default() -> Self {
+        Self {
+            address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            port: 0,
+            reserved: 0,
+            flags: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkDeadline {
+    pub version: u32,
+    pub size: u32,
+    pub kind: u32,
+    pub reserved0: u32,
+    pub absolute_ns: u64,
+    pub last_ns: u64,
+    pub clock_source: u32,
+    pub clock_generation: u32,
+    pub event_backend: u32,
+    pub tick_hz: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkDeadline {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            kind: 0,
+            reserved0: 0,
+            absolute_ns: 0,
+            last_ns: 0,
+            clock_source: 0,
+            clock_generation: 0,
+            event_backend: 0,
+            tick_hz: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkProviderInfo {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub capabilities: u64,
+    pub max_send: u32,
+    pub max_recv: u32,
+    pub max_answers: u32,
+    pub page_capacity: u32,
+    pub interface_id: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkProviderInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            provider: 0,
+            capabilities: 0,
+            max_send: 0,
+            max_recv: 0,
+            max_answers: 0,
+            page_capacity: 0,
+            interface_id: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkSocketRequest {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub socket: u64,
+    pub generation: u64,
+    pub endpoint: NetworkEndpoint,
+    pub deadline: NetworkDeadline,
+    pub flags: u32,
+    pub bytes: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkSocketRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            provider: 0,
+            socket: 0,
+            generation: 0,
+            endpoint: NetworkEndpoint { address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] }, port: 0, reserved: 0, flags: 0 },
+            deadline: NetworkDeadline { version: 1, size: 48, kind: 0, reserved0: 0, absolute_ns: 0, last_ns: 0, clock_source: 0, clock_generation: 0, event_backend: 0, tick_hz: 0 },
+            flags: 0,
+            bytes: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkSocketResult {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub socket: u64,
+    pub generation: u64,
+    pub endpoint: NetworkEndpoint,
+    pub bytes: u32,
+    pub original_bytes: u32,
+    pub state: u32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkSocketResult {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 88,
+            provider: 0,
+            socket: 0,
+            generation: 0,
+            endpoint: NetworkEndpoint { address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] }, port: 0, reserved: 0, flags: 0 },
+            bytes: 0,
+            original_bytes: 0,
+            state: 0,
+            flags: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkResolveRequest {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub query: u64,
+    pub deadline: NetworkDeadline,
+    pub family: u32,
+    pub policy: u32,
+    pub cursor: u32,
+    pub capacity: u32,
+    pub server: NetworkEndpoint,
+    pub name_len: u32,
+    pub reserved: u32,
+    pub name: [u8; 256],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkResolveRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 392,
+            provider: 0,
+            query: 0,
+            deadline: NetworkDeadline { version: 1, size: 48, kind: 0, reserved0: 0, absolute_ns: 0, last_ns: 0, clock_source: 0, clock_generation: 0, event_backend: 0, tick_hz: 0 },
+            family: 4,
+            policy: 0,
+            cursor: 0,
+            capacity: 16,
+            server: NetworkEndpoint { address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] }, port: 0, reserved: 0, flags: 0 },
+            name_len: 0,
+            reserved: 0,
+            name: [0; 256],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkResolvePage {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub query: u64,
+    pub expires_ns: u64,
+    pub next: u32,
+    pub count: u32,
+    pub total: u32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkResolvePage {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            provider: 0,
+            query: 0,
+            expires_ns: 0,
+            next: 0,
+            count: 0,
+            total: 0,
+            flags: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkResolveAnswer {
+    pub address: NetworkAddress,
+    pub ttl_seconds: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkResolveAnswer {
+    fn default() -> Self {
+        Self {
+            address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            ttl_seconds: 0,
+            reserved: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -34925,6 +35236,98 @@ const _: () = {
     assert!(core::mem::offset_of!(ClipboardOfferChunk, flags) == 52);
     assert!(core::mem::size_of::<ClipboardOfferChunk>() == 56);
     assert!(core::mem::align_of::<ClipboardOfferChunk>() == 8);
+    assert!(core::mem::offset_of!(NetworkAddress, family) == 0);
+    assert!(core::mem::offset_of!(NetworkAddress, reserved0) == 2);
+    assert!(core::mem::offset_of!(NetworkAddress, scope_id) == 4);
+    assert!(core::mem::offset_of!(NetworkAddress, interface_id) == 8);
+    assert!(core::mem::offset_of!(NetworkAddress, reserved1) == 12);
+    assert!(core::mem::offset_of!(NetworkAddress, bytes) == 16);
+    assert!(core::mem::size_of::<NetworkAddress>() == 32);
+    assert!(core::mem::align_of::<NetworkAddress>() == 4);
+    assert!(core::mem::offset_of!(NetworkEndpoint, address) == 0);
+    assert!(core::mem::offset_of!(NetworkEndpoint, port) == 32);
+    assert!(core::mem::offset_of!(NetworkEndpoint, reserved) == 34);
+    assert!(core::mem::offset_of!(NetworkEndpoint, flags) == 36);
+    assert!(core::mem::size_of::<NetworkEndpoint>() == 40);
+    assert!(core::mem::align_of::<NetworkEndpoint>() == 4);
+    assert!(core::mem::offset_of!(NetworkDeadline, version) == 0);
+    assert!(core::mem::offset_of!(NetworkDeadline, size) == 4);
+    assert!(core::mem::offset_of!(NetworkDeadline, kind) == 8);
+    assert!(core::mem::offset_of!(NetworkDeadline, reserved0) == 12);
+    assert!(core::mem::offset_of!(NetworkDeadline, absolute_ns) == 16);
+    assert!(core::mem::offset_of!(NetworkDeadline, last_ns) == 24);
+    assert!(core::mem::offset_of!(NetworkDeadline, clock_source) == 32);
+    assert!(core::mem::offset_of!(NetworkDeadline, clock_generation) == 36);
+    assert!(core::mem::offset_of!(NetworkDeadline, event_backend) == 40);
+    assert!(core::mem::offset_of!(NetworkDeadline, tick_hz) == 44);
+    assert!(core::mem::size_of::<NetworkDeadline>() == 48);
+    assert!(core::mem::align_of::<NetworkDeadline>() == 8);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, version) == 0);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, size) == 4);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, provider) == 8);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, capabilities) == 16);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, max_send) == 24);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, max_recv) == 28);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, max_answers) == 32);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, page_capacity) == 36);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, interface_id) == 40);
+    assert!(core::mem::offset_of!(NetworkProviderInfo, reserved) == 44);
+    assert!(core::mem::size_of::<NetworkProviderInfo>() == 48);
+    assert!(core::mem::align_of::<NetworkProviderInfo>() == 8);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, version) == 0);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, size) == 4);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, provider) == 8);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, socket) == 16);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, generation) == 24);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, endpoint) == 32);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, deadline) == 72);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, flags) == 120);
+    assert!(core::mem::offset_of!(NetworkSocketRequest, bytes) == 124);
+    assert!(core::mem::size_of::<NetworkSocketRequest>() == 128);
+    assert!(core::mem::align_of::<NetworkSocketRequest>() == 8);
+    assert!(core::mem::offset_of!(NetworkSocketResult, version) == 0);
+    assert!(core::mem::offset_of!(NetworkSocketResult, size) == 4);
+    assert!(core::mem::offset_of!(NetworkSocketResult, provider) == 8);
+    assert!(core::mem::offset_of!(NetworkSocketResult, socket) == 16);
+    assert!(core::mem::offset_of!(NetworkSocketResult, generation) == 24);
+    assert!(core::mem::offset_of!(NetworkSocketResult, endpoint) == 32);
+    assert!(core::mem::offset_of!(NetworkSocketResult, bytes) == 72);
+    assert!(core::mem::offset_of!(NetworkSocketResult, original_bytes) == 76);
+    assert!(core::mem::offset_of!(NetworkSocketResult, state) == 80);
+    assert!(core::mem::offset_of!(NetworkSocketResult, flags) == 84);
+    assert!(core::mem::size_of::<NetworkSocketResult>() == 88);
+    assert!(core::mem::align_of::<NetworkSocketResult>() == 8);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, version) == 0);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, size) == 4);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, provider) == 8);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, query) == 16);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, deadline) == 24);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, family) == 72);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, policy) == 76);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, cursor) == 80);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, capacity) == 84);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, server) == 88);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, name_len) == 128);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, reserved) == 132);
+    assert!(core::mem::offset_of!(NetworkResolveRequest, name) == 136);
+    assert!(core::mem::size_of::<NetworkResolveRequest>() == 392);
+    assert!(core::mem::align_of::<NetworkResolveRequest>() == 8);
+    assert!(core::mem::offset_of!(NetworkResolvePage, version) == 0);
+    assert!(core::mem::offset_of!(NetworkResolvePage, size) == 4);
+    assert!(core::mem::offset_of!(NetworkResolvePage, provider) == 8);
+    assert!(core::mem::offset_of!(NetworkResolvePage, query) == 16);
+    assert!(core::mem::offset_of!(NetworkResolvePage, expires_ns) == 24);
+    assert!(core::mem::offset_of!(NetworkResolvePage, next) == 32);
+    assert!(core::mem::offset_of!(NetworkResolvePage, count) == 36);
+    assert!(core::mem::offset_of!(NetworkResolvePage, total) == 40);
+    assert!(core::mem::offset_of!(NetworkResolvePage, flags) == 44);
+    assert!(core::mem::size_of::<NetworkResolvePage>() == 48);
+    assert!(core::mem::align_of::<NetworkResolvePage>() == 8);
+    assert!(core::mem::offset_of!(NetworkResolveAnswer, address) == 0);
+    assert!(core::mem::offset_of!(NetworkResolveAnswer, ttl_seconds) == 32);
+    assert!(core::mem::offset_of!(NetworkResolveAnswer, reserved) == 36);
+    assert!(core::mem::size_of::<NetworkResolveAnswer>() == 40);
+    assert!(core::mem::align_of::<NetworkResolveAnswer>() == 4);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);

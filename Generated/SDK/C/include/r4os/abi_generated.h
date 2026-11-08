@@ -2999,6 +2999,61 @@ extern "C" {
 #define R4OS_CLIPBOARD_OFFER_ERROR_INVALID_ENCODING ((int32_t)-6108)
 #define R4OS_CLIPBOARD_OFFER_ERROR_INCOMPLETE ((int32_t)-6109)
 #define R4OS_CLIPBOARD_OFFER_ERROR_NOT_FOUND ((int32_t)-6110)
+#define R4OS_NETWORK_FAMILY_IPV4 4u
+#define R4OS_NETWORK_FAMILY_IPV6 6u
+#define R4OS_NETWORK_CAP_IPV4 1ull
+#define R4OS_NETWORK_CAP_IPV6 2ull
+#define R4OS_NETWORK_CAP_DNS_A 4ull
+#define R4OS_NETWORK_CAP_DNS_AAAA_CODEC 8ull
+#define R4OS_NETWORK_CAP_DNS_AAAA 16ull
+#define R4OS_NETWORK_CAP_TCP 32ull
+#define R4OS_NETWORK_CAP_UDP 64ull
+#define R4OS_NETWORK_CAP_LISTEN 128ull
+#define R4OS_NETWORK_CAP_DUAL_STACK 256ull
+#define R4OS_NETWORK_CAP_V4_MAPPED 512ull
+#define R4OS_NETWORK_CAP_DATAGRAM_TRUNCATE 1024ull
+#define R4OS_NETWORK_CAP_RETAINED_TERMINAL 2048ull
+#define R4OS_NETWORK_POLICY_DUAL_STACK 1u
+#define R4OS_NETWORK_POLICY_V4_MAPPED 2u
+#define R4OS_NETWORK_POLICY_FALLBACK 4u
+#define R4OS_NETWORK_FLAG_MORE 1u
+#define R4OS_NETWORK_FLAG_TRUNCATED 2u
+#define R4OS_NETWORK_STATE_READY 1u
+#define R4OS_NETWORK_STATE_WOULD_BLOCK 2u
+#define R4OS_NETWORK_STATE_EOF 3u
+#define R4OS_NETWORK_STATE_RESET 4u
+#define R4OS_NETWORK_STATE_LOCAL_CLOSED 5u
+#define R4OS_NETWORK_STATE_TIMEOUT 6u
+#define R4OS_NETWORK_MAX_ANSWERS 32u
+#define R4OS_NETWORK_PAGE_CAPACITY 16u
+#define R4OS_NETWORK_LEASE_NS 30000000000ull
+#define R4OS_NETWORK_OP_INFO 1280u
+#define R4OS_NETWORK_OP_CONNECT 1281u
+#define R4OS_NETWORK_OP_BIND 1282u
+#define R4OS_NETWORK_OP_READ 1283u
+#define R4OS_NETWORK_OP_WRITE 1284u
+#define R4OS_NETWORK_OP_SEND 1285u
+#define R4OS_NETWORK_OP_RECV 1286u
+#define R4OS_NETWORK_OP_CLOSE 1287u
+#define R4OS_NETWORK_OP_LISTEN 1288u
+#define R4OS_NETWORK_OP_ACCEPT 1289u
+#define R4OS_NETWORK_OP_RESOLVE 1290u
+#define R4OS_NETWORK_OP_RELEASE 1291u
+#define R4OS_NET_SERVICE_OP_TCP_CONNECT_RETAINED_RESULT 797u
+#define R4OS_NETWORK_ERROR_INVALID ((int32_t)-6201)
+#define R4OS_NETWORK_ERROR_UNSUPPORTED_FAMILY ((int32_t)-6202)
+#define R4OS_NETWORK_ERROR_UNSUPPORTED_POLICY ((int32_t)-6203)
+#define R4OS_NETWORK_ERROR_UNSUPPORTED_SCOPE ((int32_t)-6204)
+#define R4OS_NETWORK_ERROR_PROVIDER_CHANGED ((int32_t)-6205)
+#define R4OS_NETWORK_ERROR_BAD_SOCKET ((int32_t)-6206)
+#define R4OS_NETWORK_ERROR_CAPACITY ((int32_t)-6207)
+#define R4OS_NETWORK_ERROR_CLOCK_CHANGED ((int32_t)-6208)
+#define R4OS_NETWORK_ERROR_TIMEOUT ((int32_t)-6209)
+#define R4OS_NETWORK_ERROR_WOULD_BLOCK ((int32_t)-6210)
+#define R4OS_NETWORK_ERROR_RESET ((int32_t)-6211)
+#define R4OS_NETWORK_ERROR_BACKEND ((int32_t)-6212)
+#define R4OS_NETWORK_ERROR_NOT_FOUND ((int32_t)-6213)
+#define R4OS_NETWORK_ERROR_TRUNCATED_DNS ((int32_t)-6214)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3939,6 +3994,15 @@ typedef struct R4ClipboardOfferTransfer R4ClipboardOfferTransfer;
 typedef struct R4ClipboardOfferEnumerate R4ClipboardOfferEnumerate;
 typedef struct R4ClipboardOfferPage R4ClipboardOfferPage;
 typedef struct R4ClipboardOfferChunk R4ClipboardOfferChunk;
+typedef struct R4NetworkAddress R4NetworkAddress;
+typedef struct R4NetworkEndpoint R4NetworkEndpoint;
+typedef struct R4NetworkDeadline R4NetworkDeadline;
+typedef struct R4NetworkProviderInfo R4NetworkProviderInfo;
+typedef struct R4NetworkSocketRequest R4NetworkSocketRequest;
+typedef struct R4NetworkSocketResult R4NetworkSocketResult;
+typedef struct R4NetworkResolveRequest R4NetworkResolveRequest;
+typedef struct R4NetworkResolvePage R4NetworkResolvePage;
+typedef struct R4NetworkResolveAnswer R4NetworkResolveAnswer;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11643,6 +11707,107 @@ typedef struct R4ClipboardOfferChunk {
     uint32_t bytes;
     uint32_t flags;
 } R4ClipboardOfferChunk;
+
+typedef struct R4NetworkAddress {
+    uint16_t family;
+    uint16_t reserved0;
+    uint32_t scope_id;
+    uint32_t interface_id;
+    uint32_t reserved1;
+    uint8_t bytes[16];
+} R4NetworkAddress;
+
+typedef struct R4NetworkEndpoint {
+    R4NetworkAddress address;
+    uint16_t port;
+    uint16_t reserved;
+    uint32_t flags;
+} R4NetworkEndpoint;
+
+typedef struct R4NetworkDeadline {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t reserved0;
+    uint64_t absolute_ns;
+    uint64_t last_ns;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t event_backend;
+    uint32_t tick_hz;
+} R4NetworkDeadline;
+
+typedef struct R4NetworkProviderInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t capabilities;
+    uint32_t max_send;
+    uint32_t max_recv;
+    uint32_t max_answers;
+    uint32_t page_capacity;
+    uint32_t interface_id;
+    uint32_t reserved;
+} R4NetworkProviderInfo;
+
+typedef struct R4NetworkSocketRequest {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t socket;
+    uint64_t generation;
+    R4NetworkEndpoint endpoint;
+    R4NetworkDeadline deadline;
+    uint32_t flags;
+    uint32_t bytes;
+} R4NetworkSocketRequest;
+
+typedef struct R4NetworkSocketResult {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t socket;
+    uint64_t generation;
+    R4NetworkEndpoint endpoint;
+    uint32_t bytes;
+    uint32_t original_bytes;
+    uint32_t state;
+    uint32_t flags;
+} R4NetworkSocketResult;
+
+typedef struct R4NetworkResolveRequest {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t query;
+    R4NetworkDeadline deadline;
+    uint32_t family;
+    uint32_t policy;
+    uint32_t cursor;
+    uint32_t capacity;
+    R4NetworkEndpoint server;
+    uint32_t name_len;
+    uint32_t reserved;
+    uint8_t name[256];
+} R4NetworkResolveRequest;
+
+typedef struct R4NetworkResolvePage {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t query;
+    uint64_t expires_ns;
+    uint32_t next;
+    uint32_t count;
+    uint32_t total;
+    uint32_t flags;
+} R4NetworkResolvePage;
+
+typedef struct R4NetworkResolveAnswer {
+    R4NetworkAddress address;
+    uint32_t ttl_seconds;
+    uint32_t reserved;
+} R4NetworkResolveAnswer;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -19658,6 +19823,89 @@ _Static_assert(offsetof(R4ClipboardOfferChunk, offset) == 32u, "ClipboardOfferCh
 _Static_assert(offsetof(R4ClipboardOfferChunk, total_bytes) == 40u, "ClipboardOfferChunk.total_bytes offset mismatch");
 _Static_assert(offsetof(R4ClipboardOfferChunk, bytes) == 48u, "ClipboardOfferChunk.bytes offset mismatch");
 _Static_assert(offsetof(R4ClipboardOfferChunk, flags) == 52u, "ClipboardOfferChunk.flags offset mismatch");
+_Static_assert(sizeof(R4NetworkAddress) == 32u, "NetworkAddress size mismatch");
+_Static_assert(offsetof(R4NetworkAddress, family) == 0u, "NetworkAddress.family offset mismatch");
+_Static_assert(offsetof(R4NetworkAddress, reserved0) == 2u, "NetworkAddress.reserved0 offset mismatch");
+_Static_assert(offsetof(R4NetworkAddress, scope_id) == 4u, "NetworkAddress.scope_id offset mismatch");
+_Static_assert(offsetof(R4NetworkAddress, interface_id) == 8u, "NetworkAddress.interface_id offset mismatch");
+_Static_assert(offsetof(R4NetworkAddress, reserved1) == 12u, "NetworkAddress.reserved1 offset mismatch");
+_Static_assert(offsetof(R4NetworkAddress, bytes) == 16u, "NetworkAddress.bytes offset mismatch");
+_Static_assert(sizeof(R4NetworkEndpoint) == 40u, "NetworkEndpoint size mismatch");
+_Static_assert(offsetof(R4NetworkEndpoint, address) == 0u, "NetworkEndpoint.address offset mismatch");
+_Static_assert(offsetof(R4NetworkEndpoint, port) == 32u, "NetworkEndpoint.port offset mismatch");
+_Static_assert(offsetof(R4NetworkEndpoint, reserved) == 34u, "NetworkEndpoint.reserved offset mismatch");
+_Static_assert(offsetof(R4NetworkEndpoint, flags) == 36u, "NetworkEndpoint.flags offset mismatch");
+_Static_assert(sizeof(R4NetworkDeadline) == 48u, "NetworkDeadline size mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, version) == 0u, "NetworkDeadline.version offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, size) == 4u, "NetworkDeadline.size offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, kind) == 8u, "NetworkDeadline.kind offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, reserved0) == 12u, "NetworkDeadline.reserved0 offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, absolute_ns) == 16u, "NetworkDeadline.absolute_ns offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, last_ns) == 24u, "NetworkDeadline.last_ns offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, clock_source) == 32u, "NetworkDeadline.clock_source offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, clock_generation) == 36u, "NetworkDeadline.clock_generation offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, event_backend) == 40u, "NetworkDeadline.event_backend offset mismatch");
+_Static_assert(offsetof(R4NetworkDeadline, tick_hz) == 44u, "NetworkDeadline.tick_hz offset mismatch");
+_Static_assert(sizeof(R4NetworkProviderInfo) == 48u, "NetworkProviderInfo size mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, version) == 0u, "NetworkProviderInfo.version offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, size) == 4u, "NetworkProviderInfo.size offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, provider) == 8u, "NetworkProviderInfo.provider offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, capabilities) == 16u, "NetworkProviderInfo.capabilities offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, max_send) == 24u, "NetworkProviderInfo.max_send offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, max_recv) == 28u, "NetworkProviderInfo.max_recv offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, max_answers) == 32u, "NetworkProviderInfo.max_answers offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, page_capacity) == 36u, "NetworkProviderInfo.page_capacity offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, interface_id) == 40u, "NetworkProviderInfo.interface_id offset mismatch");
+_Static_assert(offsetof(R4NetworkProviderInfo, reserved) == 44u, "NetworkProviderInfo.reserved offset mismatch");
+_Static_assert(sizeof(R4NetworkSocketRequest) == 128u, "NetworkSocketRequest size mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, version) == 0u, "NetworkSocketRequest.version offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, size) == 4u, "NetworkSocketRequest.size offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, provider) == 8u, "NetworkSocketRequest.provider offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, socket) == 16u, "NetworkSocketRequest.socket offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, generation) == 24u, "NetworkSocketRequest.generation offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, endpoint) == 32u, "NetworkSocketRequest.endpoint offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, deadline) == 72u, "NetworkSocketRequest.deadline offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, flags) == 120u, "NetworkSocketRequest.flags offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketRequest, bytes) == 124u, "NetworkSocketRequest.bytes offset mismatch");
+_Static_assert(sizeof(R4NetworkSocketResult) == 88u, "NetworkSocketResult size mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, version) == 0u, "NetworkSocketResult.version offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, size) == 4u, "NetworkSocketResult.size offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, provider) == 8u, "NetworkSocketResult.provider offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, socket) == 16u, "NetworkSocketResult.socket offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, generation) == 24u, "NetworkSocketResult.generation offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, endpoint) == 32u, "NetworkSocketResult.endpoint offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, bytes) == 72u, "NetworkSocketResult.bytes offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, original_bytes) == 76u, "NetworkSocketResult.original_bytes offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, state) == 80u, "NetworkSocketResult.state offset mismatch");
+_Static_assert(offsetof(R4NetworkSocketResult, flags) == 84u, "NetworkSocketResult.flags offset mismatch");
+_Static_assert(sizeof(R4NetworkResolveRequest) == 392u, "NetworkResolveRequest size mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, version) == 0u, "NetworkResolveRequest.version offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, size) == 4u, "NetworkResolveRequest.size offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, provider) == 8u, "NetworkResolveRequest.provider offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, query) == 16u, "NetworkResolveRequest.query offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, deadline) == 24u, "NetworkResolveRequest.deadline offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, family) == 72u, "NetworkResolveRequest.family offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, policy) == 76u, "NetworkResolveRequest.policy offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, cursor) == 80u, "NetworkResolveRequest.cursor offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, capacity) == 84u, "NetworkResolveRequest.capacity offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, server) == 88u, "NetworkResolveRequest.server offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, name_len) == 128u, "NetworkResolveRequest.name_len offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, reserved) == 132u, "NetworkResolveRequest.reserved offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveRequest, name) == 136u, "NetworkResolveRequest.name offset mismatch");
+_Static_assert(sizeof(R4NetworkResolvePage) == 48u, "NetworkResolvePage size mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, version) == 0u, "NetworkResolvePage.version offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, size) == 4u, "NetworkResolvePage.size offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, provider) == 8u, "NetworkResolvePage.provider offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, query) == 16u, "NetworkResolvePage.query offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, expires_ns) == 24u, "NetworkResolvePage.expires_ns offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, next) == 32u, "NetworkResolvePage.next offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, count) == 36u, "NetworkResolvePage.count offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, total) == 40u, "NetworkResolvePage.total offset mismatch");
+_Static_assert(offsetof(R4NetworkResolvePage, flags) == 44u, "NetworkResolvePage.flags offset mismatch");
+_Static_assert(sizeof(R4NetworkResolveAnswer) == 40u, "NetworkResolveAnswer size mismatch");
+_Static_assert(offsetof(R4NetworkResolveAnswer, address) == 0u, "NetworkResolveAnswer.address offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveAnswer, ttl_seconds) == 32u, "NetworkResolveAnswer.ttl_seconds offset mismatch");
+_Static_assert(offsetof(R4NetworkResolveAnswer, reserved) == 36u, "NetworkResolveAnswer.reserved offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1488u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

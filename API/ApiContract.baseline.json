@@ -134845,6 +134845,1167 @@
       ],
       "values": [],
       "description": "56byte prefix followed by bytes payload. Read returns at most4040bytes and same snapshot identity/revision; flags1 means exact EOF. offset>total fails; offset==total returns empty EOF. Short response is not an inferred provider close."
+    },
+    {
+      "name": "NetworkAddress",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "family",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "family",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 2,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "reserved0",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scope_id",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "scope_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interface_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "interface_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved1",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bytes",
+          "offset": 16,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "bytes",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Family4 uses first4 network-order bytes and12 zero bytes; family6 uses16 network-order bytes. Scope and interface are local indices, never inferred remote zones. Both reserved fields zero. No sockaddr alias."
+    },
+    {
+      "name": "NetworkEndpoint",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "address",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "address",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "port",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "port",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 34,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "reserved",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Host-order u16 port, flags/reserved zero. Address family/scope/interface remain explicit."
+    },
+    {
+      "name": "NetworkDeadline",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "kind",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "kind",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "absolute_ns",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "absolute_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_ns",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "last_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "clock_source",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "clock_generation",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_backend",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "event_backend",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tick_hz",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "tick_hz",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Checked budget shared representation with WaitSetDeadline: poll0/finite1/forever2. Absolute boot-monotonic nanoseconds and full checked clock identity. Never rebase queued requests; change/regression fails ClockChanged. Poll may perform one immediate I/O attempt, never wait or initiate connect/DNS."
+    },
+    {
+      "name": "NetworkProviderInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capabilities",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "capabilities",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_send",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_send",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_recv",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_recv",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_answers",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_answers",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "page_capacity",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "page_capacity",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interface_id",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "interface_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Actual service process generation and qualified capabilities. Info request empty. IPv6 codec support is separate from IPv6 transport. Limits are exact per-call copied capacities."
+    },
+    {
+      "name": "NetworkSocketRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "socket",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "socket",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "endpoint",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "NetworkEndpoint"
+          },
+          "description": "endpoint",
+          "size": 40,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkEndpoint",
+          "default_kind": "empty"
+        },
+        {
+          "name": "deadline",
+          "offset": 72,
+          "type": {
+            "kind": "named",
+            "name": "NetworkDeadline"
+          },
+          "description": "deadline",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "r4os.abi.NetworkDeadline",
+          "default_kind": "empty"
+        },
+        {
+          "name": "flags",
+          "offset": 120,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bytes",
+          "offset": 124,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "New TCP/UDP service RPC1. Provider plus socket and never-reused generation identify one existing owner front entry. Connect/bind socket/generation0; Read/Recv bytes capacity; Write/Send exact appended bytes. Flags select explicit policy. Close retires exact generation; transport timeout is no resource-retirement proof."
+    },
+    {
+      "name": "NetworkSocketResult",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 88,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "88"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "socket",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "socket",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "endpoint",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "NetworkEndpoint"
+          },
+          "description": "endpoint",
+          "size": 40,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkEndpoint",
+          "default_kind": "empty"
+        },
+        {
+          "name": "bytes",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "original_bytes",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "original_bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "state",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Success copied prefix followed by bytes. State Ready1/WouldBlock2/EOF3/Reset4/LocalClosed5/Timeout6. TCP bytes is confirmed accepted/read prefix; EOF only exact retained peer FIN. Datagram original_bytes is true queued datagram length; Truncated flag means suffix discarded by explicit new Recv. No EOF inference from bad identity."
+    },
+    {
+      "name": "NetworkResolveRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 392,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "392"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "query",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "query",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "NetworkDeadline"
+          },
+          "description": "deadline",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "r4os.abi.NetworkDeadline",
+          "default_kind": "empty"
+        },
+        {
+          "name": "family",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "family",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4"
+        },
+        {
+          "name": "policy",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "policy",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cursor",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "capacity",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "server",
+          "offset": 88,
+          "type": {
+            "kind": "named",
+            "name": "NetworkEndpoint"
+          },
+          "description": "server",
+          "size": 40,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkEndpoint",
+          "default_kind": "empty"
+        },
+        {
+          "name": "name_len",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "name_len",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 132,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "name",
+          "offset": 136,
+          "type": {
+            "kind": "array",
+            "length": 256,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "name",
+          "size": 256,
+          "alignment": 1,
+          "source_type": "[256]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Resolve starts with query0/cursor0, explicit family4/6, strict ASCII DNS name length1..254 and zero unused bytes. Policy0 exact family; explicit other policy may be Unsupported until available. Server all-zero selects current configured DNS; otherwise explicit endpoint. Subsequent pages use exact provider/query, cursor/capacity and other fields zero; Release uses query only. A copied page lease is separate from DNS cache TTL."
+    },
+    {
+      "name": "NetworkResolvePage",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "query",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "query",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "expires_ns",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "expires_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "next",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "next",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "count",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "total",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied immutable result page prefix followed by count NetworkResolveAnswer records. next==total ends list; flags More1 iff next<total. Up to32 distinct addresses, page1..16, fixed30second lease. TTL0 does not authorize cache reuse. Capacity exhaustion fails rather than returning silently incomplete answers."
+    },
+    {
+      "name": "NetworkResolveAnswer",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "address",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "address",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "ttl_seconds",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "ttl_seconds",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One copied address. TTL minimum includes CNAME chain; network-order bytes, no borrowed pointers."
     }
   ],
   "operations": [],
@@ -167559,6 +168720,556 @@
       "scope": "clipboard_offer",
       "stability": "fixed_contract",
       "description": "Requested representation absent in this immutable snapshot."
+    },
+    {
+      "name": "network_family_ipv4",
+      "value": "4",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_family_ipv4"
+    },
+    {
+      "name": "network_family_ipv6",
+      "value": "6",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_family_ipv6"
+    },
+    {
+      "name": "network_cap_ipv4",
+      "value": "1",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_ipv4"
+    },
+    {
+      "name": "network_cap_ipv6",
+      "value": "2",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_ipv6"
+    },
+    {
+      "name": "network_cap_dns_a",
+      "value": "4",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_dns_a"
+    },
+    {
+      "name": "network_cap_dns_aaaa_codec",
+      "value": "8",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_dns_aaaa_codec"
+    },
+    {
+      "name": "network_cap_dns_aaaa",
+      "value": "16",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_dns_aaaa"
+    },
+    {
+      "name": "network_cap_tcp",
+      "value": "32",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_tcp"
+    },
+    {
+      "name": "network_cap_udp",
+      "value": "64",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_udp"
+    },
+    {
+      "name": "network_cap_listen",
+      "value": "128",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_listen"
+    },
+    {
+      "name": "network_cap_dual_stack",
+      "value": "256",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_dual_stack"
+    },
+    {
+      "name": "network_cap_v4_mapped",
+      "value": "512",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_v4_mapped"
+    },
+    {
+      "name": "network_cap_datagram_truncate",
+      "value": "1024",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_datagram_truncate"
+    },
+    {
+      "name": "network_cap_retained_terminal",
+      "value": "2048",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_cap_retained_terminal"
+    },
+    {
+      "name": "network_policy_dual_stack",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_policy_dual_stack"
+    },
+    {
+      "name": "network_policy_v4_mapped",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_policy_v4_mapped"
+    },
+    {
+      "name": "network_policy_fallback",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_policy_fallback"
+    },
+    {
+      "name": "network_flag_more",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_flag_more"
+    },
+    {
+      "name": "network_flag_truncated",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_flag_truncated"
+    },
+    {
+      "name": "network_state_ready",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_state_ready"
+    },
+    {
+      "name": "network_state_would_block",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_state_would_block"
+    },
+    {
+      "name": "network_state_eof",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_state_eof"
+    },
+    {
+      "name": "network_state_reset",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_state_reset"
+    },
+    {
+      "name": "network_state_local_closed",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_state_local_closed"
+    },
+    {
+      "name": "network_state_timeout",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_state_timeout"
+    },
+    {
+      "name": "network_max_answers",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_max_answers"
+    },
+    {
+      "name": "network_page_capacity",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_page_capacity"
+    },
+    {
+      "name": "network_lease_ns",
+      "value": "30000000000",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_lease_ns"
+    },
+    {
+      "name": "network_op_info",
+      "value": "1280",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_info"
+    },
+    {
+      "name": "network_op_connect",
+      "value": "1281",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_connect"
+    },
+    {
+      "name": "network_op_bind",
+      "value": "1282",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_bind"
+    },
+    {
+      "name": "network_op_read",
+      "value": "1283",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_read"
+    },
+    {
+      "name": "network_op_write",
+      "value": "1284",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_write"
+    },
+    {
+      "name": "network_op_send",
+      "value": "1285",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_send"
+    },
+    {
+      "name": "network_op_recv",
+      "value": "1286",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_recv"
+    },
+    {
+      "name": "network_op_close",
+      "value": "1287",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_close"
+    },
+    {
+      "name": "network_op_listen",
+      "value": "1288",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_listen"
+    },
+    {
+      "name": "network_op_accept",
+      "value": "1289",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_accept"
+    },
+    {
+      "name": "network_op_resolve",
+      "value": "1290",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_resolve"
+    },
+    {
+      "name": "network_op_release",
+      "value": "1291",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_op_release"
+    },
+    {
+      "name": "net_service_op_tcp_connect_retained_result",
+      "value": "797",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "Existing TCP backend connect with exact connection terminal retention until explicit close/abort. Same6byte payload plus optional original deadline footer."
+    },
+    {
+      "name": "network_error_invalid",
+      "value": "-6201",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_invalid"
+    },
+    {
+      "name": "network_error_unsupported_family",
+      "value": "-6202",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_unsupported_family"
+    },
+    {
+      "name": "network_error_unsupported_policy",
+      "value": "-6203",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_unsupported_policy"
+    },
+    {
+      "name": "network_error_unsupported_scope",
+      "value": "-6204",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_unsupported_scope"
+    },
+    {
+      "name": "network_error_provider_changed",
+      "value": "-6205",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_provider_changed"
+    },
+    {
+      "name": "network_error_bad_socket",
+      "value": "-6206",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_bad_socket"
+    },
+    {
+      "name": "network_error_capacity",
+      "value": "-6207",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_capacity"
+    },
+    {
+      "name": "network_error_clock_changed",
+      "value": "-6208",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_clock_changed"
+    },
+    {
+      "name": "network_error_timeout",
+      "value": "-6209",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_timeout"
+    },
+    {
+      "name": "network_error_would_block",
+      "value": "-6210",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_would_block"
+    },
+    {
+      "name": "network_error_reset",
+      "value": "-6211",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_reset"
+    },
+    {
+      "name": "network_error_backend",
+      "value": "-6212",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_backend"
+    },
+    {
+      "name": "network_error_not_found",
+      "value": "-6213",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_not_found"
+    },
+    {
+      "name": "network_error_truncated_dns",
+      "value": "-6214",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "network_family",
+      "stability": "fixed_contract",
+      "description": "network_error_truncated_dns"
     }
   ],
   "limits": [

@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 433 von 433 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 442 von 442 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 68; Konstanten: 2986; Limits: 111
+- Operationen: 0; Fehlerdomänen: 68; Konstanten: 3041; Limits: 111
 
 ## App-Profile
 
@@ -454,6 +454,15 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ClipboardOfferEnumerate` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `ClipboardOfferPage` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `ClipboardOfferChunk` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `NetworkAddress` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `NetworkEndpoint` | fixed_layout | extern_struct | 40/4 | 40/4 | 40/4 | 40/4 |
+| `NetworkDeadline` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `NetworkProviderInfo` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `NetworkSocketRequest` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `NetworkSocketResult` | fixed_layout | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `NetworkResolveRequest` | fixed_layout | extern_struct | 392/8 | 392/8 | 392/8 | 392/8 |
+| `NetworkResolvePage` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `NetworkResolveAnswer` | fixed_layout | extern_struct | 40/4 | 40/4 | 40/4 | 40/4 |
 
 ## Typdetails
 
@@ -11176,6 +11185,170 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `bytes` | 48 | 4 | 4 | `u32` | - |
 | `flags` | 52 | 4 | 4 | `u32` | - |
 
+### `NetworkAddress`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `family` | 0 | 2 | 2 | `u16` | - |
+| `reserved0` | 2 | 2 | 2 | `u16` | - |
+| `scope_id` | 4 | 4 | 4 | `u32` | - |
+| `interface_id` | 8 | 4 | 4 | `u32` | - |
+| `reserved1` | 12 | 4 | 4 | `u32` | - |
+| `bytes` | 16 | 16 | 1 | `[16]u8` | - |
+
+### `NetworkEndpoint`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `address` | 0 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `port` | 32 | 2 | 2 | `u16` | - |
+| `reserved` | 34 | 2 | 2 | `u16` | - |
+| `flags` | 36 | 4 | 4 | `u32` | - |
+
+### `NetworkDeadline`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `reserved0` | 12 | 4 | 4 | `u32` | - |
+| `absolute_ns` | 16 | 8 | 8 | `u64` | - |
+| `last_ns` | 24 | 8 | 8 | `u64` | - |
+| `clock_source` | 32 | 4 | 4 | `u32` | - |
+| `clock_generation` | 36 | 4 | 4 | `u32` | - |
+| `event_backend` | 40 | 4 | 4 | `u32` | - |
+| `tick_hz` | 44 | 4 | 4 | `u32` | - |
+
+### `NetworkProviderInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `capabilities` | 16 | 8 | 8 | `u64` | - |
+| `max_send` | 24 | 4 | 4 | `u32` | - |
+| `max_recv` | 28 | 4 | 4 | `u32` | - |
+| `max_answers` | 32 | 4 | 4 | `u32` | - |
+| `page_capacity` | 36 | 4 | 4 | `u32` | - |
+| `interface_id` | 40 | 4 | 4 | `u32` | - |
+| `reserved` | 44 | 4 | 4 | `u32` | - |
+
+### `NetworkSocketRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `socket` | 16 | 8 | 8 | `u64` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `endpoint` | 32 | 40 | 4 | `r4os.abi.NetworkEndpoint` | - |
+| `deadline` | 72 | 48 | 8 | `r4os.abi.NetworkDeadline` | - |
+| `flags` | 120 | 4 | 4 | `u32` | - |
+| `bytes` | 124 | 4 | 4 | `u32` | - |
+
+### `NetworkSocketResult`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `socket` | 16 | 8 | 8 | `u64` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `endpoint` | 32 | 40 | 4 | `r4os.abi.NetworkEndpoint` | - |
+| `bytes` | 72 | 4 | 4 | `u32` | - |
+| `original_bytes` | 76 | 4 | 4 | `u32` | - |
+| `state` | 80 | 4 | 4 | `u32` | - |
+| `flags` | 84 | 4 | 4 | `u32` | - |
+
+### `NetworkResolveRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 392 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `query` | 16 | 8 | 8 | `u64` | - |
+| `deadline` | 24 | 48 | 8 | `r4os.abi.NetworkDeadline` | - |
+| `family` | 72 | 4 | 4 | `u32` | - |
+| `policy` | 76 | 4 | 4 | `u32` | - |
+| `cursor` | 80 | 4 | 4 | `u32` | - |
+| `capacity` | 84 | 4 | 4 | `u32` | - |
+| `server` | 88 | 40 | 4 | `r4os.abi.NetworkEndpoint` | - |
+| `name_len` | 128 | 4 | 4 | `u32` | - |
+| `reserved` | 132 | 4 | 4 | `u32` | - |
+| `name` | 136 | 256 | 1 | `[256]u8` | - |
+
+### `NetworkResolvePage`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `query` | 16 | 8 | 8 | `u64` | - |
+| `expires_ns` | 24 | 8 | 8 | `u64` | - |
+| `next` | 32 | 4 | 4 | `u32` | - |
+| `count` | 36 | 4 | 4 | `u32` | - |
+| `total` | 40 | 4 | 4 | `u32` | - |
+| `flags` | 44 | 4 | 4 | `u32` | - |
+
+### `NetworkResolveAnswer`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `address` | 0 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `ttl_seconds` | 32 | 4 | 4 | `u32` | - |
+| `reserved` | 36 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -14999,6 +15172,61 @@ Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `clipboard_offer_error_invalid_encoding` | `-6108` | `i32` | value | number | `clipboard_offer` | fixed_contract |
 | `clipboard_offer_error_incomplete` | `-6109` | `i32` | value | number | `clipboard_offer` | fixed_contract |
 | `clipboard_offer_error_not_found` | `-6110` | `i32` | value | number | `clipboard_offer` | fixed_contract |
+| `network_family_ipv4` | `4` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_family_ipv6` | `6` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_cap_ipv4` | `1` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_ipv6` | `2` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_dns_a` | `4` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_dns_aaaa_codec` | `8` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_dns_aaaa` | `16` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_tcp` | `32` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_udp` | `64` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_listen` | `128` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_dual_stack` | `256` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_v4_mapped` | `512` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_datagram_truncate` | `1024` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_cap_retained_terminal` | `2048` | `u64` | flag | bitmask | `network_family` | fixed_contract |
+| `network_policy_dual_stack` | `1` | `u32` | flag | bitmask | `network_family` | fixed_contract |
+| `network_policy_v4_mapped` | `2` | `u32` | flag | bitmask | `network_family` | fixed_contract |
+| `network_policy_fallback` | `4` | `u32` | flag | bitmask | `network_family` | fixed_contract |
+| `network_flag_more` | `1` | `u32` | flag | bitmask | `network_family` | fixed_contract |
+| `network_flag_truncated` | `2` | `u32` | flag | bitmask | `network_family` | fixed_contract |
+| `network_state_ready` | `1` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_state_would_block` | `2` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_state_eof` | `3` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_state_reset` | `4` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_state_local_closed` | `5` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_state_timeout` | `6` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_max_answers` | `32` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_page_capacity` | `16` | `u32` | value | number | `network_family` | fixed_contract |
+| `network_lease_ns` | `30000000000` | `u64` | value | number | `network_family` | fixed_contract |
+| `network_op_info` | `1280` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_connect` | `1281` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_bind` | `1282` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_read` | `1283` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_write` | `1284` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_send` | `1285` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_recv` | `1286` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_close` | `1287` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_listen` | `1288` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_accept` | `1289` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_resolve` | `1290` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_op_release` | `1291` | `u16` | identity | number | `network_family` | fixed_contract |
+| `net_service_op_tcp_connect_retained_result` | `797` | `u16` | identity | number | `network_family` | fixed_contract |
+| `network_error_invalid` | `-6201` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_unsupported_family` | `-6202` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_unsupported_policy` | `-6203` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_unsupported_scope` | `-6204` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_provider_changed` | `-6205` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_bad_socket` | `-6206` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_capacity` | `-6207` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_clock_changed` | `-6208` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_timeout` | `-6209` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_would_block` | `-6210` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_reset` | `-6211` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_backend` | `-6212` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_not_found` | `-6213` | `i32` | value | number | `network_family` | fixed_contract |
+| `network_error_truncated_dns` | `-6214` | `i32` | value | number | `network_family` | fixed_contract |
 
 ## Limits
 
