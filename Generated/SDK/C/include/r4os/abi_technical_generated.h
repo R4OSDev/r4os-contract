@@ -3702,8 +3702,10 @@ struct R4ProtocolApi2 {
     int32_t (*cpu_acceleration_work)(uint32_t, uint32_t, int32_t (* const *)(uint64_t, uint32_t), uint64_t, R4CpuAccelerationWork *);
     int32_t (*entropy_source_info)(R4EntropySourceInfo *);
     int32_t (*entropy_fill)(uint8_t *, uint32_t);
+    int32_t (*protocol_dispatch)(const uint8_t *, uint32_t, uint32_t, const R4ProtocolBuffer *, R4ProtocolBuffer *);
+    int32_t (*link_io)(const R4NetworkLinkRequest *, R4NetworkLinkInfo *);
 };
-_Static_assert(sizeof(R4ProtocolApi2) == 120, "R4ProtocolApi2 size");
+_Static_assert(sizeof(R4ProtocolApi2) == 136, "R4ProtocolApi2 size");
 _Static_assert(_Alignof(R4ProtocolApi2) == 8, "R4ProtocolApi2 alignment");
 _Static_assert(offsetof(R4ProtocolApi2, magic) == 0, "R4ProtocolApi2.magic offset");
 _Static_assert(offsetof(R4ProtocolApi2, version) == 4, "R4ProtocolApi2.version offset");
@@ -3722,6 +3724,8 @@ _Static_assert(offsetof(R4ProtocolApi2, cpu_acceleration_info) == 88, "R4Protoco
 _Static_assert(offsetof(R4ProtocolApi2, cpu_acceleration_work) == 96, "R4ProtocolApi2.cpu_acceleration_work offset");
 _Static_assert(offsetof(R4ProtocolApi2, entropy_source_info) == 104, "R4ProtocolApi2.entropy_source_info offset");
 _Static_assert(offsetof(R4ProtocolApi2, entropy_fill) == 112, "R4ProtocolApi2.entropy_fill offset");
+_Static_assert(offsetof(R4ProtocolApi2, protocol_dispatch) == 120, "R4ProtocolApi2.protocol_dispatch offset");
+_Static_assert(offsetof(R4ProtocolApi2, link_io) == 128, "R4ProtocolApi2.link_io offset");
 
 struct R4AudioBackend2 {
     uint32_t magic;

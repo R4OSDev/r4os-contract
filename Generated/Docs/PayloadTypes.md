@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 442 von 442 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 456 von 456 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 68; Konstanten: 3041; Limits: 111
+- Operationen: 0; Fehlerdomänen: 68; Konstanten: 3107; Limits: 111
 
 ## App-Profile
 
@@ -463,6 +463,20 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `NetworkResolveRequest` | fixed_layout | extern_struct | 392/8 | 392/8 | 392/8 | 392/8 |
 | `NetworkResolvePage` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `NetworkResolveAnswer` | fixed_layout | extern_struct | 40/4 | 40/4 | 40/4 | 40/4 |
+| `NetworkLinkRequest` | fixed_layout | extern_struct | 1576/8 | 1576/8 | 1576/8 | 1576/8 |
+| `NetworkLinkInfo` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
+| `Ipv6FrameOp` | fixed_layout | extern_struct | 1680/8 | 1680/8 | 1680/8 | 1680/8 |
+| `Ipv6InterfaceQuery` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `Ipv6InterfaceInfo` | fixed_layout | extern_struct | 296/8 | 296/8 | 296/8 | 296/8 |
+| `Ipv6AddressInfo` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `Ipv6RouteInfo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `Ipv6AddressConfig` | fixed_layout | extern_struct | 88/8 | 88/8 | 88/8 | 88/8 |
+| `Ipv6Packet` | fixed_layout | extern_struct | 1656/8 | 1656/8 | 1656/8 | 1656/8 |
+| `Icmpv6Message` | fixed_layout | extern_struct | 1576/4 | 1576/4 | 1576/4 | 1576/4 |
+| `NdpPrefix` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
+| `NdpRequest` | fixed_layout | extern_struct | 1608/8 | 1608/8 | 1608/8 | 1608/8 |
+| `NdpEvent` | fixed_layout | extern_struct | 328/4 | 328/4 | 328/4 | 328/4 |
+| `NdpInfo` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 
 ## Typdetails
 
@@ -11349,6 +11363,297 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ttl_seconds` | 32 | 4 | 4 | `u32` | - |
 | `reserved` | 36 | 4 | 4 | `u32` | - |
 
+### `NetworkLinkRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1576 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `op` | 8 | 4 | 4 | `u32` | - |
+| `index` | 12 | 4 | 4 | `u32` | - |
+| `interface_id` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `bytes` | 32 | 4 | 4 | `u32` | - |
+| `reserved1` | 36 | 4 | 4 | `u32` | - |
+| `frame` | 40 | 1536 | 1 | `[1536]u8` | - |
+
+### `NetworkLinkInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 128 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `index` | 8 | 4 | 4 | `u32` | - |
+| `interface_id` | 12 | 4 | 4 | `u32` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `provider` | 24 | 8 | 8 | `u64` | - |
+| `mtu` | 32 | 4 | 4 | `u32` | - |
+| `flags` | 36 | 4 | 4 | `u32` | - |
+| `mac` | 40 | 6 | 1 | `[6]u8` | - |
+| `reserved` | 46 | 2 | 2 | `u16` | - |
+| `clock` | 48 | 80 | 8 | `r4os.abi.MonotonicClockInfo` | - |
+
+### `Ipv6FrameOp`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1680 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `link` | 8 | 128 | 8 | `r4os.abi.NetworkLinkInfo` | - |
+| `bytes` | 136 | 4 | 4 | `u32` | - |
+| `reserved` | 140 | 4 | 4 | `u32` | - |
+| `frame` | 144 | 1536 | 1 | `[1536]u8` | - |
+
+### `Ipv6InterfaceQuery`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `index` | 8 | 4 | 4 | `u32` | - |
+| `interface_id` | 12 | 4 | 4 | `u32` | - |
+| `provider` | 16 | 8 | 8 | `u64` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `cursor` | 32 | 4 | 4 | `u32` | - |
+| `reserved` | 36 | 4 | 4 | `u32` | - |
+
+### `Ipv6InterfaceInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 296 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `link` | 8 | 128 | 8 | `r4os.abi.NetworkLinkInfo` | - |
+| `revision` | 136 | 8 | 8 | `u64` | - |
+| `capabilities` | 144 | 8 | 8 | `u64` | - |
+| `address_count` | 152 | 4 | 4 | `u32` | - |
+| `route_count` | 156 | 4 | 4 | `u32` | - |
+| `max_packet` | 160 | 4 | 4 | `u32` | - |
+| `reserved` | 164 | 4 | 4 | `u32` | - |
+| `link_local` | 168 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `preferred` | 200 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `default_router` | 232 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `next_due_ns` | 264 | 8 | 8 | `u64` | - |
+| `rx_packets` | 272 | 8 | 8 | `u64` | - |
+| `tx_packets` | 280 | 8 | 8 | `u64` | - |
+| `dropped_packets` | 288 | 8 | 8 | `u64` | - |
+
+### `Ipv6AddressInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `address` | 8 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `provider` | 40 | 8 | 8 | `u64` | - |
+| `generation` | 48 | 8 | 8 | `u64` | - |
+| `preferred_until_ns` | 56 | 8 | 8 | `u64` | - |
+| `valid_until_ns` | 64 | 8 | 8 | `u64` | - |
+| `flags` | 72 | 4 | 4 | `u32` | - |
+| `prefix_length` | 76 | 4 | 4 | `u32` | - |
+
+### `Ipv6RouteInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `prefix` | 8 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `gateway` | 40 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `provider` | 72 | 8 | 8 | `u64` | - |
+| `generation` | 80 | 8 | 8 | `u64` | - |
+| `valid_until_ns` | 88 | 8 | 8 | `u64` | - |
+| `prefix_length` | 96 | 4 | 4 | `u32` | - |
+| `metric` | 100 | 4 | 4 | `u32` | - |
+| `flags` | 104 | 4 | 4 | `u32` | - |
+| `reserved` | 108 | 4 | 4 | `u32` | - |
+
+### `Ipv6AddressConfig`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 88 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `interface_id` | 24 | 4 | 4 | `u32` | - |
+| `flags` | 28 | 4 | 4 | `u32` | - |
+| `address` | 32 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `prefix_length` | 64 | 4 | 4 | `u32` | - |
+| `reserved` | 68 | 4 | 4 | `u32` | - |
+| `preferred_lifetime_ns` | 72 | 8 | 8 | `u64` | - |
+| `valid_lifetime_ns` | 80 | 8 | 8 | `u64` | - |
+
+### `Ipv6Packet`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1656 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `source` | 24 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `destination` | 56 | 32 | 4 | `r4os.abi.NetworkAddress` | - |
+| `deadline` | 88 | 48 | 8 | `r4os.abi.NetworkDeadline` | - |
+| `next_header` | 136 | 4 | 4 | `u32` | - |
+| `bytes` | 140 | 4 | 4 | `u32` | - |
+| `flags` | 144 | 4 | 4 | `u32` | - |
+| `reserved` | 148 | 4 | 4 | `u32` | - |
+| `payload` | 152 | 1504 | 1 | `[1504]u8` | - |
+
+### `Icmpv6Message`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1576 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `source` | 8 | 16 | 1 | `[16]u8` | - |
+| `destination` | 24 | 16 | 1 | `[16]u8` | - |
+| `reply_source` | 40 | 16 | 1 | `[16]u8` | - |
+| `bytes` | 56 | 4 | 4 | `u32` | - |
+| `flags` | 60 | 4 | 4 | `u32` | - |
+| `next_header` | 64 | 4 | 4 | `u32` | - |
+| `checksum` | 68 | 4 | 4 | `u32` | - |
+| `payload` | 72 | 1504 | 1 | `[1504]u8` | - |
+
+### `NdpPrefix`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `bytes` | 0 | 16 | 1 | `[16]u8` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `valid_lifetime_seconds` | 20 | 4 | 4 | `u32` | - |
+| `preferred_lifetime_seconds` | 24 | 4 | 4 | `u32` | - |
+| `prefix_length` | 28 | 4 | 4 | `u32` | - |
+
+### `NdpRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1608 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `interface_id` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `now_ns` | 24 | 8 | 8 | `u64` | - |
+| `clock_generation` | 32 | 4 | 4 | `u32` | - |
+| `reserved` | 36 | 4 | 4 | `u32` | - |
+| `source` | 40 | 16 | 1 | `[16]u8` | - |
+| `destination` | 56 | 16 | 1 | `[16]u8` | - |
+| `target` | 72 | 16 | 1 | `[16]u8` | - |
+| `mac` | 88 | 6 | 1 | `[6]u8` | - |
+| `reserved1` | 94 | 2 | 2 | `u16` | - |
+| `hop_limit` | 96 | 4 | 4 | `u32` | - |
+| `bytes` | 100 | 4 | 4 | `u32` | - |
+| `payload` | 104 | 1504 | 1 | `[1504]u8` | - |
+
+### `NdpEvent`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 328 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `target` | 16 | 16 | 1 | `[16]u8` | - |
+| `mac` | 32 | 6 | 1 | `[6]u8` | - |
+| `reserved0` | 38 | 2 | 2 | `u16` | - |
+| `router_lifetime_seconds` | 40 | 4 | 4 | `u32` | - |
+| `reachable_ms` | 44 | 4 | 4 | `u32` | - |
+| `retransmit_ms` | 48 | 4 | 4 | `u32` | - |
+| `mtu` | 52 | 4 | 4 | `u32` | - |
+| `prefix_count` | 56 | 4 | 4 | `u32` | - |
+| `reserved1` | 60 | 4 | 4 | `u32` | - |
+| `prefixes` | 64 | 256 | 4 | `[8]r4os.abi.NdpPrefix` | - |
+| `nonce` | 320 | 6 | 1 | `[6]u8` | - |
+| `reserved2` | 326 | 2 | 2 | `u16` | - |
+
+### `NdpInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `active_links` | 16 | 4 | 4 | `u32` | - |
+| `max_links` | 20 | 4 | 4 | `u32` | - |
+| `active_neighbors` | 24 | 4 | 4 | `u32` | - |
+| `max_neighbors` | 28 | 4 | 4 | `u32` | - |
+| `probes` | 32 | 4 | 4 | `u32` | - |
+| `timeouts` | 36 | 4 | 4 | `u32` | - |
+| `flags` | 40 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -15227,6 +15532,72 @@ Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `network_error_backend` | `-6212` | `i32` | value | number | `network_family` | fixed_contract |
 | `network_error_not_found` | `-6213` | `i32` | value | number | `network_family` | fixed_contract |
 | `network_error_truncated_dns` | `-6214` | `i32` | value | number | `network_family` | fixed_contract |
+| `net_backend_cap_rx_multicast` | `2048` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ethernet_flag_ipv6` | `64` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ethernet_flag_multicast` | `128` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `network_link_op_identity` | `0` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `network_link_op_info` | `1` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `network_link_op_transmit` | `2` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `network_link_flag_available` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `network_link_flag_up` | `2` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `network_link_flag_multicast` | `4` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `network_link_flag_clock_valid` | `8` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_op_info` | `1536` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_op_address` | `1537` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_op_route` | `1538` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_op_configure` | `1539` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_op_send` | `1540` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_op_receive` | `1541` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_op_tick` | `1542` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_op_handle_rx` | `1543` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `icmpv6_op_parse` | `1568` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `icmpv6_op_seal` | `1569` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `icmpv6_op_checksum` | `1570` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `icmpv6_op_echo_reply` | `1571` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `icmpv6_op_error` | `1572` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_op_info` | `1600` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_op_handle_rx` | `1601` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_op_resolve` | `1602` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_op_confirm` | `1603` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_op_tick` | `1604` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_op_link_reset` | `1605` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_packet` | `1` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_icmp` | `2` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_nd` | `4` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_dad` | `8` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_slaac` | `16` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_extensions` | `32` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_reassembly` | `64` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_pmtu` | `128` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_cap_static_address` | `256` | `u64` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_address_flag_tentative` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_address_flag_preferred` | `2` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_address_flag_deprecated` | `4` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_address_flag_duplicate` | `8` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_address_flag_manual` | `16` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_address_flag_slaac` | `32` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_address_flag_link_local` | `64` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_route_flag_on_link` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_route_flag_default` | `2` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_route_flag_router` | `4` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_route_flag_manual` | `8` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_config_remove` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_minimum_mtu` | `1280` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_payload_capacity` | `1504` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ipv6_prefix_capacity` | `8` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_action_none` | `0` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_action_resolved` | `1` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_action_multicast_probe` | `2` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_action_unicast_probe` | `3` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_action_timed_out` | `4` | `u32` | value | number | `ipv6_provider` | fixed_contract |
+| `ndp_event_flag_mac_present` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ndp_event_flag_nonce_present` | `2` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ndp_event_flag_router` | `2147483648` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ndp_event_flag_solicited` | `1073741824` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ndp_event_flag_override` | `536870912` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ndp_request_fragmented` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ndp_confirm_probe_sent` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `ipv6_packet_flag_fragmented` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
 
 ## Limits
 

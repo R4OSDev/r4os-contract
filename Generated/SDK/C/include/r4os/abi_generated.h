@@ -3054,6 +3054,72 @@ extern "C" {
 #define R4OS_NETWORK_ERROR_BACKEND ((int32_t)-6212)
 #define R4OS_NETWORK_ERROR_NOT_FOUND ((int32_t)-6213)
 #define R4OS_NETWORK_ERROR_TRUNCATED_DNS ((int32_t)-6214)
+#define R4OS_NET_BACKEND_CAP_RX_MULTICAST 2048ull
+#define R4OS_ETHERNET_FLAG_IPV6 64u
+#define R4OS_ETHERNET_FLAG_MULTICAST 128u
+#define R4OS_NETWORK_LINK_OP_IDENTITY 0u
+#define R4OS_NETWORK_LINK_OP_INFO 1u
+#define R4OS_NETWORK_LINK_OP_TRANSMIT 2u
+#define R4OS_NETWORK_LINK_FLAG_AVAILABLE 1u
+#define R4OS_NETWORK_LINK_FLAG_UP 2u
+#define R4OS_NETWORK_LINK_FLAG_MULTICAST 4u
+#define R4OS_NETWORK_LINK_FLAG_CLOCK_VALID 8u
+#define R4OS_IPV6_OP_INFO 1536u
+#define R4OS_IPV6_OP_ADDRESS 1537u
+#define R4OS_IPV6_OP_ROUTE 1538u
+#define R4OS_IPV6_OP_CONFIGURE 1539u
+#define R4OS_IPV6_OP_SEND 1540u
+#define R4OS_IPV6_OP_RECEIVE 1541u
+#define R4OS_IPV6_OP_TICK 1542u
+#define R4OS_IPV6_OP_HANDLE_RX 1543u
+#define R4OS_ICMPV6_OP_PARSE 1568u
+#define R4OS_ICMPV6_OP_SEAL 1569u
+#define R4OS_ICMPV6_OP_CHECKSUM 1570u
+#define R4OS_ICMPV6_OP_ECHO_REPLY 1571u
+#define R4OS_ICMPV6_OP_ERROR 1572u
+#define R4OS_NDP_OP_INFO 1600u
+#define R4OS_NDP_OP_HANDLE_RX 1601u
+#define R4OS_NDP_OP_RESOLVE 1602u
+#define R4OS_NDP_OP_CONFIRM 1603u
+#define R4OS_NDP_OP_TICK 1604u
+#define R4OS_NDP_OP_LINK_RESET 1605u
+#define R4OS_IPV6_CAP_PACKET 1ull
+#define R4OS_IPV6_CAP_ICMP 2ull
+#define R4OS_IPV6_CAP_ND 4ull
+#define R4OS_IPV6_CAP_DAD 8ull
+#define R4OS_IPV6_CAP_SLAAC 16ull
+#define R4OS_IPV6_CAP_EXTENSIONS 32ull
+#define R4OS_IPV6_CAP_REASSEMBLY 64ull
+#define R4OS_IPV6_CAP_PMTU 128ull
+#define R4OS_IPV6_CAP_STATIC_ADDRESS 256ull
+#define R4OS_IPV6_ADDRESS_FLAG_TENTATIVE 1u
+#define R4OS_IPV6_ADDRESS_FLAG_PREFERRED 2u
+#define R4OS_IPV6_ADDRESS_FLAG_DEPRECATED 4u
+#define R4OS_IPV6_ADDRESS_FLAG_DUPLICATE 8u
+#define R4OS_IPV6_ADDRESS_FLAG_MANUAL 16u
+#define R4OS_IPV6_ADDRESS_FLAG_SLAAC 32u
+#define R4OS_IPV6_ADDRESS_FLAG_LINK_LOCAL 64u
+#define R4OS_IPV6_ROUTE_FLAG_ON_LINK 1u
+#define R4OS_IPV6_ROUTE_FLAG_DEFAULT 2u
+#define R4OS_IPV6_ROUTE_FLAG_ROUTER 4u
+#define R4OS_IPV6_ROUTE_FLAG_MANUAL 8u
+#define R4OS_IPV6_CONFIG_REMOVE 1u
+#define R4OS_IPV6_MINIMUM_MTU 1280u
+#define R4OS_IPV6_PAYLOAD_CAPACITY 1504u
+#define R4OS_IPV6_PREFIX_CAPACITY 8u
+#define R4OS_NDP_ACTION_NONE 0u
+#define R4OS_NDP_ACTION_RESOLVED 1u
+#define R4OS_NDP_ACTION_MULTICAST_PROBE 2u
+#define R4OS_NDP_ACTION_UNICAST_PROBE 3u
+#define R4OS_NDP_ACTION_TIMED_OUT 4u
+#define R4OS_NDP_EVENT_FLAG_MAC_PRESENT 1u
+#define R4OS_NDP_EVENT_FLAG_NONCE_PRESENT 2u
+#define R4OS_NDP_EVENT_FLAG_ROUTER 2147483648u
+#define R4OS_NDP_EVENT_FLAG_SOLICITED 1073741824u
+#define R4OS_NDP_EVENT_FLAG_OVERRIDE 536870912u
+#define R4OS_NDP_REQUEST_FRAGMENTED 1u
+#define R4OS_NDP_CONFIRM_PROBE_SENT 1u
+#define R4OS_IPV6_PACKET_FLAG_FRAGMENTED 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -4003,6 +4069,20 @@ typedef struct R4NetworkSocketResult R4NetworkSocketResult;
 typedef struct R4NetworkResolveRequest R4NetworkResolveRequest;
 typedef struct R4NetworkResolvePage R4NetworkResolvePage;
 typedef struct R4NetworkResolveAnswer R4NetworkResolveAnswer;
+typedef struct R4NetworkLinkRequest R4NetworkLinkRequest;
+typedef struct R4NetworkLinkInfo R4NetworkLinkInfo;
+typedef struct R4Ipv6FrameOp R4Ipv6FrameOp;
+typedef struct R4Ipv6InterfaceQuery R4Ipv6InterfaceQuery;
+typedef struct R4Ipv6InterfaceInfo R4Ipv6InterfaceInfo;
+typedef struct R4Ipv6AddressInfo R4Ipv6AddressInfo;
+typedef struct R4Ipv6RouteInfo R4Ipv6RouteInfo;
+typedef struct R4Ipv6AddressConfig R4Ipv6AddressConfig;
+typedef struct R4Ipv6Packet R4Ipv6Packet;
+typedef struct R4Icmpv6Message R4Icmpv6Message;
+typedef struct R4NdpPrefix R4NdpPrefix;
+typedef struct R4NdpRequest R4NdpRequest;
+typedef struct R4NdpEvent R4NdpEvent;
+typedef struct R4NdpInfo R4NdpInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11808,6 +11888,199 @@ typedef struct R4NetworkResolveAnswer {
     uint32_t ttl_seconds;
     uint32_t reserved;
 } R4NetworkResolveAnswer;
+
+typedef struct R4NetworkLinkRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t op;
+    uint32_t index;
+    uint32_t interface_id;
+    uint32_t reserved0;
+    uint64_t generation;
+    uint32_t bytes;
+    uint32_t reserved1;
+    uint8_t frame[1536];
+} R4NetworkLinkRequest;
+
+typedef struct R4NetworkLinkInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t index;
+    uint32_t interface_id;
+    uint64_t generation;
+    uint64_t provider;
+    uint32_t mtu;
+    uint32_t flags;
+    uint8_t mac[6];
+    uint16_t reserved;
+    R4MonotonicClockInfo clock;
+} R4NetworkLinkInfo;
+
+typedef struct R4Ipv6FrameOp {
+    uint32_t version;
+    uint32_t size;
+    R4NetworkLinkInfo link;
+    uint32_t bytes;
+    uint32_t reserved;
+    uint8_t frame[1536];
+} R4Ipv6FrameOp;
+
+typedef struct R4Ipv6InterfaceQuery {
+    uint32_t version;
+    uint32_t size;
+    uint32_t index;
+    uint32_t interface_id;
+    uint64_t provider;
+    uint64_t generation;
+    uint32_t cursor;
+    uint32_t reserved;
+} R4Ipv6InterfaceQuery;
+
+typedef struct R4Ipv6InterfaceInfo {
+    uint32_t version;
+    uint32_t size;
+    R4NetworkLinkInfo link;
+    uint64_t revision;
+    uint64_t capabilities;
+    uint32_t address_count;
+    uint32_t route_count;
+    uint32_t max_packet;
+    uint32_t reserved;
+    R4NetworkAddress link_local;
+    R4NetworkAddress preferred;
+    R4NetworkAddress default_router;
+    uint64_t next_due_ns;
+    uint64_t rx_packets;
+    uint64_t tx_packets;
+    uint64_t dropped_packets;
+} R4Ipv6InterfaceInfo;
+
+typedef struct R4Ipv6AddressInfo {
+    uint32_t version;
+    uint32_t size;
+    R4NetworkAddress address;
+    uint64_t provider;
+    uint64_t generation;
+    uint64_t preferred_until_ns;
+    uint64_t valid_until_ns;
+    uint32_t flags;
+    uint32_t prefix_length;
+} R4Ipv6AddressInfo;
+
+typedef struct R4Ipv6RouteInfo {
+    uint32_t version;
+    uint32_t size;
+    R4NetworkAddress prefix;
+    R4NetworkAddress gateway;
+    uint64_t provider;
+    uint64_t generation;
+    uint64_t valid_until_ns;
+    uint32_t prefix_length;
+    uint32_t metric;
+    uint32_t flags;
+    uint32_t reserved;
+} R4Ipv6RouteInfo;
+
+typedef struct R4Ipv6AddressConfig {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t generation;
+    uint32_t interface_id;
+    uint32_t flags;
+    R4NetworkAddress address;
+    uint32_t prefix_length;
+    uint32_t reserved;
+    uint64_t preferred_lifetime_ns;
+    uint64_t valid_lifetime_ns;
+} R4Ipv6AddressConfig;
+
+typedef struct R4Ipv6Packet {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t generation;
+    R4NetworkAddress source;
+    R4NetworkAddress destination;
+    R4NetworkDeadline deadline;
+    uint32_t next_header;
+    uint32_t bytes;
+    uint32_t flags;
+    uint32_t reserved;
+    uint8_t payload[1504];
+} R4Ipv6Packet;
+
+typedef struct R4Icmpv6Message {
+    uint32_t version;
+    uint32_t size;
+    uint8_t source[16];
+    uint8_t destination[16];
+    uint8_t reply_source[16];
+    uint32_t bytes;
+    uint32_t flags;
+    uint32_t next_header;
+    uint32_t checksum;
+    uint8_t payload[1504];
+} R4Icmpv6Message;
+
+typedef struct R4NdpPrefix {
+    uint8_t bytes[16];
+    uint32_t flags;
+    uint32_t valid_lifetime_seconds;
+    uint32_t preferred_lifetime_seconds;
+    uint32_t prefix_length;
+} R4NdpPrefix;
+
+typedef struct R4NdpRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t interface_id;
+    uint32_t flags;
+    uint64_t generation;
+    uint64_t now_ns;
+    uint32_t clock_generation;
+    uint32_t reserved;
+    uint8_t source[16];
+    uint8_t destination[16];
+    uint8_t target[16];
+    uint8_t mac[6];
+    uint16_t reserved1;
+    uint32_t hop_limit;
+    uint32_t bytes;
+    uint8_t payload[1504];
+} R4NdpRequest;
+
+typedef struct R4NdpEvent {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t flags;
+    uint8_t target[16];
+    uint8_t mac[6];
+    uint16_t reserved0;
+    uint32_t router_lifetime_seconds;
+    uint32_t reachable_ms;
+    uint32_t retransmit_ms;
+    uint32_t mtu;
+    uint32_t prefix_count;
+    uint32_t reserved1;
+    R4NdpPrefix prefixes[8];
+    uint8_t nonce[6];
+    uint16_t reserved2;
+} R4NdpEvent;
+
+typedef struct R4NdpInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint32_t active_links;
+    uint32_t max_links;
+    uint32_t active_neighbors;
+    uint32_t max_neighbors;
+    uint32_t probes;
+    uint32_t timeouts;
+    uint64_t flags;
+} R4NdpInfo;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -19906,6 +20179,171 @@ _Static_assert(sizeof(R4NetworkResolveAnswer) == 40u, "NetworkResolveAnswer size
 _Static_assert(offsetof(R4NetworkResolveAnswer, address) == 0u, "NetworkResolveAnswer.address offset mismatch");
 _Static_assert(offsetof(R4NetworkResolveAnswer, ttl_seconds) == 32u, "NetworkResolveAnswer.ttl_seconds offset mismatch");
 _Static_assert(offsetof(R4NetworkResolveAnswer, reserved) == 36u, "NetworkResolveAnswer.reserved offset mismatch");
+_Static_assert(sizeof(R4NetworkLinkRequest) == 1576u, "NetworkLinkRequest size mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, version) == 0u, "NetworkLinkRequest.version offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, size) == 4u, "NetworkLinkRequest.size offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, op) == 8u, "NetworkLinkRequest.op offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, index) == 12u, "NetworkLinkRequest.index offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, interface_id) == 16u, "NetworkLinkRequest.interface_id offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, reserved0) == 20u, "NetworkLinkRequest.reserved0 offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, generation) == 24u, "NetworkLinkRequest.generation offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, bytes) == 32u, "NetworkLinkRequest.bytes offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, reserved1) == 36u, "NetworkLinkRequest.reserved1 offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkRequest, frame) == 40u, "NetworkLinkRequest.frame offset mismatch");
+_Static_assert(sizeof(R4NetworkLinkInfo) == 128u, "NetworkLinkInfo size mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, version) == 0u, "NetworkLinkInfo.version offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, size) == 4u, "NetworkLinkInfo.size offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, index) == 8u, "NetworkLinkInfo.index offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, interface_id) == 12u, "NetworkLinkInfo.interface_id offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, generation) == 16u, "NetworkLinkInfo.generation offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, provider) == 24u, "NetworkLinkInfo.provider offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, mtu) == 32u, "NetworkLinkInfo.mtu offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, flags) == 36u, "NetworkLinkInfo.flags offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, mac) == 40u, "NetworkLinkInfo.mac offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, reserved) == 46u, "NetworkLinkInfo.reserved offset mismatch");
+_Static_assert(offsetof(R4NetworkLinkInfo, clock) == 48u, "NetworkLinkInfo.clock offset mismatch");
+_Static_assert(sizeof(R4Ipv6FrameOp) == 1680u, "Ipv6FrameOp size mismatch");
+_Static_assert(offsetof(R4Ipv6FrameOp, version) == 0u, "Ipv6FrameOp.version offset mismatch");
+_Static_assert(offsetof(R4Ipv6FrameOp, size) == 4u, "Ipv6FrameOp.size offset mismatch");
+_Static_assert(offsetof(R4Ipv6FrameOp, link) == 8u, "Ipv6FrameOp.link offset mismatch");
+_Static_assert(offsetof(R4Ipv6FrameOp, bytes) == 136u, "Ipv6FrameOp.bytes offset mismatch");
+_Static_assert(offsetof(R4Ipv6FrameOp, reserved) == 140u, "Ipv6FrameOp.reserved offset mismatch");
+_Static_assert(offsetof(R4Ipv6FrameOp, frame) == 144u, "Ipv6FrameOp.frame offset mismatch");
+_Static_assert(sizeof(R4Ipv6InterfaceQuery) == 40u, "Ipv6InterfaceQuery size mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, version) == 0u, "Ipv6InterfaceQuery.version offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, size) == 4u, "Ipv6InterfaceQuery.size offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, index) == 8u, "Ipv6InterfaceQuery.index offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, interface_id) == 12u, "Ipv6InterfaceQuery.interface_id offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, provider) == 16u, "Ipv6InterfaceQuery.provider offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, generation) == 24u, "Ipv6InterfaceQuery.generation offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, cursor) == 32u, "Ipv6InterfaceQuery.cursor offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceQuery, reserved) == 36u, "Ipv6InterfaceQuery.reserved offset mismatch");
+_Static_assert(sizeof(R4Ipv6InterfaceInfo) == 296u, "Ipv6InterfaceInfo size mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, version) == 0u, "Ipv6InterfaceInfo.version offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, size) == 4u, "Ipv6InterfaceInfo.size offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, link) == 8u, "Ipv6InterfaceInfo.link offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, revision) == 136u, "Ipv6InterfaceInfo.revision offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, capabilities) == 144u, "Ipv6InterfaceInfo.capabilities offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, address_count) == 152u, "Ipv6InterfaceInfo.address_count offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, route_count) == 156u, "Ipv6InterfaceInfo.route_count offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, max_packet) == 160u, "Ipv6InterfaceInfo.max_packet offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, reserved) == 164u, "Ipv6InterfaceInfo.reserved offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, link_local) == 168u, "Ipv6InterfaceInfo.link_local offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, preferred) == 200u, "Ipv6InterfaceInfo.preferred offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, default_router) == 232u, "Ipv6InterfaceInfo.default_router offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, next_due_ns) == 264u, "Ipv6InterfaceInfo.next_due_ns offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, rx_packets) == 272u, "Ipv6InterfaceInfo.rx_packets offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, tx_packets) == 280u, "Ipv6InterfaceInfo.tx_packets offset mismatch");
+_Static_assert(offsetof(R4Ipv6InterfaceInfo, dropped_packets) == 288u, "Ipv6InterfaceInfo.dropped_packets offset mismatch");
+_Static_assert(sizeof(R4Ipv6AddressInfo) == 80u, "Ipv6AddressInfo size mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, version) == 0u, "Ipv6AddressInfo.version offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, size) == 4u, "Ipv6AddressInfo.size offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, address) == 8u, "Ipv6AddressInfo.address offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, provider) == 40u, "Ipv6AddressInfo.provider offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, generation) == 48u, "Ipv6AddressInfo.generation offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, preferred_until_ns) == 56u, "Ipv6AddressInfo.preferred_until_ns offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, valid_until_ns) == 64u, "Ipv6AddressInfo.valid_until_ns offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, flags) == 72u, "Ipv6AddressInfo.flags offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressInfo, prefix_length) == 76u, "Ipv6AddressInfo.prefix_length offset mismatch");
+_Static_assert(sizeof(R4Ipv6RouteInfo) == 112u, "Ipv6RouteInfo size mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, version) == 0u, "Ipv6RouteInfo.version offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, size) == 4u, "Ipv6RouteInfo.size offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, prefix) == 8u, "Ipv6RouteInfo.prefix offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, gateway) == 40u, "Ipv6RouteInfo.gateway offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, provider) == 72u, "Ipv6RouteInfo.provider offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, generation) == 80u, "Ipv6RouteInfo.generation offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, valid_until_ns) == 88u, "Ipv6RouteInfo.valid_until_ns offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, prefix_length) == 96u, "Ipv6RouteInfo.prefix_length offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, metric) == 100u, "Ipv6RouteInfo.metric offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, flags) == 104u, "Ipv6RouteInfo.flags offset mismatch");
+_Static_assert(offsetof(R4Ipv6RouteInfo, reserved) == 108u, "Ipv6RouteInfo.reserved offset mismatch");
+_Static_assert(sizeof(R4Ipv6AddressConfig) == 88u, "Ipv6AddressConfig size mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, version) == 0u, "Ipv6AddressConfig.version offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, size) == 4u, "Ipv6AddressConfig.size offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, provider) == 8u, "Ipv6AddressConfig.provider offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, generation) == 16u, "Ipv6AddressConfig.generation offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, interface_id) == 24u, "Ipv6AddressConfig.interface_id offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, flags) == 28u, "Ipv6AddressConfig.flags offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, address) == 32u, "Ipv6AddressConfig.address offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, prefix_length) == 64u, "Ipv6AddressConfig.prefix_length offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, reserved) == 68u, "Ipv6AddressConfig.reserved offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, preferred_lifetime_ns) == 72u, "Ipv6AddressConfig.preferred_lifetime_ns offset mismatch");
+_Static_assert(offsetof(R4Ipv6AddressConfig, valid_lifetime_ns) == 80u, "Ipv6AddressConfig.valid_lifetime_ns offset mismatch");
+_Static_assert(sizeof(R4Ipv6Packet) == 1656u, "Ipv6Packet size mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, version) == 0u, "Ipv6Packet.version offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, size) == 4u, "Ipv6Packet.size offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, provider) == 8u, "Ipv6Packet.provider offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, generation) == 16u, "Ipv6Packet.generation offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, source) == 24u, "Ipv6Packet.source offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, destination) == 56u, "Ipv6Packet.destination offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, deadline) == 88u, "Ipv6Packet.deadline offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, next_header) == 136u, "Ipv6Packet.next_header offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, bytes) == 140u, "Ipv6Packet.bytes offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, flags) == 144u, "Ipv6Packet.flags offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, reserved) == 148u, "Ipv6Packet.reserved offset mismatch");
+_Static_assert(offsetof(R4Ipv6Packet, payload) == 152u, "Ipv6Packet.payload offset mismatch");
+_Static_assert(sizeof(R4Icmpv6Message) == 1576u, "Icmpv6Message size mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, version) == 0u, "Icmpv6Message.version offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, size) == 4u, "Icmpv6Message.size offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, source) == 8u, "Icmpv6Message.source offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, destination) == 24u, "Icmpv6Message.destination offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, reply_source) == 40u, "Icmpv6Message.reply_source offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, bytes) == 56u, "Icmpv6Message.bytes offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, flags) == 60u, "Icmpv6Message.flags offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, next_header) == 64u, "Icmpv6Message.next_header offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, checksum) == 68u, "Icmpv6Message.checksum offset mismatch");
+_Static_assert(offsetof(R4Icmpv6Message, payload) == 72u, "Icmpv6Message.payload offset mismatch");
+_Static_assert(sizeof(R4NdpPrefix) == 32u, "NdpPrefix size mismatch");
+_Static_assert(offsetof(R4NdpPrefix, bytes) == 0u, "NdpPrefix.bytes offset mismatch");
+_Static_assert(offsetof(R4NdpPrefix, flags) == 16u, "NdpPrefix.flags offset mismatch");
+_Static_assert(offsetof(R4NdpPrefix, valid_lifetime_seconds) == 20u, "NdpPrefix.valid_lifetime_seconds offset mismatch");
+_Static_assert(offsetof(R4NdpPrefix, preferred_lifetime_seconds) == 24u, "NdpPrefix.preferred_lifetime_seconds offset mismatch");
+_Static_assert(offsetof(R4NdpPrefix, prefix_length) == 28u, "NdpPrefix.prefix_length offset mismatch");
+_Static_assert(sizeof(R4NdpRequest) == 1608u, "NdpRequest size mismatch");
+_Static_assert(offsetof(R4NdpRequest, version) == 0u, "NdpRequest.version offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, size) == 4u, "NdpRequest.size offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, interface_id) == 8u, "NdpRequest.interface_id offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, flags) == 12u, "NdpRequest.flags offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, generation) == 16u, "NdpRequest.generation offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, now_ns) == 24u, "NdpRequest.now_ns offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, clock_generation) == 32u, "NdpRequest.clock_generation offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, reserved) == 36u, "NdpRequest.reserved offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, source) == 40u, "NdpRequest.source offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, destination) == 56u, "NdpRequest.destination offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, target) == 72u, "NdpRequest.target offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, mac) == 88u, "NdpRequest.mac offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, reserved1) == 94u, "NdpRequest.reserved1 offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, hop_limit) == 96u, "NdpRequest.hop_limit offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, bytes) == 100u, "NdpRequest.bytes offset mismatch");
+_Static_assert(offsetof(R4NdpRequest, payload) == 104u, "NdpRequest.payload offset mismatch");
+_Static_assert(sizeof(R4NdpEvent) == 328u, "NdpEvent size mismatch");
+_Static_assert(offsetof(R4NdpEvent, version) == 0u, "NdpEvent.version offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, size) == 4u, "NdpEvent.size offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, kind) == 8u, "NdpEvent.kind offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, flags) == 12u, "NdpEvent.flags offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, target) == 16u, "NdpEvent.target offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, mac) == 32u, "NdpEvent.mac offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, reserved0) == 38u, "NdpEvent.reserved0 offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, router_lifetime_seconds) == 40u, "NdpEvent.router_lifetime_seconds offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, reachable_ms) == 44u, "NdpEvent.reachable_ms offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, retransmit_ms) == 48u, "NdpEvent.retransmit_ms offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, mtu) == 52u, "NdpEvent.mtu offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, prefix_count) == 56u, "NdpEvent.prefix_count offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, reserved1) == 60u, "NdpEvent.reserved1 offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, prefixes) == 64u, "NdpEvent.prefixes offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, nonce) == 320u, "NdpEvent.nonce offset mismatch");
+_Static_assert(offsetof(R4NdpEvent, reserved2) == 326u, "NdpEvent.reserved2 offset mismatch");
+_Static_assert(sizeof(R4NdpInfo) == 48u, "NdpInfo size mismatch");
+_Static_assert(offsetof(R4NdpInfo, version) == 0u, "NdpInfo.version offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, size) == 4u, "NdpInfo.size offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, provider) == 8u, "NdpInfo.provider offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, active_links) == 16u, "NdpInfo.active_links offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, max_links) == 20u, "NdpInfo.max_links offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, active_neighbors) == 24u, "NdpInfo.active_neighbors offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, max_neighbors) == 28u, "NdpInfo.max_neighbors offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, probes) == 32u, "NdpInfo.probes offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, timeouts) == 36u, "NdpInfo.timeouts offset mismatch");
+_Static_assert(offsetof(R4NdpInfo, flags) == 40u, "NdpInfo.flags offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1488u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

@@ -57,7 +57,11 @@
       "register_audio_backend",
       "register_synth_engine"
     ],
-    "magic": 843665476
+    "magic": 843665476,
+    "protocol_tail_fields": [
+      "protocol_dispatch",
+      "link_io"
+    ]
   },
   "audio_status": {
     "name": "AudioBackendStatus2",

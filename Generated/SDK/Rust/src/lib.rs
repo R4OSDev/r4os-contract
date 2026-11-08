@@ -3048,6 +3048,72 @@ pub const network_error_reset: i32 = -6211;
 pub const network_error_backend: i32 = -6212;
 pub const network_error_not_found: i32 = -6213;
 pub const network_error_truncated_dns: i32 = -6214;
+pub const net_backend_cap_rx_multicast: u64 = 2048;
+pub const ethernet_flag_ipv6: u32 = 64;
+pub const ethernet_flag_multicast: u32 = 128;
+pub const network_link_op_identity: u32 = 0;
+pub const network_link_op_info: u32 = 1;
+pub const network_link_op_transmit: u32 = 2;
+pub const network_link_flag_available: u32 = 1;
+pub const network_link_flag_up: u32 = 2;
+pub const network_link_flag_multicast: u32 = 4;
+pub const network_link_flag_clock_valid: u32 = 8;
+pub const ipv6_op_info: u32 = 1536;
+pub const ipv6_op_address: u32 = 1537;
+pub const ipv6_op_route: u32 = 1538;
+pub const ipv6_op_configure: u32 = 1539;
+pub const ipv6_op_send: u32 = 1540;
+pub const ipv6_op_receive: u32 = 1541;
+pub const ipv6_op_tick: u32 = 1542;
+pub const ipv6_op_handle_rx: u32 = 1543;
+pub const icmpv6_op_parse: u32 = 1568;
+pub const icmpv6_op_seal: u32 = 1569;
+pub const icmpv6_op_checksum: u32 = 1570;
+pub const icmpv6_op_echo_reply: u32 = 1571;
+pub const icmpv6_op_error: u32 = 1572;
+pub const ndp_op_info: u32 = 1600;
+pub const ndp_op_handle_rx: u32 = 1601;
+pub const ndp_op_resolve: u32 = 1602;
+pub const ndp_op_confirm: u32 = 1603;
+pub const ndp_op_tick: u32 = 1604;
+pub const ndp_op_link_reset: u32 = 1605;
+pub const ipv6_cap_packet: u64 = 1;
+pub const ipv6_cap_icmp: u64 = 2;
+pub const ipv6_cap_nd: u64 = 4;
+pub const ipv6_cap_dad: u64 = 8;
+pub const ipv6_cap_slaac: u64 = 16;
+pub const ipv6_cap_extensions: u64 = 32;
+pub const ipv6_cap_reassembly: u64 = 64;
+pub const ipv6_cap_pmtu: u64 = 128;
+pub const ipv6_cap_static_address: u64 = 256;
+pub const ipv6_address_flag_tentative: u32 = 1;
+pub const ipv6_address_flag_preferred: u32 = 2;
+pub const ipv6_address_flag_deprecated: u32 = 4;
+pub const ipv6_address_flag_duplicate: u32 = 8;
+pub const ipv6_address_flag_manual: u32 = 16;
+pub const ipv6_address_flag_slaac: u32 = 32;
+pub const ipv6_address_flag_link_local: u32 = 64;
+pub const ipv6_route_flag_on_link: u32 = 1;
+pub const ipv6_route_flag_default: u32 = 2;
+pub const ipv6_route_flag_router: u32 = 4;
+pub const ipv6_route_flag_manual: u32 = 8;
+pub const ipv6_config_remove: u32 = 1;
+pub const ipv6_minimum_mtu: u32 = 1280;
+pub const ipv6_payload_capacity: u32 = 1504;
+pub const ipv6_prefix_capacity: u32 = 8;
+pub const ndp_action_none: u32 = 0;
+pub const ndp_action_resolved: u32 = 1;
+pub const ndp_action_multicast_probe: u32 = 2;
+pub const ndp_action_unicast_probe: u32 = 3;
+pub const ndp_action_timed_out: u32 = 4;
+pub const ndp_event_flag_mac_present: u32 = 1;
+pub const ndp_event_flag_nonce_present: u32 = 2;
+pub const ndp_event_flag_router: u32 = 2147483648;
+pub const ndp_event_flag_solicited: u32 = 1073741824;
+pub const ndp_event_flag_override: u32 = 536870912;
+pub const ndp_request_fragmented: u32 = 1;
+pub const ndp_confirm_probe_sent: u32 = 1;
+pub const ipv6_packet_flag_fragmented: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -21828,6 +21894,476 @@ impl Default for NetworkResolveAnswer {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkLinkRequest {
+    pub version: u32,
+    pub size: u32,
+    pub op: u32,
+    pub index: u32,
+    pub interface_id: u32,
+    pub reserved0: u32,
+    pub generation: u64,
+    pub bytes: u32,
+    pub reserved1: u32,
+    pub frame: [u8; 1536],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkLinkRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 1576,
+            op: 0,
+            index: 0,
+            interface_id: 0,
+            reserved0: 0,
+            generation: 0,
+            bytes: 0,
+            reserved1: 0,
+            frame: [0; 1536],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkLinkInfo {
+    pub version: u32,
+    pub size: u32,
+    pub index: u32,
+    pub interface_id: u32,
+    pub generation: u64,
+    pub provider: u64,
+    pub mtu: u32,
+    pub flags: u32,
+    pub mac: [u8; 6],
+    pub reserved: u16,
+    pub clock: MonotonicClockInfo,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkLinkInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 128,
+            index: 0,
+            interface_id: 0,
+            generation: 0,
+            provider: 0,
+            mtu: 0,
+            flags: 0,
+            mac: [0; 6],
+            reserved: 0,
+            clock: MonotonicClockInfo { version: 1, size: 80, flags: 0, source: 0, generation: 0, event_backend: 0, instant_ns: 0, frequency_hz: 1000000000, resolution_ns: 0, source_frequency_hz: 0, event_frequency_numerator: 0, event_frequency_denominator: 0, event_requested_hz: 0, event_effective_hz: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Ipv6FrameOp {
+    pub version: u32,
+    pub size: u32,
+    pub link: NetworkLinkInfo,
+    pub bytes: u32,
+    pub reserved: u32,
+    pub frame: [u8; 1536],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Ipv6FrameOp {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 1680,
+            link: NetworkLinkInfo { version: 1, size: 128, index: 0, interface_id: 0, generation: 0, provider: 0, mtu: 0, flags: 0, mac: [0; 6], reserved: 0, clock: MonotonicClockInfo { version: 1, size: 80, flags: 0, source: 0, generation: 0, event_backend: 0, instant_ns: 0, frequency_hz: 1000000000, resolution_ns: 0, source_frequency_hz: 0, event_frequency_numerator: 0, event_frequency_denominator: 0, event_requested_hz: 0, event_effective_hz: 0 } },
+            bytes: 0,
+            reserved: 0,
+            frame: [0; 1536],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Ipv6InterfaceQuery {
+    pub version: u32,
+    pub size: u32,
+    pub index: u32,
+    pub interface_id: u32,
+    pub provider: u64,
+    pub generation: u64,
+    pub cursor: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Ipv6InterfaceQuery {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            index: 0,
+            interface_id: 0,
+            provider: 0,
+            generation: 0,
+            cursor: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Ipv6InterfaceInfo {
+    pub version: u32,
+    pub size: u32,
+    pub link: NetworkLinkInfo,
+    pub revision: u64,
+    pub capabilities: u64,
+    pub address_count: u32,
+    pub route_count: u32,
+    pub max_packet: u32,
+    pub reserved: u32,
+    pub link_local: NetworkAddress,
+    pub preferred: NetworkAddress,
+    pub default_router: NetworkAddress,
+    pub next_due_ns: u64,
+    pub rx_packets: u64,
+    pub tx_packets: u64,
+    pub dropped_packets: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Ipv6InterfaceInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 296,
+            link: NetworkLinkInfo { version: 1, size: 128, index: 0, interface_id: 0, generation: 0, provider: 0, mtu: 0, flags: 0, mac: [0; 6], reserved: 0, clock: MonotonicClockInfo { version: 1, size: 80, flags: 0, source: 0, generation: 0, event_backend: 0, instant_ns: 0, frequency_hz: 1000000000, resolution_ns: 0, source_frequency_hz: 0, event_frequency_numerator: 0, event_frequency_denominator: 0, event_requested_hz: 0, event_effective_hz: 0 } },
+            revision: 0,
+            capabilities: 0,
+            address_count: 0,
+            route_count: 0,
+            max_packet: 0,
+            reserved: 0,
+            link_local: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            preferred: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            default_router: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            next_due_ns: 0,
+            rx_packets: 0,
+            tx_packets: 0,
+            dropped_packets: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Ipv6AddressInfo {
+    pub version: u32,
+    pub size: u32,
+    pub address: NetworkAddress,
+    pub provider: u64,
+    pub generation: u64,
+    pub preferred_until_ns: u64,
+    pub valid_until_ns: u64,
+    pub flags: u32,
+    pub prefix_length: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Ipv6AddressInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 80,
+            address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            provider: 0,
+            generation: 0,
+            preferred_until_ns: 0,
+            valid_until_ns: 0,
+            flags: 0,
+            prefix_length: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Ipv6RouteInfo {
+    pub version: u32,
+    pub size: u32,
+    pub prefix: NetworkAddress,
+    pub gateway: NetworkAddress,
+    pub provider: u64,
+    pub generation: u64,
+    pub valid_until_ns: u64,
+    pub prefix_length: u32,
+    pub metric: u32,
+    pub flags: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Ipv6RouteInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            prefix: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            gateway: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            provider: 0,
+            generation: 0,
+            valid_until_ns: 0,
+            prefix_length: 0,
+            metric: 0,
+            flags: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Ipv6AddressConfig {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub generation: u64,
+    pub interface_id: u32,
+    pub flags: u32,
+    pub address: NetworkAddress,
+    pub prefix_length: u32,
+    pub reserved: u32,
+    pub preferred_lifetime_ns: u64,
+    pub valid_lifetime_ns: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Ipv6AddressConfig {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 88,
+            provider: 0,
+            generation: 0,
+            interface_id: 0,
+            flags: 0,
+            address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            prefix_length: 0,
+            reserved: 0,
+            preferred_lifetime_ns: 0,
+            valid_lifetime_ns: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Ipv6Packet {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub generation: u64,
+    pub source: NetworkAddress,
+    pub destination: NetworkAddress,
+    pub deadline: NetworkDeadline,
+    pub next_header: u32,
+    pub bytes: u32,
+    pub flags: u32,
+    pub reserved: u32,
+    pub payload: [u8; 1504],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Ipv6Packet {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 1656,
+            provider: 0,
+            generation: 0,
+            source: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            destination: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] },
+            deadline: NetworkDeadline { version: 1, size: 48, kind: 0, reserved0: 0, absolute_ns: 0, last_ns: 0, clock_source: 0, clock_generation: 0, event_backend: 0, tick_hz: 0 },
+            next_header: 0,
+            bytes: 0,
+            flags: 0,
+            reserved: 0,
+            payload: [0; 1504],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Icmpv6Message {
+    pub version: u32,
+    pub size: u32,
+    pub source: [u8; 16],
+    pub destination: [u8; 16],
+    pub reply_source: [u8; 16],
+    pub bytes: u32,
+    pub flags: u32,
+    pub next_header: u32,
+    pub checksum: u32,
+    pub payload: [u8; 1504],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Icmpv6Message {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 1576,
+            source: [0; 16],
+            destination: [0; 16],
+            reply_source: [0; 16],
+            bytes: 0,
+            flags: 0,
+            next_header: 58,
+            checksum: 0,
+            payload: [0; 1504],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NdpPrefix {
+    pub bytes: [u8; 16],
+    pub flags: u32,
+    pub valid_lifetime_seconds: u32,
+    pub preferred_lifetime_seconds: u32,
+    pub prefix_length: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NdpPrefix {
+    fn default() -> Self {
+        Self {
+            bytes: [0; 16],
+            flags: 0,
+            valid_lifetime_seconds: 0,
+            preferred_lifetime_seconds: 0,
+            prefix_length: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NdpRequest {
+    pub version: u32,
+    pub size: u32,
+    pub interface_id: u32,
+    pub flags: u32,
+    pub generation: u64,
+    pub now_ns: u64,
+    pub clock_generation: u32,
+    pub reserved: u32,
+    pub source: [u8; 16],
+    pub destination: [u8; 16],
+    pub target: [u8; 16],
+    pub mac: [u8; 6],
+    pub reserved1: u16,
+    pub hop_limit: u32,
+    pub bytes: u32,
+    pub payload: [u8; 1504],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NdpRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 1608,
+            interface_id: 0,
+            flags: 0,
+            generation: 0,
+            now_ns: 0,
+            clock_generation: 0,
+            reserved: 0,
+            source: [0; 16],
+            destination: [0; 16],
+            target: [0; 16],
+            mac: [0; 6],
+            reserved1: 0,
+            hop_limit: 0,
+            bytes: 0,
+            payload: [0; 1504],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NdpEvent {
+    pub version: u32,
+    pub size: u32,
+    pub kind: u32,
+    pub flags: u32,
+    pub target: [u8; 16],
+    pub mac: [u8; 6],
+    pub reserved0: u16,
+    pub router_lifetime_seconds: u32,
+    pub reachable_ms: u32,
+    pub retransmit_ms: u32,
+    pub mtu: u32,
+    pub prefix_count: u32,
+    pub reserved1: u32,
+    pub prefixes: [NdpPrefix; 8],
+    pub nonce: [u8; 6],
+    pub reserved2: u16,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NdpEvent {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 328,
+            kind: 0,
+            flags: 0,
+            target: [0; 16],
+            mac: [0; 6],
+            reserved0: 0,
+            router_lifetime_seconds: 0,
+            reachable_ms: 0,
+            retransmit_ms: 0,
+            mtu: 0,
+            prefix_count: 0,
+            reserved1: 0,
+            prefixes: [NdpPrefix { bytes: [0; 16], flags: 0, valid_lifetime_seconds: 0, preferred_lifetime_seconds: 0, prefix_length: 0 }; 8],
+            nonce: [0; 6],
+            reserved2: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NdpInfo {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub active_links: u32,
+    pub max_links: u32,
+    pub active_neighbors: u32,
+    pub max_neighbors: u32,
+    pub probes: u32,
+    pub timeouts: u32,
+    pub flags: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NdpInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            provider: 0,
+            active_links: 0,
+            max_links: 0,
+            active_neighbors: 0,
+            max_neighbors: 0,
+            probes: 0,
+            timeouts: 0,
+            flags: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -27762,6 +28298,8 @@ pub struct ProtocolApi2 {
     pub cpu_acceleration_work: Option<unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32>,
     pub entropy_source_info: Option<unsafe extern "C" fn(*mut EntropySourceInfo) -> i32>,
     pub entropy_fill: Option<unsafe extern "C" fn(*mut u8, u32) -> i32>,
+    pub protocol_dispatch: Option<unsafe extern "C" fn(*const u8, u32, u32, *const ProtocolBuffer, *mut ProtocolBuffer) -> i32>,
+    pub link_io: Option<unsafe extern "C" fn(*const NetworkLinkRequest, *mut NetworkLinkInfo) -> i32>,
 }
 
 impl ProtocolApi2 {
@@ -27783,6 +28321,8 @@ impl ProtocolApi2 {
         cpu_acceleration_work: source.cpu_acceleration_work,
         entropy_source_info: source.entropy_source_info,
         entropy_fill: source.entropy_fill,
+        protocol_dispatch: None,
+        link_io: None,
     } }
 }
 
@@ -35328,6 +35868,185 @@ const _: () = {
     assert!(core::mem::offset_of!(NetworkResolveAnswer, reserved) == 36);
     assert!(core::mem::size_of::<NetworkResolveAnswer>() == 40);
     assert!(core::mem::align_of::<NetworkResolveAnswer>() == 4);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, version) == 0);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, size) == 4);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, op) == 8);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, index) == 12);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, interface_id) == 16);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, reserved0) == 20);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, generation) == 24);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, bytes) == 32);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, reserved1) == 36);
+    assert!(core::mem::offset_of!(NetworkLinkRequest, frame) == 40);
+    assert!(core::mem::size_of::<NetworkLinkRequest>() == 1576);
+    assert!(core::mem::align_of::<NetworkLinkRequest>() == 8);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, version) == 0);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, size) == 4);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, index) == 8);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, interface_id) == 12);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, generation) == 16);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, provider) == 24);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, mtu) == 32);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, flags) == 36);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, mac) == 40);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, reserved) == 46);
+    assert!(core::mem::offset_of!(NetworkLinkInfo, clock) == 48);
+    assert!(core::mem::size_of::<NetworkLinkInfo>() == 128);
+    assert!(core::mem::align_of::<NetworkLinkInfo>() == 8);
+    assert!(core::mem::offset_of!(Ipv6FrameOp, version) == 0);
+    assert!(core::mem::offset_of!(Ipv6FrameOp, size) == 4);
+    assert!(core::mem::offset_of!(Ipv6FrameOp, link) == 8);
+    assert!(core::mem::offset_of!(Ipv6FrameOp, bytes) == 136);
+    assert!(core::mem::offset_of!(Ipv6FrameOp, reserved) == 140);
+    assert!(core::mem::offset_of!(Ipv6FrameOp, frame) == 144);
+    assert!(core::mem::size_of::<Ipv6FrameOp>() == 1680);
+    assert!(core::mem::align_of::<Ipv6FrameOp>() == 8);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, version) == 0);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, size) == 4);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, index) == 8);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, interface_id) == 12);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, provider) == 16);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, generation) == 24);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, cursor) == 32);
+    assert!(core::mem::offset_of!(Ipv6InterfaceQuery, reserved) == 36);
+    assert!(core::mem::size_of::<Ipv6InterfaceQuery>() == 40);
+    assert!(core::mem::align_of::<Ipv6InterfaceQuery>() == 8);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, version) == 0);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, size) == 4);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, link) == 8);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, revision) == 136);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, capabilities) == 144);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, address_count) == 152);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, route_count) == 156);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, max_packet) == 160);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, reserved) == 164);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, link_local) == 168);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, preferred) == 200);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, default_router) == 232);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, next_due_ns) == 264);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, rx_packets) == 272);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, tx_packets) == 280);
+    assert!(core::mem::offset_of!(Ipv6InterfaceInfo, dropped_packets) == 288);
+    assert!(core::mem::size_of::<Ipv6InterfaceInfo>() == 296);
+    assert!(core::mem::align_of::<Ipv6InterfaceInfo>() == 8);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, version) == 0);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, size) == 4);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, address) == 8);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, provider) == 40);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, generation) == 48);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, preferred_until_ns) == 56);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, valid_until_ns) == 64);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, flags) == 72);
+    assert!(core::mem::offset_of!(Ipv6AddressInfo, prefix_length) == 76);
+    assert!(core::mem::size_of::<Ipv6AddressInfo>() == 80);
+    assert!(core::mem::align_of::<Ipv6AddressInfo>() == 8);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, version) == 0);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, size) == 4);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, prefix) == 8);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, gateway) == 40);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, provider) == 72);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, generation) == 80);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, valid_until_ns) == 88);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, prefix_length) == 96);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, metric) == 100);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, flags) == 104);
+    assert!(core::mem::offset_of!(Ipv6RouteInfo, reserved) == 108);
+    assert!(core::mem::size_of::<Ipv6RouteInfo>() == 112);
+    assert!(core::mem::align_of::<Ipv6RouteInfo>() == 8);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, version) == 0);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, size) == 4);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, provider) == 8);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, generation) == 16);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, interface_id) == 24);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, flags) == 28);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, address) == 32);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, prefix_length) == 64);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, reserved) == 68);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, preferred_lifetime_ns) == 72);
+    assert!(core::mem::offset_of!(Ipv6AddressConfig, valid_lifetime_ns) == 80);
+    assert!(core::mem::size_of::<Ipv6AddressConfig>() == 88);
+    assert!(core::mem::align_of::<Ipv6AddressConfig>() == 8);
+    assert!(core::mem::offset_of!(Ipv6Packet, version) == 0);
+    assert!(core::mem::offset_of!(Ipv6Packet, size) == 4);
+    assert!(core::mem::offset_of!(Ipv6Packet, provider) == 8);
+    assert!(core::mem::offset_of!(Ipv6Packet, generation) == 16);
+    assert!(core::mem::offset_of!(Ipv6Packet, source) == 24);
+    assert!(core::mem::offset_of!(Ipv6Packet, destination) == 56);
+    assert!(core::mem::offset_of!(Ipv6Packet, deadline) == 88);
+    assert!(core::mem::offset_of!(Ipv6Packet, next_header) == 136);
+    assert!(core::mem::offset_of!(Ipv6Packet, bytes) == 140);
+    assert!(core::mem::offset_of!(Ipv6Packet, flags) == 144);
+    assert!(core::mem::offset_of!(Ipv6Packet, reserved) == 148);
+    assert!(core::mem::offset_of!(Ipv6Packet, payload) == 152);
+    assert!(core::mem::size_of::<Ipv6Packet>() == 1656);
+    assert!(core::mem::align_of::<Ipv6Packet>() == 8);
+    assert!(core::mem::offset_of!(Icmpv6Message, version) == 0);
+    assert!(core::mem::offset_of!(Icmpv6Message, size) == 4);
+    assert!(core::mem::offset_of!(Icmpv6Message, source) == 8);
+    assert!(core::mem::offset_of!(Icmpv6Message, destination) == 24);
+    assert!(core::mem::offset_of!(Icmpv6Message, reply_source) == 40);
+    assert!(core::mem::offset_of!(Icmpv6Message, bytes) == 56);
+    assert!(core::mem::offset_of!(Icmpv6Message, flags) == 60);
+    assert!(core::mem::offset_of!(Icmpv6Message, next_header) == 64);
+    assert!(core::mem::offset_of!(Icmpv6Message, checksum) == 68);
+    assert!(core::mem::offset_of!(Icmpv6Message, payload) == 72);
+    assert!(core::mem::size_of::<Icmpv6Message>() == 1576);
+    assert!(core::mem::align_of::<Icmpv6Message>() == 4);
+    assert!(core::mem::offset_of!(NdpPrefix, bytes) == 0);
+    assert!(core::mem::offset_of!(NdpPrefix, flags) == 16);
+    assert!(core::mem::offset_of!(NdpPrefix, valid_lifetime_seconds) == 20);
+    assert!(core::mem::offset_of!(NdpPrefix, preferred_lifetime_seconds) == 24);
+    assert!(core::mem::offset_of!(NdpPrefix, prefix_length) == 28);
+    assert!(core::mem::size_of::<NdpPrefix>() == 32);
+    assert!(core::mem::align_of::<NdpPrefix>() == 4);
+    assert!(core::mem::offset_of!(NdpRequest, version) == 0);
+    assert!(core::mem::offset_of!(NdpRequest, size) == 4);
+    assert!(core::mem::offset_of!(NdpRequest, interface_id) == 8);
+    assert!(core::mem::offset_of!(NdpRequest, flags) == 12);
+    assert!(core::mem::offset_of!(NdpRequest, generation) == 16);
+    assert!(core::mem::offset_of!(NdpRequest, now_ns) == 24);
+    assert!(core::mem::offset_of!(NdpRequest, clock_generation) == 32);
+    assert!(core::mem::offset_of!(NdpRequest, reserved) == 36);
+    assert!(core::mem::offset_of!(NdpRequest, source) == 40);
+    assert!(core::mem::offset_of!(NdpRequest, destination) == 56);
+    assert!(core::mem::offset_of!(NdpRequest, target) == 72);
+    assert!(core::mem::offset_of!(NdpRequest, mac) == 88);
+    assert!(core::mem::offset_of!(NdpRequest, reserved1) == 94);
+    assert!(core::mem::offset_of!(NdpRequest, hop_limit) == 96);
+    assert!(core::mem::offset_of!(NdpRequest, bytes) == 100);
+    assert!(core::mem::offset_of!(NdpRequest, payload) == 104);
+    assert!(core::mem::size_of::<NdpRequest>() == 1608);
+    assert!(core::mem::align_of::<NdpRequest>() == 8);
+    assert!(core::mem::offset_of!(NdpEvent, version) == 0);
+    assert!(core::mem::offset_of!(NdpEvent, size) == 4);
+    assert!(core::mem::offset_of!(NdpEvent, kind) == 8);
+    assert!(core::mem::offset_of!(NdpEvent, flags) == 12);
+    assert!(core::mem::offset_of!(NdpEvent, target) == 16);
+    assert!(core::mem::offset_of!(NdpEvent, mac) == 32);
+    assert!(core::mem::offset_of!(NdpEvent, reserved0) == 38);
+    assert!(core::mem::offset_of!(NdpEvent, router_lifetime_seconds) == 40);
+    assert!(core::mem::offset_of!(NdpEvent, reachable_ms) == 44);
+    assert!(core::mem::offset_of!(NdpEvent, retransmit_ms) == 48);
+    assert!(core::mem::offset_of!(NdpEvent, mtu) == 52);
+    assert!(core::mem::offset_of!(NdpEvent, prefix_count) == 56);
+    assert!(core::mem::offset_of!(NdpEvent, reserved1) == 60);
+    assert!(core::mem::offset_of!(NdpEvent, prefixes) == 64);
+    assert!(core::mem::offset_of!(NdpEvent, nonce) == 320);
+    assert!(core::mem::offset_of!(NdpEvent, reserved2) == 326);
+    assert!(core::mem::size_of::<NdpEvent>() == 328);
+    assert!(core::mem::align_of::<NdpEvent>() == 4);
+    assert!(core::mem::offset_of!(NdpInfo, version) == 0);
+    assert!(core::mem::offset_of!(NdpInfo, size) == 4);
+    assert!(core::mem::offset_of!(NdpInfo, provider) == 8);
+    assert!(core::mem::offset_of!(NdpInfo, active_links) == 16);
+    assert!(core::mem::offset_of!(NdpInfo, max_links) == 20);
+    assert!(core::mem::offset_of!(NdpInfo, active_neighbors) == 24);
+    assert!(core::mem::offset_of!(NdpInfo, max_neighbors) == 28);
+    assert!(core::mem::offset_of!(NdpInfo, probes) == 32);
+    assert!(core::mem::offset_of!(NdpInfo, timeouts) == 36);
+    assert!(core::mem::offset_of!(NdpInfo, flags) == 40);
+    assert!(core::mem::size_of::<NdpInfo>() == 48);
+    assert!(core::mem::align_of::<NdpInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -37635,7 +38354,9 @@ const _: () = {
     assert!(core::mem::offset_of!(ProtocolApi2, cpu_acceleration_work) == 96);
     assert!(core::mem::offset_of!(ProtocolApi2, entropy_source_info) == 104);
     assert!(core::mem::offset_of!(ProtocolApi2, entropy_fill) == 112);
-    assert!(core::mem::size_of::<ProtocolApi2>() == 120);
+    assert!(core::mem::offset_of!(ProtocolApi2, protocol_dispatch) == 120);
+    assert!(core::mem::offset_of!(ProtocolApi2, link_io) == 128);
+    assert!(core::mem::size_of::<ProtocolApi2>() == 136);
     assert!(core::mem::align_of::<ProtocolApi2>() == 8);
     assert!(core::mem::offset_of!(AudioBackend2, magic) == 0);
     assert!(core::mem::offset_of!(AudioBackend2, version) == 4);

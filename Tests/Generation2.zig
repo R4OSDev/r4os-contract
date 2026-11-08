@@ -71,7 +71,14 @@ test "technical generation2 retains exact typed live slots and bounds the real s
         inline for (std.meta.fields(pair[0])) |field| try std.testing.expectEqual(@offsetOf(pair[0], field.name), @offsetOf(pair[1], field.name));
     }
     try std.testing.expectEqual(@as(usize, 656), @sizeOf(api.DriverApi2));
-    try std.testing.expectEqual(@as(usize, 120), @sizeOf(api.ProtocolApi2));
+    try std.testing.expectEqual(@as(usize, 136), @sizeOf(api.ProtocolApi2));
+    try std.testing.expectEqual(@as(usize, 120), @sizeOf(api.shared.ProtocolApi));
+    try std.testing.expectEqual(@as(usize, 120), @offsetOf(api.ProtocolApi2, "protocol_dispatch"));
+    try std.testing.expectEqual(@as(usize, 128), @offsetOf(api.ProtocolApi2, "link_io"));
+    inline for (std.meta.fields(api.shared.ProtocolApi)) |field| {
+        try std.testing.expectEqual(@offsetOf(api.shared.ProtocolApi, field.name), @offsetOf(api.ProtocolApi2, field.name));
+        try std.testing.expect(@FieldType(api.ProtocolApi2, field.name) == field.type);
+    }
     try std.testing.expectEqual(@as(usize, 80), @sizeOf(api.AudioBackendStatus2));
     try std.testing.expectEqual(@as(usize, 136), @sizeOf(api.AudioBackend2));
     try std.testing.expect(!@hasField(api.DriverApi2, "register_audio_backend"));

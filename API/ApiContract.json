@@ -136006,6 +136006,2357 @@
       ],
       "values": [],
       "description": "One copied address. TTL minimum includes CNAME chain; network-order bytes, no borrowed pointers."
+    },
+    {
+      "name": "NetworkLinkRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1576,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1576"
+        },
+        {
+          "name": "op",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "op",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "index",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "index",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interface_id",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "interface_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved0",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bytes",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved1",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frame",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 1536,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "frame",
+          "size": 1536,
+          "alignment": 1,
+          "source_type": "[1536]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Technical2 optional link callback: Identity0, copiedInfo1 byindex, Tx2 byexact interface/registrationgeneration. No IP policy, alternate adapter registry, callback registration or DMA loan. Exact bounded frame bytes; unused fields canonicalzero."
+    },
+    {
+      "name": "NetworkLinkInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 128,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "128"
+        },
+        {
+          "name": "index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "index",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interface_id",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "interface_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mtu",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "mtu",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mac",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 6,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "mac",
+          "size": 6,
+          "alignment": 1,
+          "source_type": "[6]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reserved",
+          "offset": 46,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "reserved",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock",
+          "offset": 48,
+          "type": {
+            "kind": "named",
+            "name": "MonotonicClockInfo"
+          },
+          "description": "clock",
+          "size": 80,
+          "alignment": 8,
+          "source_type": "r4os.abi.MonotonicClockInfo",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Copy of the existing NIC registry and real clock. Interface ID/generation use actual nonrecycled adapterregistration; provider is exact current R4P module slot+generation, not a version or artificial nonce. Flags separately report availability/link/multicast. Identity has no interface. No IPv6 state in kernel."
+    },
+    {
+      "name": "Ipv6FrameOp",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1680,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1680"
+        },
+        {
+          "name": "link",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "NetworkLinkInfo"
+          },
+          "description": "link",
+          "size": 128,
+          "alignment": 8,
+          "source_type": "r4os.abi.NetworkLinkInfo",
+          "default_kind": "empty"
+        },
+        {
+          "name": "bytes",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frame",
+          "offset": 144,
+          "type": {
+            "kind": "array",
+            "length": 1536,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "frame",
+          "size": 1536,
+          "alignment": 1,
+          "source_type": "[1536]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Technical synchronous RX input through the existing R4P dispatcher. Frame copy and original link metadata retained through actual return. Kernel supplies provider0; IPv6 owner obtains real own provider through optional linkIdentity. No driver callback or foreign frame loan survives dispatch."
+    },
+    {
+      "name": "Ipv6InterfaceQuery",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "index",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "index",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interface_id",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "interface_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cursor",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "IPv6 owner info/address/route query. Initial info accepts provider0; interface identity/generation exact for mutations and packet work. Cursor selects a complete original owned row; missing row is NotFound, never incomplete success."
+    },
+    {
+      "name": "Ipv6InterfaceInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 296,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "296"
+        },
+        {
+          "name": "link",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "NetworkLinkInfo"
+          },
+          "description": "link",
+          "size": 128,
+          "alignment": 8,
+          "source_type": "r4os.abi.NetworkLinkInfo",
+          "default_kind": "empty"
+        },
+        {
+          "name": "revision",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capabilities",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "capabilities",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "address_count",
+          "offset": 152,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "address_count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "route_count",
+          "offset": 156,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "route_count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_packet",
+          "offset": 160,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_packet",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 164,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "link_local",
+          "offset": 168,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "link_local",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "preferred",
+          "offset": 200,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "preferred",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "default_router",
+          "offset": 232,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "default_router",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "next_due_ns",
+          "offset": 264,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "next_due_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "rx_packets",
+          "offset": 272,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "rx_packets",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tx_packets",
+          "offset": 280,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "tx_packets",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "dropped_packets",
+          "offset": 288,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "dropped_packets",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Sole external IPv6 interface/address/route owner. Real module provider/linkgeneration, exact rowcounts and copied effective source/router. Maxpacket/MTU and fragment/extension/PMTU capabilities are separate. Codec availability is not TCP/UDP/DNSv6 capability; no second kernel IPv6 catalogue."
+    },
+    {
+      "name": "Ipv6AddressInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "address",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "address",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "provider",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "preferred_until_ns",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "preferred_until_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "valid_until_ns",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "valid_until_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "prefix_length",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "prefix_length",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One complete IPv6 owner address row. Tentative/Duplicate never usable. Preferred/deprecated/valid lifetimes and DAD belong to the same interface/module generation; local zone equals actual interface ID. UINT64_MAX denotes explicit infinite lifetime."
+    },
+    {
+      "name": "Ipv6RouteInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "prefix",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "prefix",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "gateway",
+          "offset": 40,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "gateway",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "provider",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "valid_until_ns",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "valid_until_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "prefix_length",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "prefix_length",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "metric",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "metric",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One complete external IPv6 route row; onlink and default-router state have one canonical owner. Scoped gateway and exact interface generation. Expiry is source-clock bound, not a promise of reachability."
+    },
+    {
+      "name": "Ipv6AddressConfig",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 88,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "88"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "interface_id",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "interface_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "address",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "address",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "prefix_length",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "prefix_length",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "preferred_lifetime_ns",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "preferred_lifetime_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "valid_lifetime_ns",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "valid_lifetime_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit owner configuration without an application cutover. Add0/remove1; exact provider/linkgeneration. New unicast addresses stay tentative through actual DAD. No silent family conversion or implicit bypass of scope/lifetime rules."
+    },
+    {
+      "name": "Ipv6Packet",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1656,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1656"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "source",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "destination",
+          "offset": 56,
+          "type": {
+            "kind": "named",
+            "name": "NetworkAddress"
+          },
+          "description": "destination",
+          "size": 32,
+          "alignment": 4,
+          "source_type": "r4os.abi.NetworkAddress",
+          "default_kind": "empty"
+        },
+        {
+          "name": "deadline",
+          "offset": 88,
+          "type": {
+            "kind": "named",
+            "name": "NetworkDeadline"
+          },
+          "description": "deadline",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "r4os.abi.NetworkDeadline",
+          "default_kind": "empty"
+        },
+        {
+          "name": "next_header",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "next_header",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bytes",
+          "offset": 140,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 144,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 148,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "payload",
+          "offset": 152,
+          "type": {
+            "kind": "array",
+            "length": 1504,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "payload",
+          "size": 1504,
+          "alignment": 1,
+          "source_type": "[1504]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Copied bounded upper-layer packet at the sole external IPv6 owner. Payload includes its upper-layer header; no implicit TCP/UDP socket or checksum capability. Source/destination retain exact scopes/interface ID. Whole-queue records only; capacity errors do not consume. Absolute clock-bound caller budget and no hidden retry."
+    },
+    {
+      "name": "Icmpv6Message",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1576,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1576"
+        },
+        {
+          "name": "source",
+          "offset": 8,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "source",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "destination",
+          "offset": 24,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "destination",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reply_source",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "reply_source",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "bytes",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "next_header",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "next_header",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "58"
+        },
+        {
+          "name": "checksum",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "checksum",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "payload",
+          "offset": 72,
+          "type": {
+            "kind": "array",
+            "length": 1504,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "payload",
+          "size": 1504,
+          "alignment": 1,
+          "source_type": "[1504]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Stateless bounded wire message for ICMPv6 parse/seal/echo/error and shared IPv6 pseudoheader checksum. Next58 for ICMP; generic checksum alone grants no transport. Explicit replysource handles multicast echo without guessing address ownership. Outputs copied only after whole validation."
+    },
+    {
+      "name": "NdpPrefix",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "bytes",
+          "offset": 0,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "bytes",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "valid_lifetime_seconds",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "valid_lifetime_seconds",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "preferred_lifetime_seconds",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "preferred_lifetime_seconds",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "prefix_length",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "prefix_length",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Validated RA prefix proposal. ND codec does not create a second address/route store. L/A flags independent; lifetimes are unsigned seconds, including explicit UINT32_MAX infinity."
+    },
+    {
+      "name": "NdpRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1608,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1608"
+        },
+        {
+          "name": "interface_id",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "interface_id",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "now_ns",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "now_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "clock_generation",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 40,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "source",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "destination",
+          "offset": 56,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "destination",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "target",
+          "offset": 72,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "target",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "mac",
+          "offset": 88,
+          "type": {
+            "kind": "array",
+            "length": 6,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "mac",
+          "size": 6,
+          "alignment": 1,
+          "source_type": "[6]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reserved1",
+          "offset": 94,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "reserved1",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "hop_limit",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "hop_limit",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bytes",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "payload",
+          "offset": 104,
+          "type": {
+            "kind": "array",
+            "length": 1504,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "payload",
+          "size": 1504,
+          "alignment": 1,
+          "source_type": "[1504]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Existing-interface-bound external neighbor operation. RX carries complete ICMPv6 bytes with real interface, source/destination, hoplimit and MAC; resolve/tick use zero unused wire fields. Owns only neighbor state/timers; no duplicate address/default-route catalogue."
+    },
+    {
+      "name": "NdpEvent",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 328,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "328"
+        },
+        {
+          "name": "kind",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "kind",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "target",
+          "offset": 16,
+          "type": {
+            "kind": "array",
+            "length": 16,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "target",
+          "size": 16,
+          "alignment": 1,
+          "source_type": "[16]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "mac",
+          "offset": 32,
+          "type": {
+            "kind": "array",
+            "length": 6,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "mac",
+          "size": 6,
+          "alignment": 1,
+          "source_type": "[6]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reserved0",
+          "offset": 38,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "reserved0",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "router_lifetime_seconds",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "router_lifetime_seconds",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reachable_ms",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reachable_ms",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "retransmit_ms",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "retransmit_ms",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mtu",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "mtu",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "prefix_count",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "prefix_count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved1",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "prefixes",
+          "offset": 64,
+          "type": {
+            "kind": "array",
+            "length": 8,
+            "child": {
+              "kind": "named",
+              "name": "NdpPrefix"
+            }
+          },
+          "description": "prefixes",
+          "size": 256,
+          "alignment": 4,
+          "source_type": "[8]r4os.abi.NdpPrefix",
+          "default_kind": "empty_array"
+        },
+        {
+          "name": "nonce",
+          "offset": 320,
+          "type": {
+            "kind": "array",
+            "length": 6,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "nonce",
+          "size": 6,
+          "alignment": 1,
+          "source_type": "[6]u8",
+          "default_kind": "zero_array"
+        },
+        {
+          "name": "reserved2",
+          "offset": 326,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "reserved2",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fully validated ND event/proposal. Up to8 complete prefix options or Capacity before mutation, never a silently truncated RA. Optional RFC7527 DAD nonce is copied explicitly; never infer a self-loop from MAC equality alone. Owner applies source/interface/scope/DAD/router/neighbor actions. Prefix/address/router policy stays at sole IPv6 owner."
+    },
+    {
+      "name": "NdpInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "active_links",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "active_links",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_links",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_links",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "active_neighbors",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "active_neighbors",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_neighbors",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_neighbors",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "probes",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "probes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "timeouts",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "timeouts",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "flags",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied external neighbor-provider catalogue limits and real module identity; no invented network endpoint capability from wire records."
     }
   ],
   "operations": [],
@@ -169270,6 +171621,666 @@
       "scope": "network_family",
       "stability": "fixed_contract",
       "description": "network_error_truncated_dns"
+    },
+    {
+      "name": "net_backend_cap_rx_multicast",
+      "value": "2048",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "Provider-qualified link-layer multicast reception, independent of checksum offload. Unknown/unqualified NICs do not acquire IPv6 readiness."
+    },
+    {
+      "name": "ethernet_flag_ipv6",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ethernet_flag_ipv6"
+    },
+    {
+      "name": "ethernet_flag_multicast",
+      "value": "128",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ethernet_flag_multicast"
+    },
+    {
+      "name": "network_link_op_identity",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "network_link_op_identity"
+    },
+    {
+      "name": "network_link_op_info",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "network_link_op_info"
+    },
+    {
+      "name": "network_link_op_transmit",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "network_link_op_transmit"
+    },
+    {
+      "name": "network_link_flag_available",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "network_link_flag_available"
+    },
+    {
+      "name": "network_link_flag_up",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "network_link_flag_up"
+    },
+    {
+      "name": "network_link_flag_multicast",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "network_link_flag_multicast"
+    },
+    {
+      "name": "network_link_flag_clock_valid",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "network_link_flag_clock_valid"
+    },
+    {
+      "name": "ipv6_op_info",
+      "value": "1536",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_info"
+    },
+    {
+      "name": "ipv6_op_address",
+      "value": "1537",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_address"
+    },
+    {
+      "name": "ipv6_op_route",
+      "value": "1538",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_route"
+    },
+    {
+      "name": "ipv6_op_configure",
+      "value": "1539",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_configure"
+    },
+    {
+      "name": "ipv6_op_send",
+      "value": "1540",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_send"
+    },
+    {
+      "name": "ipv6_op_receive",
+      "value": "1541",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_receive"
+    },
+    {
+      "name": "ipv6_op_tick",
+      "value": "1542",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_tick"
+    },
+    {
+      "name": "ipv6_op_handle_rx",
+      "value": "1543",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_op_handle_rx"
+    },
+    {
+      "name": "icmpv6_op_parse",
+      "value": "1568",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "icmpv6_op_parse"
+    },
+    {
+      "name": "icmpv6_op_seal",
+      "value": "1569",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "icmpv6_op_seal"
+    },
+    {
+      "name": "icmpv6_op_checksum",
+      "value": "1570",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "icmpv6_op_checksum"
+    },
+    {
+      "name": "icmpv6_op_echo_reply",
+      "value": "1571",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "icmpv6_op_echo_reply"
+    },
+    {
+      "name": "icmpv6_op_error",
+      "value": "1572",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "icmpv6_op_error"
+    },
+    {
+      "name": "ndp_op_info",
+      "value": "1600",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_op_info"
+    },
+    {
+      "name": "ndp_op_handle_rx",
+      "value": "1601",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_op_handle_rx"
+    },
+    {
+      "name": "ndp_op_resolve",
+      "value": "1602",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_op_resolve"
+    },
+    {
+      "name": "ndp_op_confirm",
+      "value": "1603",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_op_confirm"
+    },
+    {
+      "name": "ndp_op_tick",
+      "value": "1604",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_op_tick"
+    },
+    {
+      "name": "ndp_op_link_reset",
+      "value": "1605",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_op_link_reset"
+    },
+    {
+      "name": "ipv6_cap_packet",
+      "value": "1",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_packet"
+    },
+    {
+      "name": "ipv6_cap_icmp",
+      "value": "2",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_icmp"
+    },
+    {
+      "name": "ipv6_cap_nd",
+      "value": "4",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_nd"
+    },
+    {
+      "name": "ipv6_cap_dad",
+      "value": "8",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_dad"
+    },
+    {
+      "name": "ipv6_cap_slaac",
+      "value": "16",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_slaac"
+    },
+    {
+      "name": "ipv6_cap_extensions",
+      "value": "32",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_extensions"
+    },
+    {
+      "name": "ipv6_cap_reassembly",
+      "value": "64",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_reassembly"
+    },
+    {
+      "name": "ipv6_cap_pmtu",
+      "value": "128",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_pmtu"
+    },
+    {
+      "name": "ipv6_cap_static_address",
+      "value": "256",
+      "value_type": "u64",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_cap_static_address"
+    },
+    {
+      "name": "ipv6_address_flag_tentative",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_address_flag_tentative"
+    },
+    {
+      "name": "ipv6_address_flag_preferred",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_address_flag_preferred"
+    },
+    {
+      "name": "ipv6_address_flag_deprecated",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_address_flag_deprecated"
+    },
+    {
+      "name": "ipv6_address_flag_duplicate",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_address_flag_duplicate"
+    },
+    {
+      "name": "ipv6_address_flag_manual",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_address_flag_manual"
+    },
+    {
+      "name": "ipv6_address_flag_slaac",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_address_flag_slaac"
+    },
+    {
+      "name": "ipv6_address_flag_link_local",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_address_flag_link_local"
+    },
+    {
+      "name": "ipv6_route_flag_on_link",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_route_flag_on_link"
+    },
+    {
+      "name": "ipv6_route_flag_default",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_route_flag_default"
+    },
+    {
+      "name": "ipv6_route_flag_router",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_route_flag_router"
+    },
+    {
+      "name": "ipv6_route_flag_manual",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_route_flag_manual"
+    },
+    {
+      "name": "ipv6_config_remove",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_config_remove"
+    },
+    {
+      "name": "ipv6_minimum_mtu",
+      "value": "1280",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_minimum_mtu"
+    },
+    {
+      "name": "ipv6_payload_capacity",
+      "value": "1504",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_payload_capacity"
+    },
+    {
+      "name": "ipv6_prefix_capacity",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_prefix_capacity"
+    },
+    {
+      "name": "ndp_action_none",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_action_none"
+    },
+    {
+      "name": "ndp_action_resolved",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_action_resolved"
+    },
+    {
+      "name": "ndp_action_multicast_probe",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_action_multicast_probe"
+    },
+    {
+      "name": "ndp_action_unicast_probe",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_action_unicast_probe"
+    },
+    {
+      "name": "ndp_action_timed_out",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_action_timed_out"
+    },
+    {
+      "name": "ndp_event_flag_mac_present",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_event_flag_mac_present"
+    },
+    {
+      "name": "ndp_event_flag_nonce_present",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_event_flag_nonce_present"
+    },
+    {
+      "name": "ndp_event_flag_router",
+      "value": "2147483648",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_event_flag_router"
+    },
+    {
+      "name": "ndp_event_flag_solicited",
+      "value": "1073741824",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_event_flag_solicited"
+    },
+    {
+      "name": "ndp_event_flag_override",
+      "value": "536870912",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_event_flag_override"
+    },
+    {
+      "name": "ndp_request_fragmented",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_request_fragmented"
+    },
+    {
+      "name": "ndp_confirm_probe_sent",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ndp_confirm_probe_sent"
+    },
+    {
+      "name": "ipv6_packet_flag_fragmented",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "ipv6_provider",
+      "stability": "fixed_contract",
+      "description": "ipv6_packet_flag_fragmented"
     }
   ],
   "limits": [
