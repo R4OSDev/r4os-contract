@@ -133823,6 +133823,1028 @@
       ],
       "values": [],
       "description": "Short source preparation request. Copies full Process/Thread identities; snapshots the CURRENT caller-owned legacy IO/endpoint incarnation. No retained resource lease or historical identity promise for recycled legacy IDs. Returns existing80byte WaitSource with an opaque, never-reused provider epoch. Enroll revalidates exact epoch under original resource owner; close/restart returns Stale/SourceClosed. GUI is current Main/Owner context only."
+    },
+    {
+      "name": "ClipboardOfferInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Protocol1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Canonical service process generation, nonzero for this boot.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Current never-wrapping offer revision, initially0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_offer_bytes",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "max_offer_bytes",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "4194304"
+        },
+        {
+          "name": "payload_budget",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "payload_budget",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "33554432"
+        },
+        {
+          "name": "lease_ns",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "lease_ns",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "30000000000"
+        },
+        {
+          "name": "max_items",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_items",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "8"
+        },
+        {
+          "name": "max_formats",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_formats",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "max_stages",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_stages",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4"
+        },
+        {
+          "name": "max_snapshots",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_snapshots",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        },
+        {
+          "name": "put_chunk",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "put_chunk",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4048"
+        },
+        {
+          "name": "read_chunk",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "read_chunk",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "4040"
+        },
+        {
+          "name": "format_mask",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format_mask",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "62"
+        },
+        {
+          "name": "flags",
+          "offset": 76,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "CLIPSVC copied-offer capability reply. No kernel clipboard owner or conversion. See API/ClipboardOffers.txt."
+    },
+    {
+      "name": "ClipboardOfferBegin",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Protocol1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "expected_revision",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact compare-and-swap revision, checked again at commit.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_bytes",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Upper bound of all representations in this stage, at most max_offer_bytes.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Begin a private copied stage. A zero-byte stage can commit an empty offer."
+    },
+    {
+      "name": "ClipboardOfferLease",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Protocol1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "id",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Never-reused stage/snapshot ID within provider.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Stage expected revision or immutable committed/snapshot revision.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "expires_ns",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fixed absolute service clock expiry, never renewed by reads.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Writing1/Committed2/Snapshot3.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Provider-bound stage receipt or immutable snapshot lease. Transport timeout grants no publication/abort result. Commit replay on same committed stage is idempotent until expiry. IDs are invalid across provider restart. Clock identity change/regression invalidates leases without changing current offer."
+    },
+    {
+      "name": "ClipboardOfferFormat",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "item",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "item",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_bytes",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "total_bytes",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One representation: item0..7, known format1..5, flags/reserved0. Duplicate item/format rejected. No delayed rendering or foreign process pointers."
+    },
+    {
+      "name": "ClipboardOfferTransfer",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Protocol1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "id",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "item",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "item",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "format",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "format",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "offset",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "offset",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_bytes",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "total_bytes",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Declare exact representation size (offset0), append contiguous copied chunks after this48byte record, or snapshot read (total_bytes requested maximum0..4040). Repeated exact accepted chunks are idempotent; conflicting/out-of-order bytes fail without mutation. Read does not consume snapshot."
+    },
+    {
+      "name": "ClipboardOfferEnumerate",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Protocol1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "32"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "id",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "cursor",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "cursor",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "capacity",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "16"
+        }
+      ],
+      "values": [],
+      "description": "Snapshot format page request; capacity1..16. Cursor indexes this immutable snapshot, never current offer."
+    },
+    {
+      "name": "ClipboardOfferPage",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Protocol1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "id",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "next",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "next",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "count",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "count",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "total",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "48byte prefix followed by count24byte ClipboardOfferFormat records in declaration order. next==total marks end."
+    },
+    {
+      "name": "ClipboardOfferChunk",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Protocol1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact fixed record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "56"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "id",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "offset",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "offset",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "total_bytes",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "total_bytes",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bytes",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "56byte prefix followed by bytes payload. Read returns at most4040bytes and same snapshot identity/revision; flags1 means exact EOF. offset>total fails; offset==total returns empty EOF. Short response is not an inferred provider close."
     }
   ],
   "operations": [],
@@ -166137,6 +167159,406 @@
       "scope": "waitset",
       "stability": "fixed_contract",
       "description": "Current main GUI activity channel including existing shared notifications. No GUI worker access."
+    },
+    {
+      "name": "clipboard_offer_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Copied offer protocol version."
+    },
+    {
+      "name": "clipboard_offer_max_offer_bytes",
+      "value": "4194304",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "4 MB per offer."
+    },
+    {
+      "name": "clipboard_offer_payload_budget",
+      "value": "33554432",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "32 MB copied payload globally; metadata separately bounded by4stages/16snapshots/current."
+    },
+    {
+      "name": "clipboard_offer_lease_ns",
+      "value": "30000000000",
+      "value_type": "u64",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "30second fixed stage/receipt/snapshot lifetime; cleanup on next request."
+    },
+    {
+      "name": "clipboard_offer_max_items",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Items0..7."
+    },
+    {
+      "name": "clipboard_offer_max_formats",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Representations per offer."
+    },
+    {
+      "name": "clipboard_offer_max_stages",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Writing stages plus committed receipts."
+    },
+    {
+      "name": "clipboard_offer_max_snapshots",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Snapshot leases."
+    },
+    {
+      "name": "clipboard_offer_put_chunk",
+      "value": "4048",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "4096 minus48byte transfer."
+    },
+    {
+      "name": "clipboard_offer_read_chunk",
+      "value": "4040",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "4096 minus56byte reply."
+    },
+    {
+      "name": "clipboard_offer_state_writing",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Private uncommitted stage."
+    },
+    {
+      "name": "clipboard_offer_state_committed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Idempotent commit receipt."
+    },
+    {
+      "name": "clipboard_offer_state_snapshot",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Immutable pinned snapshot."
+    },
+    {
+      "name": "clipboard_offer_flag_eof",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "This chunk reaches exact total."
+    },
+    {
+      "name": "clipboard_offer_format_text_utf8",
+      "value": "1",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "text/plain;charset=utf-8; strict UTF8 without NUL."
+    },
+    {
+      "name": "clipboard_offer_format_png",
+      "value": "2",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "image/png; copied encoded data with signature/IHDR shape validation, no decode/CRC promise."
+    },
+    {
+      "name": "clipboard_offer_format_xrgb32",
+      "value": "3",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "application/x-r4os-xrgb32-v1; LE width,height,stride,flags0 followed by exact tightly packed XRGB32 pixels, each dimension1..4096."
+    },
+    {
+      "name": "clipboard_offer_format_file_list",
+      "value": "4",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "application/x-r4os-file-list-v1; LE count1..128 then LE length+strict UTF8 absolute DOS path per entry; no implicit URI/FS conversion."
+    },
+    {
+      "name": "clipboard_offer_format_text_bytes",
+      "value": "5",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "application/x-r4os-text-bytes; explicit legacy nonNUL bytes, at most4095, no guessed charset."
+    },
+    {
+      "name": "clipboard_offer_op_info",
+      "value": "64",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer info; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_begin",
+      "value": "65",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer begin; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_declare",
+      "value": "66",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer declare; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_put",
+      "value": "67",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer put; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_commit",
+      "value": "68",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer commit; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_abort",
+      "value": "69",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer abort; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_snapshot",
+      "value": "70",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer snapshot; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_enumerate",
+      "value": "71",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer enumerate; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_read",
+      "value": "72",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer read; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_release",
+      "value": "73",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer release; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_op_status",
+      "value": "74",
+      "value_type": "u16",
+      "category": "identity",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "CLIPSVC copied-offer status; original text opcodes1..5 unchanged."
+    },
+    {
+      "name": "clipboard_offer_error_invalid",
+      "value": "-6101",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Malformed shape, reserved bits, offset or conflicting retry."
+    },
+    {
+      "name": "clipboard_offer_error_too_large",
+      "value": "-6102",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Declared byte/item/format limit exceeded."
+    },
+    {
+      "name": "clipboard_offer_error_capacity",
+      "value": "-6103",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Bounded stage/snapshot/payload budget or allocation exhausted."
+    },
+    {
+      "name": "clipboard_offer_error_stale_revision",
+      "value": "-6104",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Expected current revision differs; current offer untouched."
+    },
+    {
+      "name": "clipboard_offer_error_provider_changed",
+      "value": "-6105",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Request provider does not match actual service process generation."
+    },
+    {
+      "name": "clipboard_offer_error_closed",
+      "value": "-6106",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Unknown, expired or released stage/snapshot."
+    },
+    {
+      "name": "clipboard_offer_error_unsupported",
+      "value": "-6107",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Unknown format or older provider bad opcode; no emulated typed success."
+    },
+    {
+      "name": "clipboard_offer_error_invalid_encoding",
+      "value": "-6108",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Malformed declared standard representation."
+    },
+    {
+      "name": "clipboard_offer_error_incomplete",
+      "value": "-6109",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Not every declared byte has been copied."
+    },
+    {
+      "name": "clipboard_offer_error_not_found",
+      "value": "-6110",
+      "value_type": "i32",
+      "category": "value",
+      "unit": "number",
+      "scope": "clipboard_offer",
+      "stability": "fixed_contract",
+      "description": "Requested representation absent in this immutable snapshot."
     }
   ],
   "limits": [

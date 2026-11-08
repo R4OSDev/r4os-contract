@@ -2959,6 +2959,46 @@ extern "C" {
 #define R4OS_WAITSET_SOURCE_THREAD 5u
 #define R4OS_WAITSET_SOURCE_SERVICE_ENDPOINT 6u
 #define R4OS_WAITSET_SOURCE_GUI_ACTIVITY 7u
+#define R4OS_CLIPBOARD_OFFER_VERSION 1u
+#define R4OS_CLIPBOARD_OFFER_MAX_OFFER_BYTES 4194304ull
+#define R4OS_CLIPBOARD_OFFER_PAYLOAD_BUDGET 33554432ull
+#define R4OS_CLIPBOARD_OFFER_LEASE_NS 30000000000ull
+#define R4OS_CLIPBOARD_OFFER_MAX_ITEMS 8u
+#define R4OS_CLIPBOARD_OFFER_MAX_FORMATS 16u
+#define R4OS_CLIPBOARD_OFFER_MAX_STAGES 4u
+#define R4OS_CLIPBOARD_OFFER_MAX_SNAPSHOTS 16u
+#define R4OS_CLIPBOARD_OFFER_PUT_CHUNK 4048u
+#define R4OS_CLIPBOARD_OFFER_READ_CHUNK 4040u
+#define R4OS_CLIPBOARD_OFFER_STATE_WRITING 1u
+#define R4OS_CLIPBOARD_OFFER_STATE_COMMITTED 2u
+#define R4OS_CLIPBOARD_OFFER_STATE_SNAPSHOT 3u
+#define R4OS_CLIPBOARD_OFFER_FLAG_EOF 1u
+#define R4OS_CLIPBOARD_OFFER_FORMAT_TEXT_UTF8 1u
+#define R4OS_CLIPBOARD_OFFER_FORMAT_PNG 2u
+#define R4OS_CLIPBOARD_OFFER_FORMAT_XRGB32 3u
+#define R4OS_CLIPBOARD_OFFER_FORMAT_FILE_LIST 4u
+#define R4OS_CLIPBOARD_OFFER_FORMAT_TEXT_BYTES 5u
+#define R4OS_CLIPBOARD_OFFER_OP_INFO 64u
+#define R4OS_CLIPBOARD_OFFER_OP_BEGIN 65u
+#define R4OS_CLIPBOARD_OFFER_OP_DECLARE 66u
+#define R4OS_CLIPBOARD_OFFER_OP_PUT 67u
+#define R4OS_CLIPBOARD_OFFER_OP_COMMIT 68u
+#define R4OS_CLIPBOARD_OFFER_OP_ABORT 69u
+#define R4OS_CLIPBOARD_OFFER_OP_SNAPSHOT 70u
+#define R4OS_CLIPBOARD_OFFER_OP_ENUMERATE 71u
+#define R4OS_CLIPBOARD_OFFER_OP_READ 72u
+#define R4OS_CLIPBOARD_OFFER_OP_RELEASE 73u
+#define R4OS_CLIPBOARD_OFFER_OP_STATUS 74u
+#define R4OS_CLIPBOARD_OFFER_ERROR_INVALID ((int32_t)-6101)
+#define R4OS_CLIPBOARD_OFFER_ERROR_TOO_LARGE ((int32_t)-6102)
+#define R4OS_CLIPBOARD_OFFER_ERROR_CAPACITY ((int32_t)-6103)
+#define R4OS_CLIPBOARD_OFFER_ERROR_STALE_REVISION ((int32_t)-6104)
+#define R4OS_CLIPBOARD_OFFER_ERROR_PROVIDER_CHANGED ((int32_t)-6105)
+#define R4OS_CLIPBOARD_OFFER_ERROR_CLOSED ((int32_t)-6106)
+#define R4OS_CLIPBOARD_OFFER_ERROR_UNSUPPORTED ((int32_t)-6107)
+#define R4OS_CLIPBOARD_OFFER_ERROR_INVALID_ENCODING ((int32_t)-6108)
+#define R4OS_CLIPBOARD_OFFER_ERROR_INCOMPLETE ((int32_t)-6109)
+#define R4OS_CLIPBOARD_OFFER_ERROR_NOT_FOUND ((int32_t)-6110)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3891,6 +3931,14 @@ typedef struct R4WaitSetDeadline R4WaitSetDeadline;
 typedef struct R4WaitSetEvent R4WaitSetEvent;
 typedef struct R4WaitSetBatch R4WaitSetBatch;
 typedef struct R4WaitSourceRequest R4WaitSourceRequest;
+typedef struct R4ClipboardOfferInfo R4ClipboardOfferInfo;
+typedef struct R4ClipboardOfferBegin R4ClipboardOfferBegin;
+typedef struct R4ClipboardOfferLease R4ClipboardOfferLease;
+typedef struct R4ClipboardOfferFormat R4ClipboardOfferFormat;
+typedef struct R4ClipboardOfferTransfer R4ClipboardOfferTransfer;
+typedef struct R4ClipboardOfferEnumerate R4ClipboardOfferEnumerate;
+typedef struct R4ClipboardOfferPage R4ClipboardOfferPage;
+typedef struct R4ClipboardOfferChunk R4ClipboardOfferChunk;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11506,6 +11554,95 @@ typedef struct R4WaitSourceRequest {
     uint64_t user_tag;
     uint64_t observed_revision;
 } R4WaitSourceRequest;
+
+typedef struct R4ClipboardOfferInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t revision;
+    uint64_t max_offer_bytes;
+    uint64_t payload_budget;
+    uint64_t lease_ns;
+    uint32_t max_items;
+    uint32_t max_formats;
+    uint32_t max_stages;
+    uint32_t max_snapshots;
+    uint32_t put_chunk;
+    uint32_t read_chunk;
+    uint32_t format_mask;
+    uint32_t flags;
+} R4ClipboardOfferInfo;
+
+typedef struct R4ClipboardOfferBegin {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t expected_revision;
+    uint64_t total_bytes;
+} R4ClipboardOfferBegin;
+
+typedef struct R4ClipboardOfferLease {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t id;
+    uint64_t revision;
+    uint64_t expires_ns;
+    uint32_t state;
+    uint32_t reserved;
+} R4ClipboardOfferLease;
+
+typedef struct R4ClipboardOfferFormat {
+    uint32_t item;
+    uint32_t format;
+    uint64_t total_bytes;
+    uint32_t flags;
+    uint32_t reserved;
+} R4ClipboardOfferFormat;
+
+typedef struct R4ClipboardOfferTransfer {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t id;
+    uint32_t item;
+    uint32_t format;
+    uint64_t offset;
+    uint64_t total_bytes;
+} R4ClipboardOfferTransfer;
+
+typedef struct R4ClipboardOfferEnumerate {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t id;
+    uint32_t cursor;
+    uint32_t capacity;
+} R4ClipboardOfferEnumerate;
+
+typedef struct R4ClipboardOfferPage {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t id;
+    uint64_t revision;
+    uint32_t next;
+    uint32_t count;
+    uint32_t total;
+    uint32_t reserved;
+} R4ClipboardOfferPage;
+
+typedef struct R4ClipboardOfferChunk {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    uint64_t id;
+    uint64_t revision;
+    uint64_t offset;
+    uint64_t total_bytes;
+    uint32_t bytes;
+    uint32_t flags;
+} R4ClipboardOfferChunk;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -19448,6 +19585,79 @@ _Static_assert(offsetof(R4WaitSourceRequest, scope_id) == 32u, "WaitSourceReques
 _Static_assert(offsetof(R4WaitSourceRequest, scope_generation) == 40u, "WaitSourceRequest.scope_generation offset mismatch");
 _Static_assert(offsetof(R4WaitSourceRequest, user_tag) == 48u, "WaitSourceRequest.user_tag offset mismatch");
 _Static_assert(offsetof(R4WaitSourceRequest, observed_revision) == 56u, "WaitSourceRequest.observed_revision offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferInfo) == 80u, "ClipboardOfferInfo size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, version) == 0u, "ClipboardOfferInfo.version offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, size) == 4u, "ClipboardOfferInfo.size offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, provider) == 8u, "ClipboardOfferInfo.provider offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, revision) == 16u, "ClipboardOfferInfo.revision offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, max_offer_bytes) == 24u, "ClipboardOfferInfo.max_offer_bytes offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, payload_budget) == 32u, "ClipboardOfferInfo.payload_budget offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, lease_ns) == 40u, "ClipboardOfferInfo.lease_ns offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, max_items) == 48u, "ClipboardOfferInfo.max_items offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, max_formats) == 52u, "ClipboardOfferInfo.max_formats offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, max_stages) == 56u, "ClipboardOfferInfo.max_stages offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, max_snapshots) == 60u, "ClipboardOfferInfo.max_snapshots offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, put_chunk) == 64u, "ClipboardOfferInfo.put_chunk offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, read_chunk) == 68u, "ClipboardOfferInfo.read_chunk offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, format_mask) == 72u, "ClipboardOfferInfo.format_mask offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferInfo, flags) == 76u, "ClipboardOfferInfo.flags offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferBegin) == 32u, "ClipboardOfferBegin size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferBegin, version) == 0u, "ClipboardOfferBegin.version offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferBegin, size) == 4u, "ClipboardOfferBegin.size offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferBegin, provider) == 8u, "ClipboardOfferBegin.provider offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferBegin, expected_revision) == 16u, "ClipboardOfferBegin.expected_revision offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferBegin, total_bytes) == 24u, "ClipboardOfferBegin.total_bytes offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferLease) == 48u, "ClipboardOfferLease size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, version) == 0u, "ClipboardOfferLease.version offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, size) == 4u, "ClipboardOfferLease.size offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, provider) == 8u, "ClipboardOfferLease.provider offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, id) == 16u, "ClipboardOfferLease.id offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, revision) == 24u, "ClipboardOfferLease.revision offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, expires_ns) == 32u, "ClipboardOfferLease.expires_ns offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, state) == 40u, "ClipboardOfferLease.state offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferLease, reserved) == 44u, "ClipboardOfferLease.reserved offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferFormat) == 24u, "ClipboardOfferFormat size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferFormat, item) == 0u, "ClipboardOfferFormat.item offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferFormat, format) == 4u, "ClipboardOfferFormat.format offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferFormat, total_bytes) == 8u, "ClipboardOfferFormat.total_bytes offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferFormat, flags) == 16u, "ClipboardOfferFormat.flags offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferFormat, reserved) == 20u, "ClipboardOfferFormat.reserved offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferTransfer) == 48u, "ClipboardOfferTransfer size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, version) == 0u, "ClipboardOfferTransfer.version offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, size) == 4u, "ClipboardOfferTransfer.size offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, provider) == 8u, "ClipboardOfferTransfer.provider offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, id) == 16u, "ClipboardOfferTransfer.id offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, item) == 24u, "ClipboardOfferTransfer.item offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, format) == 28u, "ClipboardOfferTransfer.format offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, offset) == 32u, "ClipboardOfferTransfer.offset offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferTransfer, total_bytes) == 40u, "ClipboardOfferTransfer.total_bytes offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferEnumerate) == 32u, "ClipboardOfferEnumerate size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferEnumerate, version) == 0u, "ClipboardOfferEnumerate.version offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferEnumerate, size) == 4u, "ClipboardOfferEnumerate.size offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferEnumerate, provider) == 8u, "ClipboardOfferEnumerate.provider offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferEnumerate, id) == 16u, "ClipboardOfferEnumerate.id offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferEnumerate, cursor) == 24u, "ClipboardOfferEnumerate.cursor offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferEnumerate, capacity) == 28u, "ClipboardOfferEnumerate.capacity offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferPage) == 48u, "ClipboardOfferPage size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, version) == 0u, "ClipboardOfferPage.version offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, size) == 4u, "ClipboardOfferPage.size offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, provider) == 8u, "ClipboardOfferPage.provider offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, id) == 16u, "ClipboardOfferPage.id offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, revision) == 24u, "ClipboardOfferPage.revision offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, next) == 32u, "ClipboardOfferPage.next offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, count) == 36u, "ClipboardOfferPage.count offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, total) == 40u, "ClipboardOfferPage.total offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferPage, reserved) == 44u, "ClipboardOfferPage.reserved offset mismatch");
+_Static_assert(sizeof(R4ClipboardOfferChunk) == 56u, "ClipboardOfferChunk size mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, version) == 0u, "ClipboardOfferChunk.version offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, size) == 4u, "ClipboardOfferChunk.size offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, provider) == 8u, "ClipboardOfferChunk.provider offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, id) == 16u, "ClipboardOfferChunk.id offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, revision) == 24u, "ClipboardOfferChunk.revision offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, offset) == 32u, "ClipboardOfferChunk.offset offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, total_bytes) == 40u, "ClipboardOfferChunk.total_bytes offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, bytes) == 48u, "ClipboardOfferChunk.bytes offset mismatch");
+_Static_assert(offsetof(R4ClipboardOfferChunk, flags) == 52u, "ClipboardOfferChunk.flags offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1488u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

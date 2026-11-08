@@ -2953,6 +2953,46 @@ pub const waitset_source_process: u32 = 4;
 pub const waitset_source_thread: u32 = 5;
 pub const waitset_source_service_endpoint: u32 = 6;
 pub const waitset_source_gui_activity: u32 = 7;
+pub const clipboard_offer_version: u32 = 1;
+pub const clipboard_offer_max_offer_bytes: u64 = 4194304;
+pub const clipboard_offer_payload_budget: u64 = 33554432;
+pub const clipboard_offer_lease_ns: u64 = 30000000000;
+pub const clipboard_offer_max_items: u32 = 8;
+pub const clipboard_offer_max_formats: u32 = 16;
+pub const clipboard_offer_max_stages: u32 = 4;
+pub const clipboard_offer_max_snapshots: u32 = 16;
+pub const clipboard_offer_put_chunk: u32 = 4048;
+pub const clipboard_offer_read_chunk: u32 = 4040;
+pub const clipboard_offer_state_writing: u32 = 1;
+pub const clipboard_offer_state_committed: u32 = 2;
+pub const clipboard_offer_state_snapshot: u32 = 3;
+pub const clipboard_offer_flag_eof: u32 = 1;
+pub const clipboard_offer_format_text_utf8: u32 = 1;
+pub const clipboard_offer_format_png: u32 = 2;
+pub const clipboard_offer_format_xrgb32: u32 = 3;
+pub const clipboard_offer_format_file_list: u32 = 4;
+pub const clipboard_offer_format_text_bytes: u32 = 5;
+pub const clipboard_offer_op_info: u16 = 64;
+pub const clipboard_offer_op_begin: u16 = 65;
+pub const clipboard_offer_op_declare: u16 = 66;
+pub const clipboard_offer_op_put: u16 = 67;
+pub const clipboard_offer_op_commit: u16 = 68;
+pub const clipboard_offer_op_abort: u16 = 69;
+pub const clipboard_offer_op_snapshot: u16 = 70;
+pub const clipboard_offer_op_enumerate: u16 = 71;
+pub const clipboard_offer_op_read: u16 = 72;
+pub const clipboard_offer_op_release: u16 = 73;
+pub const clipboard_offer_op_status: u16 = 74;
+pub const clipboard_offer_error_invalid: i32 = -6101;
+pub const clipboard_offer_error_too_large: i32 = -6102;
+pub const clipboard_offer_error_capacity: i32 = -6103;
+pub const clipboard_offer_error_stale_revision: i32 = -6104;
+pub const clipboard_offer_error_provider_changed: i32 = -6105;
+pub const clipboard_offer_error_closed: i32 = -6106;
+pub const clipboard_offer_error_unsupported: i32 = -6107;
+pub const clipboard_offer_error_invalid_encoding: i32 = -6108;
+pub const clipboard_offer_error_incomplete: i32 = -6109;
+pub const clipboard_offer_error_not_found: i32 = -6110;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -21251,6 +21291,232 @@ impl Default for WaitSourceRequest {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferInfo {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub revision: u64,
+    pub max_offer_bytes: u64,
+    pub payload_budget: u64,
+    pub lease_ns: u64,
+    pub max_items: u32,
+    pub max_formats: u32,
+    pub max_stages: u32,
+    pub max_snapshots: u32,
+    pub put_chunk: u32,
+    pub read_chunk: u32,
+    pub format_mask: u32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 80,
+            provider: 0,
+            revision: 0,
+            max_offer_bytes: 4194304,
+            payload_budget: 33554432,
+            lease_ns: 30000000000,
+            max_items: 8,
+            max_formats: 16,
+            max_stages: 4,
+            max_snapshots: 16,
+            put_chunk: 4048,
+            read_chunk: 4040,
+            format_mask: 62,
+            flags: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferBegin {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub expected_revision: u64,
+    pub total_bytes: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferBegin {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            provider: 0,
+            expected_revision: 0,
+            total_bytes: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferLease {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub id: u64,
+    pub revision: u64,
+    pub expires_ns: u64,
+    pub state: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferLease {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            provider: 0,
+            id: 0,
+            revision: 0,
+            expires_ns: 0,
+            state: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferFormat {
+    pub item: u32,
+    pub format: u32,
+    pub total_bytes: u64,
+    pub flags: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferFormat {
+    fn default() -> Self {
+        Self {
+            item: 0,
+            format: 0,
+            total_bytes: 0,
+            flags: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferTransfer {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub id: u64,
+    pub item: u32,
+    pub format: u32,
+    pub offset: u64,
+    pub total_bytes: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferTransfer {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            provider: 0,
+            id: 0,
+            item: 0,
+            format: 0,
+            offset: 0,
+            total_bytes: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferEnumerate {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub id: u64,
+    pub cursor: u32,
+    pub capacity: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferEnumerate {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 32,
+            provider: 0,
+            id: 0,
+            cursor: 0,
+            capacity: 16,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferPage {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub id: u64,
+    pub revision: u64,
+    pub next: u32,
+    pub count: u32,
+    pub total: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferPage {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            provider: 0,
+            id: 0,
+            revision: 0,
+            next: 0,
+            count: 0,
+            total: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ClipboardOfferChunk {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub id: u64,
+    pub revision: u64,
+    pub offset: u64,
+    pub total_bytes: u64,
+    pub bytes: u32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for ClipboardOfferChunk {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 56,
+            provider: 0,
+            id: 0,
+            revision: 0,
+            offset: 0,
+            total_bytes: 0,
+            bytes: 0,
+            flags: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -34578,6 +34844,87 @@ const _: () = {
     assert!(core::mem::offset_of!(WaitSourceRequest, observed_revision) == 56);
     assert!(core::mem::size_of::<WaitSourceRequest>() == 64);
     assert!(core::mem::align_of::<WaitSourceRequest>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, version) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, size) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, provider) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, revision) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, max_offer_bytes) == 24);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, payload_budget) == 32);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, lease_ns) == 40);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, max_items) == 48);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, max_formats) == 52);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, max_stages) == 56);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, max_snapshots) == 60);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, put_chunk) == 64);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, read_chunk) == 68);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, format_mask) == 72);
+    assert!(core::mem::offset_of!(ClipboardOfferInfo, flags) == 76);
+    assert!(core::mem::size_of::<ClipboardOfferInfo>() == 80);
+    assert!(core::mem::align_of::<ClipboardOfferInfo>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferBegin, version) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferBegin, size) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferBegin, provider) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferBegin, expected_revision) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferBegin, total_bytes) == 24);
+    assert!(core::mem::size_of::<ClipboardOfferBegin>() == 32);
+    assert!(core::mem::align_of::<ClipboardOfferBegin>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, version) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, size) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, provider) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, id) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, revision) == 24);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, expires_ns) == 32);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, state) == 40);
+    assert!(core::mem::offset_of!(ClipboardOfferLease, reserved) == 44);
+    assert!(core::mem::size_of::<ClipboardOfferLease>() == 48);
+    assert!(core::mem::align_of::<ClipboardOfferLease>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferFormat, item) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferFormat, format) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferFormat, total_bytes) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferFormat, flags) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferFormat, reserved) == 20);
+    assert!(core::mem::size_of::<ClipboardOfferFormat>() == 24);
+    assert!(core::mem::align_of::<ClipboardOfferFormat>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, version) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, size) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, provider) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, id) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, item) == 24);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, format) == 28);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, offset) == 32);
+    assert!(core::mem::offset_of!(ClipboardOfferTransfer, total_bytes) == 40);
+    assert!(core::mem::size_of::<ClipboardOfferTransfer>() == 48);
+    assert!(core::mem::align_of::<ClipboardOfferTransfer>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferEnumerate, version) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferEnumerate, size) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferEnumerate, provider) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferEnumerate, id) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferEnumerate, cursor) == 24);
+    assert!(core::mem::offset_of!(ClipboardOfferEnumerate, capacity) == 28);
+    assert!(core::mem::size_of::<ClipboardOfferEnumerate>() == 32);
+    assert!(core::mem::align_of::<ClipboardOfferEnumerate>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, version) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, size) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, provider) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, id) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, revision) == 24);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, next) == 32);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, count) == 36);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, total) == 40);
+    assert!(core::mem::offset_of!(ClipboardOfferPage, reserved) == 44);
+    assert!(core::mem::size_of::<ClipboardOfferPage>() == 48);
+    assert!(core::mem::align_of::<ClipboardOfferPage>() == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, version) == 0);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, size) == 4);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, provider) == 8);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, id) == 16);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, revision) == 24);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, offset) == 32);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, total_bytes) == 40);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, bytes) == 48);
+    assert!(core::mem::offset_of!(ClipboardOfferChunk, flags) == 52);
+    assert!(core::mem::size_of::<ClipboardOfferChunk>() == 56);
+    assert!(core::mem::align_of::<ClipboardOfferChunk>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
