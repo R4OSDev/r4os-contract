@@ -1579,6 +1579,24 @@
       "removed": false
     },
     {
+      "group": "R4SYS",
+      "name": "file_metadata2",
+      "source_number": 175,
+      "source_offset": 1416,
+      "number": 174,
+      "offset": 1408,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "directory_metadata_batch2",
+      "source_number": 176,
+      "source_offset": 1424,
+      "number": 175,
+      "offset": 1416,
+      "removed": false
+    },
+    {
       "group": "R4DESK",
       "name": "read_key",
       "source_number": 0,

@@ -2912,6 +2912,20 @@ pub const gui_gradient_min_r4draw_version: u32 = 39;
 pub const device_snapshot_version: u32 = 1;
 pub const device_snapshot_flag_complete: u32 = 1;
 pub const device_snapshot_flag_independent_copies: u32 = 2;
+pub const file_metadata2_version: u32 = 1;
+pub const directory_metadata2_flag_bound: u32 = 1;
+pub const file_identity2_flag_namespace: u32 = 1;
+pub const file_identity2_flag_root: u32 = 2;
+pub const file_identity2_flag_fat_slot: u32 = 4;
+pub const file_identity2_flag_ntfs_record: u32 = 8;
+pub const file_metadata2_flag_exists: u32 = 1;
+pub const file_metadata2_flag_directory: u32 = 2;
+pub const file_metadata2_flag_identity_valid: u32 = 4;
+pub const file_metadata2_flag_byte_size_valid: u32 = 8;
+pub const file_metadata2_flag_content_revision_valid: u32 = 16;
+pub const file_metadata2_flag_backend_node_valid: u32 = 32;
+pub const file_metadata2_flag_dos_time_valid: u32 = 64;
+pub const file_metadata2_flag_reparse: u32 = 128;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3343,6 +3357,17 @@ pub const device_snapshot_result_capacity: i32 = -2;
 pub const device_snapshot_result_overflow: i32 = -3;
 pub const device_snapshot_result_exhausted: i32 = -4;
 pub const device_snapshot_result_no_memory: i32 = -8;
+pub const file_metadata2_result_found: i32 = 1;
+pub const file_metadata2_result_missing: i32 = 0;
+pub const file_metadata2_error_invalid: i32 = -1;
+pub const file_metadata2_error_no_mount: i32 = -3;
+pub const file_metadata2_result_end: i32 = -5;
+pub const file_metadata2_error_path_bounds: i32 = -7;
+pub const file_metadata2_error_io: i32 = -9;
+pub const file_metadata2_error_restart: i32 = -10;
+pub const file_metadata_error_unrepresentable: i32 = -11;
+pub const file_metadata2_error_namespace_exhausted: i32 = -12;
+pub const file_metadata2_error_unsupported: i32 = -13;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -3366,6 +3391,7 @@ impl R4ErrorDomain {
     pub const device: Self = Self(15);
     pub const storage: Self = Self(16);
     pub const serial: Self = Self(17);
+    pub const file_metadata2: Self = Self(18);
 }
 
 #[repr(transparent)]
@@ -20852,6 +20878,118 @@ impl Default for GuiWindowAppearance {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FileIdentity2 {
+    pub mount_generation: u64,
+    pub namespace_generation: u64,
+    pub object_hi: u64,
+    pub object_lo: u64,
+    pub mount_slot: u32,
+    pub provider: u32,
+    pub flags: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FileIdentity2 {
+    fn default() -> Self {
+        Self {
+            mount_generation: 0,
+            namespace_generation: 0,
+            object_hi: 0,
+            object_lo: 0,
+            mount_slot: 0,
+            provider: 0,
+            flags: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FileMetadata2 {
+    pub version: u32,
+    pub size: u32,
+    pub identity: FileIdentity2,
+    pub byte_size: u64,
+    pub content_revision: u64,
+    pub backend_node: u64,
+    pub flags: u32,
+    pub attributes: u32,
+    pub drive_letter: u32,
+    pub reserved0: u32,
+    pub created_time: u16,
+    pub created_date: u16,
+    pub access_date: u16,
+    pub modified_time: u16,
+    pub modified_date: u16,
+    pub reserved1: [u16; 3],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FileMetadata2 {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            identity: FileIdentity2 { mount_generation: 0, namespace_generation: 0, object_hi: 0, object_lo: 0, mount_slot: 0, provider: 0, flags: 0, reserved0: 0 },
+            byte_size: 0,
+            content_revision: 0,
+            backend_node: 0,
+            flags: 0,
+            attributes: 0,
+            drive_letter: 0,
+            reserved0: 0,
+            created_time: 0,
+            created_date: 0,
+            access_date: 0,
+            modified_time: 0,
+            modified_date: 0,
+            reserved1: [0; 3],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DirectoryMetadataEntry2 {
+    pub info: FileMetadata2,
+    pub path: [u8; 1024],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DirectoryMetadataEntry2 {
+    fn default() -> Self {
+        Self {
+            info: FileMetadata2 { version: 1, size: 112, identity: FileIdentity2 { mount_generation: 0, namespace_generation: 0, object_hi: 0, object_lo: 0, mount_slot: 0, provider: 0, flags: 0, reserved0: 0 }, byte_size: 0, content_revision: 0, backend_node: 0, flags: 0, attributes: 0, drive_letter: 0, reserved0: 0, created_time: 0, created_date: 0, access_date: 0, modified_time: 0, modified_date: 0, reserved1: [0; 3] },
+            path: [0; 1024],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DirectoryMetadataCursor2 {
+    pub version: u32,
+    pub size: u32,
+    pub namespace_generation: u64,
+    pub flags: u32,
+    pub reserved0: u32,
+    pub scan: DirectoryBatchCursor,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DirectoryMetadataCursor2 {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 2184,
+            namespace_generation: 0,
+            flags: 0,
+            reserved0: 0,
+            scan: DirectoryBatchCursor { version: 1, size: 2160, change: DirectoryChangeCursor { version: 1, size: 40, sequence: 0, node: 0, mount_generation: 0, mount_slot: 0, reserved: 0 }, parent_change: DirectoryChangeCursor { version: 1, size: 40, sequence: 0, node: 0, mount_generation: 0, mount_slot: 0, reserved: 0 }, owner_id: 0, owner_kind: 0, owner_generation: 0, node_generation: 0, path_len: 0, path: [0; 1024], backend: [0; 128] },
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21036,6 +21174,8 @@ pub mod R4SysFns {
     pub type service_inventory_page = unsafe extern "C" fn(*mut ServiceInventoryCursor, *mut ServiceInventoryRow, u32) -> i32;
     pub type service_control_bound = unsafe extern "C" fn(*const ServiceControlRequest) -> i32;
     pub type system_update_target_supported = unsafe extern "C" fn(*const u8) -> i32;
+    pub type file_metadata2 = unsafe extern "C" fn(*const u8, *mut FileMetadata2) -> i32;
+    pub type directory_metadata_batch2 = unsafe extern "C" fn(*const u8, *mut DirectoryMetadataCursor2, *mut DirectoryMetadataEntry2, u32) -> i32;
 }
 
 #[repr(C)]
@@ -21220,14 +21360,16 @@ pub struct R4XStartR4Sys {
     pub service_inventory_page: usize,
     pub service_control_bound: usize,
     pub system_update_target_supported: usize,
+    pub file_metadata2: usize,
+    pub directory_metadata_batch2: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 36,
-            size: 1416,
+            abi_version: 37,
+            size: 1432,
             flags: 0,
             write: 0,
             putc: 0,
@@ -21404,6 +21546,8 @@ impl Default for R4XStartR4Sys {
             service_inventory_page: 0,
             service_control_bound: 0,
             system_update_target_supported: 0,
+            file_metadata2: 0,
+            directory_metadata_batch2: 0,
         }
     }
 }
@@ -34033,6 +34177,46 @@ const _: () = {
     assert!(core::mem::offset_of!(GuiWindowAppearance, reserved) == 44);
     assert!(core::mem::size_of::<GuiWindowAppearance>() == 48);
     assert!(core::mem::align_of::<GuiWindowAppearance>() == 8);
+    assert!(core::mem::offset_of!(FileIdentity2, mount_generation) == 0);
+    assert!(core::mem::offset_of!(FileIdentity2, namespace_generation) == 8);
+    assert!(core::mem::offset_of!(FileIdentity2, object_hi) == 16);
+    assert!(core::mem::offset_of!(FileIdentity2, object_lo) == 24);
+    assert!(core::mem::offset_of!(FileIdentity2, mount_slot) == 32);
+    assert!(core::mem::offset_of!(FileIdentity2, provider) == 36);
+    assert!(core::mem::offset_of!(FileIdentity2, flags) == 40);
+    assert!(core::mem::offset_of!(FileIdentity2, reserved0) == 44);
+    assert!(core::mem::size_of::<FileIdentity2>() == 48);
+    assert!(core::mem::align_of::<FileIdentity2>() == 8);
+    assert!(core::mem::offset_of!(FileMetadata2, version) == 0);
+    assert!(core::mem::offset_of!(FileMetadata2, size) == 4);
+    assert!(core::mem::offset_of!(FileMetadata2, identity) == 8);
+    assert!(core::mem::offset_of!(FileMetadata2, byte_size) == 56);
+    assert!(core::mem::offset_of!(FileMetadata2, content_revision) == 64);
+    assert!(core::mem::offset_of!(FileMetadata2, backend_node) == 72);
+    assert!(core::mem::offset_of!(FileMetadata2, flags) == 80);
+    assert!(core::mem::offset_of!(FileMetadata2, attributes) == 84);
+    assert!(core::mem::offset_of!(FileMetadata2, drive_letter) == 88);
+    assert!(core::mem::offset_of!(FileMetadata2, reserved0) == 92);
+    assert!(core::mem::offset_of!(FileMetadata2, created_time) == 96);
+    assert!(core::mem::offset_of!(FileMetadata2, created_date) == 98);
+    assert!(core::mem::offset_of!(FileMetadata2, access_date) == 100);
+    assert!(core::mem::offset_of!(FileMetadata2, modified_time) == 102);
+    assert!(core::mem::offset_of!(FileMetadata2, modified_date) == 104);
+    assert!(core::mem::offset_of!(FileMetadata2, reserved1) == 106);
+    assert!(core::mem::size_of::<FileMetadata2>() == 112);
+    assert!(core::mem::align_of::<FileMetadata2>() == 8);
+    assert!(core::mem::offset_of!(DirectoryMetadataEntry2, info) == 0);
+    assert!(core::mem::offset_of!(DirectoryMetadataEntry2, path) == 112);
+    assert!(core::mem::size_of::<DirectoryMetadataEntry2>() == 1136);
+    assert!(core::mem::align_of::<DirectoryMetadataEntry2>() == 8);
+    assert!(core::mem::offset_of!(DirectoryMetadataCursor2, version) == 0);
+    assert!(core::mem::offset_of!(DirectoryMetadataCursor2, size) == 4);
+    assert!(core::mem::offset_of!(DirectoryMetadataCursor2, namespace_generation) == 8);
+    assert!(core::mem::offset_of!(DirectoryMetadataCursor2, flags) == 16);
+    assert!(core::mem::offset_of!(DirectoryMetadataCursor2, reserved0) == 20);
+    assert!(core::mem::offset_of!(DirectoryMetadataCursor2, scan) == 24);
+    assert!(core::mem::size_of::<DirectoryMetadataCursor2>() == 2184);
+    assert!(core::mem::align_of::<DirectoryMetadataCursor2>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -34214,7 +34398,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_inventory_page) == 1392);
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_control_bound) == 1400);
     assert!(core::mem::offset_of!(R4XStartR4Sys, system_update_target_supported) == 1408);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1416);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, file_metadata2) == 1416);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, directory_metadata_batch2) == 1424);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1432);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

@@ -2,10 +2,10 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 517; Funktionen: 506; reserviert/Tombstone: 11
-- Sichtbarkeit: public=364, advanced=142, internal=11
+- Physische Gruppenslots: 519; Funktionen: 508; reserviert/Tombstone: 11
+- Sichtbarkeit: public=366, advanced=142, internal=11
 - Zentrale SDK-only-Operationen: 0
-- Statusdomänen: 18
+- Statusdomänen: 19
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
 
 ## Statusdomänen
@@ -30,6 +30,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | 15 | `device` | Device- und Diagnoseoperation. |
 | 16 | `storage` | Storage identity, exclusive operations, bounded raw I/O and volume mounts. |
 | 17 | `serial` | Raw serial port configuration, transfer progress, exclusive identity and acknowledged close. |
+| 18 | `file_metadata2` | Wide passive file metadata and namespace-bound directory observation; found/missing/progress/end and explicit failure/restart/exhaustion. |
 
 ## Gruppenslots
 
@@ -210,6 +211,8 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4SYS | 172 | `service_inventory_page` | function | public | R4SYS | ja | `service` | caller_buffer | call | may_block | thread_safe | none | success_only | none | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4SYS | 173 | `service_control_bound` | function | public | R4SYS | ja | `service` | borrowed | call | blocking_wait | thread_safe | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | wait_budget | shutdown_wakeup | outcome_unknown | reentrant | none | call | request_close_wait_reap |
 | R4SYS | 174 | `system_update_target_supported` | function | public | R4SYS | ja | `filesystem` | borrowed | call | nonblocking | thread_safe | path_based_no_handle | none | none | idempotent | none | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4SYS | 175 | `file_metadata2` | function | public | R4SYS | ja | `file_metadata2` | caller_buffer | call | may_block | thread_safe | path_based_no_handle | success_only | none | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
+| R4SYS | 176 | `directory_metadata_batch2` | function | public | R4SYS | ja | `file_metadata2` | caller_buffer | call | may_block | thread_safe | path_based_no_handle | success_only | none | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DESK | 0 | `read_key` | function | public | R4DESK | ja | `desktop` | none | none | may_block | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |
 | R4DESK | 1 | `mouse_state` | function | public | R4DESK | ja | `desktop` | caller_buffer | call | nonblocking | owner_thread_only | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | call | none |
 | R4DESK | 2 | `mouse_show` | function | public | R4DESK | ja | `desktop` | none | none | nonblocking | owner_thread_only | none | none | may_have_occurred | never_automatic | none | zig_and_c_required | none | not_cancellable | none | owner_thread_only | none | none | none |

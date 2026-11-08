@@ -241,8 +241,10 @@ pub struct R4XStartR4Sys2 {
     pub service_inventory_page: u64,
     pub service_control_bound: u64,
     pub system_update_target_supported: u64,
+    pub file_metadata2: u64,
+    pub directory_metadata_batch2: u64,
 }
-impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 1, size: 1408, flags: 0,
+impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 2, size: 1424, flags: 0,
     write: 0,
     putc: 0,
     sleep_ticks: 0,
@@ -417,8 +419,10 @@ impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834
     service_inventory_page: 0,
     service_control_bound: 0,
     system_update_target_supported: 0,
+    file_metadata2: 0,
+    directory_metadata_batch2: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1408);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1424);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,write) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,putc) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,sleep_ticks) == 32);
@@ -593,6 +597,8 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1408);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,service_inventory_page) == 1384);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,service_control_bound) == 1392);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,system_update_target_supported) == 1400);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,file_metadata2) == 1408);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,directory_metadata_batch2) == 1416);
 };
 impl R4XStartR4Sys2 {
     pub fn project_provider(source: &super::R4XStartR4Sys) -> Self { Self {
@@ -768,6 +774,8 @@ impl R4XStartR4Sys2 {
         service_inventory_page: source.service_inventory_page as u64,
         service_control_bound: source.service_control_bound as u64,
         system_update_target_supported: source.system_update_target_supported as u64,
+        file_metadata2: source.file_metadata2 as u64,
+        directory_metadata_batch2: source.directory_metadata_batch2 as u64,
         ..Self::default()
     } }
 }

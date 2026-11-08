@@ -60,8 +60,8 @@ comptime {
 pub const R4SysFns2 = shared.R4SysFns;
 pub const R4XStartR4Sys2 = extern struct {
     magic: u32 = 844714834,
-    abi_version: u32 = 1,
-    size: u32 = 1408,
+    abi_version: u32 = 2,
+    size: u32 = 1424,
     flags: u32 = 0,
     @"write": u64 = 0,
     @"putc": u64 = 0,
@@ -237,9 +237,11 @@ pub const R4XStartR4Sys2 = extern struct {
     @"service_inventory_page": u64 = 0,
     @"service_control_bound": u64 = 0,
     @"system_update_target_supported": u64 = 0,
+    @"file_metadata2": u64 = 0,
+    @"directory_metadata_batch2": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Sys2) != 1408) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Sys2) != 1424) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Sys2, "write") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "putc") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "sleep_ticks") != 32) @compileError("Generation2 slot offset");
@@ -414,6 +416,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys2, "service_inventory_page") != 1384) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "service_control_bound") != 1392) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "system_update_target_supported") != 1400) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "file_metadata2") != 1408) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "directory_metadata_batch2") != 1416) @compileError("Generation2 slot offset");
 }
 pub const R4DeskFns2 = shared.R4DeskFns;
 pub const R4XStartR4Desk2 = extern struct {

@@ -2918,6 +2918,20 @@ extern "C" {
 #define R4OS_DEVICE_SNAPSHOT_VERSION 1u
 #define R4OS_DEVICE_SNAPSHOT_FLAG_COMPLETE 1u
 #define R4OS_DEVICE_SNAPSHOT_FLAG_INDEPENDENT_COPIES 2u
+#define R4OS_FILE_METADATA2_VERSION 1u
+#define R4OS_DIRECTORY_METADATA2_FLAG_BOUND 1u
+#define R4OS_FILE_IDENTITY2_FLAG_NAMESPACE 1u
+#define R4OS_FILE_IDENTITY2_FLAG_ROOT 2u
+#define R4OS_FILE_IDENTITY2_FLAG_FAT_SLOT 4u
+#define R4OS_FILE_IDENTITY2_FLAG_NTFS_RECORD 8u
+#define R4OS_FILE_METADATA2_FLAG_EXISTS 1u
+#define R4OS_FILE_METADATA2_FLAG_DIRECTORY 2u
+#define R4OS_FILE_METADATA2_FLAG_IDENTITY_VALID 4u
+#define R4OS_FILE_METADATA2_FLAG_BYTE_SIZE_VALID 8u
+#define R4OS_FILE_METADATA2_FLAG_CONTENT_REVISION_VALID 16u
+#define R4OS_FILE_METADATA2_FLAG_BACKEND_NODE_VALID 32u
+#define R4OS_FILE_METADATA2_FLAG_DOS_TIME_VALID 64u
+#define R4OS_FILE_METADATA2_FLAG_REPARSE 128u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3349,6 +3363,17 @@ extern "C" {
 #define R4OS_DEVICE_SNAPSHOT_RESULT_OVERFLOW ((int32_t)-3)
 #define R4OS_DEVICE_SNAPSHOT_RESULT_EXHAUSTED ((int32_t)-4)
 #define R4OS_DEVICE_SNAPSHOT_RESULT_NO_MEMORY ((int32_t)-8)
+#define R4OS_FILE_METADATA2_RESULT_FOUND ((int32_t)1)
+#define R4OS_FILE_METADATA2_RESULT_MISSING ((int32_t)0)
+#define R4OS_FILE_METADATA2_ERROR_INVALID ((int32_t)-1)
+#define R4OS_FILE_METADATA2_ERROR_NO_MOUNT ((int32_t)-3)
+#define R4OS_FILE_METADATA2_RESULT_END ((int32_t)-5)
+#define R4OS_FILE_METADATA2_ERROR_PATH_BOUNDS ((int32_t)-7)
+#define R4OS_FILE_METADATA2_ERROR_IO ((int32_t)-9)
+#define R4OS_FILE_METADATA2_ERROR_RESTART ((int32_t)-10)
+#define R4OS_FILE_METADATA_ERROR_UNREPRESENTABLE ((int32_t)-11)
+#define R4OS_FILE_METADATA2_ERROR_NAMESPACE_EXHAUSTED ((int32_t)-12)
+#define R4OS_FILE_METADATA2_ERROR_UNSUPPORTED ((int32_t)-13)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3369,7 +3394,8 @@ enum {
     R4_ERROR_DOMAIN_AUDIO = 14,
     R4_ERROR_DOMAIN_DEVICE = 15,
     R4_ERROR_DOMAIN_STORAGE = 16,
-    R4_ERROR_DOMAIN_SERIAL = 17
+    R4_ERROR_DOMAIN_SERIAL = 17,
+    R4_ERROR_DOMAIN_FILE_METADATA2 = 18
 };
 
 #define R4L_GROUP_R4SYS 1u
@@ -3801,6 +3827,10 @@ typedef struct R4ServiceControlRequest R4ServiceControlRequest;
 typedef struct R4GuiGradientPaint R4GuiGradientPaint;
 typedef struct R4GuiGradientStop R4GuiGradientStop;
 typedef struct R4GuiWindowAppearance R4GuiWindowAppearance;
+typedef struct R4FileIdentity2 R4FileIdentity2;
+typedef struct R4FileMetadata2 R4FileMetadata2;
+typedef struct R4DirectoryMetadataEntry2 R4DirectoryMetadataEntry2;
+typedef struct R4DirectoryMetadataCursor2 R4DirectoryMetadataCursor2;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11290,6 +11320,50 @@ typedef struct R4GuiWindowAppearance {
     uint32_t reserved;
 } R4GuiWindowAppearance;
 
+typedef struct R4FileIdentity2 {
+    uint64_t mount_generation;
+    uint64_t namespace_generation;
+    uint64_t object_hi;
+    uint64_t object_lo;
+    uint32_t mount_slot;
+    uint32_t provider;
+    uint32_t flags;
+    uint32_t reserved0;
+} R4FileIdentity2;
+
+typedef struct R4FileMetadata2 {
+    uint32_t version;
+    uint32_t size;
+    R4FileIdentity2 identity;
+    uint64_t byte_size;
+    uint64_t content_revision;
+    uint64_t backend_node;
+    uint32_t flags;
+    uint32_t attributes;
+    uint32_t drive_letter;
+    uint32_t reserved0;
+    uint16_t created_time;
+    uint16_t created_date;
+    uint16_t access_date;
+    uint16_t modified_time;
+    uint16_t modified_date;
+    uint16_t reserved1[3];
+} R4FileMetadata2;
+
+typedef struct R4DirectoryMetadataEntry2 {
+    R4FileMetadata2 info;
+    uint8_t path[1024];
+} R4DirectoryMetadataEntry2;
+
+typedef struct R4DirectoryMetadataCursor2 {
+    uint32_t version;
+    uint32_t size;
+    uint64_t namespace_generation;
+    uint32_t flags;
+    uint32_t reserved0;
+    R4DirectoryBatchCursor scan;
+} R4DirectoryMetadataCursor2;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11508,6 +11582,8 @@ typedef int32_t (*R4SysServiceStopBoundFn)(const uint8_t * name, const R4Program
 typedef int32_t (*R4SysServiceInventoryPageFn)(R4ServiceInventoryCursor * cursor, R4ServiceInventoryRow * rows, uint32_t capacity);
 typedef int32_t (*R4SysServiceControlBoundFn)(const R4ServiceControlRequest * request);
 typedef int32_t (*R4SysSystemUpdateTargetSupportedFn)(const uint8_t * path);
+typedef int32_t (*R4SysFileMetadata2Fn)(const uint8_t * path, R4FileMetadata2 * out_info);
+typedef int32_t (*R4SysDirectoryMetadataBatch2Fn)(const uint8_t * path, R4DirectoryMetadataCursor2 * cursor, R4DirectoryMetadataEntry2 * out, uint32_t capacity);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11689,6 +11765,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t service_inventory_page;
     uintptr_t service_control_bound;
     uintptr_t system_update_target_supported;
+    uintptr_t file_metadata2;
+    uintptr_t directory_metadata_batch2;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -19106,7 +19184,43 @@ _Static_assert(offsetof(R4GuiWindowAppearance, flags) == 32u, "GuiWindowAppearan
 _Static_assert(offsetof(R4GuiWindowAppearance, title_background) == 36u, "GuiWindowAppearance.title_background offset mismatch");
 _Static_assert(offsetof(R4GuiWindowAppearance, title_foreground) == 40u, "GuiWindowAppearance.title_foreground offset mismatch");
 _Static_assert(offsetof(R4GuiWindowAppearance, reserved) == 44u, "GuiWindowAppearance.reserved offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1416u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4FileIdentity2) == 48u, "FileIdentity2 size mismatch");
+_Static_assert(offsetof(R4FileIdentity2, mount_generation) == 0u, "FileIdentity2.mount_generation offset mismatch");
+_Static_assert(offsetof(R4FileIdentity2, namespace_generation) == 8u, "FileIdentity2.namespace_generation offset mismatch");
+_Static_assert(offsetof(R4FileIdentity2, object_hi) == 16u, "FileIdentity2.object_hi offset mismatch");
+_Static_assert(offsetof(R4FileIdentity2, object_lo) == 24u, "FileIdentity2.object_lo offset mismatch");
+_Static_assert(offsetof(R4FileIdentity2, mount_slot) == 32u, "FileIdentity2.mount_slot offset mismatch");
+_Static_assert(offsetof(R4FileIdentity2, provider) == 36u, "FileIdentity2.provider offset mismatch");
+_Static_assert(offsetof(R4FileIdentity2, flags) == 40u, "FileIdentity2.flags offset mismatch");
+_Static_assert(offsetof(R4FileIdentity2, reserved0) == 44u, "FileIdentity2.reserved0 offset mismatch");
+_Static_assert(sizeof(R4FileMetadata2) == 112u, "FileMetadata2 size mismatch");
+_Static_assert(offsetof(R4FileMetadata2, version) == 0u, "FileMetadata2.version offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, size) == 4u, "FileMetadata2.size offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, identity) == 8u, "FileMetadata2.identity offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, byte_size) == 56u, "FileMetadata2.byte_size offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, content_revision) == 64u, "FileMetadata2.content_revision offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, backend_node) == 72u, "FileMetadata2.backend_node offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, flags) == 80u, "FileMetadata2.flags offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, attributes) == 84u, "FileMetadata2.attributes offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, drive_letter) == 88u, "FileMetadata2.drive_letter offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, reserved0) == 92u, "FileMetadata2.reserved0 offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, created_time) == 96u, "FileMetadata2.created_time offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, created_date) == 98u, "FileMetadata2.created_date offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, access_date) == 100u, "FileMetadata2.access_date offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, modified_time) == 102u, "FileMetadata2.modified_time offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, modified_date) == 104u, "FileMetadata2.modified_date offset mismatch");
+_Static_assert(offsetof(R4FileMetadata2, reserved1) == 106u, "FileMetadata2.reserved1 offset mismatch");
+_Static_assert(sizeof(R4DirectoryMetadataEntry2) == 1136u, "DirectoryMetadataEntry2 size mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataEntry2, info) == 0u, "DirectoryMetadataEntry2.info offset mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataEntry2, path) == 112u, "DirectoryMetadataEntry2.path offset mismatch");
+_Static_assert(sizeof(R4DirectoryMetadataCursor2) == 2184u, "DirectoryMetadataCursor2 size mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataCursor2, version) == 0u, "DirectoryMetadataCursor2.version offset mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataCursor2, size) == 4u, "DirectoryMetadataCursor2.size offset mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataCursor2, namespace_generation) == 8u, "DirectoryMetadataCursor2.namespace_generation offset mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataCursor2, flags) == 16u, "DirectoryMetadataCursor2.flags offset mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataCursor2, reserved0) == 20u, "DirectoryMetadataCursor2.reserved0 offset mismatch");
+_Static_assert(offsetof(R4DirectoryMetadataCursor2, scan) == 24u, "DirectoryMetadataCursor2.scan offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1432u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -19454,6 +19568,10 @@ _Static_assert(offsetof(R4XStartR4Sys, service_control_bound) == 1400u, "R4XStar
 _Static_assert(sizeof(R4SysServiceControlBoundFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, system_update_target_supported) == 1408u, "R4XStartR4Sys.system_update_target_supported offset mismatch");
 _Static_assert(sizeof(R4SysSystemUpdateTargetSupportedFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, file_metadata2) == 1416u, "R4XStartR4Sys.file_metadata2 offset mismatch");
+_Static_assert(sizeof(R4SysFileMetadata2Fn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, directory_metadata_batch2) == 1424u, "R4XStartR4Sys.directory_metadata_batch2 offset mismatch");
+_Static_assert(sizeof(R4SysDirectoryMetadataBatch2Fn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

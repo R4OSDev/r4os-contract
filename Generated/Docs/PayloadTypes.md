@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 414 von 414 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 418 von 418 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 65; Konstanten: 2905; Limits: 111
+- Operationen: 0; Fehlerdomänen: 66; Konstanten: 2919; Limits: 111
 
 ## App-Profile
 
@@ -435,6 +435,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `GuiGradientPaint` | fixed_layout | extern_struct | 32/4 | 32/4 | 32/4 | 32/4 |
 | `GuiGradientStop` | fixed_layout | extern_struct | 8/4 | 8/4 | 8/4 | 8/4 |
 | `GuiWindowAppearance` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `FileIdentity2` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `FileMetadata2` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `DirectoryMetadataEntry2` | fixed_layout | extern_struct | 1136/8 | 1136/8 | 1136/8 | 1136/8 |
+| `DirectoryMetadataCursor2` | extensible | extern_struct | 2184/8 | 2184/8 | 2184/8 | 2184/8 |
 
 ## Typdetails
 
@@ -10808,6 +10812,78 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `title_foreground` | 40 | 4 | 4 | `u32` | - |
 | `reserved` | 44 | 4 | 4 | `u32` | - |
 
+### `FileIdentity2`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `mount_generation` | 0 | 8 | 8 | `u64` | - |
+| `namespace_generation` | 8 | 8 | 8 | `u64` | - |
+| `object_hi` | 16 | 8 | 8 | `u64` | - |
+| `object_lo` | 24 | 8 | 8 | `u64` | - |
+| `mount_slot` | 32 | 4 | 4 | `u32` | - |
+| `provider` | 36 | 4 | 4 | `u32` | - |
+| `flags` | 40 | 4 | 4 | `u32` | - |
+| `reserved0` | 44 | 4 | 4 | `u32` | - |
+
+### `FileMetadata2`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `identity` | 8 | 48 | 8 | `FileIdentity2` | - |
+| `byte_size` | 56 | 8 | 8 | `u64` | - |
+| `content_revision` | 64 | 8 | 8 | `u64` | - |
+| `backend_node` | 72 | 8 | 8 | `u64` | - |
+| `flags` | 80 | 4 | 4 | `u32` | - |
+| `attributes` | 84 | 4 | 4 | `u32` | - |
+| `drive_letter` | 88 | 4 | 4 | `u32` | - |
+| `reserved0` | 92 | 4 | 4 | `u32` | - |
+| `created_time` | 96 | 2 | 2 | `u16` | - |
+| `created_date` | 98 | 2 | 2 | `u16` | - |
+| `access_date` | 100 | 2 | 2 | `u16` | - |
+| `modified_time` | 102 | 2 | 2 | `u16` | - |
+| `modified_date` | 104 | 2 | 2 | `u16` | - |
+| `reserved1` | 106 | 6 | 2 | `[3]u16` | - |
+
+### `DirectoryMetadataEntry2`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 1136 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `info` | 0 | 112 | 8 | `FileMetadata2` | - |
+| `path` | 112 | 1024 | 1 | `[1024]u8` | - |
+
+### `DirectoryMetadataCursor2`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `extensible`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 2184 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `namespace_generation` | 8 | 8 | 8 | `u64` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `scan` | 24 | 2160 | 8 | `DirectoryBatchCursor` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11584,6 +11660,24 @@ Geltung: `device_snapshot`, Einheit: `status_code`, Stabilität: `fixed_contract
 | `device_snapshot_result_overflow` | -3 | `i32` |
 | `device_snapshot_result_exhausted` | -4 | `i32` |
 | `device_snapshot_result_no_memory` | -8 | `i32` |
+
+### `file_metadata2`
+
+Geltung: `file_metadata2`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `file_metadata2_result_found` | 1 | `i32` |
+| `file_metadata2_result_missing` | 0 | `i32` |
+| `file_metadata2_error_invalid` | -1 | `i32` |
+| `file_metadata2_error_no_mount` | -3 | `i32` |
+| `file_metadata2_result_end` | -5 | `i32` |
+| `file_metadata2_error_path_bounds` | -7 | `i32` |
+| `file_metadata2_error_io` | -9 | `i32` |
+| `file_metadata2_error_restart` | -10 | `i32` |
+| `file_metadata_error_unrepresentable` | -11 | `i32` |
+| `file_metadata2_error_namespace_exhausted` | -12 | `i32` |
+| `file_metadata2_error_unsupported` | -13 | `i32` |
 
 ## Konstanten
 
@@ -14494,6 +14588,20 @@ Geltung: `device_snapshot`, Einheit: `status_code`, Stabilität: `fixed_contract
 | `device_snapshot_version` | `1` | `u32` | version | number | `device_snapshot` | fixed_contract |
 | `device_snapshot_flag_complete` | `1` | `u32` | flag | bitmask | `device_snapshot` | fixed_contract |
 | `device_snapshot_flag_independent_copies` | `2` | `u32` | flag | bitmask | `device_snapshot` | fixed_contract |
+| `file_metadata2_version` | `1` | `u32` | version | number | `file_metadata2` | fixed_contract |
+| `directory_metadata2_flag_bound` | `1` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_identity2_flag_namespace` | `1` | `u32` | flag | bitmask | `file_identity2` | fixed_contract |
+| `file_identity2_flag_root` | `2` | `u32` | flag | bitmask | `file_identity2` | fixed_contract |
+| `file_identity2_flag_fat_slot` | `4` | `u32` | flag | bitmask | `file_identity2` | fixed_contract |
+| `file_identity2_flag_ntfs_record` | `8` | `u32` | flag | bitmask | `file_identity2` | fixed_contract |
+| `file_metadata2_flag_exists` | `1` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_metadata2_flag_directory` | `2` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_metadata2_flag_identity_valid` | `4` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_metadata2_flag_byte_size_valid` | `8` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_metadata2_flag_content_revision_valid` | `16` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_metadata2_flag_backend_node_valid` | `32` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_metadata2_flag_dos_time_valid` | `64` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `file_metadata2_flag_reparse` | `128` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
 
 ## Limits
 

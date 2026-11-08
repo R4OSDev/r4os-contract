@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 36,
+      "abi_version": 37,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1416,
+      "size": 1432,
       "slots": [
         {
           "number": 0,
@@ -13924,6 +13924,184 @@
             "side_effects": "none",
             "retry": "idempotent",
             "buffer_too_small": "none",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 175,
+          "offset": 1416,
+          "name": "file_metadata2",
+          "state": "function",
+          "required": false,
+          "description": "Read actual VFS metadata under the existing exact mount/request owner, preserving full u64 backend node. Returns1 found,0 absent; negative errors leave output unchanged. Qualified identity uses exact mount plus nonreused global namespace observation and tagged FAT directory slot or NTFS node/sequence; no generic first-cluster identity, handle, retain, stable infinite incarnation or content revision. Current providers do not certify content revision; flags distinguish unknown size/times/revision. Namespace change during observation returns-10; namespace exhaustion returns-12. No allocation or retained caller pointers. Synchronous return ends the output loan. Current backend admission limits remain; this API does not add real NTFS>u32 support.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_info",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "FileMetadata2"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "file_metadata2",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "path_based_no_handle",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 176,
+          "offset": 1424,
+          "name": "directory_metadata_batch2",
+          "state": "function",
+          "required": false,
+          "description": "Use the same canonical bounded directory engine and exact owner/mount/path guards with a distinct2184-byte cursor and1136-byte records. Capacity1..8, shared256physical-step budget; positive count publishes rows,0 bounded progress,-5 EOF. Bound capacity0/out=NULL validates without advancing. Any global namespace publication or mount/owner mismatch returns-10; discard all prior pages. Errors leave caller cursor unchanged and grant no row authority; buffer contents on errors are unspecified. Whole paths and same FileMetadata2 identity projection as single lookup. No persistent Kernel allocation, mount pin or scan; reset closes/cancels. Current content metadata remains per-entry observations, not one atomic directory-wide content snapshot. Namespace exhaustion-12 never reuses an identity.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": true,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "cursor",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DirectoryMetadataCursor2"
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DirectoryMetadataEntry2"
+                  },
+                  "direction": "output",
+                  "nullable": true,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "file_metadata2",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "path_based_no_handle",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -131547,6 +131725,514 @@
       ],
       "values": [],
       "description": "Optional immutable title appearance from the actually admitted R4X metadata. This read-only snapshot belongs only to the named hosted App window; the Desktop owns active/inactive rendering and controls. Absent fields use Desktop defaults; zero is a valid supplied color. Errors use gui_host_input_error values, and do not modify output."
+    },
+    {
+      "name": "FileIdentity2",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "mount_generation",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact live mount generation at observation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "namespace_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Canonical global namespace observation, never reused by these new APIs after exhaustion. Zero is valid.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "object_hi",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque full backend identity word. Do not interpret as a data cluster.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "object_lo",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque backend incarnation/location word.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "mount_slot",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact mount slot.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing file_name_provider value.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Namespace/root/FAT-slot/NTFS-record identity kind.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Opaque exact-mount/global-namespace-qualified file observation. FAT slot location and NTFS node/sequence are tagged separately; no first-cluster identity, stable infinite birth ID, handle, retain or content revision. Compare only complete valid tuples; namespace generation0 is valid."
+    },
+    {
+      "name": "FileMetadata2",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact record size112.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "identity",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "FileIdentity2"
+          },
+          "description": "Qualified identity only when identity-valid flag is set.",
+          "size": 48,
+          "alignment": 8,
+          "source_type": "FileIdentity2",
+          "default_kind": "empty"
+        },
+        {
+          "name": "byte_size",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "File byte length only when size-valid; directory/root size is not certified.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "content_revision",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Only meaningful with content-revision-valid; current providers leave unknown/zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "backend_node",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Optional full backend diagnostic node; never generic file identity or handle.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Explicit field validity, kind and reparse observation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "attributes",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original provider DOS attributes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "drive_letter",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Visible DOS drive letter; identity uses exact actual mount, including boot routing.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "created_time",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Original DOS time, only with time-valid.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "created_date",
+          "offset": 98,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Original DOS date.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "access_date",
+          "offset": 100,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Original DOS access date.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "modified_time",
+          "offset": 102,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Original DOS time, not content revision.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "modified_date",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "Original DOS date.",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 106,
+          "type": {
+            "kind": "array",
+            "length": 3,
+            "child": {
+              "kind": "scalar",
+              "name": "u16"
+            }
+          },
+          "description": "Zero.",
+          "size": 6,
+          "alignment": 2,
+          "source_type": "[3]u16",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Lossless node diagnostic and explicit valid metadata fields. Name/path remains with the path operation or complete directory result. Namespace identity is separate from content revision, which current providers do not certify."
+    },
+    {
+      "name": "DirectoryMetadataEntry2",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 1136,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "info",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "FileMetadata2"
+          },
+          "description": "Same projection as single metadata.",
+          "size": 112,
+          "alignment": 8,
+          "source_type": "FileMetadata2",
+          "default_kind": "empty"
+        },
+        {
+          "name": "path",
+          "offset": 112,
+          "type": {
+            "kind": "array",
+            "length": 1024,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "Complete NUL DOS path, never silently truncated.",
+          "size": 1024,
+          "alignment": 1,
+          "source_type": "[1024]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Complete owned wide metadata plus authoritative full NUL path. Only positive returned count publishes rows; errors never authorize adoption."
+    },
+    {
+      "name": "DirectoryMetadataCursor2",
+      "source": "API/ApiContract.json",
+      "classification": "extensible",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 2184,
+      "alignment": 8,
+      "source_layout": "extern",
+      "size_field": "size",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete cursor2184.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "2184"
+        },
+        {
+          "name": "namespace_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Bound global namespace observation; zero is valid with bound flag.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bound flag only; private opaque state.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scan",
+          "offset": 24,
+          "type": {
+            "kind": "named",
+            "name": "DirectoryBatchCursor"
+          },
+          "description": "Existing canonical backend/owner/mount/path scan state; not interchangeable with an old public cursor.",
+          "size": 2160,
+          "alignment": 8,
+          "source_type": "DirectoryBatchCursor",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Distinct caller-owned pointer-free scan with explicit global namespace binding. Any namespace publication invalidates continuation, including unrelated directories. No persistent scan resource, allocation or mount lease; reset closes immediately."
     }
   ],
   "operations": [],
@@ -131640,6 +132326,11 @@
       "name": "serial",
       "id": 17,
       "description": "Raw serial port configuration, transfer progress, exclusive identity and acknowledged close."
+    },
+    {
+      "name": "file_metadata2",
+      "id": 18,
+      "description": "Wide passive file metadata and namespace-bound directory observation; found/missing/progress/end and explicit failure/restart/exhaustion."
     }
   ],
   "error_domains": [
@@ -134147,6 +134838,81 @@
         }
       ],
       "description": "One passive capture; failures never publish a truncated success view. No allocation in the current Kernel owner."
+    },
+    {
+      "name": "file_metadata2",
+      "unit": "status_code",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "file_metadata2_result_found",
+          "value": 1,
+          "value_type": "i32",
+          "description": "Single file found; batch positive values count rows."
+        },
+        {
+          "name": "file_metadata2_result_missing",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Single path absent; batch0 means bounded progress."
+        },
+        {
+          "name": "file_metadata2_error_invalid",
+          "value": -1,
+          "value_type": "i32",
+          "description": "Invalid pointers/header/capacity/opaque cursor state."
+        },
+        {
+          "name": "file_metadata2_error_no_mount",
+          "value": -3,
+          "value_type": "i32",
+          "description": "Missing mount or initially absent/not-directory scan target."
+        },
+        {
+          "name": "file_metadata2_result_end",
+          "value": -5,
+          "value_type": "i32",
+          "description": "Complete directory EOF only."
+        },
+        {
+          "name": "file_metadata2_error_path_bounds",
+          "value": -7,
+          "value_type": "i32",
+          "description": "Whole path does not fit; never truncate."
+        },
+        {
+          "name": "file_metadata2_error_io",
+          "value": -9,
+          "value_type": "i32",
+          "description": "Existing request/lookup/backend IO admission failed."
+        },
+        {
+          "name": "file_metadata2_error_restart",
+          "value": -10,
+          "value_type": "i32",
+          "description": "Global namespace, exact mount/owner or traversal binding changed; discard partial view."
+        },
+        {
+          "name": "file_metadata_error_unrepresentable",
+          "value": -11,
+          "value_type": "i32",
+          "description": "Legacy FileInfo32-bit node cannot represent actual u64 value; no truncate or panic."
+        },
+        {
+          "name": "file_metadata2_error_namespace_exhausted",
+          "value": -12,
+          "value_type": "i32",
+          "description": "Canonical namespace sequence wrapped; no valid new identity is reused."
+        },
+        {
+          "name": "file_metadata2_error_unsupported",
+          "value": -13,
+          "value_type": "i32",
+          "description": "Backend cannot provide required metadata/identity facts."
+        }
+      ],
+      "description": "Wide passive metadata and namespace-bound bounded directory observation. Old FileInfo projections additionally use defined unrepresentable-11 instead of narrowing/panic."
     }
   ],
   "constants": [
@@ -163199,6 +163965,146 @@
       "scope": "device_snapshot",
       "stability": "fixed_contract",
       "description": "Device capture receipt contract; source copies are not globally atomic."
+    },
+    {
+      "name": "file_metadata2_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Metadata/cursor version1."
+    },
+    {
+      "name": "directory_metadata2_flag_bound",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Cursor has a valid namespace binding, including epoch0."
+    },
+    {
+      "name": "file_identity2_flag_namespace",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_identity2",
+      "stability": "fixed_contract",
+      "description": "Qualified only within exact global namespace observation."
+    },
+    {
+      "name": "file_identity2_flag_root",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_identity2",
+      "stability": "fixed_contract",
+      "description": "Explicit mount root identity."
+    },
+    {
+      "name": "file_identity2_flag_fat_slot",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_identity2",
+      "stability": "fixed_contract",
+      "description": "Opaque FAT directory sector/offset, not cluster."
+    },
+    {
+      "name": "file_identity2_flag_ntfs_record",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_identity2",
+      "stability": "fixed_contract",
+      "description": "Opaque full NTFS record/sequence."
+    },
+    {
+      "name": "file_metadata2_flag_exists",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Confirmed found record."
+    },
+    {
+      "name": "file_metadata2_flag_directory",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Directory kind."
+    },
+    {
+      "name": "file_metadata2_flag_identity_valid",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Complete qualified identity tuple."
+    },
+    {
+      "name": "file_metadata2_flag_byte_size_valid",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "File byte size known; directories/root leave unknown."
+    },
+    {
+      "name": "file_metadata2_flag_content_revision_valid",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Actual content revision known; current providers never set this."
+    },
+    {
+      "name": "file_metadata2_flag_backend_node_valid",
+      "value": "32",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Full optional diagnostic node known."
+    },
+    {
+      "name": "file_metadata2_flag_dos_time_valid",
+      "value": "64",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Original provider DOS date/time fields known, not precision upgrade."
+    },
+    {
+      "name": "file_metadata2_flag_reparse",
+      "value": "128",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "file_metadata2",
+      "stability": "fixed_contract",
+      "description": "Original backend reparse observation, no traversal authority."
     }
   ],
   "limits": [

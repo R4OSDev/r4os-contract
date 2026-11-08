@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 506,
-    "group_slot_count": 506,
+    "function_count": 508,
+    "group_slot_count": 508,
     "sdk_only_count": 0,
-    "public_count": 364,
+    "public_count": 366,
     "advanced_count": 142
   },
   "functions": [
@@ -2073,6 +2073,30 @@
       "slot": 174,
       "exposure": "public",
       "description": "Read-only admission query for the installed early-update-recovery target scope. Borrowed NUL-terminated native journal path, at most1023 UTF8 bytes; returns1 if normalized target is supported,0 if outside the scope,-1 for invalid path/Unicode. No filesystem access, reservation, installation or version/dependency check. Mount, capacity, artifact identity, ownership and lifecycle remain the updater preflight responsibility.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.file_metadata2",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 175,
+      "exposure": "public",
+      "description": "Read actual VFS metadata under the existing exact mount/request owner, preserving full u64 backend node. Returns1 found,0 absent; negative errors leave output unchanged. Qualified identity uses exact mount plus nonreused global namespace observation and tagged FAT directory slot or NTFS node/sequence; no generic first-cluster identity, handle, retain, stable infinite incarnation or content revision. Current providers do not certify content revision; flags distinguish unknown size/times/revision. Namespace change during observation returns-10; namespace exhaustion returns-12. No allocation or retained caller pointers. Synchronous return ends the output loan. Current backend admission limits remain; this API does not add real NTFS>u32 support.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.directory_metadata_batch2",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 176,
+      "exposure": "public",
+      "description": "Use the same canonical bounded directory engine and exact owner/mount/path guards with a distinct2184-byte cursor and1136-byte records. Capacity1..8, shared256physical-step budget; positive count publishes rows,0 bounded progress,-5 EOF. Bound capacity0/out=NULL validates without advancing. Any global namespace publication or mount/owner mismatch returns-10; discard all prior pages. Errors leave caller cursor unchanged and grant no row authority; buffer contents on errors are unspecified. Whole paths and same FileMetadata2 identity projection as single lookup. No persistent Kernel allocation, mount pin or scan; reset closes/cancels. Current content metadata remains per-entry observations, not one atomic directory-wide content snapshot. Namespace exhaustion-12 never reuses an identity.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

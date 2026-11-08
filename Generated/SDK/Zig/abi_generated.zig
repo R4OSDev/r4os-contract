@@ -2906,6 +2906,20 @@ pub const gui_gradient_min_r4draw_version: u32 = 39;
 pub const device_snapshot_version: u32 = 1;
 pub const device_snapshot_flag_complete: u32 = 1;
 pub const device_snapshot_flag_independent_copies: u32 = 2;
+pub const file_metadata2_version: u32 = 1;
+pub const directory_metadata2_flag_bound: u32 = 1;
+pub const file_identity2_flag_namespace: u32 = 1;
+pub const file_identity2_flag_root: u32 = 2;
+pub const file_identity2_flag_fat_slot: u32 = 4;
+pub const file_identity2_flag_ntfs_record: u32 = 8;
+pub const file_metadata2_flag_exists: u32 = 1;
+pub const file_metadata2_flag_directory: u32 = 2;
+pub const file_metadata2_flag_identity_valid: u32 = 4;
+pub const file_metadata2_flag_byte_size_valid: u32 = 8;
+pub const file_metadata2_flag_content_revision_valid: u32 = 16;
+pub const file_metadata2_flag_backend_node_valid: u32 = 32;
+pub const file_metadata2_flag_dos_time_valid: u32 = 64;
+pub const file_metadata2_flag_reparse: u32 = 128;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3337,6 +3351,17 @@ pub const device_snapshot_result_capacity: i32 = -2;
 pub const device_snapshot_result_overflow: i32 = -3;
 pub const device_snapshot_result_exhausted: i32 = -4;
 pub const device_snapshot_result_no_memory: i32 = -8;
+pub const file_metadata2_result_found: i32 = 1;
+pub const file_metadata2_result_missing: i32 = 0;
+pub const file_metadata2_error_invalid: i32 = -1;
+pub const file_metadata2_error_no_mount: i32 = -3;
+pub const file_metadata2_result_end: i32 = -5;
+pub const file_metadata2_error_path_bounds: i32 = -7;
+pub const file_metadata2_error_io: i32 = -9;
+pub const file_metadata2_error_restart: i32 = -10;
+pub const file_metadata_error_unrepresentable: i32 = -11;
+pub const file_metadata2_error_namespace_exhausted: i32 = -12;
+pub const file_metadata2_error_unsupported: i32 = -13;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -3357,6 +3382,7 @@ pub const R4ErrorDomain = enum(u16) {
     device = 15,
     storage = 16,
     serial = 17,
+    file_metadata2 = 18,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -10935,6 +10961,50 @@ pub const GuiWindowAppearance = extern struct {
     reserved: u32 = 0,
 };
 
+pub const FileIdentity2 = extern struct {
+    mount_generation: u64 = 0,
+    namespace_generation: u64 = 0,
+    object_hi: u64 = 0,
+    object_lo: u64 = 0,
+    mount_slot: u32 = 0,
+    provider: u32 = 0,
+    flags: u32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const FileMetadata2 = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    identity: FileIdentity2 = .{},
+    byte_size: u64 = 0,
+    content_revision: u64 = 0,
+    backend_node: u64 = 0,
+    flags: u32 = 0,
+    attributes: u32 = 0,
+    drive_letter: u32 = 0,
+    reserved0: u32 = 0,
+    created_time: u16 = 0,
+    created_date: u16 = 0,
+    access_date: u16 = 0,
+    modified_time: u16 = 0,
+    modified_date: u16 = 0,
+    reserved1: [3]u16 = .{0} ** 3,
+};
+
+pub const DirectoryMetadataEntry2 = extern struct {
+    info: FileMetadata2 = .{},
+    path: [1024]u8 = .{0} ** 1024,
+};
+
+pub const DirectoryMetadataCursor2 = extern struct {
+    version: u32 = 1,
+    size: u32 = 2184,
+    namespace_generation: u64 = 0,
+    flags: u32 = 0,
+    reserved0: u32 = 0,
+    scan: DirectoryBatchCursor = .{},
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11108,12 +11178,14 @@ pub const R4SysFns = struct {
     pub const service_inventory_page = *const fn (*ServiceInventoryCursor, [*]ServiceInventoryRow, u32) callconv(.c) i32;
     pub const service_control_bound = *const fn (*const ServiceControlRequest) callconv(.c) i32;
     pub const system_update_target_supported = *const fn ([*:0]const u8) callconv(.c) i32;
+    pub const file_metadata2 = *const fn ([*:0]const u8, *FileMetadata2) callconv(.c) i32;
+    pub const directory_metadata_batch2 = *const fn (?[*:0]const u8, *DirectoryMetadataCursor2, ?[*]DirectoryMetadataEntry2, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 36,
-    size: u32 = 1416,
+    abi_version: u32 = 37,
+    size: u32 = 1432,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -11290,6 +11362,8 @@ pub const R4XStartR4Sys = extern struct {
     service_inventory_page: usize = 0,
     service_control_bound: usize = 0,
     system_update_target_supported: usize = 0,
+    file_metadata2: usize = 0,
+    directory_metadata_batch2: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -12197,6 +12271,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 172, .offset = 1392, .name = "service_inventory_page", .state = .function, .required = false },
     .{ .number = 173, .offset = 1400, .name = "service_control_bound", .state = .function, .required = false },
     .{ .number = 174, .offset = 1408, .name = "system_update_target_supported", .state = .function, .required = false },
+    .{ .number = 175, .offset = 1416, .name = "file_metadata2", .state = .function, .required = false },
+    .{ .number = 176, .offset = 1424, .name = "directory_metadata_batch2", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -19660,7 +19736,47 @@ comptime {
     if (@offsetOf(GuiWindowAppearance, "title_background") != 36) @compileError("generated ABI offset drift: GuiWindowAppearance.title_background");
     if (@offsetOf(GuiWindowAppearance, "title_foreground") != 40) @compileError("generated ABI offset drift: GuiWindowAppearance.title_foreground");
     if (@offsetOf(GuiWindowAppearance, "reserved") != 44) @compileError("generated ABI offset drift: GuiWindowAppearance.reserved");
-    if (@sizeOf(R4XStartR4Sys) != 1416) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(FileIdentity2) != 48) @compileError("generated ABI size drift: FileIdentity2");
+    if (@alignOf(FileIdentity2) != 8) @compileError("generated ABI alignment drift: FileIdentity2");
+    if (@offsetOf(FileIdentity2, "mount_generation") != 0) @compileError("generated ABI offset drift: FileIdentity2.mount_generation");
+    if (@offsetOf(FileIdentity2, "namespace_generation") != 8) @compileError("generated ABI offset drift: FileIdentity2.namespace_generation");
+    if (@offsetOf(FileIdentity2, "object_hi") != 16) @compileError("generated ABI offset drift: FileIdentity2.object_hi");
+    if (@offsetOf(FileIdentity2, "object_lo") != 24) @compileError("generated ABI offset drift: FileIdentity2.object_lo");
+    if (@offsetOf(FileIdentity2, "mount_slot") != 32) @compileError("generated ABI offset drift: FileIdentity2.mount_slot");
+    if (@offsetOf(FileIdentity2, "provider") != 36) @compileError("generated ABI offset drift: FileIdentity2.provider");
+    if (@offsetOf(FileIdentity2, "flags") != 40) @compileError("generated ABI offset drift: FileIdentity2.flags");
+    if (@offsetOf(FileIdentity2, "reserved0") != 44) @compileError("generated ABI offset drift: FileIdentity2.reserved0");
+    if (@sizeOf(FileMetadata2) != 112) @compileError("generated ABI size drift: FileMetadata2");
+    if (@alignOf(FileMetadata2) != 8) @compileError("generated ABI alignment drift: FileMetadata2");
+    if (@offsetOf(FileMetadata2, "version") != 0) @compileError("generated ABI offset drift: FileMetadata2.version");
+    if (@offsetOf(FileMetadata2, "size") != 4) @compileError("generated ABI offset drift: FileMetadata2.size");
+    if (@offsetOf(FileMetadata2, "identity") != 8) @compileError("generated ABI offset drift: FileMetadata2.identity");
+    if (@offsetOf(FileMetadata2, "byte_size") != 56) @compileError("generated ABI offset drift: FileMetadata2.byte_size");
+    if (@offsetOf(FileMetadata2, "content_revision") != 64) @compileError("generated ABI offset drift: FileMetadata2.content_revision");
+    if (@offsetOf(FileMetadata2, "backend_node") != 72) @compileError("generated ABI offset drift: FileMetadata2.backend_node");
+    if (@offsetOf(FileMetadata2, "flags") != 80) @compileError("generated ABI offset drift: FileMetadata2.flags");
+    if (@offsetOf(FileMetadata2, "attributes") != 84) @compileError("generated ABI offset drift: FileMetadata2.attributes");
+    if (@offsetOf(FileMetadata2, "drive_letter") != 88) @compileError("generated ABI offset drift: FileMetadata2.drive_letter");
+    if (@offsetOf(FileMetadata2, "reserved0") != 92) @compileError("generated ABI offset drift: FileMetadata2.reserved0");
+    if (@offsetOf(FileMetadata2, "created_time") != 96) @compileError("generated ABI offset drift: FileMetadata2.created_time");
+    if (@offsetOf(FileMetadata2, "created_date") != 98) @compileError("generated ABI offset drift: FileMetadata2.created_date");
+    if (@offsetOf(FileMetadata2, "access_date") != 100) @compileError("generated ABI offset drift: FileMetadata2.access_date");
+    if (@offsetOf(FileMetadata2, "modified_time") != 102) @compileError("generated ABI offset drift: FileMetadata2.modified_time");
+    if (@offsetOf(FileMetadata2, "modified_date") != 104) @compileError("generated ABI offset drift: FileMetadata2.modified_date");
+    if (@offsetOf(FileMetadata2, "reserved1") != 106) @compileError("generated ABI offset drift: FileMetadata2.reserved1");
+    if (@sizeOf(DirectoryMetadataEntry2) != 1136) @compileError("generated ABI size drift: DirectoryMetadataEntry2");
+    if (@alignOf(DirectoryMetadataEntry2) != 8) @compileError("generated ABI alignment drift: DirectoryMetadataEntry2");
+    if (@offsetOf(DirectoryMetadataEntry2, "info") != 0) @compileError("generated ABI offset drift: DirectoryMetadataEntry2.info");
+    if (@offsetOf(DirectoryMetadataEntry2, "path") != 112) @compileError("generated ABI offset drift: DirectoryMetadataEntry2.path");
+    if (@sizeOf(DirectoryMetadataCursor2) != 2184) @compileError("generated ABI size drift: DirectoryMetadataCursor2");
+    if (@alignOf(DirectoryMetadataCursor2) != 8) @compileError("generated ABI alignment drift: DirectoryMetadataCursor2");
+    if (@offsetOf(DirectoryMetadataCursor2, "version") != 0) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.version");
+    if (@offsetOf(DirectoryMetadataCursor2, "size") != 4) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.size");
+    if (@offsetOf(DirectoryMetadataCursor2, "namespace_generation") != 8) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.namespace_generation");
+    if (@offsetOf(DirectoryMetadataCursor2, "flags") != 16) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.flags");
+    if (@offsetOf(DirectoryMetadataCursor2, "reserved0") != 20) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.reserved0");
+    if (@offsetOf(DirectoryMetadataCursor2, "scan") != 24) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.scan");
+    if (@sizeOf(R4XStartR4Sys) != 1432) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -19836,6 +19952,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "service_inventory_page") != 1392) @compileError("generated ABI offset drift: R4XStartR4Sys.service_inventory_page");
     if (@offsetOf(R4XStartR4Sys, "service_control_bound") != 1400) @compileError("generated ABI offset drift: R4XStartR4Sys.service_control_bound");
     if (@offsetOf(R4XStartR4Sys, "system_update_target_supported") != 1408) @compileError("generated ABI offset drift: R4XStartR4Sys.system_update_target_supported");
+    if (@offsetOf(R4XStartR4Sys, "file_metadata2") != 1416) @compileError("generated ABI offset drift: R4XStartR4Sys.file_metadata2");
+    if (@offsetOf(R4XStartR4Sys, "directory_metadata_batch2") != 1424) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_metadata_batch2");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
