@@ -2909,6 +2909,9 @@ pub const gui_gradient_kind_radial: u32 = 2;
 pub const gui_gradient_max_stops: u32 = 8;
 pub const gui_gradient_resource_version: u32 = 1;
 pub const gui_gradient_min_r4draw_version: u32 = 39;
+pub const device_snapshot_version: u32 = 1;
+pub const device_snapshot_flag_complete: u32 = 1;
+pub const device_snapshot_flag_independent_copies: u32 = 2;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3334,6 +3337,12 @@ pub const serial_error_overflow: i32 = -11;
 pub const serial_error_would_block: i32 = -12;
 pub const serial_error_owner: i32 = -13;
 pub const serial_error_too_large: i32 = -14;
+pub const device_snapshot_result_ok: i32 = 0;
+pub const device_snapshot_result_invalid: i32 = -1;
+pub const device_snapshot_result_capacity: i32 = -2;
+pub const device_snapshot_result_overflow: i32 = -3;
+pub const device_snapshot_result_exhausted: i32 = -4;
+pub const device_snapshot_result_no_memory: i32 = -8;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -7965,6 +7974,46 @@ impl Default for DeviceInventoryRecord {
             driver: [0; 32],
             status: [0; 32],
             note: [0; 96],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct DeviceInventorySnapshotInfo {
+    pub version: u32,
+    pub size: u32,
+    pub snapshot_generation: u64,
+    pub count: u32,
+    pub required_count: u32,
+    pub capacity: u32,
+    pub flags: u32,
+    pub with_driver: u32,
+    pub without_driver: u32,
+    pub unknown: u32,
+    pub source_mask: u32,
+    pub record_size: u32,
+    pub reserved0: u32,
+    pub reserved1: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for DeviceInventorySnapshotInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            snapshot_generation: 0,
+            count: 0,
+            required_count: 0,
+            capacity: 0,
+            flags: 0,
+            with_driver: 0,
+            without_driver: 0,
+            unknown: 0,
+            source_mask: 0,
+            record_size: 224,
+            reserved0: 0,
+            reserved1: 0,
         }
     }
 }
@@ -22297,6 +22346,7 @@ pub mod R4DevFns {
     pub type cpu_acceleration_work = unsafe extern "C" fn(u32, u32, *const unsafe extern "C" fn(u64, u32) -> i32, u64, *mut CpuAccelerationWork) -> i32;
     pub type fpu_observation = unsafe extern "C" fn(*const FpuObservationRequest, *mut FpuObservationInfo) -> i32;
     pub type firmware_system_uuid = unsafe extern "C" fn(*mut FirmwareSystemUuidInfo) -> i32;
+    pub type device_inventory_capture = unsafe extern "C" fn(*mut DeviceInventoryRecord, u32, *mut DeviceInventorySnapshotInfo) -> i32;
 }
 
 #[repr(C)]
@@ -22396,14 +22446,15 @@ pub struct R4XStartR4Dev {
     pub cpu_acceleration_work: usize,
     pub fpu_observation: usize,
     pub firmware_system_uuid: usize,
+    pub device_inventory_capture: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
     fn default() -> Self {
         Self {
             magic: 827737170,
-            abi_version: 36,
-            size: 736,
+            abi_version: 37,
+            size: 744,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -22495,6 +22546,7 @@ impl Default for R4XStartR4Dev {
             cpu_acceleration_work: 0,
             fpu_observation: 0,
             firmware_system_uuid: 0,
+            device_inventory_capture: 0,
         }
     }
 }
@@ -28906,6 +28958,22 @@ const _: () = {
     assert!(core::mem::offset_of!(DeviceInventoryRecord, note) == 128);
     assert!(core::mem::size_of::<DeviceInventoryRecord>() == 224);
     assert!(core::mem::align_of::<DeviceInventoryRecord>() == 2);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, version) == 0);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, size) == 4);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, snapshot_generation) == 8);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, count) == 16);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, required_count) == 20);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, capacity) == 24);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, flags) == 28);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, with_driver) == 32);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, without_driver) == 36);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, unknown) == 40);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, source_mask) == 44);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, record_size) == 48);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, reserved0) == 52);
+    assert!(core::mem::offset_of!(DeviceInventorySnapshotInfo, reserved1) == 56);
+    assert!(core::mem::size_of::<DeviceInventorySnapshotInfo>() == 64);
+    assert!(core::mem::align_of::<DeviceInventorySnapshotInfo>() == 8);
     assert!(core::mem::offset_of!(HardwareSummary, flags) == 0);
     assert!(core::mem::offset_of!(HardwareSummary, acpi_tables) == 4);
     assert!(core::mem::offset_of!(HardwareSummary, acpi_invalid_tables) == 8);
@@ -34517,7 +34585,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_acceleration_work) == 712);
     assert!(core::mem::offset_of!(R4XStartR4Dev, fpu_observation) == 720);
     assert!(core::mem::offset_of!(R4XStartR4Dev, firmware_system_uuid) == 728);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 736);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, device_inventory_capture) == 736);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 744);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

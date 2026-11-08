@@ -2915,6 +2915,9 @@ extern "C" {
 #define R4OS_GUI_GRADIENT_MAX_STOPS 8u
 #define R4OS_GUI_GRADIENT_RESOURCE_VERSION 1u
 #define R4OS_GUI_GRADIENT_MIN_R4DRAW_VERSION 39u
+#define R4OS_DEVICE_SNAPSHOT_VERSION 1u
+#define R4OS_DEVICE_SNAPSHOT_FLAG_COMPLETE 1u
+#define R4OS_DEVICE_SNAPSHOT_FLAG_INDEPENDENT_COPIES 2u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3340,6 +3343,12 @@ extern "C" {
 #define R4OS_SERIAL_ERROR_WOULD_BLOCK ((int32_t)-12)
 #define R4OS_SERIAL_ERROR_OWNER ((int32_t)-13)
 #define R4OS_SERIAL_ERROR_TOO_LARGE ((int32_t)-14)
+#define R4OS_DEVICE_SNAPSHOT_RESULT_OK ((int32_t)0)
+#define R4OS_DEVICE_SNAPSHOT_RESULT_INVALID ((int32_t)-1)
+#define R4OS_DEVICE_SNAPSHOT_RESULT_CAPACITY ((int32_t)-2)
+#define R4OS_DEVICE_SNAPSHOT_RESULT_OVERFLOW ((int32_t)-3)
+#define R4OS_DEVICE_SNAPSHOT_RESULT_EXHAUSTED ((int32_t)-4)
+#define R4OS_DEVICE_SNAPSHOT_RESULT_NO_MEMORY ((int32_t)-8)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3447,6 +3456,7 @@ typedef struct R4FileInfo R4FileInfo;
 typedef struct R4BootLogInfo R4BootLogInfo;
 typedef struct R4DeviceInventorySummary R4DeviceInventorySummary;
 typedef struct R4DeviceInventoryRecord R4DeviceInventoryRecord;
+typedef struct R4DeviceInventorySnapshotInfo R4DeviceInventorySnapshotInfo;
 typedef struct R4HardwareSummary R4HardwareSummary;
 typedef struct R4ProtocolStatus R4ProtocolStatus;
 typedef struct R4ProtocolBuffer R4ProtocolBuffer;
@@ -5879,6 +5889,23 @@ typedef struct R4DeviceInventoryRecord {
     uint8_t status[32];
     uint8_t note[96];
 } R4DeviceInventoryRecord;
+
+typedef struct R4DeviceInventorySnapshotInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t snapshot_generation;
+    uint32_t count;
+    uint32_t required_count;
+    uint32_t capacity;
+    uint32_t flags;
+    uint32_t with_driver;
+    uint32_t without_driver;
+    uint32_t unknown;
+    uint32_t source_mask;
+    uint32_t record_size;
+    uint32_t reserved0;
+    uint64_t reserved1;
+} R4DeviceInventorySnapshotInfo;
 
 typedef struct R4HardwareSummary {
     uint32_t flags;
@@ -12280,6 +12307,7 @@ typedef int32_t (*R4DevCpuAccelerationInfoFn)(R4CpuAccelerationInfo * out);
 typedef int32_t (*R4DevCpuAccelerationWorkFn)(uint32_t work_kind, uint32_t iterations, const R4CpuPureWorkFn * work, uint64_t context, R4CpuAccelerationWork * out);
 typedef int32_t (*R4DevFpuObservationFn)(const R4FpuObservationRequest * request, R4FpuObservationInfo * out);
 typedef int32_t (*R4DevFirmwareSystemUuidFn)(R4FirmwareSystemUuidInfo * out);
+typedef int32_t (*R4DevDeviceInventoryCaptureFn)(R4DeviceInventoryRecord * rows, uint32_t capacity, R4DeviceInventorySnapshotInfo * out_info);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -12376,6 +12404,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t cpu_acceleration_work;
     uintptr_t fpu_observation;
     uintptr_t firmware_system_uuid;
+    uintptr_t device_inventory_capture;
 } R4XStartR4Dev;
 
 
@@ -14361,6 +14390,21 @@ _Static_assert(offsetof(R4DeviceInventoryRecord, name) == 16u, "DeviceInventoryR
 _Static_assert(offsetof(R4DeviceInventoryRecord, driver) == 64u, "DeviceInventoryRecord.driver offset mismatch");
 _Static_assert(offsetof(R4DeviceInventoryRecord, status) == 96u, "DeviceInventoryRecord.status offset mismatch");
 _Static_assert(offsetof(R4DeviceInventoryRecord, note) == 128u, "DeviceInventoryRecord.note offset mismatch");
+_Static_assert(sizeof(R4DeviceInventorySnapshotInfo) == 64u, "DeviceInventorySnapshotInfo size mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, version) == 0u, "DeviceInventorySnapshotInfo.version offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, size) == 4u, "DeviceInventorySnapshotInfo.size offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, snapshot_generation) == 8u, "DeviceInventorySnapshotInfo.snapshot_generation offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, count) == 16u, "DeviceInventorySnapshotInfo.count offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, required_count) == 20u, "DeviceInventorySnapshotInfo.required_count offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, capacity) == 24u, "DeviceInventorySnapshotInfo.capacity offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, flags) == 28u, "DeviceInventorySnapshotInfo.flags offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, with_driver) == 32u, "DeviceInventorySnapshotInfo.with_driver offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, without_driver) == 36u, "DeviceInventorySnapshotInfo.without_driver offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, unknown) == 40u, "DeviceInventorySnapshotInfo.unknown offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, source_mask) == 44u, "DeviceInventorySnapshotInfo.source_mask offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, record_size) == 48u, "DeviceInventorySnapshotInfo.record_size offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, reserved0) == 52u, "DeviceInventorySnapshotInfo.reserved0 offset mismatch");
+_Static_assert(offsetof(R4DeviceInventorySnapshotInfo, reserved1) == 56u, "DeviceInventorySnapshotInfo.reserved1 offset mismatch");
 _Static_assert(sizeof(R4HardwareSummary) == 96u, "HardwareSummary size mismatch");
 _Static_assert(offsetof(R4HardwareSummary, flags) == 0u, "HardwareSummary.flags offset mismatch");
 _Static_assert(offsetof(R4HardwareSummary, acpi_tables) == 4u, "HardwareSummary.acpi_tables offset mismatch");
@@ -19913,7 +19957,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_close_stream_progress) == 216u, "
 _Static_assert(sizeof(R4AudioAudioCloseStreamProgressFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStartR4Audio.audio_output_catalog offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 736u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 744u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -20089,6 +20133,8 @@ _Static_assert(offsetof(R4XStartR4Dev, fpu_observation) == 720u, "R4XStartR4Dev.
 _Static_assert(sizeof(R4DevFpuObservationFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, firmware_system_uuid) == 728u, "R4XStartR4Dev.firmware_system_uuid offset mismatch");
 _Static_assert(sizeof(R4DevFirmwareSystemUuidFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, device_inventory_capture) == 736u, "R4XStartR4Dev.device_inventory_capture offset mismatch");
+_Static_assert(sizeof(R4DevDeviceInventoryCaptureFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #include <r4os/abi_technical_generated.h>
 

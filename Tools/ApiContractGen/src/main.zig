@@ -393,7 +393,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // Baseline refresh 0.79.4 includes the existing slots through 143.
     // 0.79.39 adds process-scoped self-exit at slot153 (v23); the v22
     // 1240-byte prefix and all existing function signatures are retained.
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 171, .reserved = 2, .tombstones = 1 },
+    // 0.90.21 baseline refresh includes the already published optional
+    // system_update_target_supported append; no existing slot changes.
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 172, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47
@@ -401,7 +403,8 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.69.48 adds one-generation multi-region publication at slot 56;
     // 0.69.67 appends the generation-bound console-input wait at slot 57;
     // 0.72.1 adds ordered layout-independent physical keys at slot 58.
-    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 75, .reserved = 1, .tombstones = 0 },
+    // Same refresh includes the existing gui_window_appearance append.
+    .{ .id = 2, .name = "R4DESK", .kind = .kernel_table, .functions = 76, .reserved = 1, .tombstones = 0 },
     // 0.62.3 used the first public R4DRAW extension slot for font_reload;
     // 0.62.4 added the transient glyph-row query, 0.62.41 appends the
     // font-neutral hosted Alpha8 coverage-mask transport, and 0.62.43 adds
@@ -434,7 +437,9 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.86.80 retires V1 diagnostic slots27/29/30 in place. Their zero
     // tombstones cannot be reused; current V2 slots/payloads do not move.
     // Existing 0.89.2 firmware_system_identity is already public in Contract71.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 85, .reserved = 2, .tombstones = 3 },
+    // 0.90.21 appends one passive whole-capture function at slot90; the
+    // original736-byte table prefix and all three tombstones are retained.
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 86, .reserved = 2, .tombstones = 3 },
 };
 
 pub fn main(init: std.process.Init) !void {

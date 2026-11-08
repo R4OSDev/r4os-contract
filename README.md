@@ -70,7 +70,8 @@ Use the repository starter with the workspace toolchain:
     ./Build.sh test      # Linux
     Build.bat test       # Windows
 
-Both delegate to Build.ps1; it falls back to Zig on PATH outside the workspace.
+Both delegate to the SDK-owned PowerShell host launcher and the pinned
+workspace toolchain.
 
 Generated files are checked during normal builds. Intentional contract changes
 must use the repository's explicit generator write workflow and update the

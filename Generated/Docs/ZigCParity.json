@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 505,
+    "group_function_signatures": 506,
     "sdk_operation_contracts": 0,
-    "parity_entries": 505,
+    "parity_entries": 506,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4553,6 +4553,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns.firmware_system_uuid",
       "c_contract": "R4DevFirmwareSystemUuidFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.device_inventory_capture",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns.device_inventory_capture",
+      "c_contract": "R4DevDeviceInventoryCaptureFn",
       "coverage": "generated_signature"
     }
   ],

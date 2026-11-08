@@ -4646,6 +4646,15 @@
       "number": 86,
       "offset": 704,
       "removed": false
+    },
+    {
+      "group": "R4DEV",
+      "name": "device_inventory_capture",
+      "source_number": 90,
+      "source_offset": 736,
+      "number": 87,
+      "offset": 712,
+      "removed": false
     }
   ]
 }

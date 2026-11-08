@@ -2903,6 +2903,9 @@ pub const gui_gradient_kind_radial: u32 = 2;
 pub const gui_gradient_max_stops: u32 = 8;
 pub const gui_gradient_resource_version: u32 = 1;
 pub const gui_gradient_min_r4draw_version: u32 = 39;
+pub const device_snapshot_version: u32 = 1;
+pub const device_snapshot_flag_complete: u32 = 1;
+pub const device_snapshot_flag_independent_copies: u32 = 2;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3328,6 +3331,12 @@ pub const serial_error_overflow: i32 = -11;
 pub const serial_error_would_block: i32 = -12;
 pub const serial_error_owner: i32 = -13;
 pub const serial_error_too_large: i32 = -14;
+pub const device_snapshot_result_ok: i32 = 0;
+pub const device_snapshot_result_invalid: i32 = -1;
+pub const device_snapshot_result_capacity: i32 = -2;
+pub const device_snapshot_result_overflow: i32 = -3;
+pub const device_snapshot_result_exhausted: i32 = -4;
+pub const device_snapshot_result_no_memory: i32 = -8;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -5504,6 +5513,23 @@ pub const DeviceInventoryRecord = extern struct {
     driver: [32]u8 = .{0} ** 32,
     status: [32]u8 = .{0} ** 32,
     note: [96]u8 = .{0} ** 96,
+};
+
+pub const DeviceInventorySnapshotInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    snapshot_generation: u64 = 0,
+    count: u32 = 0,
+    required_count: u32 = 0,
+    capacity: u32 = 0,
+    flags: u32 = 0,
+    with_driver: u32 = 0,
+    without_driver: u32 = 0,
+    unknown: u32 = 0,
+    source_mask: u32 = 0,
+    record_size: u32 = 224,
+    reserved0: u32 = 0,
+    reserved1: u64 = 0,
 };
 
 pub const HardwareSummary = extern struct {
@@ -11891,12 +11917,13 @@ pub const R4DevFns = struct {
     pub const cpu_acceleration_work = *const fn (u32, u32, ?*const CpuPureWorkFn, u64, *CpuAccelerationWork) callconv(.c) i32;
     pub const fpu_observation = *const fn (*const FpuObservationRequest, *FpuObservationInfo) callconv(.c) i32;
     pub const firmware_system_uuid = *const fn (*FirmwareSystemUuidInfo) callconv(.c) i32;
+    pub const device_inventory_capture = *const fn (?[*]DeviceInventoryRecord, u32, *DeviceInventorySnapshotInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
-    abi_version: u32 = 36,
-    size: u32 = 736,
+    abi_version: u32 = 37,
+    size: u32 = 744,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -11988,6 +12015,7 @@ pub const R4XStartR4Dev = extern struct {
     cpu_acceleration_work: usize = 0,
     fpu_observation: usize = 0,
     firmware_system_uuid: usize = 0,
+    device_inventory_capture: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -12525,6 +12553,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 87, .offset = 712, .name = "cpu_acceleration_work", .state = .function, .required = false },
     .{ .number = 88, .offset = 720, .name = "fpu_observation", .state = .function, .required = false },
     .{ .number = 89, .offset = 728, .name = "firmware_system_uuid", .state = .function, .required = false },
+    .{ .number = 90, .offset = 736, .name = "device_inventory_capture", .state = .function, .required = false },
 };
 
 comptime {
@@ -14570,6 +14599,22 @@ comptime {
     if (@offsetOf(DeviceInventoryRecord, "driver") != 64) @compileError("generated ABI offset drift: DeviceInventoryRecord.driver");
     if (@offsetOf(DeviceInventoryRecord, "status") != 96) @compileError("generated ABI offset drift: DeviceInventoryRecord.status");
     if (@offsetOf(DeviceInventoryRecord, "note") != 128) @compileError("generated ABI offset drift: DeviceInventoryRecord.note");
+    if (@sizeOf(DeviceInventorySnapshotInfo) != 64) @compileError("generated ABI size drift: DeviceInventorySnapshotInfo");
+    if (@alignOf(DeviceInventorySnapshotInfo) != 8) @compileError("generated ABI alignment drift: DeviceInventorySnapshotInfo");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "version") != 0) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.version");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "size") != 4) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.size");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "snapshot_generation") != 8) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.snapshot_generation");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "count") != 16) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.count");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "required_count") != 20) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.required_count");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "capacity") != 24) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.capacity");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "flags") != 28) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.flags");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "with_driver") != 32) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.with_driver");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "without_driver") != 36) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.without_driver");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "unknown") != 40) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.unknown");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "source_mask") != 44) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.source_mask");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "record_size") != 48) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.record_size");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "reserved0") != 52) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.reserved0");
+    if (@offsetOf(DeviceInventorySnapshotInfo, "reserved1") != 56) @compileError("generated ABI offset drift: DeviceInventorySnapshotInfo.reserved1");
     if (@sizeOf(HardwareSummary) != 96) @compileError("generated ABI size drift: HardwareSummary");
     if (@alignOf(HardwareSummary) != 8) @compileError("generated ABI alignment drift: HardwareSummary");
     if (@offsetOf(HardwareSummary, "flags") != 0) @compileError("generated ABI offset drift: HardwareSummary.flags");
@@ -20046,7 +20091,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_set_stream_expectation") != 208) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_set_stream_expectation");
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
-    if (@sizeOf(R4XStartR4Dev) != 736) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 744) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -20137,6 +20182,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "cpu_acceleration_work") != 712) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_acceleration_work");
     if (@offsetOf(R4XStartR4Dev, "fpu_observation") != 720) @compileError("generated ABI offset drift: R4XStartR4Dev.fpu_observation");
     if (@offsetOf(R4XStartR4Dev, "firmware_system_uuid") != 728) @compileError("generated ABI offset drift: R4XStartR4Dev.firmware_system_uuid");
+    if (@offsetOf(R4XStartR4Dev, "device_inventory_capture") != 736) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_capture");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -21132,13 +21178,14 @@ pub const R4DevProvider = struct {
     cpu_acceleration_work: ?R4DevFns.cpu_acceleration_work = null,
     fpu_observation: ?R4DevFns.fpu_observation = null,
     firmware_system_uuid: ?R4DevFns.firmware_system_uuid = null,
+    device_inventory_capture: ?R4DevFns.device_inventory_capture = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
-        .abi_version = 36,
-        .size = 736,
+        .abi_version = 37,
+        .size = 744,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -21230,5 +21277,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .cpu_acceleration_work = if (provider.cpu_acceleration_work) |callback| @intFromPtr(callback) else 0,
         .fpu_observation = if (provider.fpu_observation) |callback| @intFromPtr(callback) else 0,
         .firmware_system_uuid = if (provider.firmware_system_uuid) |callback| @intFromPtr(callback) else 0,
+        .device_inventory_capture = if (provider.device_inventory_capture) |callback| @intFromPtr(callback) else 0,
     };
 }

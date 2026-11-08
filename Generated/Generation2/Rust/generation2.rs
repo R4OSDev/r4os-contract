@@ -1929,8 +1929,9 @@ pub struct R4XStartR4Dev2 {
     pub cpu_acceleration_work: u64,
     pub fpu_observation: u64,
     pub firmware_system_uuid: u64,
+    pub device_inventory_capture: u64,
 }
-impl Default for R4XStartR4Dev2 { fn default() -> Self { Self { magic: 844514386, abi_version: 1, size: 712, flags: 0,
+impl Default for R4XStartR4Dev2 { fn default() -> Self { Self { magic: 844514386, abi_version: 2, size: 720, flags: 0,
     device_inventory_summary: 0,
     device_inventory_record: 0,
     memory_summary: 0,
@@ -2018,8 +2019,9 @@ impl Default for R4XStartR4Dev2 { fn default() -> Self { Self { magic: 844514386
     cpu_acceleration_work: 0,
     fpu_observation: 0,
     firmware_system_uuid: 0,
+    device_inventory_capture: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Dev2>() == 712);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Dev2>() == 720);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,device_inventory_summary) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,device_inventory_record) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,memory_summary) == 32);
@@ -2107,6 +2109,7 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Dev2>() == 712);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,cpu_acceleration_work) == 688);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,fpu_observation) == 696);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,firmware_system_uuid) == 704);
+    assert!(core::mem::offset_of!(R4XStartR4Dev2,device_inventory_capture) == 712);
 };
 impl R4XStartR4Dev2 {
     pub fn project_provider(source: &super::R4XStartR4Dev) -> Self { Self {
@@ -2195,6 +2198,7 @@ impl R4XStartR4Dev2 {
         cpu_acceleration_work: source.cpu_acceleration_work as u64,
         fpu_observation: source.fpu_observation as u64,
         firmware_system_uuid: source.firmware_system_uuid as u64,
+        device_inventory_capture: source.device_inventory_capture as u64,
         ..Self::default()
     } }
 }

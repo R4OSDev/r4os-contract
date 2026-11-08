@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 413 von 413 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 414 von 414 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 64; Konstanten: 2902; Limits: 111
+- Operationen: 0; Fehlerdomänen: 65; Konstanten: 2905; Limits: 111
 
 ## App-Profile
 
@@ -83,6 +83,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `BootLogInfo` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `DeviceInventorySummary` | fixed_layout | extern_struct | 20/4 | 20/4 | 20/4 | 20/4 |
 | `DeviceInventoryRecord` | fixed_layout | extern_struct | 224/2 | 224/2 | 224/2 | 224/2 |
+| `DeviceInventorySnapshotInfo` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `HardwareSummary` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `ProtocolStatus` | fixed_layout | extern_struct | 80/4 | 80/4 | 80/4 | 80/4 |
 | `ProtocolBuffer` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
@@ -2936,6 +2937,30 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `driver` | 64 | 32 | 1 | `[32]u8` | - |
 | `status` | 96 | 32 | 1 | `[32]u8` | - |
 | `note` | 128 | 96 | 1 | `[96]u8` | - |
+
+### `DeviceInventorySnapshotInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `snapshot_generation` | 8 | 8 | 8 | `u64` | - |
+| `count` | 16 | 4 | 4 | `u32` | - |
+| `required_count` | 20 | 4 | 4 | `u32` | - |
+| `capacity` | 24 | 4 | 4 | `u32` | - |
+| `flags` | 28 | 4 | 4 | `u32` | - |
+| `with_driver` | 32 | 4 | 4 | `u32` | - |
+| `without_driver` | 36 | 4 | 4 | `u32` | - |
+| `unknown` | 40 | 4 | 4 | `u32` | - |
+| `source_mask` | 44 | 4 | 4 | `u32` | - |
+| `record_size` | 48 | 4 | 4 | `u32` | - |
+| `reserved0` | 52 | 4 | 4 | `u32` | - |
+| `reserved1` | 56 | 8 | 8 | `u64` | - |
 
 ### `HardwareSummary`
 
@@ -11547,6 +11572,19 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `serial_error_owner` | -13 | `i32` |
 | `serial_error_too_large` | -14 | `i32` |
 
+### `device_snapshot`
+
+Geltung: `device_snapshot`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `device_snapshot_result_ok` | 0 | `i32` |
+| `device_snapshot_result_invalid` | -1 | `i32` |
+| `device_snapshot_result_capacity` | -2 | `i32` |
+| `device_snapshot_result_overflow` | -3 | `i32` |
+| `device_snapshot_result_exhausted` | -4 | `i32` |
+| `device_snapshot_result_no_memory` | -8 | `i32` |
+
 ## Konstanten
 
 | Name | Wert | Typ | Kategorie | Einheit | Geltung | Stabilität |
@@ -14453,6 +14491,9 @@ Geltung: `serial`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `gui_gradient_max_stops` | `8` | `u32` | value | number | `gui_gradient` | fixed_contract |
 | `gui_gradient_resource_version` | `1` | `u32` | version | number | `gui_gradient` | fixed_contract |
 | `gui_gradient_min_r4draw_version` | `39` | `u32` | version | number | `gui_gradient` | fixed_contract |
+| `device_snapshot_version` | `1` | `u32` | version | number | `device_snapshot` | fixed_contract |
+| `device_snapshot_flag_complete` | `1` | `u32` | flag | bitmask | `device_snapshot` | fixed_contract |
+| `device_snapshot_flag_independent_copies` | `2` | `u32` | flag | bitmask | `device_snapshot` | fixed_contract |
 
 ## Limits
 

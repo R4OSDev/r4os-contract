@@ -16,11 +16,15 @@ test "new generation has distinct identities and exact compact layouts in C and 
         try std.testing.expectEqual(@sizeOf(T), @sizeOf(C));
         try std.testing.expectEqual(@alignOf(T), @alignOf(C));
         inline for (std.meta.fields(T)) |f| try std.testing.expectEqual(@offsetOf(T, f.name), @offsetOf(C, f.name));
-        try std.testing.expectEqual(@as(u32, 1), (T{}).abi_version);
+        const version: u32 = if (T == api.R4XStartR4Dev2) 2 else 1;
+        try std.testing.expectEqual(version, (T{}).abi_version);
     }
     try std.testing.expect(!@hasField(api.R4XStartR4Sys2, "reserved_shell_run"));
     try std.testing.expect(!@hasField(api.R4XStartR4Dev2, "reserved_program_registry_summary_v1"));
     try std.testing.expect((api.R4XStartR4Sys2{}).magic != (api.shared.R4XStartR4Sys{}).magic);
+    // One optional capture follows both independently preserved prefixes.
+    try std.testing.expectEqual(@as(usize, 736), @offsetOf(api.shared.R4XStartR4Dev, "device_inventory_capture"));
+    try std.testing.expectEqual(@as(usize, 712), @offsetOf(api.R4XStartR4Dev2, "device_inventory_capture"));
 }
 
 test "generation2 typed calls preserve the canonical C function signature and declared prefix" {

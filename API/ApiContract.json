@@ -31117,10 +31117,10 @@
       "fn_namespace": "R4DevFns",
       "required": false,
       "magic": 827737170,
-      "abi_version": 36,
+      "abi_version": 37,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 736,
+      "size": 744,
       "slots": [
         {
           "number": 0,
@@ -37250,6 +37250,89 @@
             "side_effects": "none",
             "retry": "idempotent",
             "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 90,
+          "offset": 736,
+          "name": "device_inventory_capture",
+          "state": "function",
+          "required": false,
+          "description": "Copy one complete passive device inventory into caller record storage in one existing collect traversal. Returns0 for a complete frozen copy; -2 reports insufficient capacity with generation0 and required_count, -3 refuses overflow, -4 refuses identity exhaustion. Existing per-source metadata copies are not globally atomic. No new scan, IO, allocation, persistent Kernel snapshot or device retain. Rows on any failure are private and must be discarded; receipt is valid on the documented capacity/overflow errors. All pointers are exclusively borrowed for the synchronous call; buffers must be mapped, aligned and disjoint. Null rows allowed only at capacity0. Actual return ends the loan; caller cancellation cannot forcibly end an active callback.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "rows",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DeviceInventoryRecord"
+                  },
+                  "direction": "output",
+                  "nullable": true,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_info",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "DeviceInventorySnapshotInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "valid_on_documented_error",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "required_size_reported",
             "language_parity": "zig_and_c_required"
           }
         }
@@ -64737,6 +64820,216 @@
       ],
       "values": [],
       "description": "Public R4OS ABI payload type."
+    },
+    {
+      "name": "DeviceInventorySnapshotInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Record version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact receipt size64.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "snapshot_generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Boot-local nonzero unique capture identity, never wrapped or reused; zero on incomplete capture. This is the frozen copy revision, not a live device identity.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "count",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Number of initialized rows in caller storage; usable only with the complete flag.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "required_count",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Full traversal count, reported also for insufficient caller capacity. A retry is a new explicit capture.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "capacity",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Offered caller record capacity for this call.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Complete and independent-provider-copy flags. No atomic global hardware snapshot or retain.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "with_driver",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Full traversal classification count, including rows beyond insufficient capacity.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "without_driver",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Full traversal classification count.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "unknown",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Full traversal classification count.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source_mask",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Bit per observed existing DeviceInventoryRecord bus value. No new scan or provider call.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "record_size",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Unchanged fixed DeviceInventoryRecord byte size224.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "224"
+        },
+        {
+          "name": "reserved0",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Must be zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved1",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Must be zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Fixed capture receipt over one passive metadata traversal. Nonzero capture generation and complete flag validate the whole frozen caller copy. Independent providers do not share a global atomic hardware revision. Capacity/overflow leaves generation zero; required_count and classifications are diagnostic only."
     },
     {
       "name": "HardwareSummary",
@@ -133809,6 +134102,51 @@
         }
       ],
       "description": "Raw serial port ownership, configuration, partial transfer, cancellation and confirmed hardware close."
+    },
+    {
+      "name": "device_snapshot",
+      "unit": "status_code",
+      "scope": "device_snapshot",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "device_snapshot_result_ok",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Complete frozen caller copy; nonzero generation."
+        },
+        {
+          "name": "device_snapshot_result_invalid",
+          "value": -1,
+          "value_type": "i32",
+          "description": "Invalid capacity/address/alignment/overlap, no capture."
+        },
+        {
+          "name": "device_snapshot_result_capacity",
+          "value": -2,
+          "value_type": "i32",
+          "description": "One traversal completed; required_count reported, generation0 and no usable partial view."
+        },
+        {
+          "name": "device_snapshot_result_overflow",
+          "value": -3,
+          "value_type": "i32",
+          "description": "Full count overflow/truncation, no complete view."
+        },
+        {
+          "name": "device_snapshot_result_exhausted",
+          "value": -4,
+          "value_type": "i32",
+          "description": "Unique capture generation exhausted before collection."
+        },
+        {
+          "name": "device_snapshot_result_no_memory",
+          "value": -8,
+          "value_type": "i32",
+          "description": "Provider allocation refusal; current Kernel implementation itself does not allocate."
+        }
+      ],
+      "description": "One passive capture; failures never publish a truncated success view. No allocation in the current Kernel owner."
     }
   ],
   "constants": [
@@ -162831,6 +163169,36 @@
       "scope": "gui_gradient",
       "stability": "fixed_contract",
       "description": "R4DRAW grammar revision introducing gradient_rounded_rect. Existing table slots and size remain unchanged."
+    },
+    {
+      "name": "device_snapshot_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "device_snapshot",
+      "stability": "fixed_contract",
+      "description": "Device capture receipt contract; source copies are not globally atomic."
+    },
+    {
+      "name": "device_snapshot_flag_complete",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "device_snapshot",
+      "stability": "fixed_contract",
+      "description": "Device capture receipt contract; source copies are not globally atomic."
+    },
+    {
+      "name": "device_snapshot_flag_independent_copies",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "device_snapshot",
+      "stability": "fixed_contract",
+      "description": "Device capture receipt contract; source copies are not globally atomic."
     }
   ],
   "limits": [

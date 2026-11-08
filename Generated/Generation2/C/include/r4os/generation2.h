@@ -913,7 +913,7 @@ _Static_assert(offsetof(R4XStartR4Audio2,audio_set_stream_expectation)==208, "Ge
 _Static_assert(offsetof(R4XStartR4Audio2,audio_close_stream_progress)==216, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Audio2,audio_output_catalog)==224, "Generation2 slot");
 #define R4OS2_R4DEV_MAGIC UINT32_C(844514386)
-#define R4OS2_R4DEV_VERSION UINT32_C(1)
+#define R4OS2_R4DEV_VERSION UINT32_C(2)
 typedef struct {
     uint32_t magic, abi_version, size, flags;
     uint64_t device_inventory_summary;
@@ -1003,8 +1003,9 @@ typedef struct {
     uint64_t cpu_acceleration_work;
     uint64_t fpu_observation;
     uint64_t firmware_system_uuid;
+    uint64_t device_inventory_capture;
 } R4XStartR4Dev2;
-_Static_assert(sizeof(R4XStartR4Dev2)==712, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Dev2)==720, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Dev2,device_inventory_summary)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,device_inventory_record)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,memory_summary)==32, "Generation2 slot");
@@ -1092,6 +1093,7 @@ _Static_assert(offsetof(R4XStartR4Dev2,cpu_acceleration_info)==680, "Generation2
 _Static_assert(offsetof(R4XStartR4Dev2,cpu_acceleration_work)==688, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,fpu_observation)==696, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,firmware_system_uuid)==704, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Dev2,device_inventory_capture)==712, "Generation2 slot");
 typedef uint32_t (*R4XStartShouldCloseFn2)(const R4XStartContext2 *);
 typedef void (*R4XStartYieldFn2)(const R4XStartContext2 *);
 #endif

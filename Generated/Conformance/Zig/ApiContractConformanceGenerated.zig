@@ -1983,6 +1983,21 @@ comptime {
     if (@offsetOf(abi.DeviceInventoryRecord, "driver") != 64) @compileError("DeviceInventoryRecord.driver offset");
     if (@offsetOf(abi.DeviceInventoryRecord, "status") != 96) @compileError("DeviceInventoryRecord.status offset");
     if (@offsetOf(abi.DeviceInventoryRecord, "note") != 128) @compileError("DeviceInventoryRecord.note offset");
+    if (@sizeOf(abi.DeviceInventorySnapshotInfo) != 64) @compileError("DeviceInventorySnapshotInfo size");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "version") != 0) @compileError("DeviceInventorySnapshotInfo.version offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "size") != 4) @compileError("DeviceInventorySnapshotInfo.size offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "snapshot_generation") != 8) @compileError("DeviceInventorySnapshotInfo.snapshot_generation offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "count") != 16) @compileError("DeviceInventorySnapshotInfo.count offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "required_count") != 20) @compileError("DeviceInventorySnapshotInfo.required_count offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "capacity") != 24) @compileError("DeviceInventorySnapshotInfo.capacity offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "flags") != 28) @compileError("DeviceInventorySnapshotInfo.flags offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "with_driver") != 32) @compileError("DeviceInventorySnapshotInfo.with_driver offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "without_driver") != 36) @compileError("DeviceInventorySnapshotInfo.without_driver offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "unknown") != 40) @compileError("DeviceInventorySnapshotInfo.unknown offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "source_mask") != 44) @compileError("DeviceInventorySnapshotInfo.source_mask offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "record_size") != 48) @compileError("DeviceInventorySnapshotInfo.record_size offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "reserved0") != 52) @compileError("DeviceInventorySnapshotInfo.reserved0 offset");
+    if (@offsetOf(abi.DeviceInventorySnapshotInfo, "reserved1") != 56) @compileError("DeviceInventorySnapshotInfo.reserved1 offset");
     if (@sizeOf(abi.HardwareSummary) != 96) @compileError("HardwareSummary size");
     if (@offsetOf(abi.HardwareSummary, "flags") != 0) @compileError("HardwareSummary.flags offset");
     if (@offsetOf(abi.HardwareSummary, "acpi_tables") != 4) @compileError("HardwareSummary.acpi_tables offset");
@@ -7535,7 +7550,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_close_stream_progress) != 8) @compileError("R4AudioFns.audio_close_stream_progress signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("R4XStartR4Audio.audio_output_catalog offset");
     if (@sizeOf(abi.R4AudioFns.audio_output_catalog) != 8) @compileError("R4AudioFns.audio_output_catalog signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 736) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 744) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -7711,6 +7726,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.fpu_observation) != 8) @compileError("R4DevFns.fpu_observation signature");
     if (@offsetOf(abi.R4XStartR4Dev, "firmware_system_uuid") != 728) @compileError("R4XStartR4Dev.firmware_system_uuid offset");
     if (@sizeOf(abi.R4DevFns.firmware_system_uuid) != 8) @compileError("R4DevFns.firmware_system_uuid signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_capture") != 736) @compileError("R4XStartR4Dev.device_inventory_capture offset");
+    if (@sizeOf(abi.R4DevFns.device_inventory_capture) != 8) @compileError("R4DevFns.device_inventory_capture signature");
 }
 
 test "generated API contract compiles" {}
