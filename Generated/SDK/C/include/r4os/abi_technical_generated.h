@@ -122,6 +122,7 @@ typedef uint16_t R4ErrorDomain;
 #define R4ABI_ERROR_DOMAIN_SERIAL ((R4ErrorDomain)UINT64_C(17))
 #define R4ABI_ERROR_DOMAIN_FILE_METADATA2 ((R4ErrorDomain)UINT64_C(18))
 #define R4ABI_ERROR_DOMAIN_FONT_METRICS2 ((R4ErrorDomain)UINT64_C(19))
+#define R4ABI_ERROR_DOMAIN_WAITSET ((R4ErrorDomain)UINT64_C(20))
 typedef uint32_t R4XStartAppClass;
 #define R4ABI_X_START_APP_CLASS_AUTO ((R4XStartAppClass)UINT64_C(0))
 #define R4ABI_X_START_APP_CLASS_CONSOLE ((R4XStartAppClass)UINT64_C(1))

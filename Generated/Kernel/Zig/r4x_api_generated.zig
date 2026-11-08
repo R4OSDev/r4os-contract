@@ -2923,6 +2923,25 @@ pub const file_metadata2_flag_reparse: u32 = 128;
 pub const font_metrics2_version: u32 = 1;
 pub const font_metrics2_flag_complete: u32 = 1;
 pub const font_metrics2_max_bytes: u32 = 4096;
+pub const waitset_version: u32 = 1;
+pub const waitset_max_sources: u32 = 32;
+pub const waitset_max_source_subscribers: u32 = 32;
+pub const waitset_source_notification: u32 = 1;
+pub const waitset_source_timer: u32 = 2;
+pub const waitset_source_flag_stop: u32 = 1;
+pub const waitset_deadline_poll: u32 = 0;
+pub const waitset_deadline_finite: u32 = 1;
+pub const waitset_deadline_forever: u32 = 2;
+pub const waitset_outcome_ready: u32 = 0;
+pub const waitset_outcome_timeout: u32 = 1;
+pub const waitset_outcome_closed: u32 = 2;
+pub const waitset_outcome_cancelled: u32 = 3;
+pub const waitset_event_ready: u32 = 0;
+pub const waitset_event_source_closed: u32 = 1;
+pub const waitset_event_clock_changed: u32 = 2;
+pub const waitset_flag_more: u32 = 1;
+pub const waitset_flag_rescan: u32 = 2;
+pub const waitset_flag_coalesced: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3374,6 +3393,21 @@ pub const font_metrics2_capacity: i32 = -7;
 pub const font_metrics2_unavailable: i32 = -9;
 pub const font_metrics2_stale: i32 = -10;
 pub const font_metrics2_exhausted: i32 = -12;
+pub const waitset_ok: i32 = 0;
+pub const waitset_error_invalid: i32 = -13001;
+pub const waitset_error_context: i32 = -13002;
+pub const waitset_error_stale: i32 = -13003;
+pub const waitset_error_closed: i32 = -13004;
+pub const waitset_error_capacity: i32 = -13005;
+pub const waitset_error_busy: i32 = -13006;
+pub const waitset_error_clock_unavailable: i32 = -13007;
+pub const waitset_error_clock_changed: i32 = -13008;
+pub const waitset_error_memory: i32 = -13009;
+pub const waitset_error_exhausted: i32 = -13010;
+pub const waitset_error_unsupported: i32 = -13011;
+pub const waitset_error_release: i32 = -13012;
+pub const waitset_error_owner: i32 = -13013;
+pub const waitset_error_overflow: i32 = -13014;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -3396,6 +3430,7 @@ pub const R4ErrorDomain = enum(u16) {
     serial = 17,
     file_metadata2 = 18,
     font_metrics2 = 19,
+    waitset = 20,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -11035,6 +11070,59 @@ pub const FontAdvanceInfo2 = extern struct {
     reserved0: u32 = 0,
 };
 
+pub const WaitSource = extern struct {
+    version: u32 = 1,
+    size: u32 = 80,
+    kind: u32 = 0,
+    flags: u32 = 0,
+    object: u64 = 0,
+    generation: u64 = 0,
+    observed_revision: u64 = 0,
+    user_tag: u64 = 0,
+    deadline_ns: u64 = 0,
+    clock_source: u32 = 0,
+    clock_generation: u32 = 0,
+    event_backend: u32 = 0,
+    tick_hz: u32 = 0,
+    reserved0: u64 = 0,
+};
+
+pub const WaitSetDeadline = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    kind: u32 = 0,
+    reserved0: u32 = 0,
+    absolute_ns: u64 = 0,
+    last_ns: u64 = 0,
+    clock_source: u32 = 0,
+    clock_generation: u32 = 0,
+    event_backend: u32 = 0,
+    tick_hz: u32 = 0,
+};
+
+pub const WaitSetEvent = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    kind: u32 = 0,
+    flags: u32 = 0,
+    registration: u64 = 0,
+    user_tag: u64 = 0,
+    revision: u64 = 0,
+    status: i32 = 0,
+    reserved0: u32 = 0,
+};
+
+pub const WaitSetBatch = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    outcome: u32 = 0,
+    flags: u32 = 0,
+    count: u32 = 0,
+    reserved0: u32 = 0,
+    configuration_revision: u64 = 0,
+    next_registration: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11210,12 +11298,18 @@ pub const R4SysFns = struct {
     pub const system_update_target_supported = *const fn ([*:0]const u8) callconv(.c) i32;
     pub const file_metadata2 = *const fn ([*:0]const u8, *FileMetadata2) callconv(.c) i32;
     pub const directory_metadata_batch2 = *const fn (?[*:0]const u8, *DirectoryMetadataCursor2, ?[*]DirectoryMetadataEntry2, u32) callconv(.c) i32;
+    pub const waitset_create = *const fn (u32, *u64) callconv(.c) i32;
+    pub const waitset_enroll = *const fn (u64, *const WaitSource, *u64) callconv(.c) i32;
+    pub const waitset_rearm = *const fn (u64, u64, *const WaitSource) callconv(.c) i32;
+    pub const waitset_remove = *const fn (u64, u64) callconv(.c) i32;
+    pub const waitset_wait = *const fn (u64, *const WaitSetDeadline, [*]WaitSetEvent, u32, *WaitSetBatch) callconv(.c) i32;
+    pub const waitset_close = *const fn (u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 37,
-    size: u32 = 1432,
+    abi_version: u32 = 38,
+    size: u32 = 1480,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -11394,6 +11488,12 @@ pub const R4XStartR4Sys = extern struct {
     system_update_target_supported: usize = 0,
     file_metadata2: usize = 0,
     directory_metadata_batch2: usize = 0,
+    waitset_create: usize = 0,
+    waitset_enroll: usize = 0,
+    waitset_rearm: usize = 0,
+    waitset_remove: usize = 0,
+    waitset_wait: usize = 0,
+    waitset_close: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -12305,6 +12405,12 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 174, .offset = 1408, .name = "system_update_target_supported", .state = .function, .required = false },
     .{ .number = 175, .offset = 1416, .name = "file_metadata2", .state = .function, .required = false },
     .{ .number = 176, .offset = 1424, .name = "directory_metadata_batch2", .state = .function, .required = false },
+    .{ .number = 177, .offset = 1432, .name = "waitset_create", .state = .function, .required = false },
+    .{ .number = 178, .offset = 1440, .name = "waitset_enroll", .state = .function, .required = false },
+    .{ .number = 179, .offset = 1448, .name = "waitset_rearm", .state = .function, .required = false },
+    .{ .number = 180, .offset = 1456, .name = "waitset_remove", .state = .function, .required = false },
+    .{ .number = 181, .offset = 1464, .name = "waitset_wait", .state = .function, .required = false },
+    .{ .number = 182, .offset = 1472, .name = "waitset_close", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -19824,7 +19930,56 @@ comptime {
     if (@offsetOf(FontAdvanceInfo2, "required_count") != 28) @compileError("generated ABI offset drift: FontAdvanceInfo2.required_count");
     if (@offsetOf(FontAdvanceInfo2, "flags") != 32) @compileError("generated ABI offset drift: FontAdvanceInfo2.flags");
     if (@offsetOf(FontAdvanceInfo2, "reserved0") != 36) @compileError("generated ABI offset drift: FontAdvanceInfo2.reserved0");
-    if (@sizeOf(R4XStartR4Sys) != 1432) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(WaitSource) != 80) @compileError("generated ABI size drift: WaitSource");
+    if (@alignOf(WaitSource) != 8) @compileError("generated ABI alignment drift: WaitSource");
+    if (@offsetOf(WaitSource, "version") != 0) @compileError("generated ABI offset drift: WaitSource.version");
+    if (@offsetOf(WaitSource, "size") != 4) @compileError("generated ABI offset drift: WaitSource.size");
+    if (@offsetOf(WaitSource, "kind") != 8) @compileError("generated ABI offset drift: WaitSource.kind");
+    if (@offsetOf(WaitSource, "flags") != 12) @compileError("generated ABI offset drift: WaitSource.flags");
+    if (@offsetOf(WaitSource, "object") != 16) @compileError("generated ABI offset drift: WaitSource.object");
+    if (@offsetOf(WaitSource, "generation") != 24) @compileError("generated ABI offset drift: WaitSource.generation");
+    if (@offsetOf(WaitSource, "observed_revision") != 32) @compileError("generated ABI offset drift: WaitSource.observed_revision");
+    if (@offsetOf(WaitSource, "user_tag") != 40) @compileError("generated ABI offset drift: WaitSource.user_tag");
+    if (@offsetOf(WaitSource, "deadline_ns") != 48) @compileError("generated ABI offset drift: WaitSource.deadline_ns");
+    if (@offsetOf(WaitSource, "clock_source") != 56) @compileError("generated ABI offset drift: WaitSource.clock_source");
+    if (@offsetOf(WaitSource, "clock_generation") != 60) @compileError("generated ABI offset drift: WaitSource.clock_generation");
+    if (@offsetOf(WaitSource, "event_backend") != 64) @compileError("generated ABI offset drift: WaitSource.event_backend");
+    if (@offsetOf(WaitSource, "tick_hz") != 68) @compileError("generated ABI offset drift: WaitSource.tick_hz");
+    if (@offsetOf(WaitSource, "reserved0") != 72) @compileError("generated ABI offset drift: WaitSource.reserved0");
+    if (@sizeOf(WaitSetDeadline) != 48) @compileError("generated ABI size drift: WaitSetDeadline");
+    if (@alignOf(WaitSetDeadline) != 8) @compileError("generated ABI alignment drift: WaitSetDeadline");
+    if (@offsetOf(WaitSetDeadline, "version") != 0) @compileError("generated ABI offset drift: WaitSetDeadline.version");
+    if (@offsetOf(WaitSetDeadline, "size") != 4) @compileError("generated ABI offset drift: WaitSetDeadline.size");
+    if (@offsetOf(WaitSetDeadline, "kind") != 8) @compileError("generated ABI offset drift: WaitSetDeadline.kind");
+    if (@offsetOf(WaitSetDeadline, "reserved0") != 12) @compileError("generated ABI offset drift: WaitSetDeadline.reserved0");
+    if (@offsetOf(WaitSetDeadline, "absolute_ns") != 16) @compileError("generated ABI offset drift: WaitSetDeadline.absolute_ns");
+    if (@offsetOf(WaitSetDeadline, "last_ns") != 24) @compileError("generated ABI offset drift: WaitSetDeadline.last_ns");
+    if (@offsetOf(WaitSetDeadline, "clock_source") != 32) @compileError("generated ABI offset drift: WaitSetDeadline.clock_source");
+    if (@offsetOf(WaitSetDeadline, "clock_generation") != 36) @compileError("generated ABI offset drift: WaitSetDeadline.clock_generation");
+    if (@offsetOf(WaitSetDeadline, "event_backend") != 40) @compileError("generated ABI offset drift: WaitSetDeadline.event_backend");
+    if (@offsetOf(WaitSetDeadline, "tick_hz") != 44) @compileError("generated ABI offset drift: WaitSetDeadline.tick_hz");
+    if (@sizeOf(WaitSetEvent) != 48) @compileError("generated ABI size drift: WaitSetEvent");
+    if (@alignOf(WaitSetEvent) != 8) @compileError("generated ABI alignment drift: WaitSetEvent");
+    if (@offsetOf(WaitSetEvent, "version") != 0) @compileError("generated ABI offset drift: WaitSetEvent.version");
+    if (@offsetOf(WaitSetEvent, "size") != 4) @compileError("generated ABI offset drift: WaitSetEvent.size");
+    if (@offsetOf(WaitSetEvent, "kind") != 8) @compileError("generated ABI offset drift: WaitSetEvent.kind");
+    if (@offsetOf(WaitSetEvent, "flags") != 12) @compileError("generated ABI offset drift: WaitSetEvent.flags");
+    if (@offsetOf(WaitSetEvent, "registration") != 16) @compileError("generated ABI offset drift: WaitSetEvent.registration");
+    if (@offsetOf(WaitSetEvent, "user_tag") != 24) @compileError("generated ABI offset drift: WaitSetEvent.user_tag");
+    if (@offsetOf(WaitSetEvent, "revision") != 32) @compileError("generated ABI offset drift: WaitSetEvent.revision");
+    if (@offsetOf(WaitSetEvent, "status") != 40) @compileError("generated ABI offset drift: WaitSetEvent.status");
+    if (@offsetOf(WaitSetEvent, "reserved0") != 44) @compileError("generated ABI offset drift: WaitSetEvent.reserved0");
+    if (@sizeOf(WaitSetBatch) != 40) @compileError("generated ABI size drift: WaitSetBatch");
+    if (@alignOf(WaitSetBatch) != 8) @compileError("generated ABI alignment drift: WaitSetBatch");
+    if (@offsetOf(WaitSetBatch, "version") != 0) @compileError("generated ABI offset drift: WaitSetBatch.version");
+    if (@offsetOf(WaitSetBatch, "size") != 4) @compileError("generated ABI offset drift: WaitSetBatch.size");
+    if (@offsetOf(WaitSetBatch, "outcome") != 8) @compileError("generated ABI offset drift: WaitSetBatch.outcome");
+    if (@offsetOf(WaitSetBatch, "flags") != 12) @compileError("generated ABI offset drift: WaitSetBatch.flags");
+    if (@offsetOf(WaitSetBatch, "count") != 16) @compileError("generated ABI offset drift: WaitSetBatch.count");
+    if (@offsetOf(WaitSetBatch, "reserved0") != 20) @compileError("generated ABI offset drift: WaitSetBatch.reserved0");
+    if (@offsetOf(WaitSetBatch, "configuration_revision") != 24) @compileError("generated ABI offset drift: WaitSetBatch.configuration_revision");
+    if (@offsetOf(WaitSetBatch, "next_registration") != 32) @compileError("generated ABI offset drift: WaitSetBatch.next_registration");
+    if (@sizeOf(R4XStartR4Sys) != 1480) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -20002,6 +20157,12 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "system_update_target_supported") != 1408) @compileError("generated ABI offset drift: R4XStartR4Sys.system_update_target_supported");
     if (@offsetOf(R4XStartR4Sys, "file_metadata2") != 1416) @compileError("generated ABI offset drift: R4XStartR4Sys.file_metadata2");
     if (@offsetOf(R4XStartR4Sys, "directory_metadata_batch2") != 1424) @compileError("generated ABI offset drift: R4XStartR4Sys.directory_metadata_batch2");
+    if (@offsetOf(R4XStartR4Sys, "waitset_create") != 1432) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_create");
+    if (@offsetOf(R4XStartR4Sys, "waitset_enroll") != 1440) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_enroll");
+    if (@offsetOf(R4XStartR4Sys, "waitset_rearm") != 1448) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_rearm");
+    if (@offsetOf(R4XStartR4Sys, "waitset_remove") != 1456) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_remove");
+    if (@offsetOf(R4XStartR4Sys, "waitset_wait") != 1464) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_wait");
+    if (@offsetOf(R4XStartR4Sys, "waitset_close") != 1472) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_close");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -20528,13 +20689,19 @@ pub const R4SysProvider = struct {
     system_update_target_supported: ?R4SysFns.system_update_target_supported = null,
     file_metadata2: ?R4SysFns.file_metadata2 = null,
     directory_metadata_batch2: ?R4SysFns.directory_metadata_batch2 = null,
+    waitset_create: ?R4SysFns.waitset_create = null,
+    waitset_enroll: ?R4SysFns.waitset_enroll = null,
+    waitset_rearm: ?R4SysFns.waitset_rearm = null,
+    waitset_remove: ?R4SysFns.waitset_remove = null,
+    waitset_wait: ?R4SysFns.waitset_wait = null,
+    waitset_close: ?R4SysFns.waitset_close = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 37,
-        .size = 1432,
+        .abi_version = 38,
+        .size = 1480,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -20713,6 +20880,12 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .system_update_target_supported = if (provider.system_update_target_supported) |callback| @intFromPtr(callback) else 0,
         .file_metadata2 = if (provider.file_metadata2) |callback| @intFromPtr(callback) else 0,
         .directory_metadata_batch2 = if (provider.directory_metadata_batch2) |callback| @intFromPtr(callback) else 0,
+        .waitset_create = if (provider.waitset_create) |callback| @intFromPtr(callback) else 0,
+        .waitset_enroll = if (provider.waitset_enroll) |callback| @intFromPtr(callback) else 0,
+        .waitset_rearm = if (provider.waitset_rearm) |callback| @intFromPtr(callback) else 0,
+        .waitset_remove = if (provider.waitset_remove) |callback| @intFromPtr(callback) else 0,
+        .waitset_wait = if (provider.waitset_wait) |callback| @intFromPtr(callback) else 0,
+        .waitset_close = if (provider.waitset_close) |callback| @intFromPtr(callback) else 0,
     };
 }
 

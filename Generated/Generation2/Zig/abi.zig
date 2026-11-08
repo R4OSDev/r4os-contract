@@ -60,8 +60,8 @@ comptime {
 pub const R4SysFns2 = shared.R4SysFns;
 pub const R4XStartR4Sys2 = extern struct {
     magic: u32 = 844714834,
-    abi_version: u32 = 2,
-    size: u32 = 1424,
+    abi_version: u32 = 3,
+    size: u32 = 1472,
     flags: u32 = 0,
     @"write": u64 = 0,
     @"putc": u64 = 0,
@@ -239,9 +239,15 @@ pub const R4XStartR4Sys2 = extern struct {
     @"system_update_target_supported": u64 = 0,
     @"file_metadata2": u64 = 0,
     @"directory_metadata_batch2": u64 = 0,
+    @"waitset_create": u64 = 0,
+    @"waitset_enroll": u64 = 0,
+    @"waitset_rearm": u64 = 0,
+    @"waitset_remove": u64 = 0,
+    @"waitset_wait": u64 = 0,
+    @"waitset_close": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Sys2) != 1424) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Sys2) != 1472) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Sys2, "write") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "putc") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "sleep_ticks") != 32) @compileError("Generation2 slot offset");
@@ -418,6 +424,12 @@ comptime {
     if (@offsetOf(R4XStartR4Sys2, "system_update_target_supported") != 1400) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "file_metadata2") != 1408) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "directory_metadata_batch2") != 1416) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "waitset_create") != 1424) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "waitset_enroll") != 1432) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "waitset_rearm") != 1440) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "waitset_remove") != 1448) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "waitset_wait") != 1456) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "waitset_close") != 1464) @compileError("Generation2 slot offset");
 }
 pub const R4DeskFns2 = shared.R4DeskFns;
 pub const R4XStartR4Desk2 = extern struct {

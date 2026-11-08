@@ -2929,6 +2929,25 @@ pub const file_metadata2_flag_reparse: u32 = 128;
 pub const font_metrics2_version: u32 = 1;
 pub const font_metrics2_flag_complete: u32 = 1;
 pub const font_metrics2_max_bytes: u32 = 4096;
+pub const waitset_version: u32 = 1;
+pub const waitset_max_sources: u32 = 32;
+pub const waitset_max_source_subscribers: u32 = 32;
+pub const waitset_source_notification: u32 = 1;
+pub const waitset_source_timer: u32 = 2;
+pub const waitset_source_flag_stop: u32 = 1;
+pub const waitset_deadline_poll: u32 = 0;
+pub const waitset_deadline_finite: u32 = 1;
+pub const waitset_deadline_forever: u32 = 2;
+pub const waitset_outcome_ready: u32 = 0;
+pub const waitset_outcome_timeout: u32 = 1;
+pub const waitset_outcome_closed: u32 = 2;
+pub const waitset_outcome_cancelled: u32 = 3;
+pub const waitset_event_ready: u32 = 0;
+pub const waitset_event_source_closed: u32 = 1;
+pub const waitset_event_clock_changed: u32 = 2;
+pub const waitset_flag_more: u32 = 1;
+pub const waitset_flag_rescan: u32 = 2;
+pub const waitset_flag_coalesced: u32 = 4;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3380,6 +3399,21 @@ pub const font_metrics2_capacity: i32 = -7;
 pub const font_metrics2_unavailable: i32 = -9;
 pub const font_metrics2_stale: i32 = -10;
 pub const font_metrics2_exhausted: i32 = -12;
+pub const waitset_ok: i32 = 0;
+pub const waitset_error_invalid: i32 = -13001;
+pub const waitset_error_context: i32 = -13002;
+pub const waitset_error_stale: i32 = -13003;
+pub const waitset_error_closed: i32 = -13004;
+pub const waitset_error_capacity: i32 = -13005;
+pub const waitset_error_busy: i32 = -13006;
+pub const waitset_error_clock_unavailable: i32 = -13007;
+pub const waitset_error_clock_changed: i32 = -13008;
+pub const waitset_error_memory: i32 = -13009;
+pub const waitset_error_exhausted: i32 = -13010;
+pub const waitset_error_unsupported: i32 = -13011;
+pub const waitset_error_release: i32 = -13012;
+pub const waitset_error_owner: i32 = -13013;
+pub const waitset_error_overflow: i32 = -13014;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -3405,6 +3439,7 @@ impl R4ErrorDomain {
     pub const serial: Self = Self(17);
     pub const file_metadata2: Self = Self(18);
     pub const font_metrics2: Self = Self(19);
+    pub const waitset: Self = Self(20);
 }
 
 #[repr(transparent)]
@@ -21049,6 +21084,136 @@ impl Default for FontAdvanceInfo2 {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WaitSource {
+    pub version: u32,
+    pub size: u32,
+    pub kind: u32,
+    pub flags: u32,
+    pub object: u64,
+    pub generation: u64,
+    pub observed_revision: u64,
+    pub user_tag: u64,
+    pub deadline_ns: u64,
+    pub clock_source: u32,
+    pub clock_generation: u32,
+    pub event_backend: u32,
+    pub tick_hz: u32,
+    pub reserved0: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for WaitSource {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 80,
+            kind: 0,
+            flags: 0,
+            object: 0,
+            generation: 0,
+            observed_revision: 0,
+            user_tag: 0,
+            deadline_ns: 0,
+            clock_source: 0,
+            clock_generation: 0,
+            event_backend: 0,
+            tick_hz: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WaitSetDeadline {
+    pub version: u32,
+    pub size: u32,
+    pub kind: u32,
+    pub reserved0: u32,
+    pub absolute_ns: u64,
+    pub last_ns: u64,
+    pub clock_source: u32,
+    pub clock_generation: u32,
+    pub event_backend: u32,
+    pub tick_hz: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for WaitSetDeadline {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            kind: 0,
+            reserved0: 0,
+            absolute_ns: 0,
+            last_ns: 0,
+            clock_source: 0,
+            clock_generation: 0,
+            event_backend: 0,
+            tick_hz: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WaitSetEvent {
+    pub version: u32,
+    pub size: u32,
+    pub kind: u32,
+    pub flags: u32,
+    pub registration: u64,
+    pub user_tag: u64,
+    pub revision: u64,
+    pub status: i32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for WaitSetEvent {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            kind: 0,
+            flags: 0,
+            registration: 0,
+            user_tag: 0,
+            revision: 0,
+            status: 0,
+            reserved0: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WaitSetBatch {
+    pub version: u32,
+    pub size: u32,
+    pub outcome: u32,
+    pub flags: u32,
+    pub count: u32,
+    pub reserved0: u32,
+    pub configuration_revision: u64,
+    pub next_registration: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for WaitSetBatch {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            outcome: 0,
+            flags: 0,
+            count: 0,
+            reserved0: 0,
+            configuration_revision: 0,
+            next_registration: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21235,6 +21400,12 @@ pub mod R4SysFns {
     pub type system_update_target_supported = unsafe extern "C" fn(*const u8) -> i32;
     pub type file_metadata2 = unsafe extern "C" fn(*const u8, *mut FileMetadata2) -> i32;
     pub type directory_metadata_batch2 = unsafe extern "C" fn(*const u8, *mut DirectoryMetadataCursor2, *mut DirectoryMetadataEntry2, u32) -> i32;
+    pub type waitset_create = unsafe extern "C" fn(u32, *mut u64) -> i32;
+    pub type waitset_enroll = unsafe extern "C" fn(u64, *const WaitSource, *mut u64) -> i32;
+    pub type waitset_rearm = unsafe extern "C" fn(u64, u64, *const WaitSource) -> i32;
+    pub type waitset_remove = unsafe extern "C" fn(u64, u64) -> i32;
+    pub type waitset_wait = unsafe extern "C" fn(u64, *const WaitSetDeadline, *mut WaitSetEvent, u32, *mut WaitSetBatch) -> i32;
+    pub type waitset_close = unsafe extern "C" fn(u64) -> i32;
 }
 
 #[repr(C)]
@@ -21421,14 +21592,20 @@ pub struct R4XStartR4Sys {
     pub system_update_target_supported: usize,
     pub file_metadata2: usize,
     pub directory_metadata_batch2: usize,
+    pub waitset_create: usize,
+    pub waitset_enroll: usize,
+    pub waitset_rearm: usize,
+    pub waitset_remove: usize,
+    pub waitset_wait: usize,
+    pub waitset_close: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 37,
-            size: 1432,
+            abi_version: 38,
+            size: 1480,
             flags: 0,
             write: 0,
             putc: 0,
@@ -21607,6 +21784,12 @@ impl Default for R4XStartR4Sys {
             system_update_target_supported: 0,
             file_metadata2: 0,
             directory_metadata_batch2: 0,
+            waitset_create: 0,
+            waitset_enroll: 0,
+            waitset_rearm: 0,
+            waitset_remove: 0,
+            waitset_wait: 0,
+            waitset_close: 0,
         }
     }
 }
@@ -34294,6 +34477,55 @@ const _: () = {
     assert!(core::mem::offset_of!(FontAdvanceInfo2, reserved0) == 36);
     assert!(core::mem::size_of::<FontAdvanceInfo2>() == 40);
     assert!(core::mem::align_of::<FontAdvanceInfo2>() == 8);
+    assert!(core::mem::offset_of!(WaitSource, version) == 0);
+    assert!(core::mem::offset_of!(WaitSource, size) == 4);
+    assert!(core::mem::offset_of!(WaitSource, kind) == 8);
+    assert!(core::mem::offset_of!(WaitSource, flags) == 12);
+    assert!(core::mem::offset_of!(WaitSource, object) == 16);
+    assert!(core::mem::offset_of!(WaitSource, generation) == 24);
+    assert!(core::mem::offset_of!(WaitSource, observed_revision) == 32);
+    assert!(core::mem::offset_of!(WaitSource, user_tag) == 40);
+    assert!(core::mem::offset_of!(WaitSource, deadline_ns) == 48);
+    assert!(core::mem::offset_of!(WaitSource, clock_source) == 56);
+    assert!(core::mem::offset_of!(WaitSource, clock_generation) == 60);
+    assert!(core::mem::offset_of!(WaitSource, event_backend) == 64);
+    assert!(core::mem::offset_of!(WaitSource, tick_hz) == 68);
+    assert!(core::mem::offset_of!(WaitSource, reserved0) == 72);
+    assert!(core::mem::size_of::<WaitSource>() == 80);
+    assert!(core::mem::align_of::<WaitSource>() == 8);
+    assert!(core::mem::offset_of!(WaitSetDeadline, version) == 0);
+    assert!(core::mem::offset_of!(WaitSetDeadline, size) == 4);
+    assert!(core::mem::offset_of!(WaitSetDeadline, kind) == 8);
+    assert!(core::mem::offset_of!(WaitSetDeadline, reserved0) == 12);
+    assert!(core::mem::offset_of!(WaitSetDeadline, absolute_ns) == 16);
+    assert!(core::mem::offset_of!(WaitSetDeadline, last_ns) == 24);
+    assert!(core::mem::offset_of!(WaitSetDeadline, clock_source) == 32);
+    assert!(core::mem::offset_of!(WaitSetDeadline, clock_generation) == 36);
+    assert!(core::mem::offset_of!(WaitSetDeadline, event_backend) == 40);
+    assert!(core::mem::offset_of!(WaitSetDeadline, tick_hz) == 44);
+    assert!(core::mem::size_of::<WaitSetDeadline>() == 48);
+    assert!(core::mem::align_of::<WaitSetDeadline>() == 8);
+    assert!(core::mem::offset_of!(WaitSetEvent, version) == 0);
+    assert!(core::mem::offset_of!(WaitSetEvent, size) == 4);
+    assert!(core::mem::offset_of!(WaitSetEvent, kind) == 8);
+    assert!(core::mem::offset_of!(WaitSetEvent, flags) == 12);
+    assert!(core::mem::offset_of!(WaitSetEvent, registration) == 16);
+    assert!(core::mem::offset_of!(WaitSetEvent, user_tag) == 24);
+    assert!(core::mem::offset_of!(WaitSetEvent, revision) == 32);
+    assert!(core::mem::offset_of!(WaitSetEvent, status) == 40);
+    assert!(core::mem::offset_of!(WaitSetEvent, reserved0) == 44);
+    assert!(core::mem::size_of::<WaitSetEvent>() == 48);
+    assert!(core::mem::align_of::<WaitSetEvent>() == 8);
+    assert!(core::mem::offset_of!(WaitSetBatch, version) == 0);
+    assert!(core::mem::offset_of!(WaitSetBatch, size) == 4);
+    assert!(core::mem::offset_of!(WaitSetBatch, outcome) == 8);
+    assert!(core::mem::offset_of!(WaitSetBatch, flags) == 12);
+    assert!(core::mem::offset_of!(WaitSetBatch, count) == 16);
+    assert!(core::mem::offset_of!(WaitSetBatch, reserved0) == 20);
+    assert!(core::mem::offset_of!(WaitSetBatch, configuration_revision) == 24);
+    assert!(core::mem::offset_of!(WaitSetBatch, next_registration) == 32);
+    assert!(core::mem::size_of::<WaitSetBatch>() == 40);
+    assert!(core::mem::align_of::<WaitSetBatch>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -34477,7 +34709,13 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, system_update_target_supported) == 1408);
     assert!(core::mem::offset_of!(R4XStartR4Sys, file_metadata2) == 1416);
     assert!(core::mem::offset_of!(R4XStartR4Sys, directory_metadata_batch2) == 1424);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1432);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_create) == 1432);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_enroll) == 1440);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_rearm) == 1448);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_remove) == 1456);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_wait) == 1464);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_close) == 1472);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1480);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

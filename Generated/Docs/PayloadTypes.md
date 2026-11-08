@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 420 von 420 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 424 von 424 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 67; Konstanten: 2922; Limits: 111
+- Operationen: 0; Fehlerdomänen: 68; Konstanten: 2941; Limits: 111
 
 ## App-Profile
 
@@ -441,6 +441,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `DirectoryMetadataCursor2` | extensible | extern_struct | 2184/8 | 2184/8 | 2184/8 | 2184/8 |
 | `FontAdvance2` | fixed_layout | extern_struct | 8/4 | 8/4 | 8/4 | 8/4 |
 | `FontAdvanceInfo2` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `WaitSource` | fixed_layout | extern_struct | 80/8 | 80/8 | 80/8 | 80/8 |
+| `WaitSetDeadline` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `WaitSetEvent` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `WaitSetBatch` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -10917,6 +10921,87 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `flags` | 32 | 4 | 4 | `u32` | - |
 | `reserved0` | 36 | 4 | 4 | `u32` | - |
 
+### `WaitSource`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 80 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `object` | 16 | 8 | 8 | `u64` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `observed_revision` | 32 | 8 | 8 | `u64` | - |
+| `user_tag` | 40 | 8 | 8 | `u64` | - |
+| `deadline_ns` | 48 | 8 | 8 | `u64` | - |
+| `clock_source` | 56 | 4 | 4 | `u32` | - |
+| `clock_generation` | 60 | 4 | 4 | `u32` | - |
+| `event_backend` | 64 | 4 | 4 | `u32` | - |
+| `tick_hz` | 68 | 4 | 4 | `u32` | - |
+| `reserved0` | 72 | 8 | 8 | `u64` | - |
+
+### `WaitSetDeadline`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `reserved0` | 12 | 4 | 4 | `u32` | - |
+| `absolute_ns` | 16 | 8 | 8 | `u64` | - |
+| `last_ns` | 24 | 8 | 8 | `u64` | - |
+| `clock_source` | 32 | 4 | 4 | `u32` | - |
+| `clock_generation` | 36 | 4 | 4 | `u32` | - |
+| `event_backend` | 40 | 4 | 4 | `u32` | - |
+| `tick_hz` | 44 | 4 | 4 | `u32` | - |
+
+### `WaitSetEvent`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `registration` | 16 | 8 | 8 | `u64` | - |
+| `user_tag` | 24 | 8 | 8 | `u64` | - |
+| `revision` | 32 | 8 | 8 | `u64` | - |
+| `status` | 40 | 4 | 4 | `i32` | - |
+| `reserved0` | 44 | 4 | 4 | `u32` | - |
+
+### `WaitSetBatch`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `outcome` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `count` | 16 | 4 | 4 | `u32` | - |
+| `reserved0` | 20 | 4 | 4 | `u32` | - |
+| `configuration_revision` | 24 | 8 | 8 | `u64` | - |
+| `next_registration` | 32 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11727,6 +11812,28 @@ Geltung: `font_metrics2`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `font_metrics2_unavailable` | -9 | `i32` |
 | `font_metrics2_stale` | -10 | `i32` |
 | `font_metrics2_exhausted` | -12 | `i32` |
+
+### `waitset`
+
+Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `waitset_ok` | 0 | `i32` |
+| `waitset_error_invalid` | -13001 | `i32` |
+| `waitset_error_context` | -13002 | `i32` |
+| `waitset_error_stale` | -13003 | `i32` |
+| `waitset_error_closed` | -13004 | `i32` |
+| `waitset_error_capacity` | -13005 | `i32` |
+| `waitset_error_busy` | -13006 | `i32` |
+| `waitset_error_clock_unavailable` | -13007 | `i32` |
+| `waitset_error_clock_changed` | -13008 | `i32` |
+| `waitset_error_memory` | -13009 | `i32` |
+| `waitset_error_exhausted` | -13010 | `i32` |
+| `waitset_error_unsupported` | -13011 | `i32` |
+| `waitset_error_release` | -13012 | `i32` |
+| `waitset_error_owner` | -13013 | `i32` |
+| `waitset_error_overflow` | -13014 | `i32` |
 
 ## Konstanten
 
@@ -14654,6 +14761,25 @@ Geltung: `font_metrics2`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `font_metrics2_version` | `1` | `u32` | version | number | `font_metrics2` | fixed_contract |
 | `font_metrics2_flag_complete` | `1` | `u32` | flag | bitmask | `font_metrics2` | fixed_contract |
 | `font_metrics2_max_bytes` | `4096` | `u32` | value | bytes | `font_metrics2` | fixed_contract |
+| `waitset_version` | `1` | `u32` | version | number | `waitset` | fixed_contract |
+| `waitset_max_sources` | `32` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_max_source_subscribers` | `32` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_source_notification` | `1` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_source_timer` | `2` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_source_flag_stop` | `1` | `u32` | flag | bitmask | `waitset` | fixed_contract |
+| `waitset_deadline_poll` | `0` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_deadline_finite` | `1` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_deadline_forever` | `2` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_outcome_ready` | `0` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_outcome_timeout` | `1` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_outcome_closed` | `2` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_outcome_cancelled` | `3` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_event_ready` | `0` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_event_source_closed` | `1` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_event_clock_changed` | `2` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_flag_more` | `1` | `u32` | flag | bitmask | `waitset` | fixed_contract |
+| `waitset_flag_rescan` | `2` | `u32` | flag | bitmask | `waitset` | fixed_contract |
+| `waitset_flag_coalesced` | `4` | `u32` | flag | bitmask | `waitset` | fixed_contract |
 
 ## Limits
 

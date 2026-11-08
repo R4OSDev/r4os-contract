@@ -1597,6 +1597,60 @@
       "removed": false
     },
     {
+      "group": "R4SYS",
+      "name": "waitset_create",
+      "source_number": 177,
+      "source_offset": 1432,
+      "number": 176,
+      "offset": 1424,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "waitset_enroll",
+      "source_number": 178,
+      "source_offset": 1440,
+      "number": 177,
+      "offset": 1432,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "waitset_rearm",
+      "source_number": 179,
+      "source_offset": 1448,
+      "number": 178,
+      "offset": 1440,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "waitset_remove",
+      "source_number": 180,
+      "source_offset": 1456,
+      "number": 179,
+      "offset": 1448,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "waitset_wait",
+      "source_number": 181,
+      "source_offset": 1464,
+      "number": 180,
+      "offset": 1456,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "waitset_close",
+      "source_number": 182,
+      "source_offset": 1472,
+      "number": 181,
+      "offset": 1464,
+      "removed": false
+    },
+    {
       "group": "R4DESK",
       "name": "read_key",
       "source_number": 0,

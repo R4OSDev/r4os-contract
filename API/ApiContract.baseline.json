@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 37,
+      "abi_version": 38,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1432,
+      "size": 1480,
       "slots": [
         {
           "number": 0,
@@ -14100,6 +14100,440 @@
             "close_rule": "path_based_no_handle",
             "outputs": "success_only",
             "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 177,
+          "offset": 1432,
+          "name": "waitset_create",
+          "state": "function",
+          "required": false,
+          "description": "Create a resident process namespace record with explicit1..32capacity and exact creating native Task ID/generation. Handles never repeat. Allocation/publication guarded outside Runtime. No caller pointer retained. Creator death closes/unlinks all actual source registrations during real thread retirement; no stack Drop assumption.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_handle",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "waitset",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 178,
+          "offset": 1440,
+          "name": "waitset_enroll",
+          "state": "function",
+          "required": false,
+          "description": "Creator-only exact source admission and predicate registration share Runtime with source notify/close. Copies80bytes; notification handle resolves only in this process. Per-source cap32; timer source has one fixed absolute clock-bound deadline. New registration and outputs publish only after complete validation; no caller buffer retained.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "set",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "source",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSource"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_registration",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "waitset",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 179,
+          "offset": 1448,
+          "name": "waitset_rearm",
+          "state": "function",
+          "required": false,
+          "description": "Creator-only rearm of same kind/object/generation/tag/flags. Notification updates observed revision; timer supplies new explicit absolute deadline and clock. Closed notification cannot be resurrected. Changes wake existing owner if necessary, never consume source state or renew a wait deadline implicitly.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "set",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "registration",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "source",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSource"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "waitset",
+            "ownership": "borrowed",
+            "buffer_lifetime": "none",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 180,
+          "offset": 1456,
+          "name": "waitset_remove",
+          "state": "function",
+          "required": false,
+          "description": "Creator-only removal detaches the actual resident source link atomically before slot reuse. Registration IDs never repeat within set. Removing a source grants no source Close, read/reap, work cancel or buffer/DMA release.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "set",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "registration",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "waitset",
+            "ownership": "consumes_owned_handle",
+            "buffer_lifetime": "none",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "invalidates_on_success",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 181,
+          "offset": 1464,
+          "name": "waitset_wait",
+          "state": "function",
+          "required": false,
+          "description": "Creator-only non-consuming wait-any. Poll/Finite/Forever explicit; finite outer deadline and timer clocks are revalidated without rebasing. All outputs disjoint/mapped/borrowed through real return. Bounded local rows copy after Runtime release; no caller/stack pointer or unwind pin is retained by scheduler through sleep. Original one Task wait_node enrolls only in resident set queue. Source publications and enrollment are atomic; close/kill detach real links. More/rescan/coalesced flags disclose incomplete batch; level results repeat until rearm/remove. Timeout/cancel never authorizes source data/DMA release.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "set",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "deadline",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSetDeadline"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_events",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSetEvent"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              },
+              {
+                "name": "out_batch",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSetBatch"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "waitset",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "blocking_wait",
+            "threading": "thread_safe",
+            "timeout": "operation_deadline",
+            "cancel": "shutdown_wakeup",
+            "timeout_outcome": "completion_wins",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 182,
+          "offset": 1472,
+          "name": "waitset_close",
+          "state": "function",
+          "required": false,
+          "description": "Any same-process task may close to cancel an owner wait. Close atomically detaches every source link and wakes original Task queue before heap free. Failed backing free preserves exact closed identity for retry. Waiter never dereferences old set after park. Process cleanup drains sets before notification sources and Runtime backing. Already removed handles are stale; SDK owner may make its own completed close idempotent.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "set",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "waitset",
+            "ownership": "consumes_owned_handle",
+            "buffer_lifetime": "none",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "invalidates_on_success",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
             "retry": "never_automatic",
             "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
@@ -132529,6 +132963,636 @@
       ],
       "values": [],
       "description": "Whole-call font-bank receipt. Nonzero nonreused bank revision is valid only with complete flag; capacity errors publish required_count diagnostically with count0/flags0. No current-font, render completion or retained catalogue promise."
+    },
+    {
+      "name": "WaitSource",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 80,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact complete record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "80"
+        },
+        {
+          "name": "kind",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Notification1 or timer2; other kinds Unsupported.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Stop1 only for notification; timer0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "object",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact notification handle; timer0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Notification/timer0; future typed resource generation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_revision",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Notification non-consuming observed sequence; timer0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "user_tag",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Opaque copied scalar returned with each event.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "deadline_ns",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Absolute timer instant, notification0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing checked ClockIdentity source; notification0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 60,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing monotonic generation; notification0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_backend",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Existing event backend; notification0.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tick_hz",
+          "offset": 68,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Logical event_requested_hz, never rounded physical frequency.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Zero.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied source specification. Notification exact process-local never-reused handle or one-shot latched absolute timer. No caller pointer is retained. Creator-task ownership and actual source lifetime bind each registration; unsupported kinds are refused. Future adapters use object+generation without reinterpreting notification/timer fields."
+    },
+    {
+      "name": "WaitSetDeadline",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact complete record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "kind",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Poll0/Finite1/Forever2.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "absolute_ns",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Fixed finite deadline; Poll/Forever0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "last_ns",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Previous checked finite observation; may exceed absolute_ns after expiration. A later call still uses the same absolute deadline and validates the original clock identity and monotonic progression.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_source",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite existing monotonic source.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite existing monotonic generation.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "event_backend",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite existing event backend.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "tick_hz",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Finite existing logical event_requested_hz.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied Poll0/Finite1/Forever2 wait budget. Finite is one absolute monotonic nanosecond deadline for the exact source/generation/backend/logical-tick identity and last_ns regression guard. No renewed budget after wake. Poll/Forever use zero remaining fields. Timeout never retires any source work."
+    },
+    {
+      "name": "WaitSetEvent",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact complete record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "kind",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Original source kind.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Rescan/coalesced observation flags.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "registration",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact never-reused registration within this set.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "user_tag",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Copied user scalar.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "revision",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Latest sequence; timer0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "status",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "Ready0/SourceClosed1/ClockChanged2.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Non-consuming source observation under one Runtime boundary. Registration and tag identify the copied source; revision is latest notification sequence. Coalesced gaps require rescan. SourceClosed remains latched until remove. No read, reap, buffer release or hardware completion authority."
+    },
+    {
+      "name": "WaitSetBatch",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact complete record bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "outcome",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Ready0/Timeout1/Closed2/Cancelled3.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "More1/Rescan2/Coalesced4.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "count",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Whole initialized events; other output rows remain unchanged.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved0",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "configuration_revision",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Exact set configuration observation; no source content or retain authority.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "next_registration",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Informative next scan registration; kernel retains bounded rotation.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Bounded wake-any snapshot. Ready observations remain level-triggered until rearm/remove; More is not a drained-event-queue receipt. Rotating next_registration prevents permanent prefix starvation. Timeout/Close/Cancelled never imply physical retirement."
     }
   ],
   "operations": [],
@@ -132632,6 +133696,11 @@
       "name": "font_metrics2",
       "id": 19,
       "description": "Whole immutable-bank font prefix metrics, diagnostic capacity and explicit failure."
+    },
+    {
+      "name": "waitset",
+      "id": 20,
+      "description": "Bounded resident wait-any and exact source lifetime."
     }
   ],
   "error_domains": [
@@ -135277,6 +136346,105 @@
         }
       ],
       "description": "Linear immutable-bank prefix observation; caller whole rows/code lifetime ends at real return, not an inferred render completion."
+    },
+    {
+      "name": "waitset",
+      "unit": "status_code",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "waitset_ok",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Complete admitted operation."
+        },
+        {
+          "name": "waitset_error_invalid",
+          "value": -13001,
+          "value_type": "i32",
+          "description": "Invalid header/span/alias/flags or source specification; outputs unchanged."
+        },
+        {
+          "name": "waitset_error_context",
+          "value": -13002,
+          "value_type": "i32",
+          "description": "Task context requires IF enabled and no no-sleep/runtime/held owner."
+        },
+        {
+          "name": "waitset_error_stale",
+          "value": -13003,
+          "value_type": "i32",
+          "description": "Unknown set or registration identity."
+        },
+        {
+          "name": "waitset_error_closed",
+          "value": -13004,
+          "value_type": "i32",
+          "description": "Closed namespace/set rejects new admission."
+        },
+        {
+          "name": "waitset_error_capacity",
+          "value": -13005,
+          "value_type": "i32",
+          "description": "Set or concrete notification subscription capacity exhausted."
+        },
+        {
+          "name": "waitset_error_busy",
+          "value": -13006,
+          "value_type": "i32",
+          "description": "An actual wait is already admitted."
+        },
+        {
+          "name": "waitset_error_clock_unavailable",
+          "value": -13007,
+          "value_type": "i32",
+          "description": "No valid monotonic source/logical tick frequency."
+        },
+        {
+          "name": "waitset_error_clock_changed",
+          "value": -13008,
+          "value_type": "i32",
+          "description": "Finite outer budget identity changed or regressed; never rebase."
+        },
+        {
+          "name": "waitset_error_memory",
+          "value": -13009,
+          "value_type": "i32",
+          "description": "Resident set allocation failed; nothing published."
+        },
+        {
+          "name": "waitset_error_exhausted",
+          "value": -13010,
+          "value_type": "i32",
+          "description": "Nonwrapping handle/registration/configuration identity exhausted."
+        },
+        {
+          "name": "waitset_error_unsupported",
+          "value": -13011,
+          "value_type": "i32",
+          "description": "This provider does not implement the requested source kind."
+        },
+        {
+          "name": "waitset_error_release",
+          "value": -13012,
+          "value_type": "i32",
+          "description": "Heap release failed; exact closed record retained for retry."
+        },
+        {
+          "name": "waitset_error_owner",
+          "value": -13013,
+          "value_type": "i32",
+          "description": "Only the exact creating task may enroll/rearm/remove/wait; same-process peers may close."
+        },
+        {
+          "name": "waitset_error_overflow",
+          "value": -13014,
+          "value_type": "i32",
+          "description": "Finite conversion cannot be represented below rawForever sentinel."
+        }
+      ],
+      "description": "Source-bound resident wait-any; result0 publishes outputs, errors leave them unchanged. A Wake observation is no source operation/retirement."
     }
   ],
   "constants": [
@@ -164499,6 +165667,196 @@
       "scope": "font_metrics2",
       "stability": "fixed_contract",
       "description": "Maximum complete UTF8 source and row capacity; no silent clipping."
+    },
+    {
+      "name": "waitset_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "version",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Version1."
+    },
+    {
+      "name": "waitset_max_sources",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Explicit per-set maximum, not a task/process capacity."
+    },
+    {
+      "name": "waitset_max_source_subscribers",
+      "value": "32",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Explicit notification subscription admission cap bounds new Runtime traversal."
+    },
+    {
+      "name": "waitset_source_notification",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Exact original notification owner."
+    },
+    {
+      "name": "waitset_source_timer",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Latched absolute one-shot timer using original scheduler timeout."
+    },
+    {
+      "name": "waitset_source_flag_stop",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Changed/closed notification requests Cancelled; ready Stop sources take batch priority even at capacity one. Other ready sources remain level-triggered and More/Rescan is set. No resource release."
+    },
+    {
+      "name": "waitset_deadline_poll",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "One nonblocking observation."
+    },
+    {
+      "name": "waitset_deadline_finite",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "One original absolute budget."
+    },
+    {
+      "name": "waitset_deadline_forever",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "No outer timeout; source timers may still expire."
+    },
+    {
+      "name": "waitset_outcome_ready",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "One or more observations."
+    },
+    {
+      "name": "waitset_outcome_timeout",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "No ready source before fixed outer deadline."
+    },
+    {
+      "name": "waitset_outcome_closed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Set closed while waiting."
+    },
+    {
+      "name": "waitset_outcome_cancelled",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Stop source changed/closed."
+    },
+    {
+      "name": "waitset_event_ready",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Non-consuming readiness."
+    },
+    {
+      "name": "waitset_event_source_closed",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Exact source detached/closed."
+    },
+    {
+      "name": "waitset_event_clock_changed",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Timer clock identity invalidated; explicit rearm/remove."
+    },
+    {
+      "name": "waitset_flag_more",
+      "value": "1",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "More current observations than caller capacity; continue/rescan."
+    },
+    {
+      "name": "waitset_flag_rescan",
+      "value": "2",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Coalesced or closed/changed source needs caller rescan."
+    },
+    {
+      "name": "waitset_flag_coalesced",
+      "value": "4",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Notification revision gap exceeds1; no individual-event FIFO."
     }
   ],
   "limits": [

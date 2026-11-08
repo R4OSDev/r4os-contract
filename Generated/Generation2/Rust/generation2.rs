@@ -243,8 +243,14 @@ pub struct R4XStartR4Sys2 {
     pub system_update_target_supported: u64,
     pub file_metadata2: u64,
     pub directory_metadata_batch2: u64,
+    pub waitset_create: u64,
+    pub waitset_enroll: u64,
+    pub waitset_rearm: u64,
+    pub waitset_remove: u64,
+    pub waitset_wait: u64,
+    pub waitset_close: u64,
 }
-impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 2, size: 1424, flags: 0,
+impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 3, size: 1472, flags: 0,
     write: 0,
     putc: 0,
     sleep_ticks: 0,
@@ -421,8 +427,14 @@ impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834
     system_update_target_supported: 0,
     file_metadata2: 0,
     directory_metadata_batch2: 0,
+    waitset_create: 0,
+    waitset_enroll: 0,
+    waitset_rearm: 0,
+    waitset_remove: 0,
+    waitset_wait: 0,
+    waitset_close: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1424);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1472);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,write) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,putc) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,sleep_ticks) == 32);
@@ -599,6 +611,12 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1424);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,system_update_target_supported) == 1400);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,file_metadata2) == 1408);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,directory_metadata_batch2) == 1416);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_create) == 1424);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_enroll) == 1432);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_rearm) == 1440);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_remove) == 1448);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_wait) == 1456);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_close) == 1464);
 };
 impl R4XStartR4Sys2 {
     pub fn project_provider(source: &super::R4XStartR4Sys) -> Self { Self {
@@ -776,6 +794,12 @@ impl R4XStartR4Sys2 {
         system_update_target_supported: source.system_update_target_supported as u64,
         file_metadata2: source.file_metadata2 as u64,
         directory_metadata_batch2: source.directory_metadata_batch2 as u64,
+        waitset_create: source.waitset_create as u64,
+        waitset_enroll: source.waitset_enroll as u64,
+        waitset_rearm: source.waitset_rearm as u64,
+        waitset_remove: source.waitset_remove as u64,
+        waitset_wait: source.waitset_wait as u64,
+        waitset_close: source.waitset_close as u64,
         ..Self::default()
     } }
 }

@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 509,
-    "group_slot_count": 509,
+    "function_count": 515,
+    "group_slot_count": 515,
     "sdk_only_count": 0,
-    "public_count": 367,
+    "public_count": 373,
     "advanced_count": 142
   },
   "functions": [
@@ -2097,6 +2097,78 @@
       "slot": 176,
       "exposure": "public",
       "description": "Use the same canonical bounded directory engine and exact owner/mount/path guards with a distinct2184-byte cursor and1136-byte records. Capacity1..8, shared256physical-step budget; positive count publishes rows,0 bounded progress,-5 EOF. Bound capacity0/out=NULL validates without advancing. Any global namespace publication or mount/owner mismatch returns-10; discard all prior pages. Errors leave caller cursor unchanged and grant no row authority; buffer contents on errors are unspecified. Whole paths and same FileMetadata2 identity projection as single lookup. No persistent Kernel allocation, mount pin or scan; reset closes/cancels. Current content metadata remains per-entry observations, not one atomic directory-wide content snapshot. Namespace exhaustion-12 never reuses an identity.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.waitset_create",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 177,
+      "exposure": "public",
+      "description": "Create a resident process namespace record with explicit1..32capacity and exact creating native Task ID/generation. Handles never repeat. Allocation/publication guarded outside Runtime. No caller pointer retained. Creator death closes/unlinks all actual source registrations during real thread retirement; no stack Drop assumption.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.waitset_enroll",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 178,
+      "exposure": "public",
+      "description": "Creator-only exact source admission and predicate registration share Runtime with source notify/close. Copies80bytes; notification handle resolves only in this process. Per-source cap32; timer source has one fixed absolute clock-bound deadline. New registration and outputs publish only after complete validation; no caller buffer retained.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.waitset_rearm",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 179,
+      "exposure": "public",
+      "description": "Creator-only rearm of same kind/object/generation/tag/flags. Notification updates observed revision; timer supplies new explicit absolute deadline and clock. Closed notification cannot be resurrected. Changes wake existing owner if necessary, never consume source state or renew a wait deadline implicitly.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.waitset_remove",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 180,
+      "exposure": "public",
+      "description": "Creator-only removal detaches the actual resident source link atomically before slot reuse. Registration IDs never repeat within set. Removing a source grants no source Close, read/reap, work cancel or buffer/DMA release.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.waitset_wait",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 181,
+      "exposure": "public",
+      "description": "Creator-only non-consuming wait-any. Poll/Finite/Forever explicit; finite outer deadline and timer clocks are revalidated without rebasing. All outputs disjoint/mapped/borrowed through real return. Bounded local rows copy after Runtime release; no caller/stack pointer or unwind pin is retained by scheduler through sleep. Original one Task wait_node enrolls only in resident set queue. Source publications and enrollment are atomic; close/kill detach real links. More/rescan/coalesced flags disclose incomplete batch; level results repeat until rearm/remove. Timeout/cancel never authorizes source data/DMA release.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.waitset_close",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 182,
+      "exposure": "public",
+      "description": "Any same-process task may close to cancel an owner wait. Close atomically detaches every source link and wakes original Task queue before heap free. Failed backing free preserves exact closed identity for retry. Waiter never dereferences old set after park. Process cleanup drains sets before notification sources and Runtime backing. Already removed handles are stale; SDK owner may make its own completed close idempotent.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

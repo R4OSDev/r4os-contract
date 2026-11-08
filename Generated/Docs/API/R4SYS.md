@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4SYS (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4SYS (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Sys` v37, 1432 Bytes, 174 Funktionsfelder und 177 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Sys` v38, 1480 Bytes, 180 Funktionsfelder und 183 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4SysFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -186,4 +186,10 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 174 | 1408 | function | `system_update_target_supported` | `*const fn ([*:0]const u8) callconv(.c) i32` |
 | 175 | 1416 | function | `file_metadata2` | `*const fn ([*:0]const u8, *FileMetadata2) callconv(.c) i32` |
 | 176 | 1424 | function | `directory_metadata_batch2` | `*const fn (?[*:0]const u8, *DirectoryMetadataCursor2, ?[*]DirectoryMetadataEntry2, u32) callconv(.c) i32` |
+| 177 | 1432 | function | `waitset_create` | `*const fn (u32, *u64) callconv(.c) i32` |
+| 178 | 1440 | function | `waitset_enroll` | `*const fn (u64, *const WaitSource, *u64) callconv(.c) i32` |
+| 179 | 1448 | function | `waitset_rearm` | `*const fn (u64, u64, *const WaitSource) callconv(.c) i32` |
+| 180 | 1456 | function | `waitset_remove` | `*const fn (u64, u64) callconv(.c) i32` |
+| 181 | 1464 | function | `waitset_wait` | `*const fn (u64, *const WaitSetDeadline, [*]WaitSetEvent, u32, *WaitSetBatch) callconv(.c) i32` |
+| 182 | 1472 | function | `waitset_close` | `*const fn (u64) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4SYS -->

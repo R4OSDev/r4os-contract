@@ -2935,6 +2935,25 @@ extern "C" {
 #define R4OS_FONT_METRICS2_VERSION 1u
 #define R4OS_FONT_METRICS2_FLAG_COMPLETE 1u
 #define R4OS_FONT_METRICS2_MAX_BYTES 4096u
+#define R4OS_WAITSET_VERSION 1u
+#define R4OS_WAITSET_MAX_SOURCES 32u
+#define R4OS_WAITSET_MAX_SOURCE_SUBSCRIBERS 32u
+#define R4OS_WAITSET_SOURCE_NOTIFICATION 1u
+#define R4OS_WAITSET_SOURCE_TIMER 2u
+#define R4OS_WAITSET_SOURCE_FLAG_STOP 1u
+#define R4OS_WAITSET_DEADLINE_POLL 0u
+#define R4OS_WAITSET_DEADLINE_FINITE 1u
+#define R4OS_WAITSET_DEADLINE_FOREVER 2u
+#define R4OS_WAITSET_OUTCOME_READY 0u
+#define R4OS_WAITSET_OUTCOME_TIMEOUT 1u
+#define R4OS_WAITSET_OUTCOME_CLOSED 2u
+#define R4OS_WAITSET_OUTCOME_CANCELLED 3u
+#define R4OS_WAITSET_EVENT_READY 0u
+#define R4OS_WAITSET_EVENT_SOURCE_CLOSED 1u
+#define R4OS_WAITSET_EVENT_CLOCK_CHANGED 2u
+#define R4OS_WAITSET_FLAG_MORE 1u
+#define R4OS_WAITSET_FLAG_RESCAN 2u
+#define R4OS_WAITSET_FLAG_COALESCED 4u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3386,6 +3405,21 @@ extern "C" {
 #define R4OS_FONT_METRICS2_UNAVAILABLE ((int32_t)-9)
 #define R4OS_FONT_METRICS2_STALE ((int32_t)-10)
 #define R4OS_FONT_METRICS2_EXHAUSTED ((int32_t)-12)
+#define R4OS_WAITSET_OK ((int32_t)0)
+#define R4OS_WAITSET_ERROR_INVALID ((int32_t)-13001)
+#define R4OS_WAITSET_ERROR_CONTEXT ((int32_t)-13002)
+#define R4OS_WAITSET_ERROR_STALE ((int32_t)-13003)
+#define R4OS_WAITSET_ERROR_CLOSED ((int32_t)-13004)
+#define R4OS_WAITSET_ERROR_CAPACITY ((int32_t)-13005)
+#define R4OS_WAITSET_ERROR_BUSY ((int32_t)-13006)
+#define R4OS_WAITSET_ERROR_CLOCK_UNAVAILABLE ((int32_t)-13007)
+#define R4OS_WAITSET_ERROR_CLOCK_CHANGED ((int32_t)-13008)
+#define R4OS_WAITSET_ERROR_MEMORY ((int32_t)-13009)
+#define R4OS_WAITSET_ERROR_EXHAUSTED ((int32_t)-13010)
+#define R4OS_WAITSET_ERROR_UNSUPPORTED ((int32_t)-13011)
+#define R4OS_WAITSET_ERROR_RELEASE ((int32_t)-13012)
+#define R4OS_WAITSET_ERROR_OWNER ((int32_t)-13013)
+#define R4OS_WAITSET_ERROR_OVERFLOW ((int32_t)-13014)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3408,7 +3442,8 @@ enum {
     R4_ERROR_DOMAIN_STORAGE = 16,
     R4_ERROR_DOMAIN_SERIAL = 17,
     R4_ERROR_DOMAIN_FILE_METADATA2 = 18,
-    R4_ERROR_DOMAIN_FONT_METRICS2 = 19
+    R4_ERROR_DOMAIN_FONT_METRICS2 = 19,
+    R4_ERROR_DOMAIN_WAITSET = 20
 };
 
 #define R4L_GROUP_R4SYS 1u
@@ -3846,6 +3881,10 @@ typedef struct R4DirectoryMetadataEntry2 R4DirectoryMetadataEntry2;
 typedef struct R4DirectoryMetadataCursor2 R4DirectoryMetadataCursor2;
 typedef struct R4FontAdvance2 R4FontAdvance2;
 typedef struct R4FontAdvanceInfo2 R4FontAdvanceInfo2;
+typedef struct R4WaitSource R4WaitSource;
+typedef struct R4WaitSetDeadline R4WaitSetDeadline;
+typedef struct R4WaitSetEvent R4WaitSetEvent;
+typedef struct R4WaitSetBatch R4WaitSetBatch;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11396,6 +11435,59 @@ typedef struct R4FontAdvanceInfo2 {
     uint32_t reserved0;
 } R4FontAdvanceInfo2;
 
+typedef struct R4WaitSource {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t flags;
+    uint64_t object;
+    uint64_t generation;
+    uint64_t observed_revision;
+    uint64_t user_tag;
+    uint64_t deadline_ns;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t event_backend;
+    uint32_t tick_hz;
+    uint64_t reserved0;
+} R4WaitSource;
+
+typedef struct R4WaitSetDeadline {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t reserved0;
+    uint64_t absolute_ns;
+    uint64_t last_ns;
+    uint32_t clock_source;
+    uint32_t clock_generation;
+    uint32_t event_backend;
+    uint32_t tick_hz;
+} R4WaitSetDeadline;
+
+typedef struct R4WaitSetEvent {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t flags;
+    uint64_t registration;
+    uint64_t user_tag;
+    uint64_t revision;
+    int32_t status;
+    uint32_t reserved0;
+} R4WaitSetEvent;
+
+typedef struct R4WaitSetBatch {
+    uint32_t version;
+    uint32_t size;
+    uint32_t outcome;
+    uint32_t flags;
+    uint32_t count;
+    uint32_t reserved0;
+    uint64_t configuration_revision;
+    uint64_t next_registration;
+} R4WaitSetBatch;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11616,6 +11708,12 @@ typedef int32_t (*R4SysServiceControlBoundFn)(const R4ServiceControlRequest * re
 typedef int32_t (*R4SysSystemUpdateTargetSupportedFn)(const uint8_t * path);
 typedef int32_t (*R4SysFileMetadata2Fn)(const uint8_t * path, R4FileMetadata2 * out_info);
 typedef int32_t (*R4SysDirectoryMetadataBatch2Fn)(const uint8_t * path, R4DirectoryMetadataCursor2 * cursor, R4DirectoryMetadataEntry2 * out, uint32_t capacity);
+typedef int32_t (*R4SysWaitsetCreateFn)(uint32_t capacity, uint64_t * out_handle);
+typedef int32_t (*R4SysWaitsetEnrollFn)(uint64_t set, const R4WaitSource * source, uint64_t * out_registration);
+typedef int32_t (*R4SysWaitsetRearmFn)(uint64_t set, uint64_t registration, const R4WaitSource * source);
+typedef int32_t (*R4SysWaitsetRemoveFn)(uint64_t set, uint64_t registration);
+typedef int32_t (*R4SysWaitsetWaitFn)(uint64_t set, const R4WaitSetDeadline * deadline, R4WaitSetEvent * out_events, uint32_t capacity, R4WaitSetBatch * out_batch);
+typedef int32_t (*R4SysWaitsetCloseFn)(uint64_t set);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11799,6 +11897,12 @@ typedef struct R4XStartR4Sys {
     uintptr_t system_update_target_supported;
     uintptr_t file_metadata2;
     uintptr_t directory_metadata_batch2;
+    uintptr_t waitset_create;
+    uintptr_t waitset_enroll;
+    uintptr_t waitset_rearm;
+    uintptr_t waitset_remove;
+    uintptr_t waitset_wait;
+    uintptr_t waitset_close;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -19267,7 +19371,52 @@ _Static_assert(offsetof(R4FontAdvanceInfo2, count) == 24u, "FontAdvanceInfo2.cou
 _Static_assert(offsetof(R4FontAdvanceInfo2, required_count) == 28u, "FontAdvanceInfo2.required_count offset mismatch");
 _Static_assert(offsetof(R4FontAdvanceInfo2, flags) == 32u, "FontAdvanceInfo2.flags offset mismatch");
 _Static_assert(offsetof(R4FontAdvanceInfo2, reserved0) == 36u, "FontAdvanceInfo2.reserved0 offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1432u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4WaitSource) == 80u, "WaitSource size mismatch");
+_Static_assert(offsetof(R4WaitSource, version) == 0u, "WaitSource.version offset mismatch");
+_Static_assert(offsetof(R4WaitSource, size) == 4u, "WaitSource.size offset mismatch");
+_Static_assert(offsetof(R4WaitSource, kind) == 8u, "WaitSource.kind offset mismatch");
+_Static_assert(offsetof(R4WaitSource, flags) == 12u, "WaitSource.flags offset mismatch");
+_Static_assert(offsetof(R4WaitSource, object) == 16u, "WaitSource.object offset mismatch");
+_Static_assert(offsetof(R4WaitSource, generation) == 24u, "WaitSource.generation offset mismatch");
+_Static_assert(offsetof(R4WaitSource, observed_revision) == 32u, "WaitSource.observed_revision offset mismatch");
+_Static_assert(offsetof(R4WaitSource, user_tag) == 40u, "WaitSource.user_tag offset mismatch");
+_Static_assert(offsetof(R4WaitSource, deadline_ns) == 48u, "WaitSource.deadline_ns offset mismatch");
+_Static_assert(offsetof(R4WaitSource, clock_source) == 56u, "WaitSource.clock_source offset mismatch");
+_Static_assert(offsetof(R4WaitSource, clock_generation) == 60u, "WaitSource.clock_generation offset mismatch");
+_Static_assert(offsetof(R4WaitSource, event_backend) == 64u, "WaitSource.event_backend offset mismatch");
+_Static_assert(offsetof(R4WaitSource, tick_hz) == 68u, "WaitSource.tick_hz offset mismatch");
+_Static_assert(offsetof(R4WaitSource, reserved0) == 72u, "WaitSource.reserved0 offset mismatch");
+_Static_assert(sizeof(R4WaitSetDeadline) == 48u, "WaitSetDeadline size mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, version) == 0u, "WaitSetDeadline.version offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, size) == 4u, "WaitSetDeadline.size offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, kind) == 8u, "WaitSetDeadline.kind offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, reserved0) == 12u, "WaitSetDeadline.reserved0 offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, absolute_ns) == 16u, "WaitSetDeadline.absolute_ns offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, last_ns) == 24u, "WaitSetDeadline.last_ns offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, clock_source) == 32u, "WaitSetDeadline.clock_source offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, clock_generation) == 36u, "WaitSetDeadline.clock_generation offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, event_backend) == 40u, "WaitSetDeadline.event_backend offset mismatch");
+_Static_assert(offsetof(R4WaitSetDeadline, tick_hz) == 44u, "WaitSetDeadline.tick_hz offset mismatch");
+_Static_assert(sizeof(R4WaitSetEvent) == 48u, "WaitSetEvent size mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, version) == 0u, "WaitSetEvent.version offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, size) == 4u, "WaitSetEvent.size offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, kind) == 8u, "WaitSetEvent.kind offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, flags) == 12u, "WaitSetEvent.flags offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, registration) == 16u, "WaitSetEvent.registration offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, user_tag) == 24u, "WaitSetEvent.user_tag offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, revision) == 32u, "WaitSetEvent.revision offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, status) == 40u, "WaitSetEvent.status offset mismatch");
+_Static_assert(offsetof(R4WaitSetEvent, reserved0) == 44u, "WaitSetEvent.reserved0 offset mismatch");
+_Static_assert(sizeof(R4WaitSetBatch) == 40u, "WaitSetBatch size mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, version) == 0u, "WaitSetBatch.version offset mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, size) == 4u, "WaitSetBatch.size offset mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, outcome) == 8u, "WaitSetBatch.outcome offset mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, flags) == 12u, "WaitSetBatch.flags offset mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, count) == 16u, "WaitSetBatch.count offset mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, reserved0) == 20u, "WaitSetBatch.reserved0 offset mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, configuration_revision) == 24u, "WaitSetBatch.configuration_revision offset mismatch");
+_Static_assert(offsetof(R4WaitSetBatch, next_registration) == 32u, "WaitSetBatch.next_registration offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1480u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -19619,6 +19768,18 @@ _Static_assert(offsetof(R4XStartR4Sys, file_metadata2) == 1416u, "R4XStartR4Sys.
 _Static_assert(sizeof(R4SysFileMetadata2Fn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, directory_metadata_batch2) == 1424u, "R4XStartR4Sys.directory_metadata_batch2 offset mismatch");
 _Static_assert(sizeof(R4SysDirectoryMetadataBatch2Fn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, waitset_create) == 1432u, "R4XStartR4Sys.waitset_create offset mismatch");
+_Static_assert(sizeof(R4SysWaitsetCreateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, waitset_enroll) == 1440u, "R4XStartR4Sys.waitset_enroll offset mismatch");
+_Static_assert(sizeof(R4SysWaitsetEnrollFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, waitset_rearm) == 1448u, "R4XStartR4Sys.waitset_rearm offset mismatch");
+_Static_assert(sizeof(R4SysWaitsetRearmFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, waitset_remove) == 1456u, "R4XStartR4Sys.waitset_remove offset mismatch");
+_Static_assert(sizeof(R4SysWaitsetRemoveFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, waitset_wait) == 1464u, "R4XStartR4Sys.waitset_wait offset mismatch");
+_Static_assert(sizeof(R4SysWaitsetWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, waitset_close) == 1472u, "R4XStartR4Sys.waitset_close offset mismatch");
+_Static_assert(sizeof(R4SysWaitsetCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

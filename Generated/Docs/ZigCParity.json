@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 509,
+    "group_function_signatures": 515,
     "sdk_operation_contracts": 0,
-    "parity_entries": 509,
+    "parity_entries": 515,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1574,6 +1574,60 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.directory_metadata_batch2",
       "c_contract": "R4SysDirectoryMetadataBatch2Fn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.waitset_create",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.waitset_create",
+      "c_contract": "R4SysWaitsetCreateFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.waitset_enroll",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.waitset_enroll",
+      "c_contract": "R4SysWaitsetEnrollFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.waitset_rearm",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.waitset_rearm",
+      "c_contract": "R4SysWaitsetRearmFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.waitset_remove",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.waitset_remove",
+      "c_contract": "R4SysWaitsetRemoveFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.waitset_wait",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.waitset_wait",
+      "c_contract": "R4SysWaitsetWaitFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.waitset_close",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.waitset_close",
+      "c_contract": "R4SysWaitsetCloseFn",
       "coverage": "generated_signature"
     },
     {
