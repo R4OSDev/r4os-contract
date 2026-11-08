@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 424 von 424 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 425 von 425 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 68; Konstanten: 2941; Limits: 111
+- Operationen: 0; Fehlerdomänen: 68; Konstanten: 2946; Limits: 111
 
 ## App-Profile
 
@@ -445,6 +445,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `WaitSetDeadline` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `WaitSetEvent` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `WaitSetBatch` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `WaitSourceRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 
 ## Typdetails
 
@@ -11002,6 +11003,26 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `configuration_revision` | 24 | 8 | 8 | `u64` | - |
 | `next_registration` | 32 | 8 | 8 | `u64` | - |
 
+### `WaitSourceRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 64 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `kind` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `object` | 16 | 8 | 8 | `u64` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `scope_id` | 32 | 8 | 8 | `u64` | - |
+| `scope_generation` | 40 | 8 | 8 | `u64` | - |
+| `user_tag` | 48 | 8 | 8 | `u64` | - |
+| `observed_revision` | 56 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -14780,6 +14801,11 @@ Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `waitset_flag_more` | `1` | `u32` | flag | bitmask | `waitset` | fixed_contract |
 | `waitset_flag_rescan` | `2` | `u32` | flag | bitmask | `waitset` | fixed_contract |
 | `waitset_flag_coalesced` | `4` | `u32` | flag | bitmask | `waitset` | fixed_contract |
+| `waitset_source_io` | `3` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_source_process` | `4` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_source_thread` | `5` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_source_service_endpoint` | `6` | `u32` | value | number | `waitset` | fixed_contract |
+| `waitset_source_gui_activity` | `7` | `u32` | value | number | `waitset` | fixed_contract |
 
 ## Limits
 

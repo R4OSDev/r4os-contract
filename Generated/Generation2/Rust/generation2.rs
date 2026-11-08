@@ -249,8 +249,9 @@ pub struct R4XStartR4Sys2 {
     pub waitset_remove: u64,
     pub waitset_wait: u64,
     pub waitset_close: u64,
+    pub waitset_source_prepare: u64,
 }
-impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 3, size: 1472, flags: 0,
+impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 4, size: 1480, flags: 0,
     write: 0,
     putc: 0,
     sleep_ticks: 0,
@@ -433,8 +434,9 @@ impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834
     waitset_remove: 0,
     waitset_wait: 0,
     waitset_close: 0,
+    waitset_source_prepare: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1472);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1480);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,write) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,putc) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,sleep_ticks) == 32);
@@ -617,6 +619,7 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1472);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_remove) == 1448);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_wait) == 1456);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_close) == 1464);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_source_prepare) == 1472);
 };
 impl R4XStartR4Sys2 {
     pub fn project_provider(source: &super::R4XStartR4Sys) -> Self { Self {
@@ -800,6 +803,7 @@ impl R4XStartR4Sys2 {
         waitset_remove: source.waitset_remove as u64,
         waitset_wait: source.waitset_wait as u64,
         waitset_close: source.waitset_close as u64,
+        waitset_source_prepare: source.waitset_source_prepare as u64,
         ..Self::default()
     } }
 }

@@ -2942,6 +2942,11 @@ pub const waitset_event_clock_changed: u32 = 2;
 pub const waitset_flag_more: u32 = 1;
 pub const waitset_flag_rescan: u32 = 2;
 pub const waitset_flag_coalesced: u32 = 4;
+pub const waitset_source_io: u32 = 3;
+pub const waitset_source_process: u32 = 4;
+pub const waitset_source_thread: u32 = 5;
+pub const waitset_source_service_endpoint: u32 = 6;
+pub const waitset_source_gui_activity: u32 = 7;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -11123,6 +11128,19 @@ pub const WaitSetBatch = extern struct {
     next_registration: u64 = 0,
 };
 
+pub const WaitSourceRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 64,
+    kind: u32 = 0,
+    flags: u32 = 0,
+    object: u64 = 0,
+    generation: u64 = 0,
+    scope_id: u64 = 0,
+    scope_generation: u64 = 0,
+    user_tag: u64 = 0,
+    observed_revision: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11304,12 +11322,13 @@ pub const R4SysFns = struct {
     pub const waitset_remove = *const fn (u64, u64) callconv(.c) i32;
     pub const waitset_wait = *const fn (u64, *const WaitSetDeadline, [*]WaitSetEvent, u32, *WaitSetBatch) callconv(.c) i32;
     pub const waitset_close = *const fn (u64) callconv(.c) i32;
+    pub const waitset_source_prepare = *const fn (*const WaitSourceRequest, *WaitSource) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 38,
-    size: u32 = 1480,
+    abi_version: u32 = 39,
+    size: u32 = 1488,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -11494,6 +11513,7 @@ pub const R4XStartR4Sys = extern struct {
     waitset_remove: usize = 0,
     waitset_wait: usize = 0,
     waitset_close: usize = 0,
+    waitset_source_prepare: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -12411,6 +12431,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 180, .offset = 1456, .name = "waitset_remove", .state = .function, .required = false },
     .{ .number = 181, .offset = 1464, .name = "waitset_wait", .state = .function, .required = false },
     .{ .number = 182, .offset = 1472, .name = "waitset_close", .state = .function, .required = false },
+    .{ .number = 183, .offset = 1480, .name = "waitset_source_prepare", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -19979,7 +20000,19 @@ comptime {
     if (@offsetOf(WaitSetBatch, "reserved0") != 20) @compileError("generated ABI offset drift: WaitSetBatch.reserved0");
     if (@offsetOf(WaitSetBatch, "configuration_revision") != 24) @compileError("generated ABI offset drift: WaitSetBatch.configuration_revision");
     if (@offsetOf(WaitSetBatch, "next_registration") != 32) @compileError("generated ABI offset drift: WaitSetBatch.next_registration");
-    if (@sizeOf(R4XStartR4Sys) != 1480) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(WaitSourceRequest) != 64) @compileError("generated ABI size drift: WaitSourceRequest");
+    if (@alignOf(WaitSourceRequest) != 8) @compileError("generated ABI alignment drift: WaitSourceRequest");
+    if (@offsetOf(WaitSourceRequest, "version") != 0) @compileError("generated ABI offset drift: WaitSourceRequest.version");
+    if (@offsetOf(WaitSourceRequest, "size") != 4) @compileError("generated ABI offset drift: WaitSourceRequest.size");
+    if (@offsetOf(WaitSourceRequest, "kind") != 8) @compileError("generated ABI offset drift: WaitSourceRequest.kind");
+    if (@offsetOf(WaitSourceRequest, "flags") != 12) @compileError("generated ABI offset drift: WaitSourceRequest.flags");
+    if (@offsetOf(WaitSourceRequest, "object") != 16) @compileError("generated ABI offset drift: WaitSourceRequest.object");
+    if (@offsetOf(WaitSourceRequest, "generation") != 24) @compileError("generated ABI offset drift: WaitSourceRequest.generation");
+    if (@offsetOf(WaitSourceRequest, "scope_id") != 32) @compileError("generated ABI offset drift: WaitSourceRequest.scope_id");
+    if (@offsetOf(WaitSourceRequest, "scope_generation") != 40) @compileError("generated ABI offset drift: WaitSourceRequest.scope_generation");
+    if (@offsetOf(WaitSourceRequest, "user_tag") != 48) @compileError("generated ABI offset drift: WaitSourceRequest.user_tag");
+    if (@offsetOf(WaitSourceRequest, "observed_revision") != 56) @compileError("generated ABI offset drift: WaitSourceRequest.observed_revision");
+    if (@sizeOf(R4XStartR4Sys) != 1488) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -20163,6 +20196,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "waitset_remove") != 1456) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_remove");
     if (@offsetOf(R4XStartR4Sys, "waitset_wait") != 1464) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_wait");
     if (@offsetOf(R4XStartR4Sys, "waitset_close") != 1472) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_close");
+    if (@offsetOf(R4XStartR4Sys, "waitset_source_prepare") != 1480) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_source_prepare");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -20695,13 +20729,14 @@ pub const R4SysProvider = struct {
     waitset_remove: ?R4SysFns.waitset_remove = null,
     waitset_wait: ?R4SysFns.waitset_wait = null,
     waitset_close: ?R4SysFns.waitset_close = null,
+    waitset_source_prepare: ?R4SysFns.waitset_source_prepare = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 38,
-        .size = 1480,
+        .abi_version = 39,
+        .size = 1488,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -20886,6 +20921,7 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .waitset_remove = if (provider.waitset_remove) |callback| @intFromPtr(callback) else 0,
         .waitset_wait = if (provider.waitset_wait) |callback| @intFromPtr(callback) else 0,
         .waitset_close = if (provider.waitset_close) |callback| @intFromPtr(callback) else 0,
+        .waitset_source_prepare = if (provider.waitset_source_prepare) |callback| @intFromPtr(callback) else 0,
     };
 }
 

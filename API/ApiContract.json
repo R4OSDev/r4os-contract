@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 38,
+      "abi_version": 39,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1480,
+      "size": 1488,
       "slots": [
         {
           "number": 0,
@@ -14534,6 +14534,82 @@
             "close_rule": "invalidates_on_success",
             "outputs": "success_only",
             "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 183,
+          "offset": 1480,
+          "name": "waitset_source_prepare",
+          "state": "function",
+          "required": false,
+          "description": "Prepare kinds3..7 from copied64byte complete identities under each canonical IO/Program/Thread/Service/GUI owner, then Runtime. Output existing80byte source publishes only on success. Globally never-reused observer epoch prevents enrollment from following a replacement after prepare. No resource retain, work consumption, polling worker or new registry. Legacy IO/endpoint identifies current incarnation only; ambiguous IO IDs rejected. Main GUI only. Unsupported remains explicit. Preparation can race Close; Enroll then returns Stale/Closed.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "request",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSourceRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_source",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSource"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "waitset",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "none",
             "retry": "never_automatic",
             "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
@@ -133009,7 +133085,7 @@
             "kind": "scalar",
             "name": "u32"
           },
-          "description": "Notification1 or timer2; other kinds Unsupported.",
+          "description": "Notification1/Timer2 or prepared IO3/Process4/Thread5/Endpoint6/GUI7.",
           "size": 4,
           "alignment": 4,
           "source_type": "u32",
@@ -133037,7 +133113,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Exact notification handle; timer0.",
+          "description": "Notification or actual resource lookup ID; timer and current GUI0.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -133051,7 +133127,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Notification/timer0; future typed resource generation.",
+          "description": "Notification/Timer0; other kinds nonzero opaque observer epoch returned by source_prepare, never a guessed resource generation.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -133065,7 +133141,7 @@
             "kind": "scalar",
             "name": "u64"
           },
-          "description": "Notification non-consuming observed sequence; timer0.",
+          "description": "Notification/GUI revision. Other resource kinds0 on initial admission; level readiness remains ready across Rearm until actual owner consumes/closes it.",
           "size": 8,
           "alignment": 8,
           "source_type": "u64",
@@ -133172,7 +133248,7 @@
         }
       ],
       "values": [],
-      "description": "Copied source specification. Notification exact process-local never-reused handle or one-shot latched absolute timer. No caller pointer is retained. Creator-task ownership and actual source lifetime bind each registration; unsupported kinds are refused. Future adapters use object+generation without reinterpreting notification/timer fields."
+      "description": "Copied source specification. Notification/Timer retain original layouts and semantics. Kinds3..7 require waitset_source_prepare and a nonzero never-reused observer epoch in generation. Prepared source grants no retained lease; admission revalidates actual owner. All resource events are observations, never read/reap/Join/buffer release."
     },
     {
       "name": "WaitSetDeadline",
@@ -133593,6 +133669,160 @@
       ],
       "values": [],
       "description": "Bounded wake-any snapshot. Ready observations remain level-triggered until rearm/remove; More is not a drained-event-queue receipt. Rotating next_registration prevents permanent prefix starvation. Timeout/Close/Cancelled never imply physical retirement."
+    },
+    {
+      "name": "WaitSourceRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 64,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Version1.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Exact64bytes.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "64"
+        },
+        {
+          "name": "kind",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "IO3/Process4/Thread5/Endpoint6/GUI7.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Zero.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "object",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Legacy IO request ID or exact process/thread/endpoint ID. Current main GUI uses0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Process/thread exact public generation. IO/Endpoint/GUI0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scope_id",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Thread exact instance ID; other kinds0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "scope_generation",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Thread exact instance generation; other kinds0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "user_tag",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Copied scalar.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_revision",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "GUI observation sequence,0 initially; level sources require0.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Short source preparation request. Copies full Process/Thread identities; snapshots the CURRENT caller-owned legacy IO/endpoint incarnation. No retained resource lease or historical identity promise for recycled legacy IDs. Returns existing80byte WaitSource with an opaque, never-reused provider epoch. Enroll revalidates exact epoch under original resource owner; close/restart returns Stale/SourceClosed. GUI is current Main/Owner context only."
     }
   ],
   "operations": [],
@@ -165857,6 +166087,56 @@
       "scope": "waitset",
       "stability": "fixed_contract",
       "description": "Notification revision gap exceeds1; no individual-event FIFO."
+    },
+    {
+      "name": "waitset_source_io",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Actual caller-owned asynchronous IO terminal completion; no buffer/DMA retirement acknowledgement."
+    },
+    {
+      "name": "waitset_source_process",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Exact process completion; non-consuming, no Retain/Reap."
+    },
+    {
+      "name": "waitset_source_thread",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Exact same-instance joinable thread terminal state; no Join or retirement acknowledgement."
+    },
+    {
+      "name": "waitset_source_service_endpoint",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Actual currently bound service endpoint incoming FIFO; owner pump performs ordinary recv/reply."
+    },
+    {
+      "name": "waitset_source_gui_activity",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "waitset",
+      "stability": "fixed_contract",
+      "description": "Current main GUI activity channel including existing shared notifications. No GUI worker access."
     }
   ],
   "limits": [

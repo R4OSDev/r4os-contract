@@ -33,7 +33,7 @@ pub unsafe extern "C" fn r4os_rust_generation2(
         (default.magic, default.abi_version, default.size),
         (
             abi::generation2::R4SYS_MAGIC,
-            3,
+            4,
             core::mem::size_of_val(&default) as u32
         )
     );

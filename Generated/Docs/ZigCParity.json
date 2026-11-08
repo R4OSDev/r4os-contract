@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 515,
+    "group_function_signatures": 516,
     "sdk_operation_contracts": 0,
-    "parity_entries": 515,
+    "parity_entries": 516,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1628,6 +1628,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.waitset_close",
       "c_contract": "R4SysWaitsetCloseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.waitset_source_prepare",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.waitset_source_prepare",
+      "c_contract": "R4SysWaitsetSourcePrepareFn",
       "coverage": "generated_signature"
     },
     {

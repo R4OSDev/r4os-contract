@@ -2954,6 +2954,11 @@ extern "C" {
 #define R4OS_WAITSET_FLAG_MORE 1u
 #define R4OS_WAITSET_FLAG_RESCAN 2u
 #define R4OS_WAITSET_FLAG_COALESCED 4u
+#define R4OS_WAITSET_SOURCE_IO 3u
+#define R4OS_WAITSET_SOURCE_PROCESS 4u
+#define R4OS_WAITSET_SOURCE_THREAD 5u
+#define R4OS_WAITSET_SOURCE_SERVICE_ENDPOINT 6u
+#define R4OS_WAITSET_SOURCE_GUI_ACTIVITY 7u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3885,6 +3890,7 @@ typedef struct R4WaitSource R4WaitSource;
 typedef struct R4WaitSetDeadline R4WaitSetDeadline;
 typedef struct R4WaitSetEvent R4WaitSetEvent;
 typedef struct R4WaitSetBatch R4WaitSetBatch;
+typedef struct R4WaitSourceRequest R4WaitSourceRequest;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11488,6 +11494,19 @@ typedef struct R4WaitSetBatch {
     uint64_t next_registration;
 } R4WaitSetBatch;
 
+typedef struct R4WaitSourceRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t kind;
+    uint32_t flags;
+    uint64_t object;
+    uint64_t generation;
+    uint64_t scope_id;
+    uint64_t scope_generation;
+    uint64_t user_tag;
+    uint64_t observed_revision;
+} R4WaitSourceRequest;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -11714,6 +11733,7 @@ typedef int32_t (*R4SysWaitsetRearmFn)(uint64_t set, uint64_t registration, cons
 typedef int32_t (*R4SysWaitsetRemoveFn)(uint64_t set, uint64_t registration);
 typedef int32_t (*R4SysWaitsetWaitFn)(uint64_t set, const R4WaitSetDeadline * deadline, R4WaitSetEvent * out_events, uint32_t capacity, R4WaitSetBatch * out_batch);
 typedef int32_t (*R4SysWaitsetCloseFn)(uint64_t set);
+typedef int32_t (*R4SysWaitsetSourcePrepareFn)(const R4WaitSourceRequest * request, R4WaitSource * out_source);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -11903,6 +11923,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t waitset_remove;
     uintptr_t waitset_wait;
     uintptr_t waitset_close;
+    uintptr_t waitset_source_prepare;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -19416,7 +19437,18 @@ _Static_assert(offsetof(R4WaitSetBatch, count) == 16u, "WaitSetBatch.count offse
 _Static_assert(offsetof(R4WaitSetBatch, reserved0) == 20u, "WaitSetBatch.reserved0 offset mismatch");
 _Static_assert(offsetof(R4WaitSetBatch, configuration_revision) == 24u, "WaitSetBatch.configuration_revision offset mismatch");
 _Static_assert(offsetof(R4WaitSetBatch, next_registration) == 32u, "WaitSetBatch.next_registration offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1480u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4WaitSourceRequest) == 64u, "WaitSourceRequest size mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, version) == 0u, "WaitSourceRequest.version offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, size) == 4u, "WaitSourceRequest.size offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, kind) == 8u, "WaitSourceRequest.kind offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, flags) == 12u, "WaitSourceRequest.flags offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, object) == 16u, "WaitSourceRequest.object offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, generation) == 24u, "WaitSourceRequest.generation offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, scope_id) == 32u, "WaitSourceRequest.scope_id offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, scope_generation) == 40u, "WaitSourceRequest.scope_generation offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, user_tag) == 48u, "WaitSourceRequest.user_tag offset mismatch");
+_Static_assert(offsetof(R4WaitSourceRequest, observed_revision) == 56u, "WaitSourceRequest.observed_revision offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1488u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -19780,6 +19812,8 @@ _Static_assert(offsetof(R4XStartR4Sys, waitset_wait) == 1464u, "R4XStartR4Sys.wa
 _Static_assert(sizeof(R4SysWaitsetWaitFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, waitset_close) == 1472u, "R4XStartR4Sys.waitset_close offset mismatch");
 _Static_assert(sizeof(R4SysWaitsetCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, waitset_source_prepare) == 1480u, "R4XStartR4Sys.waitset_source_prepare offset mismatch");
+_Static_assert(sizeof(R4SysWaitsetSourcePrepareFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

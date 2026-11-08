@@ -183,6 +183,7 @@ static R4SysWaitsetRearmFn r4os_probe_r4sys_waitset_rearm = (R4SysWaitsetRearmFn
 static R4SysWaitsetRemoveFn r4os_probe_r4sys_waitset_remove = (R4SysWaitsetRemoveFn)0;
 static R4SysWaitsetWaitFn r4os_probe_r4sys_waitset_wait = (R4SysWaitsetWaitFn)0;
 static R4SysWaitsetCloseFn r4os_probe_r4sys_waitset_close = (R4SysWaitsetCloseFn)0;
+static R4SysWaitsetSourcePrepareFn r4os_probe_r4sys_waitset_source_prepare = (R4SysWaitsetSourcePrepareFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;

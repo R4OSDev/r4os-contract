@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 515,
-    "group_slot_count": 515,
+    "function_count": 516,
+    "group_slot_count": 516,
     "sdk_only_count": 0,
-    "public_count": 373,
+    "public_count": 374,
     "advanced_count": 142
   },
   "functions": [
@@ -2169,6 +2169,18 @@
       "slot": 182,
       "exposure": "public",
       "description": "Any same-process task may close to cancel an owner wait. Close atomically detaches every source link and wakes original Task queue before heap free. Failed backing free preserves exact closed identity for retry. Waiter never dereferences old set after park. Process cleanup drains sets before notification sources and Runtime backing. Already removed handles are stale; SDK owner may make its own completed close idempotent.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.waitset_source_prepare",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 183,
+      "exposure": "public",
+      "description": "Prepare kinds3..7 from copied64byte complete identities under each canonical IO/Program/Thread/Service/GUI owner, then Runtime. Output existing80byte source publishes only on success. Globally never-reused observer epoch prevents enrollment from following a replacement after prepare. No resource retain, work consumption, polling worker or new registry. Legacy IO/endpoint identifies current incarnation only; ambiguous IO IDs rejected. Main GUI only. Unsupported remains explicit. Preparation can race Close; Enroll then returns Stale/Closed.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

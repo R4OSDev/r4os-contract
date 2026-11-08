@@ -2948,6 +2948,11 @@ pub const waitset_event_clock_changed: u32 = 2;
 pub const waitset_flag_more: u32 = 1;
 pub const waitset_flag_rescan: u32 = 2;
 pub const waitset_flag_coalesced: u32 = 4;
+pub const waitset_source_io: u32 = 3;
+pub const waitset_source_process: u32 = 4;
+pub const waitset_source_thread: u32 = 5;
+pub const waitset_source_service_endpoint: u32 = 6;
+pub const waitset_source_gui_activity: u32 = 7;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -21214,6 +21219,38 @@ impl Default for WaitSetBatch {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct WaitSourceRequest {
+    pub version: u32,
+    pub size: u32,
+    pub kind: u32,
+    pub flags: u32,
+    pub object: u64,
+    pub generation: u64,
+    pub scope_id: u64,
+    pub scope_generation: u64,
+    pub user_tag: u64,
+    pub observed_revision: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for WaitSourceRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 64,
+            kind: 0,
+            flags: 0,
+            object: 0,
+            generation: 0,
+            scope_id: 0,
+            scope_generation: 0,
+            user_tag: 0,
+            observed_revision: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21406,6 +21443,7 @@ pub mod R4SysFns {
     pub type waitset_remove = unsafe extern "C" fn(u64, u64) -> i32;
     pub type waitset_wait = unsafe extern "C" fn(u64, *const WaitSetDeadline, *mut WaitSetEvent, u32, *mut WaitSetBatch) -> i32;
     pub type waitset_close = unsafe extern "C" fn(u64) -> i32;
+    pub type waitset_source_prepare = unsafe extern "C" fn(*const WaitSourceRequest, *mut WaitSource) -> i32;
 }
 
 #[repr(C)]
@@ -21598,14 +21636,15 @@ pub struct R4XStartR4Sys {
     pub waitset_remove: usize,
     pub waitset_wait: usize,
     pub waitset_close: usize,
+    pub waitset_source_prepare: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 38,
-            size: 1480,
+            abi_version: 39,
+            size: 1488,
             flags: 0,
             write: 0,
             putc: 0,
@@ -21790,6 +21829,7 @@ impl Default for R4XStartR4Sys {
             waitset_remove: 0,
             waitset_wait: 0,
             waitset_close: 0,
+            waitset_source_prepare: 0,
         }
     }
 }
@@ -34526,6 +34566,18 @@ const _: () = {
     assert!(core::mem::offset_of!(WaitSetBatch, next_registration) == 32);
     assert!(core::mem::size_of::<WaitSetBatch>() == 40);
     assert!(core::mem::align_of::<WaitSetBatch>() == 8);
+    assert!(core::mem::offset_of!(WaitSourceRequest, version) == 0);
+    assert!(core::mem::offset_of!(WaitSourceRequest, size) == 4);
+    assert!(core::mem::offset_of!(WaitSourceRequest, kind) == 8);
+    assert!(core::mem::offset_of!(WaitSourceRequest, flags) == 12);
+    assert!(core::mem::offset_of!(WaitSourceRequest, object) == 16);
+    assert!(core::mem::offset_of!(WaitSourceRequest, generation) == 24);
+    assert!(core::mem::offset_of!(WaitSourceRequest, scope_id) == 32);
+    assert!(core::mem::offset_of!(WaitSourceRequest, scope_generation) == 40);
+    assert!(core::mem::offset_of!(WaitSourceRequest, user_tag) == 48);
+    assert!(core::mem::offset_of!(WaitSourceRequest, observed_revision) == 56);
+    assert!(core::mem::size_of::<WaitSourceRequest>() == 64);
+    assert!(core::mem::align_of::<WaitSourceRequest>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -34715,7 +34767,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_remove) == 1456);
     assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_wait) == 1464);
     assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_close) == 1472);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1480);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_source_prepare) == 1480);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1488);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);
