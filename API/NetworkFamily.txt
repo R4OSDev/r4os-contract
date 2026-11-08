@@ -52,6 +52,13 @@ front tables and existing backend resources. Counter exhaustion fails instead
 of wrapping typed generations. Backend handle identities do not rewind during
 a live restart. Lost creation replies close their newly created owner resource.
 
+Creation first requires a free original front entry. An undeliverable public
+creation reply attempts original backend close/abort. The front entry is
+released only on an actual acknowledgement; uncertainty retains it until a
+later owner-end or service cleanup. A lost private backend creation result can
+also retain bounded backend work until its real cleanup. There is no invented
+receipt or automatic retry of an outcome whose resource identity is unknown.
+
 The existing request header identifies the caller process, not an individual
 opened service channel. New resources retain its full ProgramProcessHandle
 generation internally, so a reused process ID cannot adopt an old resource.
@@ -157,6 +164,15 @@ qualification. No application/import/profile migration is performed here.
 
 PRIVATE EXISTING-KERNEL NIPC ADAPTERS
 -----------------------------------
+On the existing TCP/UDP kernel channels, network_op_info accepts an empty
+request and returns NetworkProviderInfo48 with provider0. This zero is private
+adapter metadata, never a public managed-service provider identity. Its
+qualified bits and per-call limits advertise the retained TCP/truncating UDP
+operations below. An older backend's BadOp or malformed reply grants none of
+these features. TCPSVC/UDPSVC INFO then retains its actual process generation
+but returns transport capability bits/limits0, and typed creation fails Backend.
+Their unchanged Query1 operations can continue on that older backend.
+
 net_service_op_tcp_connect_retained_result uses the original6byte IPv4/port
 payload and optional ServiceDeadlineFooter, and original NetServiceTcpResult.
 It sets retention during allocation at the TCP owner, before handshake/receive.
