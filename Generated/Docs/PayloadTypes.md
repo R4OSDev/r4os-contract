@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 418 von 418 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 420 von 420 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 66; Konstanten: 2919; Limits: 111
+- Operationen: 0; Fehlerdomänen: 67; Konstanten: 2922; Limits: 111
 
 ## App-Profile
 
@@ -439,6 +439,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `FileMetadata2` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `DirectoryMetadataEntry2` | fixed_layout | extern_struct | 1136/8 | 1136/8 | 1136/8 | 1136/8 |
 | `DirectoryMetadataCursor2` | extensible | extern_struct | 2184/8 | 2184/8 | 2184/8 | 2184/8 |
+| `FontAdvance2` | fixed_layout | extern_struct | 8/4 | 8/4 | 8/4 | 8/4 |
+| `FontAdvanceInfo2` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
 
 ## Typdetails
 
@@ -10884,6 +10886,37 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved0` | 20 | 4 | 4 | `u32` | - |
 | `scan` | 24 | 2160 | 8 | `DirectoryBatchCursor` | - |
 
+### `FontAdvance2`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 8 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `byte_end` | 0 | 4 | 4 | `u32` | - |
+| `prefix_width` | 4 | 4 | 4 | `u32` | - |
+
+### `FontAdvanceInfo2`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `font_revision` | 8 | 8 | 8 | `u64` | - |
+| `font_id` | 16 | 4 | 4 | `u32` | - |
+| `text_bytes` | 20 | 4 | 4 | `u32` | - |
+| `count` | 24 | 4 | 4 | `u32` | - |
+| `required_count` | 28 | 4 | 4 | `u32` | - |
+| `flags` | 32 | 4 | 4 | `u32` | - |
+| `reserved0` | 36 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -11678,6 +11711,22 @@ Geltung: `file_metadata2`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `file_metadata_error_unrepresentable` | -11 | `i32` |
 | `file_metadata2_error_namespace_exhausted` | -12 | `i32` |
 | `file_metadata2_error_unsupported` | -13 | `i32` |
+
+### `font_metrics2`
+
+Geltung: `font_metrics2`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `font_metrics2_ok` | 0 | `i32` |
+| `font_metrics2_invalid` | -1 | `i32` |
+| `font_metrics2_font` | -2 | `i32` |
+| `font_metrics2_encoding` | -5 | `i32` |
+| `font_metrics2_overflow` | -6 | `i32` |
+| `font_metrics2_capacity` | -7 | `i32` |
+| `font_metrics2_unavailable` | -9 | `i32` |
+| `font_metrics2_stale` | -10 | `i32` |
+| `font_metrics2_exhausted` | -12 | `i32` |
 
 ## Konstanten
 
@@ -14602,6 +14651,9 @@ Geltung: `file_metadata2`, Einheit: `status_code`, Stabilität: `fixed_contract`
 | `file_metadata2_flag_backend_node_valid` | `32` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
 | `file_metadata2_flag_dos_time_valid` | `64` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
 | `file_metadata2_flag_reparse` | `128` | `u32` | flag | bitmask | `file_metadata2` | fixed_contract |
+| `font_metrics2_version` | `1` | `u32` | version | number | `font_metrics2` | fixed_contract |
+| `font_metrics2_flag_complete` | `1` | `u32` | flag | bitmask | `font_metrics2` | fixed_contract |
+| `font_metrics2_max_bytes` | `4096` | `u32` | value | bytes | `font_metrics2` | fixed_contract |
 
 ## Limits
 

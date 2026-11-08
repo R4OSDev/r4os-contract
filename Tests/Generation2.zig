@@ -16,7 +16,7 @@ test "new generation has distinct identities and exact compact layouts in C and 
         try std.testing.expectEqual(@sizeOf(T), @sizeOf(C));
         try std.testing.expectEqual(@alignOf(T), @alignOf(C));
         inline for (std.meta.fields(T)) |f| try std.testing.expectEqual(@offsetOf(T, f.name), @offsetOf(C, f.name));
-        const version: u32 = if (T == api.R4XStartR4Sys2 or T == api.R4XStartR4Dev2) 2 else 1;
+        const version: u32 = if (T == api.R4XStartR4Sys2 or T == api.R4XStartR4Draw2 or T == api.R4XStartR4Dev2) 2 else 1;
         try std.testing.expectEqual(version, (T{}).abi_version);
     }
     try std.testing.expect(!@hasField(api.R4XStartR4Sys2, "reserved_shell_run"));
@@ -29,6 +29,10 @@ test "new generation has distinct identities and exact compact layouts in C and 
     try std.testing.expectEqual(@as(usize, 1424), @offsetOf(api.shared.R4XStartR4Sys, "directory_metadata_batch2"));
     try std.testing.expectEqual(@as(usize, 1408), @offsetOf(api.R4XStartR4Sys2, "file_metadata2"));
     try std.testing.expectEqual(@as(usize, 1416), @offsetOf(api.R4XStartR4Sys2, "directory_metadata_batch2"));
+    try std.testing.expectEqual(@as(usize, 912), @offsetOf(api.shared.R4XStartR4Draw, "font_prefix_metrics2"));
+    try std.testing.expectEqual(@as(usize, 912), @offsetOf(api.R4XStartR4Draw2, "font_prefix_metrics2"));
+    try std.testing.expectEqual(@as(usize, 8), @sizeOf(api.shared.FontAdvance2));
+    try std.testing.expectEqual(@as(usize, 40), @sizeOf(api.shared.FontAdvanceInfo2));
 }
 
 test "generation2 typed calls preserve the canonical C function signature and declared prefix" {

@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 508,
-    "group_slot_count": 508,
+    "function_count": 509,
+    "group_slot_count": 509,
     "sdk_only_count": 0,
-    "public_count": 366,
+    "public_count": 367,
     "advanced_count": 142
   },
   "functions": [
@@ -4353,6 +4353,18 @@
       "slot": 111,
       "exposure": "public",
       "description": "Admit a normalized brightness request for an exact native output generation. Latest writer wins, survives caller exit. Returns an admission serial only; hardware completion/failure is read separately. No synchronous hardware call.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DRAW.font_prefix_metrics2",
+      "group": "R4DRAW",
+      "kind": "group_slot",
+      "slot": 112,
+      "exposure": "public",
+      "description": "Bounded linear scalar-prefix widths under one existing exact font bank/task-unwind lease. Strict UTF8/no embedded NUL, explicit length0..4096, rows capacity0..4096. One preflight validates/counts; one emission pass uses current additive glyph advances and existing CR/LF maximum-line width behavior. Returns0 complete with unique nonzero bank revision/count/complete flag; -7 capacity reports required_count with no usable rows; all other errors grant no output authority. Empty source/capacity0 is a constant-work checked font stamp probe, no full text scan. Caller keeps immutable source and whole aligned disjoint exclusive outputs/code through real synchronous return. No heap, global text cache, persistent handle, second font owner, rendering/shaping/kerning or current-font/physical completion promise. Canonical font revision wrap permanently refuses new metrics rather than reusing identities; existing font APIs remain unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

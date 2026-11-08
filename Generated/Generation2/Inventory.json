@@ -3298,6 +3298,15 @@
       "removed": false
     },
     {
+      "group": "R4DRAW",
+      "name": "font_prefix_metrics2",
+      "source_number": 112,
+      "source_offset": 912,
+      "number": 112,
+      "offset": 912,
+      "removed": false
+    },
+    {
       "group": "R4NET",
       "name": "tcp_connect",
       "source_number": 0,

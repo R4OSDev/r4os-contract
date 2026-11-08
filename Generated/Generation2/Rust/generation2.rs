@@ -1220,8 +1220,9 @@ pub struct R4XStartR4Draw2 {
     pub gfx_queue_submit_render_color_grid_list: u64,
     pub gfx_output_brightness: u64,
     pub gfx_brightness_request: u64,
+    pub font_prefix_metrics2: u64,
 }
-impl Default for R4XStartR4Draw2 { fn default() -> Self { Self { magic: 844579922, abi_version: 1, size: 912, flags: 0,
+impl Default for R4XStartR4Draw2 { fn default() -> Self { Self { magic: 844579922, abi_version: 2, size: 920, flags: 0,
     screen_width: 0,
     screen_height: 0,
     clear: 0,
@@ -1334,8 +1335,9 @@ impl Default for R4XStartR4Draw2 { fn default() -> Self { Self { magic: 84457992
     gfx_queue_submit_render_color_grid_list: 0,
     gfx_output_brightness: 0,
     gfx_brightness_request: 0,
+    font_prefix_metrics2: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Draw2>() == 912);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Draw2>() == 920);
     assert!(core::mem::offset_of!(R4XStartR4Draw2,screen_width) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Draw2,screen_height) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Draw2,clear) == 32);
@@ -1448,6 +1450,7 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Draw2>() == 912);
     assert!(core::mem::offset_of!(R4XStartR4Draw2,gfx_queue_submit_render_color_grid_list) == 888);
     assert!(core::mem::offset_of!(R4XStartR4Draw2,gfx_output_brightness) == 896);
     assert!(core::mem::offset_of!(R4XStartR4Draw2,gfx_brightness_request) == 904);
+    assert!(core::mem::offset_of!(R4XStartR4Draw2,font_prefix_metrics2) == 912);
 };
 impl R4XStartR4Draw2 {
     pub fn project_provider(source: &super::R4XStartR4Draw) -> Self { Self {
@@ -1563,6 +1566,7 @@ impl R4XStartR4Draw2 {
         gfx_queue_submit_render_color_grid_list: source.gfx_queue_submit_render_color_grid_list as u64,
         gfx_output_brightness: source.gfx_output_brightness as u64,
         gfx_brightness_request: source.gfx_brightness_request as u64,
+        font_prefix_metrics2: source.font_prefix_metrics2 as u64,
         ..Self::default()
     } }
 }

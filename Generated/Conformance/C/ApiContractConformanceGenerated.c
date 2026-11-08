@@ -365,6 +365,7 @@ static R4DrawGfxQueueSubmitNativeFn r4os_probe_r4draw_gfx_queue_submit_native = 
 static R4DrawGfxQueueSubmitRenderColorGridListFn r4os_probe_r4draw_gfx_queue_submit_render_color_grid_list = (R4DrawGfxQueueSubmitRenderColorGridListFn)0;
 static R4DrawGfxOutputBrightnessFn r4os_probe_r4draw_gfx_output_brightness = (R4DrawGfxOutputBrightnessFn)0;
 static R4DrawGfxBrightnessRequestFn r4os_probe_r4draw_gfx_brightness_request = (R4DrawGfxBrightnessRequestFn)0;
+static R4DrawFontPrefixMetrics2Fn r4os_probe_r4draw_font_prefix_metrics2 = (R4DrawFontPrefixMetrics2Fn)0;
 static R4NetTcpConnectFn r4os_probe_r4net_tcp_connect = (R4NetTcpConnectFn)0;
 static R4NetTcpWriteFn r4os_probe_r4net_tcp_write = (R4NetTcpWriteFn)0;
 static R4NetTcpReadFn r4os_probe_r4net_tcp_read = (R4NetTcpReadFn)0;

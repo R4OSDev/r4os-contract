@@ -6735,6 +6735,19 @@ comptime {
     if (@offsetOf(abi.DirectoryMetadataCursor2, "flags") != 16) @compileError("DirectoryMetadataCursor2.flags offset");
     if (@offsetOf(abi.DirectoryMetadataCursor2, "reserved0") != 20) @compileError("DirectoryMetadataCursor2.reserved0 offset");
     if (@offsetOf(abi.DirectoryMetadataCursor2, "scan") != 24) @compileError("DirectoryMetadataCursor2.scan offset");
+    if (@sizeOf(abi.FontAdvance2) != 8) @compileError("FontAdvance2 size");
+    if (@offsetOf(abi.FontAdvance2, "byte_end") != 0) @compileError("FontAdvance2.byte_end offset");
+    if (@offsetOf(abi.FontAdvance2, "prefix_width") != 4) @compileError("FontAdvance2.prefix_width offset");
+    if (@sizeOf(abi.FontAdvanceInfo2) != 40) @compileError("FontAdvanceInfo2 size");
+    if (@offsetOf(abi.FontAdvanceInfo2, "version") != 0) @compileError("FontAdvanceInfo2.version offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "size") != 4) @compileError("FontAdvanceInfo2.size offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "font_revision") != 8) @compileError("FontAdvanceInfo2.font_revision offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "font_id") != 16) @compileError("FontAdvanceInfo2.font_id offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "text_bytes") != 20) @compileError("FontAdvanceInfo2.text_bytes offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "count") != 24) @compileError("FontAdvanceInfo2.count offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "required_count") != 28) @compileError("FontAdvanceInfo2.required_count offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "flags") != 32) @compileError("FontAdvanceInfo2.flags offset");
+    if (@offsetOf(abi.FontAdvanceInfo2, "reserved0") != 36) @compileError("FontAdvanceInfo2.reserved0 offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1432) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
@@ -7241,7 +7254,7 @@ comptime {
     if (@sizeOf(abi.R4DeskFns.gui_host_input) != 8) @compileError("R4DeskFns.gui_host_input signature");
     if (@offsetOf(abi.R4XStartR4Desk, "gui_window_appearance") != 624) @compileError("R4XStartR4Desk.gui_window_appearance offset");
     if (@sizeOf(abi.R4DeskFns.gui_window_appearance) != 8) @compileError("R4DeskFns.gui_window_appearance signature");
-    if (@sizeOf(abi.R4XStartR4Draw) != 912) @compileError("R4XStartR4Draw size");
+    if (@sizeOf(abi.R4XStartR4Draw) != 920) @compileError("R4XStartR4Draw size");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_width") != 16) @compileError("R4XStartR4Draw.screen_width offset");
     if (@sizeOf(abi.R4DrawFns.screen_width) != 8) @compileError("R4DrawFns.screen_width signature");
     if (@offsetOf(abi.R4XStartR4Draw, "screen_height") != 24) @compileError("R4XStartR4Draw.screen_height offset");
@@ -7466,6 +7479,8 @@ comptime {
     if (@sizeOf(abi.R4DrawFns.gfx_output_brightness) != 8) @compileError("R4DrawFns.gfx_output_brightness signature");
     if (@offsetOf(abi.R4XStartR4Draw, "gfx_brightness_request") != 904) @compileError("R4XStartR4Draw.gfx_brightness_request offset");
     if (@sizeOf(abi.R4DrawFns.gfx_brightness_request) != 8) @compileError("R4DrawFns.gfx_brightness_request signature");
+    if (@offsetOf(abi.R4XStartR4Draw, "font_prefix_metrics2") != 912) @compileError("R4XStartR4Draw.font_prefix_metrics2 offset");
+    if (@sizeOf(abi.R4DrawFns.font_prefix_metrics2) != 8) @compileError("R4DrawFns.font_prefix_metrics2 signature");
     if (@sizeOf(abi.R4XStartR4Net) != 296) @compileError("R4XStartR4Net size");
     if (@offsetOf(abi.R4XStartR4Net, "tcp_connect") != 16) @compileError("R4XStartR4Net.tcp_connect offset");
     if (@sizeOf(abi.R4NetFns.tcp_connect) != 8) @compileError("R4NetFns.tcp_connect signature");

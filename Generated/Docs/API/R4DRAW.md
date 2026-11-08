@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DRAW (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DRAW (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Draw` v39, 912 Bytes, 112 Funktionsfelder und 112 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Draw` v40, 920 Bytes, 113 Funktionsfelder und 113 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DrawFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -121,4 +121,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 109 | 888 | function | `gfx_queue_submit_render_color_grid_list` | `*const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorGridList, *GfxFenceStatus) callconv(.c) i32` |
 | 110 | 896 | function | `gfx_output_brightness` | `*const fn (*const GfxOutputId, *GfxOutputBrightness) callconv(.c) i32` |
 | 111 | 904 | function | `gfx_brightness_request` | `*const fn (*const GfxBrightnessRequest, *GfxBrightnessRequest) callconv(.c) i32` |
+| 112 | 912 | function | `font_prefix_metrics2` | `*const fn (u32, ?[*]const u8, u32, ?[*]FontAdvance2, u32, *FontAdvanceInfo2) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DRAW -->

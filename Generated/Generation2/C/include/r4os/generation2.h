@@ -551,7 +551,7 @@ _Static_assert(offsetof(R4XStartR4Desk2,gui_pointer_capture_host)==608, "Generat
 _Static_assert(offsetof(R4XStartR4Desk2,gui_host_input)==616, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Desk2,gui_window_appearance)==624, "Generation2 slot");
 #define R4OS2_R4DRAW_MAGIC UINT32_C(844579922)
-#define R4OS2_R4DRAW_VERSION UINT32_C(1)
+#define R4OS2_R4DRAW_VERSION UINT32_C(2)
 typedef struct {
     uint32_t magic, abi_version, size, flags;
     uint64_t screen_width;
@@ -666,8 +666,9 @@ typedef struct {
     uint64_t gfx_queue_submit_render_color_grid_list;
     uint64_t gfx_output_brightness;
     uint64_t gfx_brightness_request;
+    uint64_t font_prefix_metrics2;
 } R4XStartR4Draw2;
-_Static_assert(sizeof(R4XStartR4Draw2)==912, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Draw2)==920, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Draw2,screen_width)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Draw2,screen_height)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Draw2,clear)==32, "Generation2 slot");
@@ -780,6 +781,7 @@ _Static_assert(offsetof(R4XStartR4Draw2,gfx_queue_submit_native)==880, "Generati
 _Static_assert(offsetof(R4XStartR4Draw2,gfx_queue_submit_render_color_grid_list)==888, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Draw2,gfx_output_brightness)==896, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Draw2,gfx_brightness_request)==904, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Draw2,font_prefix_metrics2)==912, "Generation2 slot");
 #define R4OS2_R4NET_MAGIC UINT32_C(843402834)
 #define R4OS2_R4NET_VERSION UINT32_C(1)
 typedef struct {

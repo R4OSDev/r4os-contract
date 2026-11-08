@@ -2932,6 +2932,9 @@ extern "C" {
 #define R4OS_FILE_METADATA2_FLAG_BACKEND_NODE_VALID 32u
 #define R4OS_FILE_METADATA2_FLAG_DOS_TIME_VALID 64u
 #define R4OS_FILE_METADATA2_FLAG_REPARSE 128u
+#define R4OS_FONT_METRICS2_VERSION 1u
+#define R4OS_FONT_METRICS2_FLAG_COMPLETE 1u
+#define R4OS_FONT_METRICS2_MAX_BYTES 4096u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3374,6 +3377,15 @@ extern "C" {
 #define R4OS_FILE_METADATA_ERROR_UNREPRESENTABLE ((int32_t)-11)
 #define R4OS_FILE_METADATA2_ERROR_NAMESPACE_EXHAUSTED ((int32_t)-12)
 #define R4OS_FILE_METADATA2_ERROR_UNSUPPORTED ((int32_t)-13)
+#define R4OS_FONT_METRICS2_OK ((int32_t)0)
+#define R4OS_FONT_METRICS2_INVALID ((int32_t)-1)
+#define R4OS_FONT_METRICS2_FONT ((int32_t)-2)
+#define R4OS_FONT_METRICS2_ENCODING ((int32_t)-5)
+#define R4OS_FONT_METRICS2_OVERFLOW ((int32_t)-6)
+#define R4OS_FONT_METRICS2_CAPACITY ((int32_t)-7)
+#define R4OS_FONT_METRICS2_UNAVAILABLE ((int32_t)-9)
+#define R4OS_FONT_METRICS2_STALE ((int32_t)-10)
+#define R4OS_FONT_METRICS2_EXHAUSTED ((int32_t)-12)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3395,7 +3407,8 @@ enum {
     R4_ERROR_DOMAIN_DEVICE = 15,
     R4_ERROR_DOMAIN_STORAGE = 16,
     R4_ERROR_DOMAIN_SERIAL = 17,
-    R4_ERROR_DOMAIN_FILE_METADATA2 = 18
+    R4_ERROR_DOMAIN_FILE_METADATA2 = 18,
+    R4_ERROR_DOMAIN_FONT_METRICS2 = 19
 };
 
 #define R4L_GROUP_R4SYS 1u
@@ -3831,6 +3844,8 @@ typedef struct R4FileIdentity2 R4FileIdentity2;
 typedef struct R4FileMetadata2 R4FileMetadata2;
 typedef struct R4DirectoryMetadataEntry2 R4DirectoryMetadataEntry2;
 typedef struct R4DirectoryMetadataCursor2 R4DirectoryMetadataCursor2;
+typedef struct R4FontAdvance2 R4FontAdvance2;
+typedef struct R4FontAdvanceInfo2 R4FontAdvanceInfo2;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -11364,6 +11379,23 @@ typedef struct R4DirectoryMetadataCursor2 {
     R4DirectoryBatchCursor scan;
 } R4DirectoryMetadataCursor2;
 
+typedef struct R4FontAdvance2 {
+    uint32_t byte_end;
+    uint32_t prefix_width;
+} R4FontAdvance2;
+
+typedef struct R4FontAdvanceInfo2 {
+    uint32_t version;
+    uint32_t size;
+    uint64_t font_revision;
+    uint32_t font_id;
+    uint32_t text_bytes;
+    uint32_t count;
+    uint32_t required_count;
+    uint32_t flags;
+    uint32_t reserved0;
+} R4FontAdvanceInfo2;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -12042,6 +12074,7 @@ typedef int32_t (*R4DrawGfxQueueSubmitNativeFn)(const R4GfxQueueHandle * queue, 
 typedef int32_t (*R4DrawGfxQueueSubmitRenderColorGridListFn)(const R4GfxQueueHandle * queue, const R4GfxSubmission * submission, const R4GfxRenderColorGridList * list, R4GfxFenceStatus * output);
 typedef int32_t (*R4DrawGfxOutputBrightnessFn)(const R4GfxOutputId * identity, R4GfxOutputBrightness * output);
 typedef int32_t (*R4DrawGfxBrightnessRequestFn)(const R4GfxBrightnessRequest * input, R4GfxBrightnessRequest * output);
+typedef int32_t (*R4DrawFontPrefixMetrics2Fn)(uint32_t font_id, const uint8_t * text, uint32_t text_bytes, R4FontAdvance2 * rows, uint32_t capacity, R4FontAdvanceInfo2 * out_info);
 
 typedef struct R4XStartR4Draw {
     uint32_t magic;
@@ -12160,6 +12193,7 @@ typedef struct R4XStartR4Draw {
     uintptr_t gfx_queue_submit_render_color_grid_list;
     uintptr_t gfx_output_brightness;
     uintptr_t gfx_brightness_request;
+    uintptr_t font_prefix_metrics2;
 } R4XStartR4Draw;
 
 typedef int32_t (*R4NetTcpConnectFn)(uint8_t arg0, uint8_t arg1, uint8_t arg2, uint8_t arg3, uint16_t arg4);
@@ -19220,6 +19254,19 @@ _Static_assert(offsetof(R4DirectoryMetadataCursor2, namespace_generation) == 8u,
 _Static_assert(offsetof(R4DirectoryMetadataCursor2, flags) == 16u, "DirectoryMetadataCursor2.flags offset mismatch");
 _Static_assert(offsetof(R4DirectoryMetadataCursor2, reserved0) == 20u, "DirectoryMetadataCursor2.reserved0 offset mismatch");
 _Static_assert(offsetof(R4DirectoryMetadataCursor2, scan) == 24u, "DirectoryMetadataCursor2.scan offset mismatch");
+_Static_assert(sizeof(R4FontAdvance2) == 8u, "FontAdvance2 size mismatch");
+_Static_assert(offsetof(R4FontAdvance2, byte_end) == 0u, "FontAdvance2.byte_end offset mismatch");
+_Static_assert(offsetof(R4FontAdvance2, prefix_width) == 4u, "FontAdvance2.prefix_width offset mismatch");
+_Static_assert(sizeof(R4FontAdvanceInfo2) == 40u, "FontAdvanceInfo2 size mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, version) == 0u, "FontAdvanceInfo2.version offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, size) == 4u, "FontAdvanceInfo2.size offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, font_revision) == 8u, "FontAdvanceInfo2.font_revision offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, font_id) == 16u, "FontAdvanceInfo2.font_id offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, text_bytes) == 20u, "FontAdvanceInfo2.text_bytes offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, count) == 24u, "FontAdvanceInfo2.count offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, required_count) == 28u, "FontAdvanceInfo2.required_count offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, flags) == 32u, "FontAdvanceInfo2.flags offset mismatch");
+_Static_assert(offsetof(R4FontAdvanceInfo2, reserved0) == 36u, "FontAdvanceInfo2.reserved0 offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1432u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -19726,7 +19773,7 @@ _Static_assert(offsetof(R4XStartR4Desk, gui_host_input) == 616u, "R4XStartR4Desk
 _Static_assert(sizeof(R4DeskGuiHostInputFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, gui_window_appearance) == 624u, "R4XStartR4Desk.gui_window_appearance offset mismatch");
 _Static_assert(sizeof(R4DeskGuiWindowAppearanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Draw) == 912u, "R4XStartR4Draw size mismatch");
+_Static_assert(sizeof(R4XStartR4Draw) == 920u, "R4XStartR4Draw size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_width) == 16u, "R4XStartR4Draw.screen_width offset mismatch");
 _Static_assert(sizeof(R4DrawScreenWidthFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, screen_height) == 24u, "R4XStartR4Draw.screen_height offset mismatch");
@@ -19951,6 +19998,8 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_output_brightness) == 896u, "R4XStar
 _Static_assert(sizeof(R4DrawGfxOutputBrightnessFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, gfx_brightness_request) == 904u, "R4XStartR4Draw.gfx_brightness_request offset mismatch");
 _Static_assert(sizeof(R4DrawGfxBrightnessRequestFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Draw, font_prefix_metrics2) == 912u, "R4XStartR4Draw.font_prefix_metrics2 offset mismatch");
+_Static_assert(sizeof(R4DrawFontPrefixMetrics2Fn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

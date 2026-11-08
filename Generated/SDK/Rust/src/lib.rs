@@ -2926,6 +2926,9 @@ pub const file_metadata2_flag_content_revision_valid: u32 = 16;
 pub const file_metadata2_flag_backend_node_valid: u32 = 32;
 pub const file_metadata2_flag_dos_time_valid: u32 = 64;
 pub const file_metadata2_flag_reparse: u32 = 128;
+pub const font_metrics2_version: u32 = 1;
+pub const font_metrics2_flag_complete: u32 = 1;
+pub const font_metrics2_max_bytes: u32 = 4096;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3368,6 +3371,15 @@ pub const file_metadata2_error_restart: i32 = -10;
 pub const file_metadata_error_unrepresentable: i32 = -11;
 pub const file_metadata2_error_namespace_exhausted: i32 = -12;
 pub const file_metadata2_error_unsupported: i32 = -13;
+pub const font_metrics2_ok: i32 = 0;
+pub const font_metrics2_invalid: i32 = -1;
+pub const font_metrics2_font: i32 = -2;
+pub const font_metrics2_encoding: i32 = -5;
+pub const font_metrics2_overflow: i32 = -6;
+pub const font_metrics2_capacity: i32 = -7;
+pub const font_metrics2_unavailable: i32 = -9;
+pub const font_metrics2_stale: i32 = -10;
+pub const font_metrics2_exhausted: i32 = -12;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -3392,6 +3404,7 @@ impl R4ErrorDomain {
     pub const storage: Self = Self(16);
     pub const serial: Self = Self(17);
     pub const file_metadata2: Self = Self(18);
+    pub const font_metrics2: Self = Self(19);
 }
 
 #[repr(transparent)]
@@ -20990,6 +21003,52 @@ impl Default for DirectoryMetadataCursor2 {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FontAdvance2 {
+    pub byte_end: u32,
+    pub prefix_width: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FontAdvance2 {
+    fn default() -> Self {
+        Self {
+            byte_end: 0,
+            prefix_width: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct FontAdvanceInfo2 {
+    pub version: u32,
+    pub size: u32,
+    pub font_revision: u64,
+    pub font_id: u32,
+    pub text_bytes: u32,
+    pub count: u32,
+    pub required_count: u32,
+    pub flags: u32,
+    pub reserved0: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for FontAdvanceInfo2 {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            font_revision: 0,
+            font_id: 0,
+            text_bytes: 0,
+            count: 0,
+            required_count: 0,
+            flags: 0,
+            reserved0: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -21922,6 +21981,7 @@ pub mod R4DrawFns {
     pub type gfx_queue_submit_render_color_grid_list = unsafe extern "C" fn(*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorGridList, *mut GfxFenceStatus) -> i32;
     pub type gfx_output_brightness = unsafe extern "C" fn(*const GfxOutputId, *mut GfxOutputBrightness) -> i32;
     pub type gfx_brightness_request = unsafe extern "C" fn(*const GfxBrightnessRequest, *mut GfxBrightnessRequest) -> i32;
+    pub type font_prefix_metrics2 = unsafe extern "C" fn(u32, *const u8, u32, *mut FontAdvance2, u32, *mut FontAdvanceInfo2) -> i32;
 }
 
 #[repr(C)]
@@ -22043,14 +22103,15 @@ pub struct R4XStartR4Draw {
     pub gfx_queue_submit_render_color_grid_list: usize,
     pub gfx_output_brightness: usize,
     pub gfx_brightness_request: usize,
+    pub font_prefix_metrics2: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Draw {
     fn default() -> Self {
         Self {
             magic: 827802706,
-            abi_version: 39,
-            size: 912,
+            abi_version: 40,
+            size: 920,
             flags: 0,
             screen_width: 0,
             screen_height: 0,
@@ -22164,6 +22225,7 @@ impl Default for R4XStartR4Draw {
             gfx_queue_submit_render_color_grid_list: 0,
             gfx_output_brightness: 0,
             gfx_brightness_request: 0,
+            font_prefix_metrics2: 0,
         }
     }
 }
@@ -34217,6 +34279,21 @@ const _: () = {
     assert!(core::mem::offset_of!(DirectoryMetadataCursor2, scan) == 24);
     assert!(core::mem::size_of::<DirectoryMetadataCursor2>() == 2184);
     assert!(core::mem::align_of::<DirectoryMetadataCursor2>() == 8);
+    assert!(core::mem::offset_of!(FontAdvance2, byte_end) == 0);
+    assert!(core::mem::offset_of!(FontAdvance2, prefix_width) == 4);
+    assert!(core::mem::size_of::<FontAdvance2>() == 8);
+    assert!(core::mem::align_of::<FontAdvance2>() == 4);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, version) == 0);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, size) == 4);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, font_revision) == 8);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, font_id) == 16);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, text_bytes) == 20);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, count) == 24);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, required_count) == 28);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, flags) == 32);
+    assert!(core::mem::offset_of!(FontAdvanceInfo2, reserved0) == 36);
+    assert!(core::mem::size_of::<FontAdvanceInfo2>() == 40);
+    assert!(core::mem::align_of::<FontAdvanceInfo2>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -34601,7 +34678,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Draw, gfx_queue_submit_render_color_grid_list) == 888);
     assert!(core::mem::offset_of!(R4XStartR4Draw, gfx_output_brightness) == 896);
     assert!(core::mem::offset_of!(R4XStartR4Draw, gfx_brightness_request) == 904);
-    assert!(core::mem::size_of::<R4XStartR4Draw>() == 912);
+    assert!(core::mem::offset_of!(R4XStartR4Draw, font_prefix_metrics2) == 912);
+    assert!(core::mem::size_of::<R4XStartR4Draw>() == 920);
     assert!(core::mem::align_of::<R4XStartR4Draw>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Net, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Net, abi_version) == 4);

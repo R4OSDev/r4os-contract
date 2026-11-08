@@ -586,8 +586,8 @@ comptime {
 pub const R4DrawFns2 = shared.R4DrawFns;
 pub const R4XStartR4Draw2 = extern struct {
     magic: u32 = 844579922,
-    abi_version: u32 = 1,
-    size: u32 = 912,
+    abi_version: u32 = 2,
+    size: u32 = 920,
     flags: u32 = 0,
     @"screen_width": u64 = 0,
     @"screen_height": u64 = 0,
@@ -701,9 +701,10 @@ pub const R4XStartR4Draw2 = extern struct {
     @"gfx_queue_submit_render_color_grid_list": u64 = 0,
     @"gfx_output_brightness": u64 = 0,
     @"gfx_brightness_request": u64 = 0,
+    @"font_prefix_metrics2": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Draw2) != 912) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Draw2) != 920) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Draw2, "screen_width") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Draw2, "screen_height") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Draw2, "clear") != 32) @compileError("Generation2 slot offset");
@@ -816,6 +817,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw2, "gfx_queue_submit_render_color_grid_list") != 888) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Draw2, "gfx_output_brightness") != 896) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Draw2, "gfx_brightness_request") != 904) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Draw2, "font_prefix_metrics2") != 912) @compileError("Generation2 slot offset");
 }
 pub const R4NetFns2 = shared.R4NetFns;
 pub const R4XStartR4Net2 = extern struct {

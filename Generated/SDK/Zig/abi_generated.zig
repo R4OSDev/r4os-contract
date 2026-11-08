@@ -2920,6 +2920,9 @@ pub const file_metadata2_flag_content_revision_valid: u32 = 16;
 pub const file_metadata2_flag_backend_node_valid: u32 = 32;
 pub const file_metadata2_flag_dos_time_valid: u32 = 64;
 pub const file_metadata2_flag_reparse: u32 = 128;
+pub const font_metrics2_version: u32 = 1;
+pub const font_metrics2_flag_complete: u32 = 1;
+pub const font_metrics2_max_bytes: u32 = 4096;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3362,6 +3365,15 @@ pub const file_metadata2_error_restart: i32 = -10;
 pub const file_metadata_error_unrepresentable: i32 = -11;
 pub const file_metadata2_error_namespace_exhausted: i32 = -12;
 pub const file_metadata2_error_unsupported: i32 = -13;
+pub const font_metrics2_ok: i32 = 0;
+pub const font_metrics2_invalid: i32 = -1;
+pub const font_metrics2_font: i32 = -2;
+pub const font_metrics2_encoding: i32 = -5;
+pub const font_metrics2_overflow: i32 = -6;
+pub const font_metrics2_capacity: i32 = -7;
+pub const font_metrics2_unavailable: i32 = -9;
+pub const font_metrics2_stale: i32 = -10;
+pub const font_metrics2_exhausted: i32 = -12;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -3383,6 +3395,7 @@ pub const R4ErrorDomain = enum(u16) {
     storage = 16,
     serial = 17,
     file_metadata2 = 18,
+    font_metrics2 = 19,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -11005,6 +11018,23 @@ pub const DirectoryMetadataCursor2 = extern struct {
     scan: DirectoryBatchCursor = .{},
 };
 
+pub const FontAdvance2 = extern struct {
+    byte_end: u32 = 0,
+    prefix_width: u32 = 0,
+};
+
+pub const FontAdvanceInfo2 = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    font_revision: u64 = 0,
+    font_id: u32 = 0,
+    text_bytes: u32 = 0,
+    count: u32 = 0,
+    required_count: u32 = 0,
+    flags: u32 = 0,
+    reserved0: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11642,12 +11672,13 @@ pub const R4DrawFns = struct {
     pub const gfx_queue_submit_render_color_grid_list = *const fn (*const GfxQueueHandle, *const GfxSubmission, *const GfxRenderColorGridList, *GfxFenceStatus) callconv(.c) i32;
     pub const gfx_output_brightness = *const fn (*const GfxOutputId, *GfxOutputBrightness) callconv(.c) i32;
     pub const gfx_brightness_request = *const fn (*const GfxBrightnessRequest, *GfxBrightnessRequest) callconv(.c) i32;
+    pub const font_prefix_metrics2 = *const fn (u32, ?[*]const u8, u32, ?[*]FontAdvance2, u32, *FontAdvanceInfo2) callconv(.c) i32;
 };
 
 pub const R4XStartR4Draw = extern struct {
     magic: u32 = 827802706,
-    abi_version: u32 = 39,
-    size: u32 = 912,
+    abi_version: u32 = 40,
+    size: u32 = 920,
     flags: u32 = 0,
     screen_width: usize = 0,
     screen_height: usize = 0,
@@ -11761,6 +11792,7 @@ pub const R4XStartR4Draw = extern struct {
     gfx_queue_submit_render_color_grid_list: usize = 0,
     gfx_output_brightness: usize = 0,
     gfx_brightness_request: usize = 0,
+    font_prefix_metrics2: usize = 0,
 };
 
 pub const R4NetFns = struct {
@@ -12468,6 +12500,7 @@ pub const R4DrawSlots = [_]R4ApiSlotMeta{
     .{ .number = 109, .offset = 888, .name = "gfx_queue_submit_render_color_grid_list", .state = .function, .required = false },
     .{ .number = 110, .offset = 896, .name = "gfx_output_brightness", .state = .function, .required = false },
     .{ .number = 111, .offset = 904, .name = "gfx_brightness_request", .state = .function, .required = false },
+    .{ .number = 112, .offset = 912, .name = "font_prefix_metrics2", .state = .function, .required = false },
 };
 
 pub const R4NetSlots = [_]R4ApiSlotMeta{
@@ -19776,6 +19809,21 @@ comptime {
     if (@offsetOf(DirectoryMetadataCursor2, "flags") != 16) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.flags");
     if (@offsetOf(DirectoryMetadataCursor2, "reserved0") != 20) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.reserved0");
     if (@offsetOf(DirectoryMetadataCursor2, "scan") != 24) @compileError("generated ABI offset drift: DirectoryMetadataCursor2.scan");
+    if (@sizeOf(FontAdvance2) != 8) @compileError("generated ABI size drift: FontAdvance2");
+    if (@alignOf(FontAdvance2) != 4) @compileError("generated ABI alignment drift: FontAdvance2");
+    if (@offsetOf(FontAdvance2, "byte_end") != 0) @compileError("generated ABI offset drift: FontAdvance2.byte_end");
+    if (@offsetOf(FontAdvance2, "prefix_width") != 4) @compileError("generated ABI offset drift: FontAdvance2.prefix_width");
+    if (@sizeOf(FontAdvanceInfo2) != 40) @compileError("generated ABI size drift: FontAdvanceInfo2");
+    if (@alignOf(FontAdvanceInfo2) != 8) @compileError("generated ABI alignment drift: FontAdvanceInfo2");
+    if (@offsetOf(FontAdvanceInfo2, "version") != 0) @compileError("generated ABI offset drift: FontAdvanceInfo2.version");
+    if (@offsetOf(FontAdvanceInfo2, "size") != 4) @compileError("generated ABI offset drift: FontAdvanceInfo2.size");
+    if (@offsetOf(FontAdvanceInfo2, "font_revision") != 8) @compileError("generated ABI offset drift: FontAdvanceInfo2.font_revision");
+    if (@offsetOf(FontAdvanceInfo2, "font_id") != 16) @compileError("generated ABI offset drift: FontAdvanceInfo2.font_id");
+    if (@offsetOf(FontAdvanceInfo2, "text_bytes") != 20) @compileError("generated ABI offset drift: FontAdvanceInfo2.text_bytes");
+    if (@offsetOf(FontAdvanceInfo2, "count") != 24) @compileError("generated ABI offset drift: FontAdvanceInfo2.count");
+    if (@offsetOf(FontAdvanceInfo2, "required_count") != 28) @compileError("generated ABI offset drift: FontAdvanceInfo2.required_count");
+    if (@offsetOf(FontAdvanceInfo2, "flags") != 32) @compileError("generated ABI offset drift: FontAdvanceInfo2.flags");
+    if (@offsetOf(FontAdvanceInfo2, "reserved0") != 36) @compileError("generated ABI offset drift: FontAdvanceInfo2.reserved0");
     if (@sizeOf(R4XStartR4Sys) != 1432) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -20032,7 +20080,7 @@ comptime {
     if (@offsetOf(R4XStartR4Desk, "gui_pointer_capture_host") != 608) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_pointer_capture_host");
     if (@offsetOf(R4XStartR4Desk, "gui_host_input") != 616) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_host_input");
     if (@offsetOf(R4XStartR4Desk, "gui_window_appearance") != 624) @compileError("generated ABI offset drift: R4XStartR4Desk.gui_window_appearance");
-    if (@sizeOf(R4XStartR4Draw) != 912) @compileError("generated ABI size drift: R4XStartR4Draw");
+    if (@sizeOf(R4XStartR4Draw) != 920) @compileError("generated ABI size drift: R4XStartR4Draw");
     if (@offsetOf(R4XStartR4Draw, "screen_width") != 16) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_width");
     if (@offsetOf(R4XStartR4Draw, "screen_height") != 24) @compileError("generated ABI offset drift: R4XStartR4Draw.screen_height");
     if (@offsetOf(R4XStartR4Draw, "clear") != 32) @compileError("generated ABI offset drift: R4XStartR4Draw.clear");
@@ -20145,6 +20193,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_queue_submit_render_color_grid_list") != 888) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_queue_submit_render_color_grid_list");
     if (@offsetOf(R4XStartR4Draw, "gfx_output_brightness") != 896) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_output_brightness");
     if (@offsetOf(R4XStartR4Draw, "gfx_brightness_request") != 904) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_brightness_request");
+    if (@offsetOf(R4XStartR4Draw, "font_prefix_metrics2") != 912) @compileError("generated ABI offset drift: R4XStartR4Draw.font_prefix_metrics2");
     if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
