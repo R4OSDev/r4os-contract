@@ -100,6 +100,7 @@ typedef struct R4DriverApi2 R4DriverApi2;
 typedef struct R4ProtocolApi2 R4ProtocolApi2;
 typedef struct R4AudioBackend2 R4AudioBackend2;
 typedef struct R4AudioBackendStatus2 R4AudioBackendStatus2;
+typedef struct R4AudioCaptureBackend2 R4AudioCaptureBackend2;
 
 typedef uint16_t R4ErrorDomain;
 #define R4ABI_ERROR_DOMAIN_NONE ((R4ErrorDomain)UINT64_C(0))
@@ -126,6 +127,7 @@ typedef uint16_t R4ErrorDomain;
 #define R4ABI_ERROR_DOMAIN_BYTE_PIPE ((R4ErrorDomain)UINT64_C(21))
 #define R4ABI_ERROR_DOMAIN_LAUNCH_IO ((R4ErrorDomain)UINT64_C(22))
 #define R4ABI_ERROR_DOMAIN_COMPOSITION ((R4ErrorDomain)UINT64_C(23))
+#define R4ABI_ERROR_DOMAIN_AUDIO_CAPTURE ((R4ErrorDomain)UINT64_C(24))
 typedef uint32_t R4XStartAppClass;
 #define R4ABI_X_START_APP_CLASS_AUTO ((R4XStartAppClass)UINT64_C(0))
 #define R4ABI_X_START_APP_CLASS_CONSOLE ((R4XStartAppClass)UINT64_C(1))
@@ -243,6 +245,7 @@ typedef void (*R4NetTxComplete)(uint64_t, int32_t, uint32_t);
 typedef int32_t (*R4NetTransmitPacketFn)(void *, const R4NetTxRequest *);
 typedef int32_t (*R4AudioBackendRegisterFn2)(const uint8_t *, const R4AudioBackend2 *);
 typedef int32_t (*R4AudioBackendStatusFn2)(void *, R4AudioBackendStatus2 *);
+typedef int32_t (*R4AudioCaptureRegisterFn2)(const uint8_t *, const R4AudioCaptureBackend2 *);
 
 struct R4LABISnapshot {
     uint32_t magic;
@@ -3599,8 +3602,9 @@ struct R4DriverApi2 {
     int32_t (*driver_work_submit_owned)(int32_t (*)(uintptr_t), uintptr_t, uint32_t *);
     int32_t (*serial_query)(R4DriverSerialApi *);
     int32_t (*register_audio_output_epoch)(const uint8_t *, int32_t (*)(uint64_t, R4AudioOutputEpoch *));
+    int32_t (*register_audio_capture_backend)(const uint8_t *, const R4AudioCaptureBackend2 *);
 };
-_Static_assert(sizeof(R4DriverApi2) == 656, "R4DriverApi2 size");
+_Static_assert(sizeof(R4DriverApi2) == 664, "R4DriverApi2 size");
 _Static_assert(_Alignof(R4DriverApi2) == 8, "R4DriverApi2 alignment");
 _Static_assert(offsetof(R4DriverApi2, magic) == 0, "R4DriverApi2.magic offset");
 _Static_assert(offsetof(R4DriverApi2, version) == 4, "R4DriverApi2.version offset");
@@ -3686,6 +3690,7 @@ _Static_assert(offsetof(R4DriverApi2, dma_sync_range_for_cpu) == 624, "R4DriverA
 _Static_assert(offsetof(R4DriverApi2, driver_work_submit_owned) == 632, "R4DriverApi2.driver_work_submit_owned offset");
 _Static_assert(offsetof(R4DriverApi2, serial_query) == 640, "R4DriverApi2.serial_query offset");
 _Static_assert(offsetof(R4DriverApi2, register_audio_output_epoch) == 648, "R4DriverApi2.register_audio_output_epoch offset");
+_Static_assert(offsetof(R4DriverApi2, register_audio_capture_backend) == 656, "R4DriverApi2.register_audio_capture_backend offset");
 
 struct R4ProtocolApi2 {
     uint32_t magic;
@@ -3807,6 +3812,25 @@ _Static_assert(offsetof(R4AudioBackendStatus2, silence_refills) == 48, "R4AudioB
 _Static_assert(offsetof(R4AudioBackendStatus2, buffer_bytes) == 56, "R4AudioBackendStatus2.buffer_bytes offset");
 _Static_assert(offsetof(R4AudioBackendStatus2, queued_buffers) == 64, "R4AudioBackendStatus2.queued_buffers offset");
 _Static_assert(offsetof(R4AudioBackendStatus2, last_buffer_bytes) == 72, "R4AudioBackendStatus2.last_buffer_bytes offset");
+
+struct R4AudioCaptureBackend2 {
+    uint32_t magic;
+    uint32_t version;
+    uint32_t size;
+    uint32_t flags;
+    void *context;
+    int32_t (*io)(void *, const R4AudioCaptureRequest *, R4AudioCaptureReply *, uint8_t *, uint32_t);
+    int32_t (*shutdown)(void *);
+};
+_Static_assert(sizeof(R4AudioCaptureBackend2) == 40, "R4AudioCaptureBackend2 size");
+_Static_assert(_Alignof(R4AudioCaptureBackend2) == 8, "R4AudioCaptureBackend2 alignment");
+_Static_assert(offsetof(R4AudioCaptureBackend2, magic) == 0, "R4AudioCaptureBackend2.magic offset");
+_Static_assert(offsetof(R4AudioCaptureBackend2, version) == 4, "R4AudioCaptureBackend2.version offset");
+_Static_assert(offsetof(R4AudioCaptureBackend2, size) == 8, "R4AudioCaptureBackend2.size offset");
+_Static_assert(offsetof(R4AudioCaptureBackend2, flags) == 12, "R4AudioCaptureBackend2.flags offset");
+_Static_assert(offsetof(R4AudioCaptureBackend2, context) == 16, "R4AudioCaptureBackend2.context offset");
+_Static_assert(offsetof(R4AudioCaptureBackend2, io) == 24, "R4AudioCaptureBackend2.io offset");
+_Static_assert(offsetof(R4AudioCaptureBackend2, shutdown) == 32, "R4AudioCaptureBackend2.shutdown offset");
 
 #define R4OS_DESKTOP_ACTION_OP_EXCHANGE_FOCUS ((uint16_t)UINT64_C(4808))
 #define R4OS_DESKTOP_ACTION_OP_FOCUS_SNAPSHOT ((uint16_t)UINT64_C(4809))

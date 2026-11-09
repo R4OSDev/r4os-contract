@@ -3135,6 +3135,29 @@ pub const composition_event_commit: u32 = 2;
 pub const composition_event_cancel: u32 = 3;
 pub const composition_op_capability: u16 = 4920;
 pub const composition_op_focus: u16 = 4921;
+pub const audio_capture_op_service: u16 = 6100;
+pub const audio_capture_op_catalog: u32 = 0;
+pub const audio_capture_op_open: u32 = 1;
+pub const audio_capture_op_read: u32 = 2;
+pub const audio_capture_op_query: u32 = 3;
+pub const audio_capture_op_stop: u32 = 4;
+pub const audio_capture_op_close: u32 = 5;
+pub const audio_capture_source_adc: u32 = 1;
+pub const audio_capture_source_controlled: u32 = 2;
+pub const audio_capture_source_hardware_timestamp: u32 = 4;
+pub const audio_capture_reply_source: u32 = 1;
+pub const audio_capture_reply_hardware_stopped: u32 = 2;
+pub const audio_capture_reply_discontinuity: u32 = 4;
+pub const audio_capture_reply_hardware_timestamp: u32 = 8;
+pub const audio_capture_reply_open_pending: u32 = 16;
+pub const audio_capture_state_reserved: u32 = 0;
+pub const audio_capture_state_open: u32 = 1;
+pub const audio_capture_state_stopping: u32 = 2;
+pub const audio_capture_state_stopped: u32 = 3;
+pub const audio_capture_state_closed: u32 = 4;
+pub const audio_capture_state_source_gone: u32 = 5;
+pub const audio_capture_backend_magic: u32 = 844120387;
+pub const audio_capture_backend_version: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3254,6 +3277,10 @@ pub const byte_pipe_max_payload: u64 = 4194304;
 pub const byte_pipe_max_waiters: u64 = 32;
 pub const composition_max_text_bytes: u64 = 1024;
 pub const composition_max_document_bytes: u64 = 65536;
+pub const audio_capture_max_sources_per_backend: u64 = 32;
+pub const audio_capture_max_sessions: u64 = 4;
+pub const audio_capture_max_queue_bytes: u64 = 65536;
+pub const audio_capture_max_read_bytes: u64 = 2048;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -3650,6 +3677,22 @@ pub const composition_error_provider_changed: i32 = -16009;
 pub const composition_error_exhausted: i32 = -16010;
 pub const composition_error_no_provider: i32 = -16011;
 pub const composition_error_unsupported: i32 = -16012;
+pub const audio_capture_ok: i32 = 0;
+pub const audio_capture_error_unsupported: i32 = -17001;
+pub const audio_capture_error_invalid: i32 = -17002;
+pub const audio_capture_error_format: i32 = -17003;
+pub const audio_capture_error_source_gone: i32 = -17004;
+pub const audio_capture_error_would_block: i32 = -17005;
+pub const audio_capture_error_timed_out: i32 = -17006;
+pub const audio_capture_error_cancelled: i32 = -17007;
+pub const audio_capture_error_capacity: i32 = -17008;
+pub const audio_capture_error_stale: i32 = -17009;
+pub const audio_capture_error_busy: i32 = -17010;
+pub const audio_capture_error_clock_changed: i32 = -17011;
+pub const audio_capture_error_exhausted: i32 = -17012;
+pub const audio_capture_error_provider: i32 = -17013;
+pub const audio_capture_error_unknown_outcome: i32 = -17014;
+pub const audio_capture_error_overrun: i32 = -17015;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -3679,6 +3722,7 @@ impl R4ErrorDomain {
     pub const byte_pipe: Self = Self(21);
     pub const launch_io: Self = Self(22);
     pub const composition: Self = Self(23);
+    pub const audio_capture: Self = Self(24);
 }
 
 #[repr(transparent)]
@@ -22781,6 +22825,180 @@ impl Default for CompositionCapabilityReply {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioCaptureSourceId {
+    pub registration: u64,
+    pub source: u64,
+    pub generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioCaptureSourceId {
+    fn default() -> Self {
+        Self {
+            registration: 0,
+            source: 0,
+            generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioCaptureFormat {
+    pub rate_hz: u32,
+    pub channels: u16,
+    pub sample_format: u16,
+    pub frame_bytes: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioCaptureFormat {
+    fn default() -> Self {
+        Self {
+            rate_hz: 0,
+            channels: 0,
+            sample_format: 1,
+            frame_bytes: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioCaptureHandle {
+    pub service: ProgramProcessHandle,
+    pub source: AudioCaptureSourceId,
+    pub stream: u64,
+    pub generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioCaptureHandle {
+    fn default() -> Self {
+        Self {
+            service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            source: AudioCaptureSourceId { registration: 0, source: 0, generation: 0 },
+            stream: 0,
+            generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioCaptureSourceInfo {
+    pub version: u32,
+    pub size: u32,
+    pub id: AudioCaptureSourceId,
+    pub flags: u32,
+    pub formats: u32,
+    pub min_rate: u32,
+    pub max_rate: u32,
+    pub min_channels: u16,
+    pub max_channels: u16,
+    pub max_queue_frames: u32,
+    pub clock_id: u64,
+    pub clock_generation: u64,
+    pub clock_frequency: u64,
+    pub name: [u8; 32],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioCaptureSourceInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            id: AudioCaptureSourceId { registration: 0, source: 0, generation: 0 },
+            flags: 0,
+            formats: 0,
+            min_rate: 0,
+            max_rate: 0,
+            min_channels: 0,
+            max_channels: 0,
+            max_queue_frames: 0,
+            clock_id: 0,
+            clock_generation: 0,
+            clock_frequency: 0,
+            name: [0; 32],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioCaptureRequest {
+    pub version: u32,
+    pub size: u32,
+    pub op: u32,
+    pub flags: u32,
+    pub handle: AudioCaptureHandle,
+    pub format: AudioCaptureFormat,
+    pub queue_frames: u32,
+    pub frames: u32,
+    pub buffer_bytes: u32,
+    pub client_generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioCaptureRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 104,
+            op: 0,
+            flags: 0,
+            handle: AudioCaptureHandle { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, source: AudioCaptureSourceId { registration: 0, source: 0, generation: 0 }, stream: 0, generation: 0 },
+            format: AudioCaptureFormat { rate_hz: 0, channels: 0, sample_format: 1, frame_bytes: 0 },
+            queue_frames: 0,
+            frames: 0,
+            buffer_bytes: 0,
+            client_generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioCaptureReply {
+    pub version: u32,
+    pub size: u32,
+    pub result: i32,
+    pub flags: u32,
+    pub handle: AudioCaptureHandle,
+    pub source: AudioCaptureSourceInfo,
+    pub format: AudioCaptureFormat,
+    pub state: u32,
+    pub queued_frames: u32,
+    pub frames: u32,
+    pub first_frame: u64,
+    pub first_timestamp: u64,
+    pub overrun_frames: u64,
+    pub gap_frames: u64,
+    pub bytes: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioCaptureReply {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 248,
+            result: 0,
+            flags: 0,
+            handle: AudioCaptureHandle { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, source: AudioCaptureSourceId { registration: 0, source: 0, generation: 0 }, stream: 0, generation: 0 },
+            source: AudioCaptureSourceInfo { version: 1, size: 112, id: AudioCaptureSourceId { registration: 0, source: 0, generation: 0 }, flags: 0, formats: 0, min_rate: 0, max_rate: 0, min_channels: 0, max_channels: 0, max_queue_frames: 0, clock_id: 0, clock_generation: 0, clock_frequency: 0, name: [0; 32] },
+            format: AudioCaptureFormat { rate_hz: 0, channels: 0, sample_format: 1, frame_bytes: 0 },
+            state: 0,
+            queued_frames: 0,
+            frames: 0,
+            first_frame: 0,
+            first_timestamp: 0,
+            overrun_frames: 0,
+            gap_frames: 0,
+            bytes: 0,
+            reserved: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -24168,6 +24386,7 @@ pub mod R4AudioFns {
     pub type audio_set_stream_expectation = unsafe extern "C" fn(u32, *const AudioStreamExpectation) -> i32;
     pub type audio_close_stream_progress = unsafe extern "C" fn(u32, u64, *mut AudioStreamProgress) -> i32;
     pub type audio_output_catalog = unsafe extern "C" fn(*mut AudioOutputInfo, u32, *mut AudioOutputCatalog) -> i32;
+    pub type audio_capture_io = unsafe extern "C" fn(*const AudioCaptureRequest, *mut AudioCaptureReply, *mut u8, u32) -> i32;
 }
 
 #[repr(C)]
@@ -24204,14 +24423,15 @@ pub struct R4XStartR4Audio {
     pub audio_set_stream_expectation: usize,
     pub audio_close_stream_progress: usize,
     pub audio_output_catalog: usize,
+    pub audio_capture_io: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Audio {
     fn default() -> Self {
         Self {
             magic: 827670866,
-            abi_version: 4,
-            size: 232,
+            abi_version: 5,
+            size: 240,
             flags: 0,
             audio_open_stream: 0,
             audio_write: 0,
@@ -24240,6 +24460,7 @@ impl Default for R4XStartR4Audio {
             audio_set_stream_expectation: 0,
             audio_close_stream_progress: 0,
             audio_output_catalog: 0,
+            audio_capture_io: 0,
         }
     }
 }
@@ -28631,6 +28852,7 @@ pub struct DriverApi2 {
     pub driver_work_submit_owned: Option<unsafe extern "C" fn(unsafe extern "C" fn(usize) -> i32, usize, *mut u32) -> i32>,
     pub serial_query: Option<unsafe extern "C" fn(*mut DriverSerialApi) -> i32>,
     pub register_audio_output_epoch: Option<unsafe extern "C" fn(*const u8, unsafe extern "C" fn(u64, *mut AudioOutputEpoch) -> i32) -> i32>,
+    pub register_audio_capture_backend: Option<unsafe extern "C" fn(*const u8, *const AudioCaptureBackend2) -> i32>,
 }
 
 impl DriverApi2 {
@@ -28719,6 +28941,7 @@ impl DriverApi2 {
         driver_work_submit_owned: source.driver_work_submit_owned,
         serial_query: source.serial_query,
         register_audio_output_epoch: source.register_audio_output_epoch,
+        register_audio_capture_backend: None,
     } }
 }
 
@@ -28882,6 +29105,34 @@ impl AudioBackendStatus2 {
 pub type AudioBackendRegisterFn2 = unsafe extern "C" fn(*const u8, *const AudioBackend2) -> i32;
 
 pub type AudioBackendStatusFn2 = unsafe extern "C" fn(*mut core::ffi::c_void, *mut AudioBackendStatus2) -> i32;
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AudioCaptureBackend2 {
+    pub magic: u32,
+    pub version: u32,
+    pub size: u32,
+    pub flags: u32,
+    pub context: *mut core::ffi::c_void,
+    pub io: Option<unsafe extern "C" fn(*mut core::ffi::c_void, *const AudioCaptureRequest, *mut AudioCaptureReply, *mut u8, u32) -> i32>,
+    pub shutdown: Option<unsafe extern "C" fn(*mut core::ffi::c_void) -> i32>,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for AudioCaptureBackend2 {
+    fn default() -> Self {
+        Self {
+            magic: 844120387,
+            version: 1,
+            size: 40,
+            flags: 0,
+            context: core::ptr::null_mut(),
+            io: None,
+            shutdown: None,
+        }
+    }
+}
+
+pub type AudioCaptureRegisterFn2 = unsafe extern "C" fn(*const u8, *const AudioCaptureBackend2) -> i32;
 pub const driver_api2_magic: u32 = 843665476;
 pub const driver_api2_version: u32 = 1;
 pub const protocol_api2_magic: u32 = 843665488;
@@ -36605,6 +36856,69 @@ const _: () = {
     assert!(core::mem::offset_of!(CompositionCapabilityReply, provider) == 8);
     assert!(core::mem::size_of::<CompositionCapabilityReply>() == 48);
     assert!(core::mem::align_of::<CompositionCapabilityReply>() == 8);
+    assert!(core::mem::offset_of!(AudioCaptureSourceId, registration) == 0);
+    assert!(core::mem::offset_of!(AudioCaptureSourceId, source) == 8);
+    assert!(core::mem::offset_of!(AudioCaptureSourceId, generation) == 16);
+    assert!(core::mem::size_of::<AudioCaptureSourceId>() == 24);
+    assert!(core::mem::align_of::<AudioCaptureSourceId>() == 8);
+    assert!(core::mem::offset_of!(AudioCaptureFormat, rate_hz) == 0);
+    assert!(core::mem::offset_of!(AudioCaptureFormat, channels) == 4);
+    assert!(core::mem::offset_of!(AudioCaptureFormat, sample_format) == 6);
+    assert!(core::mem::offset_of!(AudioCaptureFormat, frame_bytes) == 8);
+    assert!(core::mem::size_of::<AudioCaptureFormat>() == 12);
+    assert!(core::mem::align_of::<AudioCaptureFormat>() == 4);
+    assert!(core::mem::offset_of!(AudioCaptureHandle, service) == 0);
+    assert!(core::mem::offset_of!(AudioCaptureHandle, source) == 16);
+    assert!(core::mem::offset_of!(AudioCaptureHandle, stream) == 40);
+    assert!(core::mem::offset_of!(AudioCaptureHandle, generation) == 48);
+    assert!(core::mem::size_of::<AudioCaptureHandle>() == 56);
+    assert!(core::mem::align_of::<AudioCaptureHandle>() == 8);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, version) == 0);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, size) == 4);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, id) == 8);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, flags) == 32);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, formats) == 36);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, min_rate) == 40);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, max_rate) == 44);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, min_channels) == 48);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, max_channels) == 50);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, max_queue_frames) == 52);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, clock_id) == 56);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, clock_generation) == 64);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, clock_frequency) == 72);
+    assert!(core::mem::offset_of!(AudioCaptureSourceInfo, name) == 80);
+    assert!(core::mem::size_of::<AudioCaptureSourceInfo>() == 112);
+    assert!(core::mem::align_of::<AudioCaptureSourceInfo>() == 8);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, version) == 0);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, size) == 4);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, op) == 8);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, flags) == 12);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, handle) == 16);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, format) == 72);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, queue_frames) == 84);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, frames) == 88);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, buffer_bytes) == 92);
+    assert!(core::mem::offset_of!(AudioCaptureRequest, client_generation) == 96);
+    assert!(core::mem::size_of::<AudioCaptureRequest>() == 104);
+    assert!(core::mem::align_of::<AudioCaptureRequest>() == 8);
+    assert!(core::mem::offset_of!(AudioCaptureReply, version) == 0);
+    assert!(core::mem::offset_of!(AudioCaptureReply, size) == 4);
+    assert!(core::mem::offset_of!(AudioCaptureReply, result) == 8);
+    assert!(core::mem::offset_of!(AudioCaptureReply, flags) == 12);
+    assert!(core::mem::offset_of!(AudioCaptureReply, handle) == 16);
+    assert!(core::mem::offset_of!(AudioCaptureReply, source) == 72);
+    assert!(core::mem::offset_of!(AudioCaptureReply, format) == 184);
+    assert!(core::mem::offset_of!(AudioCaptureReply, state) == 196);
+    assert!(core::mem::offset_of!(AudioCaptureReply, queued_frames) == 200);
+    assert!(core::mem::offset_of!(AudioCaptureReply, frames) == 204);
+    assert!(core::mem::offset_of!(AudioCaptureReply, first_frame) == 208);
+    assert!(core::mem::offset_of!(AudioCaptureReply, first_timestamp) == 216);
+    assert!(core::mem::offset_of!(AudioCaptureReply, overrun_frames) == 224);
+    assert!(core::mem::offset_of!(AudioCaptureReply, gap_frames) == 232);
+    assert!(core::mem::offset_of!(AudioCaptureReply, bytes) == 240);
+    assert!(core::mem::offset_of!(AudioCaptureReply, reserved) == 244);
+    assert!(core::mem::size_of::<AudioCaptureReply>() == 248);
+    assert!(core::mem::align_of::<AudioCaptureReply>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -37080,7 +37394,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_set_stream_expectation) == 208);
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_close_stream_progress) == 216);
     assert!(core::mem::offset_of!(R4XStartR4Audio, audio_output_catalog) == 224);
-    assert!(core::mem::size_of::<R4XStartR4Audio>() == 232);
+    assert!(core::mem::offset_of!(R4XStartR4Audio, audio_capture_io) == 232);
+    assert!(core::mem::size_of::<R4XStartR4Audio>() == 240);
     assert!(core::mem::align_of::<R4XStartR4Audio>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Dev, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Dev, abi_version) == 4);
@@ -38902,7 +39217,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverApi2, driver_work_submit_owned) == 632);
     assert!(core::mem::offset_of!(DriverApi2, serial_query) == 640);
     assert!(core::mem::offset_of!(DriverApi2, register_audio_output_epoch) == 648);
-    assert!(core::mem::size_of::<DriverApi2>() == 656);
+    assert!(core::mem::offset_of!(DriverApi2, register_audio_capture_backend) == 656);
+    assert!(core::mem::size_of::<DriverApi2>() == 664);
     assert!(core::mem::align_of::<DriverApi2>() == 8);
     assert!(core::mem::offset_of!(ProtocolApi2, magic) == 0);
     assert!(core::mem::offset_of!(ProtocolApi2, version) == 4);
@@ -38967,4 +39283,15 @@ const _: () = {
     assert!(core::mem::align_of::<AudioBackendRegisterFn2>() == 8);
     assert!(core::mem::size_of::<AudioBackendStatusFn2>() == 8);
     assert!(core::mem::align_of::<AudioBackendStatusFn2>() == 8);
+    assert!(core::mem::offset_of!(AudioCaptureBackend2, magic) == 0);
+    assert!(core::mem::offset_of!(AudioCaptureBackend2, version) == 4);
+    assert!(core::mem::offset_of!(AudioCaptureBackend2, size) == 8);
+    assert!(core::mem::offset_of!(AudioCaptureBackend2, flags) == 12);
+    assert!(core::mem::offset_of!(AudioCaptureBackend2, context) == 16);
+    assert!(core::mem::offset_of!(AudioCaptureBackend2, io) == 24);
+    assert!(core::mem::offset_of!(AudioCaptureBackend2, shutdown) == 32);
+    assert!(core::mem::size_of::<AudioCaptureBackend2>() == 40);
+    assert!(core::mem::align_of::<AudioCaptureBackend2>() == 8);
+    assert!(core::mem::size_of::<AudioCaptureRegisterFn2>() == 8);
+    assert!(core::mem::align_of::<AudioCaptureRegisterFn2>() == 8);
 };

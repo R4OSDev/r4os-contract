@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 471 von 471 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 477 von 477 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 71; Konstanten: 3128; Limits: 119
+- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3151; Limits: 123
 
 ## App-Profile
 
@@ -492,6 +492,12 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CompositionEvent` | fixed_layout | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
 | `CompositionFocusReply` | fixed_layout | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
 | `CompositionCapabilityReply` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `AudioCaptureSourceId` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `AudioCaptureFormat` | fixed_layout | extern_struct | 12/4 | 12/4 | 12/4 | 12/4 |
+| `AudioCaptureHandle` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `AudioCaptureSourceInfo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `AudioCaptureRequest` | fixed_layout | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
+| `AudioCaptureReply` | fixed_layout | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
 
 ## Typdetails
 
@@ -11901,6 +11907,117 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `reserved` | 4 | 4 | 4 | `u32` | - |
 | `provider` | 8 | 40 | 8 | `r4os.abi.CompositionProvider` | - |
 
+### `AudioCaptureSourceId`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `registration` | 0 | 8 | 8 | `u64` | - |
+| `source` | 8 | 8 | 8 | `u64` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+
+### `AudioCaptureFormat`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 12 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `rate_hz` | 0 | 4 | 4 | `u32` | - |
+| `channels` | 4 | 2 | 2 | `u16` | - |
+| `sample_format` | 6 | 2 | 2 | `u16` | - |
+| `frame_bytes` | 8 | 4 | 4 | `u32` | - |
+
+### `AudioCaptureHandle`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `service` | 0 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `source` | 16 | 24 | 8 | `r4os.abi.AudioCaptureSourceId` | - |
+| `stream` | 40 | 8 | 8 | `u64` | - |
+| `generation` | 48 | 8 | 8 | `u64` | - |
+
+### `AudioCaptureSourceInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `id` | 8 | 24 | 8 | `r4os.abi.AudioCaptureSourceId` | - |
+| `flags` | 32 | 4 | 4 | `u32` | - |
+| `formats` | 36 | 4 | 4 | `u32` | - |
+| `min_rate` | 40 | 4 | 4 | `u32` | - |
+| `max_rate` | 44 | 4 | 4 | `u32` | - |
+| `min_channels` | 48 | 2 | 2 | `u16` | - |
+| `max_channels` | 50 | 2 | 2 | `u16` | - |
+| `max_queue_frames` | 52 | 4 | 4 | `u32` | - |
+| `clock_id` | 56 | 8 | 8 | `u64` | - |
+| `clock_generation` | 64 | 8 | 8 | `u64` | - |
+| `clock_frequency` | 72 | 8 | 8 | `u64` | - |
+| `name` | 80 | 32 | 1 | `[32]u8` | - |
+
+### `AudioCaptureRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 104 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `op` | 8 | 4 | 4 | `u32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `handle` | 16 | 56 | 8 | `r4os.abi.AudioCaptureHandle` | - |
+| `format` | 72 | 12 | 4 | `r4os.abi.AudioCaptureFormat` | - |
+| `queue_frames` | 84 | 4 | 4 | `u32` | - |
+| `frames` | 88 | 4 | 4 | `u32` | - |
+| `buffer_bytes` | 92 | 4 | 4 | `u32` | - |
+| `client_generation` | 96 | 8 | 8 | `u64` | - |
+
+### `AudioCaptureReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 248 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `result` | 8 | 4 | 4 | `i32` | - |
+| `flags` | 12 | 4 | 4 | `u32` | - |
+| `handle` | 16 | 56 | 8 | `r4os.abi.AudioCaptureHandle` | - |
+| `source` | 72 | 112 | 8 | `r4os.abi.AudioCaptureSourceInfo` | - |
+| `format` | 184 | 12 | 4 | `r4os.abi.AudioCaptureFormat` | - |
+| `state` | 196 | 4 | 4 | `u32` | - |
+| `queued_frames` | 200 | 4 | 4 | `u32` | - |
+| `frames` | 204 | 4 | 4 | `u32` | - |
+| `first_frame` | 208 | 8 | 8 | `u64` | - |
+| `first_timestamp` | 216 | 8 | 8 | `u64` | - |
+| `overrun_frames` | 224 | 8 | 8 | `u64` | - |
+| `gap_frames` | 232 | 8 | 8 | `u64` | - |
+| `bytes` | 240 | 4 | 4 | `u32` | - |
+| `reserved` | 244 | 4 | 4 | `u32` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12795,6 +12912,29 @@ Geltung: `composition`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `composition_error_exhausted` | -16010 | `i32` |
 | `composition_error_no_provider` | -16011 | `i32` |
 | `composition_error_unsupported` | -16012 | `i32` |
+
+### `audio_capture`
+
+Geltung: `audio_capture`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `audio_capture_ok` | 0 | `i32` |
+| `audio_capture_error_unsupported` | -17001 | `i32` |
+| `audio_capture_error_invalid` | -17002 | `i32` |
+| `audio_capture_error_format` | -17003 | `i32` |
+| `audio_capture_error_source_gone` | -17004 | `i32` |
+| `audio_capture_error_would_block` | -17005 | `i32` |
+| `audio_capture_error_timed_out` | -17006 | `i32` |
+| `audio_capture_error_cancelled` | -17007 | `i32` |
+| `audio_capture_error_capacity` | -17008 | `i32` |
+| `audio_capture_error_stale` | -17009 | `i32` |
+| `audio_capture_error_busy` | -17010 | `i32` |
+| `audio_capture_error_clock_changed` | -17011 | `i32` |
+| `audio_capture_error_exhausted` | -17012 | `i32` |
+| `audio_capture_error_provider` | -17013 | `i32` |
+| `audio_capture_error_unknown_outcome` | -17014 | `i32` |
+| `audio_capture_error_overrun` | -17015 | `i32` |
 
 ## Konstanten
 
@@ -15928,6 +16068,29 @@ Geltung: `composition`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `composition_event_cancel` | `3` | `u32` | value | number | `composition` | fixed_contract |
 | `composition_op_capability` | `4920` | `u16` | value | number | `composition` | fixed_contract |
 | `composition_op_focus` | `4921` | `u16` | value | number | `composition` | fixed_contract |
+| `audio_capture_op_service` | `6100` | `u16` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_op_catalog` | `0` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_op_open` | `1` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_op_read` | `2` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_op_query` | `3` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_op_stop` | `4` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_op_close` | `5` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_source_adc` | `1` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_source_controlled` | `2` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_source_hardware_timestamp` | `4` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_reply_source` | `1` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_reply_hardware_stopped` | `2` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_reply_discontinuity` | `4` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_reply_hardware_timestamp` | `8` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_reply_open_pending` | `16` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_state_reserved` | `0` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_state_open` | `1` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_state_stopping` | `2` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_state_stopped` | `3` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_state_closed` | `4` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_state_source_gone` | `5` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_backend_magic` | `844120387` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `audio_capture_backend_version` | `1` | `u32` | value | number | `audio_capture` | fixed_contract |
 
 ## Limits
 
@@ -16052,3 +16215,7 @@ Geltung: `composition`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `byte_pipe_max_waiters` | `32` | `u64` | number | `byte_pipe` | fixed_contract |
 | `composition_max_text_bytes` | `1024` | `u64` | bytes | `composition` | fixed_contract |
 | `composition_max_document_bytes` | `65536` | `u64` | bytes | `composition` | fixed_contract |
+| `audio_capture_max_sources_per_backend` | `32` | `u64` | count | `audio_capture` | fixed_contract |
+| `audio_capture_max_sessions` | `4` | `u64` | count | `audio_capture` | fixed_contract |
+| `audio_capture_max_queue_bytes` | `65536` | `u64` | bytes | `audio_capture` | fixed_contract |
+| `audio_capture_max_read_bytes` | `2048` | `u64` | bytes | `audio_capture` | fixed_contract |

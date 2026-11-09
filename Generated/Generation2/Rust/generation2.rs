@@ -1,5 +1,5 @@
 // Generated Generation2. DO NOT EDIT.
-pub use super::{DriverApi2, ProtocolApi2, AudioBackend2, AudioBackendStatus2, AudioBackendRegisterFn2, AudioBackendStatusFn2};
+pub use super::{DriverApi2, ProtocolApi2, AudioBackend2, AudioBackendStatus2, AudioBackendRegisterFn2, AudioBackendStatusFn2, AudioCaptureBackend2, AudioCaptureRegisterFn2};
 pub const DRIVER_MAGIC: u32 = super::driver_api2_magic;
 pub const DRIVER_VERSION: u32 = super::driver_api2_version;
 pub const PROTOCOL_MAGIC: u32 = super::protocol_api2_magic;
@@ -1823,8 +1823,9 @@ pub struct R4XStartR4Audio2 {
     pub audio_set_stream_expectation: u64,
     pub audio_close_stream_progress: u64,
     pub audio_output_catalog: u64,
+    pub audio_capture_io: u64,
 }
-impl Default for R4XStartR4Audio2 { fn default() -> Self { Self { magic: 844448082, abi_version: 1, size: 232, flags: 0,
+impl Default for R4XStartR4Audio2 { fn default() -> Self { Self { magic: 844448082, abi_version: 2, size: 240, flags: 0,
     audio_open_stream: 0,
     audio_write: 0,
     audio_close: 0,
@@ -1852,8 +1853,9 @@ impl Default for R4XStartR4Audio2 { fn default() -> Self { Self { magic: 8444480
     audio_set_stream_expectation: 0,
     audio_close_stream_progress: 0,
     audio_output_catalog: 0,
+    audio_capture_io: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Audio2>() == 232);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Audio2>() == 240);
     assert!(core::mem::offset_of!(R4XStartR4Audio2,audio_open_stream) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Audio2,audio_write) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Audio2,audio_close) == 32);
@@ -1881,6 +1883,7 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Audio2>() == 232);
     assert!(core::mem::offset_of!(R4XStartR4Audio2,audio_set_stream_expectation) == 208);
     assert!(core::mem::offset_of!(R4XStartR4Audio2,audio_close_stream_progress) == 216);
     assert!(core::mem::offset_of!(R4XStartR4Audio2,audio_output_catalog) == 224);
+    assert!(core::mem::offset_of!(R4XStartR4Audio2,audio_capture_io) == 232);
 };
 impl R4XStartR4Audio2 {
     pub fn project_provider(source: &super::R4XStartR4Audio) -> Self { Self {
@@ -1909,6 +1912,7 @@ impl R4XStartR4Audio2 {
         audio_set_stream_expectation: source.audio_set_stream_expectation as u64,
         audio_close_stream_progress: source.audio_close_stream_progress as u64,
         audio_output_catalog: source.audio_output_catalog as u64,
+        audio_capture_io: source.audio_capture_io as u64,
         ..Self::default()
     } }
 }

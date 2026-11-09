@@ -3129,6 +3129,29 @@ pub const composition_event_commit: u32 = 2;
 pub const composition_event_cancel: u32 = 3;
 pub const composition_op_capability: u16 = 4920;
 pub const composition_op_focus: u16 = 4921;
+pub const audio_capture_op_service: u16 = 6100;
+pub const audio_capture_op_catalog: u32 = 0;
+pub const audio_capture_op_open: u32 = 1;
+pub const audio_capture_op_read: u32 = 2;
+pub const audio_capture_op_query: u32 = 3;
+pub const audio_capture_op_stop: u32 = 4;
+pub const audio_capture_op_close: u32 = 5;
+pub const audio_capture_source_adc: u32 = 1;
+pub const audio_capture_source_controlled: u32 = 2;
+pub const audio_capture_source_hardware_timestamp: u32 = 4;
+pub const audio_capture_reply_source: u32 = 1;
+pub const audio_capture_reply_hardware_stopped: u32 = 2;
+pub const audio_capture_reply_discontinuity: u32 = 4;
+pub const audio_capture_reply_hardware_timestamp: u32 = 8;
+pub const audio_capture_reply_open_pending: u32 = 16;
+pub const audio_capture_state_reserved: u32 = 0;
+pub const audio_capture_state_open: u32 = 1;
+pub const audio_capture_state_stopping: u32 = 2;
+pub const audio_capture_state_stopped: u32 = 3;
+pub const audio_capture_state_closed: u32 = 4;
+pub const audio_capture_state_source_gone: u32 = 5;
+pub const audio_capture_backend_magic: u32 = 844120387;
+pub const audio_capture_backend_version: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3248,6 +3271,10 @@ pub const byte_pipe_max_payload: u64 = 4194304;
 pub const byte_pipe_max_waiters: u64 = 32;
 pub const composition_max_text_bytes: u64 = 1024;
 pub const composition_max_document_bytes: u64 = 65536;
+pub const audio_capture_max_sources_per_backend: u64 = 32;
+pub const audio_capture_max_sessions: u64 = 4;
+pub const audio_capture_max_queue_bytes: u64 = 65536;
+pub const audio_capture_max_read_bytes: u64 = 2048;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -3644,6 +3671,22 @@ pub const composition_error_provider_changed: i32 = -16009;
 pub const composition_error_exhausted: i32 = -16010;
 pub const composition_error_no_provider: i32 = -16011;
 pub const composition_error_unsupported: i32 = -16012;
+pub const audio_capture_ok: i32 = 0;
+pub const audio_capture_error_unsupported: i32 = -17001;
+pub const audio_capture_error_invalid: i32 = -17002;
+pub const audio_capture_error_format: i32 = -17003;
+pub const audio_capture_error_source_gone: i32 = -17004;
+pub const audio_capture_error_would_block: i32 = -17005;
+pub const audio_capture_error_timed_out: i32 = -17006;
+pub const audio_capture_error_cancelled: i32 = -17007;
+pub const audio_capture_error_capacity: i32 = -17008;
+pub const audio_capture_error_stale: i32 = -17009;
+pub const audio_capture_error_busy: i32 = -17010;
+pub const audio_capture_error_clock_changed: i32 = -17011;
+pub const audio_capture_error_exhausted: i32 = -17012;
+pub const audio_capture_error_provider: i32 = -17013;
+pub const audio_capture_error_unknown_outcome: i32 = -17014;
+pub const audio_capture_error_overrun: i32 = -17015;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -3670,6 +3713,7 @@ pub const R4ErrorDomain = enum(u16) {
     byte_pipe = 21,
     launch_io = 22,
     composition = 23,
+    audio_capture = 24,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -11885,6 +11929,75 @@ pub const CompositionCapabilityReply = extern struct {
     provider: CompositionProvider = .{},
 };
 
+pub const AudioCaptureSourceId = extern struct {
+    registration: u64 = 0,
+    source: u64 = 0,
+    generation: u64 = 0,
+};
+
+pub const AudioCaptureFormat = extern struct {
+    rate_hz: u32 = 0,
+    channels: u16 = 0,
+    sample_format: u16 = 1,
+    frame_bytes: u32 = 0,
+};
+
+pub const AudioCaptureHandle = extern struct {
+    service: ProgramProcessHandle = .{},
+    source: AudioCaptureSourceId = .{},
+    stream: u64 = 0,
+    generation: u64 = 0,
+};
+
+pub const AudioCaptureSourceInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    id: AudioCaptureSourceId = .{},
+    flags: u32 = 0,
+    formats: u32 = 0,
+    min_rate: u32 = 0,
+    max_rate: u32 = 0,
+    min_channels: u16 = 0,
+    max_channels: u16 = 0,
+    max_queue_frames: u32 = 0,
+    clock_id: u64 = 0,
+    clock_generation: u64 = 0,
+    clock_frequency: u64 = 0,
+    name: [32]u8 = .{0} ** 32,
+};
+
+pub const AudioCaptureRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 104,
+    op: u32 = 0,
+    flags: u32 = 0,
+    handle: AudioCaptureHandle = .{},
+    format: AudioCaptureFormat = .{},
+    queue_frames: u32 = 0,
+    frames: u32 = 0,
+    buffer_bytes: u32 = 0,
+    client_generation: u64 = 0,
+};
+
+pub const AudioCaptureReply = extern struct {
+    version: u32 = 1,
+    size: u32 = 248,
+    result: i32 = 0,
+    flags: u32 = 0,
+    handle: AudioCaptureHandle = .{},
+    source: AudioCaptureSourceInfo = .{},
+    format: AudioCaptureFormat = .{},
+    state: u32 = 0,
+    queued_frames: u32 = 0,
+    frames: u32 = 0,
+    first_frame: u64 = 0,
+    first_timestamp: u64 = 0,
+    overrun_frames: u64 = 0,
+    gap_frames: u64 = 0,
+    bytes: u32 = 0,
+    reserved: u32 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -12783,12 +12896,13 @@ pub const R4AudioFns = struct {
     pub const audio_set_stream_expectation = *const fn (u32, *const AudioStreamExpectation) callconv(.c) i32;
     pub const audio_close_stream_progress = *const fn (u32, u64, *AudioStreamProgress) callconv(.c) i32;
     pub const audio_output_catalog = *const fn ([*]AudioOutputInfo, u32, *AudioOutputCatalog) callconv(.c) i32;
+    pub const audio_capture_io = *const fn (*const AudioCaptureRequest, *AudioCaptureReply, [*]u8, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Audio = extern struct {
     magic: u32 = 827670866,
-    abi_version: u32 = 4,
-    size: u32 = 232,
+    abi_version: u32 = 5,
+    size: u32 = 240,
     flags: u32 = 0,
     audio_open_stream: usize = 0,
     audio_write: usize = 0,
@@ -12817,6 +12931,7 @@ pub const R4XStartR4Audio = extern struct {
     audio_set_stream_expectation: usize = 0,
     audio_close_stream_progress: usize = 0,
     audio_output_catalog: usize = 0,
+    audio_capture_io: usize = 0,
 };
 
 pub const R4DevFns = struct {
@@ -13467,6 +13582,7 @@ pub const R4AudioSlots = [_]R4ApiSlotMeta{
     .{ .number = 24, .offset = 208, .name = "audio_set_stream_expectation", .state = .function, .required = false },
     .{ .number = 25, .offset = 216, .name = "audio_close_stream_progress", .state = .function, .required = false },
     .{ .number = 26, .offset = 224, .name = "audio_output_catalog", .state = .function, .required = false },
+    .{ .number = 27, .offset = 232, .name = "audio_capture_io", .state = .function, .required = false },
 };
 
 pub const R4DevSlots = [_]R4ApiSlotMeta{
@@ -21247,6 +21363,69 @@ comptime {
     if (@offsetOf(CompositionCapabilityReply, "result") != 0) @compileError("generated ABI offset drift: CompositionCapabilityReply.result");
     if (@offsetOf(CompositionCapabilityReply, "reserved") != 4) @compileError("generated ABI offset drift: CompositionCapabilityReply.reserved");
     if (@offsetOf(CompositionCapabilityReply, "provider") != 8) @compileError("generated ABI offset drift: CompositionCapabilityReply.provider");
+    if (@sizeOf(AudioCaptureSourceId) != 24) @compileError("generated ABI size drift: AudioCaptureSourceId");
+    if (@alignOf(AudioCaptureSourceId) != 8) @compileError("generated ABI alignment drift: AudioCaptureSourceId");
+    if (@offsetOf(AudioCaptureSourceId, "registration") != 0) @compileError("generated ABI offset drift: AudioCaptureSourceId.registration");
+    if (@offsetOf(AudioCaptureSourceId, "source") != 8) @compileError("generated ABI offset drift: AudioCaptureSourceId.source");
+    if (@offsetOf(AudioCaptureSourceId, "generation") != 16) @compileError("generated ABI offset drift: AudioCaptureSourceId.generation");
+    if (@sizeOf(AudioCaptureFormat) != 12) @compileError("generated ABI size drift: AudioCaptureFormat");
+    if (@alignOf(AudioCaptureFormat) != 4) @compileError("generated ABI alignment drift: AudioCaptureFormat");
+    if (@offsetOf(AudioCaptureFormat, "rate_hz") != 0) @compileError("generated ABI offset drift: AudioCaptureFormat.rate_hz");
+    if (@offsetOf(AudioCaptureFormat, "channels") != 4) @compileError("generated ABI offset drift: AudioCaptureFormat.channels");
+    if (@offsetOf(AudioCaptureFormat, "sample_format") != 6) @compileError("generated ABI offset drift: AudioCaptureFormat.sample_format");
+    if (@offsetOf(AudioCaptureFormat, "frame_bytes") != 8) @compileError("generated ABI offset drift: AudioCaptureFormat.frame_bytes");
+    if (@sizeOf(AudioCaptureHandle) != 56) @compileError("generated ABI size drift: AudioCaptureHandle");
+    if (@alignOf(AudioCaptureHandle) != 8) @compileError("generated ABI alignment drift: AudioCaptureHandle");
+    if (@offsetOf(AudioCaptureHandle, "service") != 0) @compileError("generated ABI offset drift: AudioCaptureHandle.service");
+    if (@offsetOf(AudioCaptureHandle, "source") != 16) @compileError("generated ABI offset drift: AudioCaptureHandle.source");
+    if (@offsetOf(AudioCaptureHandle, "stream") != 40) @compileError("generated ABI offset drift: AudioCaptureHandle.stream");
+    if (@offsetOf(AudioCaptureHandle, "generation") != 48) @compileError("generated ABI offset drift: AudioCaptureHandle.generation");
+    if (@sizeOf(AudioCaptureSourceInfo) != 112) @compileError("generated ABI size drift: AudioCaptureSourceInfo");
+    if (@alignOf(AudioCaptureSourceInfo) != 8) @compileError("generated ABI alignment drift: AudioCaptureSourceInfo");
+    if (@offsetOf(AudioCaptureSourceInfo, "version") != 0) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.version");
+    if (@offsetOf(AudioCaptureSourceInfo, "size") != 4) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.size");
+    if (@offsetOf(AudioCaptureSourceInfo, "id") != 8) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.id");
+    if (@offsetOf(AudioCaptureSourceInfo, "flags") != 32) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.flags");
+    if (@offsetOf(AudioCaptureSourceInfo, "formats") != 36) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.formats");
+    if (@offsetOf(AudioCaptureSourceInfo, "min_rate") != 40) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.min_rate");
+    if (@offsetOf(AudioCaptureSourceInfo, "max_rate") != 44) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.max_rate");
+    if (@offsetOf(AudioCaptureSourceInfo, "min_channels") != 48) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.min_channels");
+    if (@offsetOf(AudioCaptureSourceInfo, "max_channels") != 50) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.max_channels");
+    if (@offsetOf(AudioCaptureSourceInfo, "max_queue_frames") != 52) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.max_queue_frames");
+    if (@offsetOf(AudioCaptureSourceInfo, "clock_id") != 56) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.clock_id");
+    if (@offsetOf(AudioCaptureSourceInfo, "clock_generation") != 64) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.clock_generation");
+    if (@offsetOf(AudioCaptureSourceInfo, "clock_frequency") != 72) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.clock_frequency");
+    if (@offsetOf(AudioCaptureSourceInfo, "name") != 80) @compileError("generated ABI offset drift: AudioCaptureSourceInfo.name");
+    if (@sizeOf(AudioCaptureRequest) != 104) @compileError("generated ABI size drift: AudioCaptureRequest");
+    if (@alignOf(AudioCaptureRequest) != 8) @compileError("generated ABI alignment drift: AudioCaptureRequest");
+    if (@offsetOf(AudioCaptureRequest, "version") != 0) @compileError("generated ABI offset drift: AudioCaptureRequest.version");
+    if (@offsetOf(AudioCaptureRequest, "size") != 4) @compileError("generated ABI offset drift: AudioCaptureRequest.size");
+    if (@offsetOf(AudioCaptureRequest, "op") != 8) @compileError("generated ABI offset drift: AudioCaptureRequest.op");
+    if (@offsetOf(AudioCaptureRequest, "flags") != 12) @compileError("generated ABI offset drift: AudioCaptureRequest.flags");
+    if (@offsetOf(AudioCaptureRequest, "handle") != 16) @compileError("generated ABI offset drift: AudioCaptureRequest.handle");
+    if (@offsetOf(AudioCaptureRequest, "format") != 72) @compileError("generated ABI offset drift: AudioCaptureRequest.format");
+    if (@offsetOf(AudioCaptureRequest, "queue_frames") != 84) @compileError("generated ABI offset drift: AudioCaptureRequest.queue_frames");
+    if (@offsetOf(AudioCaptureRequest, "frames") != 88) @compileError("generated ABI offset drift: AudioCaptureRequest.frames");
+    if (@offsetOf(AudioCaptureRequest, "buffer_bytes") != 92) @compileError("generated ABI offset drift: AudioCaptureRequest.buffer_bytes");
+    if (@offsetOf(AudioCaptureRequest, "client_generation") != 96) @compileError("generated ABI offset drift: AudioCaptureRequest.client_generation");
+    if (@sizeOf(AudioCaptureReply) != 248) @compileError("generated ABI size drift: AudioCaptureReply");
+    if (@alignOf(AudioCaptureReply) != 8) @compileError("generated ABI alignment drift: AudioCaptureReply");
+    if (@offsetOf(AudioCaptureReply, "version") != 0) @compileError("generated ABI offset drift: AudioCaptureReply.version");
+    if (@offsetOf(AudioCaptureReply, "size") != 4) @compileError("generated ABI offset drift: AudioCaptureReply.size");
+    if (@offsetOf(AudioCaptureReply, "result") != 8) @compileError("generated ABI offset drift: AudioCaptureReply.result");
+    if (@offsetOf(AudioCaptureReply, "flags") != 12) @compileError("generated ABI offset drift: AudioCaptureReply.flags");
+    if (@offsetOf(AudioCaptureReply, "handle") != 16) @compileError("generated ABI offset drift: AudioCaptureReply.handle");
+    if (@offsetOf(AudioCaptureReply, "source") != 72) @compileError("generated ABI offset drift: AudioCaptureReply.source");
+    if (@offsetOf(AudioCaptureReply, "format") != 184) @compileError("generated ABI offset drift: AudioCaptureReply.format");
+    if (@offsetOf(AudioCaptureReply, "state") != 196) @compileError("generated ABI offset drift: AudioCaptureReply.state");
+    if (@offsetOf(AudioCaptureReply, "queued_frames") != 200) @compileError("generated ABI offset drift: AudioCaptureReply.queued_frames");
+    if (@offsetOf(AudioCaptureReply, "frames") != 204) @compileError("generated ABI offset drift: AudioCaptureReply.frames");
+    if (@offsetOf(AudioCaptureReply, "first_frame") != 208) @compileError("generated ABI offset drift: AudioCaptureReply.first_frame");
+    if (@offsetOf(AudioCaptureReply, "first_timestamp") != 216) @compileError("generated ABI offset drift: AudioCaptureReply.first_timestamp");
+    if (@offsetOf(AudioCaptureReply, "overrun_frames") != 224) @compileError("generated ABI offset drift: AudioCaptureReply.overrun_frames");
+    if (@offsetOf(AudioCaptureReply, "gap_frames") != 232) @compileError("generated ABI offset drift: AudioCaptureReply.gap_frames");
+    if (@offsetOf(AudioCaptureReply, "bytes") != 240) @compileError("generated ABI offset drift: AudioCaptureReply.bytes");
+    if (@offsetOf(AudioCaptureReply, "reserved") != 244) @compileError("generated ABI offset drift: AudioCaptureReply.reserved");
     if (@sizeOf(R4XStartR4Sys) != 1560) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
@@ -21669,7 +21848,7 @@ comptime {
     if (@offsetOf(R4XStartR4Net, "net_service_request") != 272) @compileError("generated ABI offset drift: R4XStartR4Net.net_service_request");
     if (@offsetOf(R4XStartR4Net, "ipc_performance") != 280) @compileError("generated ABI offset drift: R4XStartR4Net.ipc_performance");
     if (@offsetOf(R4XStartR4Net, "tcp_performance") != 288) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_performance");
-    if (@sizeOf(R4XStartR4Audio) != 232) @compileError("generated ABI size drift: R4XStartR4Audio");
+    if (@sizeOf(R4XStartR4Audio) != 240) @compileError("generated ABI size drift: R4XStartR4Audio");
     if (@offsetOf(R4XStartR4Audio, "audio_open_stream") != 16) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_open_stream");
     if (@offsetOf(R4XStartR4Audio, "audio_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_write");
     if (@offsetOf(R4XStartR4Audio, "audio_close") != 32) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close");
@@ -21697,6 +21876,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_set_stream_expectation") != 208) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_set_stream_expectation");
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
+    if (@offsetOf(R4XStartR4Audio, "audio_capture_io") != 232) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_capture_io");
     if (@sizeOf(R4XStartR4Dev) != 744) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");

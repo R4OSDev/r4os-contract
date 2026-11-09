@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 525,
+    "group_function_signatures": 526,
     "sdk_operation_contracts": 0,
-    "parity_entries": 525,
+    "parity_entries": 526,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -3959,6 +3959,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4AudioFns.audio_output_catalog",
       "c_contract": "R4AudioAudioOutputCatalogFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4AUDIO.audio_capture_io",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4AudioFns.audio_capture_io",
+      "c_contract": "R4AudioAudioCaptureIoFn",
       "coverage": "generated_signature"
     },
     {

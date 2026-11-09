@@ -891,7 +891,7 @@ _Static_assert(offsetof(R4XStartR4Net2,net_service_request)==272, "Generation2 s
 _Static_assert(offsetof(R4XStartR4Net2,ipc_performance)==280, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Net2,tcp_performance)==288, "Generation2 slot");
 #define R4OS2_R4AUDIO_MAGIC UINT32_C(844448082)
-#define R4OS2_R4AUDIO_VERSION UINT32_C(1)
+#define R4OS2_R4AUDIO_VERSION UINT32_C(2)
 typedef struct {
     uint32_t magic, abi_version, size, flags;
     uint64_t audio_open_stream;
@@ -921,8 +921,9 @@ typedef struct {
     uint64_t audio_set_stream_expectation;
     uint64_t audio_close_stream_progress;
     uint64_t audio_output_catalog;
+    uint64_t audio_capture_io;
 } R4XStartR4Audio2;
-_Static_assert(sizeof(R4XStartR4Audio2)==232, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Audio2)==240, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Audio2,audio_open_stream)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Audio2,audio_write)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Audio2,audio_close)==32, "Generation2 slot");
@@ -950,6 +951,7 @@ _Static_assert(offsetof(R4XStartR4Audio2,audio_stream_progress)==200, "Generatio
 _Static_assert(offsetof(R4XStartR4Audio2,audio_set_stream_expectation)==208, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Audio2,audio_close_stream_progress)==216, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Audio2,audio_output_catalog)==224, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Audio2,audio_capture_io)==232, "Generation2 slot");
 #define R4OS2_R4DEV_MAGIC UINT32_C(844514386)
 #define R4OS2_R4DEV_VERSION UINT32_C(2)
 typedef struct {

@@ -31021,10 +31021,10 @@
       "fn_namespace": "R4AudioFns",
       "required": false,
       "magic": 827670866,
-      "abi_version": 4,
+      "abi_version": 5,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 232,
+      "size": 240,
       "slots": [
         {
           "number": 0,
@@ -32585,6 +32585,106 @@
             "outputs": "success_only",
             "side_effects": "none",
             "retry": "idempotent",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 27,
+          "offset": 232,
+          "name": "audio_capture_io",
+          "state": "function",
+          "required": false,
+          "description": "Optional infrastructure-only nonblocking copied input backend IO through original R4D audio registry/permit. No kernel capture queue or decoder. Request and reply records are disjoint borrowed pointers; output PCM scratch is at most2048bytes/whole frames. Returns0 for a complete reply whose result carries operation outcome; negative mechanism errors do not publish reply metadata. No registered input returns explicit UnsupportedCapture in copied reply. R4D retains DMA/pins through failed Stop/Close/shutdown; input record is removed only after genuine hardware quiescence ACK. AUDSVC owns normal client catalog/queue/policy; no playback readback.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "request",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "AudioCaptureRequest"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "AudioCaptureReply"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "bytes",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4AUDIO"
+            ],
+            "optional_capability": true,
+            "error_domain": "audio_capture",
+            "ownership": "none",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "serialized",
+            "callback_context": "none",
+            "buffer_completion": "none",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
             "buffer_too_small": "fixed_capacity",
             "language_parity": "zig_and_c_required"
           }
@@ -140378,6 +140478,799 @@
       ],
       "values": [],
       "description": "Copied WINSVC inputmethod availability response. No installed qualified inputmethod returns NoProvider and feature0 with zero provider identity/generation. A transport success alone is not a composition capability; no candidate database, language or editor integration is installed by this protocol."
+    },
+    {
+      "name": "AudioCaptureSourceId",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "registration",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "registration",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "source",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "source",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied exact optional input source: nonzero nonreused R4D registration epoch, provider-local source number and nonwrapping source generation. Zero registration is no source, never a microphone inferred from playback."
+    },
+    {
+      "name": "AudioCaptureFormat",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 12,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "rate_hz",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "rate_hz",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "channels",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "channels",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "sample_format",
+          "offset": 6,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "sample_format",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "frame_bytes",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "frame_bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Explicit interleaved PCM; initial S16LE,1..8channels,1..192000frames/second. frame_bytes must equal2*channels. No partial frames, resampler or encoder-as-source."
+    },
+    {
+      "name": "AudioCaptureHandle",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "service",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "service",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "source",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "AudioCaptureSourceId"
+          },
+          "description": "source",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "r4os.abi.AudioCaptureSourceId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "stream",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "stream",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Full original AUDSVC process and input registration/source incarnation, stream and nonwrapping session generation. Copies retain no resources; exact owner/client generation remains enforced by AUDSVC. Late/wrong handle never addresses a replacement stream."
+    },
+    {
+      "name": "AudioCaptureSourceInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "id",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "AudioCaptureSourceId"
+          },
+          "description": "id",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "r4os.abi.AudioCaptureSourceId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "flags",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "formats",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "formats",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_rate",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "min_rate",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_rate",
+          "offset": 44,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_rate",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "min_channels",
+          "offset": 48,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "min_channels",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_channels",
+          "offset": 50,
+          "type": {
+            "kind": "scalar",
+            "name": "u16"
+          },
+          "description": "max_channels",
+          "size": 2,
+          "alignment": 2,
+          "source_type": "u16",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_queue_frames",
+          "offset": 52,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_queue_frames",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_id",
+          "offset": 56,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "clock_id",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_generation",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "clock_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "clock_frequency",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "clock_frequency",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "name",
+          "offset": 80,
+          "type": {
+            "kind": "array",
+            "length": 32,
+            "child": {
+              "kind": "scalar",
+              "name": "u8"
+            }
+          },
+          "description": "name",
+          "size": 32,
+          "alignment": 1,
+          "source_type": "[32]u8",
+          "default_kind": "zero_array"
+        }
+      ],
+      "values": [],
+      "description": "Copied bounded source catalog. ADC and explicitly CONTROLLED virtual input are distinct; playback capability is insufficient. Hardware timestamp support is optional and uses exact clock ID/generation/frequency; unknown values stay zero. Backend sets local source/generation; original bridge stamps registration. Name is bounded UTF8 display metadata, not identity."
+    },
+    {
+      "name": "AudioCaptureRequest",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 104,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "104"
+        },
+        {
+          "name": "op",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "op",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "handle",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "AudioCaptureHandle"
+          },
+          "description": "handle",
+          "size": 56,
+          "alignment": 8,
+          "source_type": "r4os.abi.AudioCaptureHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "format",
+          "offset": 72,
+          "type": {
+            "kind": "named",
+            "name": "AudioCaptureFormat"
+          },
+          "description": "format",
+          "size": 12,
+          "alignment": 4,
+          "source_type": "r4os.abi.AudioCaptureFormat",
+          "default_kind": "empty"
+        },
+        {
+          "name": "queue_frames",
+          "offset": 84,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "queue_frames",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frames",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "frames",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "buffer_bytes",
+          "offset": 92,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "Read caller capacity in bytes, at most2048; non-Read operations require0. Whole frames are rejected before activation or dequeue when they do not fit.",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "client_generation",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "Full requesting client generation paired with ServiceMessageHeader.client_id; required by AUDSVC before mutable admission. Infrastructure backend requests use0 and exact handle.service instead.",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied capture request. Catalog0 enumerates bounded sources by handle.source.source index with zero registration. Open1 reserves a logical bounded queue; no DMA starts until Read2 on returned exact handle. Query3/Stop4/Close5 keep exact identity. flags0. buffer_bytes carries the final caller output capacity for Read2 and is0 otherwise; do not substitute the larger RPC staging buffer. client_generation binds the exact request sender incarnation; infrastructure backend requests use0 and full handle.service. Service transport op6100; backend callback uses same pointer-only fixed record, no retained caller pointers."
+    },
+    {
+      "name": "AudioCaptureReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 248,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "248"
+        },
+        {
+          "name": "result",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "result",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "handle",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "AudioCaptureHandle"
+          },
+          "description": "handle",
+          "size": 56,
+          "alignment": 8,
+          "source_type": "r4os.abi.AudioCaptureHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "source",
+          "offset": 72,
+          "type": {
+            "kind": "named",
+            "name": "AudioCaptureSourceInfo"
+          },
+          "description": "source",
+          "size": 112,
+          "alignment": 8,
+          "source_type": "r4os.abi.AudioCaptureSourceInfo",
+          "default_kind": "empty"
+        },
+        {
+          "name": "format",
+          "offset": 184,
+          "type": {
+            "kind": "named",
+            "name": "AudioCaptureFormat"
+          },
+          "description": "format",
+          "size": 12,
+          "alignment": 4,
+          "source_type": "r4os.abi.AudioCaptureFormat",
+          "default_kind": "empty"
+        },
+        {
+          "name": "state",
+          "offset": 196,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "state",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queued_frames",
+          "offset": 200,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "queued_frames",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "frames",
+          "offset": 204,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "frames",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "first_frame",
+          "offset": 208,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "first_frame",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "first_timestamp",
+          "offset": 216,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "first_timestamp",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "overrun_frames",
+          "offset": 224,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "overrun_frames",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "gap_frames",
+          "offset": 232,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "gap_frames",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "bytes",
+          "offset": 240,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 244,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Copied capture result followed by bytes complete PCM in service reads. Transport success separate from result. Nonzero read bytes equal frames*frame_bytes, at most2048. first_frame and cumulative overrun/gap describe discontinuities. Timestamp only with explicit hardware-valid flag and matching source clock; otherwise0. A Stop/Close request alone does not grant hardware-stopped: only genuine driver ACK sets that flag. Negative/unknown completion retains active ownership and DMA/pins; absent registration is quiesced only after original terminal shutdown ACK."
     }
   ],
   "operations": [],
@@ -140501,6 +141394,11 @@
       "name": "composition",
       "id": 23,
       "description": "Bounded copied editor text-composition sessions and acknowledged focus/provider availability."
+    },
+    {
+      "name": "audio_capture",
+      "id": 24,
+      "description": "Optional capability-bound input PCM, copied service queues and genuine R4D Stop/Close ACK."
     }
   ],
   "error_domains": [
@@ -143518,6 +144416,111 @@
         }
       ],
       "description": "Additional bounded text composition SDK/service statuses. Negative operations never mutate document/output bytes; stale focus/view/provider/text invalidates only the old local session. Service copied replies carry their explicit result separately from transport success."
+    },
+    {
+      "name": "audio_capture",
+      "unit": "status_code",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "audio_capture_ok",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Optional capture ok. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_unsupported",
+          "value": -17001,
+          "value_type": "i32",
+          "description": "Optional capture error_unsupported. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_invalid",
+          "value": -17002,
+          "value_type": "i32",
+          "description": "Optional capture error_invalid. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_format",
+          "value": -17003,
+          "value_type": "i32",
+          "description": "Optional capture error_format. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_source_gone",
+          "value": -17004,
+          "value_type": "i32",
+          "description": "Optional capture error_source_gone. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_would_block",
+          "value": -17005,
+          "value_type": "i32",
+          "description": "Optional capture error_would_block. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_timed_out",
+          "value": -17006,
+          "value_type": "i32",
+          "description": "Optional capture error_timed_out. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_cancelled",
+          "value": -17007,
+          "value_type": "i32",
+          "description": "Optional capture error_cancelled. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_capacity",
+          "value": -17008,
+          "value_type": "i32",
+          "description": "Optional capture error_capacity. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_stale",
+          "value": -17009,
+          "value_type": "i32",
+          "description": "Optional capture error_stale. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_busy",
+          "value": -17010,
+          "value_type": "i32",
+          "description": "Optional capture error_busy. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_clock_changed",
+          "value": -17011,
+          "value_type": "i32",
+          "description": "Optional capture error_clock_changed. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_exhausted",
+          "value": -17012,
+          "value_type": "i32",
+          "description": "Optional capture error_exhausted. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_provider",
+          "value": -17013,
+          "value_type": "i32",
+          "description": "Optional capture error_provider. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_unknown_outcome",
+          "value": -17014,
+          "value_type": "i32",
+          "description": "Optional capture error_unknown_outcome. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        },
+        {
+          "name": "audio_capture_error_overrun",
+          "value": -17015,
+          "value_type": "i32",
+          "description": "Optional capture error_overrun. No silent playback/still-frame substitute; unknown/negative Stop retains DMA/pins until genuine hardware ACK."
+        }
+      ],
+      "description": "Optional copied PCM capture results. Unsupported means no qualified input provider. Overrun/Gap is explicit; PCM prefixes consist only of complete frames. Timeout/cancel of reads does not physically stop hardware or release pins."
     }
   ],
   "constants": [
@@ -174800,6 +175803,236 @@
       "scope": "composition",
       "stability": "fixed_contract",
       "description": "Optional WINSVC own-window CompositionFocusReply operation, exact WindowModeIdentity request."
+    },
+    {
+      "name": "audio_capture_op_service",
+      "value": "6100",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: op_service. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_op_catalog",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: op_catalog. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_op_open",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: op_open. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_op_read",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: op_read. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_op_query",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: op_query. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_op_stop",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: op_stop. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_op_close",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: op_close. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_source_adc",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: source_adc. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_source_controlled",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: source_controlled. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_source_hardware_timestamp",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: source_hardware_timestamp. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_reply_source",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: reply_source. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_reply_hardware_stopped",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: reply_hardware_stopped. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_reply_discontinuity",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: reply_discontinuity. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_reply_hardware_timestamp",
+      "value": "8",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: reply_hardware_timestamp. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_reply_open_pending",
+      "value": "16",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: reply_open_pending. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_state_reserved",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: state_reserved. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_state_open",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: state_open. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_state_stopping",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: state_stopping. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_state_stopped",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: state_stopped. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_state_closed",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: state_closed. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_state_source_gone",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: state_source_gone. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_backend_magic",
+      "value": "844120387",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: backend_magic. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "audio_capture_backend_version",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Optional copied PCM capture: backend_version. No real ADC capability without a qualified registered input source."
     }
   ],
   "limits": [
@@ -175873,6 +177106,42 @@
       "scope": "composition",
       "stability": "fixed_contract",
       "description": "Maximum complete document bytes validated by the initial bounded SDK owner; larger input reports Capacity without partial mutation."
+    },
+    {
+      "name": "audio_capture_max_sources_per_backend",
+      "value": "32",
+      "value_type": "u64",
+      "unit": "count",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Bounded input-owner max_sources_per_backend; limits reject before partial frame publication."
+    },
+    {
+      "name": "audio_capture_max_sessions",
+      "value": "4",
+      "value_type": "u64",
+      "unit": "count",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Bounded input-owner max_sessions; limits reject before partial frame publication."
+    },
+    {
+      "name": "audio_capture_max_queue_bytes",
+      "value": "65536",
+      "value_type": "u64",
+      "unit": "bytes",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Bounded input-owner max_queue_bytes; limits reject before partial frame publication."
+    },
+    {
+      "name": "audio_capture_max_read_bytes",
+      "value": "2048",
+      "value_type": "u64",
+      "unit": "bytes",
+      "scope": "audio_capture",
+      "stability": "fixed_contract",
+      "description": "Bounded input-owner max_read_bytes; limits reject before partial frame publication."
     }
   ],
   "artifact_metadata": {

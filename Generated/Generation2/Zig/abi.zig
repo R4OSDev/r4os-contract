@@ -11,6 +11,8 @@ pub const AudioBackend2 = shared.AudioBackend2;
 pub const AudioBackendStatus2 = shared.AudioBackendStatus2;
 pub const AudioBackendRegisterFn2 = shared.AudioBackendRegisterFn2;
 pub const AudioBackendStatusFn2 = shared.AudioBackendStatusFn2;
+pub const AudioCaptureBackend2 = shared.AudioCaptureBackend2;
+pub const AudioCaptureRegisterFn2 = shared.AudioCaptureRegisterFn2;
 pub const driver_magic = shared.driver_api2_magic;
 pub const driver_version = shared.driver_api2_version;
 pub const protocol_magic = shared.protocol_api2_magic;
@@ -934,8 +936,8 @@ comptime {
 pub const R4AudioFns2 = shared.R4AudioFns;
 pub const R4XStartR4Audio2 = extern struct {
     magic: u32 = 844448082,
-    abi_version: u32 = 1,
-    size: u32 = 232,
+    abi_version: u32 = 2,
+    size: u32 = 240,
     flags: u32 = 0,
     @"audio_open_stream": u64 = 0,
     @"audio_write": u64 = 0,
@@ -964,9 +966,10 @@ pub const R4XStartR4Audio2 = extern struct {
     @"audio_set_stream_expectation": u64 = 0,
     @"audio_close_stream_progress": u64 = 0,
     @"audio_output_catalog": u64 = 0,
+    @"audio_capture_io": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Audio2) != 232) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Audio2) != 240) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Audio2, "audio_open_stream") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Audio2, "audio_write") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Audio2, "audio_close") != 32) @compileError("Generation2 slot offset");
@@ -994,6 +997,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio2, "audio_set_stream_expectation") != 208) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Audio2, "audio_close_stream_progress") != 216) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Audio2, "audio_output_catalog") != 224) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Audio2, "audio_capture_io") != 232) @compileError("Generation2 slot offset");
 }
 pub const R4DevFns2 = shared.R4DevFns;
 pub const R4XStartR4Dev2 = extern struct {

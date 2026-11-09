@@ -2,10 +2,10 @@
 
 Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesbare Sicht auf Reife, Anforderungen, Fehler, Besitz, Blocking, Threading, Lifecycle und Wiederholung. Manuelle Änderungen sind nicht zulässig.
 
-- Physische Gruppenslots: 536; Funktionen: 525; reserviert/Tombstone: 11
-- Sichtbarkeit: public=383, advanced=142, internal=11
+- Physische Gruppenslots: 537; Funktionen: 526; reserviert/Tombstone: 11
+- Sichtbarkeit: public=384, advanced=142, internal=11
 - Zentrale SDK-only-Operationen: 0
-- Statusdomänen: 24
+- Statusdomänen: 25
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
 
 ## Statusdomänen
@@ -36,6 +36,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | 21 | `byte_pipe` | Bounded resident byte streams with exact endpoint references, accepted prefixes, EOF and explicit cancellation. |
 | 22 | `launch_io` | Copied atomic Start2 pipe bindings and borrowed process stdio identity snapshot. |
 | 23 | `composition` | Bounded copied editor text-composition sessions and acknowledged focus/provider availability. |
+| 24 | `audio_capture` | Optional capability-bound input PCM, copied service queues and genuine R4D Stop/Close ACK. |
 
 ## Gruppenslots
 
@@ -486,6 +487,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | R4AUDIO | 24 | `audio_set_stream_expectation` | function | public | R4AUDIO | ja | `audio` | none | call | may_block | thread_safe | none | none | may_have_occurred | idempotent | none | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
 | R4AUDIO | 25 | `audio_close_stream_progress` | function | public | R4AUDIO | ja | `audio` | consumes_owned_handle | call | may_block | thread_safe | none | progress_reported | may_have_occurred | idempotent | none | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
 | R4AUDIO | 26 | `audio_output_catalog` | function | public | R4AUDIO | ja | `audio` | none | call | nonblocking | thread_safe | none | success_only | none | idempotent | fixed_capacity | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
+| R4AUDIO | 27 | `audio_capture_io` | function | public | R4AUDIO | ja | `audio_capture` | none | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | fixed_capacity | zig_and_c_required | none | not_cancellable | none | serialized | none | none | none |
 | R4DEV | 0 | `device_inventory_summary` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 1 | `device_inventory_record` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | may_have_occurred | never_automatic | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |
 | R4DEV | 2 | `memory_summary` | function | advanced | R4DEV | ja | `device` | caller_buffer | call | nonblocking | thread_safe | none | success_only | none | idempotent | caller_capacity_without_required_size | zig_and_c_required | none | not_cancellable | none | reentrant | none | call | none |

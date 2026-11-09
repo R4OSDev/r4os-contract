@@ -386,6 +386,8 @@ fn generation2Projection(out: *Output, comptime name: []const u8, comptime T: ty
                 try out.text("0");
             } else if (comptime driver and std.mem.eql(u8, field.name, "register_audio_output_backend")) {
                 try out.text("register_audio");
+            } else if (comptime driver and std.mem.eql(u8, field.name, "register_audio_capture_backend")) {
+                try out.text("None");
             } else if (comptime !driver and (std.mem.eql(u8, field.name, "protocol_dispatch") or std.mem.eql(u8, field.name, "link_io") or std.mem.eql(u8, field.name, "process_status"))) {
                 // Source is the exact original legacy table. New optional
                 // protocol mechanisms are supplied separately by the owner.

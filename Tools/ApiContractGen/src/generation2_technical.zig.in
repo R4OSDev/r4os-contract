@@ -50,7 +50,37 @@ pub const AudioBackend2 = extern struct {
     playback: ?*const fn (?*anyopaque, *base.AudioBackendPlayback) callconv(.c) i32 = null,
     flow: ?*const fn (?*anyopaque, *const base.AudioBackendFlow) callconv(.c) i32 = null,
 };
-pub const DriverApi2 = compact(base.DriverApi, &driver_drops);
+// Separate immutable input extension: no existing AudioBackend2 field grows.
+// Its original R4D registration retains descriptor/code/context until genuine
+// capture shutdown ACK; no request or service queue pointer survives IO.
+pub const AudioCaptureBackend2 = extern struct {
+    magic: u32 = base.audio_capture_backend_magic,
+    version: u32 = 1,
+    size: u32 = @sizeOf(AudioCaptureBackend2),
+    flags: u32 = 0,
+    context: ?*anyopaque = null,
+    io: ?*const fn (?*anyopaque, *const base.AudioCaptureRequest, *base.AudioCaptureReply, [*]u8, u32) callconv(.c) i32 = null,
+    shutdown: ?*const fn (?*anyopaque) callconv(.c) i32 = null,
+};
+pub const AudioCaptureRegisterFn2 = *const fn ([*:0]const u8, *const AudioCaptureBackend2) callconv(.c) i32;
+fn extendDriver() type {
+    const Prefix = compact(base.DriverApi, &driver_drops);
+    const fields = @typeInfo(Prefix).@"struct".fields;
+    var names: [fields.len + 1][:0]const u8 = undefined;
+    var types: [names.len]type = undefined;
+    var attributes: [names.len]std.builtin.Type.StructField.Attributes = undefined;
+    for (fields, 0..) |field, i| {
+        names[i] = field.name;
+        types[i] = field.type;
+        attributes[i] = .{ .default_value_ptr = field.default_value_ptr, .@"align" = field.alignment };
+    }
+    const missing: ?AudioCaptureRegisterFn2 = null;
+    names[fields.len] = "register_audio_capture_backend";
+    types[fields.len] = @TypeOf(missing);
+    attributes[fields.len] = .{ .default_value_ptr = @ptrCast(&missing) };
+    return @Struct(.@"extern", null, &names, &types, &attributes);
+}
+pub const DriverApi2 = extendDriver();
 // Append only in the independent generation2 namespace. The complete legacy
 // ProtocolApi120 and every earlier ProtocolApi2 field retain their offsets.
 fn extendProtocol() type {
@@ -81,7 +111,7 @@ fn extendProtocol() type {
 pub const ProtocolApi2 = extendProtocol();
 
 comptime {
-    if (@sizeOf(DriverApi2) != @sizeOf(base.DriverApi) - 16 or @sizeOf(ProtocolApi2) != @sizeOf(base.ProtocolApi) + 24) @compileError("Generation2 technical tables");
+    if (@sizeOf(DriverApi2) != @sizeOf(base.DriverApi) - 8 or @offsetOf(DriverApi2, "register_audio_capture_backend") != @sizeOf(base.DriverApi) - 16 or @sizeOf(ProtocolApi2) != @sizeOf(base.ProtocolApi) + 24) @compileError("Generation2 technical tables");
     if (@offsetOf(ProtocolApi2, "protocol_dispatch") != 120 or @offsetOf(ProtocolApi2, "link_io") != 128 or @offsetOf(ProtocolApi2, "process_status") != 136 or @offsetOf(ProtocolApi2, "entropy_fill") != 112) @compileError("Generation2 protocol prefix drift");
     if (@hasField(DriverApi2, "register_audio_backend") or @hasField(DriverApi2, "register_synth_engine")) @compileError("Generation2 retired registration");
     if (@sizeOf(AudioBackendStatus2) != 80 or @sizeOf(AudioBackend2) != 136 or @offsetOf(AudioBackend2, "status") != 72) @compileError("Generation2 audio layout");

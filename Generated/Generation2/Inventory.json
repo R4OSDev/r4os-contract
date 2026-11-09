@@ -4009,6 +4009,15 @@
       "removed": false
     },
     {
+      "group": "R4AUDIO",
+      "name": "audio_capture_io",
+      "source_number": 27,
+      "source_offset": 232,
+      "number": 27,
+      "offset": 232,
+      "removed": false
+    },
+    {
       "group": "R4DEV",
       "name": "device_inventory_summary",
       "source_number": 0,

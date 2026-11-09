@@ -16,7 +16,7 @@ test "new generation has distinct identities and exact compact layouts in C and 
         try std.testing.expectEqual(@sizeOf(T), @sizeOf(C));
         try std.testing.expectEqual(@alignOf(T), @alignOf(C));
         inline for (std.meta.fields(T)) |f| try std.testing.expectEqual(@offsetOf(T, f.name), @offsetOf(C, f.name));
-        const version: u32 = if (T == api.R4XStartR4Sys2) 6 else if (T == api.R4XStartR4Draw2 or T == api.R4XStartR4Dev2) 2 else 1;
+        const version: u32 = if (T == api.R4XStartR4Sys2) 6 else if (T == api.R4XStartR4Draw2 or T == api.R4XStartR4Dev2 or T == api.R4XStartR4Audio2) 2 else 1;
         try std.testing.expectEqual(version, (T{}).abi_version);
     }
     try std.testing.expect(!@hasField(api.R4XStartR4Sys2, "reserved_shell_run"));
@@ -31,6 +31,8 @@ test "new generation has distinct identities and exact compact layouts in C and 
     try std.testing.expectEqual(@as(usize, 1416), @offsetOf(api.R4XStartR4Sys2, "directory_metadata_batch2"));
     try std.testing.expectEqual(@as(usize, 1560), @sizeOf(api.shared.R4XStartR4Sys));
     try std.testing.expectEqual(@as(usize, 1552), @sizeOf(api.R4XStartR4Sys2));
+    try std.testing.expectEqual(@as(usize, 240), @sizeOf(api.R4XStartR4Audio2));
+    try std.testing.expectEqual(@as(usize, 232), @offsetOf(api.R4XStartR4Audio2, "audio_capture_io"));
     inline for (.{ "waitset_create", "waitset_enroll", "waitset_rearm", "waitset_remove", "waitset_wait", "waitset_close", "waitset_source_prepare" }, 0..) |name, index| {
         try std.testing.expectEqual(@as(usize, 1432) + index * 8, @offsetOf(api.shared.R4XStartR4Sys, name));
         try std.testing.expectEqual(@as(usize, 1424) + index * 8, @offsetOf(api.R4XStartR4Sys2, name));
@@ -92,7 +94,9 @@ test "technical generation2 retains exact typed live slots and bounds the real s
         try std.testing.expectEqual(@alignOf(pair[0]), @alignOf(pair[1]));
         inline for (std.meta.fields(pair[0])) |field| try std.testing.expectEqual(@offsetOf(pair[0], field.name), @offsetOf(pair[1], field.name));
     }
-    try std.testing.expectEqual(@as(usize, 656), @sizeOf(api.DriverApi2));
+    try std.testing.expectEqual(@as(usize, 664), @sizeOf(api.DriverApi2));
+    try std.testing.expectEqual(@as(usize, 656), @offsetOf(api.DriverApi2, "register_audio_capture_backend"));
+    try std.testing.expectEqual(@as(usize, 40), @sizeOf(api.AudioCaptureBackend2));
     try std.testing.expectEqual(@as(usize, 144), @sizeOf(api.ProtocolApi2));
     try std.testing.expectEqual(@as(usize, 120), @sizeOf(api.shared.ProtocolApi));
     try std.testing.expectEqual(@as(usize, 120), @offsetOf(api.ProtocolApi2, "protocol_dispatch"));

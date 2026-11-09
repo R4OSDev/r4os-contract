@@ -3141,6 +3141,29 @@ extern "C" {
 #define R4OS_COMPOSITION_EVENT_CANCEL 3u
 #define R4OS_COMPOSITION_OP_CAPABILITY 4920u
 #define R4OS_COMPOSITION_OP_FOCUS 4921u
+#define R4OS_AUDIO_CAPTURE_OP_SERVICE 6100u
+#define R4OS_AUDIO_CAPTURE_OP_CATALOG 0u
+#define R4OS_AUDIO_CAPTURE_OP_OPEN 1u
+#define R4OS_AUDIO_CAPTURE_OP_READ 2u
+#define R4OS_AUDIO_CAPTURE_OP_QUERY 3u
+#define R4OS_AUDIO_CAPTURE_OP_STOP 4u
+#define R4OS_AUDIO_CAPTURE_OP_CLOSE 5u
+#define R4OS_AUDIO_CAPTURE_SOURCE_ADC 1u
+#define R4OS_AUDIO_CAPTURE_SOURCE_CONTROLLED 2u
+#define R4OS_AUDIO_CAPTURE_SOURCE_HARDWARE_TIMESTAMP 4u
+#define R4OS_AUDIO_CAPTURE_REPLY_SOURCE 1u
+#define R4OS_AUDIO_CAPTURE_REPLY_HARDWARE_STOPPED 2u
+#define R4OS_AUDIO_CAPTURE_REPLY_DISCONTINUITY 4u
+#define R4OS_AUDIO_CAPTURE_REPLY_HARDWARE_TIMESTAMP 8u
+#define R4OS_AUDIO_CAPTURE_REPLY_OPEN_PENDING 16u
+#define R4OS_AUDIO_CAPTURE_STATE_RESERVED 0u
+#define R4OS_AUDIO_CAPTURE_STATE_OPEN 1u
+#define R4OS_AUDIO_CAPTURE_STATE_STOPPING 2u
+#define R4OS_AUDIO_CAPTURE_STATE_STOPPED 3u
+#define R4OS_AUDIO_CAPTURE_STATE_CLOSED 4u
+#define R4OS_AUDIO_CAPTURE_STATE_SOURCE_GONE 5u
+#define R4OS_AUDIO_CAPTURE_BACKEND_MAGIC 844120387u
+#define R4OS_AUDIO_CAPTURE_BACKEND_VERSION 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3260,6 +3283,10 @@ extern "C" {
 #define R4OS_BYTE_PIPE_MAX_WAITERS 32ull
 #define R4OS_COMPOSITION_MAX_TEXT_BYTES 1024ull
 #define R4OS_COMPOSITION_MAX_DOCUMENT_BYTES 65536ull
+#define R4OS_AUDIO_CAPTURE_MAX_SOURCES_PER_BACKEND 32ull
+#define R4OS_AUDIO_CAPTURE_MAX_SESSIONS 4ull
+#define R4OS_AUDIO_CAPTURE_MAX_QUEUE_BYTES 65536ull
+#define R4OS_AUDIO_CAPTURE_MAX_READ_BYTES 2048ull
 #define R4OS_ARP_RESULT_BUFFER_SMALL ((int32_t)-4)
 #define R4OS_ARP_RESULT_NOT_ARP ((int32_t)1)
 #define R4OS_ARP_RESULT_OK ((int32_t)0)
@@ -3656,6 +3683,22 @@ extern "C" {
 #define R4OS_COMPOSITION_ERROR_EXHAUSTED ((int32_t)-16010)
 #define R4OS_COMPOSITION_ERROR_NO_PROVIDER ((int32_t)-16011)
 #define R4OS_COMPOSITION_ERROR_UNSUPPORTED ((int32_t)-16012)
+#define R4OS_AUDIO_CAPTURE_OK ((int32_t)0)
+#define R4OS_AUDIO_CAPTURE_ERROR_UNSUPPORTED ((int32_t)-17001)
+#define R4OS_AUDIO_CAPTURE_ERROR_INVALID ((int32_t)-17002)
+#define R4OS_AUDIO_CAPTURE_ERROR_FORMAT ((int32_t)-17003)
+#define R4OS_AUDIO_CAPTURE_ERROR_SOURCE_GONE ((int32_t)-17004)
+#define R4OS_AUDIO_CAPTURE_ERROR_WOULD_BLOCK ((int32_t)-17005)
+#define R4OS_AUDIO_CAPTURE_ERROR_TIMED_OUT ((int32_t)-17006)
+#define R4OS_AUDIO_CAPTURE_ERROR_CANCELLED ((int32_t)-17007)
+#define R4OS_AUDIO_CAPTURE_ERROR_CAPACITY ((int32_t)-17008)
+#define R4OS_AUDIO_CAPTURE_ERROR_STALE ((int32_t)-17009)
+#define R4OS_AUDIO_CAPTURE_ERROR_BUSY ((int32_t)-17010)
+#define R4OS_AUDIO_CAPTURE_ERROR_CLOCK_CHANGED ((int32_t)-17011)
+#define R4OS_AUDIO_CAPTURE_ERROR_EXHAUSTED ((int32_t)-17012)
+#define R4OS_AUDIO_CAPTURE_ERROR_PROVIDER ((int32_t)-17013)
+#define R4OS_AUDIO_CAPTURE_ERROR_UNKNOWN_OUTCOME ((int32_t)-17014)
+#define R4OS_AUDIO_CAPTURE_ERROR_OVERRUN ((int32_t)-17015)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3682,7 +3725,8 @@ enum {
     R4_ERROR_DOMAIN_WAITSET = 20,
     R4_ERROR_DOMAIN_BYTE_PIPE = 21,
     R4_ERROR_DOMAIN_LAUNCH_IO = 22,
-    R4_ERROR_DOMAIN_COMPOSITION = 23
+    R4_ERROR_DOMAIN_COMPOSITION = 23,
+    R4_ERROR_DOMAIN_AUDIO_CAPTURE = 24
 };
 
 #define R4L_GROUP_R4SYS 1u
@@ -4171,6 +4215,12 @@ typedef struct R4CompositionId R4CompositionId;
 typedef struct R4CompositionEvent R4CompositionEvent;
 typedef struct R4CompositionFocusReply R4CompositionFocusReply;
 typedef struct R4CompositionCapabilityReply R4CompositionCapabilityReply;
+typedef struct R4AudioCaptureSourceId R4AudioCaptureSourceId;
+typedef struct R4AudioCaptureFormat R4AudioCaptureFormat;
+typedef struct R4AudioCaptureHandle R4AudioCaptureHandle;
+typedef struct R4AudioCaptureSourceInfo R4AudioCaptureSourceInfo;
+typedef struct R4AudioCaptureRequest R4AudioCaptureRequest;
+typedef struct R4AudioCaptureReply R4AudioCaptureReply;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -12297,6 +12347,75 @@ typedef struct R4CompositionCapabilityReply {
     R4CompositionProvider provider;
 } R4CompositionCapabilityReply;
 
+typedef struct R4AudioCaptureSourceId {
+    uint64_t registration;
+    uint64_t source;
+    uint64_t generation;
+} R4AudioCaptureSourceId;
+
+typedef struct R4AudioCaptureFormat {
+    uint32_t rate_hz;
+    uint16_t channels;
+    uint16_t sample_format;
+    uint32_t frame_bytes;
+} R4AudioCaptureFormat;
+
+typedef struct R4AudioCaptureHandle {
+    R4ProgramProcessHandle service;
+    R4AudioCaptureSourceId source;
+    uint64_t stream;
+    uint64_t generation;
+} R4AudioCaptureHandle;
+
+typedef struct R4AudioCaptureSourceInfo {
+    uint32_t version;
+    uint32_t size;
+    R4AudioCaptureSourceId id;
+    uint32_t flags;
+    uint32_t formats;
+    uint32_t min_rate;
+    uint32_t max_rate;
+    uint16_t min_channels;
+    uint16_t max_channels;
+    uint32_t max_queue_frames;
+    uint64_t clock_id;
+    uint64_t clock_generation;
+    uint64_t clock_frequency;
+    uint8_t name[32];
+} R4AudioCaptureSourceInfo;
+
+typedef struct R4AudioCaptureRequest {
+    uint32_t version;
+    uint32_t size;
+    uint32_t op;
+    uint32_t flags;
+    R4AudioCaptureHandle handle;
+    R4AudioCaptureFormat format;
+    uint32_t queue_frames;
+    uint32_t frames;
+    uint32_t buffer_bytes;
+    uint64_t client_generation;
+} R4AudioCaptureRequest;
+
+typedef struct R4AudioCaptureReply {
+    uint32_t version;
+    uint32_t size;
+    int32_t result;
+    uint32_t flags;
+    R4AudioCaptureHandle handle;
+    R4AudioCaptureSourceInfo source;
+    R4AudioCaptureFormat format;
+    uint32_t state;
+    uint32_t queued_frames;
+    uint32_t frames;
+    uint64_t first_frame;
+    uint64_t first_timestamp;
+    uint64_t overrun_frames;
+    uint64_t gap_frames;
+    uint32_t bytes;
+    uint32_t reserved;
+} R4AudioCaptureReply;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -13232,6 +13351,7 @@ typedef int32_t (*R4AudioAudioStreamProgressFn)(uint32_t stream_id, uint64_t gen
 typedef int32_t (*R4AudioAudioSetStreamExpectationFn)(uint32_t stream_id, const R4AudioStreamExpectation * expectation);
 typedef int32_t (*R4AudioAudioCloseStreamProgressFn)(uint32_t stream_id, uint64_t generation, R4AudioStreamProgress * out);
 typedef int32_t (*R4AudioAudioOutputCatalogFn)(R4AudioOutputInfo * outputs, uint32_t capacity, R4AudioOutputCatalog * out);
+typedef int32_t (*R4AudioAudioCaptureIoFn)(const R4AudioCaptureRequest * request, R4AudioCaptureReply * out, uint8_t * bytes, uint32_t capacity);
 
 typedef struct R4XStartR4Audio {
     uint32_t magic;
@@ -13265,6 +13385,7 @@ typedef struct R4XStartR4Audio {
     uintptr_t audio_set_stream_expectation;
     uintptr_t audio_close_stream_progress;
     uintptr_t audio_output_catalog;
+    uintptr_t audio_capture_io;
 } R4XStartR4Audio;
 
 typedef int32_t (*R4DevDeviceInventorySummaryFn)(R4DeviceInventorySummary * arg0);
@@ -20674,6 +20795,63 @@ _Static_assert(sizeof(R4CompositionCapabilityReply) == 48u, "CompositionCapabili
 _Static_assert(offsetof(R4CompositionCapabilityReply, result) == 0u, "CompositionCapabilityReply.result offset mismatch");
 _Static_assert(offsetof(R4CompositionCapabilityReply, reserved) == 4u, "CompositionCapabilityReply.reserved offset mismatch");
 _Static_assert(offsetof(R4CompositionCapabilityReply, provider) == 8u, "CompositionCapabilityReply.provider offset mismatch");
+_Static_assert(sizeof(R4AudioCaptureSourceId) == 24u, "AudioCaptureSourceId size mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceId, registration) == 0u, "AudioCaptureSourceId.registration offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceId, source) == 8u, "AudioCaptureSourceId.source offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceId, generation) == 16u, "AudioCaptureSourceId.generation offset mismatch");
+_Static_assert(sizeof(R4AudioCaptureFormat) == 12u, "AudioCaptureFormat size mismatch");
+_Static_assert(offsetof(R4AudioCaptureFormat, rate_hz) == 0u, "AudioCaptureFormat.rate_hz offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureFormat, channels) == 4u, "AudioCaptureFormat.channels offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureFormat, sample_format) == 6u, "AudioCaptureFormat.sample_format offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureFormat, frame_bytes) == 8u, "AudioCaptureFormat.frame_bytes offset mismatch");
+_Static_assert(sizeof(R4AudioCaptureHandle) == 56u, "AudioCaptureHandle size mismatch");
+_Static_assert(offsetof(R4AudioCaptureHandle, service) == 0u, "AudioCaptureHandle.service offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureHandle, source) == 16u, "AudioCaptureHandle.source offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureHandle, stream) == 40u, "AudioCaptureHandle.stream offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureHandle, generation) == 48u, "AudioCaptureHandle.generation offset mismatch");
+_Static_assert(sizeof(R4AudioCaptureSourceInfo) == 112u, "AudioCaptureSourceInfo size mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, version) == 0u, "AudioCaptureSourceInfo.version offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, size) == 4u, "AudioCaptureSourceInfo.size offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, id) == 8u, "AudioCaptureSourceInfo.id offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, flags) == 32u, "AudioCaptureSourceInfo.flags offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, formats) == 36u, "AudioCaptureSourceInfo.formats offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, min_rate) == 40u, "AudioCaptureSourceInfo.min_rate offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, max_rate) == 44u, "AudioCaptureSourceInfo.max_rate offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, min_channels) == 48u, "AudioCaptureSourceInfo.min_channels offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, max_channels) == 50u, "AudioCaptureSourceInfo.max_channels offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, max_queue_frames) == 52u, "AudioCaptureSourceInfo.max_queue_frames offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, clock_id) == 56u, "AudioCaptureSourceInfo.clock_id offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, clock_generation) == 64u, "AudioCaptureSourceInfo.clock_generation offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, clock_frequency) == 72u, "AudioCaptureSourceInfo.clock_frequency offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureSourceInfo, name) == 80u, "AudioCaptureSourceInfo.name offset mismatch");
+_Static_assert(sizeof(R4AudioCaptureRequest) == 104u, "AudioCaptureRequest size mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, version) == 0u, "AudioCaptureRequest.version offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, size) == 4u, "AudioCaptureRequest.size offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, op) == 8u, "AudioCaptureRequest.op offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, flags) == 12u, "AudioCaptureRequest.flags offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, handle) == 16u, "AudioCaptureRequest.handle offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, format) == 72u, "AudioCaptureRequest.format offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, queue_frames) == 84u, "AudioCaptureRequest.queue_frames offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, frames) == 88u, "AudioCaptureRequest.frames offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, buffer_bytes) == 92u, "AudioCaptureRequest.buffer_bytes offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureRequest, client_generation) == 96u, "AudioCaptureRequest.client_generation offset mismatch");
+_Static_assert(sizeof(R4AudioCaptureReply) == 248u, "AudioCaptureReply size mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, version) == 0u, "AudioCaptureReply.version offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, size) == 4u, "AudioCaptureReply.size offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, result) == 8u, "AudioCaptureReply.result offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, flags) == 12u, "AudioCaptureReply.flags offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, handle) == 16u, "AudioCaptureReply.handle offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, source) == 72u, "AudioCaptureReply.source offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, format) == 184u, "AudioCaptureReply.format offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, state) == 196u, "AudioCaptureReply.state offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, queued_frames) == 200u, "AudioCaptureReply.queued_frames offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, frames) == 204u, "AudioCaptureReply.frames offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, first_frame) == 208u, "AudioCaptureReply.first_frame offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, first_timestamp) == 216u, "AudioCaptureReply.first_timestamp offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, overrun_frames) == 224u, "AudioCaptureReply.overrun_frames offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, gap_frames) == 232u, "AudioCaptureReply.gap_frames offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, bytes) == 240u, "AudioCaptureReply.bytes offset mismatch");
+_Static_assert(offsetof(R4AudioCaptureReply, reserved) == 244u, "AudioCaptureReply.reserved offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1560u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -21510,7 +21688,7 @@ _Static_assert(offsetof(R4XStartR4Net, ipc_performance) == 280u, "R4XStartR4Net.
 _Static_assert(sizeof(R4NetIpcPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_performance) == 288u, "R4XStartR4Net.tcp_performance offset mismatch");
 _Static_assert(sizeof(R4NetTcpPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Audio) == 232u, "R4XStartR4Audio size mismatch");
+_Static_assert(sizeof(R4XStartR4Audio) == 240u, "R4XStartR4Audio size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_open_stream) == 16u, "R4XStartR4Audio.audio_open_stream offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOpenStreamFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_write) == 24u, "R4XStartR4Audio.audio_write offset mismatch");
@@ -21563,6 +21741,8 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_close_stream_progress) == 216u, "
 _Static_assert(sizeof(R4AudioAudioCloseStreamProgressFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStartR4Audio.audio_output_catalog offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Audio, audio_capture_io) == 232u, "R4XStartR4Audio.audio_capture_io offset mismatch");
+_Static_assert(sizeof(R4AudioAudioCaptureIoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Dev) == 744u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
