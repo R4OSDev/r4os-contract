@@ -4,9 +4,14 @@
 Rolle
 -----
 
-R4XStart ist der aktuelle Einstieg fuer R4X-Programme. Der Loader uebergibt
-einen R4XStartContext. Das SDK validiert ihn und erzeugt daraus einen
-r4os.r4x.Context mit den importierten Gruppen-Contexts.
+Diese Datei beschreibt den waehrend der Migration erhaltenen
+Generation1-Einstieg R4XStart mit R4XStartContext. Generation2 verwendet
+R4XStart2:2, den wirklichen120-Byte-R4XStartContext2 und Query2:2 fuer
+eingebaute Plattformgruppen. Normativ sind ABI/R4M0.txt, API/Generation2.json
+und die daraus erzeugten Bindings unter Generated/Generation2/. Fachliche
+Runtime-R4L-Revisionen sind davon unabhaengig. Das normale SDK-App2-Startup
+validiert alle geordneten Manifestimports einschliesslich optionaler Libraries;
+es formt keinen alten Kontext oder eine alte Gruppentabelle.
 
 R4OS-CONTRACT-GENERATED:BEGIN R4XSTART
 Dieser Block wird aus ApiContract.json erzeugt und darf nicht von Hand geaendert werden.
