@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 456 von 456 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 457 von 457 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 68; Konstanten: 3107; Limits: 111
+- Operationen: 0; Fehlerdomänen: 68; Konstanten: 3111; Limits: 111
 
 ## App-Profile
 
@@ -477,6 +477,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `NdpRequest` | fixed_layout | extern_struct | 1608/8 | 1608/8 | 1608/8 | 1608/8 |
 | `NdpEvent` | fixed_layout | extern_struct | 328/4 | 328/4 | 328/4 | 328/4 |
 | `NdpInfo` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `NetworkTransportRequest` | fixed_layout | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
 
 ## Typdetails
 
@@ -11654,6 +11655,22 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `timeouts` | 36 | 4 | 4 | `u32` | - |
 | `flags` | 40 | 8 | 8 | `u64` | - |
 
+### `NetworkTransportRequest`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 176 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 8 | 8 | `u64` | - |
+| `broker` | 16 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `owner` | 32 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `request` | 48 | 128 | 8 | `r4os.abi.NetworkSocketRequest` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -15598,6 +15615,10 @@ Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `ndp_request_fragmented` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
 | `ndp_confirm_probe_sent` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
 | `ipv6_packet_flag_fragmented` | `1` | `u32` | flag | bitmask | `ipv6_provider` | fixed_contract |
+| `network_transport_op_tick` | `1647` | `u32` | value | operation | `network_transport` | fixed_contract |
+| `ipv6_op_prepare` | `1544` | `u32` | value | operation | `ipv6_provider` | fixed_contract |
+| `net_service_op_tcp_listen_retained_result` | `798` | `u16` | value | number | `network_family` | fixed_contract |
+| `network_error_packet_too_big` | `-6215` | `i32` | value | number | `network_family` | fixed_contract |
 
 ## Limits
 

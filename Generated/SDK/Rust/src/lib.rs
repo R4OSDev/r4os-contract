@@ -3114,6 +3114,10 @@ pub const ndp_event_flag_override: u32 = 536870912;
 pub const ndp_request_fragmented: u32 = 1;
 pub const ndp_confirm_probe_sent: u32 = 1;
 pub const ipv6_packet_flag_fragmented: u32 = 1;
+pub const network_transport_op_tick: u32 = 1647;
+pub const ipv6_op_prepare: u32 = 1544;
+pub const net_service_op_tcp_listen_retained_result: u16 = 798;
+pub const network_error_packet_too_big: i32 = -6215;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -22364,6 +22368,30 @@ impl Default for NdpInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkTransportRequest {
+    pub version: u32,
+    pub size: u32,
+    pub provider: u64,
+    pub broker: ProgramProcessHandle,
+    pub owner: ProgramProcessHandle,
+    pub request: NetworkSocketRequest,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkTransportRequest {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 176,
+            provider: 0,
+            broker: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            request: NetworkSocketRequest { version: 1, size: 128, provider: 0, socket: 0, generation: 0, endpoint: NetworkEndpoint { address: NetworkAddress { family: 0, reserved0: 0, scope_id: 0, interface_id: 0, reserved1: 0, bytes: [0; 16] }, port: 0, reserved: 0, flags: 0 }, deadline: NetworkDeadline { version: 1, size: 48, kind: 0, reserved0: 0, absolute_ns: 0, last_ns: 0, clock_source: 0, clock_generation: 0, event_backend: 0, tick_hz: 0 }, flags: 0, bytes: 0 },
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -28300,6 +28328,7 @@ pub struct ProtocolApi2 {
     pub entropy_fill: Option<unsafe extern "C" fn(*mut u8, u32) -> i32>,
     pub protocol_dispatch: Option<unsafe extern "C" fn(*const u8, u32, u32, *const ProtocolBuffer, *mut ProtocolBuffer) -> i32>,
     pub link_io: Option<unsafe extern "C" fn(*const NetworkLinkRequest, *mut NetworkLinkInfo) -> i32>,
+    pub process_status: Option<unsafe extern "C" fn(*const ProgramProcessHandle, *mut ProgramInstanceInfo) -> i32>,
 }
 
 impl ProtocolApi2 {
@@ -28323,6 +28352,7 @@ impl ProtocolApi2 {
         entropy_fill: source.entropy_fill,
         protocol_dispatch: None,
         link_io: None,
+        process_status: None,
     } }
 }
 
@@ -36047,6 +36077,14 @@ const _: () = {
     assert!(core::mem::offset_of!(NdpInfo, flags) == 40);
     assert!(core::mem::size_of::<NdpInfo>() == 48);
     assert!(core::mem::align_of::<NdpInfo>() == 8);
+    assert!(core::mem::offset_of!(NetworkTransportRequest, version) == 0);
+    assert!(core::mem::offset_of!(NetworkTransportRequest, size) == 4);
+    assert!(core::mem::offset_of!(NetworkTransportRequest, provider) == 8);
+    assert!(core::mem::offset_of!(NetworkTransportRequest, broker) == 16);
+    assert!(core::mem::offset_of!(NetworkTransportRequest, owner) == 32);
+    assert!(core::mem::offset_of!(NetworkTransportRequest, request) == 48);
+    assert!(core::mem::size_of::<NetworkTransportRequest>() == 176);
+    assert!(core::mem::align_of::<NetworkTransportRequest>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -38356,7 +38394,8 @@ const _: () = {
     assert!(core::mem::offset_of!(ProtocolApi2, entropy_fill) == 112);
     assert!(core::mem::offset_of!(ProtocolApi2, protocol_dispatch) == 120);
     assert!(core::mem::offset_of!(ProtocolApi2, link_io) == 128);
-    assert!(core::mem::size_of::<ProtocolApi2>() == 136);
+    assert!(core::mem::offset_of!(ProtocolApi2, process_status) == 136);
+    assert!(core::mem::size_of::<ProtocolApi2>() == 144);
     assert!(core::mem::align_of::<ProtocolApi2>() == 8);
     assert!(core::mem::offset_of!(AudioBackend2, magic) == 0);
     assert!(core::mem::offset_of!(AudioBackend2, version) == 4);

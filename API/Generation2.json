@@ -60,7 +60,8 @@
     "magic": 843665476,
     "protocol_tail_fields": [
       "protocol_dispatch",
-      "link_io"
+      "link_io",
+      "process_status"
     ]
   },
   "audio_status": {

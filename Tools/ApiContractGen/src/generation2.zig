@@ -65,7 +65,7 @@ fn validate(config: Config, contract: anytype) !void {
     if (!std.mem.eql(u8, config.driver.init_symbol, "DriverInit2") or !std.mem.eql(u8, config.driver.protocol_init_symbol, "ProtocolInit2") or config.driver.export_version != 2) return error.GenerationDriverIdentity;
     if (config.driver.magic != 0x32495044 or config.driver.protocol_magic != 0x32495050 or config.driver.initial_version != 1 or config.driver.source_version != 39 or config.driver.protocol_source_version != 1) return error.GenerationDriverIdentity;
     if (config.driver.remove_fields.len != 2 or !contains(config.driver.remove_fields, "register_audio_backend") or !contains(config.driver.remove_fields, "register_synth_engine")) return error.GenerationFieldRemoval;
-    if (config.driver.protocol_tail_fields.len != 2 or !std.mem.eql(u8, config.driver.protocol_tail_fields[0], "protocol_dispatch") or !std.mem.eql(u8, config.driver.protocol_tail_fields[1], "link_io")) return error.GenerationProtocolTail;
+    if (config.driver.protocol_tail_fields.len != 3 or !std.mem.eql(u8, config.driver.protocol_tail_fields[0], "protocol_dispatch") or !std.mem.eql(u8, config.driver.protocol_tail_fields[1], "link_io") or !std.mem.eql(u8, config.driver.protocol_tail_fields[2], "process_status")) return error.GenerationProtocolTail;
     if (!std.mem.eql(u8, config.audio_status.name, "AudioBackendStatus2") or config.audio_status.backend_version != 3 or config.audio_status.backend_magic != 0x32425541 or config.audio_status.remove_fields.len != 6) return error.GenerationAudioIdentity;
     for ([_][]const u8{ "last_write_ticks", "max_write_ticks", "total_write_ticks", "last_refill_ticks", "max_refill_ticks", "total_refill_ticks" }) |field| if (!contains(config.audio_status.remove_fields, field)) return error.GenerationFieldRemoval;
     if (config.selection.default_generation != 1 or !config.selection.shared_resource_owners or !std.mem.eql(u8, config.selection.missing_generation, "reject") or !std.mem.eql(u8, config.selection.mixed_start_generations, "reject")) return error.GenerationSelection;
@@ -253,7 +253,7 @@ pub fn selftest(allocator: std.mem.Allocator, io: std.Io, contract: anytype) !vo
     const raw = try std.Io.Dir.cwd().readFileAlloc(io, "API/Generation2.json", a, .limited(64 * 1024));
     const parsed = try std.json.parseFromSlice(Config, a, raw, .{});
     try validate(parsed.value, contract);
-    for (0..16) |i| {
+    for (0..17) |i| {
         var mutated = parsed.value;
         switch (i) {
             0 => mutated.query.symbol = "Query",
@@ -272,11 +272,12 @@ pub fn selftest(allocator: std.mem.Allocator, io: std.Io, contract: anytype) !vo
             13 => mutated.driver.protocol_tail_fields = &.{ "link_io", "protocol_dispatch" },
             14 => mutated.driver.protocol_tail_fields = &.{"protocol_dispatch"},
             15 => mutated.driver.protocol_tail_fields = &.{ "protocol_dispatch", "unrestricted_kernel" },
+            16 => mutated.driver.protocol_tail_fields = &.{ "protocol_dispatch", "link_io", "unrestricted_kernel" },
             else => unreachable,
         }
         if (validate(mutated, contract)) |_| return error.GenerationMutationAccepted else |_| {}
     }
-    std.debug.print("Generation2 selftest: 16 incompatible identity/removal/selection/revision/tail mutations rejected.\n", .{});
+    std.debug.print("Generation2 selftest: 17 incompatible identity/removal/selection/revision/tail mutations rejected.\n", .{});
 }
 
 fn emitTechnical(a: std.mem.Allocator, config: Config) ![]const u8 {

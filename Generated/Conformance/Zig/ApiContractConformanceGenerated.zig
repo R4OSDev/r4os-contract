@@ -7125,6 +7125,13 @@ comptime {
     if (@offsetOf(abi.NdpInfo, "probes") != 32) @compileError("NdpInfo.probes offset");
     if (@offsetOf(abi.NdpInfo, "timeouts") != 36) @compileError("NdpInfo.timeouts offset");
     if (@offsetOf(abi.NdpInfo, "flags") != 40) @compileError("NdpInfo.flags offset");
+    if (@sizeOf(abi.NetworkTransportRequest) != 176) @compileError("NetworkTransportRequest size");
+    if (@offsetOf(abi.NetworkTransportRequest, "version") != 0) @compileError("NetworkTransportRequest.version offset");
+    if (@offsetOf(abi.NetworkTransportRequest, "size") != 4) @compileError("NetworkTransportRequest.size offset");
+    if (@offsetOf(abi.NetworkTransportRequest, "provider") != 8) @compileError("NetworkTransportRequest.provider offset");
+    if (@offsetOf(abi.NetworkTransportRequest, "broker") != 16) @compileError("NetworkTransportRequest.broker offset");
+    if (@offsetOf(abi.NetworkTransportRequest, "owner") != 32) @compileError("NetworkTransportRequest.owner offset");
+    if (@offsetOf(abi.NetworkTransportRequest, "request") != 48) @compileError("NetworkTransportRequest.request offset");
     if (@sizeOf(abi.R4XStartR4Sys) != 1488) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");

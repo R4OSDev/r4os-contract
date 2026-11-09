@@ -3120,6 +3120,10 @@ extern "C" {
 #define R4OS_NDP_REQUEST_FRAGMENTED 1u
 #define R4OS_NDP_CONFIRM_PROBE_SENT 1u
 #define R4OS_IPV6_PACKET_FLAG_FRAGMENTED 1u
+#define R4OS_NETWORK_TRANSPORT_OP_TICK 1647u
+#define R4OS_IPV6_OP_PREPARE 1544u
+#define R4OS_NET_SERVICE_OP_TCP_LISTEN_RETAINED_RESULT 798u
+#define R4OS_NETWORK_ERROR_PACKET_TOO_BIG ((int32_t)-6215)
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -4083,6 +4087,7 @@ typedef struct R4NdpPrefix R4NdpPrefix;
 typedef struct R4NdpRequest R4NdpRequest;
 typedef struct R4NdpEvent R4NdpEvent;
 typedef struct R4NdpInfo R4NdpInfo;
+typedef struct R4NetworkTransportRequest R4NetworkTransportRequest;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -12081,6 +12086,15 @@ typedef struct R4NdpInfo {
     uint32_t timeouts;
     uint64_t flags;
 } R4NdpInfo;
+
+typedef struct R4NetworkTransportRequest {
+    uint32_t version;
+    uint32_t size;
+    uint64_t provider;
+    R4ProgramProcessHandle broker;
+    R4ProgramProcessHandle owner;
+    R4NetworkSocketRequest request;
+} R4NetworkTransportRequest;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -20344,6 +20358,13 @@ _Static_assert(offsetof(R4NdpInfo, max_neighbors) == 28u, "NdpInfo.max_neighbors
 _Static_assert(offsetof(R4NdpInfo, probes) == 32u, "NdpInfo.probes offset mismatch");
 _Static_assert(offsetof(R4NdpInfo, timeouts) == 36u, "NdpInfo.timeouts offset mismatch");
 _Static_assert(offsetof(R4NdpInfo, flags) == 40u, "NdpInfo.flags offset mismatch");
+_Static_assert(sizeof(R4NetworkTransportRequest) == 176u, "NetworkTransportRequest size mismatch");
+_Static_assert(offsetof(R4NetworkTransportRequest, version) == 0u, "NetworkTransportRequest.version offset mismatch");
+_Static_assert(offsetof(R4NetworkTransportRequest, size) == 4u, "NetworkTransportRequest.size offset mismatch");
+_Static_assert(offsetof(R4NetworkTransportRequest, provider) == 8u, "NetworkTransportRequest.provider offset mismatch");
+_Static_assert(offsetof(R4NetworkTransportRequest, broker) == 16u, "NetworkTransportRequest.broker offset mismatch");
+_Static_assert(offsetof(R4NetworkTransportRequest, owner) == 32u, "NetworkTransportRequest.owner offset mismatch");
+_Static_assert(offsetof(R4NetworkTransportRequest, request) == 48u, "NetworkTransportRequest.request offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1488u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

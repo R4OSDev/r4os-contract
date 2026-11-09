@@ -71,10 +71,11 @@ test "technical generation2 retains exact typed live slots and bounds the real s
         inline for (std.meta.fields(pair[0])) |field| try std.testing.expectEqual(@offsetOf(pair[0], field.name), @offsetOf(pair[1], field.name));
     }
     try std.testing.expectEqual(@as(usize, 656), @sizeOf(api.DriverApi2));
-    try std.testing.expectEqual(@as(usize, 136), @sizeOf(api.ProtocolApi2));
+    try std.testing.expectEqual(@as(usize, 144), @sizeOf(api.ProtocolApi2));
     try std.testing.expectEqual(@as(usize, 120), @sizeOf(api.shared.ProtocolApi));
     try std.testing.expectEqual(@as(usize, 120), @offsetOf(api.ProtocolApi2, "protocol_dispatch"));
     try std.testing.expectEqual(@as(usize, 128), @offsetOf(api.ProtocolApi2, "link_io"));
+    try std.testing.expectEqual(@as(usize, 136), @offsetOf(api.ProtocolApi2, "process_status"));
     inline for (std.meta.fields(api.shared.ProtocolApi)) |field| {
         try std.testing.expectEqual(@offsetOf(api.shared.ProtocolApi, field.name), @offsetOf(api.ProtocolApi2, field.name));
         try std.testing.expect(@FieldType(api.ProtocolApi2, field.name) == field.type);

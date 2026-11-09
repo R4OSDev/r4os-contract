@@ -40,6 +40,11 @@ callers may retry with the SAME absolute budget. Uncertain mutations are never
 automatically retried. Each new DNS transaction has an additional provider
 limit of3seconds; a forever caller budget does not disable DNS operation limits.
 
+Current provider qualification and the explicit extensions for0.90.33 are
+specified in Ipv6Transport.txt. The initial IPv4-only binding/listener limits
+below describe0.90.31; they are not restrictions on a qualified IPv6 provider.
+The shared identity, copied output, ownership and deadline rules still apply.
+
 SOCKET REQUESTS
 ---------------
 NetworkSocketRequest128 has exact version/size, provider, socket, generation,

@@ -3108,6 +3108,10 @@ pub const ndp_event_flag_override: u32 = 536870912;
 pub const ndp_request_fragmented: u32 = 1;
 pub const ndp_confirm_probe_sent: u32 = 1;
 pub const ipv6_packet_flag_fragmented: u32 = 1;
+pub const network_transport_op_tick: u32 = 1647;
+pub const ipv6_op_prepare: u32 = 1544;
+pub const net_service_op_tcp_listen_retained_result: u16 = 798;
+pub const network_error_packet_too_big: i32 = -6215;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -11683,6 +11687,15 @@ pub const NdpInfo = extern struct {
     probes: u32 = 0,
     timeouts: u32 = 0,
     flags: u64 = 0,
+};
+
+pub const NetworkTransportRequest = extern struct {
+    version: u32 = 1,
+    size: u32 = 176,
+    provider: u64 = 0,
+    broker: ProgramProcessHandle = .{},
+    owner: ProgramProcessHandle = .{},
+    request: NetworkSocketRequest = .{},
 };
 
 pub const R4SysFns = struct {
@@ -20908,6 +20921,14 @@ comptime {
     if (@offsetOf(NdpInfo, "probes") != 32) @compileError("generated ABI offset drift: NdpInfo.probes");
     if (@offsetOf(NdpInfo, "timeouts") != 36) @compileError("generated ABI offset drift: NdpInfo.timeouts");
     if (@offsetOf(NdpInfo, "flags") != 40) @compileError("generated ABI offset drift: NdpInfo.flags");
+    if (@sizeOf(NetworkTransportRequest) != 176) @compileError("generated ABI size drift: NetworkTransportRequest");
+    if (@alignOf(NetworkTransportRequest) != 8) @compileError("generated ABI alignment drift: NetworkTransportRequest");
+    if (@offsetOf(NetworkTransportRequest, "version") != 0) @compileError("generated ABI offset drift: NetworkTransportRequest.version");
+    if (@offsetOf(NetworkTransportRequest, "size") != 4) @compileError("generated ABI offset drift: NetworkTransportRequest.size");
+    if (@offsetOf(NetworkTransportRequest, "provider") != 8) @compileError("generated ABI offset drift: NetworkTransportRequest.provider");
+    if (@offsetOf(NetworkTransportRequest, "broker") != 16) @compileError("generated ABI offset drift: NetworkTransportRequest.broker");
+    if (@offsetOf(NetworkTransportRequest, "owner") != 32) @compileError("generated ABI offset drift: NetworkTransportRequest.owner");
+    if (@offsetOf(NetworkTransportRequest, "request") != 48) @compileError("generated ABI offset drift: NetworkTransportRequest.request");
     if (@sizeOf(R4XStartR4Sys) != 1488) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
