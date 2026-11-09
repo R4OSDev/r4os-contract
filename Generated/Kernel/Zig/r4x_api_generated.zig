@@ -3121,6 +3121,8 @@ pub const byte_pipe_broken_pipe: u32 = 4;
 pub const byte_pipe_cancelled: u32 = 5;
 pub const byte_pipe_timed_out: u32 = 6;
 pub const byte_pipe_closed: u32 = 7;
+pub const launch_io_default: u32 = 0;
+pub const launch_io_pipe: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3606,6 +3608,21 @@ pub const byte_pipe_error_exhausted: i32 = -14009;
 pub const byte_pipe_error_clock_unavailable: i32 = -14010;
 pub const byte_pipe_error_clock_changed: i32 = -14011;
 pub const byte_pipe_error_unsupported: i32 = -14012;
+pub const launch_io_ok: i32 = 0;
+pub const launch_io_error_invalid: i32 = -15001;
+pub const launch_io_error_context: i32 = -15002;
+pub const launch_io_error_stale: i32 = -15003;
+pub const launch_io_error_owner: i32 = -15004;
+pub const launch_io_error_direction: i32 = -15005;
+pub const launch_io_error_capacity: i32 = -15006;
+pub const launch_io_error_memory: i32 = -15007;
+pub const launch_io_error_release: i32 = -15008;
+pub const launch_io_error_exhausted: i32 = -15009;
+pub const launch_io_error_unsupported: i32 = -15010;
+pub const launch_io_error_not_found: i32 = -15011;
+pub const launch_io_error_load: i32 = -15012;
+pub const launch_io_error_start: i32 = -15013;
+pub const launch_io_error_busy: i32 = -15014;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -3630,6 +3647,7 @@ pub const R4ErrorDomain = enum(u16) {
     font_metrics2 = 19,
     waitset = 20,
     byte_pipe = 21,
+    launch_io = 22,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -11760,6 +11778,22 @@ pub const BytePipeInfo = extern struct {
     max_step: u64 = 0,
 };
 
+pub const LaunchIoBinding = extern struct {
+    kind: u32 = 0,
+    reserved: u32 = 0,
+    end: BytePipeEnd = .{},
+};
+
+pub const LaunchIo = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    policy: u32 = 0,
+    console_host: u32 = 0,
+    stdin_binding: LaunchIoBinding = .{},
+    stdout_binding: LaunchIoBinding = .{},
+    stderr_binding: LaunchIoBinding = .{},
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11949,12 +11983,14 @@ pub const R4SysFns = struct {
     pub const byte_pipe_cancel = *const fn (BytePipeEnd) callconv(.c) i32;
     pub const byte_pipe_close = *const fn (BytePipeEnd) callconv(.c) i32;
     pub const byte_pipe_info = *const fn (BytePipeEnd, *BytePipeInfo) callconv(.c) i32;
+    pub const program_launch_io = *const fn ([*:0]const u8, [*:0]const u8, *const LaunchIo, *ProgramProcessHandle) callconv(.c) i32;
+    pub const program_stdio = *const fn (*LaunchIo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 40,
-    size: u32 = 1544,
+    abi_version: u32 = 41,
+    size: u32 = 1560,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -12147,6 +12183,8 @@ pub const R4XStartR4Sys = extern struct {
     byte_pipe_cancel: usize = 0,
     byte_pipe_close: usize = 0,
     byte_pipe_info: usize = 0,
+    program_launch_io: usize = 0,
+    program_stdio: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -13072,6 +13110,8 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 188, .offset = 1520, .name = "byte_pipe_cancel", .state = .function, .required = false },
     .{ .number = 189, .offset = 1528, .name = "byte_pipe_close", .state = .function, .required = false },
     .{ .number = 190, .offset = 1536, .name = "byte_pipe_info", .state = .function, .required = false },
+    .{ .number = 191, .offset = 1544, .name = "program_launch_io", .state = .function, .required = false },
+    .{ .number = 192, .offset = 1552, .name = "program_stdio", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -21041,7 +21081,21 @@ comptime {
     if (@offsetOf(BytePipeInfo, "writers") != 28) @compileError("generated ABI offset drift: BytePipeInfo.writers");
     if (@offsetOf(BytePipeInfo, "atomic_limit") != 32) @compileError("generated ABI offset drift: BytePipeInfo.atomic_limit");
     if (@offsetOf(BytePipeInfo, "max_step") != 40) @compileError("generated ABI offset drift: BytePipeInfo.max_step");
-    if (@sizeOf(R4XStartR4Sys) != 1544) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(LaunchIoBinding) != 32) @compileError("generated ABI size drift: LaunchIoBinding");
+    if (@alignOf(LaunchIoBinding) != 8) @compileError("generated ABI alignment drift: LaunchIoBinding");
+    if (@offsetOf(LaunchIoBinding, "kind") != 0) @compileError("generated ABI offset drift: LaunchIoBinding.kind");
+    if (@offsetOf(LaunchIoBinding, "reserved") != 4) @compileError("generated ABI offset drift: LaunchIoBinding.reserved");
+    if (@offsetOf(LaunchIoBinding, "end") != 8) @compileError("generated ABI offset drift: LaunchIoBinding.end");
+    if (@sizeOf(LaunchIo) != 112) @compileError("generated ABI size drift: LaunchIo");
+    if (@alignOf(LaunchIo) != 8) @compileError("generated ABI alignment drift: LaunchIo");
+    if (@offsetOf(LaunchIo, "version") != 0) @compileError("generated ABI offset drift: LaunchIo.version");
+    if (@offsetOf(LaunchIo, "size") != 4) @compileError("generated ABI offset drift: LaunchIo.size");
+    if (@offsetOf(LaunchIo, "policy") != 8) @compileError("generated ABI offset drift: LaunchIo.policy");
+    if (@offsetOf(LaunchIo, "console_host") != 12) @compileError("generated ABI offset drift: LaunchIo.console_host");
+    if (@offsetOf(LaunchIo, "stdin_binding") != 16) @compileError("generated ABI offset drift: LaunchIo.stdin_binding");
+    if (@offsetOf(LaunchIo, "stdout_binding") != 48) @compileError("generated ABI offset drift: LaunchIo.stdout_binding");
+    if (@offsetOf(LaunchIo, "stderr_binding") != 80) @compileError("generated ABI offset drift: LaunchIo.stderr_binding");
+    if (@sizeOf(R4XStartR4Sys) != 1560) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -21233,6 +21287,8 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "byte_pipe_cancel") != 1520) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_cancel");
     if (@offsetOf(R4XStartR4Sys, "byte_pipe_close") != 1528) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_close");
     if (@offsetOf(R4XStartR4Sys, "byte_pipe_info") != 1536) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_info");
+    if (@offsetOf(R4XStartR4Sys, "program_launch_io") != 1544) @compileError("generated ABI offset drift: R4XStartR4Sys.program_launch_io");
+    if (@offsetOf(R4XStartR4Sys, "program_stdio") != 1552) @compileError("generated ABI offset drift: R4XStartR4Sys.program_stdio");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -21773,13 +21829,15 @@ pub const R4SysProvider = struct {
     byte_pipe_cancel: ?R4SysFns.byte_pipe_cancel = null,
     byte_pipe_close: ?R4SysFns.byte_pipe_close = null,
     byte_pipe_info: ?R4SysFns.byte_pipe_info = null,
+    program_launch_io: ?R4SysFns.program_launch_io = null,
+    program_stdio: ?R4SysFns.program_stdio = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 40,
-        .size = 1544,
+        .abi_version = 41,
+        .size = 1560,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -21972,6 +22030,8 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .byte_pipe_cancel = if (provider.byte_pipe_cancel) |callback| @intFromPtr(callback) else 0,
         .byte_pipe_close = if (provider.byte_pipe_close) |callback| @intFromPtr(callback) else 0,
         .byte_pipe_info = if (provider.byte_pipe_info) |callback| @intFromPtr(callback) else 0,
+        .program_launch_io = if (provider.program_launch_io) |callback| @intFromPtr(callback) else 0,
+        .program_stdio = if (provider.program_stdio) |callback| @intFromPtr(callback) else 0,
     };
 }
 

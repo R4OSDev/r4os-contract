@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 40,
+      "abi_version": 41,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1544,
+      "size": 1560,
       "slots": [
         {
           "number": 0,
@@ -15106,6 +15106,177 @@
             ],
             "optional_capability": true,
             "error_domain": "byte_pipe",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 191,
+          "offset": 1544,
+          "name": "program_launch_io",
+          "state": "function",
+          "required": false,
+          "description": "Copy and validate LaunchIo and launch strings, then create one Start2 child. All selected pipe references bind atomically to its full reserved generation before first Ready. Both stdout/stderr create distinct refs even for the same parent End. No automatic inheritance; every failure rolls child refs back. Parent references remain untouched; caller out_handle only publishes complete success.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "path",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "args",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "sentinel",
+                  "is_const": true,
+                  "sentinel": 0,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "nul_terminator",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "io",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "LaunchIo"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_handle",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramProcessHandle"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "launch_io",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "request_close_wait_reap",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 192,
+          "offset": 1552,
+          "name": "program_stdio",
+          "state": "function",
+          "required": false,
+          "description": "Return this exact Start2 process startup binding snapshot; defaults use existing console routes. Pipe End values are borrowed references owned by this process, not a new retain. Query does not reopen closed ends; Dup explicitly if another owning reference is needed. No parent pointers or context-reserved fields are used.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "out_io",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "LaunchIo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "launch_io",
             "ownership": "borrowed",
             "buffer_lifetime": "call",
             "blocking": "may_block",
@@ -139310,6 +139481,170 @@
       ],
       "values": [],
       "description": "Coherent advisory byte channel snapshot. Bounded copied storage, qualified multiple readers/writers serialized per operation. Writes no larger than atomic_limit are all-or-none; larger writes may accept one prefix up to max_step. Scheduling fairness and message boundaries are not promised. No direct caller storage or WaitSource lifetime is retained."
+    },
+    {
+      "name": "LaunchIoBinding",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 32,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "kind",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "kind",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "end",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "BytePipeEnd"
+          },
+          "description": "end",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "r4os.abi.BytePipeEnd",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Explicit default Console0 with zero end, or Pipe1 with a live exact caller-owned endpoint. stdin requires Reader; stdout/stderr require Writer. Each Pipe binding creates a distinct child reference even when two streams select the same parent end. Simple copies or default Console never inherit another pipe."
+    },
+    {
+      "name": "LaunchIo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "policy",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "policy",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "console_host",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "console_host",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "stdin_binding",
+          "offset": 16,
+          "type": {
+            "kind": "named",
+            "name": "LaunchIoBinding"
+          },
+          "description": "stdin_binding",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "r4os.abi.LaunchIoBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "stdout_binding",
+          "offset": 48,
+          "type": {
+            "kind": "named",
+            "name": "LaunchIoBinding"
+          },
+          "description": "stdout_binding",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "r4os.abi.LaunchIoBinding",
+          "default_kind": "empty"
+        },
+        {
+          "name": "stderr_binding",
+          "offset": 80,
+          "type": {
+            "kind": "named",
+            "name": "LaunchIoBinding"
+          },
+          "description": "stderr_binding",
+          "size": 32,
+          "alignment": 8,
+          "source_type": "r4os.abi.LaunchIoBinding",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Copied optional Start2 construction request and current-process binding snapshot. Policy0auto/1console/2desktop; console_host0 preserves default/inherited console routing,1terminal_window,2terminal_mode with existing console-class restriction. Three bindings are retained atomically to the exact newly reserved child generation before first Ready. Parent ends stay owned until explicit parent close. Failed pre-publication construction rolls all child refs back; retirement closes child refs after physical threads. stdio query returns borrowed child references, not Dup, and no caller pointer survives return. Existing Start1/Start2 records and reserved_runtime are unchanged."
     }
   ],
   "operations": [],
@@ -139423,6 +139758,11 @@
       "name": "byte_pipe",
       "id": 21,
       "description": "Bounded resident byte streams with exact endpoint references, accepted prefixes, EOF and explicit cancellation."
+    },
+    {
+      "name": "launch_io",
+      "id": 22,
+      "description": "Copied atomic Start2 pipe bindings and borrowed process stdio identity snapshot."
     }
   ],
   "error_domains": [
@@ -142254,6 +142594,105 @@
         }
       ],
       "description": "Negative errors preserve outputs. Close release failure has a documented retained logical side effect; all real backing must still be acknowledged. Progress states are separate from API status."
+    },
+    {
+      "name": "launch_io",
+      "unit": "status_code",
+      "scope": "launch_io",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "launch_io_ok",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Complete success; output published."
+        },
+        {
+          "name": "launch_io_error_invalid",
+          "value": -15001,
+          "value_type": "i32",
+          "description": "Invalid header, policy, reserved, pointer, default binding or overlapping caller spans; output unchanged."
+        },
+        {
+          "name": "launch_io_error_context",
+          "value": -15002,
+          "value_type": "i32",
+          "description": "No eligible current native main task or invalid execution context."
+        },
+        {
+          "name": "launch_io_error_stale",
+          "value": -15003,
+          "value_type": "i32",
+          "description": "Closed, unknown or wrong-generation parent endpoint."
+        },
+        {
+          "name": "launch_io_error_owner",
+          "value": -15004,
+          "value_type": "i32",
+          "description": "Parent endpoint belongs to another full process generation."
+        },
+        {
+          "name": "launch_io_error_direction",
+          "value": -15005,
+          "value_type": "i32",
+          "description": "stdin is not Reader or stdout/stderr is not Writer."
+        },
+        {
+          "name": "launch_io_error_capacity",
+          "value": -15006,
+          "value_type": "i32",
+          "description": "Not enough references for every binding atomically."
+        },
+        {
+          "name": "launch_io_error_memory",
+          "value": -15007,
+          "value_type": "i32",
+          "description": "Construction allocation failed; child resources roll back."
+        },
+        {
+          "name": "launch_io_error_release",
+          "value": -15008,
+          "value_type": "i32",
+          "description": "Resource acknowledgement incomplete; exact retry/retirement owner retained."
+        },
+        {
+          "name": "launch_io_error_exhausted",
+          "value": -15009,
+          "value_type": "i32",
+          "description": "Nonwrapping reference/process identity exhausted."
+        },
+        {
+          "name": "launch_io_error_unsupported",
+          "value": -15010,
+          "value_type": "i32",
+          "description": "Child is not Start2 or optional operation/stdio mode unsupported."
+        },
+        {
+          "name": "launch_io_error_not_found",
+          "value": -15011,
+          "value_type": "i32",
+          "description": "Launch path could not be resolved."
+        },
+        {
+          "name": "launch_io_error_load",
+          "value": -15012,
+          "value_type": "i32",
+          "description": "Image, import or memory contract failed."
+        },
+        {
+          "name": "launch_io_error_start",
+          "value": -15013,
+          "value_type": "i32",
+          "description": "Task creation/publication/cancellation failed; failed child never executes."
+        },
+        {
+          "name": "launch_io_error_busy",
+          "value": -15014,
+          "value_type": "i32",
+          "description": "Existing launch admission is busy."
+        }
+      ],
+      "description": "New optional copied launch/stdio query errors; success0, negative errors leave caller output unchanged. Parent endpoints are never consumed. Underlying admitted retirement keeps ownership until actual acknowledgement."
     }
   ],
   "constants": [
@@ -173456,6 +173895,26 @@
       "scope": "byte_pipe",
       "stability": "fixed_contract",
       "description": "closed"
+    },
+    {
+      "name": "launch_io_default",
+      "value": "0",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "launch_io",
+      "stability": "fixed_contract",
+      "description": "Explicit Console/default binding."
+    },
+    {
+      "name": "launch_io_pipe",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "launch_io",
+      "stability": "fixed_contract",
+      "description": "Exact BytePipe endpoint binding."
     }
   ],
   "limits": [

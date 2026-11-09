@@ -3127,6 +3127,8 @@ pub const byte_pipe_broken_pipe: u32 = 4;
 pub const byte_pipe_cancelled: u32 = 5;
 pub const byte_pipe_timed_out: u32 = 6;
 pub const byte_pipe_closed: u32 = 7;
+pub const launch_io_default: u32 = 0;
+pub const launch_io_pipe: u32 = 1;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3612,6 +3614,21 @@ pub const byte_pipe_error_exhausted: i32 = -14009;
 pub const byte_pipe_error_clock_unavailable: i32 = -14010;
 pub const byte_pipe_error_clock_changed: i32 = -14011;
 pub const byte_pipe_error_unsupported: i32 = -14012;
+pub const launch_io_ok: i32 = 0;
+pub const launch_io_error_invalid: i32 = -15001;
+pub const launch_io_error_context: i32 = -15002;
+pub const launch_io_error_stale: i32 = -15003;
+pub const launch_io_error_owner: i32 = -15004;
+pub const launch_io_error_direction: i32 = -15005;
+pub const launch_io_error_capacity: i32 = -15006;
+pub const launch_io_error_memory: i32 = -15007;
+pub const launch_io_error_release: i32 = -15008;
+pub const launch_io_error_exhausted: i32 = -15009;
+pub const launch_io_error_unsupported: i32 = -15010;
+pub const launch_io_error_not_found: i32 = -15011;
+pub const launch_io_error_load: i32 = -15012;
+pub const launch_io_error_start: i32 = -15013;
+pub const launch_io_error_busy: i32 = -15014;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -3639,6 +3656,7 @@ impl R4ErrorDomain {
     pub const font_metrics2: Self = Self(19);
     pub const waitset: Self = Self(20);
     pub const byte_pipe: Self = Self(21);
+    pub const launch_io: Self = Self(22);
 }
 
 #[repr(transparent)]
@@ -22511,6 +22529,50 @@ impl Default for BytePipeInfo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct LaunchIoBinding {
+    pub kind: u32,
+    pub reserved: u32,
+    pub end: BytePipeEnd,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for LaunchIoBinding {
+    fn default() -> Self {
+        Self {
+            kind: 0,
+            reserved: 0,
+            end: BytePipeEnd { handle: 0, generation: 0, direction: 0, reserved: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct LaunchIo {
+    pub version: u32,
+    pub size: u32,
+    pub policy: u32,
+    pub console_host: u32,
+    pub stdin_binding: LaunchIoBinding,
+    pub stdout_binding: LaunchIoBinding,
+    pub stderr_binding: LaunchIoBinding,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for LaunchIo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            policy: 0,
+            console_host: 0,
+            stdin_binding: LaunchIoBinding { kind: 0, reserved: 0, end: BytePipeEnd { handle: 0, generation: 0, direction: 0, reserved: 0 } },
+            stdout_binding: LaunchIoBinding { kind: 0, reserved: 0, end: BytePipeEnd { handle: 0, generation: 0, direction: 0, reserved: 0 } },
+            stderr_binding: LaunchIoBinding { kind: 0, reserved: 0, end: BytePipeEnd { handle: 0, generation: 0, direction: 0, reserved: 0 } },
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -22711,6 +22773,8 @@ pub mod R4SysFns {
     pub type byte_pipe_cancel = unsafe extern "C" fn(BytePipeEnd) -> i32;
     pub type byte_pipe_close = unsafe extern "C" fn(BytePipeEnd) -> i32;
     pub type byte_pipe_info = unsafe extern "C" fn(BytePipeEnd, *mut BytePipeInfo) -> i32;
+    pub type program_launch_io = unsafe extern "C" fn(*const u8, *const u8, *const LaunchIo, *mut ProgramProcessHandle) -> i32;
+    pub type program_stdio = unsafe extern "C" fn(*mut LaunchIo) -> i32;
 }
 
 #[repr(C)]
@@ -22911,14 +22975,16 @@ pub struct R4XStartR4Sys {
     pub byte_pipe_cancel: usize,
     pub byte_pipe_close: usize,
     pub byte_pipe_info: usize,
+    pub program_launch_io: usize,
+    pub program_stdio: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 40,
-            size: 1544,
+            abi_version: 41,
+            size: 1560,
             flags: 0,
             write: 0,
             putc: 0,
@@ -23111,6 +23177,8 @@ impl Default for R4XStartR4Sys {
             byte_pipe_cancel: 0,
             byte_pipe_close: 0,
             byte_pipe_info: 0,
+            program_launch_io: 0,
+            program_stdio: 0,
         }
     }
 }
@@ -36254,6 +36322,20 @@ const _: () = {
     assert!(core::mem::offset_of!(BytePipeInfo, max_step) == 40);
     assert!(core::mem::size_of::<BytePipeInfo>() == 48);
     assert!(core::mem::align_of::<BytePipeInfo>() == 8);
+    assert!(core::mem::offset_of!(LaunchIoBinding, kind) == 0);
+    assert!(core::mem::offset_of!(LaunchIoBinding, reserved) == 4);
+    assert!(core::mem::offset_of!(LaunchIoBinding, end) == 8);
+    assert!(core::mem::size_of::<LaunchIoBinding>() == 32);
+    assert!(core::mem::align_of::<LaunchIoBinding>() == 8);
+    assert!(core::mem::offset_of!(LaunchIo, version) == 0);
+    assert!(core::mem::offset_of!(LaunchIo, size) == 4);
+    assert!(core::mem::offset_of!(LaunchIo, policy) == 8);
+    assert!(core::mem::offset_of!(LaunchIo, console_host) == 12);
+    assert!(core::mem::offset_of!(LaunchIo, stdin_binding) == 16);
+    assert!(core::mem::offset_of!(LaunchIo, stdout_binding) == 48);
+    assert!(core::mem::offset_of!(LaunchIo, stderr_binding) == 80);
+    assert!(core::mem::size_of::<LaunchIo>() == 112);
+    assert!(core::mem::align_of::<LaunchIo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -36451,7 +36533,9 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_cancel) == 1520);
     assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_close) == 1528);
     assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_info) == 1536);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1544);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_launch_io) == 1544);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, program_stdio) == 1552);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1560);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

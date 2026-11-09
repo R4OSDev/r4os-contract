@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 523,
-    "group_slot_count": 523,
+    "function_count": 525,
+    "group_slot_count": 525,
     "sdk_only_count": 0,
-    "public_count": 381,
+    "public_count": 383,
     "advanced_count": 142
   },
   "functions": [
@@ -2265,6 +2265,30 @@
       "slot": 190,
       "exposure": "public",
       "description": "Copy advisory coherent channel capacity/queued/reference counts and atomic/step limits. Does not reserve capacity or prove drain, delivery or shutdown.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_launch_io",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 191,
+      "exposure": "public",
+      "description": "Copy and validate LaunchIo and launch strings, then create one Start2 child. All selected pipe references bind atomically to its full reserved generation before first Ready. Both stdout/stderr create distinct refs even for the same parent End. No automatic inheritance; every failure rolls child refs back. Parent references remain untouched; caller out_handle only publishes complete success.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.program_stdio",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 192,
+      "exposure": "public",
+      "description": "Return this exact Start2 process startup binding snapshot; defaults use existing console routes. Pipe End values are borrowed references owned by this process, not a new retain. Query does not reopen closed ends; Dup explicitly if another owning reference is needed. No parent pointers or context-reserved fields are used.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

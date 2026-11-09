@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 461 von 461 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 463 von 463 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 69; Konstanten: 3120; Limits: 117
+- Operationen: 0; Fehlerdomänen: 70; Konstanten: 3122; Limits: 117
 
 ## App-Profile
 
@@ -482,6 +482,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `BytePipePair` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `BytePipeProgress` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
 | `BytePipeInfo` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
+| `LaunchIoBinding` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
+| `LaunchIo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 
 ## Typdetails
 
@@ -11736,6 +11738,36 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `atomic_limit` | 32 | 8 | 8 | `u64` | - |
 | `max_step` | 40 | 8 | 8 | `u64` | - |
 
+### `LaunchIoBinding`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 32 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `kind` | 0 | 4 | 4 | `u32` | - |
+| `reserved` | 4 | 4 | 4 | `u32` | - |
+| `end` | 8 | 24 | 8 | `r4os.abi.BytePipeEnd` | - |
+
+### `LaunchIo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `policy` | 8 | 4 | 4 | `u32` | - |
+| `console_host` | 12 | 4 | 4 | `u32` | - |
+| `stdin_binding` | 16 | 32 | 8 | `r4os.abi.LaunchIoBinding` | - |
+| `stdout_binding` | 48 | 32 | 8 | `r4os.abi.LaunchIoBinding` | - |
+| `stderr_binding` | 80 | 32 | 8 | `r4os.abi.LaunchIoBinding` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12588,6 +12620,28 @@ Geltung: `byte_pipe`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `byte_pipe_error_clock_unavailable` | -14010 | `i32` |
 | `byte_pipe_error_clock_changed` | -14011 | `i32` |
 | `byte_pipe_error_unsupported` | -14012 | `i32` |
+
+### `launch_io`
+
+Geltung: `launch_io`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `launch_io_ok` | 0 | `i32` |
+| `launch_io_error_invalid` | -15001 | `i32` |
+| `launch_io_error_context` | -15002 | `i32` |
+| `launch_io_error_stale` | -15003 | `i32` |
+| `launch_io_error_owner` | -15004 | `i32` |
+| `launch_io_error_direction` | -15005 | `i32` |
+| `launch_io_error_capacity` | -15006 | `i32` |
+| `launch_io_error_memory` | -15007 | `i32` |
+| `launch_io_error_release` | -15008 | `i32` |
+| `launch_io_error_exhausted` | -15009 | `i32` |
+| `launch_io_error_unsupported` | -15010 | `i32` |
+| `launch_io_error_not_found` | -15011 | `i32` |
+| `launch_io_error_load` | -15012 | `i32` |
+| `launch_io_error_start` | -15013 | `i32` |
+| `launch_io_error_busy` | -15014 | `i32` |
 
 ## Konstanten
 
@@ -15713,6 +15767,8 @@ Geltung: `byte_pipe`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `byte_pipe_cancelled` | `5` | `u32` | value | number | `byte_pipe` | fixed_contract |
 | `byte_pipe_timed_out` | `6` | `u32` | value | number | `byte_pipe` | fixed_contract |
 | `byte_pipe_closed` | `7` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `launch_io_default` | `0` | `u32` | value | number | `launch_io` | fixed_contract |
+| `launch_io_pipe` | `1` | `u32` | value | number | `launch_io` | fixed_contract |
 
 ## Limits
 

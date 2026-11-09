@@ -3133,6 +3133,8 @@ extern "C" {
 #define R4OS_BYTE_PIPE_CANCELLED 5u
 #define R4OS_BYTE_PIPE_TIMED_OUT 6u
 #define R4OS_BYTE_PIPE_CLOSED 7u
+#define R4OS_LAUNCH_IO_DEFAULT 0u
+#define R4OS_LAUNCH_IO_PIPE 1u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3618,6 +3620,21 @@ extern "C" {
 #define R4OS_BYTE_PIPE_ERROR_CLOCK_UNAVAILABLE ((int32_t)-14010)
 #define R4OS_BYTE_PIPE_ERROR_CLOCK_CHANGED ((int32_t)-14011)
 #define R4OS_BYTE_PIPE_ERROR_UNSUPPORTED ((int32_t)-14012)
+#define R4OS_LAUNCH_IO_OK ((int32_t)0)
+#define R4OS_LAUNCH_IO_ERROR_INVALID ((int32_t)-15001)
+#define R4OS_LAUNCH_IO_ERROR_CONTEXT ((int32_t)-15002)
+#define R4OS_LAUNCH_IO_ERROR_STALE ((int32_t)-15003)
+#define R4OS_LAUNCH_IO_ERROR_OWNER ((int32_t)-15004)
+#define R4OS_LAUNCH_IO_ERROR_DIRECTION ((int32_t)-15005)
+#define R4OS_LAUNCH_IO_ERROR_CAPACITY ((int32_t)-15006)
+#define R4OS_LAUNCH_IO_ERROR_MEMORY ((int32_t)-15007)
+#define R4OS_LAUNCH_IO_ERROR_RELEASE ((int32_t)-15008)
+#define R4OS_LAUNCH_IO_ERROR_EXHAUSTED ((int32_t)-15009)
+#define R4OS_LAUNCH_IO_ERROR_UNSUPPORTED ((int32_t)-15010)
+#define R4OS_LAUNCH_IO_ERROR_NOT_FOUND ((int32_t)-15011)
+#define R4OS_LAUNCH_IO_ERROR_LOAD ((int32_t)-15012)
+#define R4OS_LAUNCH_IO_ERROR_START ((int32_t)-15013)
+#define R4OS_LAUNCH_IO_ERROR_BUSY ((int32_t)-15014)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3642,7 +3659,8 @@ enum {
     R4_ERROR_DOMAIN_FILE_METADATA2 = 18,
     R4_ERROR_DOMAIN_FONT_METRICS2 = 19,
     R4_ERROR_DOMAIN_WAITSET = 20,
-    R4_ERROR_DOMAIN_BYTE_PIPE = 21
+    R4_ERROR_DOMAIN_BYTE_PIPE = 21,
+    R4_ERROR_DOMAIN_LAUNCH_IO = 22
 };
 
 #define R4L_GROUP_R4SYS 1u
@@ -4121,6 +4139,8 @@ typedef struct R4BytePipeEnd R4BytePipeEnd;
 typedef struct R4BytePipePair R4BytePipePair;
 typedef struct R4BytePipeProgress R4BytePipeProgress;
 typedef struct R4BytePipeInfo R4BytePipeInfo;
+typedef struct R4LaunchIoBinding R4LaunchIoBinding;
+typedef struct R4LaunchIo R4LaunchIo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -12162,6 +12182,22 @@ typedef struct R4BytePipeInfo {
     uint64_t max_step;
 } R4BytePipeInfo;
 
+typedef struct R4LaunchIoBinding {
+    uint32_t kind;
+    uint32_t reserved;
+    R4BytePipeEnd end;
+} R4LaunchIoBinding;
+
+typedef struct R4LaunchIo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t policy;
+    uint32_t console_host;
+    R4LaunchIoBinding stdin_binding;
+    R4LaunchIoBinding stdout_binding;
+    R4LaunchIoBinding stderr_binding;
+} R4LaunchIo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -12396,6 +12432,8 @@ typedef int32_t (*R4SysBytePipeWriteFn)(R4BytePipeEnd end, const uint8_t * data,
 typedef int32_t (*R4SysBytePipeCancelFn)(R4BytePipeEnd end);
 typedef int32_t (*R4SysBytePipeCloseFn)(R4BytePipeEnd end);
 typedef int32_t (*R4SysBytePipeInfoFn)(R4BytePipeEnd end, R4BytePipeInfo * out_info);
+typedef int32_t (*R4SysProgramLaunchIoFn)(const uint8_t * path, const uint8_t * args, const R4LaunchIo * io, R4ProgramProcessHandle * out_handle);
+typedef int32_t (*R4SysProgramStdioFn)(R4LaunchIo * out_io);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -12593,6 +12631,8 @@ typedef struct R4XStartR4Sys {
     uintptr_t byte_pipe_cancel;
     uintptr_t byte_pipe_close;
     uintptr_t byte_pipe_info;
+    uintptr_t program_launch_io;
+    uintptr_t program_stdio;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -20470,7 +20510,19 @@ _Static_assert(offsetof(R4BytePipeInfo, readers) == 24u, "BytePipeInfo.readers o
 _Static_assert(offsetof(R4BytePipeInfo, writers) == 28u, "BytePipeInfo.writers offset mismatch");
 _Static_assert(offsetof(R4BytePipeInfo, atomic_limit) == 32u, "BytePipeInfo.atomic_limit offset mismatch");
 _Static_assert(offsetof(R4BytePipeInfo, max_step) == 40u, "BytePipeInfo.max_step offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1544u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4LaunchIoBinding) == 32u, "LaunchIoBinding size mismatch");
+_Static_assert(offsetof(R4LaunchIoBinding, kind) == 0u, "LaunchIoBinding.kind offset mismatch");
+_Static_assert(offsetof(R4LaunchIoBinding, reserved) == 4u, "LaunchIoBinding.reserved offset mismatch");
+_Static_assert(offsetof(R4LaunchIoBinding, end) == 8u, "LaunchIoBinding.end offset mismatch");
+_Static_assert(sizeof(R4LaunchIo) == 112u, "LaunchIo size mismatch");
+_Static_assert(offsetof(R4LaunchIo, version) == 0u, "LaunchIo.version offset mismatch");
+_Static_assert(offsetof(R4LaunchIo, size) == 4u, "LaunchIo.size offset mismatch");
+_Static_assert(offsetof(R4LaunchIo, policy) == 8u, "LaunchIo.policy offset mismatch");
+_Static_assert(offsetof(R4LaunchIo, console_host) == 12u, "LaunchIo.console_host offset mismatch");
+_Static_assert(offsetof(R4LaunchIo, stdin_binding) == 16u, "LaunchIo.stdin_binding offset mismatch");
+_Static_assert(offsetof(R4LaunchIo, stdout_binding) == 48u, "LaunchIo.stdout_binding offset mismatch");
+_Static_assert(offsetof(R4LaunchIo, stderr_binding) == 80u, "LaunchIo.stderr_binding offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1560u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -20850,6 +20902,10 @@ _Static_assert(offsetof(R4XStartR4Sys, byte_pipe_close) == 1528u, "R4XStartR4Sys
 _Static_assert(sizeof(R4SysBytePipeCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, byte_pipe_info) == 1536u, "R4XStartR4Sys.byte_pipe_info offset mismatch");
 _Static_assert(sizeof(R4SysBytePipeInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_launch_io) == 1544u, "R4XStartR4Sys.program_launch_io offset mismatch");
+_Static_assert(sizeof(R4SysProgramLaunchIoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, program_stdio) == 1552u, "R4XStartR4Sys.program_stdio offset mismatch");
+_Static_assert(sizeof(R4SysProgramStdioFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

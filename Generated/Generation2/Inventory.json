@@ -1723,6 +1723,24 @@
       "removed": false
     },
     {
+      "group": "R4SYS",
+      "name": "program_launch_io",
+      "source_number": 191,
+      "source_offset": 1544,
+      "number": 190,
+      "offset": 1536,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "program_stdio",
+      "source_number": 192,
+      "source_offset": 1552,
+      "number": 191,
+      "offset": 1544,
+      "removed": false
+    },
+    {
       "group": "R4DESK",
       "name": "read_key",
       "source_number": 0,

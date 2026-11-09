@@ -257,8 +257,10 @@ pub struct R4XStartR4Sys2 {
     pub byte_pipe_cancel: u64,
     pub byte_pipe_close: u64,
     pub byte_pipe_info: u64,
+    pub program_launch_io: u64,
+    pub program_stdio: u64,
 }
-impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 5, size: 1536, flags: 0,
+impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 6, size: 1552, flags: 0,
     write: 0,
     putc: 0,
     sleep_ticks: 0,
@@ -449,8 +451,10 @@ impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834
     byte_pipe_cancel: 0,
     byte_pipe_close: 0,
     byte_pipe_info: 0,
+    program_launch_io: 0,
+    program_stdio: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1536);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1552);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,write) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,putc) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,sleep_ticks) == 32);
@@ -641,6 +645,8 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1536);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_cancel) == 1512);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_close) == 1520);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_info) == 1528);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,program_launch_io) == 1536);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,program_stdio) == 1544);
 };
 impl R4XStartR4Sys2 {
     pub fn project_provider(source: &super::R4XStartR4Sys) -> Self { Self {
@@ -832,6 +838,8 @@ impl R4XStartR4Sys2 {
         byte_pipe_cancel: source.byte_pipe_cancel as u64,
         byte_pipe_close: source.byte_pipe_close as u64,
         byte_pipe_info: source.byte_pipe_info as u64,
+        program_launch_io: source.program_launch_io as u64,
+        program_stdio: source.program_stdio as u64,
         ..Self::default()
     } }
 }

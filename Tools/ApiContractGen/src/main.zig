@@ -395,7 +395,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // 1240-byte prefix and all existing function signatures are retained.
     // 0.90.21 baseline refresh includes the already published optional
     // system_update_target_supported append; no existing slot changes.
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 188, .reserved = 2, .tombstones = 1 },
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 190, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47
