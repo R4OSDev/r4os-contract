@@ -3124,6 +3124,15 @@ extern "C" {
 #define R4OS_IPV6_OP_PREPARE 1544u
 #define R4OS_NET_SERVICE_OP_TCP_LISTEN_RETAINED_RESULT 798u
 #define R4OS_NETWORK_ERROR_PACKET_TOO_BIG ((int32_t)-6215)
+#define R4OS_BYTE_PIPE_READER 1u
+#define R4OS_BYTE_PIPE_WRITER 2u
+#define R4OS_BYTE_PIPE_READY 1u
+#define R4OS_BYTE_PIPE_WOULD_BLOCK 2u
+#define R4OS_BYTE_PIPE_EOF 3u
+#define R4OS_BYTE_PIPE_BROKEN_PIPE 4u
+#define R4OS_BYTE_PIPE_CANCELLED 5u
+#define R4OS_BYTE_PIPE_TIMED_OUT 6u
+#define R4OS_BYTE_PIPE_CLOSED 7u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3235,6 +3244,12 @@ extern "C" {
 #define R4OS_TRAY_TOOLTIP_BYTES 64ull
 #define R4OS_SERIAL_MAX_TRANSFER_BYTES 2147483647u
 #define R4OS_SERIAL_BOUNCE_BYTES 256u
+#define R4OS_BYTE_PIPE_MAX_CAPACITY 65536ull
+#define R4OS_BYTE_PIPE_MAX_STEP 4096ull
+#define R4OS_BYTE_PIPE_MAX_REFERENCES 32ull
+#define R4OS_BYTE_PIPE_MAX_PIPES 64ull
+#define R4OS_BYTE_PIPE_MAX_PAYLOAD 4194304ull
+#define R4OS_BYTE_PIPE_MAX_WAITERS 32ull
 #define R4OS_ARP_RESULT_BUFFER_SMALL ((int32_t)-4)
 #define R4OS_ARP_RESULT_NOT_ARP ((int32_t)1)
 #define R4OS_ARP_RESULT_OK ((int32_t)0)
@@ -3590,6 +3605,19 @@ extern "C" {
 #define R4OS_WAITSET_ERROR_RELEASE ((int32_t)-13012)
 #define R4OS_WAITSET_ERROR_OWNER ((int32_t)-13013)
 #define R4OS_WAITSET_ERROR_OVERFLOW ((int32_t)-13014)
+#define R4OS_BYTE_PIPE_OK ((int32_t)0)
+#define R4OS_BYTE_PIPE_ERROR_INVALID ((int32_t)-14001)
+#define R4OS_BYTE_PIPE_ERROR_CONTEXT ((int32_t)-14002)
+#define R4OS_BYTE_PIPE_ERROR_STALE ((int32_t)-14003)
+#define R4OS_BYTE_PIPE_ERROR_OWNER ((int32_t)-14004)
+#define R4OS_BYTE_PIPE_ERROR_DIRECTION ((int32_t)-14005)
+#define R4OS_BYTE_PIPE_ERROR_CAPACITY ((int32_t)-14006)
+#define R4OS_BYTE_PIPE_ERROR_MEMORY ((int32_t)-14007)
+#define R4OS_BYTE_PIPE_ERROR_RELEASE ((int32_t)-14008)
+#define R4OS_BYTE_PIPE_ERROR_EXHAUSTED ((int32_t)-14009)
+#define R4OS_BYTE_PIPE_ERROR_CLOCK_UNAVAILABLE ((int32_t)-14010)
+#define R4OS_BYTE_PIPE_ERROR_CLOCK_CHANGED ((int32_t)-14011)
+#define R4OS_BYTE_PIPE_ERROR_UNSUPPORTED ((int32_t)-14012)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3613,7 +3641,8 @@ enum {
     R4_ERROR_DOMAIN_SERIAL = 17,
     R4_ERROR_DOMAIN_FILE_METADATA2 = 18,
     R4_ERROR_DOMAIN_FONT_METRICS2 = 19,
-    R4_ERROR_DOMAIN_WAITSET = 20
+    R4_ERROR_DOMAIN_WAITSET = 20,
+    R4_ERROR_DOMAIN_BYTE_PIPE = 21
 };
 
 #define R4L_GROUP_R4SYS 1u
@@ -4088,6 +4117,10 @@ typedef struct R4NdpRequest R4NdpRequest;
 typedef struct R4NdpEvent R4NdpEvent;
 typedef struct R4NdpInfo R4NdpInfo;
 typedef struct R4NetworkTransportRequest R4NetworkTransportRequest;
+typedef struct R4BytePipeEnd R4BytePipeEnd;
+typedef struct R4BytePipePair R4BytePipePair;
+typedef struct R4BytePipeProgress R4BytePipeProgress;
+typedef struct R4BytePipeInfo R4BytePipeInfo;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -12096,6 +12129,39 @@ typedef struct R4NetworkTransportRequest {
     R4NetworkSocketRequest request;
 } R4NetworkTransportRequest;
 
+typedef struct R4BytePipeEnd {
+    uint64_t handle;
+    uint64_t generation;
+    uint32_t direction;
+    uint32_t reserved;
+} R4BytePipeEnd;
+
+typedef struct R4BytePipePair {
+    uint32_t version;
+    uint32_t size;
+    R4BytePipeEnd reader;
+    R4BytePipeEnd writer;
+} R4BytePipePair;
+
+typedef struct R4BytePipeProgress {
+    uint32_t version;
+    uint32_t size;
+    uint64_t bytes;
+    uint32_t state;
+    uint32_t flags;
+} R4BytePipeProgress;
+
+typedef struct R4BytePipeInfo {
+    uint32_t version;
+    uint32_t size;
+    uint64_t capacity;
+    uint64_t queued;
+    uint32_t readers;
+    uint32_t writers;
+    uint64_t atomic_limit;
+    uint64_t max_step;
+} R4BytePipeInfo;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -12323,6 +12389,13 @@ typedef int32_t (*R4SysWaitsetRemoveFn)(uint64_t set, uint64_t registration);
 typedef int32_t (*R4SysWaitsetWaitFn)(uint64_t set, const R4WaitSetDeadline * deadline, R4WaitSetEvent * out_events, uint32_t capacity, R4WaitSetBatch * out_batch);
 typedef int32_t (*R4SysWaitsetCloseFn)(uint64_t set);
 typedef int32_t (*R4SysWaitsetSourcePrepareFn)(const R4WaitSourceRequest * request, R4WaitSource * out_source);
+typedef int32_t (*R4SysBytePipeCreateFn)(uint64_t capacity, R4BytePipePair * out_pair);
+typedef int32_t (*R4SysBytePipeDupFn)(R4BytePipeEnd end, R4BytePipeEnd * out_end);
+typedef int32_t (*R4SysBytePipeReadFn)(R4BytePipeEnd end, uint8_t * data, uint64_t length, const R4WaitSetDeadline * deadline, R4BytePipeProgress * out_progress);
+typedef int32_t (*R4SysBytePipeWriteFn)(R4BytePipeEnd end, const uint8_t * data, uint64_t length, const R4WaitSetDeadline * deadline, R4BytePipeProgress * out_progress);
+typedef int32_t (*R4SysBytePipeCancelFn)(R4BytePipeEnd end);
+typedef int32_t (*R4SysBytePipeCloseFn)(R4BytePipeEnd end);
+typedef int32_t (*R4SysBytePipeInfoFn)(R4BytePipeEnd end, R4BytePipeInfo * out_info);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -12513,6 +12586,13 @@ typedef struct R4XStartR4Sys {
     uintptr_t waitset_wait;
     uintptr_t waitset_close;
     uintptr_t waitset_source_prepare;
+    uintptr_t byte_pipe_create;
+    uintptr_t byte_pipe_dup;
+    uintptr_t byte_pipe_read;
+    uintptr_t byte_pipe_write;
+    uintptr_t byte_pipe_cancel;
+    uintptr_t byte_pipe_close;
+    uintptr_t byte_pipe_info;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -20365,7 +20445,32 @@ _Static_assert(offsetof(R4NetworkTransportRequest, provider) == 8u, "NetworkTran
 _Static_assert(offsetof(R4NetworkTransportRequest, broker) == 16u, "NetworkTransportRequest.broker offset mismatch");
 _Static_assert(offsetof(R4NetworkTransportRequest, owner) == 32u, "NetworkTransportRequest.owner offset mismatch");
 _Static_assert(offsetof(R4NetworkTransportRequest, request) == 48u, "NetworkTransportRequest.request offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1488u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4BytePipeEnd) == 24u, "BytePipeEnd size mismatch");
+_Static_assert(offsetof(R4BytePipeEnd, handle) == 0u, "BytePipeEnd.handle offset mismatch");
+_Static_assert(offsetof(R4BytePipeEnd, generation) == 8u, "BytePipeEnd.generation offset mismatch");
+_Static_assert(offsetof(R4BytePipeEnd, direction) == 16u, "BytePipeEnd.direction offset mismatch");
+_Static_assert(offsetof(R4BytePipeEnd, reserved) == 20u, "BytePipeEnd.reserved offset mismatch");
+_Static_assert(sizeof(R4BytePipePair) == 56u, "BytePipePair size mismatch");
+_Static_assert(offsetof(R4BytePipePair, version) == 0u, "BytePipePair.version offset mismatch");
+_Static_assert(offsetof(R4BytePipePair, size) == 4u, "BytePipePair.size offset mismatch");
+_Static_assert(offsetof(R4BytePipePair, reader) == 8u, "BytePipePair.reader offset mismatch");
+_Static_assert(offsetof(R4BytePipePair, writer) == 32u, "BytePipePair.writer offset mismatch");
+_Static_assert(sizeof(R4BytePipeProgress) == 24u, "BytePipeProgress size mismatch");
+_Static_assert(offsetof(R4BytePipeProgress, version) == 0u, "BytePipeProgress.version offset mismatch");
+_Static_assert(offsetof(R4BytePipeProgress, size) == 4u, "BytePipeProgress.size offset mismatch");
+_Static_assert(offsetof(R4BytePipeProgress, bytes) == 8u, "BytePipeProgress.bytes offset mismatch");
+_Static_assert(offsetof(R4BytePipeProgress, state) == 16u, "BytePipeProgress.state offset mismatch");
+_Static_assert(offsetof(R4BytePipeProgress, flags) == 20u, "BytePipeProgress.flags offset mismatch");
+_Static_assert(sizeof(R4BytePipeInfo) == 48u, "BytePipeInfo size mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, version) == 0u, "BytePipeInfo.version offset mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, size) == 4u, "BytePipeInfo.size offset mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, capacity) == 8u, "BytePipeInfo.capacity offset mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, queued) == 16u, "BytePipeInfo.queued offset mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, readers) == 24u, "BytePipeInfo.readers offset mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, writers) == 28u, "BytePipeInfo.writers offset mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, atomic_limit) == 32u, "BytePipeInfo.atomic_limit offset mismatch");
+_Static_assert(offsetof(R4BytePipeInfo, max_step) == 40u, "BytePipeInfo.max_step offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1544u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -20731,6 +20836,20 @@ _Static_assert(offsetof(R4XStartR4Sys, waitset_close) == 1472u, "R4XStartR4Sys.w
 _Static_assert(sizeof(R4SysWaitsetCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, waitset_source_prepare) == 1480u, "R4XStartR4Sys.waitset_source_prepare offset mismatch");
 _Static_assert(sizeof(R4SysWaitsetSourcePrepareFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, byte_pipe_create) == 1488u, "R4XStartR4Sys.byte_pipe_create offset mismatch");
+_Static_assert(sizeof(R4SysBytePipeCreateFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, byte_pipe_dup) == 1496u, "R4XStartR4Sys.byte_pipe_dup offset mismatch");
+_Static_assert(sizeof(R4SysBytePipeDupFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, byte_pipe_read) == 1504u, "R4XStartR4Sys.byte_pipe_read offset mismatch");
+_Static_assert(sizeof(R4SysBytePipeReadFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, byte_pipe_write) == 1512u, "R4XStartR4Sys.byte_pipe_write offset mismatch");
+_Static_assert(sizeof(R4SysBytePipeWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, byte_pipe_cancel) == 1520u, "R4XStartR4Sys.byte_pipe_cancel offset mismatch");
+_Static_assert(sizeof(R4SysBytePipeCancelFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, byte_pipe_close) == 1528u, "R4XStartR4Sys.byte_pipe_close offset mismatch");
+_Static_assert(sizeof(R4SysBytePipeCloseFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, byte_pipe_info) == 1536u, "R4XStartR4Sys.byte_pipe_info offset mismatch");
+_Static_assert(sizeof(R4SysBytePipeInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

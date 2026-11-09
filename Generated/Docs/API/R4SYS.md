@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4SYS (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4SYS (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Sys` v39, 1488 Bytes, 181 Funktionsfelder und 184 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Sys` v40, 1544 Bytes, 188 Funktionsfelder und 191 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4SysFns` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -193,4 +193,11 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 181 | 1464 | function | `waitset_wait` | `*const fn (u64, *const WaitSetDeadline, [*]WaitSetEvent, u32, *WaitSetBatch) callconv(.c) i32` |
 | 182 | 1472 | function | `waitset_close` | `*const fn (u64) callconv(.c) i32` |
 | 183 | 1480 | function | `waitset_source_prepare` | `*const fn (*const WaitSourceRequest, *WaitSource) callconv(.c) i32` |
+| 184 | 1488 | function | `byte_pipe_create` | `*const fn (u64, *BytePipePair) callconv(.c) i32` |
+| 185 | 1496 | function | `byte_pipe_dup` | `*const fn (BytePipeEnd, *BytePipeEnd) callconv(.c) i32` |
+| 186 | 1504 | function | `byte_pipe_read` | `*const fn (BytePipeEnd, [*]u8, u64, *const WaitSetDeadline, *BytePipeProgress) callconv(.c) i32` |
+| 187 | 1512 | function | `byte_pipe_write` | `*const fn (BytePipeEnd, [*]const u8, u64, *const WaitSetDeadline, *BytePipeProgress) callconv(.c) i32` |
+| 188 | 1520 | function | `byte_pipe_cancel` | `*const fn (BytePipeEnd) callconv(.c) i32` |
+| 189 | 1528 | function | `byte_pipe_close` | `*const fn (BytePipeEnd) callconv(.c) i32` |
+| 190 | 1536 | function | `byte_pipe_info` | `*const fn (BytePipeEnd, *BytePipeInfo) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4SYS -->

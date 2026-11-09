@@ -33,7 +33,7 @@ _Static_assert(sizeof(R4LQuery2)==24, "Query2 size");
 _Static_assert(sizeof(R4XStartContext2)==120, "Start2 size");
 _Static_assert(offsetof(R4XStartContext2,reserved2)==112, "Start2 tail");
 #define R4OS2_R4SYS_MAGIC UINT32_C(844714834)
-#define R4OS2_R4SYS_VERSION UINT32_C(4)
+#define R4OS2_R4SYS_VERSION UINT32_C(5)
 typedef struct {
     uint32_t magic, abi_version, size, flags;
     uint64_t write;
@@ -219,8 +219,15 @@ typedef struct {
     uint64_t waitset_wait;
     uint64_t waitset_close;
     uint64_t waitset_source_prepare;
+    uint64_t byte_pipe_create;
+    uint64_t byte_pipe_dup;
+    uint64_t byte_pipe_read;
+    uint64_t byte_pipe_write;
+    uint64_t byte_pipe_cancel;
+    uint64_t byte_pipe_close;
+    uint64_t byte_pipe_info;
 } R4XStartR4Sys2;
-_Static_assert(sizeof(R4XStartR4Sys2)==1480, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Sys2)==1536, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Sys2,write)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,putc)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,sleep_ticks)==32, "Generation2 slot");
@@ -404,6 +411,13 @@ _Static_assert(offsetof(R4XStartR4Sys2,waitset_remove)==1448, "Generation2 slot"
 _Static_assert(offsetof(R4XStartR4Sys2,waitset_wait)==1456, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,waitset_close)==1464, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,waitset_source_prepare)==1472, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_create)==1480, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_dup)==1488, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_read)==1496, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_write)==1504, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_cancel)==1512, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_close)==1520, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_info)==1528, "Generation2 slot");
 #define R4OS2_R4DESK_MAGIC UINT32_C(843400274)
 #define R4OS2_R4DESK_VERSION UINT32_C(1)
 typedef struct {

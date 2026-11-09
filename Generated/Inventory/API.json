@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 516,
-    "group_slot_count": 516,
+    "function_count": 523,
+    "group_slot_count": 523,
     "sdk_only_count": 0,
-    "public_count": 374,
+    "public_count": 381,
     "advanced_count": 142
   },
   "functions": [
@@ -2181,6 +2181,90 @@
       "slot": 183,
       "exposure": "public",
       "description": "Prepare kinds3..7 from copied64byte complete identities under each canonical IO/Program/Thread/Service/GUI owner, then Runtime. Output existing80byte source publishes only on success. Globally never-reused observer epoch prevents enrollment from following a replacement after prepare. No resource retain, work consumption, polling worker or new registry. Legacy IO/endpoint identifies current incarnation only; ambiguous IO IDs rejected. Main GUI only. Unsupported remains explicit. Preparation can race Close; Enroll then returns Stale/Closed.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.byte_pipe_create",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 184,
+      "exposure": "public",
+      "description": "Create one bounded resident byte channel and two exact caller-owned references. Capacity1..65536,64channels globally,4MB total admitted payload including unfinished frees. Allocation/free outside Runtime; caller output publishes only on success. No worker, handler or application migration.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.byte_pipe_dup",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 185,
+      "exposure": "public",
+      "description": "Create a distinct same-direction reference in the same exact process. At most32 live or unreleased references per pipe. Simple handle copies do not keep an end alive. No transfer to another process or launch.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.byte_pipe_read",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 186,
+      "exposure": "public",
+      "description": "Read one bounded prefix, up to4096bytes, under one original Poll/Finite/Forever absolute budget. Nonzero length required; caller spans disjoint and borrowed until actual return. Finite identity/regression/expiry revalidated before admission, never rebased by wakes. A <=atomic_limit write waits for the whole offered record; larger writes may return an exact partial prefix. Caller spans remain borrowed through actual return. No resident queue stores caller pointers; no Unwind guard survives scheduler park. Cancel/close wakes actual waiters; every wake re-resolves full endpoint identity. Last writer close then drain yields EOF; last reader close yields BrokenPipe with zero accepted bytes. No peer-delivery or physical-DMA claim.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.byte_pipe_write",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 187,
+      "exposure": "public",
+      "description": "Write one bounded prefix, up to4096bytes, under one original Poll/Finite/Forever absolute budget. Nonzero length required; caller spans disjoint and borrowed until actual return. Finite identity/regression/expiry revalidated before admission, never rebased by wakes. A <=atomic_limit write waits for the whole offered record; larger writes may return an exact partial prefix. Caller spans remain borrowed through actual return. No resident queue stores caller pointers; no Unwind guard survives scheduler park. Cancel/close wakes actual waiters; every wake re-resolves full endpoint identity. Last writer close then drain yields EOF; last reader close yields BrokenPipe with zero accepted bytes. No peer-delivery or physical-DMA claim.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.byte_pipe_cancel",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 188,
+      "exposure": "public",
+      "description": "Advance the exact reference cancellation epoch and wake current operations. Applies to calls already admitted, including staging; a later call uses a fresh epoch. No close, byte discard, reference release or cancellation of other duplicate ends. Epoch never wraps.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.byte_pipe_close",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 189,
+      "exposure": "public",
+      "description": "Close only this exact reference, waking all blocked directions. Last writer permits buffered drain then EOF. Last reader discards unread bytes and forbids later writes with BrokenPipe. Last reference frees real backing outside Runtime; failed free retains a closed exact retry identity and all resource accounting. Process retirement closes its own references, never peers in other processes.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.byte_pipe_info",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 190,
+      "exposure": "public",
+      "description": "Copy advisory coherent channel capacity/queued/reference counts and atomic/step limits. Does not reserve capacity or prove drain, delivery or shutdown.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

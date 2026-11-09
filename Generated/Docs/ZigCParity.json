@@ -4,9 +4,9 @@
   "source_schema_version": 11,
   "source_baseline_id": "standalone-contract-0.64.11",
   "summary": {
-    "group_function_signatures": 516,
+    "group_function_signatures": 523,
     "sdk_operation_contracts": 0,
-    "parity_entries": 516,
+    "parity_entries": 523,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1637,6 +1637,69 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns.waitset_source_prepare",
       "c_contract": "R4SysWaitsetSourcePrepareFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.byte_pipe_create",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.byte_pipe_create",
+      "c_contract": "R4SysBytePipeCreateFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.byte_pipe_dup",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.byte_pipe_dup",
+      "c_contract": "R4SysBytePipeDupFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.byte_pipe_read",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.byte_pipe_read",
+      "c_contract": "R4SysBytePipeReadFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.byte_pipe_write",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.byte_pipe_write",
+      "c_contract": "R4SysBytePipeWriteFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.byte_pipe_cancel",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.byte_pipe_cancel",
+      "c_contract": "R4SysBytePipeCancelFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.byte_pipe_close",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.byte_pipe_close",
+      "c_contract": "R4SysBytePipeCloseFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.byte_pipe_info",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns.byte_pipe_info",
+      "c_contract": "R4SysBytePipeInfoFn",
       "coverage": "generated_signature"
     },
     {

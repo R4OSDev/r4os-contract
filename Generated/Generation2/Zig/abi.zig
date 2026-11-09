@@ -60,8 +60,8 @@ comptime {
 pub const R4SysFns2 = shared.R4SysFns;
 pub const R4XStartR4Sys2 = extern struct {
     magic: u32 = 844714834,
-    abi_version: u32 = 4,
-    size: u32 = 1480,
+    abi_version: u32 = 5,
+    size: u32 = 1536,
     flags: u32 = 0,
     @"write": u64 = 0,
     @"putc": u64 = 0,
@@ -246,9 +246,16 @@ pub const R4XStartR4Sys2 = extern struct {
     @"waitset_wait": u64 = 0,
     @"waitset_close": u64 = 0,
     @"waitset_source_prepare": u64 = 0,
+    @"byte_pipe_create": u64 = 0,
+    @"byte_pipe_dup": u64 = 0,
+    @"byte_pipe_read": u64 = 0,
+    @"byte_pipe_write": u64 = 0,
+    @"byte_pipe_cancel": u64 = 0,
+    @"byte_pipe_close": u64 = 0,
+    @"byte_pipe_info": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Sys2) != 1480) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Sys2) != 1536) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Sys2, "write") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "putc") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "sleep_ticks") != 32) @compileError("Generation2 slot offset");
@@ -432,6 +439,13 @@ comptime {
     if (@offsetOf(R4XStartR4Sys2, "waitset_wait") != 1456) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "waitset_close") != 1464) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "waitset_source_prepare") != 1472) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "byte_pipe_create") != 1480) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "byte_pipe_dup") != 1488) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "byte_pipe_read") != 1496) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "byte_pipe_write") != 1504) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "byte_pipe_cancel") != 1512) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "byte_pipe_close") != 1520) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "byte_pipe_info") != 1528) @compileError("Generation2 slot offset");
 }
 pub const R4DeskFns2 = shared.R4DeskFns;
 pub const R4XStartR4Desk2 = extern struct {

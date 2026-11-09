@@ -3118,6 +3118,15 @@ pub const network_transport_op_tick: u32 = 1647;
 pub const ipv6_op_prepare: u32 = 1544;
 pub const net_service_op_tcp_listen_retained_result: u16 = 798;
 pub const network_error_packet_too_big: i32 = -6215;
+pub const byte_pipe_reader: u32 = 1;
+pub const byte_pipe_writer: u32 = 2;
+pub const byte_pipe_ready: u32 = 1;
+pub const byte_pipe_would_block: u32 = 2;
+pub const byte_pipe_eof: u32 = 3;
+pub const byte_pipe_broken_pipe: u32 = 4;
+pub const byte_pipe_cancelled: u32 = 5;
+pub const byte_pipe_timed_out: u32 = 6;
+pub const byte_pipe_closed: u32 = 7;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3229,6 +3238,12 @@ pub const tray_max_owners: usize = 16;
 pub const tray_tooltip_bytes: usize = 64;
 pub const serial_max_transfer_bytes: u32 = 2147483647;
 pub const serial_bounce_bytes: u32 = 256;
+pub const byte_pipe_max_capacity: u64 = 65536;
+pub const byte_pipe_max_step: u64 = 4096;
+pub const byte_pipe_max_references: u64 = 32;
+pub const byte_pipe_max_pipes: u64 = 64;
+pub const byte_pipe_max_payload: u64 = 4194304;
+pub const byte_pipe_max_waiters: u64 = 32;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -3584,6 +3599,19 @@ pub const waitset_error_unsupported: i32 = -13011;
 pub const waitset_error_release: i32 = -13012;
 pub const waitset_error_owner: i32 = -13013;
 pub const waitset_error_overflow: i32 = -13014;
+pub const byte_pipe_ok: i32 = 0;
+pub const byte_pipe_error_invalid: i32 = -14001;
+pub const byte_pipe_error_context: i32 = -14002;
+pub const byte_pipe_error_stale: i32 = -14003;
+pub const byte_pipe_error_owner: i32 = -14004;
+pub const byte_pipe_error_direction: i32 = -14005;
+pub const byte_pipe_error_capacity: i32 = -14006;
+pub const byte_pipe_error_memory: i32 = -14007;
+pub const byte_pipe_error_release: i32 = -14008;
+pub const byte_pipe_error_exhausted: i32 = -14009;
+pub const byte_pipe_error_clock_unavailable: i32 = -14010;
+pub const byte_pipe_error_clock_changed: i32 = -14011;
+pub const byte_pipe_error_unsupported: i32 = -14012;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -3610,6 +3638,7 @@ impl R4ErrorDomain {
     pub const file_metadata2: Self = Self(18);
     pub const font_metrics2: Self = Self(19);
     pub const waitset: Self = Self(20);
+    pub const byte_pipe: Self = Self(21);
 }
 
 #[repr(transparent)]
@@ -22392,6 +22421,96 @@ impl Default for NetworkTransportRequest {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BytePipeEnd {
+    pub handle: u64,
+    pub generation: u64,
+    pub direction: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for BytePipeEnd {
+    fn default() -> Self {
+        Self {
+            handle: 0,
+            generation: 0,
+            direction: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BytePipePair {
+    pub version: u32,
+    pub size: u32,
+    pub reader: BytePipeEnd,
+    pub writer: BytePipeEnd,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for BytePipePair {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 56,
+            reader: BytePipeEnd { handle: 0, generation: 0, direction: 0, reserved: 0 },
+            writer: BytePipeEnd { handle: 0, generation: 0, direction: 0, reserved: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BytePipeProgress {
+    pub version: u32,
+    pub size: u32,
+    pub bytes: u64,
+    pub state: u32,
+    pub flags: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for BytePipeProgress {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 24,
+            bytes: 0,
+            state: 0,
+            flags: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BytePipeInfo {
+    pub version: u32,
+    pub size: u32,
+    pub capacity: u64,
+    pub queued: u64,
+    pub readers: u32,
+    pub writers: u32,
+    pub atomic_limit: u64,
+    pub max_step: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for BytePipeInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 48,
+            capacity: 0,
+            queued: 0,
+            readers: 0,
+            writers: 0,
+            atomic_limit: 0,
+            max_step: 0,
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -22585,6 +22704,13 @@ pub mod R4SysFns {
     pub type waitset_wait = unsafe extern "C" fn(u64, *const WaitSetDeadline, *mut WaitSetEvent, u32, *mut WaitSetBatch) -> i32;
     pub type waitset_close = unsafe extern "C" fn(u64) -> i32;
     pub type waitset_source_prepare = unsafe extern "C" fn(*const WaitSourceRequest, *mut WaitSource) -> i32;
+    pub type byte_pipe_create = unsafe extern "C" fn(u64, *mut BytePipePair) -> i32;
+    pub type byte_pipe_dup = unsafe extern "C" fn(BytePipeEnd, *mut BytePipeEnd) -> i32;
+    pub type byte_pipe_read = unsafe extern "C" fn(BytePipeEnd, *mut u8, u64, *const WaitSetDeadline, *mut BytePipeProgress) -> i32;
+    pub type byte_pipe_write = unsafe extern "C" fn(BytePipeEnd, *const u8, u64, *const WaitSetDeadline, *mut BytePipeProgress) -> i32;
+    pub type byte_pipe_cancel = unsafe extern "C" fn(BytePipeEnd) -> i32;
+    pub type byte_pipe_close = unsafe extern "C" fn(BytePipeEnd) -> i32;
+    pub type byte_pipe_info = unsafe extern "C" fn(BytePipeEnd, *mut BytePipeInfo) -> i32;
 }
 
 #[repr(C)]
@@ -22778,14 +22904,21 @@ pub struct R4XStartR4Sys {
     pub waitset_wait: usize,
     pub waitset_close: usize,
     pub waitset_source_prepare: usize,
+    pub byte_pipe_create: usize,
+    pub byte_pipe_dup: usize,
+    pub byte_pipe_read: usize,
+    pub byte_pipe_write: usize,
+    pub byte_pipe_cancel: usize,
+    pub byte_pipe_close: usize,
+    pub byte_pipe_info: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
     fn default() -> Self {
         Self {
             magic: 827937618,
-            abi_version: 39,
-            size: 1488,
+            abi_version: 40,
+            size: 1544,
             flags: 0,
             write: 0,
             putc: 0,
@@ -22971,6 +23104,13 @@ impl Default for R4XStartR4Sys {
             waitset_wait: 0,
             waitset_close: 0,
             waitset_source_prepare: 0,
+            byte_pipe_create: 0,
+            byte_pipe_dup: 0,
+            byte_pipe_read: 0,
+            byte_pipe_write: 0,
+            byte_pipe_cancel: 0,
+            byte_pipe_close: 0,
+            byte_pipe_info: 0,
         }
     }
 }
@@ -36085,6 +36225,35 @@ const _: () = {
     assert!(core::mem::offset_of!(NetworkTransportRequest, request) == 48);
     assert!(core::mem::size_of::<NetworkTransportRequest>() == 176);
     assert!(core::mem::align_of::<NetworkTransportRequest>() == 8);
+    assert!(core::mem::offset_of!(BytePipeEnd, handle) == 0);
+    assert!(core::mem::offset_of!(BytePipeEnd, generation) == 8);
+    assert!(core::mem::offset_of!(BytePipeEnd, direction) == 16);
+    assert!(core::mem::offset_of!(BytePipeEnd, reserved) == 20);
+    assert!(core::mem::size_of::<BytePipeEnd>() == 24);
+    assert!(core::mem::align_of::<BytePipeEnd>() == 8);
+    assert!(core::mem::offset_of!(BytePipePair, version) == 0);
+    assert!(core::mem::offset_of!(BytePipePair, size) == 4);
+    assert!(core::mem::offset_of!(BytePipePair, reader) == 8);
+    assert!(core::mem::offset_of!(BytePipePair, writer) == 32);
+    assert!(core::mem::size_of::<BytePipePair>() == 56);
+    assert!(core::mem::align_of::<BytePipePair>() == 8);
+    assert!(core::mem::offset_of!(BytePipeProgress, version) == 0);
+    assert!(core::mem::offset_of!(BytePipeProgress, size) == 4);
+    assert!(core::mem::offset_of!(BytePipeProgress, bytes) == 8);
+    assert!(core::mem::offset_of!(BytePipeProgress, state) == 16);
+    assert!(core::mem::offset_of!(BytePipeProgress, flags) == 20);
+    assert!(core::mem::size_of::<BytePipeProgress>() == 24);
+    assert!(core::mem::align_of::<BytePipeProgress>() == 8);
+    assert!(core::mem::offset_of!(BytePipeInfo, version) == 0);
+    assert!(core::mem::offset_of!(BytePipeInfo, size) == 4);
+    assert!(core::mem::offset_of!(BytePipeInfo, capacity) == 8);
+    assert!(core::mem::offset_of!(BytePipeInfo, queued) == 16);
+    assert!(core::mem::offset_of!(BytePipeInfo, readers) == 24);
+    assert!(core::mem::offset_of!(BytePipeInfo, writers) == 28);
+    assert!(core::mem::offset_of!(BytePipeInfo, atomic_limit) == 32);
+    assert!(core::mem::offset_of!(BytePipeInfo, max_step) == 40);
+    assert!(core::mem::size_of::<BytePipeInfo>() == 48);
+    assert!(core::mem::align_of::<BytePipeInfo>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -36275,7 +36444,14 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_wait) == 1464);
     assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_close) == 1472);
     assert!(core::mem::offset_of!(R4XStartR4Sys, waitset_source_prepare) == 1480);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1488);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_create) == 1488);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_dup) == 1496);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_read) == 1504);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_write) == 1512);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_cancel) == 1520);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_close) == 1528);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_info) == 1536);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1544);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

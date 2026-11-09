@@ -250,8 +250,15 @@ pub struct R4XStartR4Sys2 {
     pub waitset_wait: u64,
     pub waitset_close: u64,
     pub waitset_source_prepare: u64,
+    pub byte_pipe_create: u64,
+    pub byte_pipe_dup: u64,
+    pub byte_pipe_read: u64,
+    pub byte_pipe_write: u64,
+    pub byte_pipe_cancel: u64,
+    pub byte_pipe_close: u64,
+    pub byte_pipe_info: u64,
 }
-impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 4, size: 1480, flags: 0,
+impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 5, size: 1536, flags: 0,
     write: 0,
     putc: 0,
     sleep_ticks: 0,
@@ -435,8 +442,15 @@ impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834
     waitset_wait: 0,
     waitset_close: 0,
     waitset_source_prepare: 0,
+    byte_pipe_create: 0,
+    byte_pipe_dup: 0,
+    byte_pipe_read: 0,
+    byte_pipe_write: 0,
+    byte_pipe_cancel: 0,
+    byte_pipe_close: 0,
+    byte_pipe_info: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1480);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1536);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,write) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,putc) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,sleep_ticks) == 32);
@@ -620,6 +634,13 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1480);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_wait) == 1456);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_close) == 1464);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,waitset_source_prepare) == 1472);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_create) == 1480);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_dup) == 1488);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_read) == 1496);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_write) == 1504);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_cancel) == 1512);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_close) == 1520);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_info) == 1528);
 };
 impl R4XStartR4Sys2 {
     pub fn project_provider(source: &super::R4XStartR4Sys) -> Self { Self {
@@ -804,6 +825,13 @@ impl R4XStartR4Sys2 {
         waitset_wait: source.waitset_wait as u64,
         waitset_close: source.waitset_close as u64,
         waitset_source_prepare: source.waitset_source_prepare as u64,
+        byte_pipe_create: source.byte_pipe_create as u64,
+        byte_pipe_dup: source.byte_pipe_dup as u64,
+        byte_pipe_read: source.byte_pipe_read as u64,
+        byte_pipe_write: source.byte_pipe_write as u64,
+        byte_pipe_cancel: source.byte_pipe_cancel as u64,
+        byte_pipe_close: source.byte_pipe_close as u64,
+        byte_pipe_info: source.byte_pipe_info as u64,
         ..Self::default()
     } }
 }

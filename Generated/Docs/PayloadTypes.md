@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 457 von 457 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 461 von 461 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 68; Konstanten: 3111; Limits: 111
+- Operationen: 0; Fehlerdomänen: 69; Konstanten: 3120; Limits: 117
 
 ## App-Profile
 
@@ -478,6 +478,10 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `NdpEvent` | fixed_layout | extern_struct | 328/4 | 328/4 | 328/4 | 328/4 |
 | `NdpInfo` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `NetworkTransportRequest` | fixed_layout | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
+| `BytePipeEnd` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `BytePipePair` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
+| `BytePipeProgress` | fixed_layout | extern_struct | 24/8 | 24/8 | 24/8 | 24/8 |
+| `BytePipeInfo` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 
 ## Typdetails
 
@@ -11671,6 +11675,67 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `owner` | 32 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
 | `request` | 48 | 128 | 8 | `r4os.abi.NetworkSocketRequest` | - |
 
+### `BytePipeEnd`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `handle` | 0 | 8 | 8 | `u64` | - |
+| `generation` | 8 | 8 | 8 | `u64` | - |
+| `direction` | 16 | 4 | 4 | `u32` | - |
+| `reserved` | 20 | 4 | 4 | `u32` | - |
+
+### `BytePipePair`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `reader` | 8 | 24 | 8 | `r4os.abi.BytePipeEnd` | - |
+| `writer` | 32 | 24 | 8 | `r4os.abi.BytePipeEnd` | - |
+
+### `BytePipeProgress`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `bytes` | 8 | 8 | 8 | `u64` | - |
+| `state` | 16 | 4 | 4 | `u32` | - |
+| `flags` | 20 | 4 | 4 | `u32` | - |
+
+### `BytePipeInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `capacity` | 8 | 8 | 8 | `u64` | - |
+| `queued` | 16 | 8 | 8 | `u64` | - |
+| `readers` | 24 | 4 | 4 | `u32` | - |
+| `writers` | 28 | 4 | 4 | `u32` | - |
+| `atomic_limit` | 32 | 8 | 8 | `u64` | - |
+| `max_step` | 40 | 8 | 8 | `u64` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12503,6 +12568,26 @@ Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `waitset_error_release` | -13012 | `i32` |
 | `waitset_error_owner` | -13013 | `i32` |
 | `waitset_error_overflow` | -13014 | `i32` |
+
+### `byte_pipe`
+
+Geltung: `byte_pipe`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `byte_pipe_ok` | 0 | `i32` |
+| `byte_pipe_error_invalid` | -14001 | `i32` |
+| `byte_pipe_error_context` | -14002 | `i32` |
+| `byte_pipe_error_stale` | -14003 | `i32` |
+| `byte_pipe_error_owner` | -14004 | `i32` |
+| `byte_pipe_error_direction` | -14005 | `i32` |
+| `byte_pipe_error_capacity` | -14006 | `i32` |
+| `byte_pipe_error_memory` | -14007 | `i32` |
+| `byte_pipe_error_release` | -14008 | `i32` |
+| `byte_pipe_error_exhausted` | -14009 | `i32` |
+| `byte_pipe_error_clock_unavailable` | -14010 | `i32` |
+| `byte_pipe_error_clock_changed` | -14011 | `i32` |
+| `byte_pipe_error_unsupported` | -14012 | `i32` |
 
 ## Konstanten
 
@@ -15619,6 +15704,15 @@ Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `ipv6_op_prepare` | `1544` | `u32` | value | operation | `ipv6_provider` | fixed_contract |
 | `net_service_op_tcp_listen_retained_result` | `798` | `u16` | value | number | `network_family` | fixed_contract |
 | `network_error_packet_too_big` | `-6215` | `i32` | value | number | `network_family` | fixed_contract |
+| `byte_pipe_reader` | `1` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_writer` | `2` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_ready` | `1` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_would_block` | `2` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_eof` | `3` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_broken_pipe` | `4` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_cancelled` | `5` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_timed_out` | `6` | `u32` | value | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_closed` | `7` | `u32` | value | number | `byte_pipe` | fixed_contract |
 
 ## Limits
 
@@ -15735,3 +15829,9 @@ Geltung: `waitset`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `tray_tooltip_bytes` | `64` | `usize` | bytes | `tray_item` | fixed_contract |
 | `serial_max_transfer_bytes` | `2147483647` | `u32` | bytes | `serial` | fixed_contract |
 | `serial_bounce_bytes` | `256` | `u32` | bytes | `serial` | fixed_contract |
+| `byte_pipe_max_capacity` | `65536` | `u64` | bytes | `byte_pipe` | fixed_contract |
+| `byte_pipe_max_step` | `4096` | `u64` | bytes | `byte_pipe` | fixed_contract |
+| `byte_pipe_max_references` | `32` | `u64` | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_max_pipes` | `64` | `u64` | number | `byte_pipe` | fixed_contract |
+| `byte_pipe_max_payload` | `4194304` | `u64` | bytes | `byte_pipe` | fixed_contract |
+| `byte_pipe_max_waiters` | `32` | `u64` | number | `byte_pipe` | fixed_contract |

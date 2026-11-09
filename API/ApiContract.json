@@ -597,10 +597,10 @@
       "fn_namespace": "R4SysFns",
       "required": true,
       "magic": 827937618,
-      "abi_version": 39,
+      "abi_version": 40,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1488,
+      "size": 1544,
       "slots": [
         {
           "number": 0,
@@ -14608,6 +14608,516 @@
             "buffer_completion": "call",
             "shutdown": "none",
             "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 184,
+          "offset": 1488,
+          "name": "byte_pipe_create",
+          "state": "function",
+          "required": false,
+          "description": "Create one bounded resident byte channel and two exact caller-owned references. Capacity1..65536,64channels globally,4MB total admitted payload including unfinished frees. Allocation/free outside Runtime; caller output publishes only on success. No worker, handler or application migration.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "out_pair",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "BytePipePair"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "byte_pipe",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 185,
+          "offset": 1496,
+          "name": "byte_pipe_dup",
+          "state": "function",
+          "required": false,
+          "description": "Create a distinct same-direction reference in the same exact process. At most32 live or unreleased references per pipe. Simple handle copies do not keep an end alive. No transfer to another process or launch.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "end",
+                "type": {
+                  "kind": "named",
+                  "name": "BytePipeEnd"
+                }
+              },
+              {
+                "name": "out_end",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "BytePipeEnd"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "byte_pipe",
+            "ownership": "returns_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "explicit_close_required",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 186,
+          "offset": 1504,
+          "name": "byte_pipe_read",
+          "state": "function",
+          "required": false,
+          "description": "Read one bounded prefix, up to4096bytes, under one original Poll/Finite/Forever absolute budget. Nonzero length required; caller spans disjoint and borrowed until actual return. Finite identity/regression/expiry revalidated before admission, never rebased by wakes. A <=atomic_limit write waits for the whole offered record; larger writes may return an exact partial prefix. Caller spans remain borrowed through actual return. No resident queue stores caller pointers; no Unwind guard survives scheduler park. Cancel/close wakes actual waiters; every wake re-resolves full endpoint identity. Last writer close then drain yields EOF; last reader close yields BrokenPipe with zero accepted bytes. No peer-delivery or physical-DMA claim.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "end",
+                "type": {
+                  "kind": "named",
+                  "name": "BytePipeEnd"
+                }
+              },
+              {
+                "name": "data",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "length",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "length",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "deadline",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSetDeadline"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_progress",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "BytePipeProgress"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "byte_pipe",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "blocking_wait",
+            "threading": "thread_safe",
+            "timeout": "operation_deadline",
+            "cancel": "shutdown_wakeup",
+            "timeout_outcome": "completion_wins",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "progress_reported",
+            "side_effects": "confirmed_progress",
+            "retry": "retry_from_reported_progress",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 187,
+          "offset": 1512,
+          "name": "byte_pipe_write",
+          "state": "function",
+          "required": false,
+          "description": "Write one bounded prefix, up to4096bytes, under one original Poll/Finite/Forever absolute budget. Nonzero length required; caller spans disjoint and borrowed until actual return. Finite identity/regression/expiry revalidated before admission, never rebased by wakes. A <=atomic_limit write waits for the whole offered record; larger writes may return an exact partial prefix. Caller spans remain borrowed through actual return. No resident queue stores caller pointers; no Unwind guard survives scheduler park. Cancel/close wakes actual waiters; every wake re-resolves full endpoint identity. Last writer close then drain yields EOF; last reader close yields BrokenPipe with zero accepted bytes. No peer-delivery or physical-DMA claim.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "end",
+                "type": {
+                  "kind": "named",
+                  "name": "BytePipeEnd"
+                }
+              },
+              {
+                "name": "data",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "many",
+                  "is_const": true,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u8"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "length",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "length",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u64"
+                }
+              },
+              {
+                "name": "deadline",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": true,
+                  "child": {
+                    "kind": "named",
+                    "name": "WaitSetDeadline"
+                  },
+                  "direction": "input",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "out_progress",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "BytePipeProgress"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "byte_pipe",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "blocking_wait",
+            "threading": "thread_safe",
+            "timeout": "operation_deadline",
+            "cancel": "shutdown_wakeup",
+            "timeout_outcome": "completion_wins",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "progress_reported",
+            "side_effects": "confirmed_progress",
+            "retry": "retry_from_reported_progress",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 188,
+          "offset": 1520,
+          "name": "byte_pipe_cancel",
+          "state": "function",
+          "required": false,
+          "description": "Advance the exact reference cancellation epoch and wake current operations. Applies to calls already admitted, including staging; a later call uses a fresh epoch. No close, byte discard, reference release or cancellation of other duplicate ends. Epoch never wraps.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "end",
+                "type": {
+                  "kind": "named",
+                  "name": "BytePipeEnd"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "byte_pipe",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "atomic_on_success",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 189,
+          "offset": 1528,
+          "name": "byte_pipe_close",
+          "state": "function",
+          "required": false,
+          "description": "Close only this exact reference, waking all blocked directions. Last writer permits buffered drain then EOF. Last reader discards unread bytes and forbids later writes with BrokenPipe. Last reference frees real backing outside Runtime; failed free retains a closed exact retry identity and all resource accounting. Process retirement closes its own references, never peers in other processes.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "end",
+                "type": {
+                  "kind": "named",
+                  "name": "BytePipeEnd"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "byte_pipe",
+            "ownership": "consumes_owned_handle",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "invalidates_on_success",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 190,
+          "offset": 1536,
+          "name": "byte_pipe_info",
+          "state": "function",
+          "required": false,
+          "description": "Copy advisory coherent channel capacity/queued/reference counts and atomic/step limits. Does not reserve capacity or prove drain, delivery or shutdown.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "end",
+                "type": {
+                  "kind": "named",
+                  "name": "BytePipeEnd"
+                }
+              },
+              {
+                "name": "out_info",
+                "type": {
+                  "kind": "pointer",
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "child": {
+                    "kind": "named",
+                    "name": "BytePipeInfo"
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "byte_pipe",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "none",
             "retry": "never_automatic",
@@ -138452,6 +138962,354 @@
       ],
       "values": [],
       "description": "Copied private service-to-external-transport request with exact protocol, broker and client lifetimes. Payload bytes follow the fixed record."
+    },
+    {
+      "name": "BytePipeEnd",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "handle",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "handle",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "generation",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "direction",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "direction",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Opaque process-owned endpoint reference. Handle and pipe generation never repeat during a boot. Direction Reader1/Writer2 is checked, not authority. Copying these bytes creates no reference; byte_pipe_dup does. No pointer or process identity is inherited implicitly."
+    },
+    {
+      "name": "BytePipePair",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 56,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "56"
+        },
+        {
+          "name": "reader",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "BytePipeEnd"
+          },
+          "description": "reader",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "r4os.abi.BytePipeEnd",
+          "default_kind": "empty"
+        },
+        {
+          "name": "writer",
+          "offset": 32,
+          "type": {
+            "kind": "named",
+            "name": "BytePipeEnd"
+          },
+          "description": "writer",
+          "size": 24,
+          "alignment": 8,
+          "source_type": "r4os.abi.BytePipeEnd",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Two independently owned references created atomically. Explicit Close of every reference or exact process retirement closes its direction. Initial endpoint ownership stays in the creating process; LaunchIo is a separate atomic binding contract."
+    },
+    {
+      "name": "BytePipeProgress",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "24"
+        },
+        {
+          "name": "bytes",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "bytes",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "state",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "state",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "flags",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "flags",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "One synchronous bounded byte operation. bytes is the exact accepted write prefix or copied read prefix, never peer delivery/drain. State Ready1/WouldBlock2/EOF3/BrokenPipe4/Cancelled5/TimedOut6/Closed7. EOF only after every writer reference closed and all queued bytes drained. flags0. Negative API results leave result and read storage unchanged."
+    },
+    {
+      "name": "BytePipeInfo",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "48"
+        },
+        {
+          "name": "capacity",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "capacity",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "queued",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "queued",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "readers",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "readers",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "writers",
+          "offset": 28,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "writers",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "atomic_limit",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "atomic_limit",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_step",
+          "offset": 40,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "max_step",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Coherent advisory byte channel snapshot. Bounded copied storage, qualified multiple readers/writers serialized per operation. Writes no larger than atomic_limit are all-or-none; larger writes may accept one prefix up to max_step. Scheduling fairness and message boundaries are not promised. No direct caller storage or WaitSource lifetime is retained."
     }
   ],
   "operations": [],
@@ -138560,6 +139418,11 @@
       "name": "waitset",
       "id": 20,
       "description": "Bounded resident wait-any and exact source lifetime."
+    },
+    {
+      "name": "byte_pipe",
+      "id": 21,
+      "description": "Bounded resident byte streams with exact endpoint references, accepted prefixes, EOF and explicit cancellation."
     }
   ],
   "error_domains": [
@@ -141304,6 +142167,93 @@
         }
       ],
       "description": "Source-bound resident wait-any; result0 publishes outputs, errors leave them unchanged. A Wake observation is no source operation/retirement."
+    },
+    {
+      "name": "byte_pipe",
+      "unit": "status_code",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "byte_pipe_ok",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Whole operation result published; progress state may report no data."
+        },
+        {
+          "name": "byte_pipe_error_invalid",
+          "value": -14001,
+          "value_type": "i32",
+          "description": "Invalid endpoint/header/zero length/overlap/overflow; caller output unchanged."
+        },
+        {
+          "name": "byte_pipe_error_context",
+          "value": -14002,
+          "value_type": "i32",
+          "description": "Native task context requires IF enabled without held owners."
+        },
+        {
+          "name": "byte_pipe_error_stale",
+          "value": -14003,
+          "value_type": "i32",
+          "description": "Unknown or closed endpoint reference; no operation admitted."
+        },
+        {
+          "name": "byte_pipe_error_owner",
+          "value": -14004,
+          "value_type": "i32",
+          "description": "Endpoint belongs to another exact process generation."
+        },
+        {
+          "name": "byte_pipe_error_direction",
+          "value": -14005,
+          "value_type": "i32",
+          "description": "Endpoint direction does not match the operation or original reference."
+        },
+        {
+          "name": "byte_pipe_error_capacity",
+          "value": -14006,
+          "value_type": "i32",
+          "description": "Channel/payload/reference/waiter admission bound reached; no data or new reference accepted."
+        },
+        {
+          "name": "byte_pipe_error_memory",
+          "value": -14007,
+          "value_type": "i32",
+          "description": "Resident allocation failed; caller output unchanged."
+        },
+        {
+          "name": "byte_pipe_error_release",
+          "value": -14008,
+          "value_type": "i32",
+          "description": "Last backing free failed: endpoint closed, exact retry identity and global budget retained."
+        },
+        {
+          "name": "byte_pipe_error_exhausted",
+          "value": -14009,
+          "value_type": "i32",
+          "description": "Nonwrapping endpoint/channel/cancel identity exhausted."
+        },
+        {
+          "name": "byte_pipe_error_clock_unavailable",
+          "value": -14010,
+          "value_type": "i32",
+          "description": "Finite deadline lacks a valid source or tick frequency."
+        },
+        {
+          "name": "byte_pipe_error_clock_changed",
+          "value": -14011,
+          "value_type": "i32",
+          "description": "Finite deadline clock identity changed or regressed; never rebase."
+        },
+        {
+          "name": "byte_pipe_error_unsupported",
+          "value": -14012,
+          "value_type": "i32",
+          "description": "Optional adapter is not implemented by this provider."
+        }
+      ],
+      "description": "Negative errors preserve outputs. Close release failure has a documented retained logical side effect; all real backing must still be acknowledged. Progress states are separate from API status."
     }
   ],
   "constants": [
@@ -172416,6 +173366,96 @@
       "scope": "network_family",
       "stability": "fixed_contract",
       "description": "Datagram exceeds the explicitly qualified transmit MTU. Distinct from queue/output capacity; this alone is no discovered path-MTU capability."
+    },
+    {
+      "name": "byte_pipe_reader",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "reader"
+    },
+    {
+      "name": "byte_pipe_writer",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "writer"
+    },
+    {
+      "name": "byte_pipe_ready",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "ready"
+    },
+    {
+      "name": "byte_pipe_would_block",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "would_block"
+    },
+    {
+      "name": "byte_pipe_eof",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "eof"
+    },
+    {
+      "name": "byte_pipe_broken_pipe",
+      "value": "4",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "broken_pipe"
+    },
+    {
+      "name": "byte_pipe_cancelled",
+      "value": "5",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "cancelled"
+    },
+    {
+      "name": "byte_pipe_timed_out",
+      "value": "6",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "timed_out"
+    },
+    {
+      "name": "byte_pipe_closed",
+      "value": "7",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "closed"
     }
   ],
   "limits": [
@@ -173417,6 +174457,60 @@
       "scope": "serial",
       "stability": "fixed_contract",
       "description": "Maximum resident per-call bounce span; provider retains no caller buffer."
+    },
+    {
+      "name": "byte_pipe_max_capacity",
+      "value": "65536",
+      "value_type": "u64",
+      "unit": "bytes",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "max_capacity"
+    },
+    {
+      "name": "byte_pipe_max_step",
+      "value": "4096",
+      "value_type": "u64",
+      "unit": "bytes",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "max_step"
+    },
+    {
+      "name": "byte_pipe_max_references",
+      "value": "32",
+      "value_type": "u64",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "max_references"
+    },
+    {
+      "name": "byte_pipe_max_pipes",
+      "value": "64",
+      "value_type": "u64",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "max_pipes"
+    },
+    {
+      "name": "byte_pipe_max_payload",
+      "value": "4194304",
+      "value_type": "u64",
+      "unit": "bytes",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "max_payload"
+    },
+    {
+      "name": "byte_pipe_max_waiters",
+      "value": "32",
+      "value_type": "u64",
+      "unit": "number",
+      "scope": "byte_pipe",
+      "stability": "fixed_contract",
+      "description": "Maximum simultaneously parked native read/write Task nodes per pipe; bounds both wake traversals. Admission uses the original queues under Runtime, never a separate stale counter."
     }
   ],
   "artifact_metadata": {

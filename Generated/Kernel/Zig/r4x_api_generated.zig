@@ -3112,6 +3112,15 @@ pub const network_transport_op_tick: u32 = 1647;
 pub const ipv6_op_prepare: u32 = 1544;
 pub const net_service_op_tcp_listen_retained_result: u16 = 798;
 pub const network_error_packet_too_big: i32 = -6215;
+pub const byte_pipe_reader: u32 = 1;
+pub const byte_pipe_writer: u32 = 2;
+pub const byte_pipe_ready: u32 = 1;
+pub const byte_pipe_would_block: u32 = 2;
+pub const byte_pipe_eof: u32 = 3;
+pub const byte_pipe_broken_pipe: u32 = 4;
+pub const byte_pipe_cancelled: u32 = 5;
+pub const byte_pipe_timed_out: u32 = 6;
+pub const byte_pipe_closed: u32 = 7;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3223,6 +3232,12 @@ pub const tray_max_owners: usize = 16;
 pub const tray_tooltip_bytes: usize = 64;
 pub const serial_max_transfer_bytes: u32 = 2147483647;
 pub const serial_bounce_bytes: u32 = 256;
+pub const byte_pipe_max_capacity: u64 = 65536;
+pub const byte_pipe_max_step: u64 = 4096;
+pub const byte_pipe_max_references: u64 = 32;
+pub const byte_pipe_max_pipes: u64 = 64;
+pub const byte_pipe_max_payload: u64 = 4194304;
+pub const byte_pipe_max_waiters: u64 = 32;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -3578,6 +3593,19 @@ pub const waitset_error_unsupported: i32 = -13011;
 pub const waitset_error_release: i32 = -13012;
 pub const waitset_error_owner: i32 = -13013;
 pub const waitset_error_overflow: i32 = -13014;
+pub const byte_pipe_ok: i32 = 0;
+pub const byte_pipe_error_invalid: i32 = -14001;
+pub const byte_pipe_error_context: i32 = -14002;
+pub const byte_pipe_error_stale: i32 = -14003;
+pub const byte_pipe_error_owner: i32 = -14004;
+pub const byte_pipe_error_direction: i32 = -14005;
+pub const byte_pipe_error_capacity: i32 = -14006;
+pub const byte_pipe_error_memory: i32 = -14007;
+pub const byte_pipe_error_release: i32 = -14008;
+pub const byte_pipe_error_exhausted: i32 = -14009;
+pub const byte_pipe_error_clock_unavailable: i32 = -14010;
+pub const byte_pipe_error_clock_changed: i32 = -14011;
+pub const byte_pipe_error_unsupported: i32 = -14012;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -3601,6 +3629,7 @@ pub const R4ErrorDomain = enum(u16) {
     file_metadata2 = 18,
     font_metrics2 = 19,
     waitset = 20,
+    byte_pipe = 21,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -11698,6 +11727,39 @@ pub const NetworkTransportRequest = extern struct {
     request: NetworkSocketRequest = .{},
 };
 
+pub const BytePipeEnd = extern struct {
+    handle: u64 = 0,
+    generation: u64 = 0,
+    direction: u32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const BytePipePair = extern struct {
+    version: u32 = 1,
+    size: u32 = 56,
+    reader: BytePipeEnd = .{},
+    writer: BytePipeEnd = .{},
+};
+
+pub const BytePipeProgress = extern struct {
+    version: u32 = 1,
+    size: u32 = 24,
+    bytes: u64 = 0,
+    state: u32 = 0,
+    flags: u32 = 0,
+};
+
+pub const BytePipeInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 48,
+    capacity: u64 = 0,
+    queued: u64 = 0,
+    readers: u32 = 0,
+    writers: u32 = 0,
+    atomic_limit: u64 = 0,
+    max_step: u64 = 0,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -11880,12 +11942,19 @@ pub const R4SysFns = struct {
     pub const waitset_wait = *const fn (u64, *const WaitSetDeadline, [*]WaitSetEvent, u32, *WaitSetBatch) callconv(.c) i32;
     pub const waitset_close = *const fn (u64) callconv(.c) i32;
     pub const waitset_source_prepare = *const fn (*const WaitSourceRequest, *WaitSource) callconv(.c) i32;
+    pub const byte_pipe_create = *const fn (u64, *BytePipePair) callconv(.c) i32;
+    pub const byte_pipe_dup = *const fn (BytePipeEnd, *BytePipeEnd) callconv(.c) i32;
+    pub const byte_pipe_read = *const fn (BytePipeEnd, [*]u8, u64, *const WaitSetDeadline, *BytePipeProgress) callconv(.c) i32;
+    pub const byte_pipe_write = *const fn (BytePipeEnd, [*]const u8, u64, *const WaitSetDeadline, *BytePipeProgress) callconv(.c) i32;
+    pub const byte_pipe_cancel = *const fn (BytePipeEnd) callconv(.c) i32;
+    pub const byte_pipe_close = *const fn (BytePipeEnd) callconv(.c) i32;
+    pub const byte_pipe_info = *const fn (BytePipeEnd, *BytePipeInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
-    abi_version: u32 = 39,
-    size: u32 = 1488,
+    abi_version: u32 = 40,
+    size: u32 = 1544,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -12071,6 +12140,13 @@ pub const R4XStartR4Sys = extern struct {
     waitset_wait: usize = 0,
     waitset_close: usize = 0,
     waitset_source_prepare: usize = 0,
+    byte_pipe_create: usize = 0,
+    byte_pipe_dup: usize = 0,
+    byte_pipe_read: usize = 0,
+    byte_pipe_write: usize = 0,
+    byte_pipe_cancel: usize = 0,
+    byte_pipe_close: usize = 0,
+    byte_pipe_info: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -12989,6 +13065,13 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 181, .offset = 1464, .name = "waitset_wait", .state = .function, .required = false },
     .{ .number = 182, .offset = 1472, .name = "waitset_close", .state = .function, .required = false },
     .{ .number = 183, .offset = 1480, .name = "waitset_source_prepare", .state = .function, .required = false },
+    .{ .number = 184, .offset = 1488, .name = "byte_pipe_create", .state = .function, .required = false },
+    .{ .number = 185, .offset = 1496, .name = "byte_pipe_dup", .state = .function, .required = false },
+    .{ .number = 186, .offset = 1504, .name = "byte_pipe_read", .state = .function, .required = false },
+    .{ .number = 187, .offset = 1512, .name = "byte_pipe_write", .state = .function, .required = false },
+    .{ .number = 188, .offset = 1520, .name = "byte_pipe_cancel", .state = .function, .required = false },
+    .{ .number = 189, .offset = 1528, .name = "byte_pipe_close", .state = .function, .required = false },
+    .{ .number = 190, .offset = 1536, .name = "byte_pipe_info", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -20929,7 +21012,36 @@ comptime {
     if (@offsetOf(NetworkTransportRequest, "broker") != 16) @compileError("generated ABI offset drift: NetworkTransportRequest.broker");
     if (@offsetOf(NetworkTransportRequest, "owner") != 32) @compileError("generated ABI offset drift: NetworkTransportRequest.owner");
     if (@offsetOf(NetworkTransportRequest, "request") != 48) @compileError("generated ABI offset drift: NetworkTransportRequest.request");
-    if (@sizeOf(R4XStartR4Sys) != 1488) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(BytePipeEnd) != 24) @compileError("generated ABI size drift: BytePipeEnd");
+    if (@alignOf(BytePipeEnd) != 8) @compileError("generated ABI alignment drift: BytePipeEnd");
+    if (@offsetOf(BytePipeEnd, "handle") != 0) @compileError("generated ABI offset drift: BytePipeEnd.handle");
+    if (@offsetOf(BytePipeEnd, "generation") != 8) @compileError("generated ABI offset drift: BytePipeEnd.generation");
+    if (@offsetOf(BytePipeEnd, "direction") != 16) @compileError("generated ABI offset drift: BytePipeEnd.direction");
+    if (@offsetOf(BytePipeEnd, "reserved") != 20) @compileError("generated ABI offset drift: BytePipeEnd.reserved");
+    if (@sizeOf(BytePipePair) != 56) @compileError("generated ABI size drift: BytePipePair");
+    if (@alignOf(BytePipePair) != 8) @compileError("generated ABI alignment drift: BytePipePair");
+    if (@offsetOf(BytePipePair, "version") != 0) @compileError("generated ABI offset drift: BytePipePair.version");
+    if (@offsetOf(BytePipePair, "size") != 4) @compileError("generated ABI offset drift: BytePipePair.size");
+    if (@offsetOf(BytePipePair, "reader") != 8) @compileError("generated ABI offset drift: BytePipePair.reader");
+    if (@offsetOf(BytePipePair, "writer") != 32) @compileError("generated ABI offset drift: BytePipePair.writer");
+    if (@sizeOf(BytePipeProgress) != 24) @compileError("generated ABI size drift: BytePipeProgress");
+    if (@alignOf(BytePipeProgress) != 8) @compileError("generated ABI alignment drift: BytePipeProgress");
+    if (@offsetOf(BytePipeProgress, "version") != 0) @compileError("generated ABI offset drift: BytePipeProgress.version");
+    if (@offsetOf(BytePipeProgress, "size") != 4) @compileError("generated ABI offset drift: BytePipeProgress.size");
+    if (@offsetOf(BytePipeProgress, "bytes") != 8) @compileError("generated ABI offset drift: BytePipeProgress.bytes");
+    if (@offsetOf(BytePipeProgress, "state") != 16) @compileError("generated ABI offset drift: BytePipeProgress.state");
+    if (@offsetOf(BytePipeProgress, "flags") != 20) @compileError("generated ABI offset drift: BytePipeProgress.flags");
+    if (@sizeOf(BytePipeInfo) != 48) @compileError("generated ABI size drift: BytePipeInfo");
+    if (@alignOf(BytePipeInfo) != 8) @compileError("generated ABI alignment drift: BytePipeInfo");
+    if (@offsetOf(BytePipeInfo, "version") != 0) @compileError("generated ABI offset drift: BytePipeInfo.version");
+    if (@offsetOf(BytePipeInfo, "size") != 4) @compileError("generated ABI offset drift: BytePipeInfo.size");
+    if (@offsetOf(BytePipeInfo, "capacity") != 8) @compileError("generated ABI offset drift: BytePipeInfo.capacity");
+    if (@offsetOf(BytePipeInfo, "queued") != 16) @compileError("generated ABI offset drift: BytePipeInfo.queued");
+    if (@offsetOf(BytePipeInfo, "readers") != 24) @compileError("generated ABI offset drift: BytePipeInfo.readers");
+    if (@offsetOf(BytePipeInfo, "writers") != 28) @compileError("generated ABI offset drift: BytePipeInfo.writers");
+    if (@offsetOf(BytePipeInfo, "atomic_limit") != 32) @compileError("generated ABI offset drift: BytePipeInfo.atomic_limit");
+    if (@offsetOf(BytePipeInfo, "max_step") != 40) @compileError("generated ABI offset drift: BytePipeInfo.max_step");
+    if (@sizeOf(R4XStartR4Sys) != 1544) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -21114,6 +21226,13 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "waitset_wait") != 1464) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_wait");
     if (@offsetOf(R4XStartR4Sys, "waitset_close") != 1472) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_close");
     if (@offsetOf(R4XStartR4Sys, "waitset_source_prepare") != 1480) @compileError("generated ABI offset drift: R4XStartR4Sys.waitset_source_prepare");
+    if (@offsetOf(R4XStartR4Sys, "byte_pipe_create") != 1488) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_create");
+    if (@offsetOf(R4XStartR4Sys, "byte_pipe_dup") != 1496) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_dup");
+    if (@offsetOf(R4XStartR4Sys, "byte_pipe_read") != 1504) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_read");
+    if (@offsetOf(R4XStartR4Sys, "byte_pipe_write") != 1512) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_write");
+    if (@offsetOf(R4XStartR4Sys, "byte_pipe_cancel") != 1520) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_cancel");
+    if (@offsetOf(R4XStartR4Sys, "byte_pipe_close") != 1528) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_close");
+    if (@offsetOf(R4XStartR4Sys, "byte_pipe_info") != 1536) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_info");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -21647,13 +21766,20 @@ pub const R4SysProvider = struct {
     waitset_wait: ?R4SysFns.waitset_wait = null,
     waitset_close: ?R4SysFns.waitset_close = null,
     waitset_source_prepare: ?R4SysFns.waitset_source_prepare = null,
+    byte_pipe_create: ?R4SysFns.byte_pipe_create = null,
+    byte_pipe_dup: ?R4SysFns.byte_pipe_dup = null,
+    byte_pipe_read: ?R4SysFns.byte_pipe_read = null,
+    byte_pipe_write: ?R4SysFns.byte_pipe_write = null,
+    byte_pipe_cancel: ?R4SysFns.byte_pipe_cancel = null,
+    byte_pipe_close: ?R4SysFns.byte_pipe_close = null,
+    byte_pipe_info: ?R4SysFns.byte_pipe_info = null,
 };
 
 pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
     return .{
         .magic = 827937618,
-        .abi_version = 39,
-        .size = 1488,
+        .abi_version = 40,
+        .size = 1544,
         .flags = 0,
         .write = if (provider.write) |callback| @intFromPtr(callback) else 0,
         .putc = if (provider.putc) |callback| @intFromPtr(callback) else 0,
@@ -21839,6 +21965,13 @@ pub fn buildR4SysTable(provider: R4SysProvider) R4XStartR4Sys {
         .waitset_wait = if (provider.waitset_wait) |callback| @intFromPtr(callback) else 0,
         .waitset_close = if (provider.waitset_close) |callback| @intFromPtr(callback) else 0,
         .waitset_source_prepare = if (provider.waitset_source_prepare) |callback| @intFromPtr(callback) else 0,
+        .byte_pipe_create = if (provider.byte_pipe_create) |callback| @intFromPtr(callback) else 0,
+        .byte_pipe_dup = if (provider.byte_pipe_dup) |callback| @intFromPtr(callback) else 0,
+        .byte_pipe_read = if (provider.byte_pipe_read) |callback| @intFromPtr(callback) else 0,
+        .byte_pipe_write = if (provider.byte_pipe_write) |callback| @intFromPtr(callback) else 0,
+        .byte_pipe_cancel = if (provider.byte_pipe_cancel) |callback| @intFromPtr(callback) else 0,
+        .byte_pipe_close = if (provider.byte_pipe_close) |callback| @intFromPtr(callback) else 0,
+        .byte_pipe_info = if (provider.byte_pipe_info) |callback| @intFromPtr(callback) else 0,
     };
 }
 

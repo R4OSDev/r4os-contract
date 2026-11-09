@@ -16,7 +16,7 @@ test "new generation has distinct identities and exact compact layouts in C and 
         try std.testing.expectEqual(@sizeOf(T), @sizeOf(C));
         try std.testing.expectEqual(@alignOf(T), @alignOf(C));
         inline for (std.meta.fields(T)) |f| try std.testing.expectEqual(@offsetOf(T, f.name), @offsetOf(C, f.name));
-        const version: u32 = if (T == api.R4XStartR4Sys2) 4 else if (T == api.R4XStartR4Draw2 or T == api.R4XStartR4Dev2) 2 else 1;
+        const version: u32 = if (T == api.R4XStartR4Sys2) 5 else if (T == api.R4XStartR4Draw2 or T == api.R4XStartR4Dev2) 2 else 1;
         try std.testing.expectEqual(version, (T{}).abi_version);
     }
     try std.testing.expect(!@hasField(api.R4XStartR4Sys2, "reserved_shell_run"));
@@ -29,11 +29,23 @@ test "new generation has distinct identities and exact compact layouts in C and 
     try std.testing.expectEqual(@as(usize, 1424), @offsetOf(api.shared.R4XStartR4Sys, "directory_metadata_batch2"));
     try std.testing.expectEqual(@as(usize, 1408), @offsetOf(api.R4XStartR4Sys2, "file_metadata2"));
     try std.testing.expectEqual(@as(usize, 1416), @offsetOf(api.R4XStartR4Sys2, "directory_metadata_batch2"));
-    try std.testing.expectEqual(@as(usize, 1488), @sizeOf(api.shared.R4XStartR4Sys));
-    try std.testing.expectEqual(@as(usize, 1480), @sizeOf(api.R4XStartR4Sys2));
+    try std.testing.expectEqual(@as(usize, 1544), @sizeOf(api.shared.R4XStartR4Sys));
+    try std.testing.expectEqual(@as(usize, 1536), @sizeOf(api.R4XStartR4Sys2));
     inline for (.{ "waitset_create", "waitset_enroll", "waitset_rearm", "waitset_remove", "waitset_wait", "waitset_close", "waitset_source_prepare" }, 0..) |name, index| {
         try std.testing.expectEqual(@as(usize, 1432) + index * 8, @offsetOf(api.shared.R4XStartR4Sys, name));
         try std.testing.expectEqual(@as(usize, 1424) + index * 8, @offsetOf(api.R4XStartR4Sys2, name));
+    }
+    // Preserve both original byte prefixes and check the seven new tails
+    // independently of the generated field order or current total size.
+    inline for (.{ "byte_pipe_create", "byte_pipe_dup", "byte_pipe_read", "byte_pipe_write", "byte_pipe_cancel", "byte_pipe_close", "byte_pipe_info" }, 0..) |name, index| {
+        try std.testing.expectEqual(@as(usize, 1488) + index * 8, @offsetOf(api.shared.R4XStartR4Sys, name));
+        try std.testing.expectEqual(@as(usize, 1480) + index * 8, @offsetOf(api.R4XStartR4Sys2, name));
+    }
+    inline for (.{ .{ api.shared.BytePipeEnd, c.R4BytePipeEnd, 24 }, .{ api.shared.BytePipePair, c.R4BytePipePair, 56 }, .{ api.shared.BytePipeProgress, c.R4BytePipeProgress, 24 }, .{ api.shared.BytePipeInfo, c.R4BytePipeInfo, 48 } }) |pair| {
+        try std.testing.expectEqual(@as(usize, pair[2]), @sizeOf(pair[0]));
+        try std.testing.expectEqual(@sizeOf(pair[0]), @sizeOf(pair[1]));
+        try std.testing.expectEqual(@alignOf(pair[0]), @alignOf(pair[1]));
+        inline for (std.meta.fields(pair[0])) |field| try std.testing.expectEqual(@offsetOf(pair[0], field.name), @offsetOf(pair[1], field.name));
     }
     try std.testing.expectEqual(@as(usize, 80), @sizeOf(api.shared.WaitSource));
     try std.testing.expectEqual(@as(usize, 64), @sizeOf(api.shared.WaitSourceRequest));

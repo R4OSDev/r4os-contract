@@ -1660,6 +1660,69 @@
       "removed": false
     },
     {
+      "group": "R4SYS",
+      "name": "byte_pipe_create",
+      "source_number": 184,
+      "source_offset": 1488,
+      "number": 183,
+      "offset": 1480,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "byte_pipe_dup",
+      "source_number": 185,
+      "source_offset": 1496,
+      "number": 184,
+      "offset": 1488,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "byte_pipe_read",
+      "source_number": 186,
+      "source_offset": 1504,
+      "number": 185,
+      "offset": 1496,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "byte_pipe_write",
+      "source_number": 187,
+      "source_offset": 1512,
+      "number": 186,
+      "offset": 1504,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "byte_pipe_cancel",
+      "source_number": 188,
+      "source_offset": 1520,
+      "number": 187,
+      "offset": 1512,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "byte_pipe_close",
+      "source_number": 189,
+      "source_offset": 1528,
+      "number": 188,
+      "offset": 1520,
+      "removed": false
+    },
+    {
+      "group": "R4SYS",
+      "name": "byte_pipe_info",
+      "source_number": 190,
+      "source_offset": 1536,
+      "number": 189,
+      "offset": 1528,
+      "removed": false
+    },
+    {
       "group": "R4DESK",
       "name": "read_key",
       "source_number": 0,
