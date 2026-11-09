@@ -139645,6 +139645,739 @@
       ],
       "values": [],
       "description": "Copied optional Start2 construction request and current-process binding snapshot. Policy0auto/1console/2desktop; console_host0 preserves default/inherited console routing,1terminal_window,2terminal_mode with existing console-class restriction. Three bindings are retained atomically to the exact newly reserved child generation before first Ready. Parent ends stay owned until explicit parent close. Failed pre-publication construction rolls all child refs back; retirement closes child refs after physical threads. stdio query returns borrowed child references, not Dup, and no caller pointer survives return. Existing Start1/Start2 records and reserved_runtime are unchanged."
+    },
+    {
+      "name": "Utf8ByteRange",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 16,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "start",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "start",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "end",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "end",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Half-open UTF8 byte offsets, start<=end. Composition requires pinned R4STD extended-grapheme boundaries in the complete bounded document or preedit text. Not UTF16 units, scalar count or glyph positions."
+    },
+    {
+      "name": "CompositionCaret",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 24,
+      "alignment": 4,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "x",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "x",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "y",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "y",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "width",
+          "offset": 8,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "width",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "height",
+          "offset": 12,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "height",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "scale_numerator",
+          "offset": 16,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "scale_numerator",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "scale_denominator",
+          "offset": 20,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "scale_denominator",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        }
+      ],
+      "values": [],
+      "description": "Copied caret rectangle in logical view pixels, nonzero height and rational physical-pixel scale. Exact composition view identity/revision binds the observation; no physical render/DPI discovery promise."
+    },
+    {
+      "name": "CompositionProvider",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 40,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "40"
+        },
+        {
+          "name": "process",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "process",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "generation",
+          "offset": 24,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "features",
+          "offset": 32,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "features",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "max_text_bytes",
+          "offset": 36,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "max_text_bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1024"
+        }
+      ],
+      "values": [],
+      "description": "External inputmethod metadata, copied values only. Feature1 supports the bounded UTF8/grapheme protocol; requires full live provider identity and nonzero nonreused provider generation. Feature0 with zero identity/generation is NoProvider, never an installed languageIME. Code/payload ownership stays external."
+    },
+    {
+      "name": "CompositionFocus",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 112,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "112"
+        },
+        {
+          "name": "window",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "WindowModeIdentity"
+          },
+          "description": "window",
+          "size": 64,
+          "alignment": 8,
+          "source_type": "r4os.abi.WindowModeIdentity",
+          "default_kind": "empty"
+        },
+        {
+          "name": "view_generation",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "view_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "focus_generation",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "focus_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "input_revision",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "input_revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "observed_tick",
+          "offset": 96,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "observed_tick",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "focused",
+          "offset": 104,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "focused",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 108,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "New separate acknowledged WINSVC focus sidecar. Full original window/service/desktop/owner identity, exact view and nonwrapping focus incarnation. Input revision and observation tick are freshness context, not focus generation. SDK owner must cancel on its actual local focus/view/provider loss before later events; transport is acquired outside GUI/text locks. No reinterpretation of DesktopFocusSnapshot/GuiEvent."
+    },
+    {
+      "name": "CompositionId",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 120,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "window",
+          "offset": 0,
+          "type": {
+            "kind": "named",
+            "name": "WindowModeIdentity"
+          },
+          "description": "window",
+          "size": 64,
+          "alignment": 8,
+          "source_type": "r4os.abi.WindowModeIdentity",
+          "default_kind": "empty"
+        },
+        {
+          "name": "view_generation",
+          "offset": 64,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "view_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "focus_generation",
+          "offset": 72,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "focus_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "owner_generation",
+          "offset": 80,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "owner_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "session_generation",
+          "offset": 88,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "session_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider",
+          "offset": 96,
+          "type": {
+            "kind": "named",
+            "name": "ProgramProcessHandle"
+          },
+          "description": "provider",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.ProgramProcessHandle",
+          "default_kind": "empty"
+        },
+        {
+          "name": "provider_generation",
+          "offset": 112,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "provider_generation",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Exact composition identity. Caller editor owner supplies a nonzero never-reused owner generation within the full window lifetime; SDK owner allocates monotonically nonwrapping session generations. Byte copies retain no resource or authority. Focus/view/provider replacement invalidates the session, late events cannot mutate a newer document."
+    },
+    {
+      "name": "CompositionEvent",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 184,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "version",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "version",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "1"
+        },
+        {
+          "name": "size",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "size",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "184"
+        },
+        {
+          "name": "id",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "CompositionId"
+          },
+          "description": "id",
+          "size": 120,
+          "alignment": 8,
+          "source_type": "r4os.abi.CompositionId",
+          "default_kind": "empty"
+        },
+        {
+          "name": "sequence",
+          "offset": 128,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "sequence",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "text_revision",
+          "offset": 136,
+          "type": {
+            "kind": "scalar",
+            "name": "u64"
+          },
+          "description": "text_revision",
+          "size": 8,
+          "alignment": 8,
+          "source_type": "u64",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "replacement",
+          "offset": 144,
+          "type": {
+            "kind": "named",
+            "name": "Utf8ByteRange"
+          },
+          "description": "replacement",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.Utf8ByteRange",
+          "default_kind": "empty"
+        },
+        {
+          "name": "selection",
+          "offset": 160,
+          "type": {
+            "kind": "named",
+            "name": "Utf8ByteRange"
+          },
+          "description": "selection",
+          "size": 16,
+          "alignment": 8,
+          "source_type": "r4os.abi.Utf8ByteRange",
+          "default_kind": "empty"
+        },
+        {
+          "name": "kind",
+          "offset": 176,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "kind",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "text_bytes",
+          "offset": 180,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "text_bytes",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        }
+      ],
+      "values": [],
+      "description": "Bounded copied event header: Preedit1, Commit2, Cancel3. Positive strictly increasing sequence, exact session/provider/focus/view/text revision. Separate text_bytes payload<=1024, strict UTF8/noNUL, whole grapheme selection in event text and replacement in original document. Cancel carries no text/ranges. Preedit never mutates document; only a valid synchronous owner Commit changes complete bytes and increments the exact text revision."
+    },
+    {
+      "name": "CompositionFocusReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 120,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "result",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "result",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "focus",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "CompositionFocus"
+          },
+          "description": "focus",
+          "size": 112,
+          "alignment": 8,
+          "source_type": "r4os.abi.CompositionFocus",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Copied WINSVC focus query result. Zero grants an acknowledged current own-window focused observation, not a future lease. NoFocus/StaleView are explicit; old key and GUI event records remain unchanged."
+    },
+    {
+      "name": "CompositionCapabilityReply",
+      "source": "API/ApiContract.json",
+      "classification": "fixed_layout",
+      "representation": "extern_struct",
+      "version": 1,
+      "size": 48,
+      "alignment": 8,
+      "source_layout": "extern",
+      "fields": [
+        {
+          "name": "result",
+          "offset": 0,
+          "type": {
+            "kind": "scalar",
+            "name": "i32"
+          },
+          "description": "result",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "i32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "reserved",
+          "offset": 4,
+          "type": {
+            "kind": "scalar",
+            "name": "u32"
+          },
+          "description": "reserved",
+          "size": 4,
+          "alignment": 4,
+          "source_type": "u32",
+          "default_kind": "integer",
+          "default_value": "0"
+        },
+        {
+          "name": "provider",
+          "offset": 8,
+          "type": {
+            "kind": "named",
+            "name": "CompositionProvider"
+          },
+          "description": "provider",
+          "size": 40,
+          "alignment": 8,
+          "source_type": "r4os.abi.CompositionProvider",
+          "default_kind": "empty"
+        }
+      ],
+      "values": [],
+      "description": "Copied WINSVC inputmethod availability response. No installed qualified inputmethod returns NoProvider and feature0 with zero provider identity/generation. A transport success alone is not a composition capability; no candidate database, language or editor integration is installed by this protocol."
     }
   ],
   "operations": [],
@@ -139763,6 +140496,11 @@
       "name": "launch_io",
       "id": 22,
       "description": "Copied atomic Start2 pipe bindings and borrowed process stdio identity snapshot."
+    },
+    {
+      "name": "composition",
+      "id": 23,
+      "description": "Bounded copied editor text-composition sessions and acknowledged focus/provider availability."
     }
   ],
   "error_domains": [
@@ -142693,6 +143431,93 @@
         }
       ],
       "description": "New optional copied launch/stdio query errors; success0, negative errors leave caller output unchanged. Parent endpoints are never consumed. Underlying admitted retirement keeps ownership until actual acknowledgement."
+    },
+    {
+      "name": "composition",
+      "unit": "status_code",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "values": [
+        {
+          "name": "composition_ok",
+          "value": 0,
+          "value_type": "i32",
+          "description": "Complete scoped success."
+        },
+        {
+          "name": "composition_error_invalid",
+          "value": -16001,
+          "value_type": "i32",
+          "description": "Invalid header/reserved/provider/geometry/buffer/aliasing or state."
+        },
+        {
+          "name": "composition_error_encoding",
+          "value": -16002,
+          "value_type": "i32",
+          "description": "Invalid complete UTF8 or embedded NUL; no truncation/transcoding."
+        },
+        {
+          "name": "composition_error_range",
+          "value": -16003,
+          "value_type": "i32",
+          "description": "Not ordered/in-bounds/whole-grapheme UTF8 byte ranges."
+        },
+        {
+          "name": "composition_error_capacity",
+          "value": -16004,
+          "value_type": "i32",
+          "description": "Document/text/output capacity exceeded; no partial commit."
+        },
+        {
+          "name": "composition_error_stale_session",
+          "value": -16005,
+          "value_type": "i32",
+          "description": "Wrong session/owner/full identity or non-increasing event sequence."
+        },
+        {
+          "name": "composition_error_stale_text",
+          "value": -16006,
+          "value_type": "i32",
+          "description": "Original owner text revision differs; invalidate old session, document unchanged."
+        },
+        {
+          "name": "composition_error_stale_view",
+          "value": -16007,
+          "value_type": "i32",
+          "description": "Full window/view/focus incarnation changed; invalidate old session."
+        },
+        {
+          "name": "composition_error_no_focus",
+          "value": -16008,
+          "value_type": "i32",
+          "description": "No acknowledged current focus; invalidate old session."
+        },
+        {
+          "name": "composition_error_provider_changed",
+          "value": -16009,
+          "value_type": "i32",
+          "description": "Provider full process/generation changed; invalidate old session."
+        },
+        {
+          "name": "composition_error_exhausted",
+          "value": -16010,
+          "value_type": "i32",
+          "description": "Nonwrapping session/text identity exhausted; no reuse."
+        },
+        {
+          "name": "composition_error_no_provider",
+          "value": -16011,
+          "value_type": "i32",
+          "description": "No installed qualified inputmethod; feature false, no fabricated languageIME."
+        },
+        {
+          "name": "composition_error_unsupported",
+          "value": -16012,
+          "value_type": "i32",
+          "description": "Optional composition provider/transport/protocol unavailable."
+        }
+      ],
+      "description": "Additional bounded text composition SDK/service statuses. Negative operations never mutate document/output bytes; stale focus/view/provider/text invalidates only the old local session. Service copied replies carry their explicit result separately from transport success."
     }
   ],
   "constants": [
@@ -173915,6 +174740,66 @@
       "scope": "launch_io",
       "stability": "fixed_contract",
       "description": "Exact BytePipe endpoint binding."
+    },
+    {
+      "name": "composition_feature_utf8_grapheme",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Bounded strict UTF8 text and pinned extended-grapheme range semantics."
+    },
+    {
+      "name": "composition_event_preedit",
+      "value": "1",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Copied temporary text, document unchanged."
+    },
+    {
+      "name": "composition_event_commit",
+      "value": "2",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Atomic synchronous original-owner document replacement."
+    },
+    {
+      "name": "composition_event_cancel",
+      "value": "3",
+      "value_type": "u32",
+      "category": "value",
+      "unit": "number",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Cancel exact old session, no text or ranges."
+    },
+    {
+      "name": "composition_op_capability",
+      "value": "4920",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Optional WINSVC copied CompositionCapabilityReply operation, empty request."
+    },
+    {
+      "name": "composition_op_focus",
+      "value": "4921",
+      "value_type": "u16",
+      "category": "value",
+      "unit": "number",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Optional WINSVC own-window CompositionFocusReply operation, exact WindowModeIdentity request."
     }
   ],
   "limits": [
@@ -174970,6 +175855,24 @@
       "scope": "byte_pipe",
       "stability": "fixed_contract",
       "description": "Maximum simultaneously parked native read/write Task nodes per pipe; bounds both wake traversals. Admission uses the original queues under Runtime, never a separate stale counter."
+    },
+    {
+      "name": "composition_max_text_bytes",
+      "value": "1024",
+      "value_type": "u64",
+      "unit": "bytes",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Maximum complete Preedit/Commit/explicit surrounding-text bytes, never truncated."
+    },
+    {
+      "name": "composition_max_document_bytes",
+      "value": "65536",
+      "value_type": "u64",
+      "unit": "bytes",
+      "scope": "composition",
+      "stability": "fixed_contract",
+      "description": "Maximum complete document bytes validated by the initial bounded SDK owner; larger input reports Capacity without partial mutation."
     }
   ],
   "artifact_metadata": {

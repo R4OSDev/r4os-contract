@@ -125,6 +125,7 @@ typedef uint16_t R4ErrorDomain;
 #define R4ABI_ERROR_DOMAIN_WAITSET ((R4ErrorDomain)UINT64_C(20))
 #define R4ABI_ERROR_DOMAIN_BYTE_PIPE ((R4ErrorDomain)UINT64_C(21))
 #define R4ABI_ERROR_DOMAIN_LAUNCH_IO ((R4ErrorDomain)UINT64_C(22))
+#define R4ABI_ERROR_DOMAIN_COMPOSITION ((R4ErrorDomain)UINT64_C(23))
 typedef uint32_t R4XStartAppClass;
 #define R4ABI_X_START_APP_CLASS_AUTO ((R4XStartAppClass)UINT64_C(0))
 #define R4ABI_X_START_APP_CLASS_CONSOLE ((R4XStartAppClass)UINT64_C(1))

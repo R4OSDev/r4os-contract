@@ -3129,6 +3129,12 @@ pub const byte_pipe_timed_out: u32 = 6;
 pub const byte_pipe_closed: u32 = 7;
 pub const launch_io_default: u32 = 0;
 pub const launch_io_pipe: u32 = 1;
+pub const composition_feature_utf8_grapheme: u32 = 1;
+pub const composition_event_preedit: u32 = 1;
+pub const composition_event_commit: u32 = 2;
+pub const composition_event_cancel: u32 = 3;
+pub const composition_op_capability: u16 = 4920;
+pub const composition_op_focus: u16 = 4921;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3246,6 +3252,8 @@ pub const byte_pipe_max_references: u64 = 32;
 pub const byte_pipe_max_pipes: u64 = 64;
 pub const byte_pipe_max_payload: u64 = 4194304;
 pub const byte_pipe_max_waiters: u64 = 32;
+pub const composition_max_text_bytes: u64 = 1024;
+pub const composition_max_document_bytes: u64 = 65536;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -3629,6 +3637,19 @@ pub const launch_io_error_not_found: i32 = -15011;
 pub const launch_io_error_load: i32 = -15012;
 pub const launch_io_error_start: i32 = -15013;
 pub const launch_io_error_busy: i32 = -15014;
+pub const composition_ok: i32 = 0;
+pub const composition_error_invalid: i32 = -16001;
+pub const composition_error_encoding: i32 = -16002;
+pub const composition_error_range: i32 = -16003;
+pub const composition_error_capacity: i32 = -16004;
+pub const composition_error_stale_session: i32 = -16005;
+pub const composition_error_stale_text: i32 = -16006;
+pub const composition_error_stale_view: i32 = -16007;
+pub const composition_error_no_focus: i32 = -16008;
+pub const composition_error_provider_changed: i32 = -16009;
+pub const composition_error_exhausted: i32 = -16010;
+pub const composition_error_no_provider: i32 = -16011;
+pub const composition_error_unsupported: i32 = -16012;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -3657,6 +3678,7 @@ impl R4ErrorDomain {
     pub const waitset: Self = Self(20);
     pub const byte_pipe: Self = Self(21);
     pub const launch_io: Self = Self(22);
+    pub const composition: Self = Self(23);
 }
 
 #[repr(transparent)]
@@ -22573,6 +22595,192 @@ impl Default for LaunchIo {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct Utf8ByteRange {
+    pub start: u64,
+    pub end: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for Utf8ByteRange {
+    fn default() -> Self {
+        Self {
+            start: 0,
+            end: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CompositionCaret {
+    pub x: i32,
+    pub y: i32,
+    pub width: u32,
+    pub height: u32,
+    pub scale_numerator: u32,
+    pub scale_denominator: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CompositionCaret {
+    fn default() -> Self {
+        Self {
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 1,
+            scale_numerator: 1,
+            scale_denominator: 1,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CompositionProvider {
+    pub version: u32,
+    pub size: u32,
+    pub process: ProgramProcessHandle,
+    pub generation: u64,
+    pub features: u32,
+    pub max_text_bytes: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CompositionProvider {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 40,
+            process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            generation: 0,
+            features: 0,
+            max_text_bytes: 1024,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CompositionFocus {
+    pub version: u32,
+    pub size: u32,
+    pub window: WindowModeIdentity,
+    pub view_generation: u64,
+    pub focus_generation: u64,
+    pub input_revision: u64,
+    pub observed_tick: u64,
+    pub focused: u32,
+    pub reserved: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CompositionFocus {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 112,
+            window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 },
+            view_generation: 0,
+            focus_generation: 0,
+            input_revision: 0,
+            observed_tick: 0,
+            focused: 0,
+            reserved: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CompositionId {
+    pub window: WindowModeIdentity,
+    pub view_generation: u64,
+    pub focus_generation: u64,
+    pub owner_generation: u64,
+    pub session_generation: u64,
+    pub provider: ProgramProcessHandle,
+    pub provider_generation: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CompositionId {
+    fn default() -> Self {
+        Self {
+            window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 },
+            view_generation: 0,
+            focus_generation: 0,
+            owner_generation: 0,
+            session_generation: 0,
+            provider: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 },
+            provider_generation: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CompositionEvent {
+    pub version: u32,
+    pub size: u32,
+    pub id: CompositionId,
+    pub sequence: u64,
+    pub text_revision: u64,
+    pub replacement: Utf8ByteRange,
+    pub selection: Utf8ByteRange,
+    pub kind: u32,
+    pub text_bytes: u32,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CompositionEvent {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 184,
+            id: CompositionId { window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_generation: 0, focus_generation: 0, owner_generation: 0, session_generation: 0, provider: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, provider_generation: 0 },
+            sequence: 0,
+            text_revision: 0,
+            replacement: Utf8ByteRange { start: 0, end: 0 },
+            selection: Utf8ByteRange { start: 0, end: 0 },
+            kind: 0,
+            text_bytes: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CompositionFocusReply {
+    pub result: i32,
+    pub reserved: u32,
+    pub focus: CompositionFocus,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CompositionFocusReply {
+    fn default() -> Self {
+        Self {
+            result: 0,
+            reserved: 0,
+            focus: CompositionFocus { version: 1, size: 112, window: WindowModeIdentity { service: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, desktop: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, owner: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, serial: 0, window_id: 0, reserved: 0 }, view_generation: 0, focus_generation: 0, input_revision: 0, observed_tick: 0, focused: 0, reserved: 0 },
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CompositionCapabilityReply {
+    pub result: i32,
+    pub reserved: u32,
+    pub provider: CompositionProvider,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CompositionCapabilityReply {
+    fn default() -> Self {
+        Self {
+            result: 0,
+            reserved: 0,
+            provider: CompositionProvider { version: 1, size: 40, process: ProgramProcessHandle { instance_id: 0, reserved: 0, generation: 0 }, generation: 0, features: 0, max_text_bytes: 1024 },
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -36336,6 +36544,67 @@ const _: () = {
     assert!(core::mem::offset_of!(LaunchIo, stderr_binding) == 80);
     assert!(core::mem::size_of::<LaunchIo>() == 112);
     assert!(core::mem::align_of::<LaunchIo>() == 8);
+    assert!(core::mem::offset_of!(Utf8ByteRange, start) == 0);
+    assert!(core::mem::offset_of!(Utf8ByteRange, end) == 8);
+    assert!(core::mem::size_of::<Utf8ByteRange>() == 16);
+    assert!(core::mem::align_of::<Utf8ByteRange>() == 8);
+    assert!(core::mem::offset_of!(CompositionCaret, x) == 0);
+    assert!(core::mem::offset_of!(CompositionCaret, y) == 4);
+    assert!(core::mem::offset_of!(CompositionCaret, width) == 8);
+    assert!(core::mem::offset_of!(CompositionCaret, height) == 12);
+    assert!(core::mem::offset_of!(CompositionCaret, scale_numerator) == 16);
+    assert!(core::mem::offset_of!(CompositionCaret, scale_denominator) == 20);
+    assert!(core::mem::size_of::<CompositionCaret>() == 24);
+    assert!(core::mem::align_of::<CompositionCaret>() == 4);
+    assert!(core::mem::offset_of!(CompositionProvider, version) == 0);
+    assert!(core::mem::offset_of!(CompositionProvider, size) == 4);
+    assert!(core::mem::offset_of!(CompositionProvider, process) == 8);
+    assert!(core::mem::offset_of!(CompositionProvider, generation) == 24);
+    assert!(core::mem::offset_of!(CompositionProvider, features) == 32);
+    assert!(core::mem::offset_of!(CompositionProvider, max_text_bytes) == 36);
+    assert!(core::mem::size_of::<CompositionProvider>() == 40);
+    assert!(core::mem::align_of::<CompositionProvider>() == 8);
+    assert!(core::mem::offset_of!(CompositionFocus, version) == 0);
+    assert!(core::mem::offset_of!(CompositionFocus, size) == 4);
+    assert!(core::mem::offset_of!(CompositionFocus, window) == 8);
+    assert!(core::mem::offset_of!(CompositionFocus, view_generation) == 72);
+    assert!(core::mem::offset_of!(CompositionFocus, focus_generation) == 80);
+    assert!(core::mem::offset_of!(CompositionFocus, input_revision) == 88);
+    assert!(core::mem::offset_of!(CompositionFocus, observed_tick) == 96);
+    assert!(core::mem::offset_of!(CompositionFocus, focused) == 104);
+    assert!(core::mem::offset_of!(CompositionFocus, reserved) == 108);
+    assert!(core::mem::size_of::<CompositionFocus>() == 112);
+    assert!(core::mem::align_of::<CompositionFocus>() == 8);
+    assert!(core::mem::offset_of!(CompositionId, window) == 0);
+    assert!(core::mem::offset_of!(CompositionId, view_generation) == 64);
+    assert!(core::mem::offset_of!(CompositionId, focus_generation) == 72);
+    assert!(core::mem::offset_of!(CompositionId, owner_generation) == 80);
+    assert!(core::mem::offset_of!(CompositionId, session_generation) == 88);
+    assert!(core::mem::offset_of!(CompositionId, provider) == 96);
+    assert!(core::mem::offset_of!(CompositionId, provider_generation) == 112);
+    assert!(core::mem::size_of::<CompositionId>() == 120);
+    assert!(core::mem::align_of::<CompositionId>() == 8);
+    assert!(core::mem::offset_of!(CompositionEvent, version) == 0);
+    assert!(core::mem::offset_of!(CompositionEvent, size) == 4);
+    assert!(core::mem::offset_of!(CompositionEvent, id) == 8);
+    assert!(core::mem::offset_of!(CompositionEvent, sequence) == 128);
+    assert!(core::mem::offset_of!(CompositionEvent, text_revision) == 136);
+    assert!(core::mem::offset_of!(CompositionEvent, replacement) == 144);
+    assert!(core::mem::offset_of!(CompositionEvent, selection) == 160);
+    assert!(core::mem::offset_of!(CompositionEvent, kind) == 176);
+    assert!(core::mem::offset_of!(CompositionEvent, text_bytes) == 180);
+    assert!(core::mem::size_of::<CompositionEvent>() == 184);
+    assert!(core::mem::align_of::<CompositionEvent>() == 8);
+    assert!(core::mem::offset_of!(CompositionFocusReply, result) == 0);
+    assert!(core::mem::offset_of!(CompositionFocusReply, reserved) == 4);
+    assert!(core::mem::offset_of!(CompositionFocusReply, focus) == 8);
+    assert!(core::mem::size_of::<CompositionFocusReply>() == 120);
+    assert!(core::mem::align_of::<CompositionFocusReply>() == 8);
+    assert!(core::mem::offset_of!(CompositionCapabilityReply, result) == 0);
+    assert!(core::mem::offset_of!(CompositionCapabilityReply, reserved) == 4);
+    assert!(core::mem::offset_of!(CompositionCapabilityReply, provider) == 8);
+    assert!(core::mem::size_of::<CompositionCapabilityReply>() == 48);
+    assert!(core::mem::align_of::<CompositionCapabilityReply>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);

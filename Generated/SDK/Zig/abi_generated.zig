@@ -3123,6 +3123,12 @@ pub const byte_pipe_timed_out: u32 = 6;
 pub const byte_pipe_closed: u32 = 7;
 pub const launch_io_default: u32 = 0;
 pub const launch_io_pipe: u32 = 1;
+pub const composition_feature_utf8_grapheme: u32 = 1;
+pub const composition_event_preedit: u32 = 1;
+pub const composition_event_commit: u32 = 2;
+pub const composition_event_cancel: u32 = 3;
+pub const composition_op_capability: u16 = 4920;
+pub const composition_op_focus: u16 = 4921;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;
@@ -3240,6 +3246,8 @@ pub const byte_pipe_max_references: u64 = 32;
 pub const byte_pipe_max_pipes: u64 = 64;
 pub const byte_pipe_max_payload: u64 = 4194304;
 pub const byte_pipe_max_waiters: u64 = 32;
+pub const composition_max_text_bytes: u64 = 1024;
+pub const composition_max_document_bytes: u64 = 65536;
 pub const arp_result_buffer_small: i32 = -4;
 pub const arp_result_not_arp: i32 = 1;
 pub const arp_result_ok: i32 = 0;
@@ -3623,6 +3631,19 @@ pub const launch_io_error_not_found: i32 = -15011;
 pub const launch_io_error_load: i32 = -15012;
 pub const launch_io_error_start: i32 = -15013;
 pub const launch_io_error_busy: i32 = -15014;
+pub const composition_ok: i32 = 0;
+pub const composition_error_invalid: i32 = -16001;
+pub const composition_error_encoding: i32 = -16002;
+pub const composition_error_range: i32 = -16003;
+pub const composition_error_capacity: i32 = -16004;
+pub const composition_error_stale_session: i32 = -16005;
+pub const composition_error_stale_text: i32 = -16006;
+pub const composition_error_stale_view: i32 = -16007;
+pub const composition_error_no_focus: i32 = -16008;
+pub const composition_error_provider_changed: i32 = -16009;
+pub const composition_error_exhausted: i32 = -16010;
+pub const composition_error_no_provider: i32 = -16011;
+pub const composition_error_unsupported: i32 = -16012;
 
 pub const R4ErrorDomain = enum(u16) {
     none = 0,
@@ -3648,6 +3669,7 @@ pub const R4ErrorDomain = enum(u16) {
     waitset = 20,
     byte_pipe = 21,
     launch_io = 22,
+    composition = 23,
 };
 
 pub const R4XStartAppClass = enum(u32) {
@@ -11792,6 +11814,75 @@ pub const LaunchIo = extern struct {
     stdin_binding: LaunchIoBinding = .{},
     stdout_binding: LaunchIoBinding = .{},
     stderr_binding: LaunchIoBinding = .{},
+};
+
+pub const Utf8ByteRange = extern struct {
+    start: u64 = 0,
+    end: u64 = 0,
+};
+
+pub const CompositionCaret = extern struct {
+    x: i32 = 0,
+    y: i32 = 0,
+    width: u32 = 0,
+    height: u32 = 1,
+    scale_numerator: u32 = 1,
+    scale_denominator: u32 = 1,
+};
+
+pub const CompositionProvider = extern struct {
+    version: u32 = 1,
+    size: u32 = 40,
+    process: ProgramProcessHandle = .{},
+    generation: u64 = 0,
+    features: u32 = 0,
+    max_text_bytes: u32 = 1024,
+};
+
+pub const CompositionFocus = extern struct {
+    version: u32 = 1,
+    size: u32 = 112,
+    window: WindowModeIdentity = .{},
+    view_generation: u64 = 0,
+    focus_generation: u64 = 0,
+    input_revision: u64 = 0,
+    observed_tick: u64 = 0,
+    focused: u32 = 0,
+    reserved: u32 = 0,
+};
+
+pub const CompositionId = extern struct {
+    window: WindowModeIdentity = .{},
+    view_generation: u64 = 0,
+    focus_generation: u64 = 0,
+    owner_generation: u64 = 0,
+    session_generation: u64 = 0,
+    provider: ProgramProcessHandle = .{},
+    provider_generation: u64 = 0,
+};
+
+pub const CompositionEvent = extern struct {
+    version: u32 = 1,
+    size: u32 = 184,
+    id: CompositionId = .{},
+    sequence: u64 = 0,
+    text_revision: u64 = 0,
+    replacement: Utf8ByteRange = .{},
+    selection: Utf8ByteRange = .{},
+    kind: u32 = 0,
+    text_bytes: u32 = 0,
+};
+
+pub const CompositionFocusReply = extern struct {
+    result: i32 = 0,
+    reserved: u32 = 0,
+    focus: CompositionFocus = .{},
+};
+
+pub const CompositionCapabilityReply = extern struct {
+    result: i32 = 0,
+    reserved: u32 = 0,
+    provider: CompositionProvider = .{},
 };
 
 pub const R4SysFns = struct {
@@ -21095,6 +21186,67 @@ comptime {
     if (@offsetOf(LaunchIo, "stdin_binding") != 16) @compileError("generated ABI offset drift: LaunchIo.stdin_binding");
     if (@offsetOf(LaunchIo, "stdout_binding") != 48) @compileError("generated ABI offset drift: LaunchIo.stdout_binding");
     if (@offsetOf(LaunchIo, "stderr_binding") != 80) @compileError("generated ABI offset drift: LaunchIo.stderr_binding");
+    if (@sizeOf(Utf8ByteRange) != 16) @compileError("generated ABI size drift: Utf8ByteRange");
+    if (@alignOf(Utf8ByteRange) != 8) @compileError("generated ABI alignment drift: Utf8ByteRange");
+    if (@offsetOf(Utf8ByteRange, "start") != 0) @compileError("generated ABI offset drift: Utf8ByteRange.start");
+    if (@offsetOf(Utf8ByteRange, "end") != 8) @compileError("generated ABI offset drift: Utf8ByteRange.end");
+    if (@sizeOf(CompositionCaret) != 24) @compileError("generated ABI size drift: CompositionCaret");
+    if (@alignOf(CompositionCaret) != 4) @compileError("generated ABI alignment drift: CompositionCaret");
+    if (@offsetOf(CompositionCaret, "x") != 0) @compileError("generated ABI offset drift: CompositionCaret.x");
+    if (@offsetOf(CompositionCaret, "y") != 4) @compileError("generated ABI offset drift: CompositionCaret.y");
+    if (@offsetOf(CompositionCaret, "width") != 8) @compileError("generated ABI offset drift: CompositionCaret.width");
+    if (@offsetOf(CompositionCaret, "height") != 12) @compileError("generated ABI offset drift: CompositionCaret.height");
+    if (@offsetOf(CompositionCaret, "scale_numerator") != 16) @compileError("generated ABI offset drift: CompositionCaret.scale_numerator");
+    if (@offsetOf(CompositionCaret, "scale_denominator") != 20) @compileError("generated ABI offset drift: CompositionCaret.scale_denominator");
+    if (@sizeOf(CompositionProvider) != 40) @compileError("generated ABI size drift: CompositionProvider");
+    if (@alignOf(CompositionProvider) != 8) @compileError("generated ABI alignment drift: CompositionProvider");
+    if (@offsetOf(CompositionProvider, "version") != 0) @compileError("generated ABI offset drift: CompositionProvider.version");
+    if (@offsetOf(CompositionProvider, "size") != 4) @compileError("generated ABI offset drift: CompositionProvider.size");
+    if (@offsetOf(CompositionProvider, "process") != 8) @compileError("generated ABI offset drift: CompositionProvider.process");
+    if (@offsetOf(CompositionProvider, "generation") != 24) @compileError("generated ABI offset drift: CompositionProvider.generation");
+    if (@offsetOf(CompositionProvider, "features") != 32) @compileError("generated ABI offset drift: CompositionProvider.features");
+    if (@offsetOf(CompositionProvider, "max_text_bytes") != 36) @compileError("generated ABI offset drift: CompositionProvider.max_text_bytes");
+    if (@sizeOf(CompositionFocus) != 112) @compileError("generated ABI size drift: CompositionFocus");
+    if (@alignOf(CompositionFocus) != 8) @compileError("generated ABI alignment drift: CompositionFocus");
+    if (@offsetOf(CompositionFocus, "version") != 0) @compileError("generated ABI offset drift: CompositionFocus.version");
+    if (@offsetOf(CompositionFocus, "size") != 4) @compileError("generated ABI offset drift: CompositionFocus.size");
+    if (@offsetOf(CompositionFocus, "window") != 8) @compileError("generated ABI offset drift: CompositionFocus.window");
+    if (@offsetOf(CompositionFocus, "view_generation") != 72) @compileError("generated ABI offset drift: CompositionFocus.view_generation");
+    if (@offsetOf(CompositionFocus, "focus_generation") != 80) @compileError("generated ABI offset drift: CompositionFocus.focus_generation");
+    if (@offsetOf(CompositionFocus, "input_revision") != 88) @compileError("generated ABI offset drift: CompositionFocus.input_revision");
+    if (@offsetOf(CompositionFocus, "observed_tick") != 96) @compileError("generated ABI offset drift: CompositionFocus.observed_tick");
+    if (@offsetOf(CompositionFocus, "focused") != 104) @compileError("generated ABI offset drift: CompositionFocus.focused");
+    if (@offsetOf(CompositionFocus, "reserved") != 108) @compileError("generated ABI offset drift: CompositionFocus.reserved");
+    if (@sizeOf(CompositionId) != 120) @compileError("generated ABI size drift: CompositionId");
+    if (@alignOf(CompositionId) != 8) @compileError("generated ABI alignment drift: CompositionId");
+    if (@offsetOf(CompositionId, "window") != 0) @compileError("generated ABI offset drift: CompositionId.window");
+    if (@offsetOf(CompositionId, "view_generation") != 64) @compileError("generated ABI offset drift: CompositionId.view_generation");
+    if (@offsetOf(CompositionId, "focus_generation") != 72) @compileError("generated ABI offset drift: CompositionId.focus_generation");
+    if (@offsetOf(CompositionId, "owner_generation") != 80) @compileError("generated ABI offset drift: CompositionId.owner_generation");
+    if (@offsetOf(CompositionId, "session_generation") != 88) @compileError("generated ABI offset drift: CompositionId.session_generation");
+    if (@offsetOf(CompositionId, "provider") != 96) @compileError("generated ABI offset drift: CompositionId.provider");
+    if (@offsetOf(CompositionId, "provider_generation") != 112) @compileError("generated ABI offset drift: CompositionId.provider_generation");
+    if (@sizeOf(CompositionEvent) != 184) @compileError("generated ABI size drift: CompositionEvent");
+    if (@alignOf(CompositionEvent) != 8) @compileError("generated ABI alignment drift: CompositionEvent");
+    if (@offsetOf(CompositionEvent, "version") != 0) @compileError("generated ABI offset drift: CompositionEvent.version");
+    if (@offsetOf(CompositionEvent, "size") != 4) @compileError("generated ABI offset drift: CompositionEvent.size");
+    if (@offsetOf(CompositionEvent, "id") != 8) @compileError("generated ABI offset drift: CompositionEvent.id");
+    if (@offsetOf(CompositionEvent, "sequence") != 128) @compileError("generated ABI offset drift: CompositionEvent.sequence");
+    if (@offsetOf(CompositionEvent, "text_revision") != 136) @compileError("generated ABI offset drift: CompositionEvent.text_revision");
+    if (@offsetOf(CompositionEvent, "replacement") != 144) @compileError("generated ABI offset drift: CompositionEvent.replacement");
+    if (@offsetOf(CompositionEvent, "selection") != 160) @compileError("generated ABI offset drift: CompositionEvent.selection");
+    if (@offsetOf(CompositionEvent, "kind") != 176) @compileError("generated ABI offset drift: CompositionEvent.kind");
+    if (@offsetOf(CompositionEvent, "text_bytes") != 180) @compileError("generated ABI offset drift: CompositionEvent.text_bytes");
+    if (@sizeOf(CompositionFocusReply) != 120) @compileError("generated ABI size drift: CompositionFocusReply");
+    if (@alignOf(CompositionFocusReply) != 8) @compileError("generated ABI alignment drift: CompositionFocusReply");
+    if (@offsetOf(CompositionFocusReply, "result") != 0) @compileError("generated ABI offset drift: CompositionFocusReply.result");
+    if (@offsetOf(CompositionFocusReply, "reserved") != 4) @compileError("generated ABI offset drift: CompositionFocusReply.reserved");
+    if (@offsetOf(CompositionFocusReply, "focus") != 8) @compileError("generated ABI offset drift: CompositionFocusReply.focus");
+    if (@sizeOf(CompositionCapabilityReply) != 48) @compileError("generated ABI size drift: CompositionCapabilityReply");
+    if (@alignOf(CompositionCapabilityReply) != 8) @compileError("generated ABI alignment drift: CompositionCapabilityReply");
+    if (@offsetOf(CompositionCapabilityReply, "result") != 0) @compileError("generated ABI offset drift: CompositionCapabilityReply.result");
+    if (@offsetOf(CompositionCapabilityReply, "reserved") != 4) @compileError("generated ABI offset drift: CompositionCapabilityReply.reserved");
+    if (@offsetOf(CompositionCapabilityReply, "provider") != 8) @compileError("generated ABI offset drift: CompositionCapabilityReply.provider");
     if (@sizeOf(R4XStartR4Sys) != 1560) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");

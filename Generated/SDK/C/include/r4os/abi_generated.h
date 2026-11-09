@@ -3135,6 +3135,12 @@ extern "C" {
 #define R4OS_BYTE_PIPE_CLOSED 7u
 #define R4OS_LAUNCH_IO_DEFAULT 0u
 #define R4OS_LAUNCH_IO_PIPE 1u
+#define R4OS_COMPOSITION_FEATURE_UTF8_GRAPHEME 1u
+#define R4OS_COMPOSITION_EVENT_PREEDIT 1u
+#define R4OS_COMPOSITION_EVENT_COMMIT 2u
+#define R4OS_COMPOSITION_EVENT_CANCEL 3u
+#define R4OS_COMPOSITION_OP_CAPABILITY 4920u
+#define R4OS_COMPOSITION_OP_FOCUS 4921u
 #define R4OS_AUDIO_SERVICE_ERROR_BYTES 32ull
 #define R4OS_AUDIO_SERVICE_MAX_SESSIONS 8u
 #define R4OS_AUDIO_SERVICE_NAME_BYTES 32ull
@@ -3252,6 +3258,8 @@ extern "C" {
 #define R4OS_BYTE_PIPE_MAX_PIPES 64ull
 #define R4OS_BYTE_PIPE_MAX_PAYLOAD 4194304ull
 #define R4OS_BYTE_PIPE_MAX_WAITERS 32ull
+#define R4OS_COMPOSITION_MAX_TEXT_BYTES 1024ull
+#define R4OS_COMPOSITION_MAX_DOCUMENT_BYTES 65536ull
 #define R4OS_ARP_RESULT_BUFFER_SMALL ((int32_t)-4)
 #define R4OS_ARP_RESULT_NOT_ARP ((int32_t)1)
 #define R4OS_ARP_RESULT_OK ((int32_t)0)
@@ -3635,6 +3643,19 @@ extern "C" {
 #define R4OS_LAUNCH_IO_ERROR_LOAD ((int32_t)-15012)
 #define R4OS_LAUNCH_IO_ERROR_START ((int32_t)-15013)
 #define R4OS_LAUNCH_IO_ERROR_BUSY ((int32_t)-15014)
+#define R4OS_COMPOSITION_OK ((int32_t)0)
+#define R4OS_COMPOSITION_ERROR_INVALID ((int32_t)-16001)
+#define R4OS_COMPOSITION_ERROR_ENCODING ((int32_t)-16002)
+#define R4OS_COMPOSITION_ERROR_RANGE ((int32_t)-16003)
+#define R4OS_COMPOSITION_ERROR_CAPACITY ((int32_t)-16004)
+#define R4OS_COMPOSITION_ERROR_STALE_SESSION ((int32_t)-16005)
+#define R4OS_COMPOSITION_ERROR_STALE_TEXT ((int32_t)-16006)
+#define R4OS_COMPOSITION_ERROR_STALE_VIEW ((int32_t)-16007)
+#define R4OS_COMPOSITION_ERROR_NO_FOCUS ((int32_t)-16008)
+#define R4OS_COMPOSITION_ERROR_PROVIDER_CHANGED ((int32_t)-16009)
+#define R4OS_COMPOSITION_ERROR_EXHAUSTED ((int32_t)-16010)
+#define R4OS_COMPOSITION_ERROR_NO_PROVIDER ((int32_t)-16011)
+#define R4OS_COMPOSITION_ERROR_UNSUPPORTED ((int32_t)-16012)
 
 /* Wire typedefs are reflected from Zig by the technical projection. */
 enum {
@@ -3660,7 +3681,8 @@ enum {
     R4_ERROR_DOMAIN_FONT_METRICS2 = 19,
     R4_ERROR_DOMAIN_WAITSET = 20,
     R4_ERROR_DOMAIN_BYTE_PIPE = 21,
-    R4_ERROR_DOMAIN_LAUNCH_IO = 22
+    R4_ERROR_DOMAIN_LAUNCH_IO = 22,
+    R4_ERROR_DOMAIN_COMPOSITION = 23
 };
 
 #define R4L_GROUP_R4SYS 1u
@@ -4141,6 +4163,14 @@ typedef struct R4BytePipeProgress R4BytePipeProgress;
 typedef struct R4BytePipeInfo R4BytePipeInfo;
 typedef struct R4LaunchIoBinding R4LaunchIoBinding;
 typedef struct R4LaunchIo R4LaunchIo;
+typedef struct R4Utf8ByteRange R4Utf8ByteRange;
+typedef struct R4CompositionCaret R4CompositionCaret;
+typedef struct R4CompositionProvider R4CompositionProvider;
+typedef struct R4CompositionFocus R4CompositionFocus;
+typedef struct R4CompositionId R4CompositionId;
+typedef struct R4CompositionEvent R4CompositionEvent;
+typedef struct R4CompositionFocusReply R4CompositionFocusReply;
+typedef struct R4CompositionCapabilityReply R4CompositionCapabilityReply;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -12197,6 +12227,75 @@ typedef struct R4LaunchIo {
     R4LaunchIoBinding stdout_binding;
     R4LaunchIoBinding stderr_binding;
 } R4LaunchIo;
+
+typedef struct R4Utf8ByteRange {
+    uint64_t start;
+    uint64_t end;
+} R4Utf8ByteRange;
+
+typedef struct R4CompositionCaret {
+    int32_t x;
+    int32_t y;
+    uint32_t width;
+    uint32_t height;
+    uint32_t scale_numerator;
+    uint32_t scale_denominator;
+} R4CompositionCaret;
+
+typedef struct R4CompositionProvider {
+    uint32_t version;
+    uint32_t size;
+    R4ProgramProcessHandle process;
+    uint64_t generation;
+    uint32_t features;
+    uint32_t max_text_bytes;
+} R4CompositionProvider;
+
+typedef struct R4CompositionFocus {
+    uint32_t version;
+    uint32_t size;
+    R4WindowModeIdentity window;
+    uint64_t view_generation;
+    uint64_t focus_generation;
+    uint64_t input_revision;
+    uint64_t observed_tick;
+    uint32_t focused;
+    uint32_t reserved;
+} R4CompositionFocus;
+
+typedef struct R4CompositionId {
+    R4WindowModeIdentity window;
+    uint64_t view_generation;
+    uint64_t focus_generation;
+    uint64_t owner_generation;
+    uint64_t session_generation;
+    R4ProgramProcessHandle provider;
+    uint64_t provider_generation;
+} R4CompositionId;
+
+typedef struct R4CompositionEvent {
+    uint32_t version;
+    uint32_t size;
+    R4CompositionId id;
+    uint64_t sequence;
+    uint64_t text_revision;
+    R4Utf8ByteRange replacement;
+    R4Utf8ByteRange selection;
+    uint32_t kind;
+    uint32_t text_bytes;
+} R4CompositionEvent;
+
+typedef struct R4CompositionFocusReply {
+    int32_t result;
+    uint32_t reserved;
+    R4CompositionFocus focus;
+} R4CompositionFocusReply;
+
+typedef struct R4CompositionCapabilityReply {
+    int32_t result;
+    uint32_t reserved;
+    R4CompositionProvider provider;
+} R4CompositionCapabilityReply;
 
 typedef struct R4XStartContext {
     uint32_t magic;
@@ -20522,6 +20621,59 @@ _Static_assert(offsetof(R4LaunchIo, console_host) == 12u, "LaunchIo.console_host
 _Static_assert(offsetof(R4LaunchIo, stdin_binding) == 16u, "LaunchIo.stdin_binding offset mismatch");
 _Static_assert(offsetof(R4LaunchIo, stdout_binding) == 48u, "LaunchIo.stdout_binding offset mismatch");
 _Static_assert(offsetof(R4LaunchIo, stderr_binding) == 80u, "LaunchIo.stderr_binding offset mismatch");
+_Static_assert(sizeof(R4Utf8ByteRange) == 16u, "Utf8ByteRange size mismatch");
+_Static_assert(offsetof(R4Utf8ByteRange, start) == 0u, "Utf8ByteRange.start offset mismatch");
+_Static_assert(offsetof(R4Utf8ByteRange, end) == 8u, "Utf8ByteRange.end offset mismatch");
+_Static_assert(sizeof(R4CompositionCaret) == 24u, "CompositionCaret size mismatch");
+_Static_assert(offsetof(R4CompositionCaret, x) == 0u, "CompositionCaret.x offset mismatch");
+_Static_assert(offsetof(R4CompositionCaret, y) == 4u, "CompositionCaret.y offset mismatch");
+_Static_assert(offsetof(R4CompositionCaret, width) == 8u, "CompositionCaret.width offset mismatch");
+_Static_assert(offsetof(R4CompositionCaret, height) == 12u, "CompositionCaret.height offset mismatch");
+_Static_assert(offsetof(R4CompositionCaret, scale_numerator) == 16u, "CompositionCaret.scale_numerator offset mismatch");
+_Static_assert(offsetof(R4CompositionCaret, scale_denominator) == 20u, "CompositionCaret.scale_denominator offset mismatch");
+_Static_assert(sizeof(R4CompositionProvider) == 40u, "CompositionProvider size mismatch");
+_Static_assert(offsetof(R4CompositionProvider, version) == 0u, "CompositionProvider.version offset mismatch");
+_Static_assert(offsetof(R4CompositionProvider, size) == 4u, "CompositionProvider.size offset mismatch");
+_Static_assert(offsetof(R4CompositionProvider, process) == 8u, "CompositionProvider.process offset mismatch");
+_Static_assert(offsetof(R4CompositionProvider, generation) == 24u, "CompositionProvider.generation offset mismatch");
+_Static_assert(offsetof(R4CompositionProvider, features) == 32u, "CompositionProvider.features offset mismatch");
+_Static_assert(offsetof(R4CompositionProvider, max_text_bytes) == 36u, "CompositionProvider.max_text_bytes offset mismatch");
+_Static_assert(sizeof(R4CompositionFocus) == 112u, "CompositionFocus size mismatch");
+_Static_assert(offsetof(R4CompositionFocus, version) == 0u, "CompositionFocus.version offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, size) == 4u, "CompositionFocus.size offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, window) == 8u, "CompositionFocus.window offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, view_generation) == 72u, "CompositionFocus.view_generation offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, focus_generation) == 80u, "CompositionFocus.focus_generation offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, input_revision) == 88u, "CompositionFocus.input_revision offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, observed_tick) == 96u, "CompositionFocus.observed_tick offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, focused) == 104u, "CompositionFocus.focused offset mismatch");
+_Static_assert(offsetof(R4CompositionFocus, reserved) == 108u, "CompositionFocus.reserved offset mismatch");
+_Static_assert(sizeof(R4CompositionId) == 120u, "CompositionId size mismatch");
+_Static_assert(offsetof(R4CompositionId, window) == 0u, "CompositionId.window offset mismatch");
+_Static_assert(offsetof(R4CompositionId, view_generation) == 64u, "CompositionId.view_generation offset mismatch");
+_Static_assert(offsetof(R4CompositionId, focus_generation) == 72u, "CompositionId.focus_generation offset mismatch");
+_Static_assert(offsetof(R4CompositionId, owner_generation) == 80u, "CompositionId.owner_generation offset mismatch");
+_Static_assert(offsetof(R4CompositionId, session_generation) == 88u, "CompositionId.session_generation offset mismatch");
+_Static_assert(offsetof(R4CompositionId, provider) == 96u, "CompositionId.provider offset mismatch");
+_Static_assert(offsetof(R4CompositionId, provider_generation) == 112u, "CompositionId.provider_generation offset mismatch");
+_Static_assert(sizeof(R4CompositionEvent) == 184u, "CompositionEvent size mismatch");
+_Static_assert(offsetof(R4CompositionEvent, version) == 0u, "CompositionEvent.version offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, size) == 4u, "CompositionEvent.size offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, id) == 8u, "CompositionEvent.id offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, sequence) == 128u, "CompositionEvent.sequence offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, text_revision) == 136u, "CompositionEvent.text_revision offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, replacement) == 144u, "CompositionEvent.replacement offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, selection) == 160u, "CompositionEvent.selection offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, kind) == 176u, "CompositionEvent.kind offset mismatch");
+_Static_assert(offsetof(R4CompositionEvent, text_bytes) == 180u, "CompositionEvent.text_bytes offset mismatch");
+_Static_assert(sizeof(R4CompositionFocusReply) == 120u, "CompositionFocusReply size mismatch");
+_Static_assert(offsetof(R4CompositionFocusReply, result) == 0u, "CompositionFocusReply.result offset mismatch");
+_Static_assert(offsetof(R4CompositionFocusReply, reserved) == 4u, "CompositionFocusReply.reserved offset mismatch");
+_Static_assert(offsetof(R4CompositionFocusReply, focus) == 8u, "CompositionFocusReply.focus offset mismatch");
+_Static_assert(sizeof(R4CompositionCapabilityReply) == 48u, "CompositionCapabilityReply size mismatch");
+_Static_assert(offsetof(R4CompositionCapabilityReply, result) == 0u, "CompositionCapabilityReply.result offset mismatch");
+_Static_assert(offsetof(R4CompositionCapabilityReply, reserved) == 4u, "CompositionCapabilityReply.reserved offset mismatch");
+_Static_assert(offsetof(R4CompositionCapabilityReply, provider) == 8u, "CompositionCapabilityReply.provider offset mismatch");
 _Static_assert(sizeof(R4XStartR4Sys) == 1560u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

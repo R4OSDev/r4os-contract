@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 463 von 463 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 471 von 471 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 70; Konstanten: 3122; Limits: 117
+- Operationen: 0; Fehlerdomänen: 71; Konstanten: 3128; Limits: 119
 
 ## App-Profile
 
@@ -484,6 +484,14 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `BytePipeInfo` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 | `LaunchIoBinding` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `LaunchIo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `Utf8ByteRange` | fixed_layout | extern_struct | 16/8 | 16/8 | 16/8 | 16/8 |
+| `CompositionCaret` | fixed_layout | extern_struct | 24/4 | 24/4 | 24/4 | 24/4 |
+| `CompositionProvider` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
+| `CompositionFocus` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
+| `CompositionId` | fixed_layout | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `CompositionEvent` | fixed_layout | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
+| `CompositionFocusReply` | fixed_layout | extern_struct | 120/8 | 120/8 | 120/8 | 120/8 |
+| `CompositionCapabilityReply` | fixed_layout | extern_struct | 48/8 | 48/8 | 48/8 | 48/8 |
 
 ## Typdetails
 
@@ -11768,6 +11776,131 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `stdout_binding` | 48 | 32 | 8 | `r4os.abi.LaunchIoBinding` | - |
 | `stderr_binding` | 80 | 32 | 8 | `r4os.abi.LaunchIoBinding` | - |
 
+### `Utf8ByteRange`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 16 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `start` | 0 | 8 | 8 | `u64` | - |
+| `end` | 8 | 8 | 8 | `u64` | - |
+
+### `CompositionCaret`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 24 / 4
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `x` | 0 | 4 | 4 | `i32` | - |
+| `y` | 4 | 4 | 4 | `i32` | - |
+| `width` | 8 | 4 | 4 | `u32` | - |
+| `height` | 12 | 4 | 4 | `u32` | - |
+| `scale_numerator` | 16 | 4 | 4 | `u32` | - |
+| `scale_denominator` | 20 | 4 | 4 | `u32` | - |
+
+### `CompositionProvider`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 40 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `process` | 8 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `generation` | 24 | 8 | 8 | `u64` | - |
+| `features` | 32 | 4 | 4 | `u32` | - |
+| `max_text_bytes` | 36 | 4 | 4 | `u32` | - |
+
+### `CompositionFocus`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 112 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `window` | 8 | 64 | 8 | `r4os.abi.WindowModeIdentity` | - |
+| `view_generation` | 72 | 8 | 8 | `u64` | - |
+| `focus_generation` | 80 | 8 | 8 | `u64` | - |
+| `input_revision` | 88 | 8 | 8 | `u64` | - |
+| `observed_tick` | 96 | 8 | 8 | `u64` | - |
+| `focused` | 104 | 4 | 4 | `u32` | - |
+| `reserved` | 108 | 4 | 4 | `u32` | - |
+
+### `CompositionId`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 120 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `window` | 0 | 64 | 8 | `r4os.abi.WindowModeIdentity` | - |
+| `view_generation` | 64 | 8 | 8 | `u64` | - |
+| `focus_generation` | 72 | 8 | 8 | `u64` | - |
+| `owner_generation` | 80 | 8 | 8 | `u64` | - |
+| `session_generation` | 88 | 8 | 8 | `u64` | - |
+| `provider` | 96 | 16 | 8 | `r4os.abi.ProgramProcessHandle` | - |
+| `provider_generation` | 112 | 8 | 8 | `u64` | - |
+
+### `CompositionEvent`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 184 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `id` | 8 | 120 | 8 | `r4os.abi.CompositionId` | - |
+| `sequence` | 128 | 8 | 8 | `u64` | - |
+| `text_revision` | 136 | 8 | 8 | `u64` | - |
+| `replacement` | 144 | 16 | 8 | `r4os.abi.Utf8ByteRange` | - |
+| `selection` | 160 | 16 | 8 | `r4os.abi.Utf8ByteRange` | - |
+| `kind` | 176 | 4 | 4 | `u32` | - |
+| `text_bytes` | 180 | 4 | 4 | `u32` | - |
+
+### `CompositionFocusReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 120 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `result` | 0 | 4 | 4 | `i32` | - |
+| `reserved` | 4 | 4 | 4 | `u32` | - |
+| `focus` | 8 | 112 | 8 | `r4os.abi.CompositionFocus` | - |
+
+### `CompositionCapabilityReply`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 48 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `result` | 0 | 4 | 4 | `i32` | - |
+| `reserved` | 4 | 4 | 4 | `u32` | - |
+| `provider` | 8 | 40 | 8 | `r4os.abi.CompositionProvider` | - |
+
 ## Fehlerdomänen
 
 ### `arp`
@@ -12642,6 +12775,26 @@ Geltung: `launch_io`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `launch_io_error_load` | -15012 | `i32` |
 | `launch_io_error_start` | -15013 | `i32` |
 | `launch_io_error_busy` | -15014 | `i32` |
+
+### `composition`
+
+Geltung: `composition`, Einheit: `status_code`, Stabilität: `fixed_contract`.
+
+| Name | Wert | Typ |
+|---|---:|---|
+| `composition_ok` | 0 | `i32` |
+| `composition_error_invalid` | -16001 | `i32` |
+| `composition_error_encoding` | -16002 | `i32` |
+| `composition_error_range` | -16003 | `i32` |
+| `composition_error_capacity` | -16004 | `i32` |
+| `composition_error_stale_session` | -16005 | `i32` |
+| `composition_error_stale_text` | -16006 | `i32` |
+| `composition_error_stale_view` | -16007 | `i32` |
+| `composition_error_no_focus` | -16008 | `i32` |
+| `composition_error_provider_changed` | -16009 | `i32` |
+| `composition_error_exhausted` | -16010 | `i32` |
+| `composition_error_no_provider` | -16011 | `i32` |
+| `composition_error_unsupported` | -16012 | `i32` |
 
 ## Konstanten
 
@@ -15769,6 +15922,12 @@ Geltung: `launch_io`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `byte_pipe_closed` | `7` | `u32` | value | number | `byte_pipe` | fixed_contract |
 | `launch_io_default` | `0` | `u32` | value | number | `launch_io` | fixed_contract |
 | `launch_io_pipe` | `1` | `u32` | value | number | `launch_io` | fixed_contract |
+| `composition_feature_utf8_grapheme` | `1` | `u32` | value | number | `composition` | fixed_contract |
+| `composition_event_preedit` | `1` | `u32` | value | number | `composition` | fixed_contract |
+| `composition_event_commit` | `2` | `u32` | value | number | `composition` | fixed_contract |
+| `composition_event_cancel` | `3` | `u32` | value | number | `composition` | fixed_contract |
+| `composition_op_capability` | `4920` | `u16` | value | number | `composition` | fixed_contract |
+| `composition_op_focus` | `4921` | `u16` | value | number | `composition` | fixed_contract |
 
 ## Limits
 
@@ -15891,3 +16050,5 @@ Geltung: `launch_io`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `byte_pipe_max_pipes` | `64` | `u64` | number | `byte_pipe` | fixed_contract |
 | `byte_pipe_max_payload` | `4194304` | `u64` | bytes | `byte_pipe` | fixed_contract |
 | `byte_pipe_max_waiters` | `32` | `u64` | number | `byte_pipe` | fixed_contract |
+| `composition_max_text_bytes` | `1024` | `u64` | bytes | `composition` | fixed_contract |
+| `composition_max_document_bytes` | `65536` | `u64` | bytes | `composition` | fixed_contract |

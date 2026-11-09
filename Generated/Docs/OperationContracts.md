@@ -5,7 +5,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 - Physische Gruppenslots: 536; Funktionen: 525; reserviert/Tombstone: 11
 - Sichtbarkeit: public=383, advanced=142, internal=11
 - Zentrale SDK-only-Operationen: 0
-- Statusdomänen: 23
+- Statusdomänen: 24
 - Sprachparität: public/advanced verlangt Zig und C; internal bleibt intern
 
 ## Statusdomänen
@@ -35,6 +35,7 @@ Diese Matrix wird vollständig aus `ApiContract.json` erzeugt. Sie ist die lesba
 | 20 | `waitset` | Bounded resident wait-any and exact source lifetime. |
 | 21 | `byte_pipe` | Bounded resident byte streams with exact endpoint references, accepted prefixes, EOF and explicit cancellation. |
 | 22 | `launch_io` | Copied atomic Start2 pipe bindings and borrowed process stdio identity snapshot. |
+| 23 | `composition` | Bounded copied editor text-composition sessions and acknowledged focus/provider availability. |
 
 ## Gruppenslots
 
