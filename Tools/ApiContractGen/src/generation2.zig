@@ -68,7 +68,7 @@ fn validate(config: Config, contract: anytype) !void {
     if (config.driver.protocol_tail_fields.len != 3 or !std.mem.eql(u8, config.driver.protocol_tail_fields[0], "protocol_dispatch") or !std.mem.eql(u8, config.driver.protocol_tail_fields[1], "link_io") or !std.mem.eql(u8, config.driver.protocol_tail_fields[2], "process_status")) return error.GenerationProtocolTail;
     if (!std.mem.eql(u8, config.audio_status.name, "AudioBackendStatus2") or config.audio_status.backend_version != 3 or config.audio_status.backend_magic != 0x32425541 or config.audio_status.remove_fields.len != 6) return error.GenerationAudioIdentity;
     for ([_][]const u8{ "last_write_ticks", "max_write_ticks", "total_write_ticks", "last_refill_ticks", "max_refill_ticks", "total_refill_ticks" }) |field| if (!contains(config.audio_status.remove_fields, field)) return error.GenerationFieldRemoval;
-    if (config.selection.default_generation != 1 or !config.selection.shared_resource_owners or !std.mem.eql(u8, config.selection.missing_generation, "reject") or !std.mem.eql(u8, config.selection.mixed_start_generations, "reject")) return error.GenerationSelection;
+    if (config.selection.default_generation != 2 or !config.selection.shared_resource_owners or !std.mem.eql(u8, config.selection.missing_generation, "reject") or !std.mem.eql(u8, config.selection.mixed_start_generations, "reject")) return error.GenerationSelection;
     var drops: usize = 0;
     for (contract.groups) |group| {
         _ = try tableVersion(config, group);
@@ -261,7 +261,7 @@ pub fn selftest(allocator: std.mem.Allocator, io: std.Io, contract: anytype) !vo
             2 => mutated.generation = 3,
             3 => mutated.tables.remove_slots.R4SYS = &.{"write"},
             4 => mutated.tables.magic_high_byte = '1',
-            5 => mutated.selection.default_generation = 2,
+            5 => mutated.selection.default_generation = 1,
             6 => mutated.selection.missing_generation = "fallback",
             7 => mutated.query.size = 32,
             8 => mutated.tables.source_versions.R4SYS = 35,
