@@ -13,6 +13,11 @@ expansion notes below are historical; they do not admit those retired outer
 records. DMA, callback, work and retirement ownership rules and independent
 functional subrecord versions continue to apply.
 
+Contract 0.64.96 appends the optional task-context audio_output_progress
+callback at DriverApi2 offset 664 (size 672), preserving the full former
+prefix and revision 1. Its ownership and finite fallback contract is in
+API/AudioProgressNotifications.txt.
+
 Audio detail duration retirement (Contract0.64.61 / R4OS0.88.59)
 -------------------------------------------------------------
 AudioBackendStatus remains fixed128 bytes. Its last/max/total_write_ticks

@@ -28853,6 +28853,7 @@ pub struct DriverApi2 {
     pub serial_query: Option<unsafe extern "C" fn(*mut DriverSerialApi) -> i32>,
     pub register_audio_output_epoch: Option<unsafe extern "C" fn(*const u8, unsafe extern "C" fn(u64, *mut AudioOutputEpoch) -> i32) -> i32>,
     pub register_audio_capture_backend: Option<unsafe extern "C" fn(*const u8, *const AudioCaptureBackend2) -> i32>,
+    pub audio_output_progress: Option<unsafe extern "C" fn() -> ()>,
 }
 
 #[repr(C)]
@@ -39103,7 +39104,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverApi2, serial_query) == 640);
     assert!(core::mem::offset_of!(DriverApi2, register_audio_output_epoch) == 648);
     assert!(core::mem::offset_of!(DriverApi2, register_audio_capture_backend) == 656);
-    assert!(core::mem::size_of::<DriverApi2>() == 664);
+    assert!(core::mem::offset_of!(DriverApi2, audio_output_progress) == 664);
+    assert!(core::mem::size_of::<DriverApi2>() == 672);
     assert!(core::mem::align_of::<DriverApi2>() == 8);
     assert!(core::mem::offset_of!(ProtocolApi2, magic) == 0);
     assert!(core::mem::offset_of!(ProtocolApi2, version) == 4);

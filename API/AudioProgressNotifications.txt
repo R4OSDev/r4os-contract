@@ -1,0 +1,38 @@
+﻿Audio period-work notification (Contract 0.64.96 / R4OS 0.91.7)
+=============================================================
+
+DriverApi2 retains DPI2, revision 1 and the complete former 664-byte prefix.
+The optional audio_output_progress callback occupies offset 664; current
+size is 672. Its C signature is void (*)(void). All other technical records,
+platform group slots and payload layouts are unchanged. Negotiate the actual
+table size and a non-null callback before use. An older table has no such
+callback and retains the audio core's finite observation fallback.
+
+An audio R4D calls this hint from its existing period-completion Work after
+releasing stream, recovery, control and reaper owners. The callback is for
+task context, not IRQ context. It coalesces pending MIX/BACKEND deadlines and
+wakes the existing audio-progress worker. It allocates nothing, takes no
+foreign callback and retains no pointer, handle, driver or source identity.
+A late hint is harmless: only the existing output permit and authenticated
+backend callbacks can observe actual generation-bound PCM progress.
+
+HDA and AC97 publish after successful period work. No new worker or observer
+is introduced. HDA fallback follows the current attributed block end and
+reported consumption, rounded up to milliseconds and bounded to 1..10 ms.
+A reported not-yet-running short tail keeps its existing 2-ms start probe.
+Cursorless providers use one 480-frame/48-kHz mixer quantum (10 ms) as the
+finite fallback; this does not create a consumed-frame receipt. Existing
+short lock/callback-contention retries remain separate.
+
+When a valid playback snapshot supplies max_queue_frames, the core checks
+remaining admission room before mixing and updates it only for a matching
+write-receipt epoch. Unaccepted PCM remains in the original source rings.
+An unknown limit or unavailable cursor retains backend admission. Driver
+BUSY does not consume source frames or acknowledge playback. Source-starve
+observation retains the original absolute promise and waits while accepted
+PCM is buffered; an overdue promise cannot create a 1-ms polling loop.
+
+The existing owner, ABI, diagnostic and native audio checks qualify these
+mechanisms. Hardware hearing and physical-controller qualification remain
+separate. Workspace evidence and current status: Docs/Audio/PlaybackProgress.txt
+and the 0.91.7 roadmap record.

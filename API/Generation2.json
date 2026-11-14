@@ -36,7 +36,7 @@
   "technical": [
     {
       "name": "DriverApi2",
-      "size": 664,
+      "size": 672,
       "alignment": 8,
       "fields": [
         {
@@ -548,6 +548,12 @@
           "zig_type": "?AudioCaptureRegisterFn2",
           "default_value": "null",
           "offset": 656
+        },
+        {
+          "name": "audio_output_progress",
+          "zig_type": "?*const fn () callconv(.c) void",
+          "default_value": "null",
+          "offset": 664
         }
       ]
     },

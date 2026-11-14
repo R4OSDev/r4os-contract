@@ -94,8 +94,9 @@ test "technical generation2 retains exact typed live slots and bounds the real s
         try std.testing.expectEqual(@alignOf(pair[0]), @alignOf(pair[1]));
         inline for (std.meta.fields(pair[0])) |field| try std.testing.expectEqual(@offsetOf(pair[0], field.name), @offsetOf(pair[1], field.name));
     }
-    try std.testing.expectEqual(@as(usize, 664), @sizeOf(api.DriverApi2));
+    try std.testing.expectEqual(@as(usize, 672), @sizeOf(api.DriverApi2));
     try std.testing.expectEqual(@as(usize, 656), @offsetOf(api.DriverApi2, "register_audio_capture_backend"));
+    try std.testing.expectEqual(@as(usize, 664), @offsetOf(api.DriverApi2, "audio_output_progress"));
     try std.testing.expectEqual(@as(usize, 40), @sizeOf(api.AudioCaptureBackend2));
     try std.testing.expectEqual(@as(usize, 144), @sizeOf(api.ProtocolApi2));
     try std.testing.expectEqual(@as(usize, 120), @sizeOf(api.shared.ProtocolApi));

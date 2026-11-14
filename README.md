@@ -5,6 +5,11 @@ It contains the R4M0 container contract, shared layouts and error codes,
 platform API groups, generated bindings, conformance fixtures, and the
 contract generator.
 
+Contract 0.64.96 appends the optional task-context audio_output_progress
+hint to DriverApi2 while preserving its former 664-byte prefix and revision.
+Canonical ownership and negotiation: API/AudioProgressNotifications.txt.
+The six platform groups and their 533 slots remain byte-identical.
+
 The active platform contract is generation 2. `API/ApiContract.json` owns all
 533 slots, their signatures and semantics, `Query2:2` and `R4XStart2:2`.
 `API/Generation2.json` independently describes the driver, protocol and audio
