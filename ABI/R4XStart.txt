@@ -124,7 +124,7 @@ Kernel-Gruppentabelle zugeordnet. Andere Libraries erhalten keine
 Gruppen-ID; ihre Interfaces werden ausschliesslich als benannte Importe mit
 group_id=0 transportiert.
 
-Der Kontextvalidator verlangt die aktuelle Magic, ABI-Major 1 und mindestens
+Der Kontextvalidator verlangt die aktuelle Magic, ABI-Major 2 und mindestens
 die im generierten Block angegebene Kontextgroesse. Ein groesserer Minorwert
 bleibt zulaessig, solange der bekannte Mindestteil vorhanden ist. Alle Offsets
 gelten fuer x86_64.
@@ -153,10 +153,10 @@ Stabilitaet
 - hasFn("feld") ist die normale SDK-Pruefung.
 - Ein reservierter Slot ist kein Funktionsfeld und wird nicht mit hasFn
   abgefragt.
-- reserved_runtime im Kontext liegt bei Offset 112 und ist 0.
-- reserved_shell_run in R4SYS liegt bei Offset 408 und ist 0.
-  system_halt bleibt bei 416, boot_log_read bei 752.
-- Alle weiteren reserved-Felder bleiben 0.
+- reserved2 im aktuellen Kontext liegt bei Offset112 und ist0.
+- Reservierte Gruppenslots bleiben0; ihre aktuellen Offsets stammen aus
+  den erzeugten Generation2-Tabellen, nicht aus alten Tabellenpraefixen.
+- Alle weiteren reserved-Felder bleiben0.
 
 Start- und Importvertrag
 ------------------------
@@ -164,10 +164,10 @@ Start- und Importvertrag
 Ein gueltiges R4X besitzt:
 
 - R4M0 ModuleKind R4X;
-- Export R4XStart Version 1;
-- Metadaten r4x.start=r4xstart, r4x.entry=R4XStart und
-  r4x.context=R4XStartContext;
-- Import R4SYS:Query:1;
+- Export R4XStart2 Version2;
+- Metadaten r4x.start=r4xstart2, r4x.entry=R4XStart2,
+  r4x.start_abi=2 und r4x.context=R4XStartContext2;
+- Import R4SYS:Query2:2;
 - alle zusaetzlichen Plattform- oder benannten Imports aus module.R4MF.
 
 Ein benannter Import wie EXTMATH:API_V1:1 erscheint mit group_id=0 und mit
@@ -182,26 +182,32 @@ SDK-Nutzung
 
 Zig:
 
-    pub fn r4_app_main(app: *r4os.App) i32 {
+    pub fn r4_app_main(app: *r4os.App2) i32 {
         app.system().println("Hallo");
         return 0;
     }
 
 C:
 
-    int32_t r4_app_main(R4App *app);
+    int32_t r4_app_main(R4App2 *app);
 
-Die SDK-Startups exportieren R4XStart, validieren Kontext und Profilgruppen
-und rufen r4_app_main mit einem aufruflokalen App-Objekt auf. Direkter
-R4XStart-Zugriff bleibt explizite Low-Level-ABI.
+Die aktuellen SDK-Startups exportieren R4XStart2, validieren den wirklichen
+Generation2-Kontext und alle geordneten Manifestimports und rufen r4_app_main
+mit einem aufruflokalen App2-Objekt auf. C bindet r4os/app2.h ein. Rust
+verwendet r4os_sdk::app2!(main) mit App2. Direkter R4XStart2-Zugriff bleibt
+eine ausdrueckliche Low-Level-ABI. Alte128-Byte-Kontexte werden nicht erzeugt.
 
 Generierte Pakete und Pruefung
 ------------------------------
 
-    Generated/SDK/Zig/abi_generated.zig
-    Generated/SDK/C/include/r4os/abi_generated.h
-    Generated/Kernel/Zig/r4x_api_generated.zig
+    Generated/Generation2/Zig/abi.zig
+    Generated/Generation2/C/include/r4os/generation2.h
+    Generated/Generation2/Rust/generation2.rs
     Generated/Conformance/
+
+Generated/SDK und Generated/Kernel enthalten zusaetzlich erhaltene gemeinsame
+Records sowie ausdruecklich historische Drahtdefinitionen; dies fuehrt keinen
+zweiten Start-/Query-Anbieter ein.
 
 `zig build check` prueft Vertragsblock und Pakete bytegenau;
 `zig build test` kompiliert die Zig-/C-Projektionen.

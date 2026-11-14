@@ -2,7 +2,9 @@
 ============================================================
 
 Contract0.64.81, R4SYS37, kompakte R4SYS-Tabellenrevision2, 0.90.22.
-Die Symbolvertraege Query:1/Query2:2 und R4XStart:1/R4XStart2:2 bleiben.
+Aktive Symbolvertraege nach Cutover0.90.89 sind Query2:2 und R4XStart2:2.
+Die folgenden Versions-/Praefixangaben beschreiben die datierte Einfuehrung;
+Query:1 und R4XStart:1 bleiben historische Vergleichs-/Ablehnungsinformation.
 Zwei optionale Slots folgen dem erhaltenen1416-Byte-SYS-Praefix, kompakt1408.
 Neue Groessen1432/1424. Der Generation2-Sourceursprung36 bleibt unveraendert.
 Alle bisherigen Slots, Typen, Fehlerzahlen und Nulltombstones bleiben.

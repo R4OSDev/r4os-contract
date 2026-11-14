@@ -15,7 +15,7 @@ Eine optionale Runtime-R4L besitzt ihre Implementierung und ihren fachlichen
 API-/ABI-Vertrag selbst. Der Plattformvertrag kennt nur:
 
 - den R4M0-Container und dessen generische Imports, Exports und Relocations;
-- den R4LQuery:1-Prefix fuer Identitaet und technische Metadaten;
+- den R4LQuery2:2-Deskriptor fuer Identitaet und technische Metadaten;
 - den R4XStartImport-Transport fuer Modulname, Exportname, Mindestversion,
   aufgeloeste Version und Tabellenpointer;
 - den in dieser Datei definierten gemeinsamen Interface-Header;
@@ -63,23 +63,26 @@ ungueltig. Es gibt dafuer keine zentrale Registry. Ein Binding prueft diese
 Identitaet, damit ein gleichnamiger, aber fachlich falscher Export nicht als
 passend gilt.
 
-R4LQuery:1 fuer benannte Libraries
-----------------------------------
+Query2:2 fuer benannte Libraries
+--------------------------------
 
-Jede R4L exportiert weiterhin Query Version 1 mit dem unveraenderten
-32-Byte-Layout aus R4LQuery.txt. Fuer eine optionale benannte Runtime-R4L gilt:
+Jede aktuelle R4L exportiert Query2 Version 2 mit dem exakt24-Byte-Layout
+aus R4LQuery.txt. Fuer eine optionale benannte Runtime-R4L gilt:
 
-    magic         = 0x314C3452
-    abi_version   = 1
-    size          = 32
+    magic         = 0x324C3452
+    abi_version   = 2
+    size          = 24
     group         = 0
-    kernel_bridge = 0
     reserved      = 0
 
 group=0 bedeutet: Die Identitaet und Aufloesung erfolgen ausschliesslich ueber
 Modulname, Exportname und Exportversion. Der Wert ist keine fehlende oder
-unbekannte Plattformgruppe. Query:1 ist keine fachliche Funktionstabelle und
-seine Version ist unabhaengig von den Interface-Versionen einer Library.
+unbekannte Plattformgruppe. Query2:2 ist keine fachliche Funktionstabelle;
+seine Revision ist unabhaengig von den Interface-Versionen einer Library.
+Der alte32-Byte-Query-Deskriptor bleibt historische Vergleichs- und
+Ablehnungsinformation. Er ist kein aktueller technischer Anbieterpfad.
+Der folgende fachliche Interfaceheader bleibt unveraendert32Byte/Revision1;
+API_V1 und andere benannte Librarytabellen behalten ihre eigenen Revisionen.
 
 Es existiert kein direkt importierbarer interner Kernelzugang. Eine Library
 bezieht benoetigte Platform APIs oder andere R4Ls ueber normale, in ihrem

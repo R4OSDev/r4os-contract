@@ -59,24 +59,24 @@ Query-Vertrag
   Der Provider exportiert seine statische Query-Identitaet direkt aus dem
   Kernel.
 - Eine Runtime-R4L ist ein R4M0-Modul mit ModuleKind R4L. Ihr module.R4MF
-  exportiert Query und nennt den fachlichen CONTRACT.
+  exportiert Query2 Version2 und nennt den fachlichen CONTRACT.
 - Magic, Version, Groesse, Gruppe und Pointergroesse muessen passen.
-- kernel_bridge ist ein historisch gebundenes Feld, bleibt 0 und ist kein
-  App-Funktionsfeld.
+- Der aktuelle24-Byte-Record besitzt reserved=0 und kein kernel_bridge-Feld.
+  Die alte Bridge gehoert ausschliesslich zu historischen Drahtdefinitionen.
 - Der Loader ordnet die sechs eingebauten Provider ueber ihre feste
   Gruppen-ID der jeweiligen R4XStart-Tabelle zu.
 - Benannte Runtime-R4Ls verwenden group=0; Anwendungen importieren ihre
   libraryeigene Funktionstabelle direkt mit
   `<MODUL>:<INTERFACE>:<REVISION>`.
 - Es existiert kein direkt importierbarer interner Kernelzugang. Platform
-  APIs werden ueber ihren oeffentlichen Namen importiert; Generation 1
-  verwendet Query:1, Generation 2 den getrennten Namen Query2:2.
+  APIs werden ueber ihren oeffentlichen Namen als Query2:2 importiert.
+  Query:1 bezeichnet ausschliesslich den stillgelegten historischen Vertrag.
 - Neue optionale Libraries verwenden group=0 und keine zentrale Gruppen-ID.
 
 Beispiel
 --------
 
-    IMPORT=R4SYS:Query:1
+    IMPORT=R4SYS:Query2:2
     IMPORT=EXAMPLE:API_V1:1
 
 Die Importliste eines Projekts steht ausschliesslich in module.R4MF.
@@ -90,8 +90,10 @@ reserved bleibt 0; ein kernel_bridge-Feld existiert in diesem Record nicht.
 Die kanonischen Ableitungsregeln stehen in API/Generation2.json. Die daraus
 generierten Zig-/C-/Rust-Typen unter Generated/Generation2 sind verbindlich.
 
-Eine Runtime-R4L verwendet group=0. Sie darf Query:1 und Query2:2 gleichzeitig
-anbieten; fachliche Interfaces behalten ihre eigenen Exportnamen/Revisionen.
+Eine aktuelle Runtime-R4L verwendet group=0 und ausschliesslich Query2:2
+als technische Identitaet. Der Cutover0.90.89 hat den alten Plattformpfad
+stillgelegt; das normale SDK erzeugt seit0.90.90 keinen parallelen alten
+Anbieter. Fachliche Interfaces behalten ihre eigenen Exportnamen/Revisionen.
 Der Loader prueft vor der Veroeffentlichung Revision, Magic, Headergroesse,
 Abschnittsgrenze, Ausrichtung, Gruppe und reserved. Query2:1 und ein alter
 32-Byte-Query unter dem neuen Namen sind ungueltig. Der Exportresolver selbst

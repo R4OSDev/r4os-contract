@@ -2,7 +2,9 @@
 =======================================================
 
 Contract0.64.80, R4DEV37 / Query2-R4DEV-Tabellenrevision2, 0.90.21.
-Der Query-/Startsymbolvertrag selbst bleibt Query:1 bzw. Query2:2.
+Aktiver Symbolvertrag nach Cutover0.90.89 ist Query2:2 mit R4XStart2:2.
+Die folgenden Versions-/Praefixangaben beschreiben die datierte Einfuehrung;
+Query:1 bleibt ausschliesslich historische Vergleichs-/Ablehnungsinformation.
 
 Der neue optionale Slot folgt dem unveraenderten 736-Byte-Praefix der
 bisherigen R4DEV-Tabelle. Die kompakte Query2-Tabelle erhaelt ihn nach ihrem

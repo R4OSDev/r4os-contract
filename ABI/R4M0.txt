@@ -94,7 +94,7 @@ Imports und Exports
 Ein Import nennt Modul, Symbol, Mindestversion und Flags. Namen liegen im
 Meta-/Stringbereich. Beispiel:
 
-    R4SYS:Query:1
+    R4SYS:Query2:2
     ACMECODEC:API_V1:2
 
 Ein Export nennt Symbol, Section, Sectionoffset und Version. Namen und
@@ -105,9 +105,10 @@ Generation2-R4X exportiert R4XStart2 Version2 und importiert eingebaute APIs
 als Query2 Version2. Runtime-R4Ls exportieren zusaetzlich ihre unabhaengigen
 fachlichen Tabellen wie TEXT_V1 oder COMPILER_V1. Deren Header und Revision
 folgen R4LInterface.txt; eine fachliche Revision1 bleibt unter Generation2
-gueltig. Waehrend der Verbraucherumstellung bestehen die alten technischen
-Query-/Start-/Initvertraege neben den neuen. Keine Generation wird durch
-Umbenennen eines Exports oder Umdeuten einer Tabelle angepasst.
+gueltig. Seit dem Cutover0.90.89 ist Generation2 der einzige aktive technische
+Plattformvertrag. Historische Query-/Start-/Initdefinitionen dienen nur dem
+Vergleich und der definierten Ablehnung alter Artefakte. Keine Generation
+wird durch Umbenennen eines Exports oder Umdeuten einer Tabelle angepasst.
 
 Beim ELF-basierten Bau einer Runtime-R4L deklariert module.R4MF die Zuordnung
 
@@ -198,7 +199,7 @@ Ein SDK-Profil waehlt die Generation ausdruecklich; ENTRY_MODE=app verwendet
 die normale Sprachlaufzeit mit aus dem ganzen Manifest abgeleiteten Startdaten.
 ENTRY_MODE=lowlevel bleibt ein ausdruecklicher technischer Einstieg.
 
-Der waehrend der Migration verbleibende Generation1-Vertrag besitzt:
+Der stillgelegte historische Generation1-Vertrag besass (kein aktiver Startpfad):
 
     r4x.start=r4xstart
     r4x.entry=R4XStart
