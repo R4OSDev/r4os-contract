@@ -3604,8 +3604,9 @@ struct R4DriverApi2 {
     int32_t (*register_audio_output_epoch)(const uint8_t *, int32_t (*)(uint64_t, R4AudioOutputEpoch *));
     int32_t (*register_audio_capture_backend)(const uint8_t *, const R4AudioCaptureBackend2 *);
     void (*audio_output_progress)(void);
+    int32_t (*irq_rearm)(uint8_t, uint32_t (*)(uint8_t, uintptr_t), uintptr_t);
 };
-_Static_assert(sizeof(R4DriverApi2) == 672, "R4DriverApi2 size");
+_Static_assert(sizeof(R4DriverApi2) == 680, "R4DriverApi2 size");
 _Static_assert(_Alignof(R4DriverApi2) == 8, "R4DriverApi2 alignment");
 _Static_assert(offsetof(R4DriverApi2, magic) == 0, "R4DriverApi2.magic offset");
 _Static_assert(offsetof(R4DriverApi2, version) == 4, "R4DriverApi2.version offset");
@@ -3693,6 +3694,7 @@ _Static_assert(offsetof(R4DriverApi2, serial_query) == 640, "R4DriverApi2.serial
 _Static_assert(offsetof(R4DriverApi2, register_audio_output_epoch) == 648, "R4DriverApi2.register_audio_output_epoch offset");
 _Static_assert(offsetof(R4DriverApi2, register_audio_capture_backend) == 656, "R4DriverApi2.register_audio_capture_backend offset");
 _Static_assert(offsetof(R4DriverApi2, audio_output_progress) == 664, "R4DriverApi2.audio_output_progress offset");
+_Static_assert(offsetof(R4DriverApi2, irq_rearm) == 672, "R4DriverApi2.irq_rearm offset");
 
 struct R4ProtocolApi2 {
     uint32_t magic;

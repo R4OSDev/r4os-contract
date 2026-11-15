@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 477 von 477 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3151; Limits: 123
+- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3152; Limits: 123
 
 ## App-Profile
 
@@ -12250,6 +12250,7 @@ Geltung: `irq`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | Name | Wert | Typ |
 |---|---:|---|
 | `irq_result_handled` | 1 | `u32` |
+| `irq_result_deferred` | 2 | `u32` |
 
 ### `mem`
 
@@ -13257,6 +13258,7 @@ Geltung: `audio_capture`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `ipv4_op_handle_rx` | `1` | `u32` | identity | number | `ipv4_op` | fixed_contract |
 | `ipv4_op_handle_tx` | `2` | `u32` | identity | number | `ipv4_op` | fixed_contract |
 | `irq_flag_level_low` | `2` | `u32` | flag | bitmask | `irq` | fixed_contract |
+| `irq_flag_deferred` | `8` | `u32` | flag | bitmask | `irq` | fixed_contract |
 | `irq_flag_msi` | `4` | `u32` | flag | bitmask | `irq` | fixed_contract |
 | `irq_flag_shared` | `1` | `u32` | flag | bitmask | `irq` | fixed_contract |
 | `line_ending_crlf` | `2` | `u8` | identity | enum | `text_path_time` | fixed_contract |

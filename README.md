@@ -5,6 +5,13 @@ It contains the R4M0 container contract, shared layouts and error codes,
 platform API groups, generated bindings, conformance fixtures, and the
 contract generator.
 
+Contract0.64.97 appends optional DriverApi2 `irq_rearm` at672, preserving
+the entire earlier672-byte prefix and table version1. Exclusive owned
+IOAPIC level IRQs may opt into deferred masking until their task completes
+device service. Retirement retains callback identity and outstanding service
+debt; acknowledgement after withdrawal cannot unmask. See ABI/R4DDriver.txt.
+All platform group versions and fixed-layout public records stay unchanged.
+
 Contract 0.64.96 appends the optional task-context audio_output_progress
 hint to DriverApi2 while preserving its former 664-byte prefix and revision.
 Canonical ownership and negotiation: API/AudioProgressNotifications.txt.

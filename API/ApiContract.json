@@ -142037,6 +142037,12 @@
           "value": 1,
           "value_type": "u32",
           "description": "Public result or error value."
+        },
+        {
+          "name": "irq_result_deferred",
+          "value": 2,
+          "value_type": "u32",
+          "description": "Mask an exclusive deferred level IRQ until the owning task acknowledges completed device service with DriverApi2.irq_rearm."
         }
       ],
       "description": "Public result and error domain."
@@ -147540,6 +147546,16 @@
       "scope": "irq",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "irq_flag_deferred",
+      "value": "8",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "irq",
+      "stability": "fixed_contract",
+      "description": "Exclusive owned level-low IRQ with deferred task service. Requires optional DriverApi2.irq_rearm; cannot combine with shared/MSI or kernel-owned/cascade IRQs."
     },
     {
       "name": "irq_flag_msi",

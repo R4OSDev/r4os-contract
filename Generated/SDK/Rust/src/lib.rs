@@ -324,6 +324,7 @@ pub const ipv4_op_build_packet: u32 = 3;
 pub const ipv4_op_handle_rx: u32 = 1;
 pub const ipv4_op_handle_tx: u32 = 2;
 pub const irq_flag_level_low: u32 = 2;
+pub const irq_flag_deferred: u32 = 8;
 pub const irq_flag_msi: u32 = 4;
 pub const irq_flag_shared: u32 = 1;
 pub const line_ending_crlf: u8 = 2;
@@ -3386,6 +3387,7 @@ pub const ipv4_result_ok: i32 = 0;
 pub const ipv4_result_short: i32 = -1;
 pub const ipv4_result_version: i32 = -2;
 pub const irq_result_handled: u32 = 1;
+pub const irq_result_deferred: u32 = 2;
 pub const mem_error_invalid_alignment: i32 = -2;
 pub const mem_error_invalid_pointer: i32 = -1;
 pub const mem_error_invalid_size: i32 = -7;
@@ -28854,6 +28856,7 @@ pub struct DriverApi2 {
     pub register_audio_output_epoch: Option<unsafe extern "C" fn(*const u8, unsafe extern "C" fn(u64, *mut AudioOutputEpoch) -> i32) -> i32>,
     pub register_audio_capture_backend: Option<unsafe extern "C" fn(*const u8, *const AudioCaptureBackend2) -> i32>,
     pub audio_output_progress: Option<unsafe extern "C" fn() -> ()>,
+    pub irq_rearm: Option<unsafe extern "C" fn(u8, unsafe extern "C" fn(u8, usize) -> u32, usize) -> i32>,
 }
 
 #[repr(C)]
@@ -39105,7 +39108,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverApi2, register_audio_output_epoch) == 648);
     assert!(core::mem::offset_of!(DriverApi2, register_audio_capture_backend) == 656);
     assert!(core::mem::offset_of!(DriverApi2, audio_output_progress) == 664);
-    assert!(core::mem::size_of::<DriverApi2>() == 672);
+    assert!(core::mem::offset_of!(DriverApi2, irq_rearm) == 672);
+    assert!(core::mem::size_of::<DriverApi2>() == 680);
     assert!(core::mem::align_of::<DriverApi2>() == 8);
     assert!(core::mem::offset_of!(ProtocolApi2, magic) == 0);
     assert!(core::mem::offset_of!(ProtocolApi2, version) == 4);

@@ -36,7 +36,7 @@
   "technical": [
     {
       "name": "DriverApi2",
-      "size": 672,
+      "size": 680,
       "alignment": 8,
       "fields": [
         {
@@ -554,6 +554,12 @@
           "zig_type": "?*const fn () callconv(.c) void",
           "default_value": "null",
           "offset": 664
+        },
+        {
+          "name": "irq_rearm",
+          "zig_type": "?*const fn (u8, base.IrqHandler, usize) callconv(.c) i32",
+          "default_value": "null",
+          "offset": 672
         }
       ]
     },

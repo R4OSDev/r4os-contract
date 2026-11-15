@@ -1150,3 +1150,26 @@ generation2 profile to its language/kind; manifests use R4DEV:Query2:2.
 Existing profiles, Init1 tables, old descriptors and consumer artifacts keep
 their existing layouts. Consumer migration and retirement of old providers
 are a later, separately planned cutover.
+Deferred level IRQ service (0.91.23)
+-----------------------------------
+DriverApi2 version1 appends optional irq_rearm at672 (680bytes total).
+The complete earlier672-byte prefix and DriverInit2 remain unchanged.
+Consumers size-check the optional slot before requesting irq_flag_deferred8.
+Only a single owned IOAPIC level-low handler may combine that flag with
+irq_flag_level_low2. Shared/MSI, kernel IRQ0/1/12 and cascade2 are rejected;
+an unavailable level route fails instead of silently using an edge route.
+
+Returning irq_result_deferred2 masks the line before callback completion and
+architecture EOI. The callback only publishes resident work/wake state; the
+owner's task performs the real device status/ACK and calls irq_rearm with the
+exact irq/handler/context. Wrong owner/identity returns-2; an admitted callback
+still in flight returns-3 without unmasking. No wait/allocation or foreign
+callback runs under the router's Runtime owner. Older registrations ignore
+the new result bit unless explicitly opted in.
+
+Unregister first withdraws admission and masks, then returns-3 while a callback
+or deferred service debt remains. The exact registration/context stays live.
+After device quiescence, irq_rearm on that retired binding clears only its debt
+and never unmasks; unregister retry supplies final removal acknowledgement.
+Owner retirement withdraws callbacks before provider shutdown; final generic
+cleanup cannot release a registration with unresolved deferred debt.

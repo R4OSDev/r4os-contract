@@ -96,9 +96,10 @@ pub const DriverApi2 = extern struct {
     register_audio_output_epoch: ?*const fn ([*:0]const u8, base.AudioOutputEpochFn) callconv(.c) i32 = null,
     register_audio_capture_backend: ?AudioCaptureRegisterFn2 = null,
     audio_output_progress: ?*const fn () callconv(.c) void = null,
+    irq_rearm: ?*const fn (u8, base.IrqHandler, usize) callconv(.c) i32 = null,
 };
 comptime {
-    if (@sizeOf(DriverApi2) != 672 or @alignOf(DriverApi2) != 8) @compileError("Canonical technical layout");
+    if (@sizeOf(DriverApi2) != 680 or @alignOf(DriverApi2) != 8) @compileError("Canonical technical layout");
     if (@offsetOf(DriverApi2, "magic") != 0) @compileError("Canonical technical field");
     if (@offsetOf(DriverApi2, "version") != 4) @compileError("Canonical technical field");
     if (@offsetOf(DriverApi2, "size") != 8) @compileError("Canonical technical field");
@@ -185,6 +186,7 @@ comptime {
     if (@offsetOf(DriverApi2, "register_audio_output_epoch") != 648) @compileError("Canonical technical field");
     if (@offsetOf(DriverApi2, "register_audio_capture_backend") != 656) @compileError("Canonical technical field");
     if (@offsetOf(DriverApi2, "audio_output_progress") != 664) @compileError("Canonical technical field");
+    if (@offsetOf(DriverApi2, "irq_rearm") != 672) @compileError("Canonical technical field");
 }
 pub const ProtocolApi2 = extern struct {
     magic: u32,
