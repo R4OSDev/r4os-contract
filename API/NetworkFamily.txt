@@ -68,13 +68,22 @@ The existing request header identifies the caller process, not an individual
 opened service channel. New resources retain its full ProgramProcessHandle
 generation internally, so a reused process ID cannot adopt an old resource.
 Several channels of the same live process may address its sockets. Closing a
-client channel does not replace explicit socket Close. Only while typed sockets
-exist, the existing service loop checks their exact owners at bounded1second
-intervals and aborts/closes abandoned sockets after a real terminal or exact
-missing/stale process result. Busy/unavailable owner status retains resources.
-An uncertain backend return retains the bounded front entry for a later actual
-acknowledgement. Original old-only idle waits remain unchanged. Resolver pins
-also bind the full owner generation and can be reclaimed after its actual end.
+client channel does not replace explicit socket Close. TCPSVC checks typed socket owners at bounded1second intervals; its original
+old-only idle wait remains unchanged. UDPSVC checks all actually process-bound
+front entries, including historical IPv4 sockets, at bounded1second intervals
+while any such entry exists. With no such entries it waits forever. Each UDP
+admission copies the original full caller from the delivered IPC request via
+the optional service_endpoint_client slot, never by reopening client_id after
+delivery. Busy/unavailable owner status retains resources; only a terminal or
+exact missing/stale owner permits retirement. An uncertain backend return
+retains the exact bounded front/backend tuple until actual acknowledgement.
+A canceled/lost creation reply initiates retirement only when its exact
+backend identity is known; ambiguous queued replies may retain ownership
+until actual owner end or service cleanup. IPv6 and dualstack sides retire
+independently; ProviderChanged alone is not an absence acknowledgement. UDP
+legacy front IDs use the nonreused positive Kernel backend identity; typed
+front IDs use a disjoint checked range and nonwrapping generation. Resolver
+pins also bind the full owner generation and are reclaimed after its real end.
 
 Connect: TCPSVC only, exact remote endpoint, bytes0. Poll returns WouldBlock
 without allocating or sending SYN. A finite/forever attempt uses the original
