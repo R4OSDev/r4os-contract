@@ -252,6 +252,7 @@ pub mod R4SysFns2 {
     pub type byte_pipe_info = unsafe extern "C" fn(super::super::BytePipeEnd, *mut super::super::BytePipeInfo) -> i32;
     pub type program_launch_io = unsafe extern "C" fn(*const u8, *const u8, *const super::super::LaunchIo, *mut super::super::ProgramProcessHandle) -> i32;
     pub type program_stdio = unsafe extern "C" fn(*mut super::super::LaunchIo) -> i32;
+    pub type service_endpoint_client = unsafe extern "C" fn(u32, u32, *mut super::super::ProgramProcessHandle) -> i32;
 }
 pub const R4SYS_MAGIC: u32 = 844714834;
 #[repr(C)]
@@ -450,8 +451,9 @@ pub struct R4XStartR4Sys2 {
     pub byte_pipe_info: u64,
     pub program_launch_io: u64,
     pub program_stdio: u64,
+    pub service_endpoint_client: u64,
 }
-impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 6, size: 1552, flags: 0,
+impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 6, size: 1560, flags: 0,
     write: 0,
     putc: 0,
     sleep_ticks: 0,
@@ -644,8 +646,9 @@ impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834
     byte_pipe_info: 0,
     program_launch_io: 0,
     program_stdio: 0,
+    service_endpoint_client: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1552);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1560);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,write) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,putc) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,sleep_ticks) == 32);
@@ -838,6 +841,7 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1552);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,byte_pipe_info) == 1528);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,program_launch_io) == 1536);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,program_stdio) == 1544);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,service_endpoint_client) == 1552);
 };
 pub mod R4DeskFns2 {
     pub type read_key = unsafe extern "C" fn() -> u8;

@@ -15,7 +15,7 @@
       "abi_version": 6,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1552,
+      "size": 1560,
       "slots": [
         {
           "number": 0,
@@ -22479,6 +22479,122 @@
             "side_effects": "none",
             "retry": "never_automatic",
             "buffer_too_small": "fixed_capacity",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 192,
+          "offset": 1552,
+          "name": "service_endpoint_client",
+          "state": "function",
+          "required": false,
+          "description": "Copy the original full ProgramProcessHandle captured at submission of this exact delivered service request. The endpoint and request IDs must still identify a delivered, uncancelled native slot. Returns service_api_result_ok; missing/cancelled request returns service_api_result_not_found, invalid/nonprogram identity returns service_api_result_invalid, and invalid endpoint returns service_api_result_bad_handle. Errors leave output unchanged. The snapshot is an observation, not a pin, ownership transfer or authorization. Never reopen the numeric header client_id; cancellation and process retirement may occur immediately after the copy. Existing ServiceMessageHeader layout remains unchanged.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "handle",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
+                }
+              },
+              {
+                "name": "request_id",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
+                }
+              },
+              {
+                "name": "out_handle",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "named",
+                    "name": "ProgramProcessHandle",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32",
+              "pointer_kind": null,
+              "is_const": null,
+              "sentinel": null,
+              "length": null,
+              "child": null,
+              "direction": null,
+              "nullable": null,
+              "length_by": null,
+              "ownership": null,
+              "lifetime": null
+            }
+          },
+          "semantics": {
+            "exposure": "public",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "service",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "may_block",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
           }
         }

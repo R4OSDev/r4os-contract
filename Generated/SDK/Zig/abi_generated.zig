@@ -12191,12 +12191,13 @@ pub const R4SysFns = struct {
     pub const byte_pipe_info = *const fn (BytePipeEnd, *BytePipeInfo) callconv(.c) i32;
     pub const program_launch_io = *const fn ([*:0]const u8, [*:0]const u8, *const LaunchIo, *ProgramProcessHandle) callconv(.c) i32;
     pub const program_stdio = *const fn (*LaunchIo) callconv(.c) i32;
+    pub const service_endpoint_client = *const fn (u32, u32, *ProgramProcessHandle) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
     abi_version: u32 = 41,
-    size: u32 = 1560,
+    size: u32 = 1568,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -12391,6 +12392,7 @@ pub const R4XStartR4Sys = extern struct {
     byte_pipe_info: usize = 0,
     program_launch_io: usize = 0,
     program_stdio: usize = 0,
+    service_endpoint_client: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -13320,6 +13322,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 190, .offset = 1536, .name = "byte_pipe_info", .state = .function, .required = false },
     .{ .number = 191, .offset = 1544, .name = "program_launch_io", .state = .function, .required = false },
     .{ .number = 192, .offset = 1552, .name = "program_stdio", .state = .function, .required = false },
+    .{ .number = 193, .offset = 1560, .name = "service_endpoint_client", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -21428,7 +21431,7 @@ comptime {
     if (@offsetOf(AudioCaptureReply, "gap_frames") != 232) @compileError("generated ABI offset drift: AudioCaptureReply.gap_frames");
     if (@offsetOf(AudioCaptureReply, "bytes") != 240) @compileError("generated ABI offset drift: AudioCaptureReply.bytes");
     if (@offsetOf(AudioCaptureReply, "reserved") != 244) @compileError("generated ABI offset drift: AudioCaptureReply.reserved");
-    if (@sizeOf(R4XStartR4Sys) != 1560) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(R4XStartR4Sys) != 1568) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -21622,6 +21625,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "byte_pipe_info") != 1536) @compileError("generated ABI offset drift: R4XStartR4Sys.byte_pipe_info");
     if (@offsetOf(R4XStartR4Sys, "program_launch_io") != 1544) @compileError("generated ABI offset drift: R4XStartR4Sys.program_launch_io");
     if (@offsetOf(R4XStartR4Sys, "program_stdio") != 1552) @compileError("generated ABI offset drift: R4XStartR4Sys.program_stdio");
+    if (@offsetOf(R4XStartR4Sys, "service_endpoint_client") != 1560) @compileError("generated ABI offset drift: R4XStartR4Sys.service_endpoint_client");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");

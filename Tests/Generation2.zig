@@ -29,8 +29,10 @@ test "new generation has distinct identities and exact compact layouts in C and 
     try std.testing.expectEqual(@as(usize, 1424), @offsetOf(api.shared.R4XStartR4Sys, "directory_metadata_batch2"));
     try std.testing.expectEqual(@as(usize, 1408), @offsetOf(api.R4XStartR4Sys2, "file_metadata2"));
     try std.testing.expectEqual(@as(usize, 1416), @offsetOf(api.R4XStartR4Sys2, "directory_metadata_batch2"));
-    try std.testing.expectEqual(@as(usize, 1560), @sizeOf(api.shared.R4XStartR4Sys));
-    try std.testing.expectEqual(@as(usize, 1552), @sizeOf(api.R4XStartR4Sys2));
+    try std.testing.expectEqual(@as(usize, 1568), @sizeOf(api.shared.R4XStartR4Sys));
+    try std.testing.expectEqual(@as(usize, 1560), @sizeOf(api.R4XStartR4Sys2));
+    try std.testing.expectEqual(@as(usize, 1560), @offsetOf(api.shared.R4XStartR4Sys, "service_endpoint_client"));
+    try std.testing.expectEqual(@as(usize, 1552), @offsetOf(api.R4XStartR4Sys2, "service_endpoint_client"));
     try std.testing.expectEqual(@as(usize, 240), @sizeOf(api.R4XStartR4Audio2));
     try std.testing.expectEqual(@as(usize, 232), @offsetOf(api.R4XStartR4Audio2, "audio_capture_io"));
     inline for (.{ "waitset_create", "waitset_enroll", "waitset_rearm", "waitset_remove", "waitset_wait", "waitset_close", "waitset_source_prepare" }, 0..) |name, index| {

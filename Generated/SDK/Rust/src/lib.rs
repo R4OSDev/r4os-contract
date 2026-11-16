@@ -23203,6 +23203,7 @@ pub mod R4SysFns {
     pub type byte_pipe_info = unsafe extern "C" fn(BytePipeEnd, *mut BytePipeInfo) -> i32;
     pub type program_launch_io = unsafe extern "C" fn(*const u8, *const u8, *const LaunchIo, *mut ProgramProcessHandle) -> i32;
     pub type program_stdio = unsafe extern "C" fn(*mut LaunchIo) -> i32;
+    pub type service_endpoint_client = unsafe extern "C" fn(u32, u32, *mut ProgramProcessHandle) -> i32;
 }
 
 #[repr(C)]
@@ -23405,6 +23406,7 @@ pub struct R4XStartR4Sys {
     pub byte_pipe_info: usize,
     pub program_launch_io: usize,
     pub program_stdio: usize,
+    pub service_endpoint_client: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
@@ -23412,7 +23414,7 @@ impl Default for R4XStartR4Sys {
         Self {
             magic: 827937618,
             abi_version: 41,
-            size: 1560,
+            size: 1568,
             flags: 0,
             write: 0,
             putc: 0,
@@ -23607,6 +23609,7 @@ impl Default for R4XStartR4Sys {
             byte_pipe_info: 0,
             program_launch_io: 0,
             program_stdio: 0,
+            service_endpoint_client: 0,
         }
     }
 }
@@ -37007,7 +37010,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, byte_pipe_info) == 1536);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_launch_io) == 1544);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_stdio) == 1552);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1560);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, service_endpoint_client) == 1560);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1568);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);

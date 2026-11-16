@@ -727,12 +727,13 @@ pub const R4SysFns2 = struct {
     pub const byte_pipe_info = *const fn (BytePipeEnd, *BytePipeInfo) callconv(.c) i32;
     pub const program_launch_io = *const fn ([*:0]const u8, [*:0]const u8, *const LaunchIo, *ProgramProcessHandle) callconv(.c) i32;
     pub const program_stdio = *const fn (*LaunchIo) callconv(.c) i32;
+    pub const service_endpoint_client = *const fn (u32, u32, *ProgramProcessHandle) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys2 = extern struct {
     magic: u32 = 844714834,
     abi_version: u32 = 6,
-    size: u32 = 1552,
+    size: u32 = 1560,
     flags: u32 = 0,
     @"write": u64 = 0,
     @"putc": u64 = 0,
@@ -926,9 +927,10 @@ pub const R4XStartR4Sys2 = extern struct {
     @"byte_pipe_info": u64 = 0,
     @"program_launch_io": u64 = 0,
     @"program_stdio": u64 = 0,
+    @"service_endpoint_client": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Sys2) != 1552) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Sys2) != 1560) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Sys2, "write") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "putc") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "sleep_ticks") != 32) @compileError("Generation2 slot offset");
@@ -1121,6 +1123,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys2, "byte_pipe_info") != 1528) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "program_launch_io") != 1536) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "program_stdio") != 1544) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "service_endpoint_client") != 1552) @compileError("Generation2 slot offset");
 }
 pub const R4DeskFns2 = struct {
     pub const read_key = *const fn () callconv(.c) u8;

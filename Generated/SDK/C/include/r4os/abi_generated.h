@@ -12654,6 +12654,7 @@ typedef int32_t (*R4SysBytePipeCloseFn)(R4BytePipeEnd end);
 typedef int32_t (*R4SysBytePipeInfoFn)(R4BytePipeEnd end, R4BytePipeInfo * out_info);
 typedef int32_t (*R4SysProgramLaunchIoFn)(const uint8_t * path, const uint8_t * args, const R4LaunchIo * io, R4ProgramProcessHandle * out_handle);
 typedef int32_t (*R4SysProgramStdioFn)(R4LaunchIo * out_io);
+typedef int32_t (*R4SysServiceEndpointClientFn)(uint32_t handle, uint32_t request_id, R4ProgramProcessHandle * out_handle);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -12853,6 +12854,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t byte_pipe_info;
     uintptr_t program_launch_io;
     uintptr_t program_stdio;
+    uintptr_t service_endpoint_client;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -20854,7 +20856,7 @@ _Static_assert(offsetof(R4AudioCaptureReply, overrun_frames) == 224u, "AudioCapt
 _Static_assert(offsetof(R4AudioCaptureReply, gap_frames) == 232u, "AudioCaptureReply.gap_frames offset mismatch");
 _Static_assert(offsetof(R4AudioCaptureReply, bytes) == 240u, "AudioCaptureReply.bytes offset mismatch");
 _Static_assert(offsetof(R4AudioCaptureReply, reserved) == 244u, "AudioCaptureReply.reserved offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1560u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1568u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -21238,6 +21240,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_launch_io) == 1544u, "R4XStartR4S
 _Static_assert(sizeof(R4SysProgramLaunchIoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, program_stdio) == 1552u, "R4XStartR4Sys.program_stdio offset mismatch");
 _Static_assert(sizeof(R4SysProgramStdioFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, service_endpoint_client) == 1560u, "R4XStartR4Sys.service_endpoint_client offset mismatch");
+_Static_assert(sizeof(R4SysServiceEndpointClientFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

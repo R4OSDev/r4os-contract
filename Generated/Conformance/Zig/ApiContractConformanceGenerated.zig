@@ -7279,7 +7279,7 @@ comptime {
     if (@offsetOf(abi.AudioCaptureReply, "gap_frames") != 232) @compileError("AudioCaptureReply.gap_frames offset");
     if (@offsetOf(abi.AudioCaptureReply, "bytes") != 240) @compileError("AudioCaptureReply.bytes offset");
     if (@offsetOf(abi.AudioCaptureReply, "reserved") != 244) @compileError("AudioCaptureReply.reserved offset");
-    if (@sizeOf(abi.R4XStartR4Sys) != 1560) @compileError("R4XStartR4Sys size");
+    if (@sizeOf(abi.R4XStartR4Sys) != 1568) @compileError("R4XStartR4Sys size");
     if (@offsetOf(abi.R4XStartR4Sys, "write") != 16) @compileError("R4XStartR4Sys.write offset");
     if (@sizeOf(abi.R4SysFns.write) != 8) @compileError("R4SysFns.write signature");
     if (@offsetOf(abi.R4XStartR4Sys, "putc") != 24) @compileError("R4XStartR4Sys.putc offset");
@@ -7663,6 +7663,8 @@ comptime {
     if (@sizeOf(abi.R4SysFns.program_launch_io) != 8) @compileError("R4SysFns.program_launch_io signature");
     if (@offsetOf(abi.R4XStartR4Sys, "program_stdio") != 1552) @compileError("R4XStartR4Sys.program_stdio offset");
     if (@sizeOf(abi.R4SysFns.program_stdio) != 8) @compileError("R4SysFns.program_stdio signature");
+    if (@offsetOf(abi.R4XStartR4Sys, "service_endpoint_client") != 1560) @compileError("R4XStartR4Sys.service_endpoint_client offset");
+    if (@sizeOf(abi.R4SysFns.service_endpoint_client) != 8) @compileError("R4SysFns.service_endpoint_client signature");
     if (@sizeOf(abi.R4XStartR4Desk) != 632) @compileError("R4XStartR4Desk size");
     if (@offsetOf(abi.R4XStartR4Desk, "read_key") != 16) @compileError("R4XStartR4Desk.read_key offset");
     if (@sizeOf(abi.R4DeskFns.read_key) != 8) @compileError("R4DeskFns.read_key signature");

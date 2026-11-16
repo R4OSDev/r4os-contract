@@ -4,9 +4,9 @@
   "source_schema_version": 12,
   "source_baseline_id": "canonical-generation2-0.64.95",
   "summary": {
-    "group_function_signatures": 526,
+    "group_function_signatures": 527,
     "sdk_operation_contracts": 0,
-    "parity_entries": 526,
+    "parity_entries": 527,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1718,6 +1718,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns2.program_stdio",
       "c_contract": "R4SysFProgramStdioFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.service_endpoint_client",
+      "kind": "group_slot",
+      "exposure": "public",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns2.service_endpoint_client",
+      "c_contract": "R4SysFServiceEndpointClientFn",
       "coverage": "generated_signature"
     },
     {

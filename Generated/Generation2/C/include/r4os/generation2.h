@@ -222,6 +222,7 @@ typedef int32_t (*R4SysBytePipeCloseFn2)(R4BytePipeEnd end);
 typedef int32_t (*R4SysBytePipeInfoFn2)(R4BytePipeEnd end, R4BytePipeInfo * out_info);
 typedef int32_t (*R4SysProgramLaunchIoFn2)(const uint8_t * path, const uint8_t * args, const R4LaunchIo * io, R4ProgramProcessHandle * out_handle);
 typedef int32_t (*R4SysProgramStdioFn2)(R4LaunchIo * out_io);
+typedef int32_t (*R4SysServiceEndpointClientFn2)(uint32_t handle, uint32_t request_id, R4ProgramProcessHandle * out_handle);
 #define R4OS2_R4SYS_MAGIC UINT32_C(844714834)
 #define R4OS2_R4SYS_VERSION UINT32_C(6)
 typedef struct {
@@ -418,8 +419,9 @@ typedef struct {
     uint64_t byte_pipe_info;
     uint64_t program_launch_io;
     uint64_t program_stdio;
+    uint64_t service_endpoint_client;
 } R4XStartR4Sys2;
-_Static_assert(sizeof(R4XStartR4Sys2)==1552, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Sys2)==1560, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Sys2,write)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,putc)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,sleep_ticks)==32, "Generation2 slot");
@@ -612,6 +614,7 @@ _Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_close)==1520, "Generation2 slot
 _Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_info)==1528, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,program_launch_io)==1536, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,program_stdio)==1544, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,service_endpoint_client)==1552, "Generation2 slot");
 typedef uint8_t (*R4DeskReadKeyFn2)(void);
 typedef void (*R4DeskMouseStateFn2)(R4Mouse * arg0);
 typedef void (*R4DeskMouseShowFn2)(void);

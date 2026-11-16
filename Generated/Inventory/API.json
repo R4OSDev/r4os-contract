@@ -7,10 +7,10 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 526,
-    "group_slot_count": 526,
+    "function_count": 527,
+    "group_slot_count": 527,
     "sdk_only_count": 0,
-    "public_count": 384,
+    "public_count": 385,
     "advanced_count": 142
   },
   "functions": [
@@ -2289,6 +2289,18 @@
       "slot": 191,
       "exposure": "public",
       "description": "Return this exact Start2 process startup binding snapshot; defaults use existing console routes. Pipe End values are borrowed references owned by this process, not a new retain. Query does not reopen closed ends; Dup explicitly if another owning reference is needed. No parent pointers or context-reserved fields are used.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4SYS.service_endpoint_client",
+      "group": "R4SYS",
+      "kind": "group_slot",
+      "slot": 192,
+      "exposure": "public",
+      "description": "Copy the original full ProgramProcessHandle captured at submission of this exact delivered service request. The endpoint and request IDs must still identify a delivered, uncancelled native slot. Returns service_api_result_ok; missing/cancelled request returns service_api_result_not_found, invalid/nonprogram identity returns service_api_result_invalid, and invalid endpoint returns service_api_result_bad_handle. Errors leave output unchanged. The snapshot is an observation, not a pin, ownership transfer or authorization. Never reopen the numeric header client_id; cancellation and process retirement may occur immediately after the copy. Existing ServiceMessageHeader layout remains unchanged.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

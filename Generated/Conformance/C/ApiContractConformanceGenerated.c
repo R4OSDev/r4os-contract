@@ -193,6 +193,7 @@ static R4SysBytePipeCloseFn r4os_probe_r4sys_byte_pipe_close = (R4SysBytePipeClo
 static R4SysBytePipeInfoFn r4os_probe_r4sys_byte_pipe_info = (R4SysBytePipeInfoFn)0;
 static R4SysProgramLaunchIoFn r4os_probe_r4sys_program_launch_io = (R4SysProgramLaunchIoFn)0;
 static R4SysProgramStdioFn r4os_probe_r4sys_program_stdio = (R4SysProgramStdioFn)0;
+static R4SysServiceEndpointClientFn r4os_probe_r4sys_service_endpoint_client = (R4SysServiceEndpointClientFn)0;
 static R4DeskReadKeyFn r4os_probe_r4desk_read_key = (R4DeskReadKeyFn)0;
 static R4DeskMouseStateFn r4os_probe_r4desk_mouse_state = (R4DeskMouseStateFn)0;
 static R4DeskMouseShowFn r4os_probe_r4desk_mouse_show = (R4DeskMouseShowFn)0;
