@@ -37,7 +37,33 @@ pub unsafe extern "C" fn r4os_rust_generation2(
             core::mem::size_of_val(&default) as u32
         )
     );
-    let call: abi::generation2::R4SysFns2::write = unsafe { core::mem::transmute(table.write as usize) };
+    let call: abi::generation2::R4SysFns2::write =
+        unsafe { core::mem::transmute(table.write as usize) };
+    assert_ne!(table.service_endpoint_client, 0);
+    let client: abi::generation2::R4SysFns2::service_endpoint_client =
+        unsafe { core::mem::transmute(table.service_endpoint_client as usize) };
+    #[repr(C)]
+    struct Output {
+        value: abi::ProgramProcessHandle,
+        canary: u64,
+    }
+    let mut output = Output {
+        value: abi::ProgramProcessHandle::default(),
+        canary: 0xaabb913612345678,
+    };
+    assert_eq!(
+        unsafe { client(0x91360073, 0x65010091, &mut output.value) },
+        0
+    );
+    assert_eq!(
+        (
+            output.value.instance_id,
+            output.value.reserved,
+            output.value.generation,
+            output.canary
+        ),
+        (11, 0, 0x9136000012345678, 0xaabb913612345678)
+    );
     unsafe { call(b"API2".as_ptr(), 4) }
 }
 

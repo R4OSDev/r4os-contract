@@ -12,9 +12,14 @@ test "generation2 C Rust Zig layouts defaults and callable slots agree" {
         fn write(data: [*]const u8, len: u32) callconv(.c) i32 {
             return if (len == 4 and std.mem.eql(u8, data[0..len], "API2")) -20002 else -1;
         }
+        fn client(handle: u32, request: u32, out: *abi.ProgramProcessHandle) callconv(.c) i32 {
+            if (handle != 0x91360073 or request != 0x65010091) return -17;
+            out.* = .{ .instance_id = 11, .generation = 0x9136000012345678 };
+            return 0;
+        }
     };
     const ctx: api2.R4XStartContext2 = .{};
-    const table: api2.R4XStartR4Sys2 = .{ .write = @intFromPtr(&Provider.write) };
+    const table: api2.R4XStartR4Sys2 = .{ .write = @intFromPtr(&Provider.write), .service_endpoint_client = @intFromPtr(&Provider.client) };
     try std.testing.expectEqual(@as(i32, -20002), r4os_c_generation2(&ctx, &table));
     try std.testing.expectEqual(@as(i32, -20002), r4os_rust_generation2(&ctx, &table));
 }

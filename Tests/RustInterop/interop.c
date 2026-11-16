@@ -6,6 +6,12 @@ int32_t r4os_c_generation2(const R4XStartContext2 *context, const R4XStartR4Sys2
     if(context->magic != R4OS2_START_MAGIC || context->abi_major != 2 || context->size != 120 ||
        table->magic != R4OS2_R4SYS_MAGIC || table->abi_version != 6 || table->size != sizeof(*table) || table->write == 0) return -1;
     const R4SysWriteFn2 call = (R4SysWriteFn2)(uintptr_t)table->write;
+    if (table->service_endpoint_client == 0) return -2;
+    const R4SysServiceEndpointClientFn2 client = (R4SysServiceEndpointClientFn2)(uintptr_t)table->service_endpoint_client;
+    struct { R4ProgramProcessHandle value; uint64_t canary; } out = { .canary = UINT64_C(0xaabb913612345678) };
+    if (client(UINT32_C(0x91360073), UINT32_C(0x65010091), &out.value) != 0 ||
+        out.value.instance_id != 11 || out.value.reserved != 0 || out.value.generation != UINT64_C(0x9136000012345678) ||
+        out.canary != UINT64_C(0xaabb913612345678)) return -3;
     return call((const uint8_t*)"API2",4);
 }
 
