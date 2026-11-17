@@ -3152,6 +3152,7 @@ pub const audio_capture_state_closed = generated.audio_capture_state_closed;
 pub const audio_capture_state_source_gone = generated.audio_capture_state_source_gone;
 pub const audio_capture_backend_magic = generated.audio_capture_backend_magic;
 pub const audio_capture_backend_version = generated.audio_capture_backend_version;
+pub const gfx_queue_operation_present_region = generated.gfx_queue_operation_present_region;
 pub const audio_service_error_bytes = generated.audio_service_error_bytes;
 pub const audio_service_max_sessions = generated.audio_service_max_sessions;
 pub const audio_service_name_bytes = generated.audio_service_name_bytes;

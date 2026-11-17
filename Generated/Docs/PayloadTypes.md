@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 477 von 477 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3152; Limits: 123
+- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3153; Limits: 123
 
 ## App-Profile
 
@@ -16093,6 +16093,7 @@ Geltung: `audio_capture`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `audio_capture_state_source_gone` | `5` | `u32` | value | number | `audio_capture` | fixed_contract |
 | `audio_capture_backend_magic` | `844120387` | `u32` | value | number | `audio_capture` | fixed_contract |
 | `audio_capture_backend_version` | `1` | `u32` | value | number | `audio_capture` | fixed_contract |
+| `gfx_queue_operation_present_region` | `12` | `u32` | identity | number | `gfx_queue` | fixed_contract |
 
 ## Limits
 

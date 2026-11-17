@@ -3159,6 +3159,7 @@ pub const audio_capture_state_closed: u32 = 4;
 pub const audio_capture_state_source_gone: u32 = 5;
 pub const audio_capture_backend_magic: u32 = 844120387;
 pub const audio_capture_backend_version: u32 = 1;
+pub const gfx_queue_operation_present_region: u32 = 12;
 pub const audio_service_error_bytes: usize = 32;
 pub const audio_service_max_sessions: u32 = 8;
 pub const audio_service_name_bytes: usize = 32;

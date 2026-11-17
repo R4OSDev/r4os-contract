@@ -175969,6 +175969,16 @@
       "scope": "audio_capture",
       "stability": "fixed_contract",
       "description": "Optional copied PCM capture: backend_version. No real ADC capability without a qualified registered input source."
+    },
+    {
+      "name": "gfx_queue_operation_present_region",
+      "value": "12",
+      "value_type": "u32",
+      "category": "identity",
+      "unit": "number",
+      "scope": "gfx_queue",
+      "stability": "fixed_contract",
+      "description": "Native composition present of a fully valid image with one conservative damage rectangle. Requires backend operation bit12 and the normal present bit5; no direct scanout. Source is the complete current output image, retained in full through execution. source_offset=y*plane_pitch+x*4, byte_length=w*4, row_count=h, source_pitch=the descriptor pitch. Rectangle is nonempty, pixel-aligned, within the complete image. Target/target_offset/target_pitch/render remain zero. A driver may transfer the whole image when its retained host resource is uninitialized. Normal mode/output/binding, writer/dependency, cancellation and quiescent-retirement rules apply. No visibility or VBlank guarantee."
     }
   ],
   "limits": [
