@@ -13480,6 +13480,7 @@ typedef int32_t (*R4DevCpuAccelerationWorkFn)(uint32_t work_kind, uint32_t itera
 typedef int32_t (*R4DevFpuObservationFn)(const R4FpuObservationRequest * request, R4FpuObservationInfo * out);
 typedef int32_t (*R4DevFirmwareSystemUuidFn)(R4FirmwareSystemUuidInfo * out);
 typedef int32_t (*R4DevDeviceInventoryCaptureFn)(R4DeviceInventoryRecord * rows, uint32_t capacity, R4DeviceInventorySnapshotInfo * out_info);
+typedef int32_t (*R4DevDisplayBlitCheckFn)(void);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -13577,6 +13578,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t fpu_observation;
     uintptr_t firmware_system_uuid;
     uintptr_t device_inventory_capture;
+    uintptr_t display_blit_check;
 } R4XStartR4Dev;
 
 
@@ -21751,7 +21753,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStar
 _Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_capture_io) == 232u, "R4XStartR4Audio.audio_capture_io offset mismatch");
 _Static_assert(sizeof(R4AudioAudioCaptureIoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 744u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 752u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -21929,6 +21931,8 @@ _Static_assert(offsetof(R4XStartR4Dev, firmware_system_uuid) == 728u, "R4XStartR
 _Static_assert(sizeof(R4DevFirmwareSystemUuidFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_capture) == 736u, "R4XStartR4Dev.device_inventory_capture offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventoryCaptureFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, display_blit_check) == 744u, "R4XStartR4Dev.display_blit_check offset mismatch");
+_Static_assert(sizeof(R4DevDisplayBlitCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #include <r4os/abi_technical_generated.h>
 

@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4DEV (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4DEV (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Dev2` v2, 720 Bytes, 86 Funktionsfelder und 88 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Dev2` v2, 728 Bytes, 87 Funktionsfelder und 89 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4DevFns2` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -97,4 +97,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 85 | 696 | function | `fpu_observation` | `*const fn (*const FpuObservationRequest, *FpuObservationInfo) callconv(.c) i32` |
 | 86 | 704 | function | `firmware_system_uuid` | `*const fn (*FirmwareSystemUuidInfo) callconv(.c) i32` |
 | 87 | 712 | function | `device_inventory_capture` | `*const fn (?[*]DeviceInventoryRecord, u32, *DeviceInventorySnapshotInfo) callconv(.c) i32` |
+| 88 | 720 | function | `display_blit_check` | `*const fn () callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4DEV -->

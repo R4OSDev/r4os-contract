@@ -7,11 +7,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 527,
-    "group_slot_count": 527,
+    "function_count": 528,
+    "group_slot_count": 528,
     "sdk_only_count": 0,
     "public_count": 385,
-    "advanced_count": 142
+    "advanced_count": 143
   },
   "functions": [
     {
@@ -6333,6 +6333,18 @@
       "slot": 87,
       "exposure": "advanced",
       "description": "Copy one complete passive device inventory into caller record storage in one existing collect traversal. Returns0 for a complete frozen copy; -2 reports insufficient capacity with generation0 and required_count, -3 refuses overflow, -4 refuses identity exhaustion. Existing per-source metadata copies are not globally atomic. No new scan, IO, allocation, persistent Kernel snapshot or device retain. Rows on any failure are private and must be discarded; receipt is valid on the documented capacity/overflow errors. All pointers are exclusively borrowed for the synchronous call; buffers must be mapped, aligned and disjoint. Null rows allowed only at capacity0. Actual return ends the loan; caller cancellation cannot forcibly end an active callback.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.display_blit_check",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 88,
+      "exposure": "advanced",
+      "description": "Explicit synchronous RAM copy check of the registered display blit backend. Two separated regions cover 25 of 96 private pixels. All 96 pixels must match. Returns 0 on success, -1 without an admitted backend or a negative result on failure. Only a checked registration reports SELF_TESTED. No visible display or framebuffer is written.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

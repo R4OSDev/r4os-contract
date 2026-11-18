@@ -32727,7 +32727,7 @@
       "abi_version": 2,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 720,
+      "size": 728,
       "slots": [
         {
           "number": 0,
@@ -38841,6 +38841,47 @@
             "side_effects": "none",
             "retry": "never_automatic",
             "buffer_too_small": "required_size_reported",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 88,
+          "offset": 720,
+          "name": "display_blit_check",
+          "state": "function",
+          "required": false,
+          "description": "Explicit synchronous RAM copy check of the registered display blit backend. Two separated regions cover 25 of 96 private pixels. All 96 pixels must match. Returns 0 on success, -1 without an admitted backend or a negative result on failure. Only a checked registration reports SELF_TESTED. No visible display or framebuffer is written.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32"
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "serial",
+            "ownership": "borrowed",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "cancel_wake_join_cleanup",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
           }
         }

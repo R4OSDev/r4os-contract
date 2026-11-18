@@ -24561,6 +24561,7 @@ pub mod R4DevFns {
     pub type fpu_observation = unsafe extern "C" fn(*const FpuObservationRequest, *mut FpuObservationInfo) -> i32;
     pub type firmware_system_uuid = unsafe extern "C" fn(*mut FirmwareSystemUuidInfo) -> i32;
     pub type device_inventory_capture = unsafe extern "C" fn(*mut DeviceInventoryRecord, u32, *mut DeviceInventorySnapshotInfo) -> i32;
+    pub type display_blit_check = unsafe extern "C" fn() -> i32;
 }
 
 #[repr(C)]
@@ -24661,6 +24662,7 @@ pub struct R4XStartR4Dev {
     pub fpu_observation: usize,
     pub firmware_system_uuid: usize,
     pub device_inventory_capture: usize,
+    pub display_blit_check: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
@@ -24668,7 +24670,7 @@ impl Default for R4XStartR4Dev {
         Self {
             magic: 827737170,
             abi_version: 37,
-            size: 744,
+            size: 752,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -24761,6 +24763,7 @@ impl Default for R4XStartR4Dev {
             fpu_observation: 0,
             firmware_system_uuid: 0,
             device_inventory_capture: 0,
+            display_blit_check: 0,
         }
     }
 }
@@ -37387,7 +37390,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, fpu_observation) == 720);
     assert!(core::mem::offset_of!(R4XStartR4Dev, firmware_system_uuid) == 728);
     assert!(core::mem::offset_of!(R4XStartR4Dev, device_inventory_capture) == 736);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 744);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, display_blit_check) == 744);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 752);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

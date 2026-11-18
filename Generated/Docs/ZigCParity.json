@@ -4,9 +4,9 @@
   "source_schema_version": 12,
   "source_baseline_id": "canonical-generation2-0.64.95",
   "summary": {
-    "group_function_signatures": 527,
+    "group_function_signatures": 528,
     "sdk_operation_contracts": 0,
-    "parity_entries": 527,
+    "parity_entries": 528,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4751,6 +4751,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns2.device_inventory_capture",
       "c_contract": "R4DevFDeviceInventoryCaptureFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.display_blit_check",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns2.display_blit_check",
+      "c_contract": "R4DevFDisplayBlitCheckFn",
       "coverage": "generated_signature"
     }
   ],

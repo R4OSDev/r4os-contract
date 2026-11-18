@@ -1173,3 +1173,7 @@ After device quiescence, irq_rearm on that retired binding clears only its debt
 and never unmasks; unregister retry supplies final removal acknowledgement.
 Owner retirement withdraws callbacks before provider shutdown; final generic
 cleanup cannot release a registration with unresolved deferred debt.
+
+An XRGB32 synchronous backend can register before a copy diagnostic runs.
+The optional R4DEV display_blit_check slot invokes its registered present callback
+on private pixels and updates SELF_TESTED for that exact registration.

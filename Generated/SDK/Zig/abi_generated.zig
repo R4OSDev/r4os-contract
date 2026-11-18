@@ -13027,12 +13027,13 @@ pub const R4DevFns = struct {
     pub const fpu_observation = *const fn (*const FpuObservationRequest, *FpuObservationInfo) callconv(.c) i32;
     pub const firmware_system_uuid = *const fn (*FirmwareSystemUuidInfo) callconv(.c) i32;
     pub const device_inventory_capture = *const fn (?[*]DeviceInventoryRecord, u32, *DeviceInventorySnapshotInfo) callconv(.c) i32;
+    pub const display_blit_check = *const fn () callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
     abi_version: u32 = 37,
-    size: u32 = 744,
+    size: u32 = 752,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -13125,6 +13126,7 @@ pub const R4XStartR4Dev = extern struct {
     fpu_observation: usize = 0,
     firmware_system_uuid: usize = 0,
     device_inventory_capture: usize = 0,
+    display_blit_check: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -13684,6 +13686,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 88, .offset = 720, .name = "fpu_observation", .state = .function, .required = false },
     .{ .number = 89, .offset = 728, .name = "firmware_system_uuid", .state = .function, .required = false },
     .{ .number = 90, .offset = 736, .name = "device_inventory_capture", .state = .function, .required = false },
+    .{ .number = 91, .offset = 744, .name = "display_blit_check", .state = .function, .required = false },
 };
 
 comptime {
@@ -21885,7 +21888,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
     if (@offsetOf(R4XStartR4Audio, "audio_capture_io") != 232) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_capture_io");
-    if (@sizeOf(R4XStartR4Dev) != 744) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 752) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -21977,4 +21980,5 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "fpu_observation") != 720) @compileError("generated ABI offset drift: R4XStartR4Dev.fpu_observation");
     if (@offsetOf(R4XStartR4Dev, "firmware_system_uuid") != 728) @compileError("generated ABI offset drift: R4XStartR4Dev.firmware_system_uuid");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_capture") != 736) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_capture");
+    if (@offsetOf(R4XStartR4Dev, "display_blit_check") != 744) @compileError("generated ABI offset drift: R4XStartR4Dev.display_blit_check");
 }
