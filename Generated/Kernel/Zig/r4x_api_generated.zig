@@ -1059,6 +1059,7 @@ pub const r4xstart_abi_major: u16 = 1;
 pub const r4xstart_abi_minor: u16 = 1;
 pub const r4xstart_flag_close_supported: u32 = 4;
 pub const r4xstart_flag_imports_valid: u32 = 1;
+pub const r4xstart_flag_endpoint_stop_wake: u32 = 16;
 pub const r4xstart_flag_yield_supported: u32 = 8;
 pub const r4xstart_import_flag_group_interface: u32 = 1;
 pub const r4xstart_magic: u32 = 1398289490;

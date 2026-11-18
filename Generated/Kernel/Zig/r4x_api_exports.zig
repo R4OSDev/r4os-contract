@@ -1058,6 +1058,7 @@ pub const r4xstart_abi_major = generated.r4xstart_abi_major;
 pub const r4xstart_abi_minor = generated.r4xstart_abi_minor;
 pub const r4xstart_flag_close_supported = generated.r4xstart_flag_close_supported;
 pub const r4xstart_flag_imports_valid = generated.r4xstart_flag_imports_valid;
+pub const r4xstart_flag_endpoint_stop_wake = generated.r4xstart_flag_endpoint_stop_wake;
 pub const r4xstart_flag_yield_supported = generated.r4xstart_flag_yield_supported;
 pub const r4xstart_import_flag_group_interface = generated.r4xstart_import_flag_group_interface;
 pub const r4xstart_magic = generated.r4xstart_magic;

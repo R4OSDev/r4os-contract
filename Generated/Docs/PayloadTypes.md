@@ -7,7 +7,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Schema: v11, Baseline `standalone-contract-0.64.11`
 - Reachability: 477 von 477 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3153; Limits: 123
+- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3154; Limits: 123
 
 ## App-Profile
 
@@ -13999,6 +13999,7 @@ Geltung: `audio_capture`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `r4xstart_abi_minor` | `1` | `u16` | value | count | `r4xstart_abi` | fixed_contract |
 | `r4xstart_flag_close_supported` | `4` | `u32` | flag | bitmask | `r4xstart` | fixed_contract |
 | `r4xstart_flag_imports_valid` | `1` | `u32` | flag | bitmask | `r4xstart` | fixed_contract |
+| `r4xstart_flag_endpoint_stop_wake` | `16` | `u32` | flag | bitmask | `r4xstart` | fixed_contract |
 | `r4xstart_flag_yield_supported` | `8` | `u32` | flag | bitmask | `r4xstart` | fixed_contract |
 | `r4xstart_import_flag_group_interface` | `1` | `u32` | flag | bitmask | `r4xstart_import` | fixed_contract |
 | `r4xstart_magic` | `1398289490` | `u32` | magic | number | `r4xstart` | fixed_contract |

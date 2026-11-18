@@ -211,3 +211,8 @@ zweiten Start-/Query-Anbieter ein.
 
 `zig build check` prueft Vertragsblock und Pakete bytegenau;
 `zig build test` kompiliert die Zig-/C-Projektionen.
+
+A service start context with r4xstart_flag_endpoint_stop_wake can wait on its
+own endpoint until a request, cooperative process close, or application deadline.
+The close flag is published before wakeup and is checked during wait admission.
+Providers without the bit use the finite SDK stop interval.

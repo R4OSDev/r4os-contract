@@ -399,6 +399,11 @@
         "name": "yield_supported",
         "value": 8,
         "description": "Yield callback is available."
+      },
+      {
+        "name": "endpoint_stop_wake",
+        "value": 16,
+        "description": "A cooperative process close wakes waits on the endpoints owned by this service process."
       }
     ],
     "import_flags": [
@@ -155029,6 +155034,16 @@
       "scope": "r4xstart",
       "stability": "fixed_contract",
       "description": "Public fixed contract constant."
+    },
+    {
+      "name": "r4xstart_flag_endpoint_stop_wake",
+      "value": "16",
+      "value_type": "u32",
+      "category": "flag",
+      "unit": "bitmask",
+      "scope": "r4xstart",
+      "stability": "fixed_contract",
+      "description": "A cooperative process close wakes waits on the endpoints owned by this service process."
     },
     {
       "name": "r4xstart_flag_yield_supported",
