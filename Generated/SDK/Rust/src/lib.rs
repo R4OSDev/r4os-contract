@@ -2126,6 +2126,8 @@ pub const cpu_topology_result_end: i32 = 0;
 pub const cpu_topology_result_invalid: i32 = -1;
 pub const cpu_topology_result_busy: i32 = -2;
 pub const cpu_topology_flag_captured: u32 = 1;
+pub const cpu_time_flag_online: u32 = 1;
+pub const cpu_time_flag_available: u32 = 2;
 pub const cpu_topology_flag_geometry: u32 = 2;
 pub const cpu_topology_flag_acpi_uid: u32 = 4;
 pub const cpu_topology_flag_online: u32 = 8;
@@ -19321,6 +19323,38 @@ impl Default for CpuIdleInfo {
 
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct CpuTimeInfo {
+    pub version: u32,
+    pub size: u32,
+    pub cpu_index: u32,
+    pub configured_cpus: u32,
+    pub flags: u32,
+    pub clock_generation: u32,
+    pub epoch: u64,
+    pub online_ns: u64,
+    pub idle_ns: u64,
+    pub wake_count: u64,
+}
+#[allow(clippy::derivable_impls)]
+impl Default for CpuTimeInfo {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            size: 56,
+            cpu_index: 0,
+            configured_cpus: 0,
+            flags: 0,
+            clock_generation: 0,
+            epoch: 0,
+            online_ns: 0,
+            idle_ns: 0,
+            wake_count: 0,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct CpuMachineInfo {
     pub version: u32,
     pub size: u32,
@@ -24562,6 +24596,7 @@ pub mod R4DevFns {
     pub type firmware_system_uuid = unsafe extern "C" fn(*mut FirmwareSystemUuidInfo) -> i32;
     pub type device_inventory_capture = unsafe extern "C" fn(*mut DeviceInventoryRecord, u32, *mut DeviceInventorySnapshotInfo) -> i32;
     pub type display_blit_check = unsafe extern "C" fn() -> i32;
+    pub type cpu_time_info = unsafe extern "C" fn(u32, *mut CpuTimeInfo) -> i32;
 }
 
 #[repr(C)]
@@ -24663,6 +24698,7 @@ pub struct R4XStartR4Dev {
     pub firmware_system_uuid: usize,
     pub device_inventory_capture: usize,
     pub display_blit_check: usize,
+    pub cpu_time_info: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
@@ -24670,7 +24706,7 @@ impl Default for R4XStartR4Dev {
         Self {
             magic: 827737170,
             abi_version: 37,
-            size: 752,
+            size: 760,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -24764,6 +24800,7 @@ impl Default for R4XStartR4Dev {
             firmware_system_uuid: 0,
             device_inventory_capture: 0,
             display_blit_check: 0,
+            cpu_time_info: 0,
         }
     }
 }
@@ -35458,6 +35495,18 @@ const _: () = {
     assert!(core::mem::offset_of!(CpuIdleInfo, energy_uj) == 184);
     assert!(core::mem::size_of::<CpuIdleInfo>() == 192);
     assert!(core::mem::align_of::<CpuIdleInfo>() == 8);
+    assert!(core::mem::offset_of!(CpuTimeInfo, version) == 0);
+    assert!(core::mem::offset_of!(CpuTimeInfo, size) == 4);
+    assert!(core::mem::offset_of!(CpuTimeInfo, cpu_index) == 8);
+    assert!(core::mem::offset_of!(CpuTimeInfo, configured_cpus) == 12);
+    assert!(core::mem::offset_of!(CpuTimeInfo, flags) == 16);
+    assert!(core::mem::offset_of!(CpuTimeInfo, clock_generation) == 20);
+    assert!(core::mem::offset_of!(CpuTimeInfo, epoch) == 24);
+    assert!(core::mem::offset_of!(CpuTimeInfo, online_ns) == 32);
+    assert!(core::mem::offset_of!(CpuTimeInfo, idle_ns) == 40);
+    assert!(core::mem::offset_of!(CpuTimeInfo, wake_count) == 48);
+    assert!(core::mem::size_of::<CpuTimeInfo>() == 56);
+    assert!(core::mem::align_of::<CpuTimeInfo>() == 8);
     assert!(core::mem::offset_of!(CpuMachineInfo, version) == 0);
     assert!(core::mem::offset_of!(CpuMachineInfo, size) == 4);
     assert!(core::mem::offset_of!(CpuMachineInfo, cpu_index) == 8);
@@ -37391,7 +37440,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, firmware_system_uuid) == 728);
     assert!(core::mem::offset_of!(R4XStartR4Dev, device_inventory_capture) == 736);
     assert!(core::mem::offset_of!(R4XStartR4Dev, display_blit_check) == 744);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 752);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_time_info) == 752);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 760);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

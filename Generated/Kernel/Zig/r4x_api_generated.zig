@@ -2120,6 +2120,8 @@ pub const cpu_topology_result_end: i32 = 0;
 pub const cpu_topology_result_invalid: i32 = -1;
 pub const cpu_topology_result_busy: i32 = -2;
 pub const cpu_topology_flag_captured: u32 = 1;
+pub const cpu_time_flag_online: u32 = 1;
+pub const cpu_time_flag_available: u32 = 2;
 pub const cpu_topology_flag_geometry: u32 = 2;
 pub const cpu_topology_flag_acpi_uid: u32 = 4;
 pub const cpu_topology_flag_online: u32 = 8;
@@ -10522,6 +10524,19 @@ pub const CpuIdleInfo = extern struct {
     energy_uj: u64 = 0,
 };
 
+pub const CpuTimeInfo = extern struct {
+    version: u32 = 1,
+    size: u32 = 56,
+    cpu_index: u32 = 0,
+    configured_cpus: u32 = 0,
+    flags: u32 = 0,
+    clock_generation: u32 = 0,
+    epoch: u64 = 0,
+    online_ns: u64 = 0,
+    idle_ns: u64 = 0,
+    wake_count: u64 = 0,
+};
+
 pub const CpuMachineInfo = extern struct {
     version: u32 = 1,
     size: u32 = 144,
@@ -13028,12 +13043,13 @@ pub const R4DevFns = struct {
     pub const firmware_system_uuid = *const fn (*FirmwareSystemUuidInfo) callconv(.c) i32;
     pub const device_inventory_capture = *const fn (?[*]DeviceInventoryRecord, u32, *DeviceInventorySnapshotInfo) callconv(.c) i32;
     pub const display_blit_check = *const fn () callconv(.c) i32;
+    pub const cpu_time_info = *const fn (u32, *CpuTimeInfo) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
     abi_version: u32 = 37,
-    size: u32 = 752,
+    size: u32 = 760,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -13127,6 +13143,7 @@ pub const R4XStartR4Dev = extern struct {
     firmware_system_uuid: usize = 0,
     device_inventory_capture: usize = 0,
     display_blit_check: usize = 0,
+    cpu_time_info: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -13687,6 +13704,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 89, .offset = 728, .name = "firmware_system_uuid", .state = .function, .required = false },
     .{ .number = 90, .offset = 736, .name = "device_inventory_capture", .state = .function, .required = false },
     .{ .number = 91, .offset = 744, .name = "display_blit_check", .state = .function, .required = false },
+    .{ .number = 92, .offset = 752, .name = "cpu_time_info", .state = .function, .required = false },
 };
 
 comptime {
@@ -20086,6 +20104,18 @@ comptime {
     if (@offsetOf(CpuIdleInfo, "residency_ns") != 168) @compileError("generated ABI offset drift: CpuIdleInfo.residency_ns");
     if (@offsetOf(CpuIdleInfo, "wake_latency_ns") != 176) @compileError("generated ABI offset drift: CpuIdleInfo.wake_latency_ns");
     if (@offsetOf(CpuIdleInfo, "energy_uj") != 184) @compileError("generated ABI offset drift: CpuIdleInfo.energy_uj");
+    if (@sizeOf(CpuTimeInfo) != 56) @compileError("generated ABI size drift: CpuTimeInfo");
+    if (@alignOf(CpuTimeInfo) != 8) @compileError("generated ABI alignment drift: CpuTimeInfo");
+    if (@offsetOf(CpuTimeInfo, "version") != 0) @compileError("generated ABI offset drift: CpuTimeInfo.version");
+    if (@offsetOf(CpuTimeInfo, "size") != 4) @compileError("generated ABI offset drift: CpuTimeInfo.size");
+    if (@offsetOf(CpuTimeInfo, "cpu_index") != 8) @compileError("generated ABI offset drift: CpuTimeInfo.cpu_index");
+    if (@offsetOf(CpuTimeInfo, "configured_cpus") != 12) @compileError("generated ABI offset drift: CpuTimeInfo.configured_cpus");
+    if (@offsetOf(CpuTimeInfo, "flags") != 16) @compileError("generated ABI offset drift: CpuTimeInfo.flags");
+    if (@offsetOf(CpuTimeInfo, "clock_generation") != 20) @compileError("generated ABI offset drift: CpuTimeInfo.clock_generation");
+    if (@offsetOf(CpuTimeInfo, "epoch") != 24) @compileError("generated ABI offset drift: CpuTimeInfo.epoch");
+    if (@offsetOf(CpuTimeInfo, "online_ns") != 32) @compileError("generated ABI offset drift: CpuTimeInfo.online_ns");
+    if (@offsetOf(CpuTimeInfo, "idle_ns") != 40) @compileError("generated ABI offset drift: CpuTimeInfo.idle_ns");
+    if (@offsetOf(CpuTimeInfo, "wake_count") != 48) @compileError("generated ABI offset drift: CpuTimeInfo.wake_count");
     if (@sizeOf(CpuMachineInfo) != 144) @compileError("generated ABI size drift: CpuMachineInfo");
     if (@alignOf(CpuMachineInfo) != 8) @compileError("generated ABI alignment drift: CpuMachineInfo");
     if (@offsetOf(CpuMachineInfo, "version") != 0) @compileError("generated ABI offset drift: CpuMachineInfo.version");
@@ -21888,7 +21918,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
     if (@offsetOf(R4XStartR4Audio, "audio_capture_io") != 232) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_capture_io");
-    if (@sizeOf(R4XStartR4Dev) != 752) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 760) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -21981,6 +22011,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "firmware_system_uuid") != 728) @compileError("generated ABI offset drift: R4XStartR4Dev.firmware_system_uuid");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_capture") != 736) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_capture");
     if (@offsetOf(R4XStartR4Dev, "display_blit_check") != 744) @compileError("generated ABI offset drift: R4XStartR4Dev.display_blit_check");
+    if (@offsetOf(R4XStartR4Dev, "cpu_time_info") != 752) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_time_info");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -23020,13 +23051,14 @@ pub const R4DevProvider = struct {
     firmware_system_uuid: ?R4DevFns.firmware_system_uuid = null,
     device_inventory_capture: ?R4DevFns.device_inventory_capture = null,
     display_blit_check: ?R4DevFns.display_blit_check = null,
+    cpu_time_info: ?R4DevFns.cpu_time_info = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
         .abi_version = 37,
-        .size = 752,
+        .size = 760,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -23120,5 +23152,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .firmware_system_uuid = if (provider.firmware_system_uuid) |callback| @intFromPtr(callback) else 0,
         .device_inventory_capture = if (provider.device_inventory_capture) |callback| @intFromPtr(callback) else 0,
         .display_blit_check = if (provider.display_blit_check) |callback| @intFromPtr(callback) else 0,
+        .cpu_time_info = if (provider.cpu_time_info) |callback| @intFromPtr(callback) else 0,
     };
 }

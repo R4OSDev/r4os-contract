@@ -48893,7 +48893,7 @@
       "abi_version": 2,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 728,
+      "size": 736,
       "slots": [
         {
           "number": 0,
@@ -58288,6 +58288,105 @@
             "close_rule": "none",
             "outputs": "success_only",
             "side_effects": "may_have_occurred",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 89,
+          "offset": 728,
+          "name": "cpu_time_info",
+          "state": "function",
+          "required": false,
+          "description": "Copy an online-epoch software time snapshot for one configured logical CPU. Return 0 on success, a negative status for an invalid header or index. No sampling interrupt, remote wake, hardware counter programming or process inventory is required.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "cpu_index",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "named",
+                    "name": "CpuTimeInfo",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32",
+              "pointer_kind": null,
+              "is_const": null,
+              "sentinel": null,
+              "length": null,
+              "child": null,
+              "direction": null,
+              "nullable": null,
+              "length_by": null,
+              "ownership": null,
+              "lifetime": null
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
             "retry": "never_automatic",
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"

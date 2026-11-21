@@ -4,9 +4,9 @@
   "source_schema_version": 12,
   "source_baseline_id": "canonical-generation2-0.64.95",
   "summary": {
-    "group_function_signatures": 528,
+    "group_function_signatures": 529,
     "sdk_operation_contracts": 0,
-    "parity_entries": 528,
+    "parity_entries": 529,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4760,6 +4760,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns2.display_blit_check",
       "c_contract": "R4DevFDisplayBlitCheckFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.cpu_time_info",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns2.cpu_time_info",
+      "c_contract": "R4DevFCpuTimeInfoFn",
       "coverage": "generated_signature"
     }
   ],

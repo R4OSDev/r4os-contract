@@ -531,5 +531,6 @@ static R4DevFpuObservationFn r4os_probe_r4dev_fpu_observation = (R4DevFpuObserva
 static R4DevFirmwareSystemUuidFn r4os_probe_r4dev_firmware_system_uuid = (R4DevFirmwareSystemUuidFn)0;
 static R4DevDeviceInventoryCaptureFn r4os_probe_r4dev_device_inventory_capture = (R4DevDeviceInventoryCaptureFn)0;
 static R4DevDisplayBlitCheckFn r4os_probe_r4dev_display_blit_check = (R4DevDisplayBlitCheckFn)0;
+static R4DevCpuTimeInfoFn r4os_probe_r4dev_cpu_time_info = (R4DevCpuTimeInfoFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

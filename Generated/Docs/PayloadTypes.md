@@ -5,9 +5,9 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 477 von 477 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 478 von 478 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
-- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3154; Limits: 123
+- Operationen: 0; Fehlerdomänen: 72; Konstanten: 3156; Limits: 123
 
 ## App-Profile
 
@@ -372,6 +372,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `CpuIdleDescriptor` | fixed_layout | extern_struct | 96/8 | 96/8 | 96/8 | 96/8 |
 | `CpuIdlePolicy` | fixed_layout | extern_struct | 32/8 | 32/8 | 32/8 | 32/8 |
 | `CpuIdleInfo` | fixed_layout | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
+| `CpuTimeInfo` | fixed_layout | extern_struct | 56/8 | 56/8 | 56/8 | 56/8 |
 | `CpuMachineInfo` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
 | `CpuMachineBank` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `CpuMicrocodeInfo` | fixed_layout | extern_struct | 144/8 | 144/8 | 144/8 | 144/8 |
@@ -9664,6 +9665,26 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `wake_latency_ns` | 176 | 8 | 8 | `u64` | - |
 | `energy_uj` | 184 | 8 | 8 | `u64` | - |
 
+### `CpuTimeInfo`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 56 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `version` | 0 | 4 | 4 | `u32` | - |
+| `size` | 4 | 4 | 4 | `u32` | - |
+| `cpu_index` | 8 | 4 | 4 | `u32` | - |
+| `configured_cpus` | 12 | 4 | 4 | `u32` | - |
+| `flags` | 16 | 4 | 4 | `u32` | - |
+| `clock_generation` | 20 | 4 | 4 | `u32` | - |
+| `epoch` | 24 | 8 | 8 | `u64` | - |
+| `online_ns` | 32 | 8 | 8 | `u64` | - |
+| `idle_ns` | 40 | 8 | 8 | `u64` | - |
+| `wake_count` | 48 | 8 | 8 | `u64` | - |
+
 ### `CpuMachineInfo`
 
 - Quelle: `API/ApiContract.json`
@@ -15060,6 +15081,8 @@ Geltung: `audio_capture`, Einheit: `status_code`, Stabilität: `fixed_contract`.
 | `cpu_topology_result_invalid` | `-1` | `i32` | value | number | `cpu_topology` | fixed_contract |
 | `cpu_topology_result_busy` | `-2` | `i32` | value | number | `cpu_topology` | fixed_contract |
 | `cpu_topology_flag_captured` | `1` | `u32` | value | number | `cpu_topology` | fixed_contract |
+| `cpu_time_flag_online` | `1` | `u32` | value | number | `cpu_time` | fixed_contract |
+| `cpu_time_flag_available` | `2` | `u32` | value | number | `cpu_time` | fixed_contract |
 | `cpu_topology_flag_geometry` | `2` | `u32` | value | number | `cpu_topology` | fixed_contract |
 | `cpu_topology_flag_acpi_uid` | `4` | `u32` | value | number | `cpu_topology` | fixed_contract |
 | `cpu_topology_flag_online` | `8` | `u32` | value | number | `cpu_topology` | fixed_contract |

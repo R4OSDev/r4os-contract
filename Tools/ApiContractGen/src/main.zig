@@ -440,7 +440,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // Existing 0.89.2 firmware_system_identity is already public in Contract71.
     // 0.90.21 appends one passive whole-capture function at slot90; the
     // original736-byte table prefix and all three tombstones are retained.
-    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 87, .reserved = 2, .tombstones = 3 },
+    .{ .id = 6, .name = "R4DEV", .kind = .kernel_table, .functions = 88, .reserved = 2, .tombstones = 3 },
 };
 
 pub fn main(init: std.process.Init) !void {

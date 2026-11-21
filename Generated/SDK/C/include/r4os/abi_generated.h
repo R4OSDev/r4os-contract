@@ -2132,6 +2132,8 @@ extern "C" {
 #define R4OS_CPU_TOPOLOGY_RESULT_INVALID ((int32_t)-1)
 #define R4OS_CPU_TOPOLOGY_RESULT_BUSY ((int32_t)-2)
 #define R4OS_CPU_TOPOLOGY_FLAG_CAPTURED 1u
+#define R4OS_CPU_TIME_FLAG_ONLINE 1u
+#define R4OS_CPU_TIME_FLAG_AVAILABLE 2u
 #define R4OS_CPU_TOPOLOGY_FLAG_GEOMETRY 2u
 #define R4OS_CPU_TOPOLOGY_FLAG_ACPI_UID 4u
 #define R4OS_CPU_TOPOLOGY_FLAG_ONLINE 8u
@@ -4103,6 +4105,7 @@ typedef struct R4CpuFirmwareInfo R4CpuFirmwareInfo;
 typedef struct R4CpuIdleDescriptor R4CpuIdleDescriptor;
 typedef struct R4CpuIdlePolicy R4CpuIdlePolicy;
 typedef struct R4CpuIdleInfo R4CpuIdleInfo;
+typedef struct R4CpuTimeInfo R4CpuTimeInfo;
 typedef struct R4CpuMachineInfo R4CpuMachineInfo;
 typedef struct R4CpuMachineBank R4CpuMachineBank;
 typedef struct R4CpuMicrocodeInfo R4CpuMicrocodeInfo;
@@ -10948,6 +10951,19 @@ typedef struct R4CpuIdleInfo {
     uint64_t energy_uj;
 } R4CpuIdleInfo;
 
+typedef struct R4CpuTimeInfo {
+    uint32_t version;
+    uint32_t size;
+    uint32_t cpu_index;
+    uint32_t configured_cpus;
+    uint32_t flags;
+    uint32_t clock_generation;
+    uint64_t epoch;
+    uint64_t online_ns;
+    uint64_t idle_ns;
+    uint64_t wake_count;
+} R4CpuTimeInfo;
+
 typedef struct R4CpuMachineInfo {
     uint32_t version;
     uint32_t size;
@@ -13481,6 +13497,7 @@ typedef int32_t (*R4DevFpuObservationFn)(const R4FpuObservationRequest * request
 typedef int32_t (*R4DevFirmwareSystemUuidFn)(R4FirmwareSystemUuidInfo * out);
 typedef int32_t (*R4DevDeviceInventoryCaptureFn)(R4DeviceInventoryRecord * rows, uint32_t capacity, R4DeviceInventorySnapshotInfo * out_info);
 typedef int32_t (*R4DevDisplayBlitCheckFn)(void);
+typedef int32_t (*R4DevCpuTimeInfoFn)(uint32_t cpu_index, R4CpuTimeInfo * out);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -13579,6 +13596,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t firmware_system_uuid;
     uintptr_t device_inventory_capture;
     uintptr_t display_blit_check;
+    uintptr_t cpu_time_info;
 } R4XStartR4Dev;
 
 
@@ -19632,6 +19650,17 @@ _Static_assert(offsetof(R4CpuIdleInfo, descriptor_revision) == 160u, "CpuIdleInf
 _Static_assert(offsetof(R4CpuIdleInfo, residency_ns) == 168u, "CpuIdleInfo.residency_ns offset mismatch");
 _Static_assert(offsetof(R4CpuIdleInfo, wake_latency_ns) == 176u, "CpuIdleInfo.wake_latency_ns offset mismatch");
 _Static_assert(offsetof(R4CpuIdleInfo, energy_uj) == 184u, "CpuIdleInfo.energy_uj offset mismatch");
+_Static_assert(sizeof(R4CpuTimeInfo) == 56u, "CpuTimeInfo size mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, version) == 0u, "CpuTimeInfo.version offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, size) == 4u, "CpuTimeInfo.size offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, cpu_index) == 8u, "CpuTimeInfo.cpu_index offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, configured_cpus) == 12u, "CpuTimeInfo.configured_cpus offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, flags) == 16u, "CpuTimeInfo.flags offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, clock_generation) == 20u, "CpuTimeInfo.clock_generation offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, epoch) == 24u, "CpuTimeInfo.epoch offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, online_ns) == 32u, "CpuTimeInfo.online_ns offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, idle_ns) == 40u, "CpuTimeInfo.idle_ns offset mismatch");
+_Static_assert(offsetof(R4CpuTimeInfo, wake_count) == 48u, "CpuTimeInfo.wake_count offset mismatch");
 _Static_assert(sizeof(R4CpuMachineInfo) == 144u, "CpuMachineInfo size mismatch");
 _Static_assert(offsetof(R4CpuMachineInfo, version) == 0u, "CpuMachineInfo.version offset mismatch");
 _Static_assert(offsetof(R4CpuMachineInfo, size) == 4u, "CpuMachineInfo.size offset mismatch");
@@ -21753,7 +21782,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStar
 _Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_capture_io) == 232u, "R4XStartR4Audio.audio_capture_io offset mismatch");
 _Static_assert(sizeof(R4AudioAudioCaptureIoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 752u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 760u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -21933,6 +21962,8 @@ _Static_assert(offsetof(R4XStartR4Dev, device_inventory_capture) == 736u, "R4XSt
 _Static_assert(sizeof(R4DevDeviceInventoryCaptureFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, display_blit_check) == 744u, "R4XStartR4Dev.display_blit_check offset mismatch");
 _Static_assert(sizeof(R4DevDisplayBlitCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, cpu_time_info) == 752u, "R4XStartR4Dev.cpu_time_info offset mismatch");
+_Static_assert(sizeof(R4DevCpuTimeInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #include <r4os/abi_technical_generated.h>
 
