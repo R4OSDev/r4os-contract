@@ -18460,13 +18460,14 @@ pub struct DriverCpuPowerApi {
     pub firmware_cpu_info: u64,
     pub idle_publish: u64,
     pub idle_policy: u64,
+    pub dram_register: u64,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for DriverCpuPowerApi {
     fn default() -> Self {
         Self {
             version: 1,
-            size: 184,
+            size: 192,
             register_backend: 0,
             unregister_backend: 0,
             current_cpu: 0,
@@ -18489,6 +18490,7 @@ impl Default for DriverCpuPowerApi {
             firmware_cpu_info: 0,
             idle_publish: 0,
             idle_policy: 0,
+            dram_register: 0,
         }
     }
 }
@@ -24598,6 +24600,7 @@ pub mod R4DevFns {
     pub type display_blit_check = unsafe extern "C" fn() -> i32;
     pub type cpu_time_info = unsafe extern "C" fn(u32, *mut CpuTimeInfo) -> i32;
     pub type physical_memory_usage = unsafe extern "C" fn(*mut u64, *mut u64) -> i32;
+    pub type dram_traffic = unsafe extern "C" fn(u32, *mut u64, *mut u64, *mut u64) -> i32;
 }
 
 #[repr(C)]
@@ -24701,6 +24704,7 @@ pub struct R4XStartR4Dev {
     pub display_blit_check: usize,
     pub cpu_time_info: usize,
     pub physical_memory_usage: usize,
+    pub dram_traffic: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Dev {
@@ -24708,7 +24712,7 @@ impl Default for R4XStartR4Dev {
         Self {
             magic: 827737170,
             abi_version: 37,
-            size: 768,
+            size: 776,
             flags: 0,
             device_inventory_summary: 0,
             device_inventory_record: 0,
@@ -24804,6 +24808,7 @@ impl Default for R4XStartR4Dev {
             display_blit_check: 0,
             cpu_time_info: 0,
             physical_memory_usage: 0,
+            dram_traffic: 0,
         }
     }
 }
@@ -35150,7 +35155,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverCpuPowerApi, firmware_cpu_info) == 160);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, idle_publish) == 168);
     assert!(core::mem::offset_of!(DriverCpuPowerApi, idle_policy) == 176);
-    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 184);
+    assert!(core::mem::offset_of!(DriverCpuPowerApi, dram_register) == 184);
+    assert!(core::mem::size_of::<DriverCpuPowerApi>() == 192);
     assert!(core::mem::align_of::<DriverCpuPowerApi>() == 8);
     assert!(core::mem::offset_of!(CpuPowerCounters, version) == 0);
     assert!(core::mem::offset_of!(CpuPowerCounters, size) == 4);
@@ -37445,7 +37451,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Dev, display_blit_check) == 744);
     assert!(core::mem::offset_of!(R4XStartR4Dev, cpu_time_info) == 752);
     assert!(core::mem::offset_of!(R4XStartR4Dev, physical_memory_usage) == 760);
-    assert!(core::mem::size_of::<R4XStartR4Dev>() == 768);
+    assert!(core::mem::offset_of!(R4XStartR4Dev, dram_traffic) == 768);
+    assert!(core::mem::size_of::<R4XStartR4Dev>() == 776);
     assert!(core::mem::align_of::<R4XStartR4Dev>() == 8);
     assert!(core::mem::offset_of!(R4LABISnapshot, magic) == 0);
     assert!(core::mem::offset_of!(R4LABISnapshot, abi_version) == 4);

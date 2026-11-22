@@ -4,9 +4,9 @@
   "source_schema_version": 12,
   "source_baseline_id": "canonical-generation2-0.64.95",
   "summary": {
-    "group_function_signatures": 530,
+    "group_function_signatures": 531,
     "sdk_operation_contracts": 0,
-    "parity_entries": 530,
+    "parity_entries": 531,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -4778,6 +4778,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4DevFns2.physical_memory_usage",
       "c_contract": "R4DevFPhysicalMemoryUsageFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4DEV.dram_traffic",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4DevFns2.dram_traffic",
+      "c_contract": "R4DevFDramTrafficFn",
       "coverage": "generated_signature"
     }
   ],

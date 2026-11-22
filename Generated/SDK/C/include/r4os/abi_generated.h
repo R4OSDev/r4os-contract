@@ -10586,6 +10586,7 @@ typedef struct R4DriverCpuPowerApi {
     uint64_t firmware_cpu_info;
     uint64_t idle_publish;
     uint64_t idle_policy;
+    uint64_t dram_register;
 } R4DriverCpuPowerApi;
 
 typedef struct R4CpuPowerCounters {
@@ -13499,6 +13500,7 @@ typedef int32_t (*R4DevDeviceInventoryCaptureFn)(R4DeviceInventoryRecord * rows,
 typedef int32_t (*R4DevDisplayBlitCheckFn)(void);
 typedef int32_t (*R4DevCpuTimeInfoFn)(uint32_t cpu_index, R4CpuTimeInfo * out);
 typedef int32_t (*R4DevPhysicalMemoryUsageFn)(uint64_t * total_bytes, uint64_t * free_bytes);
+typedef int32_t (*R4DevDramTrafficFn)(uint32_t operation, uint64_t * bytes, uint64_t * stamp_ns, uint64_t * epoch);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -13599,6 +13601,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t display_blit_check;
     uintptr_t cpu_time_info;
     uintptr_t physical_memory_usage;
+    uintptr_t dram_traffic;
 } R4XStartR4Dev;
 
 
@@ -19298,7 +19301,7 @@ _Static_assert(offsetof(R4CpuPowerBackend, snapshot) == 16u, "CpuPowerBackend.sn
 _Static_assert(offsetof(R4CpuPowerBackend, capture) == 24u, "CpuPowerBackend.capture offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, flags) == 32u, "CpuPowerBackend.flags offset mismatch");
 _Static_assert(offsetof(R4CpuPowerBackend, reserved0) == 36u, "CpuPowerBackend.reserved0 offset mismatch");
-_Static_assert(sizeof(R4DriverCpuPowerApi) == 184u, "DriverCpuPowerApi size mismatch");
+_Static_assert(sizeof(R4DriverCpuPowerApi) == 192u, "DriverCpuPowerApi size mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, version) == 0u, "DriverCpuPowerApi.version offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, size) == 4u, "DriverCpuPowerApi.size offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, register_backend) == 8u, "DriverCpuPowerApi.register_backend offset mismatch");
@@ -19323,6 +19326,7 @@ _Static_assert(offsetof(R4DriverCpuPowerApi, firmware_control) == 152u, "DriverC
 _Static_assert(offsetof(R4DriverCpuPowerApi, firmware_cpu_info) == 160u, "DriverCpuPowerApi.firmware_cpu_info offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, idle_publish) == 168u, "DriverCpuPowerApi.idle_publish offset mismatch");
 _Static_assert(offsetof(R4DriverCpuPowerApi, idle_policy) == 176u, "DriverCpuPowerApi.idle_policy offset mismatch");
+_Static_assert(offsetof(R4DriverCpuPowerApi, dram_register) == 184u, "DriverCpuPowerApi.dram_register offset mismatch");
 _Static_assert(sizeof(R4CpuPowerCounters) == 64u, "CpuPowerCounters size mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, version) == 0u, "CpuPowerCounters.version offset mismatch");
 _Static_assert(offsetof(R4CpuPowerCounters, size) == 4u, "CpuPowerCounters.size offset mismatch");
@@ -21784,7 +21788,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStar
 _Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_capture_io) == 232u, "R4XStartR4Audio.audio_capture_io offset mismatch");
 _Static_assert(sizeof(R4AudioAudioCaptureIoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 768u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 776u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -21968,6 +21972,8 @@ _Static_assert(offsetof(R4XStartR4Dev, cpu_time_info) == 752u, "R4XStartR4Dev.cp
 _Static_assert(sizeof(R4DevCpuTimeInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, physical_memory_usage) == 760u, "R4XStartR4Dev.physical_memory_usage offset mismatch");
 _Static_assert(sizeof(R4DevPhysicalMemoryUsageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, dram_traffic) == 768u, "R4XStartR4Dev.dram_traffic offset mismatch");
+_Static_assert(sizeof(R4DevDramTrafficFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #include <r4os/abi_technical_generated.h>
 

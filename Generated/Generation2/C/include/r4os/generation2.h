@@ -1484,6 +1484,7 @@ typedef int32_t (*R4DevDeviceInventoryCaptureFn2)(R4DeviceInventoryRecord * rows
 typedef int32_t (*R4DevDisplayBlitCheckFn2)(void);
 typedef int32_t (*R4DevCpuTimeInfoFn2)(uint32_t cpu_index, R4CpuTimeInfo * out);
 typedef int32_t (*R4DevPhysicalMemoryUsageFn2)(uint64_t * total_bytes, uint64_t * free_bytes);
+typedef int32_t (*R4DevDramTrafficFn2)(uint32_t operation, uint64_t * bytes, uint64_t * stamp_ns, uint64_t * epoch);
 #define R4OS2_R4DEV_MAGIC UINT32_C(844514386)
 #define R4OS2_R4DEV_VERSION UINT32_C(2)
 typedef struct {
@@ -1579,8 +1580,9 @@ typedef struct {
     uint64_t display_blit_check;
     uint64_t cpu_time_info;
     uint64_t physical_memory_usage;
+    uint64_t dram_traffic;
 } R4XStartR4Dev2;
-_Static_assert(sizeof(R4XStartR4Dev2)==744, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Dev2)==752, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Dev2,device_inventory_summary)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,device_inventory_record)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,memory_summary)==32, "Generation2 slot");
@@ -1672,6 +1674,7 @@ _Static_assert(offsetof(R4XStartR4Dev2,device_inventory_capture)==712, "Generati
 _Static_assert(offsetof(R4XStartR4Dev2,display_blit_check)==720, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,cpu_time_info)==728, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Dev2,physical_memory_usage)==736, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Dev2,dram_traffic)==744, "Generation2 slot");
 typedef uint32_t (*R4XStartShouldCloseFn2)(const R4XStartContext2 *);
 typedef void (*R4XStartYieldFn2)(const R4XStartContext2 *);
 #endif

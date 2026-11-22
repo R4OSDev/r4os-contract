@@ -533,5 +533,6 @@ static R4DevDeviceInventoryCaptureFn r4os_probe_r4dev_device_inventory_capture =
 static R4DevDisplayBlitCheckFn r4os_probe_r4dev_display_blit_check = (R4DevDisplayBlitCheckFn)0;
 static R4DevCpuTimeInfoFn r4os_probe_r4dev_cpu_time_info = (R4DevCpuTimeInfoFn)0;
 static R4DevPhysicalMemoryUsageFn r4os_probe_r4dev_physical_memory_usage = (R4DevPhysicalMemoryUsageFn)0;
+static R4DevDramTrafficFn r4os_probe_r4dev_dram_traffic = (R4DevDramTrafficFn)0;
 
 int r4os_api_contract_conformance_generated(void) { return 0; }

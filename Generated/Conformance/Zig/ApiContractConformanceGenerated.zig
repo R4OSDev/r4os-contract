@@ -5697,7 +5697,7 @@ comptime {
     if (@offsetOf(abi.CpuPowerBackend, "capture") != 24) @compileError("CpuPowerBackend.capture offset");
     if (@offsetOf(abi.CpuPowerBackend, "flags") != 32) @compileError("CpuPowerBackend.flags offset");
     if (@offsetOf(abi.CpuPowerBackend, "reserved0") != 36) @compileError("CpuPowerBackend.reserved0 offset");
-    if (@sizeOf(abi.DriverCpuPowerApi) != 184) @compileError("DriverCpuPowerApi size");
+    if (@sizeOf(abi.DriverCpuPowerApi) != 192) @compileError("DriverCpuPowerApi size");
     if (@offsetOf(abi.DriverCpuPowerApi, "version") != 0) @compileError("DriverCpuPowerApi.version offset");
     if (@offsetOf(abi.DriverCpuPowerApi, "size") != 4) @compileError("DriverCpuPowerApi.size offset");
     if (@offsetOf(abi.DriverCpuPowerApi, "register_backend") != 8) @compileError("DriverCpuPowerApi.register_backend offset");
@@ -5722,6 +5722,7 @@ comptime {
     if (@offsetOf(abi.DriverCpuPowerApi, "firmware_cpu_info") != 160) @compileError("DriverCpuPowerApi.firmware_cpu_info offset");
     if (@offsetOf(abi.DriverCpuPowerApi, "idle_publish") != 168) @compileError("DriverCpuPowerApi.idle_publish offset");
     if (@offsetOf(abi.DriverCpuPowerApi, "idle_policy") != 176) @compileError("DriverCpuPowerApi.idle_policy offset");
+    if (@offsetOf(abi.DriverCpuPowerApi, "dram_register") != 184) @compileError("DriverCpuPowerApi.dram_register offset");
     if (@sizeOf(abi.CpuPowerCounters) != 64) @compileError("CpuPowerCounters size");
     if (@offsetOf(abi.CpuPowerCounters, "version") != 0) @compileError("CpuPowerCounters.version offset");
     if (@offsetOf(abi.CpuPowerCounters, "size") != 4) @compileError("CpuPowerCounters.size offset");
@@ -8183,7 +8184,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_catalog) != 8) @compileError("R4AudioFns.audio_output_catalog signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_capture_io") != 232) @compileError("R4XStartR4Audio.audio_capture_io offset");
     if (@sizeOf(abi.R4AudioFns.audio_capture_io) != 8) @compileError("R4AudioFns.audio_capture_io signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 768) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 776) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -8367,6 +8368,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.cpu_time_info) != 8) @compileError("R4DevFns.cpu_time_info signature");
     if (@offsetOf(abi.R4XStartR4Dev, "physical_memory_usage") != 760) @compileError("R4XStartR4Dev.physical_memory_usage offset");
     if (@sizeOf(abi.R4DevFns.physical_memory_usage) != 8) @compileError("R4DevFns.physical_memory_usage signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "dram_traffic") != 768) @compileError("R4XStartR4Dev.dram_traffic offset");
+    if (@sizeOf(abi.R4DevFns.dram_traffic) != 8) @compileError("R4DevFns.dram_traffic signature");
 }
 
 test "generated API contract compiles" {}

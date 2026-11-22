@@ -48893,7 +48893,7 @@
       "abi_version": 2,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 744,
+      "size": 752,
       "slots": [
         {
           "number": 0,
@@ -58434,6 +58434,165 @@
               },
               {
                 "name": "free_bytes",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32",
+              "pointer_kind": null,
+              "is_const": null,
+              "sentinel": null,
+              "length": null,
+              "child": null,
+              "direction": null,
+              "nullable": null,
+              "length_by": null,
+              "ownership": null,
+              "lifetime": null
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 91,
+          "offset": 744,
+          "name": "dram_traffic",
+          "state": "function",
+          "required": false,
+          "description": "Operation 0 acquires or samples the calling process DRAM counter lease. Returns aggregate transferred bytes, a monotonic timestamp in ns, and a nonzero observation epoch. The first sample establishes a baseline. Operation 1 releases the lease. Unavailable hardware and foreign reservations return a negative status and preserve outputs. No sampling timer runs.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "operation",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
+                }
+              },
+              {
+                "name": "bytes",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "stamp_ns",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "epoch",
                 "type": {
                   "kind": "pointer",
                   "name": null,

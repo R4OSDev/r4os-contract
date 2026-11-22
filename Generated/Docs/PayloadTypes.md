@@ -354,7 +354,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `ProgramKernelCpuRegisterCheck` | fixed_layout | extern_struct | 128/8 | 128/8 | 128/8 | 128/8 |
 | `CpuPowerInfo` | fixed_layout | extern_struct | 320/8 | 320/8 | 320/8 | 320/8 |
 | `CpuPowerBackend` | fixed_layout | extern_struct | 40/8 | 40/8 | 40/8 | 40/8 |
-| `DriverCpuPowerApi` | extensible | extern_struct | 184/8 | 184/8 | 184/8 | 184/8 |
+| `DriverCpuPowerApi` | extensible | extern_struct | 192/8 | 192/8 | 192/8 | 192/8 |
 | `CpuPowerCounters` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `CpuPerformanceRequest` | fixed_layout | extern_struct | 64/8 | 64/8 | 64/8 | 64/8 |
 | `CpuPerformanceInfo` | fixed_layout | extern_struct | 176/8 | 176/8 | 176/8 | 176/8 |
@@ -9154,7 +9154,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 - Quelle: `API/ApiContract.json`
 - Klasse: `extensible`
 - Repräsentation: `extern_struct`
-- Version/Größe/Alignment: 6 / 184 / 8
+- Version/Größe/Alignment: 7 / 192 / 8
 
 | Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
 |---|---:|---:|---:|---|---|
@@ -9182,6 +9182,7 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `firmware_cpu_info` | 160 | 8 | 8 | `u64` | - |
 | `idle_publish` | 168 | 8 | 8 | `u64` | - |
 | `idle_policy` | 176 | 8 | 8 | `u64` | - |
+| `dram_register` | 184 | 8 | 8 | `u64` | - |
 
 ### `CpuPowerCounters`
 

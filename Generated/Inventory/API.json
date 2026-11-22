@@ -7,11 +7,11 @@
   "rust_binding": "Generated/SDK/Rust/src/lib.rs",
   "rust_inventory": "Generated/Inventory/RustABI.json",
   "summary": {
-    "function_count": 530,
-    "group_slot_count": 530,
+    "function_count": 531,
+    "group_slot_count": 531,
     "sdk_only_count": 0,
     "public_count": 385,
-    "advanced_count": 145
+    "advanced_count": 146
   },
   "functions": [
     {
@@ -6369,6 +6369,18 @@
       "slot": 90,
       "exposure": "advanced",
       "description": "Read managed and immediately free physical RAM in bytes under one page allocator lock. Used bytes equal total minus free. Excludes physical address holes and hardware reservations. Returns 0 on success, negative when unavailable. Leaves outputs unchanged on failure.",
+      "locations": {
+        "sdk": "Generated/SDK/Zig/abi_generated.zig",
+        "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"
+      }
+    },
+    {
+      "name": "R4DEV.dram_traffic",
+      "group": "R4DEV",
+      "kind": "group_slot",
+      "slot": 91,
+      "exposure": "advanced",
+      "description": "Operation 0 acquires or samples the calling process DRAM counter lease. Returns aggregate transferred bytes, a monotonic timestamp in ns, and a nonzero observation epoch. The first sample establishes a baseline. Operation 1 releases the lease. Unavailable hardware and foreign reservations return a negative status and preserve outputs. No sampling timer runs.",
       "locations": {
         "sdk": "Generated/SDK/Zig/abi_generated.zig",
         "provider": "Generated/Kernel/Zig/r4x_api_generated.zig"

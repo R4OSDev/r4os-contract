@@ -10136,7 +10136,7 @@ pub const CpuPowerBackend = extern struct {
 
 pub const DriverCpuPowerApi = extern struct {
     version: u32 = 1,
-    size: u32 = 184,
+    size: u32 = 192,
     register_backend: u64 = 0,
     unregister_backend: u64 = 0,
     current_cpu: u64 = 0,
@@ -10159,6 +10159,7 @@ pub const DriverCpuPowerApi = extern struct {
     firmware_cpu_info: u64 = 0,
     idle_publish: u64 = 0,
     idle_policy: u64 = 0,
+    dram_register: u64 = 0,
 };
 
 pub const CpuPowerCounters = extern struct {
@@ -13045,12 +13046,13 @@ pub const R4DevFns = struct {
     pub const display_blit_check = *const fn () callconv(.c) i32;
     pub const cpu_time_info = *const fn (u32, *CpuTimeInfo) callconv(.c) i32;
     pub const physical_memory_usage = *const fn (*u64, *u64) callconv(.c) i32;
+    pub const dram_traffic = *const fn (u32, *u64, *u64, *u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
     abi_version: u32 = 37,
-    size: u32 = 768,
+    size: u32 = 776,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -13146,6 +13148,7 @@ pub const R4XStartR4Dev = extern struct {
     display_blit_check: usize = 0,
     cpu_time_info: usize = 0,
     physical_memory_usage: usize = 0,
+    dram_traffic: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -13708,6 +13711,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 91, .offset = 744, .name = "display_blit_check", .state = .function, .required = false },
     .{ .number = 92, .offset = 752, .name = "cpu_time_info", .state = .function, .required = false },
     .{ .number = 93, .offset = 760, .name = "physical_memory_usage", .state = .function, .required = false },
+    .{ .number = 94, .offset = 768, .name = "dram_traffic", .state = .function, .required = false },
 };
 
 comptime {
@@ -19735,7 +19739,7 @@ comptime {
     if (@offsetOf(CpuPowerBackend, "capture") != 24) @compileError("generated ABI offset drift: CpuPowerBackend.capture");
     if (@offsetOf(CpuPowerBackend, "flags") != 32) @compileError("generated ABI offset drift: CpuPowerBackend.flags");
     if (@offsetOf(CpuPowerBackend, "reserved0") != 36) @compileError("generated ABI offset drift: CpuPowerBackend.reserved0");
-    if (@sizeOf(DriverCpuPowerApi) != 184) @compileError("generated ABI size drift: DriverCpuPowerApi");
+    if (@sizeOf(DriverCpuPowerApi) != 192) @compileError("generated ABI size drift: DriverCpuPowerApi");
     if (@alignOf(DriverCpuPowerApi) != 8) @compileError("generated ABI alignment drift: DriverCpuPowerApi");
     if (@offsetOf(DriverCpuPowerApi, "version") != 0) @compileError("generated ABI offset drift: DriverCpuPowerApi.version");
     if (@offsetOf(DriverCpuPowerApi, "size") != 4) @compileError("generated ABI offset drift: DriverCpuPowerApi.size");
@@ -19761,6 +19765,7 @@ comptime {
     if (@offsetOf(DriverCpuPowerApi, "firmware_cpu_info") != 160) @compileError("generated ABI offset drift: DriverCpuPowerApi.firmware_cpu_info");
     if (@offsetOf(DriverCpuPowerApi, "idle_publish") != 168) @compileError("generated ABI offset drift: DriverCpuPowerApi.idle_publish");
     if (@offsetOf(DriverCpuPowerApi, "idle_policy") != 176) @compileError("generated ABI offset drift: DriverCpuPowerApi.idle_policy");
+    if (@offsetOf(DriverCpuPowerApi, "dram_register") != 184) @compileError("generated ABI offset drift: DriverCpuPowerApi.dram_register");
     if (@sizeOf(CpuPowerCounters) != 64) @compileError("generated ABI size drift: CpuPowerCounters");
     if (@alignOf(CpuPowerCounters) != 8) @compileError("generated ABI alignment drift: CpuPowerCounters");
     if (@offsetOf(CpuPowerCounters, "version") != 0) @compileError("generated ABI offset drift: CpuPowerCounters.version");
@@ -21921,7 +21926,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
     if (@offsetOf(R4XStartR4Audio, "audio_capture_io") != 232) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_capture_io");
-    if (@sizeOf(R4XStartR4Dev) != 768) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 776) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -22016,6 +22021,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "display_blit_check") != 744) @compileError("generated ABI offset drift: R4XStartR4Dev.display_blit_check");
     if (@offsetOf(R4XStartR4Dev, "cpu_time_info") != 752) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_time_info");
     if (@offsetOf(R4XStartR4Dev, "physical_memory_usage") != 760) @compileError("generated ABI offset drift: R4XStartR4Dev.physical_memory_usage");
+    if (@offsetOf(R4XStartR4Dev, "dram_traffic") != 768) @compileError("generated ABI offset drift: R4XStartR4Dev.dram_traffic");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -23057,13 +23063,14 @@ pub const R4DevProvider = struct {
     display_blit_check: ?R4DevFns.display_blit_check = null,
     cpu_time_info: ?R4DevFns.cpu_time_info = null,
     physical_memory_usage: ?R4DevFns.physical_memory_usage = null,
+    dram_traffic: ?R4DevFns.dram_traffic = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
         .abi_version = 37,
-        .size = 768,
+        .size = 776,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -23159,5 +23166,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .display_blit_check = if (provider.display_blit_check) |callback| @intFromPtr(callback) else 0,
         .cpu_time_info = if (provider.cpu_time_info) |callback| @intFromPtr(callback) else 0,
         .physical_memory_usage = if (provider.physical_memory_usage) |callback| @intFromPtr(callback) else 0,
+        .dram_traffic = if (provider.dram_traffic) |callback| @intFromPtr(callback) else 0,
     };
 }
