@@ -2019,12 +2019,13 @@ pub const R4DevFns2 = struct {
     pub const device_inventory_capture = *const fn (?[*]DeviceInventoryRecord, u32, *DeviceInventorySnapshotInfo) callconv(.c) i32;
     pub const display_blit_check = *const fn () callconv(.c) i32;
     pub const cpu_time_info = *const fn (u32, *CpuTimeInfo) callconv(.c) i32;
+    pub const physical_memory_usage = *const fn (*u64, *u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev2 = extern struct {
     magic: u32 = 844514386,
     abi_version: u32 = 2,
-    size: u32 = 736,
+    size: u32 = 744,
     flags: u32 = 0,
     @"device_inventory_summary": u64 = 0,
     @"device_inventory_record": u64 = 0,
@@ -2116,9 +2117,10 @@ pub const R4XStartR4Dev2 = extern struct {
     @"device_inventory_capture": u64 = 0,
     @"display_blit_check": u64 = 0,
     @"cpu_time_info": u64 = 0,
+    @"physical_memory_usage": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Dev2) != 736) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Dev2) != 744) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Dev2, "device_inventory_summary") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Dev2, "device_inventory_record") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Dev2, "memory_summary") != 32) @compileError("Generation2 slot offset");
@@ -2209,6 +2211,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev2, "device_inventory_capture") != 712) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Dev2, "display_blit_check") != 720) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Dev2, "cpu_time_info") != 728) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Dev2, "physical_memory_usage") != 736) @compileError("Generation2 slot offset");
 }
 
 pub fn function(comptime Namespace: type, table: anytype, comptime field: []const u8) ?@field(Namespace, field) {

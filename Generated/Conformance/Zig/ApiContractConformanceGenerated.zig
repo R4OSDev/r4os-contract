@@ -8183,7 +8183,7 @@ comptime {
     if (@sizeOf(abi.R4AudioFns.audio_output_catalog) != 8) @compileError("R4AudioFns.audio_output_catalog signature");
     if (@offsetOf(abi.R4XStartR4Audio, "audio_capture_io") != 232) @compileError("R4XStartR4Audio.audio_capture_io offset");
     if (@sizeOf(abi.R4AudioFns.audio_capture_io) != 8) @compileError("R4AudioFns.audio_capture_io signature");
-    if (@sizeOf(abi.R4XStartR4Dev) != 760) @compileError("R4XStartR4Dev size");
+    if (@sizeOf(abi.R4XStartR4Dev) != 768) @compileError("R4XStartR4Dev size");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("R4XStartR4Dev.device_inventory_summary offset");
     if (@sizeOf(abi.R4DevFns.device_inventory_summary) != 8) @compileError("R4DevFns.device_inventory_summary signature");
     if (@offsetOf(abi.R4XStartR4Dev, "device_inventory_record") != 24) @compileError("R4XStartR4Dev.device_inventory_record offset");
@@ -8365,6 +8365,8 @@ comptime {
     if (@sizeOf(abi.R4DevFns.display_blit_check) != 8) @compileError("R4DevFns.display_blit_check signature");
     if (@offsetOf(abi.R4XStartR4Dev, "cpu_time_info") != 752) @compileError("R4XStartR4Dev.cpu_time_info offset");
     if (@sizeOf(abi.R4DevFns.cpu_time_info) != 8) @compileError("R4DevFns.cpu_time_info signature");
+    if (@offsetOf(abi.R4XStartR4Dev, "physical_memory_usage") != 760) @compileError("R4XStartR4Dev.physical_memory_usage offset");
+    if (@sizeOf(abi.R4DevFns.physical_memory_usage) != 8) @compileError("R4DevFns.physical_memory_usage signature");
 }
 
 test "generated API contract compiles" {}

@@ -13498,6 +13498,7 @@ typedef int32_t (*R4DevFirmwareSystemUuidFn)(R4FirmwareSystemUuidInfo * out);
 typedef int32_t (*R4DevDeviceInventoryCaptureFn)(R4DeviceInventoryRecord * rows, uint32_t capacity, R4DeviceInventorySnapshotInfo * out_info);
 typedef int32_t (*R4DevDisplayBlitCheckFn)(void);
 typedef int32_t (*R4DevCpuTimeInfoFn)(uint32_t cpu_index, R4CpuTimeInfo * out);
+typedef int32_t (*R4DevPhysicalMemoryUsageFn)(uint64_t * total_bytes, uint64_t * free_bytes);
 
 typedef struct R4XStartR4Dev {
     uint32_t magic;
@@ -13597,6 +13598,7 @@ typedef struct R4XStartR4Dev {
     uintptr_t device_inventory_capture;
     uintptr_t display_blit_check;
     uintptr_t cpu_time_info;
+    uintptr_t physical_memory_usage;
 } R4XStartR4Dev;
 
 
@@ -21782,7 +21784,7 @@ _Static_assert(offsetof(R4XStartR4Audio, audio_output_catalog) == 224u, "R4XStar
 _Static_assert(sizeof(R4AudioAudioOutputCatalogFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_capture_io) == 232u, "R4XStartR4Audio.audio_capture_io offset mismatch");
 _Static_assert(sizeof(R4AudioAudioCaptureIoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Dev) == 760u, "R4XStartR4Dev size mismatch");
+_Static_assert(sizeof(R4XStartR4Dev) == 768u, "R4XStartR4Dev size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_summary) == 16u, "R4XStartR4Dev.device_inventory_summary offset mismatch");
 _Static_assert(sizeof(R4DevDeviceInventorySummaryFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, device_inventory_record) == 24u, "R4XStartR4Dev.device_inventory_record offset mismatch");
@@ -21964,6 +21966,8 @@ _Static_assert(offsetof(R4XStartR4Dev, display_blit_check) == 744u, "R4XStartR4D
 _Static_assert(sizeof(R4DevDisplayBlitCheckFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Dev, cpu_time_info) == 752u, "R4XStartR4Dev.cpu_time_info offset mismatch");
 _Static_assert(sizeof(R4DevCpuTimeInfoFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Dev, physical_memory_usage) == 760u, "R4XStartR4Dev.physical_memory_usage offset mismatch");
+_Static_assert(sizeof(R4DevPhysicalMemoryUsageFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 
 #include <r4os/abi_technical_generated.h>
 

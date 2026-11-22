@@ -1989,6 +1989,7 @@ pub mod R4DevFns2 {
     pub type device_inventory_capture = unsafe extern "C" fn(*mut super::super::DeviceInventoryRecord, u32, *mut super::super::DeviceInventorySnapshotInfo) -> i32;
     pub type display_blit_check = unsafe extern "C" fn() -> i32;
     pub type cpu_time_info = unsafe extern "C" fn(u32, *mut super::super::CpuTimeInfo) -> i32;
+    pub type physical_memory_usage = unsafe extern "C" fn(*mut u64, *mut u64) -> i32;
 }
 pub const R4DEV_MAGIC: u32 = 844514386;
 #[repr(C)]
@@ -2085,8 +2086,9 @@ pub struct R4XStartR4Dev2 {
     pub device_inventory_capture: u64,
     pub display_blit_check: u64,
     pub cpu_time_info: u64,
+    pub physical_memory_usage: u64,
 }
-impl Default for R4XStartR4Dev2 { fn default() -> Self { Self { magic: 844514386, abi_version: 2, size: 736, flags: 0,
+impl Default for R4XStartR4Dev2 { fn default() -> Self { Self { magic: 844514386, abi_version: 2, size: 744, flags: 0,
     device_inventory_summary: 0,
     device_inventory_record: 0,
     memory_summary: 0,
@@ -2177,8 +2179,9 @@ impl Default for R4XStartR4Dev2 { fn default() -> Self { Self { magic: 844514386
     device_inventory_capture: 0,
     display_blit_check: 0,
     cpu_time_info: 0,
+    physical_memory_usage: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Dev2>() == 736);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Dev2>() == 744);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,device_inventory_summary) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,device_inventory_record) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,memory_summary) == 32);
@@ -2269,4 +2272,5 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Dev2>() == 736);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,device_inventory_capture) == 712);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,display_blit_check) == 720);
     assert!(core::mem::offset_of!(R4XStartR4Dev2,cpu_time_info) == 728);
+    assert!(core::mem::offset_of!(R4XStartR4Dev2,physical_memory_usage) == 736);
 };

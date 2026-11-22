@@ -13044,12 +13044,13 @@ pub const R4DevFns = struct {
     pub const device_inventory_capture = *const fn (?[*]DeviceInventoryRecord, u32, *DeviceInventorySnapshotInfo) callconv(.c) i32;
     pub const display_blit_check = *const fn () callconv(.c) i32;
     pub const cpu_time_info = *const fn (u32, *CpuTimeInfo) callconv(.c) i32;
+    pub const physical_memory_usage = *const fn (*u64, *u64) callconv(.c) i32;
 };
 
 pub const R4XStartR4Dev = extern struct {
     magic: u32 = 827737170,
     abi_version: u32 = 37,
-    size: u32 = 760,
+    size: u32 = 768,
     flags: u32 = 0,
     device_inventory_summary: usize = 0,
     device_inventory_record: usize = 0,
@@ -13144,6 +13145,7 @@ pub const R4XStartR4Dev = extern struct {
     device_inventory_capture: usize = 0,
     display_blit_check: usize = 0,
     cpu_time_info: usize = 0,
+    physical_memory_usage: usize = 0,
 };
 
 pub const R4ApiSlotState = enum(u8) { function, reserved, tombstone };
@@ -13705,6 +13707,7 @@ pub const R4DevSlots = [_]R4ApiSlotMeta{
     .{ .number = 90, .offset = 736, .name = "device_inventory_capture", .state = .function, .required = false },
     .{ .number = 91, .offset = 744, .name = "display_blit_check", .state = .function, .required = false },
     .{ .number = 92, .offset = 752, .name = "cpu_time_info", .state = .function, .required = false },
+    .{ .number = 93, .offset = 760, .name = "physical_memory_usage", .state = .function, .required = false },
 };
 
 comptime {
@@ -21918,7 +21921,7 @@ comptime {
     if (@offsetOf(R4XStartR4Audio, "audio_close_stream_progress") != 216) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_close_stream_progress");
     if (@offsetOf(R4XStartR4Audio, "audio_output_catalog") != 224) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_output_catalog");
     if (@offsetOf(R4XStartR4Audio, "audio_capture_io") != 232) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_capture_io");
-    if (@sizeOf(R4XStartR4Dev) != 760) @compileError("generated ABI size drift: R4XStartR4Dev");
+    if (@sizeOf(R4XStartR4Dev) != 768) @compileError("generated ABI size drift: R4XStartR4Dev");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_summary") != 16) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_summary");
     if (@offsetOf(R4XStartR4Dev, "device_inventory_record") != 24) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_record");
     if (@offsetOf(R4XStartR4Dev, "memory_summary") != 32) @compileError("generated ABI offset drift: R4XStartR4Dev.memory_summary");
@@ -22012,6 +22015,7 @@ comptime {
     if (@offsetOf(R4XStartR4Dev, "device_inventory_capture") != 736) @compileError("generated ABI offset drift: R4XStartR4Dev.device_inventory_capture");
     if (@offsetOf(R4XStartR4Dev, "display_blit_check") != 744) @compileError("generated ABI offset drift: R4XStartR4Dev.display_blit_check");
     if (@offsetOf(R4XStartR4Dev, "cpu_time_info") != 752) @compileError("generated ABI offset drift: R4XStartR4Dev.cpu_time_info");
+    if (@offsetOf(R4XStartR4Dev, "physical_memory_usage") != 760) @compileError("generated ABI offset drift: R4XStartR4Dev.physical_memory_usage");
 }
 
 // Typed kernel provider contracts and table builders.
@@ -23052,13 +23056,14 @@ pub const R4DevProvider = struct {
     device_inventory_capture: ?R4DevFns.device_inventory_capture = null,
     display_blit_check: ?R4DevFns.display_blit_check = null,
     cpu_time_info: ?R4DevFns.cpu_time_info = null,
+    physical_memory_usage: ?R4DevFns.physical_memory_usage = null,
 };
 
 pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
     return .{
         .magic = 827737170,
         .abi_version = 37,
-        .size = 760,
+        .size = 768,
         .flags = 0,
         .device_inventory_summary = if (provider.device_inventory_summary) |callback| @intFromPtr(callback) else 0,
         .device_inventory_record = if (provider.device_inventory_record) |callback| @intFromPtr(callback) else 0,
@@ -23153,5 +23158,6 @@ pub fn buildR4DevTable(provider: R4DevProvider) R4XStartR4Dev {
         .device_inventory_capture = if (provider.device_inventory_capture) |callback| @intFromPtr(callback) else 0,
         .display_blit_check = if (provider.display_blit_check) |callback| @intFromPtr(callback) else 0,
         .cpu_time_info = if (provider.cpu_time_info) |callback| @intFromPtr(callback) else 0,
+        .physical_memory_usage = if (provider.physical_memory_usage) |callback| @intFromPtr(callback) else 0,
     };
 }

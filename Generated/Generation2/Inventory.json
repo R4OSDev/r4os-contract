@@ -48893,7 +48893,7 @@
       "abi_version": 2,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 736,
+      "size": 744,
       "slots": [
         {
           "number": 0,
@@ -58344,6 +58344,118 @@
                     "lifetime": null
                   },
                   "direction": "inout",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32",
+              "pointer_kind": null,
+              "is_const": null,
+              "sentinel": null,
+              "length": null,
+              "child": null,
+              "direction": null,
+              "nullable": null,
+              "length_by": null,
+              "ownership": null,
+              "lifetime": null
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4DEV"
+            ],
+            "optional_capability": true,
+            "error_domain": "device",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "never_automatic",
+            "buffer_too_small": "caller_capacity_without_required_size",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 90,
+          "offset": 736,
+          "name": "physical_memory_usage",
+          "state": "function",
+          "required": false,
+          "description": "Read managed and immediately free physical RAM in bytes under one page allocator lock. Used bytes equal total minus free. Excludes physical address holes and hardware reservations. Returns 0 on success, negative when unavailable. Leaves outputs unchanged on failure.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "total_bytes",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
+                  "nullable": false,
+                  "length_by": "none",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "free_bytes",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "single",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "scalar",
+                    "name": "u64",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
                   "nullable": false,
                   "length_by": "none",
                   "ownership": "borrowed",
