@@ -15,7 +15,7 @@
       "abi_version": 6,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 1560,
+      "size": 1568,
       "slots": [
         {
           "number": 0,
@@ -22597,6 +22597,122 @@
             "buffer_too_small": "caller_capacity_without_required_size",
             "language_parity": "zig_and_c_required"
           }
+        },
+        {
+          "number": 193,
+          "offset": 1560,
+          "name": "storage_activity",
+          "state": "function",
+          "required": false,
+          "description": "Copy one coherent bounded enumeration of passive counters. Flags bit zero requests names. Return the total required entry count; if capacity is smaller, leave all outputs unchanged. Null output with zero capacity queries the count. Negative status on invalid arguments. No I/O, allocation or periodic worker.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "flags",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "named",
+                    "name": "StorageActivitySample",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
+                  "nullable": true,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32",
+              "pointer_kind": null,
+              "is_const": null,
+              "sentinel": null,
+              "length": null,
+              "child": null,
+              "direction": null,
+              "nullable": null,
+              "length_by": null,
+              "ownership": null,
+              "lifetime": null
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4SYS"
+            ],
+            "optional_capability": true,
+            "error_domain": "storage",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "required_size_reported",
+            "language_parity": "zig_and_c_required"
+          }
         }
       ]
     },
@@ -42827,7 +42943,7 @@
       "abi_version": 1,
       "header_size": 16,
       "pointer_size": 8,
-      "size": 296,
+      "size": 304,
       "slots": [
         {
           "number": 0,
@@ -46325,6 +46441,122 @@
                   "length_by": "none",
                   "ownership": "borrowed",
                   "lifetime": "call"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "scalar",
+              "name": "i32",
+              "pointer_kind": null,
+              "is_const": null,
+              "sentinel": null,
+              "length": null,
+              "child": null,
+              "direction": null,
+              "nullable": null,
+              "length_by": null,
+              "ownership": null,
+              "lifetime": null
+            }
+          },
+          "semantics": {
+            "exposure": "advanced",
+            "requirements": [
+              "R4NET"
+            ],
+            "optional_capability": true,
+            "error_domain": "network",
+            "ownership": "caller_buffer",
+            "buffer_lifetime": "call",
+            "blocking": "nonblocking",
+            "threading": "thread_safe",
+            "timeout": "none",
+            "cancel": "not_cancellable",
+            "timeout_outcome": "none",
+            "reentrancy": "reentrant",
+            "callback_context": "none",
+            "buffer_completion": "call",
+            "shutdown": "none",
+            "close_rule": "none",
+            "outputs": "success_only",
+            "side_effects": "none",
+            "retry": "idempotent",
+            "buffer_too_small": "required_size_reported",
+            "language_parity": "zig_and_c_required"
+          }
+        },
+        {
+          "number": 35,
+          "offset": 296,
+          "name": "network_traffic",
+          "state": "function",
+          "required": false,
+          "description": "Copy one coherent bounded enumeration of passive counters. Flags bit zero requests names. Return the total required entry count; if capacity is smaller, leave all outputs unchanged. Null output with zero capacity queries the count. Negative status on invalid arguments. No I/O, allocation or periodic worker.",
+          "signature": {
+            "calling_convention": "c",
+            "parameters": [
+              {
+                "name": "flags",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
+                }
+              },
+              {
+                "name": "out",
+                "type": {
+                  "kind": "pointer",
+                  "name": null,
+                  "pointer_kind": "many",
+                  "is_const": false,
+                  "sentinel": null,
+                  "length": null,
+                  "child": {
+                    "kind": "named",
+                    "name": "NetworkTrafficSample",
+                    "pointer_kind": null,
+                    "is_const": null,
+                    "sentinel": null,
+                    "length": null,
+                    "child": null,
+                    "direction": null,
+                    "nullable": null,
+                    "length_by": null,
+                    "ownership": null,
+                    "lifetime": null
+                  },
+                  "direction": "output",
+                  "nullable": true,
+                  "length_by": "capacity",
+                  "ownership": "borrowed",
+                  "lifetime": "call"
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "kind": "scalar",
+                  "name": "u32",
+                  "pointer_kind": null,
+                  "is_const": null,
+                  "sentinel": null,
+                  "length": null,
+                  "child": null,
+                  "direction": null,
+                  "nullable": null,
+                  "length_by": null,
+                  "ownership": null,
+                  "lifetime": null
                 }
               }
             ],

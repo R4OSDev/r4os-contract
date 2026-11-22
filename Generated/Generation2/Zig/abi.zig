@@ -537,6 +537,8 @@ const AudioCaptureHandle = shared.AudioCaptureHandle;
 const AudioCaptureSourceInfo = shared.AudioCaptureSourceInfo;
 const AudioCaptureRequest = shared.AudioCaptureRequest;
 const AudioCaptureReply = shared.AudioCaptureReply;
+const NetworkTrafficSample = shared.NetworkTrafficSample;
+const StorageActivitySample = shared.StorageActivitySample;
 pub const R4SysFns2 = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -729,12 +731,13 @@ pub const R4SysFns2 = struct {
     pub const program_launch_io = *const fn ([*:0]const u8, [*:0]const u8, *const LaunchIo, *ProgramProcessHandle) callconv(.c) i32;
     pub const program_stdio = *const fn (*LaunchIo) callconv(.c) i32;
     pub const service_endpoint_client = *const fn (u32, u32, *ProgramProcessHandle) callconv(.c) i32;
+    pub const storage_activity = *const fn (u32, ?[*]StorageActivitySample, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys2 = extern struct {
     magic: u32 = 844714834,
     abi_version: u32 = 6,
-    size: u32 = 1560,
+    size: u32 = 1568,
     flags: u32 = 0,
     @"write": u64 = 0,
     @"putc": u64 = 0,
@@ -929,9 +932,10 @@ pub const R4XStartR4Sys2 = extern struct {
     @"program_launch_io": u64 = 0,
     @"program_stdio": u64 = 0,
     @"service_endpoint_client": u64 = 0,
+    @"storage_activity": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Sys2) != 1560) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Sys2) != 1568) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Sys2, "write") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "putc") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "sleep_ticks") != 32) @compileError("Generation2 slot offset");
@@ -1125,6 +1129,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys2, "program_launch_io") != 1536) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "program_stdio") != 1544) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Sys2, "service_endpoint_client") != 1552) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Sys2, "storage_activity") != 1560) @compileError("Generation2 slot offset");
 }
 pub const R4DeskFns2 = struct {
     pub const read_key = *const fn () callconv(.c) u8;
@@ -1755,12 +1760,13 @@ pub const R4NetFns2 = struct {
     pub const net_service_request = *const fn (u32, u16, u32, u16, [*]const u8, u32, [*]u8, u32) callconv(.c) i32;
     pub const ipc_performance = *const fn (u32, *IpcPerformanceSummary) callconv(.c) i32;
     pub const tcp_performance = *const fn (*TcpPerformanceInfo) callconv(.c) i32;
+    pub const network_traffic = *const fn (u32, ?[*]NetworkTrafficSample, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Net2 = extern struct {
     magic: u32 = 843402834,
     abi_version: u32 = 1,
-    size: u32 = 296,
+    size: u32 = 304,
     flags: u32 = 0,
     @"tcp_connect": u64 = 0,
     @"tcp_write": u64 = 0,
@@ -1797,9 +1803,10 @@ pub const R4XStartR4Net2 = extern struct {
     @"net_service_request": u64 = 0,
     @"ipc_performance": u64 = 0,
     @"tcp_performance": u64 = 0,
+    @"network_traffic": u64 = 0,
 };
 comptime {
-    if (@sizeOf(R4XStartR4Net2) != 296) @compileError("Generation2 table size");
+    if (@sizeOf(R4XStartR4Net2) != 304) @compileError("Generation2 table size");
     if (@offsetOf(R4XStartR4Net2, "tcp_connect") != 16) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Net2, "tcp_write") != 24) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Net2, "tcp_read") != 32) @compileError("Generation2 slot offset");
@@ -1835,6 +1842,7 @@ comptime {
     if (@offsetOf(R4XStartR4Net2, "net_service_request") != 272) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Net2, "ipc_performance") != 280) @compileError("Generation2 slot offset");
     if (@offsetOf(R4XStartR4Net2, "tcp_performance") != 288) @compileError("Generation2 slot offset");
+    if (@offsetOf(R4XStartR4Net2, "network_traffic") != 296) @compileError("Generation2 slot offset");
 }
 pub const R4AudioFns2 = struct {
     pub const audio_open_stream = *const fn (u32, u16, u16) callconv(.c) i32;

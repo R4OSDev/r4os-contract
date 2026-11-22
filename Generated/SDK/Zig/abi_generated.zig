@@ -12018,6 +12018,36 @@ pub const AudioCaptureReply = extern struct {
     reserved: u32 = 0,
 };
 
+pub const NetworkTrafficSample = extern struct {
+    stamp_ns: u64 = 0,
+    clock_generation: u64 = 0,
+    generation: u64 = 0,
+    resets: u64 = 0,
+    rx_bytes: u64 = 0,
+    tx_bytes: u64 = 0,
+    rx_bps: u64 = 0,
+    tx_bps: u64 = 0,
+    interface_id: u32 = 0,
+    link: u8 = 0,
+    duplex: u8 = 0,
+    reserved: u16 = 0,
+    name: [32]u8 = .{0} ** 32,
+};
+
+pub const StorageActivitySample = extern struct {
+    stamp_ns: u64 = 0,
+    clock_generation: u64 = 0,
+    generation: u64 = 0,
+    read_bytes: u64 = 0,
+    write_bytes: u64 = 0,
+    active_ns: u64 = 0,
+    activity_epoch: u64 = 0,
+    slot: u32 = 0,
+    flags: u32 = 0,
+    name: [32]u8 = .{0} ** 32,
+    model: [40]u8 = .{0} ** 40,
+};
+
 pub const R4SysFns = struct {
     pub const write = *const fn ([*]const u8, u32) callconv(.c) i32;
     pub const putc = *const fn (u8) callconv(.c) void;
@@ -12210,12 +12240,13 @@ pub const R4SysFns = struct {
     pub const program_launch_io = *const fn ([*:0]const u8, [*:0]const u8, *const LaunchIo, *ProgramProcessHandle) callconv(.c) i32;
     pub const program_stdio = *const fn (*LaunchIo) callconv(.c) i32;
     pub const service_endpoint_client = *const fn (u32, u32, *ProgramProcessHandle) callconv(.c) i32;
+    pub const storage_activity = *const fn (u32, ?[*]StorageActivitySample, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Sys = extern struct {
     magic: u32 = 827937618,
     abi_version: u32 = 41,
-    size: u32 = 1568,
+    size: u32 = 1576,
     flags: u32 = 0,
     write: usize = 0,
     putc: usize = 0,
@@ -12411,6 +12442,7 @@ pub const R4XStartR4Sys = extern struct {
     program_launch_io: usize = 0,
     program_stdio: usize = 0,
     service_endpoint_client: usize = 0,
+    storage_activity: usize = 0,
 };
 
 pub const R4DeskFns = struct {
@@ -12848,12 +12880,13 @@ pub const R4NetFns = struct {
     pub const net_service_request = *const fn (u32, u16, u32, u16, [*]const u8, u32, [*]u8, u32) callconv(.c) i32;
     pub const ipc_performance = *const fn (u32, *IpcPerformanceSummary) callconv(.c) i32;
     pub const tcp_performance = *const fn (*TcpPerformanceInfo) callconv(.c) i32;
+    pub const network_traffic = *const fn (u32, ?[*]NetworkTrafficSample, u32) callconv(.c) i32;
 };
 
 pub const R4XStartR4Net = extern struct {
     magic: u32 = 826625618,
     abi_version: u32 = 2,
-    size: u32 = 296,
+    size: u32 = 304,
     flags: u32 = 0,
     tcp_connect: usize = 0,
     tcp_write: usize = 0,
@@ -12890,6 +12923,7 @@ pub const R4XStartR4Net = extern struct {
     net_service_request: usize = 0,
     ipc_performance: usize = 0,
     tcp_performance: usize = 0,
+    network_traffic: usize = 0,
 };
 
 pub const R4AudioFns = struct {
@@ -13349,6 +13383,7 @@ pub const R4SysSlots = [_]R4ApiSlotMeta{
     .{ .number = 191, .offset = 1544, .name = "program_launch_io", .state = .function, .required = false },
     .{ .number = 192, .offset = 1552, .name = "program_stdio", .state = .function, .required = false },
     .{ .number = 193, .offset = 1560, .name = "service_endpoint_client", .state = .function, .required = false },
+    .{ .number = 194, .offset = 1568, .name = "storage_activity", .state = .function, .required = false },
 };
 
 pub const R4DeskSlots = [_]R4ApiSlotMeta{
@@ -13583,6 +13618,7 @@ pub const R4NetSlots = [_]R4ApiSlotMeta{
     .{ .number = 32, .offset = 272, .name = "net_service_request", .state = .function, .required = false },
     .{ .number = 33, .offset = 280, .name = "ipc_performance", .state = .function, .required = false },
     .{ .number = 34, .offset = 288, .name = "tcp_performance", .state = .function, .required = false },
+    .{ .number = 35, .offset = 296, .name = "network_traffic", .state = .function, .required = false },
 };
 
 pub const R4AudioSlots = [_]R4ApiSlotMeta{
@@ -21474,7 +21510,35 @@ comptime {
     if (@offsetOf(AudioCaptureReply, "gap_frames") != 232) @compileError("generated ABI offset drift: AudioCaptureReply.gap_frames");
     if (@offsetOf(AudioCaptureReply, "bytes") != 240) @compileError("generated ABI offset drift: AudioCaptureReply.bytes");
     if (@offsetOf(AudioCaptureReply, "reserved") != 244) @compileError("generated ABI offset drift: AudioCaptureReply.reserved");
-    if (@sizeOf(R4XStartR4Sys) != 1568) @compileError("generated ABI size drift: R4XStartR4Sys");
+    if (@sizeOf(NetworkTrafficSample) != 104) @compileError("generated ABI size drift: NetworkTrafficSample");
+    if (@alignOf(NetworkTrafficSample) != 8) @compileError("generated ABI alignment drift: NetworkTrafficSample");
+    if (@offsetOf(NetworkTrafficSample, "stamp_ns") != 0) @compileError("generated ABI offset drift: NetworkTrafficSample.stamp_ns");
+    if (@offsetOf(NetworkTrafficSample, "clock_generation") != 8) @compileError("generated ABI offset drift: NetworkTrafficSample.clock_generation");
+    if (@offsetOf(NetworkTrafficSample, "generation") != 16) @compileError("generated ABI offset drift: NetworkTrafficSample.generation");
+    if (@offsetOf(NetworkTrafficSample, "resets") != 24) @compileError("generated ABI offset drift: NetworkTrafficSample.resets");
+    if (@offsetOf(NetworkTrafficSample, "rx_bytes") != 32) @compileError("generated ABI offset drift: NetworkTrafficSample.rx_bytes");
+    if (@offsetOf(NetworkTrafficSample, "tx_bytes") != 40) @compileError("generated ABI offset drift: NetworkTrafficSample.tx_bytes");
+    if (@offsetOf(NetworkTrafficSample, "rx_bps") != 48) @compileError("generated ABI offset drift: NetworkTrafficSample.rx_bps");
+    if (@offsetOf(NetworkTrafficSample, "tx_bps") != 56) @compileError("generated ABI offset drift: NetworkTrafficSample.tx_bps");
+    if (@offsetOf(NetworkTrafficSample, "interface_id") != 64) @compileError("generated ABI offset drift: NetworkTrafficSample.interface_id");
+    if (@offsetOf(NetworkTrafficSample, "link") != 68) @compileError("generated ABI offset drift: NetworkTrafficSample.link");
+    if (@offsetOf(NetworkTrafficSample, "duplex") != 69) @compileError("generated ABI offset drift: NetworkTrafficSample.duplex");
+    if (@offsetOf(NetworkTrafficSample, "reserved") != 70) @compileError("generated ABI offset drift: NetworkTrafficSample.reserved");
+    if (@offsetOf(NetworkTrafficSample, "name") != 72) @compileError("generated ABI offset drift: NetworkTrafficSample.name");
+    if (@sizeOf(StorageActivitySample) != 136) @compileError("generated ABI size drift: StorageActivitySample");
+    if (@alignOf(StorageActivitySample) != 8) @compileError("generated ABI alignment drift: StorageActivitySample");
+    if (@offsetOf(StorageActivitySample, "stamp_ns") != 0) @compileError("generated ABI offset drift: StorageActivitySample.stamp_ns");
+    if (@offsetOf(StorageActivitySample, "clock_generation") != 8) @compileError("generated ABI offset drift: StorageActivitySample.clock_generation");
+    if (@offsetOf(StorageActivitySample, "generation") != 16) @compileError("generated ABI offset drift: StorageActivitySample.generation");
+    if (@offsetOf(StorageActivitySample, "read_bytes") != 24) @compileError("generated ABI offset drift: StorageActivitySample.read_bytes");
+    if (@offsetOf(StorageActivitySample, "write_bytes") != 32) @compileError("generated ABI offset drift: StorageActivitySample.write_bytes");
+    if (@offsetOf(StorageActivitySample, "active_ns") != 40) @compileError("generated ABI offset drift: StorageActivitySample.active_ns");
+    if (@offsetOf(StorageActivitySample, "activity_epoch") != 48) @compileError("generated ABI offset drift: StorageActivitySample.activity_epoch");
+    if (@offsetOf(StorageActivitySample, "slot") != 56) @compileError("generated ABI offset drift: StorageActivitySample.slot");
+    if (@offsetOf(StorageActivitySample, "flags") != 60) @compileError("generated ABI offset drift: StorageActivitySample.flags");
+    if (@offsetOf(StorageActivitySample, "name") != 64) @compileError("generated ABI offset drift: StorageActivitySample.name");
+    if (@offsetOf(StorageActivitySample, "model") != 96) @compileError("generated ABI offset drift: StorageActivitySample.model");
+    if (@sizeOf(R4XStartR4Sys) != 1576) @compileError("generated ABI size drift: R4XStartR4Sys");
     if (@offsetOf(R4XStartR4Sys, "write") != 16) @compileError("generated ABI offset drift: R4XStartR4Sys.write");
     if (@offsetOf(R4XStartR4Sys, "putc") != 24) @compileError("generated ABI offset drift: R4XStartR4Sys.putc");
     if (@offsetOf(R4XStartR4Sys, "sleep_ticks") != 32) @compileError("generated ABI offset drift: R4XStartR4Sys.sleep_ticks");
@@ -21669,6 +21733,7 @@ comptime {
     if (@offsetOf(R4XStartR4Sys, "program_launch_io") != 1544) @compileError("generated ABI offset drift: R4XStartR4Sys.program_launch_io");
     if (@offsetOf(R4XStartR4Sys, "program_stdio") != 1552) @compileError("generated ABI offset drift: R4XStartR4Sys.program_stdio");
     if (@offsetOf(R4XStartR4Sys, "service_endpoint_client") != 1560) @compileError("generated ABI offset drift: R4XStartR4Sys.service_endpoint_client");
+    if (@offsetOf(R4XStartR4Sys, "storage_activity") != 1568) @compileError("generated ABI offset drift: R4XStartR4Sys.storage_activity");
     if (@sizeOf(R4XStartR4Desk) != 632) @compileError("generated ABI size drift: R4XStartR4Desk");
     if (@offsetOf(R4XStartR4Desk, "read_key") != 16) @compileError("generated ABI offset drift: R4XStartR4Desk.read_key");
     if (@offsetOf(R4XStartR4Desk, "mouse_state") != 24) @compileError("generated ABI offset drift: R4XStartR4Desk.mouse_state");
@@ -21861,7 +21926,7 @@ comptime {
     if (@offsetOf(R4XStartR4Draw, "gfx_output_brightness") != 896) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_output_brightness");
     if (@offsetOf(R4XStartR4Draw, "gfx_brightness_request") != 904) @compileError("generated ABI offset drift: R4XStartR4Draw.gfx_brightness_request");
     if (@offsetOf(R4XStartR4Draw, "font_prefix_metrics2") != 912) @compileError("generated ABI offset drift: R4XStartR4Draw.font_prefix_metrics2");
-    if (@sizeOf(R4XStartR4Net) != 296) @compileError("generated ABI size drift: R4XStartR4Net");
+    if (@sizeOf(R4XStartR4Net) != 304) @compileError("generated ABI size drift: R4XStartR4Net");
     if (@offsetOf(R4XStartR4Net, "tcp_connect") != 16) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_connect");
     if (@offsetOf(R4XStartR4Net, "tcp_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_write");
     if (@offsetOf(R4XStartR4Net, "tcp_read") != 32) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_read");
@@ -21897,6 +21962,7 @@ comptime {
     if (@offsetOf(R4XStartR4Net, "net_service_request") != 272) @compileError("generated ABI offset drift: R4XStartR4Net.net_service_request");
     if (@offsetOf(R4XStartR4Net, "ipc_performance") != 280) @compileError("generated ABI offset drift: R4XStartR4Net.ipc_performance");
     if (@offsetOf(R4XStartR4Net, "tcp_performance") != 288) @compileError("generated ABI offset drift: R4XStartR4Net.tcp_performance");
+    if (@offsetOf(R4XStartR4Net, "network_traffic") != 296) @compileError("generated ABI offset drift: R4XStartR4Net.network_traffic");
     if (@sizeOf(R4XStartR4Audio) != 240) @compileError("generated ABI size drift: R4XStartR4Audio");
     if (@offsetOf(R4XStartR4Audio, "audio_open_stream") != 16) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_open_stream");
     if (@offsetOf(R4XStartR4Audio, "audio_write") != 24) @compileError("generated ABI offset drift: R4XStartR4Audio.audio_write");

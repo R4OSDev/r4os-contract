@@ -253,6 +253,7 @@ pub mod R4SysFns2 {
     pub type program_launch_io = unsafe extern "C" fn(*const u8, *const u8, *const super::super::LaunchIo, *mut super::super::ProgramProcessHandle) -> i32;
     pub type program_stdio = unsafe extern "C" fn(*mut super::super::LaunchIo) -> i32;
     pub type service_endpoint_client = unsafe extern "C" fn(u32, u32, *mut super::super::ProgramProcessHandle) -> i32;
+    pub type storage_activity = unsafe extern "C" fn(u32, *mut super::super::StorageActivitySample, u32) -> i32;
 }
 pub const R4SYS_MAGIC: u32 = 844714834;
 #[repr(C)]
@@ -452,8 +453,9 @@ pub struct R4XStartR4Sys2 {
     pub program_launch_io: u64,
     pub program_stdio: u64,
     pub service_endpoint_client: u64,
+    pub storage_activity: u64,
 }
-impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 6, size: 1560, flags: 0,
+impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834, abi_version: 6, size: 1568, flags: 0,
     write: 0,
     putc: 0,
     sleep_ticks: 0,
@@ -647,8 +649,9 @@ impl Default for R4XStartR4Sys2 { fn default() -> Self { Self { magic: 844714834
     program_launch_io: 0,
     program_stdio: 0,
     service_endpoint_client: 0,
+    storage_activity: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1560);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1568);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,write) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,putc) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,sleep_ticks) == 32);
@@ -842,6 +845,7 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Sys2>() == 1560);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,program_launch_io) == 1536);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,program_stdio) == 1544);
     assert!(core::mem::offset_of!(R4XStartR4Sys2,service_endpoint_client) == 1552);
+    assert!(core::mem::offset_of!(R4XStartR4Sys2,storage_activity) == 1560);
 };
 pub mod R4DeskFns2 {
     pub type read_key = unsafe extern "C" fn() -> u8;
@@ -1662,6 +1666,7 @@ pub mod R4NetFns2 {
     pub type net_service_request = unsafe extern "C" fn(u32, u16, u32, u16, *const u8, u32, *mut u8, u32) -> i32;
     pub type ipc_performance = unsafe extern "C" fn(u32, *mut super::super::IpcPerformanceSummary) -> i32;
     pub type tcp_performance = unsafe extern "C" fn(*mut super::super::TcpPerformanceInfo) -> i32;
+    pub type network_traffic = unsafe extern "C" fn(u32, *mut super::super::NetworkTrafficSample, u32) -> i32;
 }
 pub const R4NET_MAGIC: u32 = 843402834;
 #[repr(C)]
@@ -1703,8 +1708,9 @@ pub struct R4XStartR4Net2 {
     pub net_service_request: u64,
     pub ipc_performance: u64,
     pub tcp_performance: u64,
+    pub network_traffic: u64,
 }
-impl Default for R4XStartR4Net2 { fn default() -> Self { Self { magic: 843402834, abi_version: 1, size: 296, flags: 0,
+impl Default for R4XStartR4Net2 { fn default() -> Self { Self { magic: 843402834, abi_version: 1, size: 304, flags: 0,
     tcp_connect: 0,
     tcp_write: 0,
     tcp_read: 0,
@@ -1740,8 +1746,9 @@ impl Default for R4XStartR4Net2 { fn default() -> Self { Self { magic: 843402834
     net_service_request: 0,
     ipc_performance: 0,
     tcp_performance: 0,
+    network_traffic: 0,
 } } }
-const _: () = { assert!(core::mem::size_of::<R4XStartR4Net2>() == 296);
+const _: () = { assert!(core::mem::size_of::<R4XStartR4Net2>() == 304);
     assert!(core::mem::offset_of!(R4XStartR4Net2,tcp_connect) == 16);
     assert!(core::mem::offset_of!(R4XStartR4Net2,tcp_write) == 24);
     assert!(core::mem::offset_of!(R4XStartR4Net2,tcp_read) == 32);
@@ -1777,6 +1784,7 @@ const _: () = { assert!(core::mem::size_of::<R4XStartR4Net2>() == 296);
     assert!(core::mem::offset_of!(R4XStartR4Net2,net_service_request) == 272);
     assert!(core::mem::offset_of!(R4XStartR4Net2,ipc_performance) == 280);
     assert!(core::mem::offset_of!(R4XStartR4Net2,tcp_performance) == 288);
+    assert!(core::mem::offset_of!(R4XStartR4Net2,network_traffic) == 296);
 };
 pub mod R4AudioFns2 {
     pub type audio_open_stream = unsafe extern "C" fn(u32, u16, u16) -> i32;

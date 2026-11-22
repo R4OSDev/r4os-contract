@@ -4228,6 +4228,8 @@ typedef struct R4AudioCaptureHandle R4AudioCaptureHandle;
 typedef struct R4AudioCaptureSourceInfo R4AudioCaptureSourceInfo;
 typedef struct R4AudioCaptureRequest R4AudioCaptureRequest;
 typedef struct R4AudioCaptureReply R4AudioCaptureReply;
+typedef struct R4NetworkTrafficSample R4NetworkTrafficSample;
+typedef struct R4StorageActivitySample R4StorageActivitySample;
 
 typedef int32_t (*R4ThreadEntryFn)(uint64_t arg);
 
@@ -12437,6 +12439,36 @@ typedef struct R4AudioCaptureReply {
     uint32_t reserved;
 } R4AudioCaptureReply;
 
+typedef struct R4NetworkTrafficSample {
+    uint64_t stamp_ns;
+    uint64_t clock_generation;
+    uint64_t generation;
+    uint64_t resets;
+    uint64_t rx_bytes;
+    uint64_t tx_bytes;
+    uint64_t rx_bps;
+    uint64_t tx_bps;
+    uint32_t interface_id;
+    uint8_t link;
+    uint8_t duplex;
+    uint16_t reserved;
+    uint8_t name[32];
+} R4NetworkTrafficSample;
+
+typedef struct R4StorageActivitySample {
+    uint64_t stamp_ns;
+    uint64_t clock_generation;
+    uint64_t generation;
+    uint64_t read_bytes;
+    uint64_t write_bytes;
+    uint64_t active_ns;
+    uint64_t activity_epoch;
+    uint32_t slot;
+    uint32_t flags;
+    uint8_t name[32];
+    uint8_t model[40];
+} R4StorageActivitySample;
+
 typedef struct R4XStartContext {
     uint32_t magic;
     uint16_t abi_major;
@@ -12674,6 +12706,7 @@ typedef int32_t (*R4SysBytePipeInfoFn)(R4BytePipeEnd end, R4BytePipeInfo * out_i
 typedef int32_t (*R4SysProgramLaunchIoFn)(const uint8_t * path, const uint8_t * args, const R4LaunchIo * io, R4ProgramProcessHandle * out_handle);
 typedef int32_t (*R4SysProgramStdioFn)(R4LaunchIo * out_io);
 typedef int32_t (*R4SysServiceEndpointClientFn)(uint32_t handle, uint32_t request_id, R4ProgramProcessHandle * out_handle);
+typedef int32_t (*R4SysStorageActivityFn)(uint32_t flags, R4StorageActivitySample * out, uint32_t capacity);
 
 typedef struct R4XStartR4Sys {
     uint32_t magic;
@@ -12874,6 +12907,7 @@ typedef struct R4XStartR4Sys {
     uintptr_t program_launch_io;
     uintptr_t program_stdio;
     uintptr_t service_endpoint_client;
+    uintptr_t storage_activity;
 } R4XStartR4Sys;
 
 typedef uint8_t (*R4DeskReadKeyFn)(void);
@@ -13306,6 +13340,7 @@ typedef int32_t (*R4NetSerialLinkInboxFn)(R4SerialLinkMessage * arg0);
 typedef int32_t (*R4NetNetServiceRequestFn)(uint32_t arg0, uint16_t arg1, uint32_t arg2, uint16_t arg3, const uint8_t * arg4, uint32_t arg5, uint8_t * arg6, uint32_t arg7);
 typedef int32_t (*R4NetIpcPerformanceFn)(uint32_t arg0, R4IpcPerformanceSummary * arg1);
 typedef int32_t (*R4NetTcpPerformanceFn)(R4TcpPerformanceInfo * arg0);
+typedef int32_t (*R4NetNetworkTrafficFn)(uint32_t flags, R4NetworkTrafficSample * out, uint32_t capacity);
 
 typedef struct R4XStartR4Net {
     uint32_t magic;
@@ -13347,6 +13382,7 @@ typedef struct R4XStartR4Net {
     uintptr_t net_service_request;
     uintptr_t ipc_performance;
     uintptr_t tcp_performance;
+    uintptr_t network_traffic;
 } R4XStartR4Net;
 
 typedef int32_t (*R4AudioAudioOpenStreamFn)(uint32_t arg0, uint16_t arg1, uint16_t arg2);
@@ -20895,7 +20931,33 @@ _Static_assert(offsetof(R4AudioCaptureReply, overrun_frames) == 224u, "AudioCapt
 _Static_assert(offsetof(R4AudioCaptureReply, gap_frames) == 232u, "AudioCaptureReply.gap_frames offset mismatch");
 _Static_assert(offsetof(R4AudioCaptureReply, bytes) == 240u, "AudioCaptureReply.bytes offset mismatch");
 _Static_assert(offsetof(R4AudioCaptureReply, reserved) == 244u, "AudioCaptureReply.reserved offset mismatch");
-_Static_assert(sizeof(R4XStartR4Sys) == 1568u, "R4XStartR4Sys size mismatch");
+_Static_assert(sizeof(R4NetworkTrafficSample) == 104u, "NetworkTrafficSample size mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, stamp_ns) == 0u, "NetworkTrafficSample.stamp_ns offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, clock_generation) == 8u, "NetworkTrafficSample.clock_generation offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, generation) == 16u, "NetworkTrafficSample.generation offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, resets) == 24u, "NetworkTrafficSample.resets offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, rx_bytes) == 32u, "NetworkTrafficSample.rx_bytes offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, tx_bytes) == 40u, "NetworkTrafficSample.tx_bytes offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, rx_bps) == 48u, "NetworkTrafficSample.rx_bps offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, tx_bps) == 56u, "NetworkTrafficSample.tx_bps offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, interface_id) == 64u, "NetworkTrafficSample.interface_id offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, link) == 68u, "NetworkTrafficSample.link offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, duplex) == 69u, "NetworkTrafficSample.duplex offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, reserved) == 70u, "NetworkTrafficSample.reserved offset mismatch");
+_Static_assert(offsetof(R4NetworkTrafficSample, name) == 72u, "NetworkTrafficSample.name offset mismatch");
+_Static_assert(sizeof(R4StorageActivitySample) == 136u, "StorageActivitySample size mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, stamp_ns) == 0u, "StorageActivitySample.stamp_ns offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, clock_generation) == 8u, "StorageActivitySample.clock_generation offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, generation) == 16u, "StorageActivitySample.generation offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, read_bytes) == 24u, "StorageActivitySample.read_bytes offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, write_bytes) == 32u, "StorageActivitySample.write_bytes offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, active_ns) == 40u, "StorageActivitySample.active_ns offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, activity_epoch) == 48u, "StorageActivitySample.activity_epoch offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, slot) == 56u, "StorageActivitySample.slot offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, flags) == 60u, "StorageActivitySample.flags offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, name) == 64u, "StorageActivitySample.name offset mismatch");
+_Static_assert(offsetof(R4StorageActivitySample, model) == 96u, "StorageActivitySample.model offset mismatch");
+_Static_assert(sizeof(R4XStartR4Sys) == 1576u, "R4XStartR4Sys size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, write) == 16u, "R4XStartR4Sys.write offset mismatch");
 _Static_assert(sizeof(R4SysWriteFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, putc) == 24u, "R4XStartR4Sys.putc offset mismatch");
@@ -21281,6 +21343,8 @@ _Static_assert(offsetof(R4XStartR4Sys, program_stdio) == 1552u, "R4XStartR4Sys.p
 _Static_assert(sizeof(R4SysProgramStdioFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Sys, service_endpoint_client) == 1560u, "R4XStartR4Sys.service_endpoint_client offset mismatch");
 _Static_assert(sizeof(R4SysServiceEndpointClientFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Sys, storage_activity) == 1568u, "R4XStartR4Sys.storage_activity offset mismatch");
+_Static_assert(sizeof(R4SysStorageActivityFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Desk) == 632u, "R4XStartR4Desk size mismatch");
 _Static_assert(offsetof(R4XStartR4Desk, read_key) == 16u, "R4XStartR4Desk.read_key offset mismatch");
 _Static_assert(sizeof(R4DeskReadKeyFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
@@ -21662,7 +21726,7 @@ _Static_assert(offsetof(R4XStartR4Draw, gfx_brightness_request) == 904u, "R4XSta
 _Static_assert(sizeof(R4DrawGfxBrightnessRequestFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Draw, font_prefix_metrics2) == 912u, "R4XStartR4Draw.font_prefix_metrics2 offset mismatch");
 _Static_assert(sizeof(R4DrawFontPrefixMetrics2Fn) == sizeof(uintptr_t), "generated function pointer size mismatch");
-_Static_assert(sizeof(R4XStartR4Net) == 296u, "R4XStartR4Net size mismatch");
+_Static_assert(sizeof(R4XStartR4Net) == 304u, "R4XStartR4Net size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_connect) == 16u, "R4XStartR4Net.tcp_connect offset mismatch");
 _Static_assert(sizeof(R4NetTcpConnectFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_write) == 24u, "R4XStartR4Net.tcp_write offset mismatch");
@@ -21733,6 +21797,8 @@ _Static_assert(offsetof(R4XStartR4Net, ipc_performance) == 280u, "R4XStartR4Net.
 _Static_assert(sizeof(R4NetIpcPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(offsetof(R4XStartR4Net, tcp_performance) == 288u, "R4XStartR4Net.tcp_performance offset mismatch");
 _Static_assert(sizeof(R4NetTcpPerformanceFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
+_Static_assert(offsetof(R4XStartR4Net, network_traffic) == 296u, "R4XStartR4Net.network_traffic offset mismatch");
+_Static_assert(sizeof(R4NetNetworkTrafficFn) == sizeof(uintptr_t), "generated function pointer size mismatch");
 _Static_assert(sizeof(R4XStartR4Audio) == 240u, "R4XStartR4Audio size mismatch");
 _Static_assert(offsetof(R4XStartR4Audio, audio_open_stream) == 16u, "R4XStartR4Audio.audio_open_stream offset mismatch");
 _Static_assert(sizeof(R4AudioAudioOpenStreamFn) == sizeof(uintptr_t), "generated function pointer size mismatch");

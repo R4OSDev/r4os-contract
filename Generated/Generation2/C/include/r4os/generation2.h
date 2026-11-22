@@ -223,6 +223,7 @@ typedef int32_t (*R4SysBytePipeInfoFn2)(R4BytePipeEnd end, R4BytePipeInfo * out_
 typedef int32_t (*R4SysProgramLaunchIoFn2)(const uint8_t * path, const uint8_t * args, const R4LaunchIo * io, R4ProgramProcessHandle * out_handle);
 typedef int32_t (*R4SysProgramStdioFn2)(R4LaunchIo * out_io);
 typedef int32_t (*R4SysServiceEndpointClientFn2)(uint32_t handle, uint32_t request_id, R4ProgramProcessHandle * out_handle);
+typedef int32_t (*R4SysStorageActivityFn2)(uint32_t flags, R4StorageActivitySample * out, uint32_t capacity);
 #define R4OS2_R4SYS_MAGIC UINT32_C(844714834)
 #define R4OS2_R4SYS_VERSION UINT32_C(6)
 typedef struct {
@@ -420,8 +421,9 @@ typedef struct {
     uint64_t program_launch_io;
     uint64_t program_stdio;
     uint64_t service_endpoint_client;
+    uint64_t storage_activity;
 } R4XStartR4Sys2;
-_Static_assert(sizeof(R4XStartR4Sys2)==1560, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Sys2)==1568, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Sys2,write)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,putc)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,sleep_ticks)==32, "Generation2 slot");
@@ -615,6 +617,7 @@ _Static_assert(offsetof(R4XStartR4Sys2,byte_pipe_info)==1528, "Generation2 slot"
 _Static_assert(offsetof(R4XStartR4Sys2,program_launch_io)==1536, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,program_stdio)==1544, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Sys2,service_endpoint_client)==1552, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Sys2,storage_activity)==1560, "Generation2 slot");
 typedef uint8_t (*R4DeskReadKeyFn2)(void);
 typedef void (*R4DeskMouseStateFn2)(R4Mouse * arg0);
 typedef void (*R4DeskMouseShowFn2)(void);
@@ -1231,6 +1234,7 @@ typedef int32_t (*R4NetSerialLinkInboxFn2)(R4SerialLinkMessage * arg0);
 typedef int32_t (*R4NetNetServiceRequestFn2)(uint32_t arg0, uint16_t arg1, uint32_t arg2, uint16_t arg3, const uint8_t * arg4, uint32_t arg5, uint8_t * arg6, uint32_t arg7);
 typedef int32_t (*R4NetIpcPerformanceFn2)(uint32_t arg0, R4IpcPerformanceSummary * arg1);
 typedef int32_t (*R4NetTcpPerformanceFn2)(R4TcpPerformanceInfo * arg0);
+typedef int32_t (*R4NetNetworkTrafficFn2)(uint32_t flags, R4NetworkTrafficSample * out, uint32_t capacity);
 #define R4OS2_R4NET_MAGIC UINT32_C(843402834)
 #define R4OS2_R4NET_VERSION UINT32_C(1)
 typedef struct {
@@ -1270,8 +1274,9 @@ typedef struct {
     uint64_t net_service_request;
     uint64_t ipc_performance;
     uint64_t tcp_performance;
+    uint64_t network_traffic;
 } R4XStartR4Net2;
-_Static_assert(sizeof(R4XStartR4Net2)==296, "Generation2 table size");
+_Static_assert(sizeof(R4XStartR4Net2)==304, "Generation2 table size");
 _Static_assert(offsetof(R4XStartR4Net2,tcp_connect)==16, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Net2,tcp_write)==24, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Net2,tcp_read)==32, "Generation2 slot");
@@ -1307,6 +1312,7 @@ _Static_assert(offsetof(R4XStartR4Net2,serial_link_inbox)==264, "Generation2 slo
 _Static_assert(offsetof(R4XStartR4Net2,net_service_request)==272, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Net2,ipc_performance)==280, "Generation2 slot");
 _Static_assert(offsetof(R4XStartR4Net2,tcp_performance)==288, "Generation2 slot");
+_Static_assert(offsetof(R4XStartR4Net2,network_traffic)==296, "Generation2 slot");
 typedef int32_t (*R4AudioAudioOpenStreamFn2)(uint32_t arg0, uint16_t arg1, uint16_t arg2);
 typedef int32_t (*R4AudioAudioWriteFn2)(uint32_t arg0, const uint8_t * arg1, uint32_t arg2);
 typedef int32_t (*R4AudioAudioCloseFn2)(uint32_t arg0);

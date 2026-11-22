@@ -5,7 +5,7 @@ Diese Datei wird deterministisch aus `API/ApiContract.json` erzeugt. Manuelle Ä
 Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenzen und Conformance-Fixtures werden produktiv aus diesem Schema erzeugt; handgeschriebene Dateien bleiben nur Fassaden oder erklaerende Texte.
 
 - Schema: v11, Baseline `standalone-contract-0.64.11`
-- Reachability: 478 von 478 Typen aufgelöst oder explizit klassifiziert
+- Reachability: 480 von 480 Typen aufgelöst oder explizit klassifiziert
 - Zentrale SDK-only-Wurzeln: 0; Runtime-R4Ls besitzen libraryeigene Vertraege
 - Operationen: 0; Fehlerdomänen: 72; Konstanten: 3156; Limits: 123
 
@@ -499,6 +499,8 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `AudioCaptureSourceInfo` | fixed_layout | extern_struct | 112/8 | 112/8 | 112/8 | 112/8 |
 | `AudioCaptureRequest` | fixed_layout | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
 | `AudioCaptureReply` | fixed_layout | extern_struct | 248/8 | 248/8 | 248/8 | 248/8 |
+| `NetworkTrafficSample` | fixed_layout | extern_struct | 104/8 | 104/8 | 104/8 | 104/8 |
+| `StorageActivitySample` | fixed_layout | extern_struct | 136/8 | 136/8 | 136/8 | 136/8 |
 
 ## Typdetails
 
@@ -12039,6 +12041,50 @@ Kernel-, Zig- und C-Program-ABI, R4L-Identitaeten, Contractlayouts, API-Referenz
 | `gap_frames` | 232 | 8 | 8 | `u64` | - |
 | `bytes` | 240 | 4 | 4 | `u32` | - |
 | `reserved` | 244 | 4 | 4 | `u32` | - |
+
+### `NetworkTrafficSample`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 104 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `stamp_ns` | 0 | 8 | 8 | `u64` | - |
+| `clock_generation` | 8 | 8 | 8 | `u64` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `resets` | 24 | 8 | 8 | `u64` | - |
+| `rx_bytes` | 32 | 8 | 8 | `u64` | - |
+| `tx_bytes` | 40 | 8 | 8 | `u64` | - |
+| `rx_bps` | 48 | 8 | 8 | `u64` | - |
+| `tx_bps` | 56 | 8 | 8 | `u64` | - |
+| `interface_id` | 64 | 4 | 4 | `u32` | - |
+| `link` | 68 | 1 | 1 | `u8` | - |
+| `duplex` | 69 | 1 | 1 | `u8` | - |
+| `reserved` | 70 | 2 | 2 | `u16` | - |
+| `name` | 72 | 32 | 1 | `[32]u8` | - |
+
+### `StorageActivitySample`
+
+- Quelle: `API/ApiContract.json`
+- Klasse: `fixed_layout`
+- Repräsentation: `extern_struct`
+- Version/Größe/Alignment: 1 / 136 / 8
+
+| Feld | Offset | Größe | Align | Quelltyp | Pointer-/Buffervertrag |
+|---|---:|---:|---:|---|---|
+| `stamp_ns` | 0 | 8 | 8 | `u64` | - |
+| `clock_generation` | 8 | 8 | 8 | `u64` | - |
+| `generation` | 16 | 8 | 8 | `u64` | - |
+| `read_bytes` | 24 | 8 | 8 | `u64` | - |
+| `write_bytes` | 32 | 8 | 8 | `u64` | - |
+| `active_ns` | 40 | 8 | 8 | `u64` | - |
+| `activity_epoch` | 48 | 8 | 8 | `u64` | - |
+| `slot` | 56 | 4 | 4 | `u32` | - |
+| `flags` | 60 | 4 | 4 | `u32` | - |
+| `name` | 64 | 32 | 1 | `[32]u8` | - |
+| `model` | 96 | 40 | 1 | `[40]u8` | - |
 
 ## Fehlerdomänen
 

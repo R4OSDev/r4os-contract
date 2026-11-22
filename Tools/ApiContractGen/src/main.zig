@@ -396,7 +396,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // 1240-byte prefix and all existing function signatures are retained.
     // 0.90.21 baseline refresh includes the already published optional
     // system_update_target_supported append; no existing slot changes.
-    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 191, .reserved = 2, .tombstones = 1 },
+    .{ .id = 1, .name = "R4SYS", .kind = .kernel_table, .functions = 192, .reserved = 2, .tombstones = 1 },
     // 0.62.31 activates slot 36 for Unicode keyboard codepoints while the
     // original byte-oriented read_key remains ABI-compatible at slot 0.
     // The append-only console input transport occupies slot 52; 0.69.47
@@ -426,7 +426,7 @@ const phase_a_groups = [_]ExpectedGroup{
     // 0.69.12 activates the two preallocated R4NET extension slots for the
     // generation-bound service request path and its kernel-channel telemetry;
     // 0.75.18 appends the TCP burst/ACK/poll performance snapshot at slot 34.
-    .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 35, .reserved = 0, .tombstones = 0 },
+    .{ .id = 4, .name = "R4NET", .kind = .kernel_table, .functions = 36, .reserved = 0, .tombstones = 0 },
     // 0.78.16 appends physical audio-output enumeration and selection.
     // 0.87.53 appends generation-exact progress/expectation/close receipts;
     // the original200-byte table and both reserved slots are unchanged.

@@ -3,7 +3,7 @@
 <!-- R4OS-APIREF:BEGIN R4NET (generiert von ApiContractGen aus ApiContract.json - NICHT von Hand editieren) -->
 ## Tabellen-Referenz R4NET (generiert)
 
-Kernel-Gruppentabelle `R4XStartR4Net2` v1, 296 Bytes, 35 Funktionsfelder und 35 Slots insgesamt.
+Kernel-Gruppentabelle `R4XStartR4Net2` v1, 304 Bytes, 36 Funktionsfelder und 36 Slots insgesamt.
 Signatur-Wahrheit: `abi.R4NetFns2` (Feldname == Tabellenfeld).
 Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 
@@ -44,4 +44,5 @@ Ein Feld ist nutzbar, wenn `hasFn("feld")` es als vorhanden meldet.
 | 32 | 272 | function | `net_service_request` | `*const fn (u32, u16, u32, u16, [*]const u8, u32, [*]u8, u32) callconv(.c) i32` |
 | 33 | 280 | function | `ipc_performance` | `*const fn (u32, *IpcPerformanceSummary) callconv(.c) i32` |
 | 34 | 288 | function | `tcp_performance` | `*const fn (*TcpPerformanceInfo) callconv(.c) i32` |
+| 35 | 296 | function | `network_traffic` | `*const fn (u32, ?[*]NetworkTrafficSample, u32) callconv(.c) i32` |
 <!-- R4OS-APIREF:END R4NET -->

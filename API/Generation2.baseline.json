@@ -36,7 +36,7 @@
   "technical": [
     {
       "name": "DriverApi2",
-      "size": 680,
+      "size": 688,
       "alignment": 8,
       "fields": [
         {
@@ -560,6 +560,12 @@
           "zig_type": "?*const fn (u8, base.IrqHandler, usize) callconv(.c) i32",
           "default_value": "null",
           "offset": 672
+        },
+        {
+          "name": "net_publish_media",
+          "zig_type": "?*const fn (i32, u32, u64, u64) callconv(.c) i32",
+          "default_value": "null",
+          "offset": 680
         }
       ]
     },

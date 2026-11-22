@@ -23039,6 +23039,78 @@ impl Default for AudioCaptureReply {
     }
 }
 
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct NetworkTrafficSample {
+    pub stamp_ns: u64,
+    pub clock_generation: u64,
+    pub generation: u64,
+    pub resets: u64,
+    pub rx_bytes: u64,
+    pub tx_bytes: u64,
+    pub rx_bps: u64,
+    pub tx_bps: u64,
+    pub interface_id: u32,
+    pub link: u8,
+    pub duplex: u8,
+    pub reserved: u16,
+    pub name: [u8; 32],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for NetworkTrafficSample {
+    fn default() -> Self {
+        Self {
+            stamp_ns: 0,
+            clock_generation: 0,
+            generation: 0,
+            resets: 0,
+            rx_bytes: 0,
+            tx_bytes: 0,
+            rx_bps: 0,
+            tx_bps: 0,
+            interface_id: 0,
+            link: 0,
+            duplex: 0,
+            reserved: 0,
+            name: [0; 32],
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct StorageActivitySample {
+    pub stamp_ns: u64,
+    pub clock_generation: u64,
+    pub generation: u64,
+    pub read_bytes: u64,
+    pub write_bytes: u64,
+    pub active_ns: u64,
+    pub activity_epoch: u64,
+    pub slot: u32,
+    pub flags: u32,
+    pub name: [u8; 32],
+    pub model: [u8; 40],
+}
+#[allow(clippy::derivable_impls)]
+impl Default for StorageActivitySample {
+    fn default() -> Self {
+        Self {
+            stamp_ns: 0,
+            clock_generation: 0,
+            generation: 0,
+            read_bytes: 0,
+            write_bytes: 0,
+            active_ns: 0,
+            activity_epoch: 0,
+            slot: 0,
+            flags: 0,
+            name: [0; 32],
+            model: [0; 40],
+        }
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct R4ApiSlotState(pub u8);
@@ -23242,6 +23314,7 @@ pub mod R4SysFns {
     pub type program_launch_io = unsafe extern "C" fn(*const u8, *const u8, *const LaunchIo, *mut ProgramProcessHandle) -> i32;
     pub type program_stdio = unsafe extern "C" fn(*mut LaunchIo) -> i32;
     pub type service_endpoint_client = unsafe extern "C" fn(u32, u32, *mut ProgramProcessHandle) -> i32;
+    pub type storage_activity = unsafe extern "C" fn(u32, *mut StorageActivitySample, u32) -> i32;
 }
 
 #[repr(C)]
@@ -23445,6 +23518,7 @@ pub struct R4XStartR4Sys {
     pub program_launch_io: usize,
     pub program_stdio: usize,
     pub service_endpoint_client: usize,
+    pub storage_activity: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Sys {
@@ -23452,7 +23526,7 @@ impl Default for R4XStartR4Sys {
         Self {
             magic: 827937618,
             abi_version: 41,
-            size: 1568,
+            size: 1576,
             flags: 0,
             write: 0,
             putc: 0,
@@ -23648,6 +23722,7 @@ impl Default for R4XStartR4Sys {
             program_launch_io: 0,
             program_stdio: 0,
             service_endpoint_client: 0,
+            storage_activity: 0,
         }
     }
 }
@@ -24309,6 +24384,7 @@ pub mod R4NetFns {
     pub type net_service_request = unsafe extern "C" fn(u32, u16, u32, u16, *const u8, u32, *mut u8, u32) -> i32;
     pub type ipc_performance = unsafe extern "C" fn(u32, *mut IpcPerformanceSummary) -> i32;
     pub type tcp_performance = unsafe extern "C" fn(*mut TcpPerformanceInfo) -> i32;
+    pub type network_traffic = unsafe extern "C" fn(u32, *mut NetworkTrafficSample, u32) -> i32;
 }
 
 #[repr(C)]
@@ -24353,6 +24429,7 @@ pub struct R4XStartR4Net {
     pub net_service_request: usize,
     pub ipc_performance: usize,
     pub tcp_performance: usize,
+    pub network_traffic: usize,
 }
 #[allow(clippy::derivable_impls)]
 impl Default for R4XStartR4Net {
@@ -24360,7 +24437,7 @@ impl Default for R4XStartR4Net {
         Self {
             magic: 826625618,
             abi_version: 2,
-            size: 296,
+            size: 304,
             flags: 0,
             tcp_connect: 0,
             tcp_write: 0,
@@ -24397,6 +24474,7 @@ impl Default for R4XStartR4Net {
             net_service_request: 0,
             ipc_performance: 0,
             tcp_performance: 0,
+            network_traffic: 0,
         }
     }
 }
@@ -28910,6 +28988,7 @@ pub struct DriverApi2 {
     pub register_audio_capture_backend: Option<unsafe extern "C" fn(*const u8, *const AudioCaptureBackend2) -> i32>,
     pub audio_output_progress: Option<unsafe extern "C" fn() -> ()>,
     pub irq_rearm: Option<unsafe extern "C" fn(u8, unsafe extern "C" fn(u8, usize) -> u32, usize) -> i32>,
+    pub net_publish_media: Option<unsafe extern "C" fn(i32, u32, u64, u64) -> i32>,
 }
 
 #[repr(C)]
@@ -36874,6 +36953,34 @@ const _: () = {
     assert!(core::mem::offset_of!(AudioCaptureReply, reserved) == 244);
     assert!(core::mem::size_of::<AudioCaptureReply>() == 248);
     assert!(core::mem::align_of::<AudioCaptureReply>() == 8);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, stamp_ns) == 0);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, clock_generation) == 8);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, generation) == 16);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, resets) == 24);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, rx_bytes) == 32);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, tx_bytes) == 40);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, rx_bps) == 48);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, tx_bps) == 56);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, interface_id) == 64);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, link) == 68);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, duplex) == 69);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, reserved) == 70);
+    assert!(core::mem::offset_of!(NetworkTrafficSample, name) == 72);
+    assert!(core::mem::size_of::<NetworkTrafficSample>() == 104);
+    assert!(core::mem::align_of::<NetworkTrafficSample>() == 8);
+    assert!(core::mem::offset_of!(StorageActivitySample, stamp_ns) == 0);
+    assert!(core::mem::offset_of!(StorageActivitySample, clock_generation) == 8);
+    assert!(core::mem::offset_of!(StorageActivitySample, generation) == 16);
+    assert!(core::mem::offset_of!(StorageActivitySample, read_bytes) == 24);
+    assert!(core::mem::offset_of!(StorageActivitySample, write_bytes) == 32);
+    assert!(core::mem::offset_of!(StorageActivitySample, active_ns) == 40);
+    assert!(core::mem::offset_of!(StorageActivitySample, activity_epoch) == 48);
+    assert!(core::mem::offset_of!(StorageActivitySample, slot) == 56);
+    assert!(core::mem::offset_of!(StorageActivitySample, flags) == 60);
+    assert!(core::mem::offset_of!(StorageActivitySample, name) == 64);
+    assert!(core::mem::offset_of!(StorageActivitySample, model) == 96);
+    assert!(core::mem::size_of::<StorageActivitySample>() == 136);
+    assert!(core::mem::align_of::<StorageActivitySample>() == 8);
     assert!(core::mem::size_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::align_of::<R4ApiSlotState>() == 1);
     assert!(core::mem::offset_of!(R4XStartR4Sys, magic) == 0);
@@ -37074,7 +37181,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_launch_io) == 1544);
     assert!(core::mem::offset_of!(R4XStartR4Sys, program_stdio) == 1552);
     assert!(core::mem::offset_of!(R4XStartR4Sys, service_endpoint_client) == 1560);
-    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1568);
+    assert!(core::mem::offset_of!(R4XStartR4Sys, storage_activity) == 1568);
+    assert!(core::mem::size_of::<R4XStartR4Sys>() == 1576);
     assert!(core::mem::align_of::<R4XStartR4Sys>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Desk, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Desk, abi_version) == 4);
@@ -37317,7 +37425,8 @@ const _: () = {
     assert!(core::mem::offset_of!(R4XStartR4Net, net_service_request) == 272);
     assert!(core::mem::offset_of!(R4XStartR4Net, ipc_performance) == 280);
     assert!(core::mem::offset_of!(R4XStartR4Net, tcp_performance) == 288);
-    assert!(core::mem::size_of::<R4XStartR4Net>() == 296);
+    assert!(core::mem::offset_of!(R4XStartR4Net, network_traffic) == 296);
+    assert!(core::mem::size_of::<R4XStartR4Net>() == 304);
     assert!(core::mem::align_of::<R4XStartR4Net>() == 8);
     assert!(core::mem::offset_of!(R4XStartR4Audio, magic) == 0);
     assert!(core::mem::offset_of!(R4XStartR4Audio, abi_version) == 4);
@@ -39180,7 +39289,8 @@ const _: () = {
     assert!(core::mem::offset_of!(DriverApi2, register_audio_capture_backend) == 656);
     assert!(core::mem::offset_of!(DriverApi2, audio_output_progress) == 664);
     assert!(core::mem::offset_of!(DriverApi2, irq_rearm) == 672);
-    assert!(core::mem::size_of::<DriverApi2>() == 680);
+    assert!(core::mem::offset_of!(DriverApi2, net_publish_media) == 680);
+    assert!(core::mem::size_of::<DriverApi2>() == 688);
     assert!(core::mem::align_of::<DriverApi2>() == 8);
     assert!(core::mem::offset_of!(ProtocolApi2, magic) == 0);
     assert!(core::mem::offset_of!(ProtocolApi2, version) == 4);

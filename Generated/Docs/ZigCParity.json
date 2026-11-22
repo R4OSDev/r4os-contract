@@ -4,9 +4,9 @@
   "source_schema_version": 12,
   "source_baseline_id": "canonical-generation2-0.64.95",
   "summary": {
-    "group_function_signatures": 531,
+    "group_function_signatures": 533,
     "sdk_operation_contracts": 0,
-    "parity_entries": 531,
+    "parity_entries": 533,
     "cross_language_fixtures": 1
   },
   "signature_parity": [
@@ -1727,6 +1727,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4SysFns2.service_endpoint_client",
       "c_contract": "R4SysFServiceEndpointClientFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4SYS.storage_activity",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4SysFns2.storage_activity",
+      "c_contract": "R4SysFStorageActivityFn",
       "coverage": "generated_signature"
     },
     {
@@ -3743,6 +3752,15 @@
       "language_parity": "zig_and_c_required",
       "zig_contract": "R4NetFns2.tcp_performance",
       "c_contract": "R4NetFTcpPerformanceFn",
+      "coverage": "generated_signature"
+    },
+    {
+      "id": "R4NET.network_traffic",
+      "kind": "group_slot",
+      "exposure": "advanced",
+      "language_parity": "zig_and_c_required",
+      "zig_contract": "R4NetFns2.network_traffic",
+      "c_contract": "R4NetFNetworkTrafficFn",
       "coverage": "generated_signature"
     },
     {
